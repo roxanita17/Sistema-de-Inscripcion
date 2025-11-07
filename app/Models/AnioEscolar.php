@@ -11,9 +11,9 @@ class AnioEscolar extends Model
     protected $table = 'anio_escolars';
 
     protected $fillable = [
-        'inicio_ano_escolar',
-        'cierre_ano_escolar',
-        'extencion_ano_escolar',
+        'inicio_anio_escolar',
+        'cierre_anio_escolar',
+        'extencion_anio_escolar',
         'status',
     ];
 }

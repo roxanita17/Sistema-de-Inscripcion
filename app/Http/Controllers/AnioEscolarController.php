@@ -17,54 +17,52 @@ class AnioEscolarController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'inicio_anio_escolar' => 'required',
+            'cierre_anio_escolar' => 'required',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(AnioEscolar $anioEscolar)
-    {
-        //
-    }
+        $anioEscolar = new AnioEscolar();
+        $anioEscolar->inicio_anio_escolar = $validated['inicio_anio_escolar'];
+        $anioEscolar->cierre_anio_escolar = $validated['cierre_anio_escolar'];
+        $anioEscolar->status = 'Activo';
+        $anioEscolar->save();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AnioEscolar $anioEscolar)
-    {
-        //
+        return redirect()->route('admin.anio_escolar.index')->with('success', 'Anio creado correctamente.');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AnioEscolar $anioEscolar)
+    public function extender(Request $request, $id)
     {
-        //
+        $anioEscolar = AnioEscolar::findOrFail($id);
+
+        $validated = $request->validate([
+            'cierre_anio_escolar' => 'required|date|after_or_equal:' . $anioEscolar->inicio_anio_escolar,
+        ]);
+
+        $anioEscolar->cierre_anio_escolar = $validated['cierre_anio_escolar'];
+        $anioEscolar->status = 'Extendido';
+        $anioEscolar->save();
+
+        return redirect()->route('admin.anio_escolar.index')->with('success', 'Año escolar actualizado correctamente.');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
-        $libro = AnioEscolar::find($id);
-        if ($libro) {
-            $libro->update([
-                'estatus' => 'Inactivo',
+        $anioEscolar = AnioEscolar::find($id);
+        if ($anioEscolar) {
+            $anioEscolar->update([
+                'status' => 'Inactivo',
             ]);
             return redirect()->route('admin.anio_escolar.index')->with('success', 'Anio eliminado correctamente.');
         }

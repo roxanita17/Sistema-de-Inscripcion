@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date("inicio_anio_escolar");
             $table->date("cierre_anio_escolar");
             $table->date("extencion_anio_escolar")->nullable();
-            $table->enum("status",['Inactivo', 'En Espera', 'Activo', 'Extendido'])->default('Inactivo');
+            $table->enum("status",['Inactivo', 'Activo', 'Extendido'])->default('Inactivo');
             $table->timestamps();
         });
     }
