@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('etnia_indigenas', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
+            $table->string('nombre');
             $table->boolean("status")->default(true);
             $table->timestamps();
         });
