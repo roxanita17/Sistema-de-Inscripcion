@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Banco</h1>
+    <h1>Ocupaciones</h1>
 @stop
 
 @section('content')
@@ -11,7 +11,7 @@
 
 
 
-@include('admin.banco.modales.createModal')
+@include('admin.ocupacion.modales.createModal')
 
 
     {{-- Contenedor de alertas --}}
@@ -30,38 +30,32 @@
         @endif
     </div>
 
-    {{-- Botón para abrir la modal de crear banco --}}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearBanco">
-        <i class="fas fa-plus"></i> Crear Banco
+    {{-- Botón para abrir la modal de crear ocupacion --}}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearOcupacion">
+        <i class="fas fa-plus"></i> Crear Ocupacion
     </button>
 
-    {{-- Tabla de años escolares --}}
+    {{-- Tabla de ocupaciones --}}
     <div class="table-responsive">
-        <table class="table table-striped align-middle text-center" id="tablaAnioEscolar">
+        <table class="table table-striped align-middle text-center" id="tablaOcupacion">
             <thead class="table-primary">
                 <tr>
                     {{-- <th>N°</th> --}}
-                    <th>Codigo</th>
                     <th>Nombre</th>
                     <th>Estado</th>
-                    <th>Fecha de creación</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="tbodyAnioEscolar">
-                @if ($bancos->isEmpty())
+            <tbody id="tbodyOcupacion">
+                @if ($ocupacion->isEmpty())
                                 <tr>
-                                    <td colspan="6" style="text-align: center;">No se encontraron bancos.</td>
+                                    <td colspan="4" style="text-align: center;">No se encontraron ocupaciones.</td>
                                 </tr>
                             @endif
-                @foreach ($bancos as $datos)
+                @foreach ($ocupacion as $datos)
                 @if ($datos->status == true)
                     <tr>
-                        {{-- @if ($datos->status == true)
-                            <td>{{ $loop->iteration }}</td>
-                        @endif --}}
-                        <td>{{ $datos->codigo_banco }}</td>
-                        <td>{{ $datos->nombre_banco }}</td>
+                        <td>{{ $datos->nombre_ocupacion }}</td>
                         <td>
                             @if ($datos->status == true)
                                 <span class="badge bg-success">Activo</span>
@@ -69,10 +63,7 @@
                                 <span class="badge bg-danger">Inactivo</span>
                             @endif
                         </td>
-    {{--                     <td>{{ $datos->user->name ?? 'No registrado' }}</td> --}}
-                        <td>{{ $datos->created_at->format('d/m/Y H:i') }}</td>
                         <td>
-                    
 
                             {{-- Editar --}}
                             <a href="#viewModalEditar{{ $datos->id }}" 
@@ -80,14 +71,14 @@
                                 title="Editar"
                                 data-bs-toggle="modal" 
                                 data-bs-target="#viewModalEditar{{ $datos->id }}">
-                                <i class="fas fa-pen text-white"></i>
+                                <i class="fas fa-calendar-plus"></i>
                             </a>
 
-                            @include('admin.banco.modales.editModal')
+                            @include('admin.ocupacion.modales.editModal')
 
                             <!-- Botón que abre el modal -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
-                                <i class="fas fa-trash text-white"></i>
+                                <i class="fas fa-ban"></i>
                             </button>
                             <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
@@ -100,10 +91,10 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            ¿Estás seguro de que deseas eliminar este banco?
+                                            ¿Estás seguro de que deseas eliminar esta ocupacion?
                                         </div>
                                         <div class="modal-footer">
-                                            <form action="{{ url('admin/banco/' . $datos->id) }}" method="POST">
+                                            <form action="{{ url('admin/ocupacion/' . $datos->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -122,6 +113,8 @@
     </div>
 </div>
 
+<!-- Bootstrap 5 JS + Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 @endsection

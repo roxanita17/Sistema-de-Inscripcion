@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\AnioEscolar;
+use App\Models\EtniaIndigena;
+use App\Models\Ocupacion;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,6 +25,10 @@ class DatabaseSeeder extends Seeder
             'extencion_anio_escolar' => '2026-01-01',
             'status' => 'Activo',
         ]);
+
+        EtniaIndigena::factory(20)->create();
+        Ocupacion::factory(10)->create();
+            
 
         User::factory()->create([
             'name' => 'Nohely Sosa',
