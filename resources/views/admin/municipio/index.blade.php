@@ -3,16 +3,14 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Banco</h1>
+    <h1>Municipio</h1>
 @stop
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 
 @section('content')
 <div class="container mt-4">
-
-
-
-@include('admin.banco.modales.createModal')
-
 
     {{-- Contenedor de alertas --}}
     <div id="contenedorAlertas">
@@ -30,9 +28,10 @@
         @endif
     </div>
 
-    {{-- Botón para abrir la modal de crear banco --}}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearBanco">
-        <i class="fas fa-plus"></i> Crear Banco
+    @include('admin.municipio.modales.createModal')
+    {{-- Botón para abrir la modal de crear estado --}}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearMunicipio">
+        <i class="fas fa-plus"></i> Crear Municipio
     </button>
 
     {{-- Tabla de años escolares --}}
@@ -41,27 +40,27 @@
             <thead class="table-primary">
                 <tr>
                     {{-- <th>N°</th> --}}
-                    <th>Codigo</th>
-                    <th>Nombre</th>
+                    <th>Municipio</th>
                     <th>Estado</th>
-                    <th>Fecha de creación</th>
+                    <th>Status</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody id="tbodyAnioEscolar">
-                @if ($bancos->isEmpty())
+                @if ($municipios->isEmpty())
                                 <tr>
-                                    <td colspan="4" style="text-align: center;">No se encontraron bancos.</td>
+                                    <td colspan="4" style="text-align: center;">No se encontraron municipios.</td>
                                 </tr>
                             @endif
-                @foreach ($bancos as $datos)
+                
+                @foreach ($municipios as $datos)
                 @if ($datos->status == true)
                     <tr>
                         {{-- @if ($datos->status == true)
                             <td>{{ $loop->iteration }}</td>
                         @endif --}}
-                        <td>{{ $datos->codigo_banco }}</td>
-                        <td>{{ $datos->nombre_banco }}</td>
+                        <td>{{ $datos->nombre_municipio }}</td>
+                        <td>{{ $datos->estado->nombre_estado }}</td>
                         <td>
                             @if ($datos->status == true)
                                 <span class="badge bg-success">Activo</span>
@@ -69,10 +68,16 @@
                                 <span class="badge bg-danger">Inactivo</span>
                             @endif
                         </td>
-    {{--                     <td>{{ $datos->user->name ?? 'No registrado' }}</td> --}}
-                        <td>{{ $datos->created_at->format('d/m/Y H:i') }}</td>
                         <td>
-                    
+                            {{-- Ver detalles --}}
+                            <a href="#viewModal{{ $datos->id }}" 
+                                class="btn btn-info btn-sm" 
+                                title="Ver detalles"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#viewModal{{ $datos->id }}">
+                                <i class="fas fa-eye"></i>
+                            </a>
+
 
                             {{-- Editar --}}
                             <a href="#viewModalEditar{{ $datos->id }}" 
@@ -80,30 +85,23 @@
                                 title="Editar"
                                 data-bs-toggle="modal" 
                                 data-bs-target="#viewModalEditar{{ $datos->id }}">
-                                <i class="fas fa-pen text-white"></i>
+                                <i class="fas fa-pen text-white" ></i>
                             </a>
 
-                            @include('admin.banco.modales.editModal')
+                            @include('admin.municipio.modales.editModal')
 
-                            <!-- Botón que abre el modal -->
+                            <!-- Eliminar -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
                                 <i class="fas fa-trash text-white"></i>
                             </button>
                             <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalLabel{{ $datos->id }}">
-                                                Confirmar Inactivación</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
                                         <div class="modal-body">
-                                            ¿Estás seguro de que deseas eliminar este banco?
+                                            ¿Estás seguro de que deseas eliminar este municipio?
                                         </div>
                                         <div class="modal-footer">
-                                            <form action="{{ url('admin/banco/' . $datos->id) }}" method="POST">
+                                            <form action="{{ url('admin/municipio/' . $datos->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -121,6 +119,7 @@
         </table>
     </div>
 </div>
+
 
 
 

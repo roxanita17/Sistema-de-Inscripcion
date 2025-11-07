@@ -362,6 +362,24 @@ return [
                     'icon' => 'fas fa-fw fa-store',
                     'label_color' => 'success',
                 ],
+                [
+                    'text' => 'Estado',
+                    'url' => 'admin/estado',
+                    'icon' => 'fas fa-fw fa-map',
+                    'label_color' => 'success',
+                ],
+                [
+                    'text' => 'Municipio',
+                    'url' => 'admin/municipio',
+                    'icon' => 'fas fa-fw fa-map',
+                    'label_color' => 'success',
+                ],
+                [
+                    'text' => 'Localidad',
+                    'url' => 'admin/localidad',
+                    'icon' => 'fas fa-fw fa-map',
+                    'label_color' => 'success',
+                ],
             ],
         ],
         
@@ -526,6 +544,48 @@ return [
                     'asset' => false,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
                 ],
+            ],
+
+        ],
+        'bootstrap' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => 'https://code.jquery.com/jquery-3.6.0.min.js',
+                ],
+
             ],
         ],
     ],

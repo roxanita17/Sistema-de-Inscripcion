@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('municipios', function (Blueprint $table) {
+        Schema::create('localidads', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre_municipio');
+            $table->string('nombre_localidad');
             $table->boolean('status')->default(true);
-            $table->foreignId('estado_id')->constrained('estados')->cascadeOnDelete();
+            $table->foreignId('municipio_id')->constrained('municipios')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('municipios');
+        Schema::dropIfExists('localidads');
     }
 };
