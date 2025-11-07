@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AnioEscolar;
 use App\Models\EtniaIndigena;
+use App\Models\Ocupacion;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         EtniaIndigena::factory(20)->create();
+        Ocupacion::factory(10)->create();
             
 
         User::factory()->create([

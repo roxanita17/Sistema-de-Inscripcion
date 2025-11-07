@@ -355,6 +355,13 @@ return [
             'icon' => 'fas fa-fw fa-calendar',
             'label_color' => 'success',
         ],
+
+        [
+            'text' => 'Ocupacion',
+            'url' => 'admin/ocupacion',
+            'icon' => 'fas fa-fw fa-calendar',
+            'label_color' => 'success',
+        ],
         
         
         

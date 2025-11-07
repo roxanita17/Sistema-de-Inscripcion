@@ -27,3 +27,8 @@ Route::get('admin/banco', [App\Http\Controllers\BancoController::class, 'index']
 Route::post('admin/banco/modales/store', [App\Http\Controllers\BancoController::class, 'store'])->name('admin.banco.modales.store');
 Route::post('admin/banco/{id}/update', [App\Http\Controllers\BancoController::class, 'update'])->name('admin.banco.modales.update');
 Route::delete('/admin/banco/{id}', [App\Http\Controllers\BancoController::class, 'destroy'])->name('admin.banco.destroy');
+
+Route::get('admin/ocupacion', [App\Http\Controllers\OcupacionController::class, 'index'])->name('admin.ocupacion.index');
+Route::post('admin/ocupacion/modales/store', [App\Http\Controllers\OcupacionController::class, 'store'])->name('admin.ocupacion.modales.store');
+Route::post('admin/ocupacion/{id}/update', [App\Http\Controllers\OcupacionController::class, 'update'])->name('admin.ocupacion.modales.update');
+Route::delete('/admin/ocupacion/{id}', [App\Http\Controllers\OcupacionController::class, 'destroy'])->name('admin.ocupacion.destroy');
