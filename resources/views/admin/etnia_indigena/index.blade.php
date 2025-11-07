@@ -11,7 +11,7 @@
 
 
 
-@include('admin.etnia_indigena.modales.createModal')
+@include('admin.banco.modales.createModal')
 
 
     {{-- Contenedor de alertas --}}
@@ -31,21 +31,24 @@
     </div>
 
     {{-- Botón para abrir la modal de crear banco --}}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearEtniaIndigena">
-        <i class="fas fa-plus"></i> Crear Etnia Indigena
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearBanco">
+        <i class="fas fa-plus"></i> Crear Banco
     </button>
 
     {{-- Tabla de años escolares --}}
     <div class="table-responsive">
-        <table class="table table-striped align-middle text-center" id="tablaEtniaIndigena">
+        <table class="table table-striped align-middle text-center" id="tablaAnioEscolar">
             <thead class="table-primary">
                 <tr>
+                    {{-- <th>N°</th> --}}
+                    <th>Codigo</th>
                     <th>Nombre</th>
                     <th>Estado</th>
+                    <th>Fecha de creación</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="tbody">
+            <tbody id="tbodyAnioEscolar">
                 @if ($bancos->isEmpty())
                                 <tr>
                                     <td colspan="4" style="text-align: center;">No se encontraron bancos.</td>
@@ -54,7 +57,11 @@
                 @foreach ($bancos as $datos)
                 @if ($datos->status == true)
                     <tr>
-                        <td>{{ $datos->nombre }}</td>
+                        {{-- @if ($datos->status == true)
+                            <td>{{ $loop->iteration }}</td>
+                        @endif --}}
+                        <td>{{ $datos->codigo_banco }}</td>
+                        <td>{{ $datos->nombre_banco }}</td>
                         <td>
                             @if ($datos->status == true)
                                 <span class="badge bg-success">Activo</span>
@@ -62,6 +69,8 @@
                                 <span class="badge bg-danger">Inactivo</span>
                             @endif
                         </td>
+    {{--                     <td>{{ $datos->user->name ?? 'No registrado' }}</td> --}}
+                        <td>{{ $datos->created_at->format('d/m/Y H:i') }}</td>
                         <td>
                             {{-- 🔹 Ver detalles --}}
                             <a href="#viewModal{{ $datos->id }}" 
@@ -72,7 +81,7 @@
                                 <i class="fas fa-eye"></i>
                             </a>
 
-                            @include('admin.etnia_indigena.modales.showModal')
+                            @include('admin.banco.modales.showModal')
 
                             {{-- Editar --}}
                             <a href="#viewModalEditar{{ $datos->id }}" 
@@ -83,7 +92,7 @@
                                 <i class="fas fa-calendar-plus"></i>
                             </a>
 
-                            @include('admin.etnia_indigena.modales.editModal')
+                            @include('admin.banco.modales.editModal')
 
                             <!-- Botón que abre el modal -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
