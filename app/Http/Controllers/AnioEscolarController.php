@@ -32,7 +32,7 @@ class AnioEscolarController extends Controller
         $anioEscolar->status = 'Activo';
         $anioEscolar->save();
 
-        return redirect()->route('admin.anio_escolar.index')->with('success', 'Anio creado correctamente.');
+        return redirect()->route('admin.anio_escolar.index')->with('success', 'Año creado correctamente.');
     }
 
     /**

@@ -19,4 +19,7 @@ Route::post('admin/anio_escolar/{id}/extender', [App\Http\Controllers\AnioEscola
 Route::delete('/admin/anio_escolar/{id}', [App\Http\Controllers\AnioEscolarController::class, 'destroy'])->name('admin.anio_escolar.destroy');
 
 
-
+Route::get('admin/banco', [App\Http\Controllers\BancoController::class, 'index'])->name('admin.banco.index');
+Route::post('admin/banco/modales/store', [App\Http\Controllers\BancoController::class, 'store'])->name('admin.banco.modales.store');
+Route::post('admin/banco/{id}/update', [App\Http\Controllers\BancoController::class, 'update'])->name('admin.banco.modales.update');
+Route::delete('/admin/banco/{id}', [App\Http\Controllers\BancoController::class, 'destroy'])->name('admin.banco.destroy');

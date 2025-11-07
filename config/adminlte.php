@@ -344,19 +344,26 @@ return [
         ],
 
         [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'icon' => 'fas fa-fw fa-file',
-            'label_color' => 'success',
-        ],
-        [
             'text' => 'Año Escolar',
             'url' => 'admin/anio_escolar',
             'icon' => 'fas fa-fw fa-calendar',
             'label_color' => 'success',
         ],
         
-        ['header' => 'account_settings'],
+        
+        
+        [
+            'text' => 'Configuraciones',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'Banco',
+                    'url' => 'admin/banco',
+                    'icon' => 'fas fa-fw fa-store',
+                    'label_color' => 'success',
+                ],
+            ],
+        ],
         
         /* [
             'text' => 'multilevel',
