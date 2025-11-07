@@ -13,12 +13,12 @@ class Municipio extends Model
         'status',
     ];
 
-    public function estado()
-    {
-        return $this->belongsTo(Estado::class);
+    public function estado(){
+    return $this->belongsTo(Estado::class, "estado_id", "id");
     }
 
-  /*   public function localidades(){
-        return $this->hasMany(Localidad::class,"municipio_id","id");
-    } */
+    public function localidades(){
+        return $this->hasMany(Localidad::class, "municipio_id", "id");
+    }
+
 }

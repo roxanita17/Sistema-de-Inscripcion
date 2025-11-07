@@ -24,14 +24,15 @@ class MunicipioController extends Controller
         return view('admin.municipio.modales.createModal', compact('estados'));
     }
 
+    public function getByEstado($estado_id)
+{
+    $municipios = Municipio::where('estado_id', $estado_id)
+                            ->where('status', true)
+                            ->get(['id', 'nombre_municipio']); // Solo devolvemos lo necesario
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    return response()->json($municipios);
+}
+
 
     /**
      * Store a newly created resource in storage.
