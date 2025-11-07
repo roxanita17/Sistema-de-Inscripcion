@@ -35,7 +35,7 @@ class EstadoController extends Controller
         try {
 
             $estado = new Estado();
-            $estado->nombre_estado = $validated['nombre_estado'];
+            $estado->nombre = $validated['nombre_estado'];
             $estado->status = true;
             $estado->save();
 

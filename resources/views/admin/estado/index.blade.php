@@ -54,7 +54,7 @@
                         {{-- @if ($datos->status == true)
                             <td>{{ $loop->iteration }}</td>
                         @endif --}}
-                        <td>{{ $datos->nombre_estado }}</td>
+                        <td>{{ $datos->nombre}}</td>
                         <td>
                             @if ($datos->status == true)
                                 <span class="badge bg-success">Activo</span>

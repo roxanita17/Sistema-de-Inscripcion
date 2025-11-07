@@ -8,7 +8,7 @@ class Estado extends Model
 {
     protected $table = 'estados';
     protected $fillable = [
-        'nombre_estado',
+        'nombre',
         'status',
     ];
 

@@ -60,7 +60,7 @@
                         {{-- @if ($datos->status == true)
                             <td>{{ $loop->iteration }}</td>
                         @endif --}}
-{{--                         <td>{{ $datos->estado->nombre_estado }}</td> --}}
+                        <td>{{ $datos->municipio->estado->nombre }}</td>
                         <td>{{ $datos->municipio->nombre_municipio }}</td>
                         <td>{{ $datos->nombre_localidad }}</td>
                         <td>

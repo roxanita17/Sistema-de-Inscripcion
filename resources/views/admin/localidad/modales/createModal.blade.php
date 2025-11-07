@@ -20,7 +20,7 @@
             <select name="estado_id" id="estado_id" class="form-select" required>
               <option value="">Seleccione un estado</option>
               @foreach ($estados as $estado)
-                <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
               @endforeach
             </select>
           </div>
