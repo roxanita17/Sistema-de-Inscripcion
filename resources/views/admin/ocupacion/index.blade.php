@@ -71,14 +71,14 @@
                                 title="Editar"
                                 data-bs-toggle="modal" 
                                 data-bs-target="#viewModalEditar{{ $datos->id }}">
-                                <i class="fas fa-calendar-plus"></i>
+                                <i class="fas fa-pen text-white"></i>
                             </a>
 
                             @include('admin.ocupacion.modales.editModal')
 
                             <!-- Botón que abre el modal -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
-                                <i class="fas fa-ban"></i>
+                                <i class="fas fa-trash text-white"></i>
                             </button>
                             <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog" role="document">

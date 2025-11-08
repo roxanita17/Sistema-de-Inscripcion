@@ -350,22 +350,6 @@ return [
             'label_color' => 'success',
         ],
         [
-            'text' => 'Etnia Indigena',
-            'url' => 'admin/etnia_indigena',
-            'icon' => 'fas fa-fw fa-calendar',
-            'label_color' => 'success',
-        ],
-
-        [
-            'text' => 'Ocupacion',
-            'url' => 'admin/ocupacion',
-            'icon' => 'fas fa-fw fa-calendar',
-            'label_color' => 'success',
-        ],
-        
-        
-        
-        [
             'text' => 'Configuraciones',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
@@ -376,80 +360,45 @@ return [
                     'label_color' => 'success',
                 ],
                 [
-                    'text' => 'Estado',
-                    'url' => 'admin/estado',
+                    'text' => 'Direccion',
                     'icon' => 'fas fa-fw fa-map',
-                    'label_color' => 'success',
+                    'submenu' => [
+                        [
+                            'text' => 'Estado',
+                            'url' => 'admin/estado',
+                            'icon' => 'fas fa-fw fa-map',
+                            'label_color' => 'success',
+                        ],
+                        [
+                            'text' => 'Municipio',
+                            'url' => 'admin/municipio',
+                            'icon' => 'fas fa-fw fa-map',
+                            'label_color' => 'success',
+                        ],
+                        [
+                            'text' => 'Localidad',
+                            'url' => 'admin/localidad',
+                            'icon' => 'fas fa-fw fa-map',
+                            'label_color' => 'success',
+                        ],
+                    ],
                 ],
                 [
-                    'text' => 'Municipio',
-                    'url' => 'admin/municipio',
-                    'icon' => 'fas fa-fw fa-map',
+                    'text' => 'Etnia Indigena',
+                    'url' => 'admin/etnia_indigena',
+                    'icon' => 'fas fa-fw fa-calendar',
                     'label_color' => 'success',
                 ],
+
                 [
-                    'text' => 'Localidad',
-                    'url' => 'admin/localidad',
-                    'icon' => 'fas fa-fw fa-map',
+                    'text' => 'Ocupacion',
+                    'url' => 'admin/ocupacion',
+                    'icon' => 'fas fa-fw fa-calendar',
                     'label_color' => 'success',
                 ],
             ],
         ],
         
-        /* [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-            ],
-        ], */
-        /* ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ], */
     ],
 
     

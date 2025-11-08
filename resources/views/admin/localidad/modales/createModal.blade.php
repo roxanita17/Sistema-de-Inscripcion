@@ -14,15 +14,12 @@
 
           <!-- Select Estado -->
           <div class="mb-3">
-            <label for="estado_id" class="form-label">
-              <span class="text-danger">*</span> Estado
-            </label>
-            <select name="estado_id" id="estado_id" class="form-select" required>
-              <option value="">Seleccione un estado</option>
-              @foreach ($estados as $estado)
-                <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
-              @endforeach
-            </select>
+              <label for="estado_id" class="form-label">Estado</label>
+                <select name="estado_id" id="estado_id" class="form-control selectpicker" data-live-search="true" title="Seleccione un estado" required>
+                    @foreach ($estados as $estado)
+                        <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                    @endforeach
+                </select>
           </div>
 
           <!-- Select Municipio -->
@@ -30,9 +27,9 @@
             <label for="municipio_id" class="form-label">
               <span class="text-danger">*</span> Municipio
             </label>
-            <select name="municipio_id" id="municipio_id" class="form-select" required disabled>
-              <option value="">Seleccione un estado primero</option>
-            </select>
+              <select name="municipio_id" id="municipio_id" class="form-select" required disabled>
+                <option value="">Seleccione un estado primero</option>
+              </select>
           </div>
 
           <!-- Input Nombre Localidad -->
@@ -60,7 +57,7 @@
 <!-- Script puro JS -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("✅ Script JS cargado");
+  console.log("Script JS cargado");
 
   const estadoSelect = document.getElementById("estado_id");
   const municipioSelect = document.getElementById("municipio_id");
@@ -78,12 +75,12 @@ document.addEventListener("DOMContentLoaded", function () {
     municipioSelect.innerHTML = '<option value="">Cargando municipios...</option>';
 
     try {
-      // ✅ Usa la URL absoluta de Laravel
+      // Usa la URL absoluta de Laravel
       const response = await fetch(`{{ url('admin/localidad/municipios') }}/${estadoId}`);
       if (!response.ok) throw new Error("Error en la respuesta del servidor");
 
       const municipios = await response.json();
-      console.log("✅ Municipios recibidos:", municipios);
+      console.log("Municipios recibidos:", municipios);
 
       municipioSelect.innerHTML = "";
 
@@ -98,12 +95,12 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
     } catch (error) {
-      console.error("❌ Error al cargar municipios:", error);
+      console.error("Error al cargar municipios:", error);
       municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
     }
   });
 
-  // ✅ Limpiar formulario al cerrar modal
+  // Limpiar formulario al cerrar modal
   const modal = document.getElementById("modalCrearLocalidad");
   modal.addEventListener("hidden.bs.modal", () => {
     document.getElementById("formLocalidad").reset();
