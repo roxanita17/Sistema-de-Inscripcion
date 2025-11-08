@@ -53,9 +53,8 @@ Route::get('admin/localidad', [App\Http\Controllers\LocalidadController::class, 
 Route::post('admin/localidad/modales/store', [App\Http\Controllers\LocalidadController::class, 'store'])->name('admin.localidad.modales.store');
 Route::post('admin/localidad/{id}/update', [App\Http\Controllers\LocalidadController::class, 'update'])->name('admin.localidad.modales.update');
 Route::delete('/admin/localidad/{id}', [App\Http\Controllers\LocalidadController::class, 'destroy'])->name('admin.localidad.destroy'); 
-Route::get('/admin/localidad/municipios/{estado_id}', [App\Http\Controllers\MunicipioController::class, 'getByEstado']);
-// AGREGAR ESTA LÍNEA:
-Route::get('/admin/localidad/localidades/{municipio_id}', [App\Http\Controllers\LocalidadController::class, 'getByMunicipio']);
+Route::get('admin/localidad/municipios/{estado_id}', [App\Http\Controllers\MunicipioController::class, 'getByEstado']);
+Route::get('admin/localidad/localidades/{municipio_id}', [App\Http\Controllers\LocalidadController::class, 'getByMunicipio']);
 
 
 

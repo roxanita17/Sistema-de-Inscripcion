@@ -70,16 +70,40 @@ class LocalidadController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Localidad $localidad)
+    public function update(Request $request, $id)
     {
-        //
+
+        $localidad = Localidad::findOrFail($id);
+        $validated = $request->validate([
+            'nombre_localidad' => 'required|string|max:255',
+            'municipio_id' => 'required|exists:municipios,id',
+        ]);
+        try {
+
+            $localidad->nombre_localidad = $validated['nombre_localidad'];
+            $localidad->municipio_id = $validated['municipio_id'];
+            $localidad->status = true;
+            $localidad->save();
+
+            return redirect()->route('admin.localidad.index')->with('success', 'Localidad actualizado exitosamente');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.localidad.index')->with('error', 'Error al actualizar la localidad: ' . $e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Localidad $localidad)
+    public function destroy($id)
     {
-        //
+        $localidad = Localidad::find($id);
+        if ($localidad) {
+            $localidad->update([
+                'status' => false,
+            ]);
+            return redirect()->route('admin.localidad.index')->with('success', 'Localidad eliminado correctamente.');
+        }
+
+        return redirect()->route('admin.localidad.index')->with('error', 'Localidad no encontrado.');
     }
 }

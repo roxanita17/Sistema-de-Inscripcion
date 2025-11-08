@@ -58,21 +58,6 @@ class MunicipioController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Municipio $municipio)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Municipio $municipio)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.

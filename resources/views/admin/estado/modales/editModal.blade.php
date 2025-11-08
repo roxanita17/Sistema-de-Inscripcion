@@ -15,7 +15,7 @@
                                     <input type="hidden" name="id" value="{{ $datos->id }}">
                                     <div class="mb-3">
                                         <label class="form-label"><b>Nombre:</b></label>
-                                        <input type="text" class="form-control" name="nombre_estado" value="{{ $datos->nombre_estado }}" required>
+                                        <input type="text" class="form-control" name="nombre_estado" value="{{ $datos->nombre }}" required>
                                     </div>
                                     @error('nombre_estado')
                                         <div class="alert text-danger p-0 m-0">

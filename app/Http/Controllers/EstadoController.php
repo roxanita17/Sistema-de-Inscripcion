@@ -16,13 +16,6 @@ class EstadoController extends Controller
         return view('admin.estado.index', compact('estados'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -45,26 +38,12 @@ class EstadoController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Estado $estado)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Estado $estado)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Estado $estado,$id)
+    public function update(Request $request, $id)
     {
         $estado = Estado::findOrFail($id);
 
@@ -85,7 +64,7 @@ class EstadoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Estado $estado,$id)
+    public function destroy($id)
     {
         $estado = Estado::find($id);
         if ($estado) {
