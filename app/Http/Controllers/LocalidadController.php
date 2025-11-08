@@ -14,11 +14,11 @@ class LocalidadController extends Controller
      */
     public function index()
     {
-        $municipios = Municipio::where('status', true)->get();
-        $estados = Estado::where('status', true)->get();
 
-        // 👇 Aquí está la corrección
-        $localidades = Localidad::with(['estado', 'municipio'])->get();
+        $municipios = Municipio::where('status', true)->Orderby('nombre_municipio', 'asc')->get();
+        $estados = Estado::where('status', true)->Orderby('nombre', 'asc')->get();
+
+        $localidades = Localidad::orderBy('nombre_localidad', 'asc')->with(['estado', 'municipio'])->get();
 
         return view('admin.localidad.index', compact('localidades', 'municipios', 'estados'));
     }
@@ -26,8 +26,8 @@ class LocalidadController extends Controller
 
     public function createModal()
     {
-        $municipios = Municipio::where('status', true)->get();
-        $estados = Estado::where('status', true)->get();
+        $municipios = Municipio::where('status', true)->Orderby('nombre_municipio', 'asc')->get();
+        $estados = Estado::where('status', true)->Orderby('nombre', 'asc')->get();
         return view('admin.localidad.modales.createModal', compact('municipios','estados'));
     }
 

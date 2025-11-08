@@ -12,7 +12,7 @@ class GradoController extends Controller
      */
     public function index()
     {
-        $grados = Grado::all();
+        $grados = Grado::orderBy('numero_grado', 'asc')->get();
         return view('admin.grado.index', compact('grados'));
     }
 
@@ -43,7 +43,7 @@ class GradoController extends Controller
     public function update(Request $request, $id)
     {
         
-                $grado = Grado::findOrFail($id);
+        $grado = Grado::findOrFail($id);
 
         $validated = $request->validate([
             'numero_grado' => 'required|digits_between:1,4|unique:grados,numero_grado,' . $grado->id,

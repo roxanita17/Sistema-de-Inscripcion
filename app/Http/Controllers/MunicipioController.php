@@ -13,25 +13,25 @@ class MunicipioController extends Controller
      */
     public function index()
     {
-        $estados = Estado::where('status', true)->get();
-        $municipios = Municipio::all();
+        $estados = Estado::where('status', true)->orderBy('nombre', 'asc')->get();
+        $municipios = Municipio::orderBy('nombre_municipio', 'asc')->get();
         return view('admin.municipio.index', compact('municipios','estados'));
     }
 
     public function createModal()
     {
-        $estados = Estado::where('status', true)->get();
+        $estados = Estado::where('status', true)->orderBy('nombre', 'asc')->get();
         return view('admin.municipio.modales.createModal', compact('estados'));
     }
 
     public function getByEstado($estado_id)
-{
-    $municipios = Municipio::where('estado_id', $estado_id)
-                            ->where('status', true)
-                            ->get(['id', 'nombre_municipio']); // Solo devolvemos lo necesario
+    {
+        $municipios = Municipio::where('estado_id', $estado_id)
+                                ->where('status', true)
+                                ->get(['id', 'nombre_municipio']); // Solo devolvemos lo necesario
 
-    return response()->json($municipios);
-}
+        return response()->json($municipios);
+    }
 
 
     /**
@@ -39,7 +39,6 @@ class MunicipioController extends Controller
      */
     public function store(Request $request)
     {
-        
         $validated = $request->validate([
             'nombre_municipio' => 'required|string|max:255',
             'estado_id' => 'required|exists:estados,id',

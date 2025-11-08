@@ -12,7 +12,7 @@ class BancoController extends Controller
      */
     public function index()
     {
-        $bancos = Banco::all();
+        $bancos = Banco::orderBy('codigo_banco', 'asc')->get();
         return view('admin.banco.index', compact('bancos'));
     }
 

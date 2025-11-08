@@ -62,6 +62,20 @@ Route::post('admin/grado/modales/store', [App\Http\Controllers\GradoController::
 Route::post('admin/grado/{id}/update', [App\Http\Controllers\GradoController::class, 'update'])->name('admin.grado.modales.update');
 Route::delete('/admin/grado/{id}', [App\Http\Controllers\GradoController::class, 'destroy'])->name('admin.grado.destroy');
 
+/* Area de Formacion */
+Route::get('admin/area_formacion', [App\Http\Controllers\AreaFormacionController::class, 'index'])->name('admin.area_formacion.index');
+Route::post('admin/area_formacion/modales/store', [App\Http\Controllers\AreaFormacionController::class, 'store'])->name('admin.area_formacion.modales.store');
+Route::post('admin/area_formacion/{id}/update', [App\Http\Controllers\AreaFormacionController::class, 'update'])->name('admin.area_formacion.modales.update');
+Route::delete('/admin/area_formacion/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroy'])->name('admin.area_formacion.destroy');
+
+/* Expresion Literaria */
+Route::get('admin/expresion_literaria', [App\Http\Controllers\ExpresionLiterariaController::class, 'index'])->name('admin.expresion_literaria.index');
+Route::post('admin/expresion_literaria/modales/store', [App\Http\Controllers\ExpresionLiterariaController::class, 'store'])->name('admin.expresion_literaria.modales.store');
+Route::post('admin/expresion_literaria/{id}/update', [App\Http\Controllers\ExpresionLiterariaController::class, 'update'])->name('admin.expresion_literaria.modales.update');
+Route::delete('/admin/expresion_literaria/{id}', [App\Http\Controllers\ExpresionLiterariaController::class, 'destroy'])->name('admin.expresion_literaria.destroy');
+
+
+
 
 
 

@@ -12,7 +12,8 @@ class OcupacionController extends Controller
      */
     public function index()
     {
-        $ocupacion = Ocupacion::all();
+        $ocupacion = Ocupacion::orderBy('nombre_ocupacion', 'asc')->get();
+
         return view("admin.ocupacion.index", compact("ocupacion"));
     }
 

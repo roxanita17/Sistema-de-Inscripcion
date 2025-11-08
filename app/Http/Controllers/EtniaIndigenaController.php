@@ -12,7 +12,7 @@ class EtniaIndigenaController extends Controller
      */
     public function index()
     {
-        $etniaIndigena = EtniaIndigena::all();
+        $etniaIndigena = EtniaIndigena::orderBy('nombre', 'asc')->get();
         return view("admin.etnia_indigena.index", compact("etniaIndigena"));
     }
 

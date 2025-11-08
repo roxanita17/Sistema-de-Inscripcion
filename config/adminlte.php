@@ -16,7 +16,7 @@ return [
 
     'title' => '',
     'title_prefix' => ' ',
-    'title_postfix' => ' | Sistema de Inscripcion',
+    'title_postfix' => ' | Sistema de Inscripción',
 
     /*
     |--------------------------------------------------------------------------
@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Sistema de Inscripcion</b>',
+    'logo' => '<b>SISTEMA DE <br> INSCRIPCIÓN</b>',
     'logo_img' => 'vendor/adminlte/dist/img/liceo_logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Sistema de Inscripcion',
+    'logo_img_alt' => 'Sistema de Inscripción',
 
     /*
     |--------------------------------------------------------------------------
@@ -351,7 +351,7 @@ return [
         ],
         [
             'text' => 'Configuraciones',
-            'icon' => 'fas fa-fw fa-share',
+            'icon' => 'fas fa-fw fa-cog',
             'submenu' => [
                 [
                     'text' => 'Banco',
@@ -361,24 +361,24 @@ return [
                 ],
                 [
                     'text' => 'Direccion',
-                    'icon' => 'fas fa-fw fa-map',
+                    'icon' => 'fas fa-fw fa-map-pin',
                     'submenu' => [
                         [
                             'text' => 'Estado',
                             'url' => 'admin/estado',
-                            'icon' => 'fas fa-fw fa-map',
+                            'icon' => 'fas fa-fw fa-globe',
                             'label_color' => 'success',
                         ],
                         [
                             'text' => 'Municipio',
                             'url' => 'admin/municipio',
-                            'icon' => 'fas fa-fw fa-map',
+                            'icon' => 'fas fa-fw fa-city',
                             'label_color' => 'success',
                         ],
                         [
                             'text' => 'Localidad',
                             'url' => 'admin/localidad',
-                            'icon' => 'fas fa-fw fa-map',
+                            'icon' => 'fas fa-fw fa-home',
                             'label_color' => 'success',
                         ],
                     ],
@@ -386,20 +386,32 @@ return [
                 [
                     'text' => 'Etnia Indigena',
                     'url' => 'admin/etnia_indigena',
-                    'icon' => 'fas fa-fw fa-calendar',
+                    'icon' => 'fas fa-fw fa-feather',
                     'label_color' => 'success',
                 ],
 
                 [
                     'text' => 'Ocupacion',
                     'url' => 'admin/ocupacion',
-                    'icon' => 'fas fa-fw fa-calendar',
+                    'icon' => 'fas fa-fw fa-briefcase',
                     'label_color' => 'success',
                 ],
                 [
                     'text' => 'Grado',
                     'url' => 'admin/grado',
                     'icon' => 'fas fa-fw fa-graduation-cap',
+                    'label_color' => 'success',
+                ],
+                [
+                    'text' => 'Area de Formacion',
+                    'url' => 'admin/area_formacion',
+                    'icon' => 'fas fa-fw fa-book',
+                    'label_color' => 'success',
+                ],
+                [
+                    'text' => 'Expresion Literaria',
+                    'url' => 'admin/expresion_literaria',
+                    'icon' => 'fas fa-fw fa-pen',
                     'label_color' => 'success',
                 ],
             ],
