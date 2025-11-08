@@ -414,6 +414,12 @@ return [
                     'icon' => 'fas fa-fw fa-pen',
                     'label_color' => 'success',
                 ],
+                [
+                    'text' => 'Discapacidad',
+                    'url' => 'admin/discapacidad',
+                    'icon' => 'fas fa-fw fa-wheelchair',
+                    'label_color' => 'success',
+                ],
             ],
         ],
         

@@ -74,6 +74,13 @@ Route::post('admin/expresion_literaria/modales/store', [App\Http\Controllers\Exp
 Route::post('admin/expresion_literaria/{id}/update', [App\Http\Controllers\ExpresionLiterariaController::class, 'update'])->name('admin.expresion_literaria.modales.update');
 Route::delete('/admin/expresion_literaria/{id}', [App\Http\Controllers\ExpresionLiterariaController::class, 'destroy'])->name('admin.expresion_literaria.destroy');
 
+/* Discapacidad */
+Route::get('admin/discapacidad', [App\Http\Controllers\DiscapacidadController::class, 'index'])->name('admin.discapacidad.index');
+Route::post('admin/discapacidad/modales/store', [App\Http\Controllers\DiscapacidadController::class, 'store'])->name('admin.discapacidad.modales.store');
+Route::post('admin/discapacidad/{id}/update', [App\Http\Controllers\DiscapacidadController::class, 'update'])->name('admin.discapacidad.modales.update');
+Route::delete('/admin/discapacidad/{id}', [App\Http\Controllers\DiscapacidadController::class, 'destroy'])->name('admin.discapacidad.destroy');
+
+
 
 
 
