@@ -56,5 +56,12 @@ Route::delete('/admin/localidad/{id}', [App\Http\Controllers\LocalidadController
 Route::get('admin/localidad/municipios/{estado_id}', [App\Http\Controllers\MunicipioController::class, 'getByEstado']);
 Route::get('admin/localidad/localidades/{municipio_id}', [App\Http\Controllers\LocalidadController::class, 'getByMunicipio']);
 
+/* Grado */
+Route::get('admin/grado', [App\Http\Controllers\GradoController::class, 'index'])->name('admin.grado.index');
+Route::post('admin/grado/modales/store', [App\Http\Controllers\GradoController::class, 'store'])->name('admin.grado.modales.store');
+Route::post('admin/grado/{id}/update', [App\Http\Controllers\GradoController::class, 'update'])->name('admin.grado.modales.update');
+Route::delete('/admin/grado/{id}', [App\Http\Controllers\GradoController::class, 'destroy'])->name('admin.grado.destroy');
+
+
 
 
