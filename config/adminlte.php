@@ -396,6 +396,12 @@ return [
                     'icon' => 'fas fa-fw fa-calendar',
                     'label_color' => 'success',
                 ],
+                [
+                    'text' => 'Grado',
+                    'url' => 'admin/grado',
+                    'icon' => 'fas fa-fw fa-graduation-cap',
+                    'label_color' => 'success',
+                ],
             ],
         ],
         

@@ -69,7 +69,6 @@
                                 <span class="badge bg-danger">Inactivo</span>
                             @endif
                         </td>
-    {{--                     <td>{{ $datos->user->name ?? 'No registrado' }}</td> --}}
                         <td>{{ $datos->created_at->format('d/m/Y H:i') }}</td>
                         <td>
                     

@@ -9,4 +9,10 @@ class Grado extends Model
 {
     /** @use HasFactory<\Database\Factories\GradoFactory> */
     use HasFactory;
+    protected $table = 'grados';
+
+    protected $fillable = [
+        'numero_grado',
+        'status',
+    ];
 }

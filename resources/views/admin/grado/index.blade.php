@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Banco</h1>
+    <h1>Grados</h1>
 @stop
 
 @section('content')
@@ -11,7 +11,7 @@
 
 
 
-@include('admin.banco.modales.createModal')
+@include('admin.grado.modales.createModal')
 
 
     {{-- Contenedor de alertas --}}
@@ -30,9 +30,9 @@
         @endif
     </div>
 
-    {{-- Botón para abrir la modal de crear banco --}}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearBanco">
-        <i class="fas fa-plus"></i> Crear Banco
+    {{-- Botón para abrir la modal de crear grado --}}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearGrado">
+        <i class="fas fa-plus"></i> Crear Grado
     </button>
 
     {{-- Tabla de años escolares --}}
@@ -41,27 +41,21 @@
             <thead class="table-primary">
                 <tr>
                     {{-- <th>N°</th> --}}
-                    <th>Codigo</th>
                     <th>Nombre</th>
                     <th>Estado</th>
-                    <th>Fecha de creación</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody id="tbodyAnioEscolar">
-                @if ($bancos->isEmpty())
+                @if ($grados->isEmpty())
                                 <tr>
-                                    <td colspan="6" style="text-align: center;">No se encontraron bancos.</td>
+                                    <td colspan="4" style="text-align: center;">No se encontraron grados.</td>
                                 </tr>
                             @endif
-                @foreach ($bancos as $datos)
+                @foreach ($grados as $datos)
                 @if ($datos->status == true)
                     <tr>
-                        {{-- @if ($datos->status == true)
-                            <td>{{ $loop->iteration }}</td>
-                        @endif --}}
-                        <td>{{ $datos->codigo_banco }}</td>
-                        <td>{{ $datos->nombre_banco }}</td>
+                        <td>{{ $datos->numero_grado}}</td>
                         <td>
                             @if ($datos->status == true)
                                 <span class="badge bg-success">Activo</span>
@@ -69,11 +63,7 @@
                                 <span class="badge bg-danger">Inactivo</span>
                             @endif
                         </td>
-    {{--                     <td>{{ $datos->user->name ?? 'No registrado' }}</td> --}}
-                        <td>{{ $datos->created_at->format('d/m/Y H:i') }}</td>
                         <td>
-                    
-
                             {{-- Editar --}}
                             <a href="#viewModalEditar{{ $datos->id }}" 
                                 class="btn btn-warning btn-sm" 
@@ -83,9 +73,9 @@
                                 <i class="fas fa-pen text-white"></i>
                             </a>
 
-                            @include('admin.banco.modales.editModal')
+                            @include('admin.grado.modales.editModal')
 
-                            <!-- Botón que abre el modal -->
+                            <!-- Eliminar -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
                                 <i class="fas fa-trash text-white"></i>
                             </button>
@@ -100,10 +90,10 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            ¿Estás seguro de que deseas eliminar este banco?
+                                            ¿Estás seguro de que deseas eliminar este grado?
                                         </div>
                                         <div class="modal-footer">
-                                            <form action="{{ url('admin/banco/' . $datos->id) }}" method="POST">
+                                            <form action="{{ url('admin/grado/' . $datos->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
