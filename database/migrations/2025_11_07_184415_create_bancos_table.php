@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bancos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_banco');
-            $table->string('codigo_banco')->unique();
+            $table->string('codigo_banco');
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

@@ -8,32 +8,42 @@ use Illuminate\Http\Request;
 class GradoController extends Controller
 {
     /**
-     * Muestra la lista de grados existentes.
+     * Muestra la lista de grados existentes en el sistema.
      */
     public function index()
     {
-        // Obtener todos los grados ordenados ascendentemente por número
+        // Obtener todos los grados, ordenados por el número de grado de forma ascendente
         $grados = Grado::orderBy('numero_grado', 'asc')->get();
 
-        // Retornar la vista con los datos obtenidos
+        // Retornar la vista principal con los datos obtenidos
         return view('admin.grado.index', compact('grados'));
     }
 
     /**
-     * Guarda un nuevo grado en la base de datos.
+     * Registra un nuevo grado en la base de datos.
      */
     public function store(Request $request)
     {
         // Validar los datos ingresados por el usuario
         $validated = $request->validate([
-            'numero_grado' => 'required|digits_between:1,4|unique:grados,numero_grado', 
+            'numero_grado' => 'required|digits_between:1,4',
             'capacidad_max' => 'required|digits_between:1,3',
             'min_seccion' => 'required|digits_between:1,2',
             'max_seccion' => 'required|digits_between:1,2',
         ]);
 
+        $existe = Grado::where('numero_grado', $validated['numero_grado'])
+            ->where('status', true)
+            ->exists();
+
+        if ($existe) {
+            return redirect()
+                ->route('admin.grado.index')
+                ->with('error', 'Ya existe un grado con el mismo número.');
+        }
+
         try {
-            // Crear el nuevo registro en la base de datos
+            // Crear un nuevo registro de grado con los datos validados
             $grado = new Grado();
             $grado->numero_grado = $validated['numero_grado'];
             $grado->capacidad_max = $validated['capacidad_max'];
@@ -42,65 +52,86 @@ class GradoController extends Controller
             $grado->status = true;
             $grado->save();
 
-            // Mensaje de éxito para el usuario
-            return redirect()->route('admin.grado.index')->with('success', 'Grado creado correctamente.');
+            // Retornar mensaje de éxito al usuario
+            return redirect()
+                ->route('admin.grado.index')
+                ->with('success', 'El grado fue creado correctamente.');
         } catch (\Exception $e) {
-            // Mensaje de error en caso de fallo
-            return redirect()->route('admin.grado.index')->with('error', 'Ocurrió un error al crear el grado: ' . $e->getMessage());
+            // Retornar mensaje de error en caso de excepción
+            return redirect()
+                ->route('admin.grado.index')
+                ->with('error', 'Ocurrió un error al crear el grado: ' . $e->getMessage());
         }
     }
 
     /**
-     * Actualiza los datos de un grado existente.
+     * Actualiza la información de un grado existente.
      */
     public function update(Request $request, $id)
     {
-        // Buscar el grado a actualizar
+        // Buscar el registro del grado que se desea actualizar
         $grado = Grado::findOrFail($id);
 
         // Validar los nuevos datos ingresados por el usuario
         $validated = $request->validate([
-            'numero_grado' => 'required|digits_between:1,4|unique:grados,numero_grado,' . $grado->id,
+            'numero_grado' => 'required|digits_between:1,4' . $grado->id,
             'capacidad_max' => 'required|digits_between:1,3',
             'min_seccion' => 'required|digits_between:1,2',
             'max_seccion' => 'required|digits_between:1,2',
         ]);
 
+        $existe = Grado::where('numero_grado', $validated['numero_grado'])
+            ->where('id', '!=', $grado->id)
+            ->where('status', true)
+            ->exists();
+
+        if ($existe) {
+            return redirect()
+                ->route('admin.grado.index')
+                ->with('error', 'Ya existe un grado con el mismo número.');
+        }
+
         try {
-            // Actualizar los campos del registro
+            // Actualizar los valores del registro existente
             $grado->numero_grado = $validated['numero_grado'];
             $grado->capacidad_max = $validated['capacidad_max'];
             $grado->min_seccion = $validated['min_seccion'];
             $grado->max_seccion = $validated['max_seccion'];
             $grado->save();
 
-            // Mensaje de éxito para el usuario
-            return redirect()->route('admin.grado.index')->with('success', 'Grado actualizado correctamente.');
+            // Retornar mensaje de confirmación al usuario
+            return redirect()
+                ->route('admin.grado.index')
+                ->with('success', 'El grado fue actualizado correctamente.');
         } catch (\Exception $e) {
-            // Mensaje de error si algo sale mal
-            return redirect()->route('admin.grado.index')->with('error', 'Ocurrió un error al actualizar el grado: ' . $e->getMessage());
+            // Retornar mensaje de error si ocurre algún problema
+            return redirect()
+                ->route('admin.grado.index')
+                ->with('error', 'Ocurrió un error al actualizar el grado: ' . $e->getMessage());
         }
     }
 
     /**
-     * Desactiva un grado (borrado lógico).
+     * Desactiva un grado (eliminación lógica del registro).
      */
     public function destroy($id)
     {
-        // Buscar el grado a eliminar
+        // Buscar el registro del grado que se desea desactivar
         $grado = Grado::find($id);
 
         if ($grado) {
-            // Cambiar el estado del registro a inactivo
-            $grado->update([
-                'status' => false,
-            ]);
+            // Cambiar el estado del grado a inactivo
+            $grado->update(['status' => false]);
 
-            // Mensaje de éxito para el usuario
-            return redirect()->route('admin.grado.index')->with('success', 'Grado eliminado correctamente.');
+            // Retornar mensaje de confirmación
+            return redirect()
+                ->route('admin.grado.index')
+                ->with('success', 'El grado fue eliminado correctamente.');
         }
 
-        // Mensaje en caso de no encontrar el registro
-        return redirect()->route('admin.grado.index')->with('error', 'El grado no fue encontrado.');
+        // Retornar mensaje si no se encuentra el grado especificado
+        return redirect()
+            ->route('admin.grado.index')
+            ->with('error', 'No se encontró el grado especificado.');
     }
 }

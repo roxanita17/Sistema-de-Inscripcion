@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Estado;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log; // Para mostrar mensajes en la terminal
 
 class EstadoController extends Controller
 {
@@ -30,6 +29,18 @@ class EstadoController extends Controller
             'nombre_estado' => 'required|string|max:255',
         ]);
 
+        // Verificar si ya existe un estado activo con el mismo nombre
+        $existe = Estado::where('nombre_estado', $validated['nombre_estado'])
+            ->where('status', true)
+            ->exists();
+
+        if ($existe) {
+            // Si existe un estado activo con el mismo nombre, se muestra un mensaje de error
+            return redirect()
+                ->route('admin.estado.index')
+                ->with('error', 'Ya existe un estado activo con este nombre.');
+        }
+
         try {
             // Se crea una nueva instancia del modelo Estado
             $estado = new Estado();
@@ -37,17 +48,21 @@ class EstadoController extends Controller
             $estado->status = true; // Por defecto, el estado se guarda como activo
             $estado->save();
 
-            // Mensaje en la terminal para seguimiento
+            // Mensaje de registro en la terminal
             info('Se ha creado un nuevo estado: ' . $estado->nombre_estado);
 
             // Se redirige con un mensaje de éxito visible al usuario
-            return redirect()->route('admin.estado.index')->with('success', 'Estado creado exitosamente.');
+            return redirect()
+                ->route('admin.estado.index')
+                ->with('success', 'Estado creado exitosamente.');
         } catch (\Exception $e) {
             // Mensaje en la terminal en caso de error
             info('Error al crear un nuevo estado: ' . $e->getMessage());
 
             // Se redirige con un mensaje de error visible al usuario
-            return redirect()->route('admin.estado.index')->with('error', 'Error al crear el estado: ' . $e->getMessage());
+            return redirect()
+                ->route('admin.estado.index')
+                ->with('error', 'Error al crear el estado: ' . $e->getMessage());
         }
     }
 
@@ -64,6 +79,19 @@ class EstadoController extends Controller
             'nombre_estado' => 'required|string|max:255',
         ]);
 
+        // Verificar si ya existe otro estado activo con el mismo nombre
+        $existe = Estado::where('nombre_estado', $validated['nombre_estado'])
+            ->where('status', true)
+            ->where('id', '!=', $estado->id)
+            ->exists();
+
+        if ($existe) {
+            // Si existe otro estado activo con el mismo nombre, se muestra un mensaje de error
+            return redirect()
+                ->route('admin.estado.index')
+                ->with('error', 'Ya existe otro estado activo con este nombre.');
+        }
+
         try {
             // Se actualiza el nombre del estado con el valor validado
             $estado->nombre_estado = $validated['nombre_estado'];
@@ -73,13 +101,17 @@ class EstadoController extends Controller
             info('El estado con ID ' . $id . ' ha sido actualizado correctamente.');
 
             // Se redirige con mensaje de éxito
-            return redirect()->route('admin.estado.index')->with('success', 'Estado actualizado exitosamente.');
+            return redirect()
+                ->route('admin.estado.index')
+                ->with('success', 'Estado actualizado exitosamente.');
         } catch (\Exception $e) {
             // Mensaje en la terminal si ocurre un error
             info('Error al actualizar el estado con ID ' . $id . ': ' . $e->getMessage());
 
             // Se redirige con mensaje de error
-            return redirect()->route('admin.estado.index')->with('error', 'Error al actualizar el estado: ' . $e->getMessage());
+            return redirect()
+                ->route('admin.estado.index')
+                ->with('error', 'Error al actualizar el estado: ' . $e->getMessage());
         }
     }
 
@@ -99,13 +131,17 @@ class EstadoController extends Controller
             info('El estado "' . $estado->nombre_estado . '" ha sido marcado como inactivo.');
 
             // Se redirige con mensaje de éxito visible al usuario
-            return redirect()->route('admin.estado.index')->with('success', 'Estado eliminado correctamente.');
+            return redirect()
+                ->route('admin.estado.index')
+                ->with('success', 'Estado eliminado correctamente.');
         }
 
         // Si el registro no existe, se informa en la terminal
         info('No se encontró el estado con ID ' . $id . ' para eliminar.');
 
         // Y se redirige con mensaje de error
-        return redirect()->route('admin.estado.index')->with('error', 'Estado no encontrado.');
+        return redirect()
+            ->route('admin.estado.index')
+            ->with('error', 'Estado no encontrado.');
     }
 }

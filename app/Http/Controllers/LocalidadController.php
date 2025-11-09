@@ -14,41 +14,56 @@ class LocalidadController extends Controller
      */
     public function index()
     {
-        // Obtener todos los municipios y estados activos ordenados alfabéticamente
-        $municipios = Municipio::where('status', true)->orderBy('nombre_municipio', 'asc')->get();
-        $estados = Estado::where('status', true)->orderBy('nombre_estado', 'asc')->get();
+        // Obtener todos los municipios activos, ordenados alfabéticamente
+        $municipios = Municipio::where('status', true)
+            ->orderBy('nombre_municipio', 'asc')
+            ->get();
 
-        // Obtener todas las localidades con sus relaciones correspondientes
-        $localidades = Localidad::orderBy('nombre_localidad', 'asc')->with(['estado', 'municipio'])->get();
+        // Obtener todos los estados activos, ordenados alfabéticamente
+        $estados = Estado::where('status', true)
+            ->orderBy('nombre_estado', 'asc')
+            ->get();
 
-        // Enviar los datos a la vista
+        // Obtener todas las localidades junto con sus relaciones de estado y municipio
+        $localidades = Localidad::with(['estado', 'municipio'])
+            ->orderBy('nombre_localidad', 'asc')
+            ->get();
+
+        // Retornar la vista principal con los datos recopilados
         return view('admin.localidad.index', compact('localidades', 'municipios', 'estados'));
     }
 
     /**
-     * Muestra el modal de creación de una nueva localidad.
+     * Muestra el modal para crear una nueva localidad.
      */
     public function createModal()
     {
-        // Obtener municipios y estados activos para mostrarlos en el formulario modal
-        $municipios = Municipio::where('status', true)->orderBy('nombre_municipio', 'asc')->get();
-        $estados = Estado::where('status', true)->orderBy('nombre', 'asc')->get();
+        // Obtener los municipios activos ordenados alfabéticamente
+        $municipios = Municipio::where('status', true)
+            ->orderBy('nombre_municipio', 'asc')
+            ->get();
 
-        // Retornar la vista del modal con los datos
+        // Obtener los estados activos ordenados alfabéticamente
+        $estados = Estado::where('status', true)
+            ->orderBy('nombre_estado', 'asc')
+            ->get();
+
+        // Retornar la vista del modal con los datos necesarios
         return view('admin.localidad.modales.createModal', compact('municipios', 'estados'));
     }
 
     /**
-     * Devuelve las localidades pertenecientes a un municipio específico.
+     * Devuelve las localidades asociadas a un municipio específico.
+     * Se utiliza para cargar datos dinámicamente en los formularios.
      */
     public function getByMunicipio($municipio_id)
     {
-        // Buscar localidades activas que pertenezcan al municipio indicado
+        // Buscar las localidades activas pertenecientes al municipio indicado
         $localidades = Localidad::where('municipio_id', $municipio_id)
-                                ->where('status', true)
-                                ->get(['id', 'nombre_localidad']);
+            ->where('status', true)
+            ->get(['id', 'nombre_localidad']);
 
-        // Devolver los resultados en formato JSON
+        // Retornar los resultados en formato JSON
         return response()->json($localidades);
     }
 
@@ -57,25 +72,40 @@ class LocalidadController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos del formulario
+        // Validar los datos ingresados por el usuario
         $validated = $request->validate([
             'nombre_localidad' => 'required|string|max:255',
             'municipio_id' => 'required|exists:municipios,id',
         ]);
 
+        $existe = Localidad::where('nombre_localidad', $validated['nombre_localidad'])
+            ->where('municipio_id', $validated['municipio_id'])
+            ->where('status', true)
+            ->exists();
+
+        if ($existe) {
+            return redirect()
+                ->route('admin.localidad.index')
+                ->with('error', 'Ya existe una localidad con el mismo nombre y municipio.');
+        }
+
         try {
-            // Crear el nuevo registro de localidad
+            // Crear una nueva instancia de localidad y asignar los valores validados
             $localidad = new Localidad();
             $localidad->nombre_localidad = $validated['nombre_localidad'];
             $localidad->municipio_id = $validated['municipio_id'];
             $localidad->status = true;
             $localidad->save();
 
-            // Mensaje de confirmación para el usuario
-            return redirect()->route('admin.localidad.index')->with('success', 'La localidad fue registrada correctamente.');
+            // Retornar con mensaje de éxito
+            return redirect()
+                ->route('admin.localidad.index')
+                ->with('success', 'La localidad fue registrada correctamente.');
         } catch (\Exception $e) {
-            // Mensaje de error si ocurre algún problema al guardar
-            return redirect()->route('admin.localidad.index')->with('error', 'Ocurrió un error al registrar la localidad: ' . $e->getMessage());
+            // Retornar mensaje de error en caso de fallo
+            return redirect()
+                ->route('admin.localidad.index')
+                ->with('error', 'Ocurrió un error al registrar la localidad: ' . $e->getMessage());
         }
     }
 
@@ -87,29 +117,45 @@ class LocalidadController extends Controller
         // Buscar la localidad a actualizar
         $localidad = Localidad::findOrFail($id);
 
-        // Validar los nuevos datos ingresados por el usuario
+        // Validar los nuevos datos proporcionados por el usuario
         $validated = $request->validate([
             'nombre_localidad' => 'required|string|max:255',
             'municipio_id' => 'required|exists:municipios,id',
         ]);
 
+        $existe = Localidad::where('nombre_localidad', $validated['nombre_localidad'])
+            ->where('municipio_id', $validated['municipio_id'])
+            ->where('id', '!=', $localidad->id)
+            ->where('status', true)
+            ->exists();
+
+        if ($existe) {
+            return redirect()
+                ->route('admin.localidad.index')
+                ->with('error', 'Ya existe una localidad con el mismo nombre y municipio.');
+        }
+
         try {
-            // Actualizar los datos de la localidad
+            // Actualizar los valores de la localidad
             $localidad->nombre_localidad = $validated['nombre_localidad'];
             $localidad->municipio_id = $validated['municipio_id'];
             $localidad->status = true;
             $localidad->save();
 
-            // Mensaje de confirmación
-            return redirect()->route('admin.localidad.index')->with('success', 'La localidad fue actualizada correctamente.');
+            // Retornar mensaje de éxito
+            return redirect()
+                ->route('admin.localidad.index')
+                ->with('success', 'La localidad fue actualizada correctamente.');
         } catch (\Exception $e) {
-            // Mensaje en caso de error
-            return redirect()->route('admin.localidad.index')->with('error', 'Ocurrió un error al actualizar la localidad: ' . $e->getMessage());
+            // Retornar mensaje de error si algo falla
+            return redirect()
+                ->route('admin.localidad.index')
+                ->with('error', 'Ocurrió un error al actualizar la localidad: ' . $e->getMessage());
         }
     }
 
     /**
-     * Desactiva una localidad (eliminación lógica).
+     * Desactiva una localidad (eliminación lógica del registro).
      */
     public function destroy($id)
     {
@@ -118,15 +164,17 @@ class LocalidadController extends Controller
 
         if ($localidad) {
             // Cambiar su estado a inactiva
-            $localidad->update([
-                'status' => false,
-            ]);
+            $localidad->update(['status' => false]);
 
-            // Mensaje de confirmación
-            return redirect()->route('admin.localidad.index')->with('success', 'La localidad fue eliminada correctamente.');
+            // Retornar mensaje de confirmación
+            return redirect()
+                ->route('admin.localidad.index')
+                ->with('success', 'La localidad fue eliminada correctamente.');
         }
 
-        // Mensaje si no se encuentra la localidad
-        return redirect()->route('admin.localidad.index')->with('error', 'No se encontró la localidad especificada.');
+        // Retornar mensaje si no se encuentra la localidad
+        return redirect()
+            ->route('admin.localidad.index')
+            ->with('error', 'No se encontró la localidad especificada.');
     }
 }

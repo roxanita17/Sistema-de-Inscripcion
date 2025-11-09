@@ -4,106 +4,126 @@ namespace App\Http\Controllers;
 
 use App\Models\EtniaIndigena;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log; // Para mostrar mensajes en la terminal
 
 class EtniaIndigenaController extends Controller
 {
     /**
-     * Muestra todos los registros de etnias indígenas.
+     * Muestra la lista de etnias indígenas registradas.
      */
     public function index()
     {
-        // Se obtienen todas las etnias indígenas ordenadas alfabéticamente por su nombre
+        // Obtener todas las etnias indígenas ordenadas alfabéticamente
         $etniaIndigena = EtniaIndigena::orderBy('nombre', 'asc')->get();
 
-        // Se muestra la vista principal junto con los datos obtenidos
+        // Retornar la vista principal con los datos obtenidos
         return view("admin.etnia_indigena.index", compact("etniaIndigena"));
     }
 
     /**
-     * Guarda una nueva etnia indígena en la base de datos.
+     * Registra una nueva etnia indígena en la base de datos.
      */
     public function store(Request $request)
     {
-        // Se validan los datos recibidos del formulario
+        // Validar los datos ingresados por el usuario
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
         ]);
 
+        // Verificar si ya existe una etnia activa con el mismo nombre
+        $existe = EtniaIndigena::where('nombre', $validated['nombre'])
+            ->where('status', true)
+            ->exists();
+
+        if ($existe) {
+            // Mensaje si ya existe un registro activo con ese nombre
+            return redirect()
+                ->route('admin.etnia_indigena.index')
+                ->with('error', 'Ya existe una etnia indígena activa con este nombre.');
+        }
+
         try {
-            // Se crea una nueva instancia del modelo EtniaIndigena
+            // Crear una nueva instancia del modelo y guardar
             $etniaIndigena = new EtniaIndigena();
             $etniaIndigena->nombre = $validated['nombre'];
-            $etniaIndigena->status = true; // El registro se crea como activo
+            $etniaIndigena->status = true;
             $etniaIndigena->save();
 
-            // Mensaje de registro en la terminal
-            info('Se ha creado una nueva etnia indígena: ' . $etniaIndigena->nombre);
-
-            // Se redirige al usuario con un mensaje de éxito
-            return redirect()->route('admin.etnia_indigena.index')->with('success', 'Etnia indígena creada correctamente.');
+            // Mensaje de confirmación para el usuario
+            return redirect()
+                ->route('admin.etnia_indigena.index')
+                ->with('success', 'La etnia indígena fue registrada correctamente.');
         } catch (\Exception $e) {
-            // Mensaje en la terminal en caso de error
-            info('Error al crear una nueva etnia indígena: ' . $e->getMessage());
-
-            // Mensaje de error visible al usuario
-            return redirect()->route('admin.etnia_indigena.index')->with('error', 'Error al crear la etnia indígena: ' . $e->getMessage());
+            // Mensaje en caso de error
+            return redirect()
+                ->route('admin.etnia_indigena.index')
+                ->with('error', 'Ocurrió un error al registrar la etnia indígena: ' . $e->getMessage());
         }
     }
 
     /**
-     * Actualiza una etnia indígena existente.
+     * Actualiza la información de una etnia indígena existente.
      */
     public function update(Request $request, $id)
     {
-        // Se busca la etnia indígena por su ID, o se lanza un error si no existe
+        // Buscar la etnia indígena a actualizar
         $etniaIndigena = EtniaIndigena::findOrFail($id);
 
-        // Se validan los datos enviados desde el formulario
+        // Validar los datos ingresados
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
         ]);
 
+        // Verificar si ya existe otra etnia activa con el mismo nombre
+        $existe = EtniaIndigena::where('nombre', $validated['nombre'])
+            ->where('status', true)
+            ->where('id', '!=', $etniaIndigena->id)
+            ->exists();
+
+        if ($existe) {
+            // Mensaje si ya existe otro registro activo con ese nombre
+            return redirect()
+                ->route('admin.etnia_indigena.index')
+                ->with('error', 'Ya existe otra etnia indígena activa con este nombre.');
+        }
+
         try {
-            // Se actualiza el nombre de la etnia con los nuevos datos
+            // Actualizar los datos del registro
             $etniaIndigena->nombre = $validated['nombre'];
             $etniaIndigena->save();
 
-            // Mensaje en la terminal informando del cambio
-            info('La etnia indígena con ID ' . $id . ' ha sido actualizada correctamente.');
-
-            // Se redirige con un mensaje de éxito visible al usuario
-            return redirect()->route('admin.etnia_indigena.index')->with('success', 'Etnia indígena actualizada exitosamente.');
+            // Mensaje de confirmación para el usuario
+            return redirect()
+                ->route('admin.etnia_indigena.index')
+                ->with('success', 'La etnia indígena fue actualizada correctamente.');
         } catch (\Exception $e) {
-            // Mensaje en la terminal si ocurre un error durante la actualización
-            info('Error al actualizar la etnia indígena con ID ' . $id . ': ' . $e->getMessage());
-
-            // Se redirige con mensaje de error al usuario
-            return redirect()->route('admin.etnia_indigena.index')->with('error', 'Error al actualizar la etnia indígena: ' . $e->getMessage());
+            // Mensaje de error en caso de fallo
+            return redirect()
+                ->route('admin.etnia_indigena.index')
+                ->with('error', 'Ocurrió un error al actualizar la etnia indígena: ' . $e->getMessage());
         }
     }
 
     /**
-     * Marca una etnia indígena como inactiva (eliminación lógica).
+     * Desactiva una etnia indígena (eliminación lógica).
      */
     public function destroy($id)
     {
-        // Se busca el registro según el ID proporcionado
+        // Buscar el registro a desactivar
         $etniaIndigena = EtniaIndigena::find($id);
 
-        // Si el registro existe, se actualiza el estatus a falso (inactivo)
         if ($etniaIndigena) {
+            // Cambiar el estado a inactivo
             $etniaIndigena->update(['status' => false]);
 
-            // Mensaje de registro en la terminal
-            info('La etnia indígena "' . $etniaIndigena->nombre . '" ha sido marcada como inactiva.');
-
-            // Se informa al usuario del resultado
-            return redirect()->route('admin.etnia_indigena.index')->with('success', 'Etnia indígena eliminada correctamente.');
+            // Mensaje de éxito para el usuario
+            return redirect()
+                ->route('admin.etnia_indigena.index')
+                ->with('success', 'La etnia indígena fue eliminada correctamente.');
         }
 
-        // Si no se encuentra el registro, se informa en la terminal y al usuario
-        info('No se encontró la etnia indígena con ID ' . $id . ' para eliminar.');
-        return redirect()->route('admin.etnia_indigena.index')->with('error', 'Etnia indígena no encontrada.');
+        // Mensaje si el registro no existe
+        return redirect()
+            ->route('admin.etnia_indigena.index')
+            ->with('error', 'No se encontró la etnia indígena especificada.');
     }
 }

@@ -29,7 +29,7 @@
                                     <input type="hidden" name="id" value="{{ $datos->id }}">
                                     <div class="mb-3">
                                         <label class="form-label"><b>Area de Formacion:</b></label>
-                                        <select name="area_formacion_id" id="area_formacion_id" class="form-control" title="Seleccione un area de formacion" required>
+                                        <select name="area_formacion_id" id="area_formacion_id" class="form-control selectpicker" data-live-search="true" title="Seleccione un area formacion" required>
                                             @foreach ($areaFormacion as $area)
                                                 <option value="{{ $area->id }}" {{ old('area_formacion_id', $datos->area_formacion_id) == $area->id ? 'selected' : '' }}>{{ $area->nombre_area_formacion }}</option>
                                             @endforeach

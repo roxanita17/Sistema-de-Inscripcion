@@ -36,8 +36,12 @@ class DiscapacidadController extends Controller
         ]);
 
         // Verificar si ya existe una discapacidad con el mismo nombre
-        $existe = Discapacidad::where('nombre_discapacidad', $validated['nombre_discapacidad'])->exists();
+        // Si existe uno con "status = true", no se permite crear un duplicado.
+        $existe = Discapacidad::where('nombre_discapacidad', $validated['nombre_discapacidad'])
+            ->where('status', true)
+            ->exists();
 
+        // Si ya existe un registro activo con el mismo prefijo, se muestra un mensaje de error.
         if ($existe) {
             return redirect()
                 ->route('admin.discapacidad.index')
@@ -81,6 +85,7 @@ class DiscapacidadController extends Controller
 
         // Verificar si ya existe otra discapacidad con el mismo nombre
         $existe = Discapacidad::where('nombre_discapacidad', $validated['nombre_discapacidad'])
+            ->where('status', true)
             ->where('id', '!=', $id)
             ->exists();
 

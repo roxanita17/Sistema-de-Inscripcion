@@ -12,10 +12,11 @@ class OcupacionController extends Controller
      */
     public function index()
     {
-        // Obtener todas las ocupaciones activas y ordenarlas alfabéticamente
+        // Se obtienen todas las ocupaciones registradas (activas e inactivas)
+        // y se ordenan alfabéticamente por nombre.
         $ocupacion = Ocupacion::orderBy('nombre_ocupacion', 'asc')->get();
 
-        // Retornar la vista con los datos de ocupaciones
+        // Se retorna la vista principal con la colección de ocupaciones.
         return view("admin.ocupacion.index", compact("ocupacion"));
     }
 
@@ -24,23 +25,37 @@ class OcupacionController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos enviados por el usuario
+        // Validar los datos recibidos del formulario.
         $validated = $request->validate([
             'nombre_ocupacion' => 'required|string|max:255',
         ]);
 
+        // Verificar si ya existe una ocupación activa con el mismo nombre.
+        $existe = Ocupacion::where('nombre_ocupacion', $validated['nombre_ocupacion'])
+            ->where('status', true)
+            ->exists();
+
+        // Si ya existe una ocupación activa con el mismo nombre, se devuelve un error.
+        if ($existe) {
+            return redirect()
+                ->route('admin.ocupacion.index')
+                ->with('error', 'Ya existe una ocupación activa con este nombre.');
+        }
+
         try {
-            // Crear la nueva ocupación
+            // Crear una nueva instancia del modelo y asignar los valores.
             $ocupacion = new Ocupacion();
             $ocupacion->nombre_ocupacion = $validated['nombre_ocupacion'];
             $ocupacion->status = true;
             $ocupacion->save();
 
-            // Mensaje de confirmación para el usuario
-            return redirect()->route('admin.ocupacion.index')->with('success', 'La ocupación fue registrada correctamente.');
+            // Redirigir con un mensaje de éxito.
+            return redirect()->route('admin.ocupacion.index')
+                ->with('success', 'La ocupación fue registrada correctamente.');
         } catch (\Exception $e) {
-            // Mensaje de error si algo falla
-            return redirect()->route('admin.ocupacion.index')->with('error', 'Ocurrió un error al registrar la ocupación: ' . $e->getMessage());
+            // Captura de errores y notificación al usuario.
+            return redirect()->route('admin.ocupacion.index')
+                ->with('error', 'Ocurrió un error al registrar la ocupación: ' . $e->getMessage());
         }
     }
 
@@ -49,24 +64,40 @@ class OcupacionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Buscar la ocupación a modificar
+        // Buscar la ocupación a modificar; si no existe, lanza error 404.
         $ocupacion = Ocupacion::findOrFail($id);
 
-        // Validar los datos ingresados
+        // Validar los datos ingresados en el formulario.
         $validated = $request->validate([
             'nombre_ocupacion' => 'required|string|max:255',
         ]);
 
+        // Verificar si ya existe otra ocupación activa con el mismo nombre,
+        // excluyendo el registro actual.
+        $existe = Ocupacion::where('nombre_ocupacion', $validated['nombre_ocupacion'])
+            ->where('status', true)
+            ->where('id', '!=', $ocupacion->id)
+            ->exists();
+
+        // Si existe duplicado activo, se cancela la actualización.
+        if ($existe) {
+            return redirect()
+                ->route('admin.ocupacion.index')
+                ->with('error', 'Ya existe otra ocupación activa con este nombre.');
+        }
+
         try {
-            // Actualizar los datos de la ocupación
+            // Actualizar los datos de la ocupación.
             $ocupacion->nombre_ocupacion = $validated['nombre_ocupacion'];
             $ocupacion->save();
 
-            // Mensaje de éxito
-            return redirect()->route('admin.ocupacion.index')->with('success', 'La ocupación fue actualizada correctamente.');
+            // Redirigir con mensaje de éxito.
+            return redirect()->route('admin.ocupacion.index')
+                ->with('success', 'La ocupación fue actualizada correctamente.');
         } catch (\Exception $e) {
-            // Mensaje de error
-            return redirect()->route('admin.ocupacion.index')->with('error', 'Ocurrió un error al actualizar la ocupación: ' . $e->getMessage());
+            // Si ocurre un error en la actualización, se informa al usuario.
+            return redirect()->route('admin.ocupacion.index')
+                ->with('error', 'Ocurrió un error al actualizar la ocupación: ' . $e->getMessage());
         }
     }
 
@@ -75,20 +106,21 @@ class OcupacionController extends Controller
      */
     public function destroy($id)
     {
-        // Buscar la ocupación a eliminar
+        // Buscar la ocupación a eliminar.
         $ocupacion = Ocupacion::find($id);
 
+        // Verificar si existe el registro.
         if ($ocupacion) {
-            // Cambiar el estado a inactivo en lugar de eliminarlo definitivamente
-            $ocupacion->update([
-                'status' => false,
-            ]);
+            // Cambiar el estado a falso (eliminación lógica).
+            $ocupacion->update(['status' => false]);
 
-            // Mensaje de confirmación para el usuario
-            return redirect()->route('admin.ocupacion.index')->with('success', 'La ocupación fue eliminada correctamente.');
+            // Redirigir con mensaje de confirmación.
+            return redirect()->route('admin.ocupacion.index')
+                ->with('success', 'La ocupación fue eliminada correctamente.');
         }
 
-        // Mensaje si la ocupación no se encuentra
-        return redirect()->route('admin.ocupacion.index')->with('error', 'No se encontró la ocupación especificada.');
+        // Si no se encontró la ocupación, se informa al usuario.
+        return redirect()->route('admin.ocupacion.index')
+            ->with('error', 'No se encontró la ocupación especificada.');
     }
 }

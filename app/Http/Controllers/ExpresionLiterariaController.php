@@ -26,9 +26,21 @@ class ExpresionLiterariaController extends Controller
     public function store(Request $request)
     {
         // Validación del campo, debe ser una sola letra del alfabeto
-        $request->validate([
+        $validated = $request->validate([
             'letra_expresion_literaria' => ['required', 'regex:/^[A-Za-z]$/', 'max:1'],
         ]);
+
+        // Si existe uno con "status = true", no se permite crear un duplicado.
+        $existe = ExpresionLiteraria::where('letra_expresion_literaria', $validated['letra_expresion_literaria'])
+            ->where('status', true)
+            ->exists();
+
+        // Si se encuentra un duplicado activo, se impide la actualización.
+        if ($existe) {
+            return redirect()
+                ->route('admin.expresion_literaria.index')
+                ->with('error', 'Ya existe una expresión literaria activa con este valor.');
+        }
 
         try {
             // Se crea el registro con la letra en mayúscula
@@ -62,14 +74,28 @@ class ExpresionLiterariaController extends Controller
     {
         $expresionLiteraria = ExpresionLiteraria::findOrFail($id);
         // Validación: debe ser una sola letra
-        $request->validate([
+        $validated = $request->validate([
             'letra_expresion_literaria' => ['required', 'regex:/^[A-Za-z]$/', 'max:1'],
         ]);
+
+        // Se verifica si existe otro registro activo con el mismo número de prefijo,
+        // excluyendo el registro actual (para evitar conflictos al editar).
+        $existe = ExpresionLiteraria::where('letra_expresion_literaria', $validated['letra_expresion_literaria'])
+            ->where('status', true)
+            ->where('id', '!=', $expresionLiteraria->id)
+            ->exists();
+
+        // Si se encuentra un duplicado activo, se impide la actualización.
+        if ($existe) {
+            return redirect()
+                ->route('admin.expresion_literaria.index')
+                ->with('error', 'Ya existe otra expresión literaria activa con este valor.');
+        }
 
         try {   
             // Se actualiza la letra de la expresión
             $expresionLiteraria->update([
-                'letra_expresion_literaria' => strtoupper($request->letra_expresion_literaria),
+                'letra_expresion_literaria' => strtoupper($validated['letra_expresion_literaria']),
             ]);
 
             // Registro en la terminal
