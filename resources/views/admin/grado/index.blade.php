@@ -41,7 +41,7 @@
             <thead class="table-primary">
                 <tr>
                     {{-- <th>N°</th> --}}
-                    <th>Nombre</th>
+                    <th>Grado</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -64,6 +64,16 @@
                             @endif
                         </td>
                         <td>
+                            {{-- Ver detalles --}}
+                            <a href="#viewModal{{ $datos->id }}" 
+                                class="btn btn-info btn-sm" 
+                                title="Ver detalles"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#viewModal{{ $datos->id }}">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            @include('admin.grado.modales.showModal')
+
                             {{-- Editar --}}
                             <a href="#viewModalEditar{{ $datos->id }}" 
                                 class="btn btn-warning btn-sm" 

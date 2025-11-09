@@ -15,4 +15,13 @@ class AreaFormacion extends Model
         'nombre_area_formacion',
         'status',
     ];
+
+    public function grados()
+    {
+        return $this->belongsToMany(Grado::class, 'grado_area_formacions')
+                    ->withPivot('status')
+                    ->withTimestamps();
+    }
+
+
 }

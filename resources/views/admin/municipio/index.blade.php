@@ -60,7 +60,7 @@
                             <td>{{ $loop->iteration }}</td>
                         @endif --}}
                         <td>{{ $datos->nombre_municipio }}</td>
-                        <td>{{ $datos->estado->nombre }}</td>
+                        <td>{{ $datos->estado->nombre_estado }}</td>
                         <td>
                             @if ($datos->status == true)
                                 <span class="badge bg-success">Activo</span>

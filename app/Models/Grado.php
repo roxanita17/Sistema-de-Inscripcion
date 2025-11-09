@@ -13,6 +13,16 @@ class Grado extends Model
 
     protected $fillable = [
         'numero_grado',
+        'capacidad_max',
+        'min_seccion',
+        'max_seccion',
         'status',
     ];
+
+    public function areas_formacion()
+{
+    return $this->belongsToMany(AreaFormacion::class, 'grado_area_formacions')
+                ->withPivot('status')
+                ->withTimestamps();
+}
 }

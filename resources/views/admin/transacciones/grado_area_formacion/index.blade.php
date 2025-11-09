@@ -3,14 +3,16 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Municipio</h1>
+    <h1>Asignacion de Grados a Area de Formacion</h1>
 @stop
-
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
 
 @section('content')
 <div class="container mt-4">
+
+
+
+@include('admin.transacciones.grado_area_formacion.modales.createModal')
+
 
     {{-- Contenedor de alertas --}}
     <div id="contenedorAlertas">
@@ -28,41 +30,36 @@
         @endif
     </div>
 
-    @include('admin.localidad.modales.createModal')
-    {{-- Botón para abrir la modal de crear estado --}}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearLocalidad">
-        <i class="fas fa-plus"></i> Crear Localidad
+    {{-- Botón para abrir la modal de crear grado --}}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
+        <i class="fas fa-plus"></i> Asignar Grado a Area de Formacion
     </button>
 
     {{-- Tabla de años escolares --}}
     <div class="table-responsive">
-        <table class="table table-striped align-middle text-center" id="tablaAnioEscolar">
+        <table class="table table-striped align-middle text-center" id="tablaGradoAreaFormacion">
             <thead class="table-primary">
                 <tr>
                     {{-- <th>N°</th> --}}
-                    <th>Localidad</th>
-                    <th>Municipio</th>
+                    <th>Codigo</th>
+                    <th>Grado</th>
+                    <th>Area de Formacion</th>
                     <th>Estado</th>
-                    <th>Status</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="tbodyAnioEscolar">
-                @if ($localidades->isEmpty())
+            <tbody id="tbodyGradoAreaFormacion">
+                @if ($gradoAreaFormacion->isEmpty())
                                 <tr>
-                                    <td colspan="5" style="text-align: center;">No se encontraron localidades.</td>
+                                    <td colspan="4" style="text-align: center;">No se encontraron grados.</td>
                                 </tr>
                             @endif
-                
-                @foreach ($localidades as $datos)
+                @foreach ($gradoAreaFormacion as $datos)
                 @if ($datos->status == true)
                     <tr>
-                        {{-- @if ($datos->status == true)
-                            <td>{{ $loop->iteration }}</td>
-                        @endif --}}
-                        <td>{{ $datos->nombre_localidad }}</td>
-                        <td>{{ $datos->municipio->nombre_municipio }}</td>
-                        <td>{{ $datos->municipio->estado->nombre_estado }}</td>
+                        <td>{{ $datos->codigo}}</td>
+                        <td>{{ $datos->grado->numero_grado}}</td>
+                        <td>{{ $datos->area_formacion->nombre_area_formacion }}</td>
                         <td>
                             @if ($datos->status == true)
                                 <span class="badge bg-success">Activo</span>
@@ -71,6 +68,15 @@
                             @endif
                         </td>
                         <td>
+                            {{-- Ver detalles --}}
+                            <a href="#viewModal{{ $datos->id }}" 
+                                class="btn btn-info btn-sm" 
+                                title="Ver detalles"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#viewModal{{ $datos->id }}">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            @include('admin.transacciones.grado_area_formacion.modales.showModal')
 
                             {{-- Editar --}}
                             <a href="#viewModalEditar{{ $datos->id }}" 
@@ -78,10 +84,10 @@
                                 title="Editar"
                                 data-bs-toggle="modal" 
                                 data-bs-target="#viewModalEditar{{ $datos->id }}">
-                                <i class="fas fa-pen text-white" ></i>
+                                <i class="fas fa-pen text-white"></i>
                             </a>
 
-                            @include('admin.localidad.modales.editModal')
+                            @include('admin.transacciones.grado_area_formacion.modales.editModal')
 
                             <!-- Eliminar -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
@@ -90,11 +96,18 @@
                             <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalLabel{{ $datos->id }}">
+                                                Confirmar Inactivación</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
                                         <div class="modal-body">
-                                            ¿Estás seguro de que deseas eliminar esta localidad?
+                                            ¿Estás seguro de que deseas eliminar este grado?
                                         </div>
                                         <div class="modal-footer">
-                                            <form action="{{ url('admin/localidad/' . $datos->id) }}" method="POST">
+                                            <form action="{{ url('admin/transacciones/grado_area_formacion/' . $datos->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -112,7 +125,6 @@
         </table>
     </div>
 </div>
-
 
 
 

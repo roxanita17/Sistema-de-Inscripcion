@@ -8,65 +8,133 @@ use Illuminate\Http\Request;
 class DiscapacidadController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra el listado de todas las discapacidades registradas.
+     * 
+     * Los registros se ordenan alfabéticamente por el nombre de la discapacidad
+     * y se envían a la vista correspondiente.
      */
     public function index()
     {
+        // Se obtienen todas las discapacidades activas ordenadas por nombre
         $discapacidad = Discapacidad::orderBy('nombre_discapacidad', 'asc')->get();
+
+        // Se envían los registros a la vista
         return view('admin.discapacidad.index', compact('discapacidad'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Guarda una nueva discapacidad en la base de datos.
+     * 
+     * Se valida que el nombre sea requerido, de texto y que no exista ya
+     * una discapacidad con el mismo nombre antes de crear un nuevo registro.
      */
     public function store(Request $request)
     {
+        // Validación de los datos recibidos
         $validated = $request->validate([
             'nombre_discapacidad' => 'required|string|max:255',
         ]);
 
-        $discapacidad = new Discapacidad();
-        $discapacidad->nombre_discapacidad = $validated['nombre_discapacidad'];
-        $discapacidad->status = true;
-        $discapacidad->save();
+        // Verificar si ya existe una discapacidad con el mismo nombre
+        $existe = Discapacidad::where('nombre_discapacidad', $validated['nombre_discapacidad'])->exists();
 
-        return redirect()->route('admin.discapacidad.index')->with('success', 'Discapacidad creado correctamente.');
+        if ($existe) {
+            return redirect()
+                ->route('admin.discapacidad.index')
+                ->with('error', 'Esta discapacidad ya está registrada.');
+        }
+
+        try {
+            // Crear nueva discapacidad
+            $discapacidad = new Discapacidad();
+            $discapacidad->nombre_discapacidad = $validated['nombre_discapacidad'];
+            $discapacidad->status = true; // Se marca como activa por defecto
+            $discapacidad->save();
+
+            // Retornar mensaje de éxito
+            return redirect()
+                ->route('admin.discapacidad.index')
+                ->with('success', 'Discapacidad creada correctamente.');
+        } catch (\Exception $e) {
+            // Manejo de errores durante la inserción
+            return redirect()
+                ->route('admin.discapacidad.index')
+                ->with('error', 'Error al crear la discapacidad: ' . $e->getMessage());
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza los datos de una discapacidad existente.
+     * 
+     * Se valida el nuevo nombre, se evita duplicidad (ignorando el registro actual)
+     * y se guardan los cambios en la base de datos.
      */
     public function update(Request $request, $id)
     {
+        // Buscar el registro o lanzar error si no existe
         $discapacidad = Discapacidad::findOrFail($id);
 
+        // Validación de los datos
         $validated = $request->validate([
             'nombre_discapacidad' => 'required|string|max:255',
         ]);
-        try {
 
+        // Verificar si ya existe otra discapacidad con el mismo nombre
+        $existe = Discapacidad::where('nombre_discapacidad', $validated['nombre_discapacidad'])
+            ->where('id', '!=', $id)
+            ->exists();
+
+        if ($existe) {
+            return redirect()
+                ->route('admin.discapacidad.index')
+                ->with('error', 'No se puede actualizar: ya existe una discapacidad con este nombre.');
+        }
+
+        try {
+            // Actualizar registro existente
             $discapacidad->nombre_discapacidad = $validated['nombre_discapacidad'];
             $discapacidad->save();
 
-            return redirect()->route('admin.discapacidad.index')->with('success', 'Discapacidad actualizado exitosamente');
+            return redirect()
+                ->route('admin.discapacidad.index')
+                ->with('success', 'Discapacidad actualizada exitosamente.');
         } catch (\Exception $e) {
-            return redirect()->route('admin.discapacidad.index')->with('error', 'Error al actualizar la discapacidad: ' . $e->getMessage());
+            // Manejo de errores durante la actualización
+            return redirect()
+                ->route('admin.discapacidad.index')
+                ->with('error', 'Error al actualizar la discapacidad: ' . $e->getMessage());
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Realiza una baja lógica de una discapacidad.
+     * 
+     * En lugar de eliminar el registro físicamente, se marca como inactivo.
      */
     public function destroy($id)
     {
-        $discapacidad = Discapacidad::find($id);
-        if ($discapacidad) {
-            $discapacidad->update([
-                'status' => false,
-            ]);
-            return redirect()->route('admin.discapacidad.index')->with('success', 'Discapacidad eliminado correctamente.');
-        }
+        try {
+            // Buscar la discapacidad por ID
+            $discapacidad = Discapacidad::find($id);
 
-        return redirect()->route('admin.discapacidad.index')->with('error', 'Discapacidad no encontrado.');
+            if ($discapacidad) {
+                // Marcar como inactiva (baja lógica)
+                $discapacidad->update(['status' => false]);
+
+                return redirect()
+                    ->route('admin.discapacidad.index')
+                    ->with('success', 'Discapacidad eliminada correctamente.');
+            }
+
+            // Si no se encuentra el registro
+            return redirect()
+                ->route('admin.discapacidad.index')
+                ->with('error', 'Discapacidad no encontrada.');
+        } catch (\Exception $e) {
+            // Manejo de errores durante la eliminación
+            return redirect()
+                ->route('admin.discapacidad.index')
+                ->with('error', 'Error al eliminar la discapacidad: ' . $e->getMessage());
+        }
     }
 }

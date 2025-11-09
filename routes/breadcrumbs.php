@@ -74,4 +74,8 @@ Breadcrumbs::for('admin.discapacidad.index', function (Trail $trail) {
     $trail->push('Discapacidad', route('admin.discapacidad.index'));
 });
 
-// 
+// Grado Area Formacion
+Breadcrumbs::for('admin.transacciones.grado_area_formacion.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Grado Area Formacion', route('admin.transacciones.grado_area_formacion.index'));
+});

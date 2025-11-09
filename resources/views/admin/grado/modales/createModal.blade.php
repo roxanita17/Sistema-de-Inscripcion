@@ -10,15 +10,49 @@
             </div>
 
             <div class="modal-body">
+                {{-- Ruta para guardar el grado --}}
                 <form action="{{ route('admin.grado.modales.store') }}" method="POST" id="formCrearGrado">
                     @csrf
                     <div id="contenedorAlertaCrear"></div>
-
+                    {{-- Numero de grado --}}
                     <div class="input-group mb-3">
                         <span class="input-group-text"><span class="text-danger">*</span> Numero</span>
                         <input type="text" class="form-control" id="numero_grado" name="numero_grado" inputmode="numeric" pattern="[0-9]+" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
                     </div>
                     @error('numero_grado')
+                        <div class="alert text-danger p-0 m-0">
+                            <b>{{ 'Este campo es obligatorio.' }}</b>
+                        </div>
+                    @enderror
+
+                    {{-- Capacidad maxima de cupos --}}
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><span class="text-danger">*</span> Capacidad maxima de cupos</span>
+                        <input type="text" class="form-control" id="capacidad_max" name="capacidad_max" inputmode="numeric" pattern="[0-9]+" maxlength="3" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                    </div>
+                    @error('capacidad_max')
+                        <div class="alert text-danger p-0 m-0">
+                            <b>{{ 'Este campo es obligatorio.' }}</b>
+                        </div>
+                    @enderror
+
+                    {{-- Minimo de seccion --}}
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><span class="text-danger">*</span> Minimo de seccion</span>
+                        <input type="text" class="form-control" id="min_seccion" name="min_seccion" inputmode="numeric" pattern="[0-9]+" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                    </div>
+                    @error('min_seccion')
+                        <div class="alert text-danger p-0 m-0">
+                            <b>{{ 'Este campo es obligatorio.' }}</b>
+                        </div>
+                    @enderror
+
+                    {{-- Maximo de seccion --}}
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><span class="text-danger">*</span> Maximo de seccion</span>
+                        <input type="text" class="form-control" id="max_seccion" name="max_seccion" inputmode="numeric" pattern="[0-9]+" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                    </div>
+                    @error('max_seccion')
                         <div class="alert text-danger p-0 m-0">
                             <b>{{ 'Este campo es obligatorio.' }}</b>
                         </div>

@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('grados', function (Blueprint $table) {
             $table->id();
             $table->string('numero_grado');
-            $table->boolean('status')->default(true);
+            $table->integer('capacidad_max');
+            $table->integer('min_seccion');
+            $table->integer('max_seccion');
+                $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

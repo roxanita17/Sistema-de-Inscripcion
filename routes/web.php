@@ -85,6 +85,12 @@ Route::post('admin/discapacidad/modales/store', [App\Http\Controllers\Discapacid
 Route::post('admin/discapacidad/{id}/update', [App\Http\Controllers\DiscapacidadController::class, 'update'])->name('admin.discapacidad.modales.update');
 Route::delete('/admin/discapacidad/{id}', [App\Http\Controllers\DiscapacidadController::class, 'destroy'])->name('admin.discapacidad.destroy');
 
+/* Grado Area Formacion */
+Route::get('admin/transacciones/grado_area_formacion', [App\Http\Controllers\GradoAreaFormacionController::class, 'index'])->name('admin.transacciones.grado_area_formacion.index');
+Route::post('admin/transacciones/grado_area_formacion/modales/store', [App\Http\Controllers\GradoAreaFormacionController::class, 'store'])->name('admin.transacciones.grado_area_formacion.modales.store');
+Route::post('admin/transacciones/grado_area_formacion/{id}/update', [App\Http\Controllers\GradoAreaFormacionController::class, 'update'])->name('admin.transacciones.grado_area_formacion.modales.update');
+Route::delete('/admin/transacciones/grado_area_formacion/{id}', [App\Http\Controllers\GradoAreaFormacionController::class, 'destroy'])->name('admin.transacciones.grado_area_formacion.destroy');
+
 
 
 

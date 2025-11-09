@@ -6,19 +6,19 @@ use App\Models\AnioEscolar;
 use App\Models\EtniaIndigena;
 use App\Models\Ocupacion;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         // User::factory(10)->create();
+        $this->command->info('Iniciando seeders...');
+
+
         AnioEscolar::factory(1)->create([
             'inicio_anio_escolar' => '2025-01-01',
             'cierre_anio_escolar' => '2025-12-31',
@@ -28,12 +28,18 @@ class DatabaseSeeder extends Seeder
 
         EtniaIndigena::factory(20)->create();
         Ocupacion::factory(10)->create();
-            
 
         User::factory()->create([
-            'name' => 'Nohely Sosa',
-            'email' => 'nohelysq2006@gmail.com',
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
             'password' => bcrypt('12345678'),
         ]);
+
+        $this->call([
+            GradoSeeder::class,
+            AreaFormacionSeeder::class,
+        ]);
+        $this->command->info('¡Base de datos poblada con éxito!');
+
     }
 }

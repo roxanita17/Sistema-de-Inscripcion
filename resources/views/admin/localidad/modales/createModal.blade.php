@@ -17,7 +17,7 @@
               <label for="estado_id" class="form-label">Estado</label>
                 <select name="estado_id" id="estado_id" class="form-control selectpicker" data-live-search="true" title="Seleccione un estado" required>
                     @foreach ($estados as $estado)
-                        <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
                     @endforeach
                 </select>
           </div>

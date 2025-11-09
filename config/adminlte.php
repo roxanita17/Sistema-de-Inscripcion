@@ -320,22 +320,7 @@ return [
  */
     'menu' => [
         // Navbar items:
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
-        [
-            'text' => 'link',
-            'url' => '#',
-            'right_sidebar' => true,
-        ],
-        [
-            'type' => 'navbar-search',
-            'text' => 'buscar',
-            'topnav' => true,
-            'search' => true,
-            'url' => '#',
-        ],
+
 
         // Sidebar items:
         [
@@ -349,6 +334,19 @@ return [
             'icon' => 'fas fa-fw fa-calendar',
             'label_color' => 'success',
         ],
+        [
+            'text' => 'Asignaciones',
+            'icon' => 'fas fa-fw fa-link',
+            'submenu' => [
+                [
+                    'text' => 'Asignar grados a areas academicas',
+                    'url' => 'admin/transacciones/grado_area_formacion',
+                    'icon' => 'fas fa-arrow-right',
+                    'label_color' => 'success'
+                ]
+            ],
+        ],   
+
         [
             'text' => 'Configuraciones',
             'icon' => 'fas fa-fw fa-cog',
