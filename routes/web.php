@@ -91,6 +91,12 @@ Route::post('admin/transacciones/grado_area_formacion/modales/store', [App\Http\
 Route::post('admin/transacciones/grado_area_formacion/{id}/update', [App\Http\Controllers\GradoAreaFormacionController::class, 'update'])->name('admin.transacciones.grado_area_formacion.modales.update');
 Route::delete('/admin/transacciones/grado_area_formacion/{id}', [App\Http\Controllers\GradoAreaFormacionController::class, 'destroy'])->name('admin.transacciones.grado_area_formacion.destroy');
 
+/* Prefijo de telefono */
+Route::get('admin/prefijo_telefono', [App\Http\Controllers\PrefijoTelefonoController::class, 'index'])->name('admin.prefijo_telefono.index');
+Route::post('admin/prefijo_telefono/modales/store', [App\Http\Controllers\PrefijoTelefonoController::class, 'store'])->name('admin.prefijo_telefono.modales.store');
+Route::post('admin/prefijo_telefono/{id}/update', [App\Http\Controllers\PrefijoTelefonoController::class, 'update'])->name('admin.prefijo_telefono.modales.update');
+Route::delete('/admin/prefijo_telefono/{id}', [App\Http\Controllers\PrefijoTelefonoController::class, 'destroy'])->name('admin.prefijo_telefono.destroy');
+
 
 
 

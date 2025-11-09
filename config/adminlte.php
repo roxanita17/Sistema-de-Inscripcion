@@ -418,6 +418,12 @@ return [
                     'icon' => 'fas fa-fw fa-wheelchair',
                     'label_color' => 'success',
                 ],
+                [
+                    'text' => 'Prefijo de telefono',
+                    'url' => 'admin/prefijo_telefono',
+                    'icon' => 'fas fa-fw fa-phone',
+                    'label_color' => 'success',
+                ],
             ],
         ],
         

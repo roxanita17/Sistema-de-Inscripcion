@@ -79,3 +79,10 @@ Breadcrumbs::for('admin.transacciones.grado_area_formacion.index', function (Tra
     $trail->parent('home');
     $trail->push('Grado Area Formacion', route('admin.transacciones.grado_area_formacion.index'));
 });
+
+// Prefijo de telefono
+Breadcrumbs::for('admin.prefijo_telefono.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Prefijo de telefono', route('admin.prefijo_telefono.index'));
+});
+

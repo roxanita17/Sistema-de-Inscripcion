@@ -109,7 +109,7 @@ class ExpresionLiterariaController extends Controller
                 ->with('success', 'Expresión literaria eliminada correctamente.');
         } catch (\Exception $e) {
             // Registro de error
-            info('Error al eliminar expresión literaria con ID ' . $expresionLiteraria->id . ': ' . $e->getMessage());
+            info('Error al eliminar expresión literaria con ID ' . $id . ': ' . $e->getMessage());
 
             // Mensaje de error al usuario
             return redirect()

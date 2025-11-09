@@ -26,7 +26,7 @@ class GradoController extends Controller
     {
         // Validar los datos ingresados por el usuario
         $validated = $request->validate([
-            'numero_grado' => 'required|digits_between:1,4',
+            'numero_grado' => 'required|digits_between:1,4|unique:grados,numero_grado', 
             'capacidad_max' => 'required|digits_between:1,3',
             'min_seccion' => 'required|digits_between:1,2',
             'max_seccion' => 'required|digits_between:1,2',
