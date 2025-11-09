@@ -28,14 +28,14 @@
             @endif
         </div>
 
-        <div class="card-header">
-            <h2 class="card-title">Materias</h2>
+        <div>
+            <h2 class="card-title" style="font-size: 24px; margin: 10px;"><b>Materias</b></h2>
 
 
             <div class="card-tools">
                 @include('admin.area_formacion.modales.createModal')
                 {{-- Botón para abrir la modal de crear estado --}}
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end" style="margin: 10px;">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearAreaFormacion">
                         <i class="fas fa-plus"></i> Crear Área de formación
                     </button>
@@ -114,18 +114,23 @@
         </div>
     </div>
 
+    
+
     <div class="container mt-4 card card-outline card-info">
-        <h2>Grupos de Creacion, Recreacion y Produccion</h2>
+        <div>
+            <h2 class="card-title" style="font-size: 24px; margin: 10px;"><b>Grupos de Creacion, Recreacion y Produccion</b></h2>
 
 
-        @include('admin.area_formacion.modalesGrupoEstable.createModalGrupoEstable')
-        {{-- Botón para abrir la modal de crear estado --}}
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearGrupoEstable">
-                <i class="fas fa-plus"></i> Crear Grupo Estable
-            </button>
+            <div class="card-tools">
+                @include('admin.area_formacion.modalesGrupoEstable.createModalGrupoEstable')
+                {{-- Botón para abrir la modal de crear estado --}}
+                <div class="d-flex justify-content-end" style="margin: 10px;">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearGrupoEstable">
+                    <i class="fas fa-plus"></i> Crear Grupo Estable
+                    </button>
+                </div>
+            </div>
         </div>
-
         {{-- Tabla de grupos estable --}}
         <div class="table-responsive">
             <table class="table table-striped align-middle text-center table-alignada" id="tablaGrupoEstable">

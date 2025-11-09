@@ -15,6 +15,28 @@
         {{-- Custom left links --}}
         @yield('content_top_nav_left')
     </ul>
+    <ul class="navbar-nav ml-left">
+        <li class="nav-item align-self-center">
+            <nav aria-label="breadcrumb" class="mb-0">
+                @if (Breadcrumbs::exists())
+                    {!! Breadcrumbs::render() !!}
+                @endif
+            </nav>
+        </li>
+    </ul>
+    <style>
+        .navbar .breadcrumb {
+            background: transparent;
+            margin-bottom: 0;
+            padding: 0;
+            font-size: 1.5rem;
+        }
+
+        .navbar .breadcrumb .breadcrumb-item+.breadcrumb-item::before {
+            content: "/";
+            padding: 0 6px 0 0;
+        }
+    </style>
 
     {{-- Navbar right links --}}
     <ul class="navbar-nav ml-auto">
