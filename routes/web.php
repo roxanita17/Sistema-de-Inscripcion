@@ -68,6 +68,11 @@ Route::post('admin/area_formacion/modales/store', [App\Http\Controllers\AreaForm
 Route::post('admin/area_formacion/{id}/update', [App\Http\Controllers\AreaFormacionController::class, 'update'])->name('admin.area_formacion.modales.update');
 Route::delete('/admin/area_formacion/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroy'])->name('admin.area_formacion.destroy');
 
+/* Grupo Estable */
+Route::post('admin/area_formacion/modalesGrupoEstable/storeGrupoEstable', [App\Http\Controllers\AreaFormacionController::class, 'storeGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.storeGrupoEstable');
+Route::post('admin/area_formacion/{id}/updateGrupoEstable', [App\Http\Controllers\AreaFormacionController::class, 'updateGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.updateGrupoEstable');
+Route::delete('/admin/area_formacion/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroyGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.destroyGrupoEstable');
+
 /* Expresion Literaria */
 Route::get('admin/expresion_literaria', [App\Http\Controllers\ExpresionLiterariaController::class, 'index'])->name('admin.expresion_literaria.index');
 Route::post('admin/expresion_literaria/modales/store', [App\Http\Controllers\ExpresionLiterariaController::class, 'store'])->name('admin.expresion_literaria.modales.store');
@@ -79,6 +84,8 @@ Route::get('admin/discapacidad', [App\Http\Controllers\DiscapacidadController::c
 Route::post('admin/discapacidad/modales/store', [App\Http\Controllers\DiscapacidadController::class, 'store'])->name('admin.discapacidad.modales.store');
 Route::post('admin/discapacidad/{id}/update', [App\Http\Controllers\DiscapacidadController::class, 'update'])->name('admin.discapacidad.modales.update');
 Route::delete('/admin/discapacidad/{id}', [App\Http\Controllers\DiscapacidadController::class, 'destroy'])->name('admin.discapacidad.destroy');
+
+
 
 
 

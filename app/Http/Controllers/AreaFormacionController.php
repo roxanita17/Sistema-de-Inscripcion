@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AreaFormacion;
+use App\Models\GrupoEstable;
 use Illuminate\Http\Request;
 
 class AreaFormacionController extends Controller
@@ -12,8 +13,27 @@ class AreaFormacionController extends Controller
      */
     public function index()
     {
+        $grupoEstable = GrupoEstable::orderBy('nombre_grupo_estable', 'asc')->get();
         $areaFormacion = AreaFormacion::orderBy('nombre_area_formacion', 'asc')->get();
-        return view('admin.area_formacion.index', compact('areaFormacion'));
+        return view('admin.area_formacion.index', compact('areaFormacion', 'grupoEstable'));
+    }
+
+    public function storeGrupoEstable(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre_grupo_estable' => 'required|string|max:255',
+        ]);
+        try {
+
+            $grupoEstable = new GrupoEstable();
+            $grupoEstable->nombre_grupo_estable = $validated['nombre_grupo_estable'];
+            $grupoEstable->status = true;
+            $grupoEstable->save();
+
+            return redirect()->route('admin.area_formacion.index')->with('success', 'Grupo estable creado exitosamente');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.area_formacion.index')->with('error', 'Error al crear el grupo estable: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -37,6 +57,25 @@ class AreaFormacionController extends Controller
         }
     }
 
+    public function updateGrupoEstable(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'nombre_grupo_estable' => 'required|string|max:255',
+        ]);
+        try {
+
+            $grupoEstable = GrupoEstable::findOrFail($id);
+            $grupoEstable->nombre_grupo_estable = $validated['nombre_grupo_estable'];
+            $grupoEstable->save();
+
+            return redirect()->route('admin.area_formacion.index')->with('success', 'Grupo estable actualizado exitosamente');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.area_formacion.index')->with('error', 'Error al actualizar el grupo estable: ' . $e->getMessage());
+        }
+    }
+
+    
+
     /**
      * Update the specified resource in storage.
      */
@@ -57,6 +96,19 @@ class AreaFormacionController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('admin.area_formacion.index')->with('error', 'Error al actualizar el area de formación: ' . $e->getMessage());
         }
+    }
+
+    public function destroyGrupoEstable($id)
+    {
+        $grupoEstable = GrupoEstable::find($id);
+        if ($grupoEstable) {
+            $grupoEstable->update([
+                'status' => false,
+            ]);
+            return redirect()->route('admin.area_formacion.index')->with('success', 'Grupo estable eliminado correctamente.');
+        }
+
+        return redirect()->route('admin.area_formacion.index')->with('error', 'Grupo estable no encontrado.');
     }
 
     /**
