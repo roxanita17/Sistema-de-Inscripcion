@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\AnioEscolar;
 use App\Models\EtniaIndigena;
+use App\Models\Estado;
+use App\Models\Municipio;
+use App\Models\Localidad;
 use App\Models\Ocupacion;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -38,6 +41,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             GradoSeeder::class,
             AreaFormacionSeeder::class,
+            EstadoSeeder::class,
+            MunicipioSeeder::class,
+            LocalidadSeeder::class,
         ]);
         $this->command->info('¡Base de datos poblada con éxito!');
 
