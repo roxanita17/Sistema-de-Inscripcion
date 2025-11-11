@@ -97,11 +97,17 @@ Route::post('admin/prefijo_telefono/modales/store', [App\Http\Controllers\Prefij
 Route::post('admin/prefijo_telefono/{id}/update', [App\Http\Controllers\PrefijoTelefonoController::class, 'update'])->name('admin.prefijo_telefono.modales.update');
 Route::delete('/admin/prefijo_telefono/{id}', [App\Http\Controllers\PrefijoTelefonoController::class, 'destroy'])->name('admin.prefijo_telefono.destroy');
 
+/* Roles */
+Route::get('admin/roles', [App\Http\Controllers\RoleController::class, 'index'])->name('admin.roles.index');
+Route::post('admin/roles/modales/store', [App\Http\Controllers\RoleController::class, 'store'])->name('admin.roles.modales.store');
+Route::post('admin/roles/{id}/update', [App\Http\Controllers\RoleController::class, 'update'])->name('admin.roles.modales.update');
+Route::delete('/admin/roles/{id}', [App\Http\Controllers\RoleController::class, 'destroy'])->name('admin.roles.destroy');
+Route::get('admin/roles/permisos/{id}', [App\Http\Controllers\RoleController::class, 'permisos'])->name('admin.roles.permisos');
 
+/* Estudios Realizados */
+Route::get('admin/estudios_realizados', [App\Http\Controllers\EstudiosRealizadoController::class, 'index'])->name('admin.estudios_realizados.index');
+Route::post('admin/estudios_realizados/modales/store', [App\Http\Controllers\EstudiosRealizadoController::class, 'store'])->name('admin.estudios_realizados.modales.store');
+Route::post('admin/estudios_realizados/{id}/update', [App\Http\Controllers\EstudiosRealizadoController::class, 'update'])->name('admin.estudios_realizados.modales.update');
+Route::delete('/admin/estudios_realizados/{id}', [App\Http\Controllers\EstudiosRealizadoController::class, 'destroy'])->name('admin.estudios_realizados.destroy');
 
-
-
-
-
-
-
+ 

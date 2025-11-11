@@ -424,6 +424,20 @@ return [
                     'icon' => 'fas fa-fw fa-phone',
                     'label_color' => 'success',
                 ],
+                [
+                    'text' => 'Roles',
+                    'url' => 'admin/roles',
+                    'icon' => 'fas fa-fw fa-user',
+                    'label_color' => 'success',
+/*                     'classes' => 'bg-success text-white',*/
+                ],
+                [
+                    'text' => 'Estudios Realizados de Docentes',
+                    'url' => 'admin/estudios_realizados',
+                    'icon' => 'fas fa-fw fa-graduation-cap',
+                    'label_color' => 'success',
+                ],
+
             ],
         ],
         
