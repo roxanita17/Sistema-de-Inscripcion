@@ -86,3 +86,14 @@ Breadcrumbs::for('admin.prefijo_telefono.index', function (Trail $trail) {
     $trail->push('Prefijo de telefono', route('admin.prefijo_telefono.index'));
 });
 
+// Rol
+Breadcrumbs::for('admin.rol.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Roles', route('admin.rol.index'));
+});
+
+// Estudios Realizados
+Breadcrumbs::for('admin.estudios_realizados.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Estudios Realizados', route('admin.estudios_realizados.index'));
+});
