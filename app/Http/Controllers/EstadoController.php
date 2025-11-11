@@ -4,16 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Estado;
 use Illuminate\Http\Request;
+use Livewire\WithPagination;
 
 class EstadoController extends Controller
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
     /**
      * Muestra todos los registros de estados.
      */
     public function index()
     {
         // Se obtienen todos los estados ordenados alfabéticamente por su nombre
-        $estados = Estado::orderBy('nombre_estado', 'asc')->get();
+        $estados = Estado::orderBy('nombre_estado', 'asc')->Paginate(5);
 
         // Se retorna la vista con los registros encontrados
         return view('admin.estado.index', compact('estados'));

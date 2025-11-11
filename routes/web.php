@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Group; 
 use Illuminate\Support\Facades\Auth;
+use App\Livewire\Admin\EstadoIndex;
 
 Route::get('/', function () {
     return view('welcome');

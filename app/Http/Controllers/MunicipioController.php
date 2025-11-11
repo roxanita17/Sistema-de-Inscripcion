@@ -6,7 +6,7 @@ use App\Models\Municipio;
 use App\Models\Estado;
 use Illuminate\Http\Request;
 
-class MunicipioController extends Controller
+class MunicipioController extends Controller 
 {
     /**
      * Muestra la lista de municipios junto con los estados disponibles.

@@ -1,39 +1,21 @@
-<!-- Modal Crear Año Escolar -->
-<div class="modal fade" id="modalCrearEstado" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="modalCrearEstadoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalCrearEstadoLabel">Registrar Estado</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-
-            <div class="modal-body">
-                <form action="{{ route('admin.estado.modales.store') }}" method="POST">
-                    @csrf
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><span class="text-danger">*</span> Nombre</span>
-                        <input type="text" class="form-control" id="nombre_estado" name="nombre_estado" required>
+    <div wire:ignore.self class="modal fade" id="modalCrearEstado" tabindex="-1" aria-labelledby="modalCrearEstadoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form wire:submit.prevent="store">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Crear Estado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    @error('nombre_estado')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                        </div>
-                    @enderror
+                    <div class="modal-body">
+                        <label for="nombre_estado" class="form-label">Nombre del Estado</label>
+                        <input type="text" wire:model.defer="nombre_estado" id="nombre_estado" class="form-control">
+                        @error('nombre_estado') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
-
                 </form>
             </div>
-
-            
-
         </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
