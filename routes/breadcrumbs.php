@@ -97,3 +97,10 @@ Breadcrumbs::for('admin.estudios_realizados.index', function (Trail $trail) {
     $trail->parent('home');
     $trail->push('Estudios Realizados', route('admin.estudios_realizados.index'));
 });
+
+// Area Estudio Realizado
+Breadcrumbs::for('admin.transacciones.area_estudio_realizado.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Area Estudio Realizado', route('admin.transacciones.area_estudio_realizado.index'));
+});
+

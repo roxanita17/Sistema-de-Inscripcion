@@ -111,4 +111,10 @@ Route::post('admin/estudios_realizados/modales/store', [App\Http\Controllers\Est
 Route::post('admin/estudios_realizados/{id}/update', [App\Http\Controllers\EstudiosRealizadoController::class, 'update'])->name('admin.estudios_realizados.modales.update');
 Route::delete('/admin/estudios_realizados/{id}', [App\Http\Controllers\EstudiosRealizadoController::class, 'destroy'])->name('admin.estudios_realizados.destroy');
 
+/* Area Estudio Realizado */
+Route::get('admin/transacciones/area_estudio_realizado', [App\Http\Controllers\AreaEstudioRealizadoController::class, 'index'])->name('admin.transacciones.area_estudio_realizado.index');
+Route::post('admin/transacciones/area_estudio_realizado/modales/store', [App\Http\Controllers\AreaEstudioRealizadoController::class, 'store'])->name('admin.transacciones.area_estudio_realizado.modales.store');
+Route::post('admin/transacciones/area_estudio_realizado/{id}/update', [App\Http\Controllers\AreaEstudioRealizadoController::class, 'update'])->name('admin.transacciones.area_estudio_realizado.modales.update');
+Route::delete('/admin/transacciones/area_estudio_realizado/{id}', [App\Http\Controllers\AreaEstudioRealizadoController::class, 'destroy'])->name('admin.transacciones.area_estudio_realizado.destroy');
+
  

@@ -343,6 +343,12 @@ return [
                     'url' => 'admin/transacciones/grado_area_formacion',
                     'icon' => 'fas fa-arrow-right',
                     'label_color' => 'success'
+                ],
+                [
+                    'text' => 'Asignar areas academicas a estudios realizados',
+                    'url' => 'admin/transacciones/area_estudio_realizado',
+                    'icon' => 'fas fa-arrow-right',
+                    'label_color' => 'success'
                 ]
             ],
         ],   
