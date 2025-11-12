@@ -63,7 +63,7 @@
                     @foreach ($estudiosRealizados as $datos)
                     @if ($datos->status == true)
                         <tr>
-                            <td>{{ $datos->titulo_universitario }}</td>
+                            <td>{{ $datos->estudios }}</td>
                             <td>
                                 @if ($datos->status == true)
                                     <span class="badge bg-success">Activo</span>

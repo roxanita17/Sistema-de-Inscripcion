@@ -1,17 +1,14 @@
 <?php
 
+
+
 return [
+    
 
     /*
     |--------------------------------------------------------------------------
     | Title
     |--------------------------------------------------------------------------
-    |
-    | Here you can change the default title of your admin panel.
-    |
-    | For detailed instructions you can look the title section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
     */
 
     'title' => '',
@@ -22,12 +19,6 @@ return [
     |--------------------------------------------------------------------------
     | Favicon
     |--------------------------------------------------------------------------
-    |
-    | Here you can activate the favicon.
-    |
-    | For detailed instructions you can look the favicon section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
     */
 
     'use_ico_only' => true,
@@ -37,14 +28,6 @@ return [
     |--------------------------------------------------------------------------
     | Google Fonts
     |--------------------------------------------------------------------------
-    |
-    | Here you can allow or not the use of external google fonts. Disabling the
-    | google fonts may be useful if your admin panel internet access is
-    | restricted somehow.
-    |
-    | For detailed instructions you can look the google fonts section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
     */
 
     'google_fonts' => [
@@ -55,12 +38,6 @@ return [
     |--------------------------------------------------------------------------
     | Admin Panel Logo
     |--------------------------------------------------------------------------
-    |
-    | Here you can change the logo of your admin panel.
-    |
-    | For detailed instructions you can look the logo section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
     */
 
     'logo' => '<b>SISTEMA DE <br> INSCRIPCIÓN</b>',
@@ -74,13 +51,6 @@ return [
     |--------------------------------------------------------------------------
     | Authentication Logo
     |--------------------------------------------------------------------------
-    |
-    | Here you can setup an alternative logo to use on your login and register
-    | screens. When disabled, the admin panel logo will be used instead.
-    |
-    | For detailed instructions you can look the auth logo section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
     */
 
     'auth_logo' => [
@@ -98,15 +68,6 @@ return [
     |--------------------------------------------------------------------------
     | Preloader Animation
     |--------------------------------------------------------------------------
-    |
-    | Here you can change the preloader animation configuration. Currently, two
-    | modes are supported: 'fullscreen' for a fullscreen preloader animation
-    | and 'cwrapper' to attach the preloader animation into the content-wrapper
-    | element and avoid overlapping it with the sidebars and the top navbar.
-    |
-    | For detailed instructions you can look the preloader section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
     */
 
     'preloader' => [
@@ -125,17 +86,11 @@ return [
     |--------------------------------------------------------------------------
     | User Menu
     |--------------------------------------------------------------------------
-    |
-    | Here you can activate and change the user menu.
-    |
-    | For detailed instructions you can look the user menu section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => true ,
-    'usermenu_header_class' => 'bg-info',
+    'usermenu_header' => true,
+    'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
@@ -144,18 +99,12 @@ return [
     |--------------------------------------------------------------------------
     | Layout
     |--------------------------------------------------------------------------
-    |
-    | Here we change the layout of your admin panel.
-    |
-    | For detailed instructions you can look the layout section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
-    |
     */
 
     'layout_topnav' => null,
     'layout_boxed' => null,
     'layout_fixed_sidebar' => true,
-    'layout_fixed_navbar' => null,
+    'layout_fixed_navbar' => true,
     'layout_fixed_footer' => null,
     'layout_dark_mode' => null,
 
@@ -163,31 +112,19 @@ return [
     |--------------------------------------------------------------------------
     | Authentication Views Classes
     |--------------------------------------------------------------------------
-    |
-    | Here you can change the look and behavior of the authentication views.
-    |
-    | For detailed instructions you can look the auth classes section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
-    |
     */
 
-    'classes_auth_card' => 'card-outline card-info ',
+    'classes_auth_card' => 'card-outline card-primary',
     'classes_auth_header' => '',
     'classes_auth_body' => '',
     'classes_auth_footer' => '',
     'classes_auth_icon' => '',
-    'classes_auth_btn' => 'btn-flat btn-info',
+    'classes_auth_btn' => 'btn-flat btn-primary',
 
     /*
     |--------------------------------------------------------------------------
     | Admin Panel Classes
     |--------------------------------------------------------------------------
-    |
-    | Here you can change the look and behavior of the admin panel.
-    |
-    | For detailed instructions you can look the admin panel classes here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
-    |
     */
 
     'classes_body' => '',
@@ -196,7 +133,7 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-info elevation-4',
+    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
@@ -206,12 +143,6 @@ return [
     |--------------------------------------------------------------------------
     | Sidebar
     |--------------------------------------------------------------------------
-    |
-    | Here we can modify the sidebar of the admin panel.
-    |
-    | For detailed instructions you can look the sidebar section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
-    |
     */
 
     'sidebar_mini' => 'lg',
@@ -228,12 +159,6 @@ return [
     |--------------------------------------------------------------------------
     | Control Sidebar (Right Sidebar)
     |--------------------------------------------------------------------------
-    |
-    | Here we can modify the right sidebar aka control sidebar of the admin panel.
-    |
-    | For detailed instructions you can look the right sidebar section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
-    |
     */
 
     'right_sidebar' => false,
@@ -248,12 +173,6 @@ return [
     |--------------------------------------------------------------------------
     | URLs
     |--------------------------------------------------------------------------
-    |
-    | Here we can modify the url settings of the admin panel.
-    |
-    | For detailed instructions you can look the urls section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
     */
 
     'use_route_url' => false,
@@ -270,16 +189,6 @@ return [
     |--------------------------------------------------------------------------
     | Laravel Asset Bundling
     |--------------------------------------------------------------------------
-    |
-    | Here we can enable the Laravel Asset Bundling option for the admin panel.
-    | Currently, the next modes are supported: 'mix', 'vite' and 'vite_js_only'.
-    | When using 'vite_js_only', it's expected that your CSS is imported using
-    | JavaScript. Typically, in your application's 'resources/js/app.js' file.
-    | If you are not using any of these, leave it as 'false'.
-    |
-    | For detailed instructions you can look the asset bundling section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Other-Configuration
-    |
     */
 
     'laravel_asset_bundling' => false,
@@ -288,179 +197,198 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Custom CSS
+    |--------------------------------------------------------------------------
+    */
+    
+    'custom_css' => [
+        'css/admin-custom.css',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Menu Items
     |--------------------------------------------------------------------------
-    |
-    | Here we can modify the sidebar/top navigation of the admin panel.
-    |
-    | For detailed instructions you can look here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Menu-Configuration
-    |
     */
-  /*   'right_sidebar_links' => [
-        [
-            'text' => 'Configuracion 1',
-            'url' =>'#',
-            'icon' => 'fas fa-link',
-            'target' => null,
-        ],
-        [
-            'text' => 'Configuracion 2',
-            'url' =>'#',
-            'icon' => 'fas fa-street-view',
-            'target' => null,
-        ],
-        [
-            'text' => 'Configuracion 3',
-            'url' =>'#',
-            'icon' => 'fas fa-user',
-            'target' => null,
-        ],
-    ],
- */
+
     'menu' => [
-        // Navbar items:
 
-
-        // Sidebar items:
+        // Buscador en el sidebar
         [
             'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'text' => 'Buscar...',
         ],
 
+        // Dashboard
+        [
+            'text' => 'Panel Principal',
+            'url' => 'home',
+            'icon' => 'fas fa-fw fa-tachometer-alt',
+            'icon_color' => 'primary',
+            'active' => ['home', 'home/*'],
+        ],
+
+        // Separador
+        ['header' => 'GESTIÓN ACADÉMICA'],
+
+        // Año Escolar
         [
             'text' => 'Año Escolar',
             'url' => 'admin/anio_escolar',
-            'icon' => 'fas fa-fw fa-calendar',
-            'label_color' => 'success',
+            'icon' => 'fas fa-fw fa-calendar-alt',
+            'icon_color' => 'primary',
+            'active' => ['admin/anio_escolar', 'admin/anio_escolar/*'],
         ],
+
+        // Grados
+        [
+            'text' => 'Grados',
+            'url' => 'admin/grado',
+            'icon' => 'fas fa-fw fa-layer-group',
+            'icon_color' => 'primary',
+            'active' => ['admin/grado', 'admin/grado/*'],
+        ],
+
+        // Áreas de Formación
+        [
+            'text' => 'Áreas de Formación',
+            'url' => 'admin/area_formacion',
+            'icon' => 'fas fa-fw fa-book-open',
+            'icon_color' => 'primary',
+            'active' => ['admin/area_formacion', 'admin/area_formacion/*'],
+        ],
+
+        // Asignaciones
         [
             'text' => 'Asignaciones',
             'icon' => 'fas fa-fw fa-link',
+            'icon_color' => 'cyan',
+            'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*'],
             'submenu' => [
                 [
-                    'text' => 'Asignar grados a areas academicas',
+                    'text' => 'Grados a Áreas Académicas',
                     'url' => 'admin/transacciones/grado_area_formacion',
-                    'icon' => 'fas fa-arrow-right',
-                    'label_color' => 'success'
+                    'icon' => 'fas fa-fw fa-arrow-right',
+                    'active' => ['admin/transacciones/grado_area_formacion', 'admin/transacciones/grado_area_formacion/*'],
                 ],
                 [
-                    'text' => 'Asignar areas academicas a estudios realizados',
+                    'text' => 'Áreas a Estudios Realizados',
                     'url' => 'admin/transacciones/area_estudio_realizado',
-                    'icon' => 'fas fa-arrow-right',
-                    'label_color' => 'success'
-                ]
-            ],
-        ],   
-
-        [
-            'text' => 'Configuraciones',
-            'icon' => 'fas fa-fw fa-cog',
-            'submenu' => [
-                [
-                    'text' => 'Banco',
-                    'url' => 'admin/banco',
-                    'icon' => 'fas fa-fw fa-store',
-                    'label_color' => 'success',
+                    'icon' => 'fas fa-fw fa-arrow-right',
+                    'active' => ['admin/transacciones/area_estudio_realizado', 'admin/transacciones/area_estudio_realizado/*'],
                 ],
-                [
-                    'text' => 'Direccion',
-                    'icon' => 'fas fa-fw fa-map-pin',
-                    'submenu' => [
-                        [
-                            'text' => 'Estado',
-                            'url' => 'admin/estado',
-                            'icon' => 'fas fa-fw fa-globe',
-                            'label_color' => 'success',
-                        ],
-                        [
-                            'text' => 'Municipio',
-                            'url' => 'admin/municipio',
-                            'icon' => 'fas fa-fw fa-city',
-                            'label_color' => 'success',
-                        ],
-                        [
-                            'text' => 'Localidad',
-                            'url' => 'admin/localidad',
-                            'icon' => 'fas fa-fw fa-home',
-                            'label_color' => 'success',
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'Etnia Indigena',
-                    'url' => 'admin/etnia_indigena',
-                    'icon' => 'fas fa-fw fa-feather',
-                    'label_color' => 'success',
-                ],
-
-                [
-                    'text' => 'Ocupacion',
-                    'url' => 'admin/ocupacion',
-                    'icon' => 'fas fa-fw fa-briefcase',
-                    'label_color' => 'success',
-                ],
-                [
-                    'text' => 'Grado',
-                    'url' => 'admin/grado',
-                    'icon' => 'fas fa-fw fa-graduation-cap',
-                    'label_color' => 'success',
-                ],
-                [
-                    'text' => 'Area de Formacion',
-                    'url' => 'admin/area_formacion',
-                    'icon' => 'fas fa-fw fa-book',
-                    'label_color' => 'success',
-                ],
-                [
-                    'text' => 'Expresion Literaria',
-                    'url' => 'admin/expresion_literaria',
-                    'icon' => 'fas fa-fw fa-pen',
-                    'label_color' => 'success',
-                ],
-                [
-                    'text' => 'Discapacidad',
-                    'url' => 'admin/discapacidad',
-                    'icon' => 'fas fa-fw fa-wheelchair',
-                    'label_color' => 'success',
-                ],
-                [
-                    'text' => 'Prefijo de telefono',
-                    'url' => 'admin/prefijo_telefono',
-                    'icon' => 'fas fa-fw fa-phone',
-                    'label_color' => 'success',
-                ],
-                [
-                    'text' => 'Roles',
-                    'url' => 'admin/roles',
-                    'icon' => 'fas fa-fw fa-user',
-                    'label_color' => 'success',
-/*                     'classes' => 'bg-success text-white',*/
-                ],
-                [
-                    'text' => 'Estudios Realizados de Docentes',
-                    'url' => 'admin/estudios_realizados',
-                    'icon' => 'fas fa-fw fa-graduation-cap',
-                    'label_color' => 'success',
-                ],
-
             ],
         ],
-        
-    ],
 
-    
+        // Separador
+        ['header' => 'DATOS PERSONALES'],
+
+        // Personas
+        [
+            'text' => 'Etnias Indígenas',
+            'url' => 'admin/etnia_indigena',
+            'icon' => 'fas fa-fw fa-feather-alt',
+            'active' => ['admin/etnia_indigena', 'admin/etnia_indigena/*'],
+        ],
+
+        [
+            'text' => 'Discapacidades',
+            'url' => 'admin/discapacidad',
+            'icon' => 'fas fa-fw fa-wheelchair',
+            'active' => ['admin/discapacidad', 'admin/discapacidad/*'],
+        ],
+
+        [
+            'text' => 'Ocupaciones',
+            'url' => 'admin/ocupacion',
+            'icon' => 'fas fa-fw fa-briefcase',
+            'active' => ['admin/ocupacion', 'admin/ocupacion/*'],
+        ],
+
+        // Separador
+        ['header' => 'DOCENTES'],
+
+        [
+            'text' => 'Estudios Realizados',
+            'url' => 'admin/estudios_realizados',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'active' => ['admin/estudios_realizados', 'admin/estudios_realizados/*'],
+        ],
+
+        [
+            'text' => 'Expresiones Literarias',
+            'url' => 'admin/expresion_literaria',
+            'icon' => 'fas fa-fw fa-pen-fancy',
+            'active' => ['admin/expresion_literaria', 'admin/expresion_literaria/*'],
+        ],
+
+        // Separador
+        ['header' => 'UBICACIÓN GEOGRÁFICA'],
+
+        // Ubicaciones (agrupadas)
+        [
+            'text' => 'Ubicaciones',
+            'icon' => 'fas fa-fw fa-map-marked-alt',
+            'icon_color' => 'cyan',
+            'active' => ['admin/estado*', 'admin/municipio*', 'admin/localidad*'],
+            'submenu' => [
+                [
+                    'text' => 'Estados',
+                    'url' => 'admin/estado',
+                    'icon' => 'fas fa-fw fa-globe-americas',
+                    'active' => ['admin/estado', 'admin/estado/*'],
+                ],
+                [
+                    'text' => 'Municipios',
+                    'url' => 'admin/municipio',
+                    'icon' => 'fas fa-fw fa-city',
+                    'active' => ['admin/municipio', 'admin/municipio/*'],
+                ],
+                [
+                    'text' => 'Localidades',
+                    'url' => 'admin/localidad',
+                    'icon' => 'fas fa-fw fa-home',
+                    'active' => ['admin/localidad', 'admin/localidad/*'],
+                ],
+            ],
+        ],
+
+        // Separador
+        ['header' => 'CONFIGURACIÓN GENERAL'],
+
+        // Bancos
+        [
+            'text' => 'Bancos',
+            'url' => 'admin/banco',
+            'icon' => 'fas fa-fw fa-university',
+            'active' => ['admin/banco', 'admin/banco/*'],
+        ],
+
+        // Prefijos de Teléfono
+        [
+            'text' => 'Prefijos de Teléfono',
+            'url' => 'admin/prefijo_telefono',
+            'icon' => 'fas fa-fw fa-phone-alt',
+            'active' => ['admin/prefijo_telefono', 'admin/prefijo_telefono/*'],
+        ],
+
+        // Separador
+        ['header' => 'ADMINISTRACIÓN'],
+
+        // Roles y Permisos
+        [
+            'text' => 'Roles y Permisos',
+            'url' => 'admin/roles',
+            'icon' => 'fas fa-fw fa-user-shield',
+            'icon_color' => 'warning',
+            'active' => ['admin/roles', 'admin/roles/*'],
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
     | Menu Filters
     |--------------------------------------------------------------------------
-    |
-    | Here we can modify the menu filters of the admin panel.
-    |
-    | For detailed instructions you can look the menu filters section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Menu-Configuration
-    |
     */
 
     'filters' => [
@@ -477,12 +405,6 @@ return [
     |--------------------------------------------------------------------------
     | Plugins Initialization
     |--------------------------------------------------------------------------
-    |
-    | Here we can modify the plugins used inside the admin panel.
-    |
-    | For detailed instructions you can look the plugins section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Plugins-Configuration
-    |
     */
 
     'plugins' => [
@@ -555,7 +477,6 @@ return [
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
                 ],
             ],
-
         ],
         'bootstrap' => [
             'active' => true,
@@ -563,17 +484,17 @@ return [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+                    'location' => 'https://code.jquery.com/jquery-3.6.0.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
                 ],
                 [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
-                ],
-                [
-                    'type' => 'js',
-                    'asset' => false,
-                    'location' => '//cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js',
                 ],
                 [
                     'type' => 'css',
@@ -585,17 +506,6 @@ return [
                     'asset' => false,
                     'location' => '//cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js',
                 ],
-                [
-                    'type' => 'css',
-                    'asset' => false,
-                    'location' => 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
-                ],
-                [
-                    'type' => 'js',
-                    'asset' => false,
-                    'location' => 'https://code.jquery.com/jquery-3.6.0.min.js',
-                ],
-
             ],
         ],
     ],
@@ -604,13 +514,6 @@ return [
     |--------------------------------------------------------------------------
     | IFrame
     |--------------------------------------------------------------------------
-    |
-    | Here we change the IFrame mode configuration. Note these changes will
-    | only apply to the view that extends and enable the IFrame mode.
-    |
-    | For detailed instructions you can look the iframe mode section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/IFrame-Mode-Configuration
-    |
     */
 
     'iframe' => [
@@ -637,12 +540,6 @@ return [
     |--------------------------------------------------------------------------
     | Livewire
     |--------------------------------------------------------------------------
-    |
-    | Here we can enable the Livewire support.
-    |
-    | For detailed instructions you can look the livewire here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Other-Configuration
-    |
     */
 
     'livewire' => false,

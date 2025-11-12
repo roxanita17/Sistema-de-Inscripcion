@@ -14,7 +14,7 @@ class AreaEstudioRealizado extends Model
 
     protected $fillable = [
         'area_formacion_id',
-        'titulo_universitario_id',
+        'estudios_id',
         'status',
     ];
 
@@ -27,7 +27,7 @@ class AreaEstudioRealizado extends Model
     // Relación: pertenece a un título universitario (estudio realizado)
     public function estudio_realizado()
     {
-        return $this->belongsTo(EstudiosRealizado::class, 'titulo_universitario_id', 'id');
+        return $this->belongsTo(EstudiosRealizado::class, 'estudios_id', 'id');
     }
 }
 

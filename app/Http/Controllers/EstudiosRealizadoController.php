@@ -22,11 +22,11 @@ class EstudiosRealizadoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'titulo_universitario' => 'required|string|max:255',
+            'estudios' => 'required|string|max:255',
         ]);
 
         // Verificar si ya existe un área de formación activa con el mismo nombre
-        $existe = EstudiosRealizado::where('titulo_universitario', $validated['titulo_universitario'])
+        $existe = EstudiosRealizado::where('estudios', $validated['estudios'])
             ->where('status', true)
             ->exists();
 
@@ -38,7 +38,7 @@ class EstudiosRealizadoController extends Controller
 
         try {
             $estudiosRealizados = new EstudiosRealizado();
-            $estudiosRealizados->titulo_universitario = $validated['titulo_universitario'];
+            $estudiosRealizados->estudios = $validated['estudios'];
             $estudiosRealizados->status = true;
             $estudiosRealizados->save();
 
@@ -60,11 +60,11 @@ class EstudiosRealizadoController extends Controller
         $estudiosRealizados = EstudiosRealizado::findOrFail($id);
 
         $validated = $request->validate([
-            'titulo_universitario' => 'required|string|max:255',
+            'estudios' => 'required|string|max:255',
         ]);
 
         // Verificar si ya existe otra área de formación activa con el mismo nombre
-        $existe = EstudiosRealizado::where('titulo_universitario', $validated['titulo_universitario'])
+        $existe = EstudiosRealizado::where('estudios', $validated['estudios'])
             ->where('status', true)
             ->where('id', '!=', $estudiosRealizados->id)
             ->exists();
@@ -76,7 +76,7 @@ class EstudiosRealizadoController extends Controller
         }
 
         try {
-            $estudiosRealizados->titulo_universitario = $validated['titulo_universitario'];
+            $estudiosRealizados->estudios = $validated['estudios'];
             $estudiosRealizados->save();
 
             return redirect()

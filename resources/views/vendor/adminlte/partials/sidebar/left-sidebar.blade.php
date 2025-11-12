@@ -5,7 +5,7 @@
         @include('adminlte::partials.common.brand-logo-xl')
     @else
         @include('adminlte::partials.common.brand-logo-xs')
-    @endif
+    @endif 
 
     {{-- Sidebar menu --}}
     <div class="sidebar">

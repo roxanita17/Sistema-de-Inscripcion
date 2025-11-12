@@ -18,7 +18,7 @@ return new class extends Migration
                 ->constrained('area_formacions')
                 ->onDelete('cascade');
 
-            $table->foreignId('titulo_universitario_id')
+            $table->foreignId('estudios_id')
                 ->constrained('estudios_realizados')
                 ->onDelete('cascade');
 
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Evita duplicados del mismo grado y área con un nombre más corto para el índice
-            $table->unique(['area_formacion_id', 'titulo_universitario_id'], 'area_formacion_titulo_unique');
+            $table->unique(['area_formacion_id', 'estudios_id'], 'area_formacion_titulo_unique');
                 });
     }
 

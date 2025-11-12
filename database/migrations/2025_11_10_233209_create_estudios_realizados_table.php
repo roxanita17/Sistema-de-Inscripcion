@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('estudios_realizados', function (Blueprint $table) {
             $table->id();
-            $table->string('titulo_universitario');
+            $table->string('estudios');
             $table->boolean('status');
             $table->timestamps();
         });

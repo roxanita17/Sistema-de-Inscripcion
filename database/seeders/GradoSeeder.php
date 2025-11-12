@@ -16,6 +16,6 @@ class GradoSeeder extends Seeder
             ['numero_grado' => '4', 'status' => true, 'capacidad_max'=> '100', 'min_seccion'=> '30', 'max_seccion'=> '25'], 
             ['numero_grado' => '5', 'status' => true, 'capacidad_max'=> '100', 'min_seccion'=> '30', 'max_seccion'=> '25'],
         ]);
-        $this->command->info('Grados insertados correctamente.');
+        $this->command->info(string: 'Grados insertados correctamente.');
     }
 }

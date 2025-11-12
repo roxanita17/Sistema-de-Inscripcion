@@ -4,7 +4,7 @@
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\PreloaderHelper')
 
 @section('adminlte_css')
-    @stack('css')
+    @stack('css') 
     @yield('css')
 @stop
 

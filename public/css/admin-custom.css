@@ -1,0 +1,161 @@
+/* ===================================
+   MENÚ ACTIVO - ESTILOS PERSONALIZADOS
+   =================================== */
+
+/* Color morado/info para items activos */
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #6f42c1 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(111, 66, 193, 0.3);
+    border-left: 4px solid #8b5cf6;
+}
+
+/* Hover en items activos */
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active:hover {
+    background-color: #8b5cf6 !important;
+    transform: translateX(2px);
+    transition: all 0.3s ease;
+}
+
+/* Iconos en items activos */
+.sidebar-dark-primary .nav-sidebar > .nav-link.active .nav-icon {
+    color: #ffffff !important;
+}
+
+/* Submenú activo */
+.sidebar-dark-primary .nav-treeview > .nav-item > .nav-link.active {
+    background-color: rgba(111, 66, 193, 0.2) !important;
+    color: #c4b5fd !important;
+    border-left: 3px solid #8b5cf6;
+    padding-left: 2rem !important;
+}
+
+/* Hover en submenú activo */
+.sidebar-dark-primary .nav-treeview > .nav-item > .nav-link.active:hover {
+    background-color: rgba(111, 66, 193, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* Menu padre cuando tiene hijo activo */
+.sidebar-dark-primary .nav-sidebar > .nav-item.menu-open > .nav-link {
+    background-color: rgba(111, 66, 193, 0.15) !important;
+    color: #c4b5fd !important;
+}
+
+/* Animación suave en transiciones */
+.nav-sidebar .nav-link {
+    transition: all 0.3s ease;
+}
+
+/* Badge o indicador de activo */
+.nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    background: linear-gradient(180deg, #8b5cf6, #6f42c1);
+    border-radius: 0 4px 4px 0;
+}
+
+/* Alternativa con color info (azul claro) */
+.sidebar-info-active .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+    border-left: 4px solid #3fc3ee;
+}
+
+.sidebar-info-active .nav-sidebar > .nav-item > .nav-link.active:hover {
+    background-color: #3fc3ee !important;
+}
+
+/* ===================================
+   MEJORAS VISUALES ADICIONALES
+   =================================== */
+
+/* Separadores de sección con mejor estilo */
+.sidebar-dark-primary .nav-header {
+    color: #8b5cf6 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+}
+
+/* Efecto de profundidad en el sidebar */
+.main-sidebar {
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Items no activos con hover suave */
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    transform: translateX(2px);
+}
+
+/* Iconos con transición suave */
+.nav-icon {
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover .nav-icon {
+    transform: scale(1.1);
+}
+
+/* Barra de búsqueda mejorada */
+.sidebar-dark-primary .form-control-sidebar {
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-dark-primary .form-control-sidebar:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.25);
+}
+
+/* Mejora en el logo/brand */
+.brand-link {
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2) !important;
+}
+
+.brand-link:hover {
+    background-color: rgba(139, 92, 246, 0.05) !important;
+}
+
+/* Animación de entrada para el menú */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.nav-item {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Scrollbar personalizado para el sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.8);
+}

@@ -11,7 +11,7 @@ class EstudiosRealizado extends Model
     use HasFactory;
     protected $table = 'estudios_realizados';
     protected $fillable = [
-        'titulo_universitario',
+        'estudios',
         'status',
     ];
 }

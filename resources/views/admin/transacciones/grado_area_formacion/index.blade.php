@@ -1,133 +1,225 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/createModal.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/editModal.css') }}">
+@stop
+
+@section('title', 'Gestión de Asignación de Grados a Áreas de Formación')
 
 @section('content_header')
-    <h1>Asignacion de Grados a Area de Formacion</h1>
+    <div class="content-header-modern">
+        <div class="header-content">
+            <div class="header-title">
+                <div class="icon-wrapper">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div>
+                    <h1 class="title-main">Asignación de Grados a Áreas de Formación</h1>
+                    <p class="title-subtitle">Gestión de vínculos entre grados académicos y áreas formativas</p>
+                </div>
+            </div>
+            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
+                <i class="fas fa-plus"></i>
+                <span>Nueva Asignación</span>
+            </button>
+        </div>
+    </div>
 @stop
 
 @section('content')
-<div class="container mt-4">
+    <div class="main-container">
 
+        {{-- Incluir modal de creación --}}
+        @include('admin.transacciones.grado_area_formacion.modales.createModal')
 
+        {{-- Alertas modernas --}}
+        @if (session('success') || session('error'))
+        <div class="alerts-container">
+            @if (session('success'))
+                <div class="alert-modern alert-success alert alert-dismissible fade show" role="alert">
+                    <div class="alert-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>¡Éxito!</h4>
+                        <p>{{ session('success') }}</p>
+                    </div>
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
 
-@include('admin.transacciones.grado_area_formacion.modales.createModal')
-
-
-    {{-- Contenedor de alertas --}}
-    <div id="contenedorAlertas">
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            </div>
+            @if (session('error'))
+                <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
+                    <div class="alert-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>Error</h4>
+                        <p>{{ session('error') }}</p>
+                    </div>
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
+        </div>
         @endif
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        {{-- Tarjeta moderna --}}
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <div>
+                        <h3>Listado de Asignaciones</h3>
+                        <p>{{ $gradoAreaFormacion->count() }} registros encontrados</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="date-badge">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{{ now()->translatedFormat('d M Y') }}</span>
+                    </div>
+                </div>
             </div>
-        @endif
-    </div>
 
-    {{-- Botón para abrir la modal de crear grado --}}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
-        <i class="fas fa-plus"></i> Asignar Grado a Area de Formacion
-    </button>
+            <div class="card-body-modern">
+                <div class="table-wrapper">
+                    <table class="table-modern overflow-hidden">
+                        <thead>
+                           <tr>
+                                <th width="60">#</th>
+                                <th>Código</th>
+                                <th width="180">Grado</th>
+                                <th>Área de Formación</th>
+                                <th width="120">Estado</th>
+                                <th width="180">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($gradoAreaFormacion as $index => $datos)
+                                <tr class="table-row-hover row-12">
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>
+                                        <div class="number-badge" style="padding: 0.5rem 1rem; min-width: 200px;">
+                                            {{ $datos->codigo }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <i class="fas fa-graduation-cap text-primary me-2"></i>
+                                            <span class="fw-semibold">{{ $datos->grado->numero_grado ?? '—' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <i class="fas fa-bookmark text-secondary me-2"></i>
+                                            <span>{{ $datos->area_formacion->nombre_area_formacion ?? '—' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if ($datos->status)
+                                            <span class="status-badge status-active">
+                                                <span class="status-dot"></span>
+                                                Activo
+                                            </span>
+                                        @else
+                                            <span class="status-badge status-inactive">
+                                                <span class="status-dot"></span>
+                                                Inactivo
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            {{-- Ver --}}
+                                            <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#viewModal{{ $datos->id }}" title="Ver Detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            @include('admin.transacciones.grado_area_formacion.modales.showModal')
 
-    {{-- Tabla de años escolares --}}
-    <div class="table-responsive">
-        <table class="table table-striped align-middle text-center" id="tablaGradoAreaFormacion">
-            <thead class="table-primary">
-                <tr>
-                    {{-- <th>N°</th> --}}
-                    <th>Codigo</th>
-                    <th>Grado</th>
-                    <th>Area de Formacion</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyGradoAreaFormacion">
-                @if ($gradoAreaFormacion->isEmpty())
-                                <tr>
-                                    <td colspan="4" style="text-align: center;">No se encontraron grados.</td>
-                                </tr>
-                            @endif
-                @foreach ($gradoAreaFormacion as $datos)
-                @if ($datos->status == true)
-                    <tr>
-                        <td>{{ $datos->codigo}}</td>
-                        <td>{{ $datos->grado->numero_grado}}</td>
-                        <td>{{ $datos->area_formacion->nombre_area_formacion }}</td>
-                        <td>
-                            @if ($datos->status == true)
-                                <span class="badge bg-success">Activo</span>
-                            @else
-                                <span class="badge bg-danger">Inactivo</span>
-                            @endif
-                        </td>
-                        <td>
-                            {{-- Ver detalles --}}
-                            <a href="#viewModal{{ $datos->id }}" 
-                                class="btn btn-info btn-sm" 
-                                title="Ver detalles"
-                                data-bs-toggle="modal" 
-                                data-bs-target="#viewModal{{ $datos->id }}">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            @include('admin.transacciones.grado_area_formacion.modales.showModal')
+                                            {{-- Editar --}}
+                                            <button type="button" class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#viewModalEditar{{ $datos->id }}" title="Editar">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            
 
-                            {{-- Editar --}}
-                            <a href="#viewModalEditar{{ $datos->id }}" 
-                                class="btn btn-warning btn-sm" 
-                                title="Editar"
-                                data-bs-toggle="modal" 
-                                data-bs-target="#viewModalEditar{{ $datos->id }}">
-                                <i class="fas fa-pen text-white"></i>
-                            </a>
-
-                            @include('admin.transacciones.grado_area_formacion.modales.editModal')
-
-                            <!-- Eliminar -->
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
-                                <i class="fas fa-trash text-white"></i>
-                            </button>
-                            <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalLabel{{ $datos->id }}">
-                                                Confirmar Inactivación</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                                                <span aria-hidden="true">&times;</span>
+                                            {{-- Eliminar --}}
+                                            <button type="button" class="action-btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $datos->id }}" title="Eliminar">
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
-                                        <div class="modal-body">
-                                            ¿Estás seguro de que deseas eliminar este grado?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <form action="{{ url('admin/transacciones/grado_area_formacion/' . $datos->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                @endif
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
 
+                                        
+                                    </td>
+                                </tr>
+
+                                @include('admin.transacciones.grado_area_formacion.modales.editModal')
+
+                                {{-- Modal Eliminar --}}
+                                        <div class="modal fade" id="deleteModal{{ $datos->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $datos->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content modal-modern">
+                                                    <div class="modal-header-delete">
+                                                        <div class="modal-icon-delete">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </div>
+                                                        <h5 class="modal-title-delete" id="deleteModalLabel{{ $datos->id }}">Confirmar Eliminación</h5>
+                                                        <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body-delete">
+                                                        <p class="delete-message">¿Estás seguro de que deseas eliminar esta asignación?</p>
+                                                        <p class="delete-warning">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                                            Esta acción no se puede deshacer
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer-delete">
+                                                        <form action="{{ url('admin/transacciones/grado_area_formacion/' . $datos->id) }}" method="POST" class="w-100">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <div class="footer-buttons">
+                                                                <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                                                    Cancelar
+                                                                </button>
+                                                                <button type="submit" class="btn-modal-delete">
+                                                                    <i class="fas fa-trash me-1"></i>
+                                                                    Eliminar
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                            @empty
+                                <tr>
+                                    
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <div class="empty-icon">
+                                                <i class="fas fa-inbox"></i>
+                                            </div>
+                                            <h4>No hay asignaciones registradas</h4>
+                                            <p>Comienza creando una nueva asignación usando el botón superior</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 @endsection
-
-

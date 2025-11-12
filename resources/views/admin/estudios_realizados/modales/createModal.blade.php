@@ -13,11 +13,11 @@
                 <form action="{{ route('admin.estudios_realizados.modales.store') }}" method="POST" id="formCrearEstudiosRealizados">
                     @csrf
                     <div class="mb-3">
-                        <label for="titulo_universitario" class="form-label">Nombre del estudio realizado</label>
-                        <input type="text" class="form-control" id="titulo_universitario" name="titulo_universitario" required>
+                        <label for="estudios" class="form-label">Nombre del estudio realizado</label>
+                        <input type="text" class="form-control" id="estudios" name="estudios" required>
                     </div>
 
-                    @error('titulo_universitario')
+                    @error('estudios')
                         <div class="alert text-danger p-0 m-0">
                             <b>{{ 'Este campo es obligatorio.' }}</b>
                         </div>
