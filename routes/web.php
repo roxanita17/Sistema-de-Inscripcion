@@ -67,12 +67,12 @@ Route::delete('/admin/grado/{id}', [App\Http\Controllers\GradoController::class,
 Route::get('admin/area_formacion', [App\Http\Controllers\AreaFormacionController::class, 'index'])->name('admin.area_formacion.index');
 Route::post('admin/area_formacion/modales/store', [App\Http\Controllers\AreaFormacionController::class, 'store'])->name('admin.area_formacion.modales.store');
 Route::post('admin/area_formacion/{id}/update', [App\Http\Controllers\AreaFormacionController::class, 'update'])->name('admin.area_formacion.modales.update');
-Route::delete('/admin/area_formacion/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroy'])->name('admin.area_formacion.destroy');
+Route::delete('admin/area_formacion/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroy'])->name('admin.area_formacion.destroy');
 
 /* Grupo Estable */
 Route::post('admin/area_formacion/modalesGrupoEstable/storeGrupoEstable', [App\Http\Controllers\AreaFormacionController::class, 'storeGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.storeGrupoEstable');
 Route::post('admin/area_formacion/{id}/updateGrupoEstable', [App\Http\Controllers\AreaFormacionController::class, 'updateGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.updateGrupoEstable');
-Route::delete('/admin/area_formacion/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroyGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.destroyGrupoEstable');
+Route::delete('admin/grupo_estable/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroyGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.destroyGrupoEstable');
 
 /* Expresion Literaria */
 Route::get('admin/expresion_literaria', [App\Http\Controllers\ExpresionLiterariaController::class, 'index'])->name('admin.expresion_literaria.index');

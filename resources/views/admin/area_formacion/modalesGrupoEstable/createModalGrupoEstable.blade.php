@@ -1,47 +1,56 @@
-<!-- Modal Crear Municipio -->
-<div class="modal fade" id="modalCrearGrupoEstable" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="modalCrearGrupoEstableLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalCrearGrupoEstableLabel">Registrar Grupo Estable</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+<!-- Modal Crear Area de Formación -->
+<div class="modal fade" id="modalCrearGrupoEstable" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearGrupoEstableLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-modern">
+            <div class="modal-header-create">
+                <div class="modal-icon-create">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h5 class="modal-title-create" id="modalCrearGrupoEstableLabel">Nuevo Grupo Estable</h5>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <div class="modal-body">
-                <form action="{{ route('admin.area_formacion.modalesGrupoEstable.storeGrupoEstable') }}" method="POST" id="formCrearGrupoEstable">
+            <div class="modal-body-create">
+                <form id="formGrupoEstable" action="{{ route('admin.area_formacion.modalesGrupoEstable.storeGrupoEstable') }}" method="POST">
                     @csrf
 
-                    <div class="mb-3">
-                        <label for="nombre_grupo_estable" class="form-label">Nombre del grupo estable</label>
-                        <input type="text" class="form-control" id="nombre_grupo_estable" name="nombre_grupo_estable" required>
-                    </div>
+                    <!-- Nombre del area de formación -->
+                    <div class="form-group-modern">
+                        <label for="nombre_grupo_estable" class="form-label-modern">
+                            <i class="fas fa-book"></i>
+                            Nombre del grupo estable
+                        </label>
+                        <input type="text" 
+                            name="nombre_grupo_estable" 
+                            id="nombre_grupo_estable" 
+                            class="form-control-modern" 
+                            placeholder="Ingrese el nombre del grupo estable"
+                            required>
+                        
+                        @error('nombre_grupo_estable')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
+                    </div>              
 
-                    @error('nombre_grupo_estable')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
+                    {{-- Botones --}}
+                    <div class="modal-footer-create">
+                        <div class="footer-buttons">
+                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i>
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-modal-create">
+                                <i class="fas fa-save me-1"></i>
+                                Guardar
+                            </button>
                         </div>
-                    @enderror
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" form="formCrearGrupoEstable">
-                            Guardar
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
                     </div>
-
                 </form>
             </div>
-
         </div>
     </div>
 </div>
-
-
-
-
-
-

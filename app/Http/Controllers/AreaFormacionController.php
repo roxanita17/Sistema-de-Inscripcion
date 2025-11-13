@@ -13,8 +13,11 @@ class AreaFormacionController extends Controller
      */
     public function index()
     {
-        $grupoEstable = GrupoEstable::orderBy('nombre_grupo_estable', 'asc')->get();
-        $areaFormacion = AreaFormacion::orderBy('nombre_area_formacion', 'asc')->get();
+        // Traer solo materias activas y paginarlas (10 por página)
+        $areaFormacion = AreaFormacion::where('status', true)->orderBy('nombre_area_formacion', 'asc')->paginate(5);
+
+        // Traer solo grupos estables activos y paginarlos (10 por página)
+        $grupoEstable = GrupoEstable::where('status', true)->orderBy('nombre_grupo_estable', 'asc')->paginate(5);
 
         return view('admin.area_formacion.index', compact('areaFormacion', 'grupoEstable'));
     }
