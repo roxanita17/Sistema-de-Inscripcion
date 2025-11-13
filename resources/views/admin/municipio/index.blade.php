@@ -30,11 +30,11 @@
                 }
             });
 
-            // 🧹 Eliminar manualmente los backdrop (fondo oscuro)
+            //Eliminar manualmente los backdrop (fondo oscuro)
             const backdrops = document.querySelectorAll('.modal-backdrop');
             backdrops.forEach(backdrop => backdrop.remove());
 
-            // 🧼 Asegurar que el body se desbloquee
+            // Asegurar que el body se desbloquee
             document.body.classList.remove('modal-open');
             document.body.style.overflow = '';
             document.body.style.paddingRight = '';

@@ -10,8 +10,9 @@ use App\Models\Localidad;
 use App\Models\Ocupacion;
 use App\Models\EstudiosRealizado;
 use App\Models\AreaEstudioRealizado;
-use App\Models\User;
+use App\Models\GradoAreaFormacion;
 use Illuminate\Database\Seeder;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
@@ -46,9 +47,10 @@ class DatabaseSeeder extends Seeder
             EstadoSeeder::class,
             MunicipioSeeder::class,
             LocalidadSeeder::class,
-/*             EstudiosRealizadoSeeder::class,
- *//*             AreaEstudioRealizadoSeeder::class,
- */        ]);
+            EstudiosRealizadoSeeder::class,
+            AreaEstudioRealizadoSeeder::class,
+            GradoAreaFormacionSeeder::class,
+        ]);
         $this->command->info('¡Base de datos poblada con éxito!');
 
     }

@@ -18,7 +18,7 @@ class MunicipioSeeder extends Seeder
             ['id' => 5, 'estado_id' => 1, 'nombre_municipio' => 'Manapiare'],
             ['id' => 6, 'estado_id' => 1, 'nombre_municipio' => 'Maroa'],
             ['id' => 7, 'estado_id' => 1, 'nombre_municipio' => 'Río Negro'],
-            /*['id' => 8, 'estado_id' => 2, 'nombre_municipio' => 'Anaco'],
+            ['id' => 8, 'estado_id' => 2, 'nombre_municipio' => 'Anaco'],
             ['id' => 9, 'estado_id' => 2, 'nombre_municipio' => 'Aragua'],
             ['id' => 10, 'estado_id' => 2, 'nombre_municipio' => 'Manuel Ezequiel Bruzual'],
             ['id' => 11, 'estado_id' => 2, 'nombre_municipio' => 'Diego Bautista Urbaneja'],
@@ -345,7 +345,7 @@ class MunicipioSeeder extends Seeder
             ['id' => 459, 'estado_id' => 23, 'nombre_municipio' => 'Simón Bolívar'],
             ['id' => 460, 'estado_id' => 23, 'nombre_municipio' => 'Sucre'],
             ['id' => 461, 'estado_id' => 23, 'nombre_municipio' => 'Valmore Rodríguez'],
-            ['id' => 462, 'estado_id' => 24, 'nombre_municipio' => 'Libertador'] */
+            ['id' => 462, 'estado_id' => 24, 'nombre_municipio' => 'Libertador'] ,
     ];
 
     $this->command->info('Municipios insertados correctamente.');

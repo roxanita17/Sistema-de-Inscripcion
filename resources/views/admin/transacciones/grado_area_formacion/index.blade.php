@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/createModal.css') }}">
     <link rel="stylesheet" href="{{ asset('css/editModal.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
 
 @section('title', 'Gestión de Asignación de Grados a Áreas de Formación')
@@ -91,7 +92,7 @@
 
             <div class="card-body-modern">
                 <div class="table-wrapper">
-                    <table class="table-modern overflow-hidden">
+                    <table class="table-modern overflow-hidden hidden">
                         <thead>
                            <tr>
                                 <th width="60">#</th>
@@ -104,7 +105,7 @@
                         </thead>
                         <tbody>
                             @forelse ($gradoAreaFormacion as $index => $datos)
-                                <tr class="table-row-hover row-12">
+                                <tr class="table-row-hover  row-12">
                                     <td>{{ $index + 1 }}</td>
                                     <td>
                                         <div class="number-badge" style="padding: 0.5rem 1rem; min-width: 200px;">
@@ -220,6 +221,8 @@
             </div>
         </div>
     </div>
+
+<x-pagination :paginator="$gradoAreaFormacion" />
 
 
 @endsection

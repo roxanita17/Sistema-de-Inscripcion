@@ -20,7 +20,7 @@ class GradoAreaFormacionController extends Controller
             ->join('grados', 'grados.id', '=', 'grado_area_formacions.grado_id')
             ->orderBy('grados.numero_grado', 'asc')
             ->select('grado_area_formacions.*')
-            ->get();
+            ->paginate(10);
 
         // Se obtienen los grados activos
         $grados = Grado::where('status', true)

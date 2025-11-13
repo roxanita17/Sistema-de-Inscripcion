@@ -78,10 +78,10 @@ class AreaEstudioRealizadoSeeder extends Seeder
                     'status' => true,
                 ]);
             } else {
-                $this->command->warn("⚠️ No se pudo asociar: {$asignacion['area']} ↔ {$asignacion['titulo']}");
+                $this->command->warn("No se pudo asociar: {$asignacion['area']} ↔ {$asignacion['titulo']}");
             }
         }
 
-        $this->command->info('✅ Áreas de Formación y Estudios Realizados asociados correctamente.');
+        $this->command->info('Áreas de Formación y Estudios Realizados asociados correctamente.');
     }
 }

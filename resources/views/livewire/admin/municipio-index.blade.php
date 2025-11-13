@@ -22,7 +22,7 @@
         <i class="fas fa-plus"></i> Crear Municipio
     </button>
 
-    {{-- ✅ INCLUYE LAS MODALES DENTRO DEL MISMO DIV PRINCIPAL --}}
+    {{-- INCLUYE LAS MODALES DENTRO DEL MISMO DIV PRINCIPAL --}}
     @include('admin.municipio.modales.createModal')
     @include('admin.municipio.modales.editModal')
 

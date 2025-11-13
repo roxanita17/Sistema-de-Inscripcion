@@ -19,7 +19,7 @@ class AreaEstudioRealizadoController extends Controller
             ->join('area_formacions', 'area_formacions.id', '=', 'area_estudio_realizados.area_formacion_id')
             ->orderBy('area_formacions.nombre_area_formacion', 'asc')
             ->select('area_estudio_realizados.*')
-            ->get();
+            ->paginate(10);
 
         $area_formacion = AreaFormacion::where('status', true)
             ->orderBy('nombre_area_formacion', 'asc')

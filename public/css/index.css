@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Variables de colores */
     :root {
         --primary: #4f46e5;
@@ -458,7 +460,6 @@
     .modal-modern {
         border: none;
         border-radius: var(--radius-lg);
-        overflow: hidden;
     }
 
     .modal-header-delete {

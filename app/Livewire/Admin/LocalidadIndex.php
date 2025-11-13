@@ -18,7 +18,7 @@ class LocalidadIndex extends Component
     public $localidad_id;
     public $updateMode = false;
 
-    public $municipios = []; // 👈 municipios dinámicos filtrados
+    public $municipios = []; //municipios dinámicos filtrados
 
     protected $rules = [
         'nombre_localidad' => 'required|string|max:255',
@@ -36,7 +36,7 @@ class LocalidadIndex extends Component
         return view('livewire.admin.localidad-index', compact('estados', 'localidades'));
     }
 
-    // 🔁 Cuando cambia el estado, actualizamos los municipios
+    //Cuando cambia el estado, actualizamos los municipios
     public function updatedEstadoId($estado_id)
     {
         $this->municipios = Municipio::where('estado_id', $estado_id)
@@ -44,7 +44,7 @@ class LocalidadIndex extends Component
             ->orderBy('nombre_municipio', 'asc')
             ->get();
 
-        $this->municipio_id = null; // Reinicia el select dependiente
+        $this->municipio_id = null; //Reinicia el select dependiente
     }
 
     public function resetInputFields()
@@ -77,22 +77,30 @@ class LocalidadIndex extends Component
         $this->resetInputFields();
     }
 
+
+
     public function edit($id)
     {
-        $localidad = Localidad::findOrFail($id);
-        $this->localidad_id = $id;
-        $this->nombre_localidad = $localidad->nombre_localidad;
-        $this->estado_id = $localidad->estado_id;
-        $this->municipio_id = $localidad->municipio_id;
+    $localidad = Localidad::with('municipio.estado')->findOrFail($id);
 
-        // 👇 Cargar municipios del estado actual al editar
-        $this->municipios = Municipio::where('estado_id', $this->estado_id)
-            ->where('status', true)
-            ->orderBy('nombre_municipio', 'asc')
-            ->get();
+    $this->localidad_id = $localidad->id;
+    $this->nombre_localidad = $localidad->nombre_localidad;
 
-        $this->updateMode = true;
+    //Obtenemos correctamente el estado desde la relación
+    $this->estado_id = $localidad->municipio->estado->id ?? null;
+    $this->municipio_id = $localidad->municipio->id ?? null;
+
+    //Cargamos los municipios de ese estado
+    if ($this->estado_id) {
+        $this->municipios = Municipio::where('estado_id', $this->estado_id)->get();
+    } else {
+        $this->municipios = [];
     }
+
+    //Mostrar el modal
+    $this->dispatch('abrirModalEditar');
+}
+
 
     public function update()
     {
@@ -101,8 +109,8 @@ class LocalidadIndex extends Component
         $localidad = Localidad::findOrFail($this->localidad_id);
         $localidad->update([
             'nombre_localidad' => $this->nombre_localidad,
-            'estado_id' => $this->estado_id,
             'municipio_id' => $this->municipio_id,
+
         ]);
 
         session()->flash('success', 'Localidad actualizada correctamente.');

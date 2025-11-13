@@ -20,7 +20,7 @@ class LocalidadSeeder extends Seeder
             [ 'municipio_id' => 1, 'nombre_localidad' => 'Marawaka Toky Shamanaña'],
             [ 'municipio_id' => 1, 'nombre_localidad' => 'Mavaka Mavaka'],
             [ 'municipio_id' => 1, 'nombre_localidad' => 'Sierra Parima Parimabé'],
-            /*[ 'municipio_id' => 2, 'nombre_localidad' => 'Ucata Laja Lisa'],
+            [ 'municipio_id' => 2, 'nombre_localidad' => 'Ucata Laja Lisa'],
             [ 'municipio_id' => 2, 'nombre_localidad' => 'Yapacana Macuruco'],
             [ 'municipio_id' => 2, 'nombre_localidad' => 'Caname Guarinuma'],
             [ 'municipio_id' => 3, 'nombre_localidad' => 'Fernando Girón Tovar'],
@@ -1152,7 +1152,7 @@ class LocalidadSeeder extends Seeder
             [ 'municipio_id' => 462, 'nombre_localidad'=> 'Santa Rosalía',],
             [ 'municipio_id' => 462, 'nombre_localidad'=> 'Santa Teresa', ],
             [ 'municipio_id' => 462, 'nombre_localidad'=> 'Sucre (Catia)',],
-            [ 'municipio_id' => 462, 'nombre_localidad'=> '23 de enero', ], */
+            [ 'municipio_id' => 462, 'nombre_localidad'=> '23 de enero', ], 
         
         ];
         $this->command->info('Localidades insertadas correctamente.');

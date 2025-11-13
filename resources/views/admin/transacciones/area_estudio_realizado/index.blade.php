@@ -1,96 +1,150 @@
-@extends('adminlte::page')
-
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/createModal.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/editModal.css') }}">
-@stop
-
-
-
-
+{{-- @extends('adminlte::page')
 
 @section('title', 'Gestión de Áreas de Formación')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/index.css') }}">
+<link rel="stylesheet" href="{{ asset('css/createModal.css') }}">
+<link rel="stylesheet" href="{{ asset('css/editModal.css') }}">
+<link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+@stop
+
 @section('content_header')
-    <div class="content-header-modern">
-        <div class="header-content">
-            <div class="header-title">
-                <div class="icon-wrapper">
-                    <i class="fas fa-university"></i>
-                </div>
-                <div>
-                    <h1 class="title-main">Áreas de Formación</h1>
-                    <p class="title-subtitle">Gestión de asignaciones y títulos universitarios</p>
-                </div>
+<div class="content-header-modern">
+    <div class="header-content">
+        <div class="header-title">
+            <div class="icon-wrapper">
+                <i class="fas fa-university"></i>
             </div>
-            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
-                <i class="fas fa-plus"></i>
-                <span>Nueva Asignación</span>
-            </button>
+            <div>
+                <h1 class="title-main">Áreas de Formación</h1>
+                <p class="title-subtitle">Gestión de asignaciones y títulos universitarios</p>
+            </div>
         </div>
+        <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
+            <i class="fas fa-plus"></i>
+            <span>Nueva Asignación</span>
+        </button>
     </div>
+</div>
+@stop
+
+@section('content')
+<div class="main-container"> --}}
+
+    {{-- Incluir modal de creación 
+    @include('admin.transacciones.area_estudio_realizado.modales.createModal')--}}
+
+    {{-- Alertas 
+    @if (session('success') || session('error'))
+    <div class="alerts-container">
+        @if (session('success'))
+        <div class="alert-modern alert-success alert alert-dismissible fade show" role="alert">
+            <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="alert-content">
+                <h4>¡Éxito!</h4>
+                <p>{{ session('success') }}</p>
+            </div>
+            <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+        </div>
+        @endif
+        @if (session('error'))
+        <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
+            <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="alert-content">
+                <h4>Error</h4>
+                <p>{{ session('error') }}</p>
+            </div>
+            <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+        </div>
+        @endif
+    </div>
+    @endif--}}
+
+    {{-- Contenedor de la tabla 
+    <div id="areaEstudioTable">
+        @include('admin.transacciones.area_estudio_realizado.partials.table', ['areaEstudioRealizado' => $areaEstudioRealizado])
+    </div>
+
+</div>
+@endsection--}}
+
+
+@extends('adminlte::page')
+
+@section('title', 'Gestión de Áreas de Formación')
+
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/index.css') }}">
+<link rel="stylesheet" href="{{ asset('css/createModal.css') }}">
+<link rel="stylesheet" href="{{ asset('css/editModal.css') }}">
+<link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+@stop
+
+@section('content_header')
+<div class="content-header-modern">
+    <div class="header-content">
+        <div class="header-title">
+            <div class="icon-wrapper">
+                <i class="fas fa-university"></i>
+            </div>
+            <div>
+                <h1 class="title-main">Áreas de Formación</h1>
+                <p class="title-subtitle">Gestión de asignaciones y títulos universitarios</p>
+            </div>
+        </div>
+        <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
+            <i class="fas fa-plus"></i>
+            <span>Nueva Asignación</span>
+        </button>
+    </div>
+</div>
 @stop
 
 @section('content')
 <div class="main-container">
-    
+
     {{-- Incluir modal de creación --}}
     @include('admin.transacciones.area_estudio_realizado.modales.createModal')
 
-    {{-- Alertas mejoradas --}}
+    {{-- Alertas --}}
     @if (session('success') || session('error'))
     <div class="alerts-container">
         @if (session('success'))
-            <div class="alert-modern alert-success alert alert-dismissible fade show" role="alert">
-                <div class="alert-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="alert-content">
-                    <h4>¡Éxito!</h4>
-                    <p>{{ session('success') }}</p>
-                </div>
-                <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
-                    <i class="fas fa-times"></i>
-                </button>
+        <div class="alert-modern alert-success alert alert-dismissible fade show" role="alert">
+            <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="alert-content">
+                <h4>¡Éxito!</h4>
+                <p>{{ session('success') }}</p>
             </div>
+            <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+        </div>
         @endif
-
         @if (session('error'))
-            <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
-                <div class="alert-icon">
-                    <i class="fas fa-exclamation-circle"></i>
-                </div>
-                <div class="alert-content">
-                    <h4>Error</h4>
-                    <p>{{ session('error') }}</p>
-                </div>
-                <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
-                    <i class="fas fa-times"></i>
-                </button>
+        <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
+            <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="alert-content">
+                <h4>Error</h4>
+                <p>{{ session('error') }}</p>
             </div>
+            <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+        </div>
         @endif
     </div>
     @endif
 
-
-    {{-- Tarjeta principal --}}
+    {{-- Contenedor de la tabla --}}
     <div class="card-modern">
         <div class="card-header-modern">
             <div class="header-left">
-                <div class="header-icon">
-                    <i class="fas fa-list-ul"></i>
-                </div>
+                <div class="header-icon"><i class="fas fa-list-ul"></i></div>
                 <div>
                     <h3>Listado de Asignaciones</h3>
-                    <p>{{ $areaEstudioRealizado->count() }} registros encontrados</p>
+                    <p>{{ $areaEstudioRealizado->total() }} registros encontrados</p>
                 </div>
             </div>
             <div class="header-right">
-                <div class="date-badge">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>{{ now()->translatedFormat('d M Y') }}</span>
-                </div>
+                <div class="date-badge"><i class="fas fa-calendar-alt"></i> <span>{{ now()->translatedFormat('d M Y') }}</span></div>
             </div>
         </div>
 
@@ -99,68 +153,40 @@
                 <table class="table-modern overflow-hidden">
                     <thead>
                         <tr>
-                            <th width="60">#</th>
+                            <th>#</th>
                             <th>Área de Formación</th>
                             <th>Título Universitario</th>
-                            <th width="120">Estado</th>
-                            <th width="180">Acciones</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($areaEstudioRealizado as $index => $datos)
                             <tr class="table-row-hover">
-                                <td>
-                                    <div class="number-badge">{{ $index + 1 }}</div>
-                                </td>
-                                <td>
-                                    <div class="cell-content">
-                                        <i class="fas fa-bookmark text-primary me-2"></i>
-                                        <span class="fw-semibold">{{ $datos->area_formacion->nombre_area_formacion ?? '—' }}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="cell-content">
-                                        <i class="fas fa-graduation-cap text-secondary me-2"></i>
-                                        <span>{{ $datos->estudio_realizado->estudios ?? '—' }}</span>
-                                    </div>
-                                </td>
+                                <td>{{ $index + $areaEstudioRealizado->firstItem() }}</td>
+                                <td>{{ $datos->area_formacion->nombre_area_formacion ?? '—' }}</td>
+                                <td>{{ $datos->estudio_realizado->estudios ?? '—' }}</td>
                                 <td>
                                     @if ($datos->status)
-                                        <span class="status-badge status-active">
-                                            <span class="status-dot"></span>
-                                            Activo
-                                        </span>
+                                        <span class="status-badge status-active">Activo</span>
                                     @else
-                                        <span class="status-badge status-inactive">
-                                            <span class="status-dot"></span>
-                                            Inactivo
-                                        </span>
+                                        <span class="status-badge status-inactive">Inactivo</span>
                                     @endif
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        {{-- Ver --}}
-                                        <button  class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#viewModal{{ $datos->id }}" title="Ver Detalles">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        @include('admin.transacciones.area_estudio_realizado.modales.showModal')
-
-                                        {{-- Editar --}}
-                                        <button type="button" class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#viewModalEditar{{ $datos->id }}" title="Editar">
-                                            <i class="fas fa-pen"></i>
-                                        </button>
-
-                                        {{-- Eliminar --}}
-                                        <button type="button" class="action-btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $datos->id }}" title="Eliminar">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-
-                                        {{-- Modal Eliminar --}}
-                                        
+                                        <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#viewModalEditar{{ $datos->id }}"><i class="fas fa-pen"></i></button>
+                                        <button class="action-btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $datos->id }}"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </td>
                             </tr>
-                            @include( 'admin.transacciones.area_estudio_realizado.modales.editModal')
+
+                            {{-- Edit Modal --}}
+                            @include('admin.transacciones.area_estudio_realizado.modales.editModal', [
+                                'datos' => $datos,
+                                'area_formacion' => $area_formacion,
+                                'estudios' => $estudios
+                            ])
 
                             {{-- Modal Eliminar --}}
                             <div class="modal fade" id="deleteModal{{ $datos->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $datos->id }}" aria-hidden="true">
@@ -200,27 +226,23 @@
                                     </div>
                                 </div>
                             </div>
-                        @empty
+                            @empty
                             <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="empty-icon">
-                                            <i class="fas fa-inbox"></i>
-                                        </div>
-                                        <h4>No hay asignaciones registradas</h4>
-                                        <p>Comienza creando una nueva asignación usando el botón superior</p>
-                                    </div>
-                                </td>
+                                <td colspan="5" class="text-center">No hay asignaciones registradas</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+
+            {{-- Paginación --}}
+            
         </div>
     </div>
-</div>
-
-@push('css')
     
-@endpush
+
+</div>
+<x-pagination :paginator="$areaEstudioRealizado" />
 @endsection
+
+

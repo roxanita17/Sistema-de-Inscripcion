@@ -23,7 +23,7 @@
                             Área de Formación
                         </label>
                         <select name="area_formacion_id" id="area_formacion_id_{{ $datos->id }}" 
-                                class="form-control-modern selectpicker" 
+                                class="form-control-modern selectpicker-edit-{{ $datos->id }}" 
                                 data-live-search="true" required>
                             @foreach ($area_formacion as $area)
                                 <option value="{{ $area->id }}" {{ old('area_formacion_id', $datos->area_formacion_id) == $area->id ? 'selected' : '' }}>
@@ -46,7 +46,7 @@
                             Título Universitario
                         </label>
                         <select name="estudios_id" id="estudios_id_{{ $datos->id }}" 
-                                class="form-control-modern selectpicker" 
+                                class="form-control-modern selectpicker-edit-{{ $datos->id }}" 
                                 data-live-search="true" required>
                             @foreach ($estudios as $titulo)
                                 <option value="{{ $titulo->id }}" {{ old('estudios_id', $datos->estudios_id) == $titulo->id ? 'selected' : '' }}>
@@ -83,12 +83,25 @@
 @push('js')
 <script>
 $(document).ready(function () {
-    // Refrescar los selectpicker cuando se abre el modal
-    $('#viewModalEditar{{ $datos->id }}').on('shown.bs.modal', function () {
-        $('#area_formacion_id_{{ $datos->id }}').selectpicker('refresh');
-        $('#estudios_id_{{ $datos->id }}').selectpicker('refresh');
+    var modalId = '{{ $datos->id }}';
+    
+    // Destruir cualquier instancia previa al abrir el modal
+    $('#viewModalEditar' + modalId).on('show.bs.modal', function () {
+        $('.selectpicker-edit-' + modalId).selectpicker('destroy');
+    });
+    
+    // Inicializar selectpicker cuando se muestra el modal
+    $('#viewModalEditar' + modalId).on('shown.bs.modal', function () {
+        $('.selectpicker-edit-' + modalId).selectpicker({
+            liveSearch: true,
+            noneSelectedText: 'Seleccione una opción'
+        });
+    });
+    
+    // Destruir al cerrar para evitar duplicados
+    $('#viewModalEditar' + modalId).on('hidden.bs.modal', function () {
+        $('.selectpicker-edit-' + modalId).selectpicker('destroy');
     });
 });
 </script>
 @endpush
-
