@@ -13,7 +13,7 @@ class GradoController extends Controller
     public function index()
     {
         // Obtener todos los grados, ordenados por el número de grado de forma ascendente
-        $grados = Grado::orderBy('numero_grado', 'asc')->get();
+        $grados = Grado::where('status', true)->orderBy('numero_grado', 'asc')->paginate(10);
 
         // Retornar la vista principal con los datos obtenidos
         return view('admin.grado.index', compact('grados'));

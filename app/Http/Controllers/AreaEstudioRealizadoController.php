@@ -36,48 +36,48 @@ class AreaEstudioRealizadoController extends Controller
     /**
      * Crea una nueva asignación entre grado y área de formación.
      */
-public function store(Request $request)
-{
-    // Validación de datos
-    $validated = $request->validate([
-        'area_formacion_id' => 'required|exists:area_formacions,id',
-        'estudios_id' => 'required|exists:estudios_realizados,id',
-    ]);
+    public function store(Request $request)
+    {
+        // Validación de datos
+        $validated = $request->validate([
+            'area_formacion_id' => 'required|exists:area_formacions,id',
+            'estudios_id' => 'required|exists:estudios_realizados,id',
+        ]);
 
-    // Verificar si ya existe la asignación
-    $existe = AreaEstudioRealizado::where('area_formacion_id', $validated['area_formacion_id'])
-        ->where('estudios_id', $validated['estudios_id'])
-        ->exists();
+        // Verificar si ya existe la asignación
+        $existe = AreaEstudioRealizado::where('area_formacion_id', $validated['area_formacion_id'])
+            ->where('estudios_id', $validated['estudios_id'])
+            ->exists();
 
-    if ($existe) {
-        info('Intento de duplicar asignación área-formación ↔ título universitario');
+        if ($existe) {
+            info('Intento de duplicar asignación área-formación ↔ título universitario');
 
-        return redirect()
-            ->route('admin.transacciones.area_estudio_realizado.index')
-            ->with('error', 'Esta asignación ya existe.');
+            return redirect()
+                ->route('admin.transacciones.area_estudio_realizado.index')
+                ->with('error', 'Esta asignación ya existe.');
+        }
+
+        try {
+            // Crear la nueva relación
+            $areaEstudio = new AreaEstudioRealizado();
+            $areaEstudio->area_formacion_id = $validated['area_formacion_id'];
+            $areaEstudio->estudios_id = $validated['estudios_id'];
+            $areaEstudio->status = true;
+            $areaEstudio->save();
+
+            info('Nueva asignación creada: Área ID ' . $validated['area_formacion_id'] . ', Título ID ' . $validated['estudios_id']);
+
+            return redirect()
+                ->route('admin.transacciones.area_estudio_realizado.index')
+                ->with('success', 'Asignación creada exitosamente.');
+        } catch (\Exception $e) {
+            info('Error al crear asignación: ' . $e->getMessage());
+
+            return redirect()
+                ->route('admin.transacciones.area_estudio_realizado.index')
+                ->with('error', 'Error al crear: ' . $e->getMessage());
+        }
     }
-
-    try {
-        // Crear la nueva relación
-        $areaEstudio = new AreaEstudioRealizado();
-        $areaEstudio->area_formacion_id = $validated['area_formacion_id'];
-        $areaEstudio->estudios_id = $validated['estudios_id'];
-        $areaEstudio->status = true;
-        $areaEstudio->save();
-
-        info('Nueva asignación creada: Área ID ' . $validated['area_formacion_id'] . ', Título ID ' . $validated['estudios_id']);
-
-        return redirect()
-            ->route('admin.transacciones.area_estudio_realizado.index')
-            ->with('success', 'Asignación creada exitosamente.');
-    } catch (\Exception $e) {
-        info('Error al crear asignación: ' . $e->getMessage());
-
-        return redirect()
-            ->route('admin.transacciones.area_estudio_realizado.index')
-            ->with('error', 'Error al crear: ' . $e->getMessage());
-    }
-}
 
 
      /**

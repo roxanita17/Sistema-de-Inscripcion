@@ -1,76 +1,125 @@
-<!-- Modal Crear Año Escolar -->
-<div class="modal fade" id="modalCrearGrado" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="modalCrearGradoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog">
-        <div class="modal-content">
+<!-- Modal Crear Grado -->
+<div class="modal fade" id="modalCrearGrado" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearGradoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-modern">
 
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalCrearGradoLabel">Registrar Grado</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            {{-- Cabecera del modal --}}
+            <div class="modal-header-create">
+                <div class="modal-icon-create">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h5 class="modal-title-create" id="modalCrearGradoLabel">Nuevo Grado</h5>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <div class="modal-body">
-                {{-- Ruta para guardar el grado --}}
+            {{-- Cuerpo del modal con formulario --}}
+            <div class="modal-body-create">
                 <form action="{{ route('admin.grado.modales.store') }}" method="POST" id="formCrearGrado">
                     @csrf
+
+                    {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
+
                     {{-- Numero de grado --}}
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><span class="text-danger">*</span> Numero</span>
-                        <input type="text" class="form-control" id="numero_grado" name="numero_grado" inputmode="numeric" pattern="[0-9]+" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                    <div class="form-group-modern">
+                        <label for="numero_grado" class="form-label-modern">
+                            <i class="fas fa-hashtag me-2"></i> Número de Grado
+                        </label>
+                        <input type="text" 
+                               class="form-control-modern" 
+                               id="numero_grado" 
+                               name="numero_grado" 
+                               inputmode="numeric" 
+                               pattern="[0-9]+" 
+                               maxlength="2" 
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
+                               required>
+                        @error('numero_grado')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
                     </div>
-                    @error('numero_grado')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                        </div>
-                    @enderror
 
-                    {{-- Capacidad maxima de cupos --}}
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><span class="text-danger">*</span> Capacidad maxima de cupos</span>
-                        <input type="text" class="form-control" id="capacidad_max" name="capacidad_max" inputmode="numeric" pattern="[0-9]+" maxlength="3" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                    {{-- Capacidad máxima --}}
+                    <div class="form-group-modern">
+                        <label for="capacidad_max" class="form-label-modern">
+                            <i class="fas fa-users me-2"></i> Capacidad Máxima de Cupos
+                        </label>
+                        <input type="text" 
+                               class="form-control-modern" 
+                               id="capacidad_max" 
+                               name="capacidad_max" 
+                               inputmode="numeric" 
+                               pattern="[0-9]+" 
+                               maxlength="3" 
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
+                               required>
+                        @error('capacidad_max')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
                     </div>
-                    @error('capacidad_max')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                        </div>
-                    @enderror
 
-                    {{-- Minimo de seccion --}}
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><span class="text-danger">*</span> Minimo de seccion</span>
-                        <input type="text" class="form-control" id="min_seccion" name="min_seccion" inputmode="numeric" pattern="[0-9]+" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                    {{-- Mínimo de sección --}}
+                    <div class="form-group-modern">
+                        <label for="min_seccion" class="form-label-modern">
+                            <i class="fas fa-layer-group me-2"></i> Mínimo de Sección
+                        </label>
+                        <input type="text" 
+                               class="form-control-modern" 
+                               id="min_seccion" 
+                               name="min_seccion" 
+                               inputmode="numeric" 
+                               pattern="[0-9]+" 
+                               maxlength="2" 
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
+                               required>
+                        @error('min_seccion')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
                     </div>
-                    @error('min_seccion')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                        </div>
-                    @enderror
 
-                    {{-- Maximo de seccion --}}
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><span class="text-danger">*</span> Maximo de seccion</span>
-                        <input type="text" class="form-control" id="max_seccion" name="max_seccion" inputmode="numeric" pattern="[0-9]+" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                    {{-- Máximo de sección --}}
+                    <div class="form-group-modern">
+                        <label for="max_seccion" class="form-label-modern">
+                            <i class="fas fa-layer-group me-2"></i> Máximo de Sección
+                        </label>
+                        <input type="text" 
+                               class="form-control-modern" 
+                               id="max_seccion" 
+                               name="max_seccion" 
+                               inputmode="numeric" 
+                               pattern="[0-9]+" 
+                               maxlength="2" 
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
+                               required>
+                        @error('max_seccion')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
                     </div>
-                    @error('max_seccion')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
+
+                    {{-- Pie del formulario --}}
+                    <div class="modal-footer-create">
+                        <div class="footer-buttons">
+                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-modal-create">
+                                Guardar
+                            </button>
                         </div>
-                    @enderror
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" form="formCrearGrado">
-                    Guardar
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Cancelar
-                </button>
             </div>
 
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
