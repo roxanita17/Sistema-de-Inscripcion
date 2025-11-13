@@ -12,8 +12,9 @@ class AnioEscolarController extends Controller
      */
     public function index()
     {
-        $escolar = AnioEscolar::all();
+        $escolar = AnioEscolar::paginate(10);
         return view('admin.anio_escolar.index', compact('escolar'));
+
     }
 
     /**
@@ -64,7 +65,7 @@ class AnioEscolarController extends Controller
 
         $validated = $request->validate([
             'cierre_anio_escolar' => 'required|date|after_or_equal:' . $anioEscolar->inicio_anio_escolar,
-        ]);
+        ]); 
 
         // Verificar si ya existe otro año escolar activo con la misma fecha de cierre
         $existe = AnioEscolar::where('inicio_anio_escolar', $anioEscolar->inicio_anio_escolar)

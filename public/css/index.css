@@ -347,6 +347,11 @@
         color: var(--danger);
     }
 
+    .status-extended {
+        background: var(--warning-light);
+        color: var(--warning);
+    }
+
     .status-dot {
         width: 8px;
         height: 8px;
@@ -360,6 +365,10 @@
 
     .status-inactive .status-dot {
         background: var(--danger);
+    }
+
+    .status-extended .status-dot {
+        background: var(--warning);
     }
 
     @keyframes pulse {

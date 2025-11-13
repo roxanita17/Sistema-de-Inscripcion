@@ -21,7 +21,7 @@ class GradoAreaFormacionController extends Controller
             ->orderBy('grados.numero_grado', 'asc')
             ->select('grado_area_formacions.*')
             ->paginate(10);
-
+ 
         // Se obtienen los grados activos
         $grados = Grado::where('status', true)
             ->orderBy('numero_grado', 'asc')

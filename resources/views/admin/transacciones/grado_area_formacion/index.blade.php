@@ -202,7 +202,7 @@
                                             </div>
                                         </div>
                             @empty
-                                <tr>
+                                <tr> 
                                     
                                     <td colspan="5">
                                         <div class="empty-state">

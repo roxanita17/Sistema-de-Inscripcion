@@ -1,0 +1,786 @@
+/* ============================================
+   ESTILOS GLOBALES PARA MODALES
+   ============================================ */
+
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --warning: #f59e0b;
+    --warning-dark: #d97706;
+    --info: #3b82f6;
+    --info-dark: #2563eb;
+    --success: #10b981;
+    --success-light: #d1fae5;
+    --danger: #ef4444;
+    --danger-light: #fee2e2;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+}
+
+/* Modal General */
+.modal-modern {
+    border: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-close-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   MODAL CREAR (AZUL)
+   ============================================ */
+
+.modal-header-create {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 2rem;
+    border: none;
+    text-align: center;
+    position: relative;
+}
+
+.modal-icon-create {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.75rem;
+}
+
+.modal-title-create {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-body-create {
+    padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-footer-create {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.btn-modal-create {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-modal-create:hover {
+    background: var(--primary-dark);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   MODAL EDITAR (NARANJA)
+   ============================================ */
+
+.modal-header-edit {
+    background: linear-gradient(135deg, var(--warning), var(--warning-dark));
+    color: white;
+    padding: 2rem;
+    border: none;
+    text-align: center;
+    position: relative;
+}
+
+.modal-icon-edit {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.75rem;
+}
+
+.modal-title-edit {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-body-edit {
+    padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-footer-edit {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.btn-modal-edit {
+    background: var(--warning);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-modal-edit:hover {
+    background: var(--warning-dark);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   MODAL VER (AZUL CLARO)
+   ============================================ */
+
+.modal-header-view {
+    background: linear-gradient(135deg, var(--info), var(--info-dark));
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    border: none;
+    position: relative;
+}
+
+.modal-icon-view {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.75rem;
+}
+
+.modal-title-view {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-body-view {
+    padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.details-card {
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.detail-item:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--info);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-label i {
+    color: var(--info);
+    font-size: 1rem;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: var(--gray-800);
+    text-align: right;
+}
+
+/* Badges de estado mejorados */
+.badge-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.badge-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.badge-active {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.badge-active::before {
+    background: var(--success);
+}
+
+.badge-extended {
+    background: #fef3c7;
+    color: var(--warning-dark);
+}
+
+.badge-extended::before {
+    background: var(--warning);
+}
+
+.badge-inactive {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.badge-inactive::before {
+    background: var(--danger);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.modal-footer-view {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: center;
+}
+
+/* ============================================
+   FORMULARIOS - ESTILOS GENERALES
+   ============================================ */
+
+.form-group-modern {
+    margin-bottom: 1.5rem;
+}
+
+.form-label-modern {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+}
+
+.modal-body-create .form-label-modern i,
+.modal-body-edit .form-label-modern i {
+    font-size: 0.9rem;
+}
+
+.modal-body-create .form-label-modern i {
+    color: var(--primary);
+}
+
+.modal-body-edit .form-label-modern i {
+    color: var(--warning);
+}
+
+/* ============================================
+   INPUT TEXT & NUMBER
+   ============================================ */
+
+.form-control-modern {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    color: var(--gray-800);
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.form-control-modern:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.modal-body-create .form-control-modern:focus {
+    border-color: var(--primary);
+}
+
+.modal-body-edit .form-control-modern:focus {
+    border-color: var(--warning);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.form-control-modern::placeholder {
+    color: var(--gray-300);
+    font-style: italic;
+}
+
+.form-control-modern:disabled {
+    background-color: var(--gray-100);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* ============================================
+   INPUT DATE
+   ============================================ */
+
+.form-control-modern[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.form-control-modern[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    filter: invert(0);
+}
+
+.modal-body-create .form-control-modern[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(233deg) brightness(94%) contrast(87%);
+}
+
+.modal-body-edit .form-control-modern[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(69%) sepia(54%) saturate(3507%) hue-rotate(360deg) brightness(101%) contrast(93%);
+}
+
+.form-control-modern[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   TEXTAREA
+   ============================================ */
+
+.form-control-modern.textarea-modern {
+    resize: vertical;
+    min-height: 100px;
+    max-height: 300px;
+    line-height: 1.5;
+    font-family: inherit;
+}
+
+/* ============================================
+   SELECT (Bootstrap-Select)
+   ============================================ */
+
+.bootstrap-select .dropdown-toggle {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-200) !important;
+    border-radius: var(--radius) !important;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background-color: white !important;
+}
+
+.modal-body-create .bootstrap-select .dropdown-toggle:focus,
+.modal-body-create .bootstrap-select.show .dropdown-toggle {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.modal-body-edit .bootstrap-select .dropdown-toggle:focus,
+.modal-body-edit .bootstrap-select.show .dropdown-toggle {
+    border-color: var(--warning) !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.bootstrap-select .dropdown-menu {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    margin-top: 0.5rem;
+}
+
+.bootstrap-select .dropdown-item.active,
+.bootstrap-select .dropdown-item:active {
+    background-color: var(--primary);
+}
+
+/* ============================================
+   CHECKBOX & RADIO
+   ============================================ */
+
+.form-check-modern {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    background: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.form-check-modern:hover {
+    border-color: var(--gray-300);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-check-modern input[type="checkbox"],
+.form-check-modern input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.modal-body-edit .form-check-modern input[type="checkbox"],
+.modal-body-edit .form-check-modern input[type="radio"] {
+    accent-color: var(--warning);
+}
+
+.form-check-modern label {
+    cursor: pointer;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--gray-700);
+    user-select: none;
+}
+
+.form-check-modern input:checked ~ label {
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+/* Grupo de checkboxes/radios */
+.form-check-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* ============================================
+   FILE UPLOAD
+   ============================================ */
+
+.file-upload-modern {
+    position: relative;
+}
+
+.file-upload-modern input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius);
+    background: var(--gray-50);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-label:hover {
+    border-color: var(--primary);
+    background: white;
+}
+
+.file-upload-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.modal-body-edit .file-upload-icon {
+    background: var(--warning);
+}
+
+.file-upload-text {
+    flex: 1;
+}
+
+.file-upload-text strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.file-upload-text small {
+    color: var(--gray-700);
+    font-size: 0.85rem;
+}
+
+/* ============================================
+   SWITCH/TOGGLE
+   ============================================ */
+
+.switch-modern {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch-modern input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider-modern {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--gray-300);
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider-modern:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+}
+
+.switch-modern input:checked + .slider-modern {
+    background-color: var(--primary);
+}
+
+.modal-body-edit .switch-modern input:checked + .slider-modern {
+    background-color: var(--warning);
+}
+
+.switch-modern input:checked + .slider-modern:before {
+    transform: translateX(24px);
+}
+
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    background: white;
+}
+
+/* ============================================
+   MENSAJES DE ERROR
+   ============================================ */
+
+.error-message {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--danger);
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--danger-light);
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.error-message.show {
+    display: flex;
+}
+
+.error-message i {
+    font-size: 1rem;
+}
+
+/* ============================================
+   BOTONES GENERALES
+   ============================================ */
+
+.footer-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-modal-cancel {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-modal-cancel:hover {
+    background: var(--gray-200);
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   SCROLLBAR PERSONALIZADO
+   ============================================ */
+
+.modal-body-create::-webkit-scrollbar,
+.modal-body-edit::-webkit-scrollbar,
+.modal-body-view::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body-create::-webkit-scrollbar-track,
+.modal-body-edit::-webkit-scrollbar-track,
+.modal-body-view::-webkit-scrollbar-track {
+    background: var(--gray-100);
+}
+
+.modal-body-create::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 3px;
+}
+
+.modal-body-edit::-webkit-scrollbar-thumb {
+    background: var(--warning);
+    border-radius: 3px;
+}
+
+.modal-body-view::-webkit-scrollbar-thumb {
+    background: var(--info);
+    border-radius: 3px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .modal-header-create,
+    .modal-header-edit,
+    .modal-header-view {
+        padding: 1.5rem;
+    }
+
+    .modal-body-create,
+    .modal-body-edit,
+    .modal-body-view {
+        padding: 1.5rem;
+    }
+
+    .modal-icon-create,
+    .modal-icon-edit,
+    .modal-icon-view {
+        width: 56px;
+        height: 56px;
+        font-size: 1.5rem;
+    }
+
+    .modal-title-create,
+    .modal-title-edit,
+    .modal-title-view {
+        font-size: 1.25rem;
+    }
+
+    .footer-buttons {
+        flex-direction: column;
+    }
+
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .detail-value {
+        text-align: left;
+    }
+}
