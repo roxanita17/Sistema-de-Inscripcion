@@ -12,7 +12,7 @@ class EstudiosRealizadoController extends Controller
      */
     public function index()
     {
-        $estudiosRealizados = EstudiosRealizado::all();
+        $estudiosRealizados = EstudiosRealizado::where('status', true)->orderBy('estudios', 'asc')->paginate(10);
         return view('admin.estudios_realizados.index', compact('estudiosRealizados'));
     }
 
