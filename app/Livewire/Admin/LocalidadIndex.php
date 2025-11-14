@@ -17,6 +17,10 @@ class LocalidadIndex extends Component
     public $municipio_id;
     public $localidad_id;
     public $updateMode = false;
+    public $search = '';
+
+    protected $paginationTheme = 'bootstrap'; 
+
 
     public $municipios = []; //municipios dinámicos filtrados
 
@@ -29,12 +33,29 @@ class LocalidadIndex extends Component
     public function render()
     {
         $estados = Estado::where('status', true)->get();
+
         $localidades = Localidad::where('status', true)
+            ->when($this->search, function ($query) {
+                $query->where('nombre_localidad', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('municipio', function ($q) {
+                        $q->where('nombre_municipio', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhereHas('municipio.estado', function ($q) {
+                        $q->where('nombre_estado', 'like', '%' . $this->search . '%');
+                    });
+            })
             ->orderBy('nombre_localidad', 'asc')
             ->paginate(10);
 
         return view('livewire.admin.localidad-index', compact('estados', 'localidades'));
     }
+
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
 
     //Cuando cambia el estado, actualizamos los municipios
     public function updatedEstadoId($estado_id)

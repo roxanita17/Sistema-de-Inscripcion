@@ -17,6 +17,8 @@
         @endif
     </div>
 
+    <input type="text" class="form-control mb-3" placeholder="Buscar..." wire:model.live="search">
+
     {{-- Botón para crear estado (abre modal Livewire) --}}
     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalCrearEstado">
         <i class="fas fa-plus"></i> Crear Estado
@@ -54,23 +56,28 @@
                         </td>
                         <td>
                             {{-- Editar --}}
-                            <button wire:click="edit({{ $datos->id }})" class="btn btn-warning btn-sm" title="Editar" data-bs-toggle="modal" data-bs-target="#modalEditarEstado">
+                            <button wire:click="edit({{ $datos->id }})" class="btn btn-warning btn-sm" title="Editar"
+                                data-bs-toggle="modal" data-bs-target="#modalEditarEstado">
                                 <i class="fas fa-pen text-white"></i>
                             </button>
 
                             {{-- Eliminar --}}
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
                                 <i class="fas fa-trash text-white"></i>
                             </button>
-                            <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
+                            <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
+                                role="dialog" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-body">
                                             ¿Estás seguro de que deseas eliminar este estado?
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <button wire:click="destroy({{ $datos->id }})" class="btn btn-danger">Eliminar</button>
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancelar</button>
+                                            <button wire:click="destroy({{ $datos->id }})"
+                                                class="btn btn-danger">Eliminar</button>
                                         </div>
                                     </div>
                                 </div>
@@ -90,7 +97,3 @@
     {{-- Modal para editar estado --}}
     @include('admin.estado.modales.editModal')
 </div>
-
-
-
-
