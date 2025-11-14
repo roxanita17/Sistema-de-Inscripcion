@@ -13,6 +13,7 @@ class EstadoIndex extends Component
     public $nombre_estado;
     public $estado_id;
     public $updateMode = false;
+    public $search = '';
 
     protected $paginationTheme = 'bootstrap'; // O 'tailwind' según tu frontend
 
@@ -23,10 +24,18 @@ class EstadoIndex extends Component
     public function render()
     {
         $estados = Estado::where('status', true)
+            ->when($this->search, function ($query) {
+                $query->where('nombre_estado', 'like', '%' . $this->search . '%');
+            })
             ->orderBy('nombre_estado', 'asc')
             ->paginate(10);
 
         return view('livewire.admin.estado-index', compact('estados'));
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
     }
 
     public function resetInputFields()
