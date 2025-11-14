@@ -16,7 +16,7 @@ class DiscapacidadController extends Controller
     public function index()
     {
         // Se obtienen todas las discapacidades activas ordenadas por nombre
-        $discapacidad = Discapacidad::orderBy('nombre_discapacidad', 'asc')->get();
+        $discapacidad = Discapacidad::orderBy('nombre_discapacidad', 'asc')->where('status', true)->paginate(10);
 
         // Se envían los registros a la vista
         return view('admin.discapacidad.index', compact('discapacidad'));
