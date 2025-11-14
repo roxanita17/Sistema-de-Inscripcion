@@ -70,6 +70,6 @@ class EtniaIndigenaSeeder extends Seeder
         'status' => true]);
         }
 
-        $this->command->info('Seeder de etnias indígenas ejecutado correctamente. Se insertaron etnias.');
+        $this->command->info(string: 'Seeder de etnias indígenas ejecutado correctamente. Se insertaron etnias.');
     }
 }
