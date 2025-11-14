@@ -106,7 +106,7 @@
                         @enderror
                     </div>
 
-                    {{-- Pie del formulario --}}
+                    {{-- Botones --}}
                     <div class="modal-footer-create">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">

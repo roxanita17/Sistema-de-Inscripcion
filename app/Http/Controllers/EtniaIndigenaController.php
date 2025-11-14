@@ -13,7 +13,7 @@ class EtniaIndigenaController extends Controller
     public function index()
     {
         // Obtener todas las etnias indígenas ordenadas alfabéticamente
-        $etniaIndigena = EtniaIndigena::orderBy('nombre', 'asc')->get();
+        $etniaIndigena = EtniaIndigena::orderBy('nombre', 'asc')->where('status', true)->paginate(10);
 
         // Retornar la vista principal con los datos obtenidos
         return view("admin.etnia_indigena.index", compact("etniaIndigena"));
