@@ -125,6 +125,7 @@
                             @foreach ($grados as $index => $datos)
                                 <tr class="table-row-hover row-12" style="text-align: center">
                                     <td>{{ $index + 1 }}</td>
+                                    
                                     <td class="title-main">{{ $datos->numero_grado }}</td>
                                     <td>
                                         @if ($datos->status)

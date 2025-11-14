@@ -13,7 +13,7 @@ class BancoController extends Controller
     public function index()
     {
         // Se obtienen todos los bancos ordenados por código
-        $bancos = Banco::orderBy('codigo_banco', 'asc')->get();
+        $bancos = Banco::where('status', true)->orderBy('nombre_banco', 'asc')->paginate(10);
 
         // Se envían los datos a la vista
         return view('admin.banco.index', compact('bancos'));

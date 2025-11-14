@@ -13,6 +13,7 @@ use App\Models\GradoAreaFormacion;
 use App\Models\Discapacidad;
 use App\Models\Ocupacion;
 use App\Models\ExpresionLiteraria;
+use App\Models\Banco;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -54,6 +55,7 @@ class DatabaseSeeder extends Seeder
             DiscapacidadSeeder::class,
             OcupacionSeeder::class,
             ExpresionLiterariaSeeder::class,
+            BancoSeeder::class,
         ]);
         $this->command->info('¡Base de datos poblada con éxito!');
 
