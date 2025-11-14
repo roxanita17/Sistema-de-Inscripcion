@@ -113,7 +113,7 @@
                                 <td colspan="4">
                                     <div class="empty-state">
                                         <div class="empty-icon">
-                                            <i class="fas fa-inbox"></i>
+                                            <i class="fas fa-inbox"></i> 
                                         </div>
                                         <h4>No hay discapacidades registradas</h4>
                                         <p>Agrega una nueva discapacidad con el botón superior</p>
