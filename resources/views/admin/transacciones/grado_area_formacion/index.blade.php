@@ -92,28 +92,26 @@
 
             <div class="card-body-modern">
                 <div class="table-wrapper">
-                    <table class="table-modern overflow-hidden hidden">
+                    <table class="table-modern overflow-hidden hidden " style="text-align: center">
                         <thead>
                            <tr>
-                                <th width="60">#</th>
-                                <th>Código</th>
-                                <th width="180">Grado</th>
-                                <th>Área de Formación</th>
-                                <th width="120">Estado</th>
-                                <th width="180">Acciones</th>
+                                <th style="text-align: center">Código</th>
+                                <th >Grado</th>
+                                <th >Área de Formación</th>
+                                <th style="text-align: center">Estado</th>
+                                <th style="text-align: center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="text-align: center">
                             @forelse ($gradoAreaFormacion as $index => $datos)
-                                <tr class="table-row-hover  row-12">
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>
+                                <tr class="table-row-hover ">
+                                    <td style="text-align: center">
                                         <div class="number-badge" style="padding: 0.5rem 1rem; min-width: 200px;">
                                             {{ $datos->codigo }}
                                         </div>
                                     </td>
-                                    <td>
-                                        <div class="cell-content">
+                                    <td style="text-align: center">
+                                        <div class="cell-content" style="text-align: center">
                                             <i class="fas fa-graduation-cap text-primary me-2"></i>
                                             <span class="fw-semibold">{{ $datos->grado->numero_grado ?? '—' }}</span>
                                         </div>

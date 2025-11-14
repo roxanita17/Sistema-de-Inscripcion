@@ -100,7 +100,6 @@
                 <table class="table-modern overflow-hidden hidden">
                     <thead>
                         <tr style="text-align: center">
-                            <th style="text-align: center">#</th>
                             <th style="text-align: center">Grado</th>
                             <th style="text-align: center">Estado</th>
                             <th style="text-align: center">Acciones</th>
@@ -123,9 +122,7 @@
                         @else
                             {{-- Se recorren los grados existentes --}}
                             @foreach ($grados as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">
-                                    <td>{{ $index + 1 }}</td>
-                                    
+                                <tr class="table-row-hover row-12" style="text-align: center">                                    
                                     <td class="title-main">{{ $datos->numero_grado }}</td>
                                     <td>
                                         @if ($datos->status)

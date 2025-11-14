@@ -150,22 +150,20 @@
 
         <div class="card-body-modern">
             <div class="table-wrapper">
-                <table class="table-modern overflow-hidden">
+                <table class="table-modern overflow-hidden" style="text-align: center">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Área de Formación</th>
-                            <th>Título Universitario</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th style="text-align: center; font-weight: bold">Área de Formación</th>
+                            <th style="text-align: center; font-weight: bold">Título Universitario</th>
+                            <th style="text-align: center; ">Estado</th>
+                            <th style="text-align: center; ">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($areaEstudioRealizado as $index => $datos)
                             <tr class="table-row-hover">
-                                <td>{{ $index + $areaEstudioRealizado->firstItem() }}</td>
-                                <td>{{ $datos->area_formacion->nombre_area_formacion ?? '—' }}</td>
-                                <td>{{ $datos->estudio_realizado->estudios ?? '—' }}</td>
+                                <td style="font-weight: bold">{{ $datos->area_formacion->nombre_area_formacion ?? '—' }}</td>
+                                <td >{{ $datos->estudio_realizado->estudios ?? '—' }}</td>
                                 <td>
                                     @if ($datos->status)
                                         <span class="status-badge status-active">Activo</span>

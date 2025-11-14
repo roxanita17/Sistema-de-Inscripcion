@@ -91,10 +91,10 @@
                 <table class="table-modern overflow-hidden hidden">
                     <thead>
                         <tr style="text-align: center">
-                            <th>#</th>
-                            <th>Área de formación</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th style="text-align: center">#</th>
+                            <th style="text-align: center">Área de formación</th>
+                            <th style="text-align: center">Estado</th>
+                            <th style="text-align: center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody style="text-align: center">
