@@ -6,12 +6,15 @@
     <h1>Estado</h1>
 @stop
 @livewireStyles
+<link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
 
 @section('content')
     <div class="container mt-4">
         @livewire('admin.estado-index')
     </div>
 @endsection
+
+
 
 @livewireScripts
 <script>

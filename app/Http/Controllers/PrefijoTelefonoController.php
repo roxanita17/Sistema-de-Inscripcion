@@ -14,7 +14,7 @@ class PrefijoTelefonoController extends Controller
     public function index()
     {
         // Se obtienen todos los prefijos ordenados de forma ascendente por el número de prefijo
-        $prefijos = PrefijoTelefono::orderBy('prefijo', 'asc')->get();
+        $prefijos = PrefijoTelefono::where('status', true)->orderBy('prefijo', 'asc')->paginate(10);
 
         // Se retorna la vista con los datos obtenidos
         return view('admin.prefijo_telefono.index', compact('prefijos'));

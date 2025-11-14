@@ -1,42 +1,63 @@
-<div class="modal fade" id="viewModalEditar{{ $datos->id }}" tabindex="-1"
-    aria-labelledby="viewModalEditarLabel{{ $datos->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="viewModalEditarLabel{{ $datos->id }}">
-                    Editar Grado
+<!-- Modal Editar prefijo -->
+<div class="modal fade" id="viewModalEditar{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalEditarLabel{{ $datos->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-modern">
+
+            {{-- Cabecera del modal --}}
+            <div class="modal-header-edit">
+                <div class="modal-icon-edit">
+                    <i class="fas fa-pen"></i>
+                </div>
+                <h5 class="modal-title-edit" id="viewModalEditarLabel{{ $datos->id }}">
+                    Editar Prefijo
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                {{-- Ruta de editar grado --}}
+
+            {{-- Cuerpo del modal con formulario --}}
+            <div class="modal-body-edit">
                 <form action="{{ route('admin.prefijo_telefono.modales.update', $datos->id) }}" method="POST">
                     @csrf
-                    {{-- Numero de grado --}}
                     <input type="hidden" name="id" value="{{ $datos->id }}">
-                    <div class="mb-3">
-                        <label class="form-label"><b>Prefijo:</b></label>
-                        <input type="text" class="form-control" inputmode="numeric" pattern="[0-9]+" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')" name="prefijo" value="{{ $datos->prefijo }}" required>
-                    </div>
-                    @error('prefijo')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                        </div>
-                    @enderror
 
-                    {{-- Botones de guardar y cancelar --}}
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-warning">
-                            Guardar Cambios
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
+                    {{-- Numero de prefijo --}}
+                    <div class="form-group-modern">
+                        <label for="prefijo_{{ $datos->id }}" class="form-label-modern">
+                            Número de prefijo
+                        </label>
+                        <input type="text" 
+                               class="form-control-modern" 
+                               id="prefijo_{{ $datos->id }}" 
+                               name="prefijo" 
+                               inputmode="numeric" 
+                               pattern="[0-9]+" 
+                               maxlength="4" 
+                               value="{{ $datos->prefijo }}" 
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                               required>
+                        @error('prefijo')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
                     </div>
+                    {{-- Botones --}}
+                    <div class="modal-footer-edit">
+                        <div class="footer-buttons">
+                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-modal-edit">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+
                 </form>
             </div>
+
         </div>
     </div>
 </div>
-
-

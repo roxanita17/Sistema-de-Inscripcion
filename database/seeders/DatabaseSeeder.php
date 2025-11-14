@@ -14,6 +14,7 @@ use App\Models\Discapacidad;
 use App\Models\Ocupacion;
 use App\Models\ExpresionLiteraria;
 use App\Models\Banco;
+use App\Models\PrefijoTelefono;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -56,6 +57,7 @@ class DatabaseSeeder extends Seeder
             OcupacionSeeder::class,
             ExpresionLiterariaSeeder::class,
             BancoSeeder::class,
+            PrefijoTelefonoSeeder::class,
         ]);
         $this->command->info('¡Base de datos poblada con éxito!');
 

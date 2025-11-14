@@ -1,3 +1,5 @@
+
+
 <div class="container mt-4">
 
     {{-- Contenedor de alertas --}}
@@ -17,9 +19,24 @@
         @endif
     </div>
 
-    <input type="text" class="form-control mb-3" placeholder="Buscar..." wire:model.live="search">
+    <div class="form-group-modern">
+        <div style="position: relative;">
+            <input type="text" 
+                name="buscar" 
+                id="buscar" 
+                class="form-control-modern" 
+                placeholder="Buscar..."
+                wire:model.live="search"
+                style="padding-left: 2.5rem;">
+            <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-300);"></i>
+        </div>
+    </div>
+
+    {{-- <input type="text" class="form-control mb-3" placeholder="Buscar..." wire:model.live="search"> --}}
 
     {{-- Botón para crear estado (abre modal Livewire) --}}
+
+
     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalCrearEstado">
         <i class="fas fa-plus"></i> Crear Estado
     </button>

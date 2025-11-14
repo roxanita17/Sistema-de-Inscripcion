@@ -163,7 +163,7 @@
                         @forelse ($areaEstudioRealizado as $index => $datos)
                             <tr class="table-row-hover">
                                 <td style="font-weight: bold">{{ $datos->area_formacion->nombre_area_formacion ?? '—' }}</td>
-                                <td >{{ $datos->estudio_realizado->estudios ?? '—' }}</td>
+                                <td>{{ $datos->estudio_realizado->estudios ?? '—' }}</td>
                                 <td>
                                     @if ($datos->status)
                                         <span class="status-badge status-active">Activo</span>
