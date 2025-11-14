@@ -50,6 +50,7 @@ class DatabaseSeeder extends Seeder
             EstudiosRealizadoSeeder::class,
             AreaEstudioRealizadoSeeder::class,
             GradoAreaFormacionSeeder::class,
+            EtniaIndigenaSeeder::class,
         ]);
         $this->command->info('¡Base de datos poblada con éxito!');
 
