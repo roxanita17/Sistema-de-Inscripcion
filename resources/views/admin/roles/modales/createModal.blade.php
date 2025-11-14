@@ -1,50 +1,63 @@
-<!-- Modal Crear Año Escolar -->
-<div class="modal fade" id="modalCrearRol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="modalCrearRolLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog">
-        <div class="modal-content">
+<!-- Modal Crear Grado -->
+<div class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-modern">
 
-            <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title" id="modalCrearRolLabel">Registrar Rol</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            {{-- Cabecera del modal --}}
+            <div class="modal-header-create">
+                <div class="modal-icon-create">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h5 class="modal-title-create" id="modalCrearLabel">Nuevo Rol</h5>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <div class="modal-body">
+            {{-- Cuerpo del modal con formulario --}}
+            <div class="modal-body-create">
                 <form action="{{ route('admin.roles.modales.store') }}" method="POST" id="formCrearRol">
                     @csrf
+
+                    {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
-                    <div class="form-group">
-                        <label for="">Nombre del rol</label>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="fa fa-user"></i>
-                                </span>
+
+                    {{-- Nombre --}}
+                    <div class="form-group-modern">
+                        <label for="name" class="form-label-modern">
+                            <i class="fas fa-hashtag me-2"></i> Nombre
+                        </label>
+                        <input type="text" 
+                               class="form-control-modern" 
+                               id="name" 
+                               name="name"
+                               type="text"
+                               inputmode="text"
+                               maxlength="100"
+                               placeholder="Ingrese el nombre del rol"
+                               required>
+                        @error('name')
+                            <div class="error-message">
+                                Este campo es obligatorio.
                             </div>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
+                        @enderror
                     </div>
 
-                    @error('name')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
+                   
+                    {{-- Botones --}}
+                    <div class="modal-footer-create">
+                        <div class="footer-buttons">
+                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-modal-create">
+                                Guardar
+                            </button>
                         </div>
-                    @enderror
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" form="formCrearRol">
-                            Guardar
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fa fa-arrow-left" style="margin-right: 5px;"></i>Cancelar
-                        </button>
                     </div>
-
                 </form>
             </div>
+
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
