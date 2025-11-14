@@ -14,7 +14,7 @@ class ExpresionLiterariaController extends Controller
     public function index()
     {
         // Se obtienen todas las expresiones literarias ordenadas alfabéticamente
-        $expresionLiteraria = ExpresionLiteraria::orderBy('letra_expresion_literaria', 'asc')->get();
+        $expresionLiteraria = ExpresionLiteraria::where('status', true)->orderBy('letra_expresion_literaria', 'asc')->paginate(10);
 
         // Se retorna la vista principal con los datos
         return view('admin.expresion_literaria.index', compact('expresionLiteraria'));

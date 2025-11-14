@@ -1,45 +1,61 @@
 <!-- Modal Crear Expresión Literaria -->
-<div class="modal fade" id="modalCrearExpresionLiteraria" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="modalCrearExpresionLiterariaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+<div class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-modern">
 
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalCrearExpresionLiterariaLabel">Registrar Expresión Literaria</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            {{-- Cabecera del modal --}}
+            <div class="modal-header-create">
+                <div class="modal-icon-create">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h5 class="modal-title-create" id="modalCrearLabel">Nuevo Expresión Literaria</h5>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <div class="modal-body">
+            {{-- Cuerpo del modal con formulario --}}
+            <div class="modal-body-create">
                 <form action="{{ route('admin.expresion_literaria.modales.store') }}" method="POST" id="formCrearExpresionLiteraria">
                     @csrf
-                    <div class="mb-3">
-                        <label for="letra_expresion_literaria" class="form-label">Letra de la expresión literaria</label>
-                        <input
-                            type="text"
-                            class="form-control text-uppercase"
-                            id="letra_expresion_literaria"
-                            name="letra_expresion_literaria"
-                            maxlength="1"
-                            pattern="[A-Za-z]"
-                            required
-                            oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '');"
-                            title="Debe ingresar solo una letra (A-Z)"
-                        >
+
+                    {{-- Contenedor para alertas de validación --}}
+                    <div id="contenedorAlertaCrear"></div>
+
+                    {{-- Nombre --}}
+                    <div class="form-group-modern">
+                        <label for="letra_expresion_literaria" class="form-label-modern">
+                            <i class="fas fa-hashtag me-2"></i> Letra
+                        </label>
+                        <input type="text" 
+                               placeholder="Ingrese la letra de la expresión literaria"
+                               class="form-control-modern" 
+                               id="letra_expresion_literaria" 
+                               name="letra_expresion_literaria"
+                               type="text"
+                               maxlength="1"
+                               pattern="[A-Za-z]"
+                               oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '');"
+                               title="Debe ingresar solo una letra (A-Z)"
+                               required>
+                        @error('letra_expresion_literaria')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
                     </div>
 
-                    @error('letra_expresion_literaria')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ $message }}</b>
+                   
+                    {{-- Botones --}}
+                    <div class="modal-footer-create">
+                        <div class="footer-buttons">
+                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-modal-create">
+                                Guardar
+                            </button>
                         </div>
-                    @enderror
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" form="formCrearExpresionLiteraria">
-                            Guardar
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
                     </div>
                 </form>
             </div>
