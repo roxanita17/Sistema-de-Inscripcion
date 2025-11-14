@@ -7,10 +7,11 @@ use App\Models\EtniaIndigena;
 use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
-use App\Models\Ocupacion;
 use App\Models\EstudiosRealizado;
 use App\Models\AreaEstudioRealizado;
 use App\Models\GradoAreaFormacion;
+use App\Models\Discapacidad;
+use App\Models\Ocupacion;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -32,8 +33,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'Activo',
         ]);
 
-        EtniaIndigena::factory(20)->create();
-        Ocupacion::factory(10)->create();
 
         User::factory()->create([
             'name' => 'Admin',
@@ -51,6 +50,8 @@ class DatabaseSeeder extends Seeder
             AreaEstudioRealizadoSeeder::class,
             GradoAreaFormacionSeeder::class,
             EtniaIndigenaSeeder::class,
+            DiscapacidadSeeder::class,
+            OcupacionSeeder::class,
         ]);
         $this->command->info('¡Base de datos poblada con éxito!');
 

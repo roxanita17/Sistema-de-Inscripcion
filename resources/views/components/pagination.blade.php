@@ -3,7 +3,7 @@
 
 @if ($paginator->hasPages())
     <div class="d-flex flex-column align-items-center mt-4">
-        {{-- 🔹 Botones de paginación --}}
+        {{--Botones de paginación --}}
         <nav aria-label="Paginación de registros">
             <ul class="pagination">
                 {{-- Botón anterior --}}
@@ -37,7 +37,7 @@
             </ul>
         </nav>
 
-        {{-- 🔹 Información de registros --}}
+        {{--Información de registros --}}
         <div class="pagination-info mt-2 text-muted">
             Mostrando <span>{{ $paginator->firstItem() ?? 0 }}</span>
             a <span>{{ $paginator->lastItem() ?? 0 }}</span>

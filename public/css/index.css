@@ -302,7 +302,7 @@
     }
 
     .table-modern td {
-        padding: 1.25rem 1.5rem;
+        padding: 0.3rem 0.3rem;
         font-size: 0.9rem;
         color: var(--gray-700);
     }

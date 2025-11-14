@@ -14,7 +14,7 @@ class OcupacionController extends Controller
     {
         // Se obtienen todas las ocupaciones registradas (activas e inactivas)
         // y se ordenan alfabéticamente por nombre.
-        $ocupacion = Ocupacion::orderBy('nombre_ocupacion', 'asc')->get();
+        $ocupacion = Ocupacion::orderBy('nombre_ocupacion', 'asc')->where('status', true)->paginate(10);
 
         // Se retorna la vista principal con la colección de ocupaciones.
         return view("admin.ocupacion.index", compact("ocupacion"));
