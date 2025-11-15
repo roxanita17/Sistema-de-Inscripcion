@@ -59,6 +59,7 @@ class DatabaseSeeder extends Seeder
             BancoSeeder::class,
             PrefijoTelefonoSeeder::class,
             RoleSeeder::class,
+            InstitucionProcedenciaSeeder::class,
         ]);
         $this->command->info('¡Base de datos poblada con éxito!');
 
