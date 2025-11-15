@@ -19,9 +19,6 @@ class LocalidadIndex extends Component
     public $updateMode = false;
     public $search = '';
 
-    protected $paginationTheme = 'bootstrap'; 
-
-
     public $municipios = []; //municipios dinámicos filtrados
 
     protected $rules = [
@@ -50,6 +47,10 @@ class LocalidadIndex extends Component
         return view('livewire.admin.localidad-index', compact('estados', 'localidades'));
     }
 
+    public function paginationView()
+    {
+        return 'vendor.livewire.bootstrap-custom';
+    }
 
     public function updatedSearch()
     {
@@ -102,25 +103,25 @@ class LocalidadIndex extends Component
 
     public function edit($id)
     {
-    $localidad = Localidad::with('municipio.estado')->findOrFail($id);
+        $localidad = Localidad::with('municipio.estado')->findOrFail($id);
 
-    $this->localidad_id = $localidad->id;
-    $this->nombre_localidad = $localidad->nombre_localidad;
+        $this->localidad_id = $localidad->id;
+        $this->nombre_localidad = $localidad->nombre_localidad;
 
-    //Obtenemos correctamente el estado desde la relación
-    $this->estado_id = $localidad->municipio->estado->id ?? null;
-    $this->municipio_id = $localidad->municipio->id ?? null;
+        // Obtenemos correctamente el estado desde la relación
+        $this->estado_id = $localidad->municipio->estado->id ?? null;
+        $this->municipio_id = $localidad->municipio_id;
 
-    //Cargamos los municipios de ese estado
-    if ($this->estado_id) {
-        $this->municipios = Municipio::where('estado_id', $this->estado_id)->get();
-    } else {
-        $this->municipios = [];
+        // Cargamos los municipios de ese estado
+        if ($this->estado_id) {
+            $this->municipios = Municipio::where('estado_id', $this->estado_id)
+                ->where('status', true)
+                ->orderBy('nombre_municipio', 'asc')
+                ->get();
+        }
+
+        $this->updateMode = true;
     }
-
-    //Mostrar el modal
-    $this->dispatch('abrirModalEditar');
-}
 
 
     public function update()

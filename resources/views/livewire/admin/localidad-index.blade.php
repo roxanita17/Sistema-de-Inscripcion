@@ -1,102 +1,204 @@
-<div class="container mt-4">
-    {{-- Contenedor de alertas --}}
-    <div id="contenedorAlertas">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-dismiss="alert" aria-hidden="Close"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-dismiss="alert" aria-hidden="Close"></button>
-            </div>
-        @endif
-    </div>
-    <input type="text" class="form-control mb-3" placeholder="Buscar..." wire:model.live="search">
+<div class="main-container">
 
-    {{-- Botón para abrir la modal de crear estado --}}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearLocalidad">
-        <i class="fas fa-plus"></i> Crear Localidad
-    </button>
-
+    {{-- Modales incluidos DENTRO del componente Livewire --}}
     @include('admin.localidad.modales.createModal')
     @include('admin.localidad.modales.editModal')
 
-    {{-- Tabla de años escolares --}}
-    <div class="table-responsive">
-        <table class="table table-striped align-middle text-center" id="tablaAnioEscolar">
-            <thead class="table-primary">
-                <tr>
-                    {{-- <th>N°</th> --}}
-                    <th>Localidad</th>
-                    <th>Municipio</th>
-                    <th>Estado</th>
-                    <th>Status</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyAnioEscolar">
-                @if ($localidades->isEmpty())
-                    <tr>
-                        <td colspan="5" style="text-align: center;">No se encontraron localidades.</td>
-                    </tr>
-                @endif
+    {{-- Alertas --}}
+    @if (session('success') || session('error'))
+        <div class="alerts-container">
+            @if (session('success'))
+                <div class="alert-modern alert-success alert alert-dismissible fade show">
+                    <div class="alert-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>Éxito</h4>
+                        <p>{{ session('success') }}</p>
+                    </div>
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
 
-                @foreach ($localidades as $datos)
-                    @if ($datos->status == true)
-                        <tr>
-                            <td>{{ $datos->nombre_localidad }}</td>
-                            <td>{{ $datos->municipio->nombre_municipio }}</td>
-                            <td>{{ $datos->municipio->estado->nombre_estado }}</td>
-                            <td>
-                                @if ($datos->status == true)
-                                    <span class="badge bg-success">Activo</span>
-                                @else
-                                    <span class="badge bg-danger">Inactivo</span>
-                                @endif
-                            </td>
-                            <td>
-                                {{-- Editar --}}
-                                <button wire:click="edit({{ $datos->id }})" class="btn btn-warning btn-sm"
-                                    data-bs-toggle="modal" data-bs-target="#modalEditar">
-                                    <i class="fas fa-pen text-white"></i>
-                                </button>
+            @if (session('error'))
+                <div class="alert-modern alert-error alert alert-dismissible fade show">
+                    <div class="alert-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>Error</h4>
+                        <p>{{ session('error') }}</p>
+                    </div>
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
+        </div>
+    @endif
 
-                                {{-- Eliminar --}}
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#confirmarEliminar{{ $datos->id }}">
-                                    <i class="fas fa-trash text-white"></i>
-                                </button>
+    {{-- INCLUYE LAS MODALES DENTRO DEL MISMO DIV PRINCIPAL --}}
+    @include('admin.localidad.modales.createModal')
+    @include('admin.localidad.modales.editModal')
 
-                                {{-- Modal de confirmación --}}
-                                <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
-                                    aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-body">
-                                                ¿Estás seguro de eliminar esta localidad?
+    {{-- Tarjeta moderna --}}
+    <div class="card-modern">
+        {{-- Header de la tarjeta --}}
+        <div class="card-header-modern">
+            <div class="header-left">
+                <div class="header-icon">
+                    <i class="fas fa-list-ul"></i>
+                </div>
+                <div>
+                    <h3>Listado de Localidades</h3>
+                    <p>{{ $localidades->total() }} registros encontrados</p>
+                </div>
+            </div>
+
+            {{-- Buscador --}}
+            <div class="form-group-modern mb-2">
+                <div class="search-modern"> 
+                    <i class="fas fa-search"></i>
+                    <input type="text"
+                        name="buscar"
+                        id="buscar"
+                        class="form-control-modern"
+                        placeholder="Buscar..."
+                        wire:model.live="search">
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="date-badge">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{{ now()->translatedFormat('d M Y') }}</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Cuerpo con tabla moderna --}}
+        <div class="card-body-modern">
+            <div class="table-wrapper">
+                <table class="table-modern overflow-hidden hidden">
+                    <thead>
+                        <tr class="text-center">
+                            <th>#</th>
+                            <th class="text-center">Localidad</th>
+                            <th class="text-center">Municipio</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-center">
+                        {{-- SI NO HAY LOCALIDADES --}}
+                        @if ($localidades->isEmpty())
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">
+                                        <div class="empty-icon">
+                                            <i class="fas fa-inbox"></i>
+                                        </div>
+                                        <h4>No hay localidades registradas</h4>
+                                        <p>Agrega un nuevo estado con el botón superior</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
+
+                        {{-- LISTADO --}}
+                        @foreach ($localidades as $index => $datos)
+                            <tr class="table-row-hover row-12">
+
+                                {{-- Número --}}
+                                <td>{{ $localidades->firstItem() + $index }}</td>
+
+                                {{-- Nombre de la localidad --}}
+                                <td class="title-main">{{ $datos->nombre_localidad }}</td>
+
+                                {{-- Nombre del municipio --}}
+                                <td>{{ $datos->municipio->nombre_municipio }}</td>
+
+                                {{-- Estado al que pertenece --}}
+                                <td>{{ $datos->municipio->estado->nombre_estado }}</td>
+
+                                {{-- Badge --}}
+                                <td>
+                                    @if ($datos->status)
+                                        <span class="status-badge status-active">
+                                            <span class="status-dot"></span> Activo
+                                        </span>
+                                    @else
+                                        <span class="status-badge status-inactive">
+                                            <span class="status-dot"></span> Inactivo
+                                        </span>
+                                    @endif
+                                </td>
+
+                                {{-- ACCIONES --}}
+                                <td>
+                                    <div class="action-buttons">
+                                        {{-- Botón Editar --}}
+                                        <button wire:click="edit({{ $datos->id }})"
+                                            class="action-btn btn-edit" 
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEditar"
+                                            title="Editar">
+                                            <i class="fas fa-pen text-white"></i>
+                                        </button>
+
+                                        {{-- Botón Eliminar --}}
+                                        <button class="action-btn btn-delete"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                            title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            {{-- Modal de confirmación para eliminar --}}
+                            <div wire:ignore.self class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content modal-modern">
+                                        <div class="modal-header-delete">
+                                            <div class="modal-icon-delete">
+                                                <i class="fas fa-trash-alt"></i>
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancelar</button>
-                                                <button wire:click="destroy({{ $datos->id }})"
-                                                    class="btn btn-danger">Eliminar</button>
+                                            <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                                            <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body-delete">
+                                            <p>¿Deseas eliminar esta localidad?</p>
+                                            <p class="delete-warning">
+                                                Esta acción no se puede deshacer.
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer-delete">
+                                            <div class="footer-buttons">
+                                                <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
+                                                <button class="btn-modal-delete" wire:click="destroy({{ $datos->id }})">Eliminar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </td>
-                        </tr>
-                    @endif
-                @endforeach
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="5">{{ $localidades->links() }}</td>
-                </tr>
-            </tfoot>
-        </table>
+                            </div>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Paginación --}}
+        <div class="mt-3">
+            {{ $localidades->links() }}
+        </div>
     </div>
+
 </div>
