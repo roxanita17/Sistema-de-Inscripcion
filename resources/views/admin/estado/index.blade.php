@@ -20,10 +20,11 @@
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Estado</span>
             </button>
-        </div>
+        </div> 
     </div>
 @stop
 
+{{-- Estilos --}}
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">

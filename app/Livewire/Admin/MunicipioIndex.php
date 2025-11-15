@@ -40,6 +40,11 @@ class MunicipioIndex extends Component
         return view('livewire.admin.municipio-index', compact('municipios', 'estados'));
     }
 
+    public function paginationView()
+    {
+        return 'vendor.livewire.bootstrap-custom';
+    }
+
     public function updatedSearch()
     {
         $this->resetPage();
