@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 
 class BancoController extends Controller
 {
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
+
     /**
      * Muestra el listado completo de bancos registrados.
      */
@@ -15,9 +23,12 @@ class BancoController extends Controller
         // Se obtienen todos los bancos ordenados por código
         $bancos = Banco::where('status', true)->orderBy('nombre_banco', 'asc')->paginate(10);
 
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
+
         // Se envían los datos a la vista
-        return view('admin.banco.index', compact('bancos'));
-    }
+        return view('admin.banco.index', compact('bancos', 'anioEscolarActivo'));
+    }   
 
     /**
      * Crea un nuevo registro de banco.

@@ -7,13 +7,32 @@ use Illuminate\Http\Request;
 
 class EstudiosRealizadoController extends Controller
 {
+    
+    /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $estudiosRealizados = EstudiosRealizado::where('status', true)->orderBy('estudios', 'asc')->paginate(10);
-        return view('admin.estudios_realizados.index', compact('estudiosRealizados'));
+
+        $estudiosRealizados = EstudiosRealizado::where('status', true)
+            ->orderBy('estudios', 'asc')
+            ->paginate(10);
+
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
+        
+        return view('admin.estudios_realizados.index', compact('estudiosRealizados', 'anioEscolarActivo'));
     }
 
     /**

@@ -7,16 +7,32 @@ use Illuminate\Http\Request;
 
 class EtniaIndigenaController extends Controller
 {
+        /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
+
     /**
      * Muestra la lista de etnias indígenas registradas.
      */
     public function index()
     {
         // Obtener todas las etnias indígenas ordenadas alfabéticamente
-        $etniaIndigena = EtniaIndigena::orderBy('nombre', 'asc')->where('status', true)->paginate(10);
+        $etniaIndigena = EtniaIndigena::orderBy('nombre', 'asc')
+            ->where('status', true)
+            ->paginate(10);
+
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Retornar la vista principal con los datos obtenidos
-        return view("admin.etnia_indigena.index", compact("etniaIndigena"));
+        return view("admin.etnia_indigena.index", compact("etniaIndigena", "anioEscolarActivo"));
     }
 
     /**

@@ -32,44 +32,33 @@
 @stop
 
 @section('content')
-    <div class="main-container">
-        {{-- Incluir modal de creación --}}
-        @include('admin.anio_escolar.modales.createModal')
+    {{-- Alerta si no hay año escolar activo --}}
+    @php
+        $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    @endphp
 
-        {{-- Alertas --}}
-        @if (session('success') || session('error'))
-        <div class="alerts-container">
-            @if (session('success'))
-                <div class="alert-modern alert-success alert alert-dismissible fade show" role="alert">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>¡Éxito!</h4>
-                        <p>{{ session('success') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
-                        <i class="fas fa-times"></i>
-                    </button>
+    @if (!$anioEscolarActivo)
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div>
+                    <h5 class="alert-heading mb-1">No hay año escolar activo</h5>
+                    <p class="mb-0">Debe registrar un año escolar activo para poder utilizar los demás módulos del sistema.</p>
                 </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Error</h4>
-                        <p>{{ session('error') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
+            </div>
         </div>
-        @endif 
+    @endif
+
+    {{-- Alertas de sesión --}}
+    @if (session('warning'))
+        <div class="alert alert-warning alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ session('warning') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
         {{-- Tabla de años escolares --}}
         <div class="card-modern">
@@ -158,6 +147,10 @@
                                         
                                     </td>
                                 </tr>
+                                {{-- Modal Crear --}}
+                                @include('admin.anio_escolar.modales.createModal')
+
+                                
                                 {{-- Modal Extender --}}
                                 @include('admin.anio_escolar.modales.extenderModal')
 

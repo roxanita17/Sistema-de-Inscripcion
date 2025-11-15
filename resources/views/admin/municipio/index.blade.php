@@ -15,8 +15,13 @@
                 </div>
             </div>
 
-            {{-- Botón crear --}}
-            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear">
+            {{-- Botón crear --}} 
+            <button type="button" 
+                    class="btn-create" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalCrear"
+                    @if(!$anioEscolarActivo) disabled @endif
+                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo Municipio' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Municipio</span>
             </button>

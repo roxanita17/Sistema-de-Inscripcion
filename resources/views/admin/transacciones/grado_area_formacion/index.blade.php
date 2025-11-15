@@ -2,8 +2,7 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/createModal.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/editModal.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
 
@@ -21,7 +20,12 @@
                     <p class="title-subtitle">Gestión de vínculos entre grados académicos y áreas formativas</p>
                 </div>
             </div>
-            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
+            <button type="button" 
+                    class="btn-create" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalCrearAsignacion"
+                    @if(!$anioEscolarActivo) disabled @endif
+                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nueva Asignación' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nueva Asignación</span>
             </button>
@@ -34,6 +38,22 @@
 
         {{-- Incluir modal de creación --}}
         @include('admin.transacciones.grado_area_formacion.modales.createModal')
+
+        {{-- Alerta si NO hay año escolar activo --}}
+        @if (!$anioEscolarActivo)
+            <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                        <p class="mb-0">
+                            Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> bancos hasta que se registre un año escolar activo.
+                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         {{-- Alertas modernas --}}
         @if (session('success') || session('error'))
@@ -137,20 +157,27 @@
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            {{-- Ver --}}
-                                            <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#viewModal{{ $datos->id }}" title="Ver Detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            @include('admin.transacciones.grado_area_formacion.modales.showModal')
-
+                                    
                                             {{-- Editar --}}
-                                            <button type="button" class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#viewModalEditar{{ $datos->id }}" title="Editar">
+                                            <button type="button"
+                                                    class="action-btn btn-edit"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#viewModalEditar{{ $datos->id }}"
+                                                    title="Editar"
+                                                    @if(!$anioEscolarActivo) disabled @endif
+                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
                                                 <i class="fas fa-pen"></i>
                                             </button>
                                             
 
                                             {{-- Eliminar --}}
-                                            <button type="button" class="action-btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $datos->id }}" title="Eliminar">
+                                            <button type="button"
+                                                    class="action-btn btn-delete"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal{{ $datos->id }}"
+                                                    title="Eliminar"
+                                                    @if(!$anioEscolarActivo) disabled @endif
+                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar' }}">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>

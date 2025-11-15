@@ -7,6 +7,16 @@ use Illuminate\Http\Request;
 
 class PrefijoTelefonoController extends Controller
 {
+        /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
     /**
      * Muestra el listado de todos los prefijos registrados,
      * tanto los activos como los inactivos (status = true / false).
@@ -14,10 +24,15 @@ class PrefijoTelefonoController extends Controller
     public function index()
     {
         // Se obtienen todos los prefijos ordenados de forma ascendente por el número de prefijo
-        $prefijos = PrefijoTelefono::where('status', true)->orderBy('prefijo', 'asc')->paginate(10);
+        $prefijos = PrefijoTelefono::where('status', true)
+            ->orderBy('prefijo', 'asc')
+            ->paginate(10);
+
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Se retorna la vista con los datos obtenidos
-        return view('admin.prefijo_telefono.index', compact('prefijos'));
+        return view('admin.prefijo_telefono.index', compact('prefijos', 'anioEscolarActivo'));
     }
 
     /**

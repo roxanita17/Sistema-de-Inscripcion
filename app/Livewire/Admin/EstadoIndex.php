@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Estado;
+use App\Models\AnioEscolar;
 
 class EstadoIndex extends Component
 {
@@ -14,13 +15,41 @@ class EstadoIndex extends Component
     public $estado_id;
     public $updateMode = false;
     public $search = '';
-
-    // Removemos esta línea porque ya no la necesitamos
-    // protected $paginationTheme = 'bootstrap';
+    public $anioEscolarActivo = false; // Nueva propiedad pública
 
     protected $rules = [
         'nombre_estado' => 'required|string|max:255',
     ];
+
+    /**
+     * Se ejecuta al montar el componente
+     */
+    public function mount()
+    {
+        $this->verificarAnioEscolar();
+    }
+
+    /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        $this->anioEscolarActivo = AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
+    /**
+     * Verifica antes de ejecutar acciones
+     */
+    private function verificarAccion()
+    {
+        if (!$this->anioEscolarActivo) {
+            session()->flash('warning', 'Debe registrar un año escolar activo para realizar esta acción.');
+            return false;
+        }
+        return true;
+    }
 
     public function render()
     {
@@ -34,7 +63,6 @@ class EstadoIndex extends Component
         return view('livewire.admin.estado-index', compact('estados'));
     }
 
-    // Método para especificar la vista de paginación personalizada
     public function paginationView()
     {
         return 'vendor.livewire.bootstrap-custom';
@@ -54,6 +82,11 @@ class EstadoIndex extends Component
 
     public function store()
     {
+        // Verificar año escolar antes de crear
+        if (!$this->verificarAccion()) {
+            return;
+        }
+
         $this->validate();
 
         // Evitar duplicados
@@ -74,6 +107,11 @@ class EstadoIndex extends Component
 
     public function edit($id)
     {
+        // Verificar año escolar antes de editar
+        if (!$this->verificarAccion()) {
+            return;
+        }
+
         $estado = Estado::findOrFail($id);
         $this->estado_id = $id;
         $this->nombre_estado = $estado->nombre_estado;
@@ -82,6 +120,11 @@ class EstadoIndex extends Component
 
     public function update()
     {
+        // Verificar año escolar antes de actualizar
+        if (!$this->verificarAccion()) {
+            return;
+        }
+
         $this->validate();
 
         $estado = Estado::find($this->estado_id);
@@ -94,6 +137,11 @@ class EstadoIndex extends Component
 
     public function destroy($id)
     {
+        // Verificar año escolar antes de eliminar
+        if (!$this->verificarAccion()) {
+            return;
+        }
+
         $estado = Estado::findOrFail($id);
         $estado->update(['status' => false]);
 

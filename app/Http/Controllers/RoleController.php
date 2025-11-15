@@ -7,13 +7,28 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+        /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $roles = Role::orderBy('name', 'asc')->paginate(10);
-        return view('admin.roles.index', compact('roles'));
+        $roles = Role::orderBy('name', 'asc')
+            ->paginate(10);
+
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
+
+        return view('admin.roles.index', compact('roles', 'anioEscolarActivo'));
     }
 
     /**

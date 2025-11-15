@@ -1,9 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use PHPUnit\Framework\Attributes\Group; 
 use Illuminate\Support\Facades\Auth;
-use App\Livewire\Admin\EstadoIndex;
+use App\Http\Controllers\AnioEscolarController;
+use App\Http\Controllers\BancoController;
+use App\Http\Controllers\EtniaIndigenaController;
+use App\Http\Controllers\OcupacionController;
+use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\MunicipioController;
+use App\Http\Controllers\LocalidadController;
+use App\Http\Controllers\GradoController;
+use App\Http\Controllers\AreaFormacionController;
+use App\Http\Controllers\ExpresionLiterariaController;
+use App\Http\Controllers\DiscapacidadController;
+use App\Http\Controllers\GradoAreaFormacionController;
+use App\Http\Controllers\PrefijoTelefonoController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\EstudiosRealizadoController;
+use App\Http\Controllers\AreaEstudioRealizadoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,108 +27,169 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-/* Año Escolar */
-Route::get('admin/anio_escolar', [App\Http\Controllers\AnioEscolarController::class, 'index'])->name('admin.anio_escolar.index');
-Route::post('admin/anio_escolar/modales/store', [App\Http\Controllers\AnioEscolarController::class, 'store'])->name('admin.anio_escolar.modales.store');
-Route::post('admin/anio_escolar/{id}/extender', [App\Http\Controllers\AnioEscolarController::class, 'extender'])->name('admin.anio_escolar.modales.extender');
-Route::delete('/admin/anio_escolar/{id}', [App\Http\Controllers\AnioEscolarController::class, 'destroy'])->name('admin.anio_escolar.destroy');
+// ============================================
+// RUTAS PROTEGIDAS POR AUTENTICACIÓN
+// ============================================
 
-/* Etnia Indigena */
-Route::get('admin/etnia_indigena', [App\Http\Controllers\EtniaIndigenaController::class, 'index'])->name('admin.etnia_indigena.index');
-Route::post('admin/etnia_indigena/modales/store', [App\Http\Controllers\EtniaIndigenaController::class, 'store'])->name('admin.etnia_indigena.modales.store');
-Route::post('admin/etnia_indigena/{id}/update', [App\Http\Controllers\EtniaIndigenaController::class, 'update'])->name('admin.etnia_indigena.modales.update');
-Route::delete('/admin/etnia_indigena/{id}', [App\Http\Controllers\EtniaIndigenaController::class, 'destroy'])->name('admin.etnia_indigena.destroy');
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // ===== AÑO ESCOLAR (SIEMPRE ACCESIBLE - SIN VERIFICACIÓN) =====
+    Route::get('anio_escolar', [AnioEscolarController::class, 'index'])->name('anio_escolar.index');
+    Route::post('anio_escolar/modales/store', [AnioEscolarController::class, 'store'])->name('anio_escolar.modales.store');
+    Route::post('anio_escolar/{id}/extender', [AnioEscolarController::class, 'extender'])->name('anio_escolar.modales.extender');
+    Route::delete('anio_escolar/{id}', [AnioEscolarController::class, 'destroy'])->name('anio_escolar.destroy');
+    
+    // ===== BANCOS =====
+    // Index sin middleware (permite ver sin año escolar)
+    Route::get('banco', [BancoController::class, 'index'])->name('banco.index');
+    
+    // Acciones con middleware (requieren año escolar activo)
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('banco/modales/store', [BancoController::class, 'store'])->name('banco.modales.store');
+        Route::post('banco/{id}/update', [BancoController::class, 'update'])->name('banco.modales.update');
+        Route::delete('banco/{id}', [BancoController::class, 'destroy'])->name('banco.destroy');
+    });
 
-/* Ocupacion */
-Route::get('admin/ocupacion', [App\Http\Controllers\OcupacionController::class, 'index'])->name('admin.ocupacion.index');
-Route::post('admin/ocupacion/modales/store', [App\Http\Controllers\OcupacionController::class, 'store'])->name('admin.ocupacion.modales.store');
-Route::post('admin/ocupacion/{id}/update', [App\Http\Controllers\OcupacionController::class, 'update'])->name('admin.ocupacion.modales.update');
-Route::delete('/admin/ocupacion/{id}', [App\Http\Controllers\OcupacionController::class, 'destroy'])->name('admin.ocupacion.destroy');
+    // ===== ETNIA INDÍGENA =====
+    Route::get('etnia_indigena', [EtniaIndigenaController::class, 'index'])->name('etnia_indigena.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('etnia_indigena/modales/store', [EtniaIndigenaController::class, 'store'])->name('etnia_indigena.modales.store');
+        Route::post('etnia_indigena/{id}/update', [EtniaIndigenaController::class, 'update'])->name('etnia_indigena.modales.update');
+        Route::delete('etnia_indigena/{id}', [EtniaIndigenaController::class, 'destroy'])->name('etnia_indigena.destroy');
+    });
 
-/* Banco */
-Route::get('admin/banco', [App\Http\Controllers\BancoController::class, 'index'])->name('admin.banco.index');
-Route::post('admin/banco/modales/store', [App\Http\Controllers\BancoController::class, 'store'])->name('admin.banco.modales.store');
-Route::post('admin/banco/{id}/update', [App\Http\Controllers\BancoController::class, 'update'])->name('admin.banco.modales.update');
-Route::delete('/admin/banco/{id}', [App\Http\Controllers\BancoController::class, 'destroy'])->name('admin.banco.destroy');
+    // ===== OCUPACIÓN =====
+    Route::get('ocupacion', [OcupacionController::class, 'index'])->name('ocupacion.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('ocupacion/modales/store', [OcupacionController::class, 'store'])->name('ocupacion.modales.store');
+        Route::post('ocupacion/{id}/update', [OcupacionController::class, 'update'])->name('ocupacion.modales.update');
+        Route::delete('ocupacion/{id}', [OcupacionController::class, 'destroy'])->name('ocupacion.destroy');
+    });
 
-/* Estado */
-Route::get('admin/estado', [App\Http\Controllers\EstadoController::class, 'index'])->name('admin.estado.index');
-Route::post('admin/estado/modales/store', [App\Http\Controllers\EstadoController::class, 'store'])->name('admin.estado.modales.store');
-Route::post('admin/estado/{id}/update', [App\Http\Controllers\EstadoController::class, 'update'])->name('admin.estado.modales.update');
-Route::delete('/admin/estado/{id}', [App\Http\Controllers\EstadoController::class, 'destroy'])->name('admin.estado.destroy');
+    // ===== ESTADO (LIVEWIRE) =====
+    Route::get('estado', function () {
+        return view('admin.estado.index', [
+            'anioEscolarActivo' => \App\Models\AnioEscolar::where('status', 'Activo')
+                ->orWhere('status', 'Extendido')
+                ->exists()
+        ]);
+    })->name('estado.index');
 
-/* Municipio */
-Route::get('admin/municipio', [App\Http\Controllers\MunicipioController::class, 'index'])->name('admin.municipio.index');
-Route::post('admin/municipio/modales/store', [App\Http\Controllers\MunicipioController::class, 'store'])->name('admin.municipio.modales.store');
-Route::post('admin/municipio/{id}/update', [App\Http\Controllers\MunicipioController::class, 'update'])->name('admin.municipio.modales.update');
-Route::delete('/admin/municipio/{id}', [App\Http\Controllers\MunicipioController::class, 'destroy'])->name('admin.municipio.destroy');
+    // ===== MUNICIPIO (LIVEWIRE)=====
+    Route::get('municipio', function () {
+        return view('admin.municipio.index', [
+            'anioEscolarActivo' => \App\Models\AnioEscolar::where('status', 'Activo')
+                ->orWhere('status', 'Extendido')
+                ->exists()
+        ]);
+    })->name('municipio.index');
 
-/* Localidad */
-Route::get('admin/localidad', [App\Http\Controllers\LocalidadController::class, 'index'])->name('admin.localidad.index');
-Route::post('admin/localidad/modales/store', [App\Http\Controllers\LocalidadController::class, 'store'])->name('admin.localidad.modales.store');
-Route::post('admin/localidad/{id}/update', [App\Http\Controllers\LocalidadController::class, 'update'])->name('admin.localidad.modales.update');
-Route::delete('/admin/localidad/{id}', [App\Http\Controllers\LocalidadController::class, 'destroy'])->name('admin.localidad.destroy'); 
-Route::get('admin/localidad/municipios/{estado_id}', [App\Http\Controllers\MunicipioController::class, 'getByEstado']);
-Route::get('admin/localidad/localidades/{municipio_id}', [App\Http\Controllers\LocalidadController::class, 'getByMunicipio']);
+    // ===== LOCALIDAD (LIVEWIRE)=====
+    Route::get('localidad', function () {
+        return view('admin.localidad.index', [
+            'anioEscolarActivo' => \App\Models\AnioEscolar::where('status', 'Activo')
+                ->orWhere('status', 'Extendido')
+                ->exists()
+        ]);
+    })->name('localidad.index');
+    
+ /*    Route::get('localidad/municipios/{estado_id}', [MunicipioController::class, 'getByEstado']);
+    Route::get('localidad/localidades/{municipio_id}', [LocalidadController::class, 'getByMunicipio']);
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('localidad/modales/store', [LocalidadController::class, 'store'])->name('localidad.modales.store');
+        Route::post('localidad/{id}/update', [LocalidadController::class, 'update'])->name('localidad.modales.update');
+        Route::delete('localidad/{id}', [LocalidadController::class, 'destroy'])->name('localidad.destroy');
+    }); */
 
-/* Grado */
-Route::get('admin/grado', [App\Http\Controllers\GradoController::class, 'index'])->name('admin.grado.index');
-Route::post('admin/grado/modales/store', [App\Http\Controllers\GradoController::class, 'store'])->name('admin.grado.modales.store');
-Route::post('admin/grado/{id}/update', [App\Http\Controllers\GradoController::class, 'update'])->name('admin.grado.modales.update');
-Route::delete('/admin/grado/{id}', [App\Http\Controllers\GradoController::class, 'destroy'])->name('admin.grado.destroy');
+    // ===== GRADO =====
+    Route::get('grado', [GradoController::class, 'index'])->name('grado.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('grado/modales/store', [GradoController::class, 'store'])->name('grado.modales.store');
+        Route::post('grado/{id}/update', [GradoController::class, 'update'])->name('grado.modales.update');
+        Route::delete('grado/{id}', [GradoController::class, 'destroy'])->name('grado.destroy');
+    });
 
-/* Area de Formacion */
-Route::get('admin/area_formacion', [App\Http\Controllers\AreaFormacionController::class, 'index'])->name('admin.area_formacion.index');
-Route::post('admin/area_formacion/modales/store', [App\Http\Controllers\AreaFormacionController::class, 'store'])->name('admin.area_formacion.modales.store');
-Route::post('admin/area_formacion/{id}/update', [App\Http\Controllers\AreaFormacionController::class, 'update'])->name('admin.area_formacion.modales.update');
-Route::delete('admin/area_formacion/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroy'])->name('admin.area_formacion.destroy');
+    // ===== ÁREA DE FORMACIÓN =====
+    Route::get('area_formacion', [AreaFormacionController::class, 'index'])->name('area_formacion.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('area_formacion/modales/store', [AreaFormacionController::class, 'store'])->name('area_formacion.modales.store');
+        Route::post('area_formacion/{id}/update', [AreaFormacionController::class, 'update'])->name('area_formacion.modales.update');
+        Route::delete('area_formacion/{id}', [AreaFormacionController::class, 'destroy'])->name('area_formacion.destroy');
+    });
 
-/* Grupo Estable */
-Route::post('admin/area_formacion/modalesGrupoEstable/storeGrupoEstable', [App\Http\Controllers\AreaFormacionController::class, 'storeGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.storeGrupoEstable');
-Route::post('admin/area_formacion/{id}/updateGrupoEstable', [App\Http\Controllers\AreaFormacionController::class, 'updateGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.updateGrupoEstable');
-Route::delete('admin/grupo_estable/{id}', [App\Http\Controllers\AreaFormacionController::class, 'destroyGrupoEstable'])->name('admin.area_formacion.modalesGrupoEstable.destroyGrupoEstable');
+    // ===== GRUPO ESTABLE =====
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('area_formacion/modalesGrupoEstable/storeGrupoEstable', [AreaFormacionController::class, 'storeGrupoEstable'])->name('area_formacion.modalesGrupoEstable.storeGrupoEstable');
+        Route::post('area_formacion/{id}/updateGrupoEstable', [AreaFormacionController::class, 'updateGrupoEstable'])->name('area_formacion.modalesGrupoEstable.updateGrupoEstable');
+        Route::delete('grupo_estable/{id}', [AreaFormacionController::class, 'destroyGrupoEstable'])->name('area_formacion.modalesGrupoEstable.destroyGrupoEstable');
+    });
 
-/* Expresion Literaria */
-Route::get('admin/expresion_literaria', [App\Http\Controllers\ExpresionLiterariaController::class, 'index'])->name('admin.expresion_literaria.index');
-Route::post('admin/expresion_literaria/modales/store', [App\Http\Controllers\ExpresionLiterariaController::class, 'store'])->name('admin.expresion_literaria.modales.store');
-Route::post('admin/expresion_literaria/{id}/update', [App\Http\Controllers\ExpresionLiterariaController::class, 'update'])->name('admin.expresion_literaria.modales.update');
-Route::delete('/admin/expresion_literaria/{id}', [App\Http\Controllers\ExpresionLiterariaController::class, 'destroy'])->name('admin.expresion_literaria.destroy');
+    // ===== EXPRESIÓN LITERARIA =====
+    Route::get('expresion_literaria', [ExpresionLiterariaController::class, 'index'])->name('expresion_literaria.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('expresion_literaria/modales/store', [ExpresionLiterariaController::class, 'store'])->name('expresion_literaria.modales.store');
+        Route::post('expresion_literaria/{id}/update', [ExpresionLiterariaController::class, 'update'])->name('expresion_literaria.modales.update');
+        Route::delete('expresion_literaria/{id}', [ExpresionLiterariaController::class, 'destroy'])->name('expresion_literaria.destroy');
+    });
 
-/* Discapacidad */
-Route::get('admin/discapacidad', [App\Http\Controllers\DiscapacidadController::class, 'index'])->name('admin.discapacidad.index');
-Route::post('admin/discapacidad/modales/store', [App\Http\Controllers\DiscapacidadController::class, 'store'])->name('admin.discapacidad.modales.store');
-Route::post('admin/discapacidad/{id}/update', [App\Http\Controllers\DiscapacidadController::class, 'update'])->name('admin.discapacidad.modales.update');
-Route::delete('/admin/discapacidad/{id}', [App\Http\Controllers\DiscapacidadController::class, 'destroy'])->name('admin.discapacidad.destroy');
+    // ===== DISCAPACIDAD =====
+    Route::get('discapacidad', [DiscapacidadController::class, 'index'])->name('discapacidad.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('discapacidad/modales/store', [DiscapacidadController::class, 'store'])->name('discapacidad.modales.store');
+        Route::post('discapacidad/{id}/update', [DiscapacidadController::class, 'update'])->name('discapacidad.modales.update');
+        Route::delete('discapacidad/{id}', [DiscapacidadController::class, 'destroy'])->name('discapacidad.destroy');
+    });
 
-/* Grado Area Formacion */
-Route::get('admin/transacciones/grado_area_formacion', [App\Http\Controllers\GradoAreaFormacionController::class, 'index'])->name('admin.transacciones.grado_area_formacion.index');
-Route::post('admin/transacciones/grado_area_formacion/modales/store', [App\Http\Controllers\GradoAreaFormacionController::class, 'store'])->name('admin.transacciones.grado_area_formacion.modales.store');
-Route::post('admin/transacciones/grado_area_formacion/{id}/update', [App\Http\Controllers\GradoAreaFormacionController::class, 'update'])->name('admin.transacciones.grado_area_formacion.modales.update');
-Route::delete('/admin/transacciones/grado_area_formacion/{id}', [App\Http\Controllers\GradoAreaFormacionController::class, 'destroy'])->name('admin.transacciones.grado_area_formacion.destroy');
+    // ===== GRADO ÁREA FORMACIÓN (TRANSACCIÓN) =====
+    Route::get('transacciones/grado_area_formacion', [GradoAreaFormacionController::class, 'index'])->name('transacciones.grado_area_formacion.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('transacciones/grado_area_formacion/modales/store', [GradoAreaFormacionController::class, 'store'])->name('transacciones.grado_area_formacion.modales.store');
+        Route::post('transacciones/grado_area_formacion/{id}/update', [GradoAreaFormacionController::class, 'update'])->name('transacciones.grado_area_formacion.modales.update');
+        Route::delete('transacciones/grado_area_formacion/{id}', [GradoAreaFormacionController::class, 'destroy'])->name('transacciones.grado_area_formacion.destroy');
+    });
 
-/* Prefijo de telefono */
-Route::get('admin/prefijo_telefono', [App\Http\Controllers\PrefijoTelefonoController::class, 'index'])->name('admin.prefijo_telefono.index');
-Route::post('admin/prefijo_telefono/modales/store', [App\Http\Controllers\PrefijoTelefonoController::class, 'store'])->name('admin.prefijo_telefono.modales.store');
-Route::post('admin/prefijo_telefono/{id}/update', [App\Http\Controllers\PrefijoTelefonoController::class, 'update'])->name('admin.prefijo_telefono.modales.update');
-Route::delete('/admin/prefijo_telefono/{id}', [App\Http\Controllers\PrefijoTelefonoController::class, 'destroy'])->name('admin.prefijo_telefono.destroy');
+    // ===== PREFIJO DE TELÉFONO =====
+    Route::get('prefijo_telefono', [PrefijoTelefonoController::class, 'index'])->name('prefijo_telefono.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('prefijo_telefono/modales/store', [PrefijoTelefonoController::class, 'store'])->name('prefijo_telefono.modales.store');
+        Route::post('prefijo_telefono/{id}/update', [PrefijoTelefonoController::class, 'update'])->name('prefijo_telefono.modales.update');
+        Route::delete('prefijo_telefono/{id}', [PrefijoTelefonoController::class, 'destroy'])->name('prefijo_telefono.destroy');
+    });
 
-/* Roles */
-Route::get('admin/roles', [App\Http\Controllers\RoleController::class, 'index'])->name('admin.roles.index');
-Route::post('admin/roles/modales/store', [App\Http\Controllers\RoleController::class, 'store'])->name('admin.roles.modales.store');
-Route::post('admin/roles/{id}/update', [App\Http\Controllers\RoleController::class, 'update'])->name('admin.roles.modales.update');
-Route::delete('/admin/roles/{id}', [App\Http\Controllers\RoleController::class, 'destroy'])->name('admin.roles.destroy');
-Route::get('admin/roles/permisos/{id}', [App\Http\Controllers\RoleController::class, 'permisos'])->name('admin.roles.permisos');
+    // ===== ROLES =====
+    Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+    Route::get('roles/permisos/{id}', [RoleController::class, 'permisos'])->name('roles.permisos');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('roles/modales/store', [RoleController::class, 'store'])->name('roles.modales.store');
+        Route::post('roles/{id}/update', [RoleController::class, 'update'])->name('roles.modales.update');
+        Route::delete('roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
 
-/* Estudios Realizados */
-Route::get('admin/estudios_realizados', [App\Http\Controllers\EstudiosRealizadoController::class, 'index'])->name('admin.estudios_realizados.index');
-Route::post('admin/estudios_realizados/modales/store', [App\Http\Controllers\EstudiosRealizadoController::class, 'store'])->name('admin.estudios_realizados.modales.store');
-Route::post('admin/estudios_realizados/{id}/update', [App\Http\Controllers\EstudiosRealizadoController::class, 'update'])->name('admin.estudios_realizados.modales.update');
-Route::delete('/admin/estudios_realizados/{id}', [App\Http\Controllers\EstudiosRealizadoController::class, 'destroy'])->name('admin.estudios_realizados.destroy');
+    // ===== ESTUDIOS REALIZADOS =====
+    Route::get('estudios_realizados', [EstudiosRealizadoController::class, 'index'])->name('estudios_realizados.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('estudios_realizados/modales/store', [EstudiosRealizadoController::class, 'store'])->name('estudios_realizados.modales.store');
+        Route::post('estudios_realizados/{id}/update', [EstudiosRealizadoController::class, 'update'])->name('estudios_realizados.modales.update');
+        Route::delete('estudios_realizados/{id}', [EstudiosRealizadoController::class, 'destroy'])->name('estudios_realizados.destroy');
+    });
 
-/* Area Estudio Realizado */
-Route::get('admin/transacciones/area_estudio_realizado', [App\Http\Controllers\AreaEstudioRealizadoController::class, 'index'])->name('admin.transacciones.area_estudio_realizado.index');
-Route::post('admin/transacciones/area_estudio_realizado/modales/store', [App\Http\Controllers\AreaEstudioRealizadoController::class, 'store'])->name('admin.transacciones.area_estudio_realizado.modales.store');
-Route::post('admin/transacciones/area_estudio_realizado/{id}/update', [App\Http\Controllers\AreaEstudioRealizadoController::class, 'update'])->name('admin.transacciones.area_estudio_realizado.modales.update');
-Route::delete('/admin/transacciones/area_estudio_realizado/{id}', [App\Http\Controllers\AreaEstudioRealizadoController::class, 'destroy'])->name('admin.transacciones.area_estudio_realizado.destroy');
-
- 
+    // ===== ÁREA ESTUDIO REALIZADO (TRANSACCIÓN) =====
+    Route::get('transacciones/area_estudio_realizado', [AreaEstudioRealizadoController::class, 'index'])->name('transacciones.area_estudio_realizado.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::post('transacciones/area_estudio_realizado/modales/store', [AreaEstudioRealizadoController::class, 'store'])->name('transacciones.area_estudio_realizado.modales.store');
+        Route::post('transacciones/area_estudio_realizado/{id}/update', [AreaEstudioRealizadoController::class, 'update'])->name('transacciones.area_estudio_realizado.modales.update');
+        Route::delete('transacciones/area_estudio_realizado/{id}', [AreaEstudioRealizadoController::class, 'destroy'])->name('transacciones.area_estudio_realizado.destroy');
+    });
+});

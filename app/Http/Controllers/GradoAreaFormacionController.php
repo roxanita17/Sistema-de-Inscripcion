@@ -10,6 +10,16 @@ use Illuminate\Support\Facades\Log; // Para mostrar mensajes en la terminal
 
 class GradoAreaFormacionController extends Controller
 {
+        /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
     /**
      * Muestra la lista de asignaciones entre grados y áreas de formación.
      */
@@ -32,8 +42,11 @@ class GradoAreaFormacionController extends Controller
             ->orderBy('nombre_area_formacion', 'asc')
             ->get();
 
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
+
         // Se muestra la vista principal
-        return view('admin.transacciones.grado_area_formacion.index', compact('gradoAreaFormacion', 'grados', 'areaFormacion'));
+        return view('admin.transacciones.grado_area_formacion.index', compact('gradoAreaFormacion', 'grados', 'areaFormacion', 'anioEscolarActivo'));
     }
 
     /**

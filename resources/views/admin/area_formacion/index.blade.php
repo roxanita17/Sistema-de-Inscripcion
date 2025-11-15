@@ -38,6 +38,22 @@
     {{-- Modal de crear área de formación --}}
     @include('admin.area_formacion.modales.createModal')
 
+    {{-- Alerta si NO hay año escolar activo --}}
+    @if (!$anioEscolarActivo)
+        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div>
+                    <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                    <p class="mb-0">
+                        Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> bancos hasta que se registre un año escolar activo.
+                        <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- Sección de alertas --}}
     @if (session('success') || session('error'))
         <div class="alerts-container">
@@ -80,9 +96,14 @@
             </div>
             
             {{-- Botón que abre la modal para crear un nuevo área --}}
-            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAreaFormacion">
+            <button type="button"
+                    class="btn-create"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalCrearAreaFormacion"
+                    @if(!$anioEscolarActivo) disabled @endif
+                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva área de formación' }}">
                 <i class="fas fa-plus"></i>
-                <span>Nuevo Área</span>
+                <span>Nueva Área</span>
             </button>
         </div>
 
@@ -123,12 +144,22 @@
                                         <td>
                                             <div class="action-buttons">
                                                 {{-- Editar área --}}
-                                                <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#viewModalEditar{{ $datos->id }}" title="Editar">
+                                                <button class="action-btn btn-edit"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewModalEditar{{ $datos->id }}"
+                                                        title="Editar"
+                                                        @if(!$anioEscolarActivo) disabled @endif
+                                                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar área de formación' }}">
                                                     <i class="fas fa-pen"></i>
                                                 </button>
 
                                                 {{-- Eliminar área --}}
-                                                <button class="action-btn btn-delete" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
+                                                <button class="action-btn btn-delete"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                        title="Inactivar"
+                                                        @if(!$anioEscolarActivo) disabled @endif
+                                                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar área de formación' }}">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
@@ -200,7 +231,12 @@
                 </div>
             </div>
             {{-- Botón que abre la modal para crear un nuevo grupo estable --}}
-            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearGrupoEstable">
+            <button type="button"
+             class="btn-create"
+             data-bs-toggle="modal"
+             data-bs-target="#modalCrearGrupoEstable"
+             @if(!$anioEscolarActivo) disabled @endif
+             title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nuevo grupo estable' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Grupo Estable</span>
             </button>
@@ -250,12 +286,20 @@
                                         </td>
                                         <td class="action-buttons">
                                             {{-- Editar grupo estable --}}
-                                            <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#viewModalEditarGrupoEstable{{ $grupo->id }}">
+                                            <button class="action-btn btn-edit"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#viewModalEditarGrupoEstable{{ $grupo->id }}"
+                                                    @if(!$anioEscolarActivo) disabled @endif
+                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar grupo estable' }}">
                                                 <i class="fas fa-pen"></i>
                                             </button>
 
                                             {{-- Eliminar grupo estable --}}
-                                            <button class="action-btn btn-delete" data-bs-toggle="modal" data-bs-target="#confirmarEliminarGrupo{{ $grupo->id }}">
+                                            <button class="action-btn btn-delete"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#confirmarEliminarGrupo{{ $grupo->id }}"
+                                                    @if(!$anioEscolarActivo) disabled @endif
+                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar grupo estable' }}">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>

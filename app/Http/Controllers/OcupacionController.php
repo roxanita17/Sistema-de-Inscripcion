@@ -7,6 +7,17 @@ use Illuminate\Http\Request;
 
 class OcupacionController extends Controller
 {
+
+        /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
     /**
      * Muestra la lista de ocupaciones registradas en el sistema.
      */
@@ -14,10 +25,15 @@ class OcupacionController extends Controller
     {
         // Se obtienen todas las ocupaciones registradas (activas e inactivas)
         // y se ordenan alfabéticamente por nombre.
-        $ocupacion = Ocupacion::orderBy('nombre_ocupacion', 'asc')->where('status', true)->paginate(10);
+        $ocupacion = Ocupacion::orderBy('nombre_ocupacion', 'asc')
+            ->where('status', true)
+            ->paginate(10);
+
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Se retorna la vista principal con la colección de ocupaciones.
-        return view("admin.ocupacion.index", compact("ocupacion"));
+        return view("admin.ocupacion.index", compact("ocupacion", "anioEscolarActivo"));
     }
 
     /**

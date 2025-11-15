@@ -7,17 +7,20 @@ use App\Models\Municipio;
 use App\Models\Localidad;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\AnioEscolar;
 
 class LocalidadIndex extends Component
 {
     use WithPagination;
 
     public $nombre_localidad;
-    public $estado_id;
+    public $estado_id; 
     public $municipio_id;
     public $localidad_id;
     public $updateMode = false;
     public $search = '';
+
+    public $anioEscolarActivo = false; // Nueva propiedad pública
 
     public $municipios = []; //municipios dinámicos filtrados
 
@@ -26,6 +29,36 @@ class LocalidadIndex extends Component
         'estado_id' => 'required|integer|exists:estados,id',
         'municipio_id' => 'required|integer|exists:municipios,id',
     ];
+
+        /**
+     * Se ejecuta al montar el componente
+     */
+    public function mount()
+    {
+        $this->verificarAnioEscolar();
+    }
+
+    /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        $this->anioEscolarActivo = AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
+    /**
+     * Verifica antes de ejecutar acciones
+     */
+    private function verificarAccion()
+    {
+        if (!$this->anioEscolarActivo) {
+            session()->flash('warning', 'Debe registrar un año escolar activo para realizar esta acción.');
+            return false;
+        }
+        return true;
+    }
 
     public function render()
     {
@@ -43,7 +76,7 @@ class LocalidadIndex extends Component
             })
             ->orderBy('nombre_localidad', 'asc')
             ->paginate(10);
-
+            
         return view('livewire.admin.localidad-index', compact('estados', 'localidades'));
     }
 

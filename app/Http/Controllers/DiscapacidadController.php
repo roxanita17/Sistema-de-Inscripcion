@@ -7,6 +7,17 @@ use Illuminate\Http\Request;
 
 class DiscapacidadController extends Controller
 {
+
+    /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+    
     /**
      * Muestra el listado de todas las discapacidades registradas.
      * 
@@ -15,11 +26,14 @@ class DiscapacidadController extends Controller
      */
     public function index()
     {
-        // Se obtienen todas las discapacidades activas ordenadas por nombre
-        $discapacidad = Discapacidad::orderBy('nombre_discapacidad', 'asc')->where('status', true)->paginate(10);
-
-        // Se envían los registros a la vista
-        return view('admin.discapacidad.index', compact('discapacidad'));
+        $discapacidad = Discapacidad::where('status', true)
+            ->orderBy('nombre_discapacidad', 'asc')
+            ->paginate(10);
+        
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
+        
+        return view('admin.discapacidad.index', compact('discapacidad', 'anioEscolarActivo'));
     }
 
     /**

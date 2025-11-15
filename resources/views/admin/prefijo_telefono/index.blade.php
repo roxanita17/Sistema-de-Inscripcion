@@ -24,10 +24,15 @@
                 </div>
             </div>
 
-            {{-- Botón que abre la ventana modal para crear un nuevo grado --}}
-            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear">
+            {{-- Botón que abre la ventana modal para crear un nuevo prefijo --}}
+            <button type="button"
+                    class="btn-create" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalCrear"
+                    @if(!$anioEscolarActivo) disabled @endif
+                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nuevo Prefijo' }}">
                 <i class="fas fa-plus"></i>
-                <span>Nuevo Grado</span>
+                <span>Nuevo Prefijo</span>
             </button>
         </div>
     </div>
@@ -36,8 +41,24 @@
 @section('content')
 <div class="main-container">
 
-    {{-- Modal para crear un nuevo grado --}}
+    {{-- Modal para crear un nuevo prefijo --}}
     @include('admin.prefijo_telefono.modales.createModal')
+
+    {{-- Alerta si NO hay año escolar activo --}}
+    @if (!$anioEscolarActivo)
+        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div>
+                    <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                    <p class="mb-0">
+                        Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> hasta que se registre un año escolar activo.
+                        <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
 
     {{-- Sección de alertas de éxito o error --}}
     @if (session('success') || session('error'))
@@ -74,7 +95,7 @@
         </div>
     @endif 
 
-    {{-- Contenedor principal de la tabla de grados --}}
+    {{-- Contenedor principal de la tabla de prefijo--}}
     <div class="card-modern">
         <div class="card-header-modern">
             <div class="header-left">
@@ -100,7 +121,7 @@
                 <table class="table-modern overflow-hidden hidden">
                     <thead>
                         <tr style="text-align: center">
-                            <th style="text-align: center">Grado</th>
+                            <th style="text-align: center">Prefijo</th>
                             <th style="text-align: center">Estado</th>
                             <th style="text-align: center">Acciones</th>
                         </tr>
@@ -140,13 +161,22 @@
                                     <td>
                                         <div class="action-buttons">
 
-                                            {{-- Editar grado --}}
-                                            <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#viewModalEditar{{ $datos->id }}" title="Editar">
+                                            {{-- Editar prefijo --}}
+                                            <button class="action-btn btn-edit"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#viewModalEditar{{ $datos->id }}"
+                                                title="Editar"
+                                                @if(!$anioEscolarActivo) disabled @endif
+                                                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar Prefijo' }}">
                                                 <i class="fas fa-pen"></i>
                                             </button>
 
-                                            {{-- Eliminar grado --}}
-                                            <button class="action-btn btn-delete" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Eliminar">
+                                            {{-- Eliminar prefijo --}}
+                                            <button class="action-btn btn-delete"
+                                                data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                title="Eliminar"
+                                                @if(!$anioEscolarActivo) disabled @endif
+                                                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar Prefijo' }}">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
 

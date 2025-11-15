@@ -8,16 +8,31 @@ use Illuminate\Support\Facades\Log; // Para registrar mensajes en la terminal
 
 class ExpresionLiterariaController extends Controller
 {
+        /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
     /**
      * Muestra la lista de todas las expresiones literarias registradas.
      */
     public function index()
     {
         // Se obtienen todas las expresiones literarias ordenadas alfabéticamente
-        $expresionLiteraria = ExpresionLiteraria::where('status', true)->orderBy('letra_expresion_literaria', 'asc')->paginate(10);
+        $expresionLiteraria = ExpresionLiteraria::where('status', true)
+            ->orderBy('letra_expresion_literaria', 'asc')
+            ->paginate(10);
+
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Se retorna la vista principal con los datos
-        return view('admin.expresion_literaria.index', compact('expresionLiteraria'));
+        return view('admin.expresion_literaria.index', compact('expresionLiteraria', 'anioEscolarActivo'));
     }
 
     /**

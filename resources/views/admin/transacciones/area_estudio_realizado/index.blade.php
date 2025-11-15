@@ -1,83 +1,10 @@
-{{-- @extends('adminlte::page')
-
-@section('title', 'Gestión de Áreas de Formación')
-
-@section('css')
-<link rel="stylesheet" href="{{ asset('css/index.css') }}">
-<link rel="stylesheet" href="{{ asset('css/createModal.css') }}">
-<link rel="stylesheet" href="{{ asset('css/editModal.css') }}">
-<link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-@stop
-
-@section('content_header')
-<div class="content-header-modern">
-    <div class="header-content">
-        <div class="header-title">
-            <div class="icon-wrapper">
-                <i class="fas fa-university"></i>
-            </div>
-            <div>
-                <h1 class="title-main">Áreas de Formación</h1>
-                <p class="title-subtitle">Gestión de asignaciones y títulos universitarios</p>
-            </div>
-        </div>
-        <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
-            <i class="fas fa-plus"></i>
-            <span>Nueva Asignación</span>
-        </button>
-    </div>
-</div>
-@stop
-
-@section('content')
-<div class="main-container"> --}}
-
-    {{-- Incluir modal de creación 
-    @include('admin.transacciones.area_estudio_realizado.modales.createModal')--}}
-
-    {{-- Alertas 
-    @if (session('success') || session('error'))
-    <div class="alerts-container">
-        @if (session('success'))
-        <div class="alert-modern alert-success alert alert-dismissible fade show" role="alert">
-            <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
-            <div class="alert-content">
-                <h4>¡Éxito!</h4>
-                <p>{{ session('success') }}</p>
-            </div>
-            <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar"><i class="fas fa-times"></i></button>
-        </div>
-        @endif
-        @if (session('error'))
-        <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
-            <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
-            <div class="alert-content">
-                <h4>Error</h4>
-                <p>{{ session('error') }}</p>
-            </div>
-            <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar"><i class="fas fa-times"></i></button>
-        </div>
-        @endif
-    </div>
-    @endif--}}
-
-    {{-- Contenedor de la tabla 
-    <div id="areaEstudioTable">
-        @include('admin.transacciones.area_estudio_realizado.partials.table', ['areaEstudioRealizado' => $areaEstudioRealizado])
-    </div>
-
-</div>
-@endsection--}}
-
-
 @extends('adminlte::page')
 
 @section('title', 'Gestión de Áreas de Formación')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/index.css') }}">
-<link rel="stylesheet" href="{{ asset('css/createModal.css') }}">
-<link rel="stylesheet" href="{{ asset('css/editModal.css') }}">
+<link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
 <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
 
@@ -93,7 +20,12 @@
                 <p class="title-subtitle">Gestión de asignaciones y títulos universitarios</p>
             </div>
         </div>
-        <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">
+        <button type="button"
+                class="btn-create"
+                data-bs-toggle="modal"
+                data-bs-target="#modalCrearAsignacion"
+                @if(!$anioEscolarActivo) disabled @endif
+                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nueva Asignación' }}">
             <i class="fas fa-plus"></i>
             <span>Nueva Asignación</span>
         </button>
@@ -106,6 +38,22 @@
 
     {{-- Incluir modal de creación --}}
     @include('admin.transacciones.area_estudio_realizado.modales.createModal')
+
+    {{-- Alerta si NO hay año escolar activo --}}
+    @if (!$anioEscolarActivo)
+        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div>
+                    <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                    <p class="mb-0">
+                        Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> bancos hasta que se registre un año escolar activo.
+                        <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
 
     {{-- Alertas --}}
     @if (session('success') || session('error'))
@@ -173,8 +121,20 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#viewModalEditar{{ $datos->id }}"><i class="fas fa-pen"></i></button>
-                                        <button class="action-btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $datos->id }}"><i class="fas fa-trash-alt"></i></button>
+                                        <button class="action-btn btn-edit"
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#viewModalEditar{{ $datos->id }}"
+                                         @if(!$anioEscolarActivo) disabled @endif
+                                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar área de formación' }}">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <button class="action-btn btn-delete"
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#deleteModal{{ $datos->id }}"
+                                         @if(!$anioEscolarActivo) disabled @endif
+                                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar área de formación' }}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

@@ -7,16 +7,31 @@ use Illuminate\Http\Request;
 
 class GradoController extends Controller
 {
+        /**
+     * Verifica si hay un año escolar activo
+     */
+    private function verificarAnioEscolar()
+    {
+        return \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
     /**
      * Muestra la lista de grados existentes en el sistema.
      */
     public function index()
     {
         // Obtener todos los grados, ordenados por el número de grado de forma ascendente
-        $grados = Grado::where('status', true)->orderBy('numero_grado', 'asc')->paginate(10);
+        $grados = Grado::where('status', true)
+            ->orderBy('numero_grado', 'asc')
+            ->paginate(10);
+
+        // Verificar si hay año escolar activo
+        $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Retornar la vista principal con los datos obtenidos
-        return view('admin.grado.index', compact('grados'));
+        return view('admin.grado.index', compact('grados', 'anioEscolarActivo'));
     }
 
     /**
