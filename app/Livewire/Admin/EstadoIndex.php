@@ -15,7 +15,8 @@ class EstadoIndex extends Component
     public $updateMode = false;
     public $search = '';
 
-    protected $paginationTheme = 'bootstrap'; // O 'tailwind' según tu frontend
+    // Removemos esta línea porque ya no la necesitamos
+    // protected $paginationTheme = 'bootstrap';
 
     protected $rules = [
         'nombre_estado' => 'required|string|max:255',
@@ -31,6 +32,12 @@ class EstadoIndex extends Component
             ->paginate(10);
 
         return view('livewire.admin.estado-index', compact('estados'));
+    }
+
+    // Método para especificar la vista de paginación personalizada
+    public function paginationView()
+    {
+        return 'vendor.livewire.bootstrap-custom';
     }
 
     public function updatedSearch()
@@ -63,7 +70,6 @@ class EstadoIndex extends Component
         session()->flash('success', 'Estado creado correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetInputFields();
-
     }
 
     public function edit($id)
@@ -92,9 +98,7 @@ class EstadoIndex extends Component
         $estado->update(['status' => false]);
 
         session()->flash('success', 'Estado eliminado correctamente.');
-
         $this->dispatch('cerrarModal');
         $this->resetPage();
-
     }
 }
