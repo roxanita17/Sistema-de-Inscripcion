@@ -16,8 +16,8 @@ class AnioEscolar extends Model
     protected $fillable = [
         'inicio_anio_escolar',
         'cierre_anio_escolar',
-        'extencion_anio_escolar',
-        'status',
+        'extencion_anio_escolar', 
+        'status',   
     ];
 
     protected $casts = [
