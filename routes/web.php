@@ -40,10 +40,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('anio_escolar/{id}', [AnioEscolarController::class, 'destroy'])->name('anio_escolar.destroy');
     
     // ===== BANCOS =====
-    // Index sin middleware (permite ver sin año escolar)
     Route::get('banco', [BancoController::class, 'index'])->name('banco.index');
     
-    // Acciones con middleware (requieren año escolar activo)
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('banco/modales/store', [BancoController::class, 'store'])->name('banco.modales.store');
         Route::post('banco/{id}/update', [BancoController::class, 'update'])->name('banco.modales.update');
@@ -71,38 +69,29 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ===== ESTADO (LIVEWIRE) =====
     Route::get('estado', function () {
         return view('admin.estado.index', [
-            'anioEscolarActivo' => \App\Models\AnioEscolar::where('status', 'Activo')
-                ->orWhere('status', 'Extendido')
+            'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
+                ->where('cierre_anio_escolar', '>=', now())
                 ->exists()
         ]);
     })->name('estado.index');
 
-    // ===== MUNICIPIO (LIVEWIRE)=====
+    // ===== MUNICIPIO (LIVEWIRE) =====
     Route::get('municipio', function () {
         return view('admin.municipio.index', [
-            'anioEscolarActivo' => \App\Models\AnioEscolar::where('status', 'Activo')
-                ->orWhere('status', 'Extendido')
+            'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
+                ->where('cierre_anio_escolar', '>=', now())
                 ->exists()
         ]);
     })->name('municipio.index');
 
-    // ===== LOCALIDAD (LIVEWIRE)=====
+    // ===== LOCALIDAD (LIVEWIRE) =====
     Route::get('localidad', function () {
         return view('admin.localidad.index', [
-            'anioEscolarActivo' => \App\Models\AnioEscolar::where('status', 'Activo')
-                ->orWhere('status', 'Extendido')
+            'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
+                ->where('cierre_anio_escolar', '>=', now())
                 ->exists()
         ]);
     })->name('localidad.index');
-    
- /*    Route::get('localidad/municipios/{estado_id}', [MunicipioController::class, 'getByEstado']);
-    Route::get('localidad/localidades/{municipio_id}', [LocalidadController::class, 'getByMunicipio']);
-    
-    Route::middleware(['verificar.anio.escolar'])->group(function () {
-        Route::post('localidad/modales/store', [LocalidadController::class, 'store'])->name('localidad.modales.store');
-        Route::post('localidad/{id}/update', [LocalidadController::class, 'update'])->name('localidad.modales.update');
-        Route::delete('localidad/{id}', [LocalidadController::class, 'destroy'])->name('localidad.destroy');
-    }); */
 
     // ===== GRADO =====
     Route::get('grado', [GradoController::class, 'index'])->name('grado.index');

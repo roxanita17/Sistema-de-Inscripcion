@@ -8,6 +8,7 @@
     --warning: #f59e0b;
     --warning-dark: #d97706;
     --info: #3b82f6;
+    --info-light: #8bd1ff;
     --info-dark: #2563eb;
     --success: #10b981;
     --success-light: #d1fae5;
@@ -723,6 +724,91 @@
 .error-message i {
     font-size: 1rem;
 }
+
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* ======================
+   AÑO ESCOLAR
+   ====================== */
+
+.badge {
+    padding: 0.6em 1em;
+    font-size: 0.875em;
+    font-weight: 600;
+    border-radius: 0.5rem;
+}
+.badgebg-info {
+    background-color: var(--info-light);
+}
+/* Estado extendido */
+.status-extended {
+    background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);
+    color: #000;
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+}
+
+.status-extended .status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-extended 2s infinite;
+}
+@keyframes pulse-extended {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+/* Alertas personalizadas */
+.alert-modern {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.alert-modern.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+}
+
+/* Inputs de fecha mejorados */
+input[type="date"].form-control-modern {
+padding: 0.75rem 1rem;
+font-size: 0.95rem;
+}
+input[type="date"].form-control-modern:focus {
+border-color: #0d6efd;
+box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ============================================
    BOTONES GENERALES

@@ -3,96 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\Models\AnioEscolar;
-use Illuminate\Http\Request;
+use App\Services\AnioEscolarService;
+use App\Http\Requests\StoreAnioEscolarRequest;
+use App\Http\Requests\ExtenderAnioEscolarRequest;
 
 class AnioEscolarController extends Controller
 {
+    protected $anioEscolarService;
+
+    public function __construct(AnioEscolarService $anioEscolarService)
+    {
+        $this->anioEscolarService = $anioEscolarService;
+    }
+
     /**
      * Muestra el listado de años escolares registrados.
      */
     public function index()
     {
-        $escolar = AnioEscolar::paginate(10);
+        $escolar = AnioEscolar::orderBy('inicio_anio_escolar', 'desc')->paginate(10);
         return view('admin.anio_escolar.index', compact('escolar'));
-
     }
 
     /**
      * Registra un nuevo año escolar en la base de datos.
      */
-    public function store(Request $request)
+    public function store(StoreAnioEscolarRequest $request)
     {
-        $validated = $request->validate([
-            'inicio_anio_escolar' => 'required|date',
-            'cierre_anio_escolar' => 'required|date|after:inicio_anio_escolar',
-        ]);
+        $resultado = $this->anioEscolarService->crear($request->validated());
 
-        // Verificar si ya existe un año escolar activo con las mismas fechas
-        $existe = AnioEscolar::where('inicio_anio_escolar', $validated['inicio_anio_escolar'])
-            ->where('cierre_anio_escolar', $validated['cierre_anio_escolar'])
-            ->where('status', 'Activo')
-            ->exists();
-
-        if ($existe) {
-            return redirect()
-                ->route('admin.anio_escolar.index')
-                ->with('error', 'Ya existe un año escolar activo con esas fechas.');
-        }
-
-        try {
-            $anioEscolar = new AnioEscolar();
-            $anioEscolar->inicio_anio_escolar = $validated['inicio_anio_escolar'];
-            $anioEscolar->cierre_anio_escolar = $validated['cierre_anio_escolar'];
-            $anioEscolar->status = 'Activo';
-            $anioEscolar->save();
-
+        if ($resultado['success']) {
             return redirect()
                 ->route('admin.anio_escolar.index')
                 ->with('success', 'Año escolar creado correctamente.');
-        } catch (\Exception $e) {
-            return redirect()
-                ->route('admin.anio_escolar.index')
-                ->with('error', 'Error al crear el año escolar: ' . $e->getMessage());
         }
+
+        return redirect()
+            ->route('admin.anio_escolar.index')
+            ->with('error', $resultado['error']);
     }
 
     /**
      * Extiende la fecha de cierre de un año escolar existente.
      */
-    public function extender(Request $request, $id)
+    public function extender(ExtenderAnioEscolarRequest $request, $id)
     {
-        $anioEscolar = AnioEscolar::findOrFail($id);
+        $resultado = $this->anioEscolarService->extender($id, $request->cierre_anio_escolar);
 
-        $validated = $request->validate([
-            'cierre_anio_escolar' => 'required|date|after_or_equal:' . $anioEscolar->inicio_anio_escolar,
-        ]); 
-
-        // Verificar si ya existe otro año escolar activo con la misma fecha de cierre
-        $existe = AnioEscolar::where('inicio_anio_escolar', $anioEscolar->inicio_anio_escolar)
-            ->where('cierre_anio_escolar', $validated['cierre_anio_escolar'])
-            ->where('status', 'Activo')
-            ->where('id', '!=', $anioEscolar->id)
-            ->exists();
-
-        if ($existe) {
+        if ($resultado['success']) {
             return redirect()
                 ->route('admin.anio_escolar.index')
-                ->with('error', 'Ya existe otro año escolar activo con esas fechas.');
+                ->with('success', 'Año escolar extendido correctamente.');
         }
 
-        try {
-            $anioEscolar->cierre_anio_escolar = $validated['cierre_anio_escolar'];
-            $anioEscolar->status = 'Extendido';
-            $anioEscolar->save();
-
-            return redirect()
-                ->route('admin.anio_escolar.index')
-                ->with('success', 'Año escolar actualizado correctamente.');
-        } catch (\Exception $e) {
-            return redirect()
-                ->route('admin.anio_escolar.index')
-                ->with('error', 'Error al actualizar el año escolar: ' . $e->getMessage());
-        }
+        return redirect()
+            ->route('admin.anio_escolar.index')
+            ->with('error', $resultado['error']);
     }
 
     /**
@@ -100,24 +66,16 @@ class AnioEscolarController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $anioEscolar = AnioEscolar::find($id);
+        $resultado = $this->anioEscolarService->inactivar($id);
 
-            if ($anioEscolar) {
-                $anioEscolar->update(['status' => 'Inactivo']);
-
-                return redirect()
-                    ->route('admin.anio_escolar.index')
-                    ->with('success', 'Año escolar inactivado correctamente.');
-            }
-
+        if ($resultado['success']) {
             return redirect()
                 ->route('admin.anio_escolar.index')
-                ->with('error', 'Año escolar no encontrado.');
-        } catch (\Exception $e) {
-            return redirect()
-                ->route('admin.anio_escolar.index')
-                ->with('error', 'Error al eliminar el año escolar: ' . $e->getMessage());
+                ->with('success', 'Año escolar inactivado correctamente.');
         }
+
+        return redirect()
+            ->route('admin.anio_escolar.index')
+            ->with('error', $resultado['error']);
     }
 }

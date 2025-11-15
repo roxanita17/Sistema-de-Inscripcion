@@ -10,13 +10,16 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
+    ->withMiddleware(function (Middleware $middleware) {
+        // Registrar alias de middleware personalizados
         $middleware->alias([
             'verificar.anio.escolar' => \App\Http\Middleware\VerificarAnioEscolarActivo::class,
         ]);
+
+        // Agregar el middleware de verificación de años vencidos
+        // Se ejecutará en TODAS las rutas autenticadas
+        $middleware->append(\App\Http\Middleware\VerificarAniosVencidos::class);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
-
-    
