@@ -93,6 +93,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ]);
     })->name('localidad.index');
 
+    // ===== INSTITUCIÓN DE PROCEDENCIA (LIVEWIRE)=====
+    Route::get('institucion_procedencia', function () {
+        return view('admin.institucion_procedencia.index', [
+            'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
+                ->where('cierre_anio_escolar', '>=', now())
+                ->exists()
+        ]);
+    })->name('institucion_procedencia.index');
+    
+    
+
     // ===== GRADO =====
     Route::get('grado', [GradoController::class, 'index'])->name('grado.index');
     
@@ -181,4 +192,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('transacciones/area_estudio_realizado/{id}/update', [AreaEstudioRealizadoController::class, 'update'])->name('transacciones.area_estudio_realizado.modales.update');
         Route::delete('transacciones/area_estudio_realizado/{id}', [AreaEstudioRealizadoController::class, 'destroy'])->name('transacciones.area_estudio_realizado.destroy');
     });
+
+
 });

@@ -1,139 +1,130 @@
-{{-- Modal para Editar una Localidad --}}
-<div class="modal fade" id="viewModalEditar{{ $datos->id }}" tabindex="-1"
-    aria-labelledby="viewModalEditarLabel{{ $datos->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog">
-        <div class="modal-content">
+<!-- Modal Editar Institución de Procedencia -->
+<div wire:ignore.self class="modal fade" id="modalEditar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-modern">
 
-            {{-- Encabezado del modal --}}
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="viewModalEditarLabel{{ $datos->id }}">
-                    Editar Localidad
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            {{-- Cabecera del modal --}}
+            <div class="modal-header-edit">
+                <div class="modal-icon-edit">
+                    <i class="fas fa-pen"></i>
+                </div>
+                <h5 class="modal-title-edit" id="modalEditarLabel">Editar Institución de Procedencia</h5>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <div class="modal-body">
-                {{-- Formulario de edición de localidad --}}
-                <form action="{{ route('admin.localidad.modales.update', $datos->id) }}" method="POST">
-                    @csrf
+            {{-- Cuerpo del modal --}}
+            <div class="modal-body-edit">
+                <form wire:submit.prevent="update" id="formEditarInstitucion">
 
-                    {{-- Campo de selección de estado --}}
-                    <div class="mb-3">
-                        <label for="estado_id_{{ $datos->id }}" class="form-label">Estado</label>
-                        <select name="estado_id" id="estado_id_{{ $datos->id }}" class="form-select" required>
+                    {{-- Contenedor para alertas de validación --}}
+                    <div id="contenedorAlertaEditar"></div>
+
+                    {{-- Select Estado --}}
+                    <div class="form-group-modern">
+                        <label for="estado_id_editar" class="form-label-modern">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Estado
+                        </label>
+                        <select name="estado_id"
+                            wire:model.live="estado_id"
+                            id="estado_id_editar"
+                            class="form-control-modern"
+                            required>
                             <option value="">Seleccione un estado</option>
                             @foreach ($estados as $estado)
-                                <option value="{{ $estado->id }}"
-                                    {{ $estado->id == $datos->municipio->estado_id ? 'selected' : '' }}>
+                                <option value="{{ $estado->id }}" {{ $estado_id == $estado->id ? 'selected' : '' }}>
                                     {{ $estado->nombre_estado }}
                                 </option>
                             @endforeach
                         </select>
+                        @error('estado_id')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </div>
-                    @error('estado_id')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>Este campo es obligatorio.</b>
-                        </div>
-                    @enderror
 
-                    {{-- Campo de selección de municipio --}}
-                    <div class="mb-3">
-                        <label for="municipio_id_{{ $datos->id }}" class="form-label">Municipio</label>
-                        <select name="municipio_id" id="municipio_id_{{ $datos->id }}" class="form-select" required>
+                    {{-- Select Municipio (dependiente del estado) --}}
+                    <div class="form-group-modern">
+                        <label for="municipio_id_editar" class="form-label-modern">
+                            <i class="fas fa-city"></i>
+                            Municipio
+                        </label>
+                        <select name="municipio_id"
+                            wire:model.live="municipio_id"
+                            id="municipio_id_editar"
+                            class="form-control-modern"
+                            {{ empty($municipios) ? 'disabled' : '' }}
+                            required>
                             <option value="">Seleccione un municipio</option>
-                            @foreach ($municipios->where('estado_id', $datos->municipio->estado_id) as $municipio)
-                                <option value="{{ $municipio->id }}"
-                                    {{ $municipio->id == $datos->municipio_id ? 'selected' : '' }}>
+                            @foreach ($municipios as $municipio)
+                                <option value="{{ $municipio->id }}" {{ $municipio_id == $municipio->id ? 'selected' : '' }}>
                                     {{ $municipio->nombre_municipio }}
                                 </option>
                             @endforeach
                         </select>
+                        @error('municipio_id')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </div>
-                    @error('municipio_id')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>Este campo es obligatorio.</b>
-                        </div>
-                    @enderror
 
-                    {{-- Campo para nombre de la localidad --}}
-                    <input type="hidden" name="id" value="{{ $datos->id }}">
-                    <div class="mb-3">
-                        <label class="form-label"><b>Nombre:</b></label>
-                        <input type="text" class="form-control" name="nombre_localidad"
-                            value="{{ $datos->nombre_localidad }}" required>
+                    {{-- Select Localidad (dependiente del municipio) --}}
+                    <div class="form-group-modern">
+                        <label for="localidad_id_editar" class="form-label-modern">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Localidad
+                        </label>
+                        <select name="localidad_id"
+                            wire:model.live="localidad_id"
+                            id="localidad_id_editar"
+                            class="form-control-modern"
+                            {{ empty($localidades) ? 'disabled' : '' }}
+                            required>
+                            <option value="">Seleccione una localidad</option>
+                            @foreach ($localidades as $localidad)
+                                <option value="{{ $localidad->id }}" {{ $localidad_id == $localidad->id ? 'selected' : '' }}>
+                                    {{ $localidad->nombre_localidad }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('localidad_id')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </div>
-                    @error('nombre_localidad')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>Este campo es obligatorio.</b>
-                        </div>
-                    @enderror
 
-                    {{-- Botones del modal --}}
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-warning">
-                            Guardar Cambios
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
+                    {{-- Nombre de la Institución --}}
+                    <div class="form-group-modern">
+                        <label for="nombre_institucion_editar" class="form-label-modern">
+                            <i class="fas fa-school"></i>
+                            Nombre de la Institución
+                        </label>
+                        <input type="text"
+                               class="form-control-modern"
+                               id="nombre_institucion_editar"
+                               wire:model.defer="nombre_institucion"
+                               maxlength="150"
+                               placeholder="Edite el nombre de la institución"
+                               required>
+                        @error('nombre_institucion')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </div>
+
+                    {{-- Botones --}}
+                    <div class="modal-footer-edit">
+                        <div class="footer-buttons">
+                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-modal-edit">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+
                 </form>
             </div>
+
         </div>
     </div>
 </div>
-
-<!-- Bootstrap 5 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Script para cargar municipios dinámicamente al cambiar el estado -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("Script JS de edición cargado");
-
-  // Selecciona todos los selects de estado (uno por cada modal abierto)
-  document.querySelectorAll("[id^='estado_id_']").forEach(estadoSelect => {
-    const id = estadoSelect.id.split("_")[2]; // Obtiene el ID de la localidad (por ejemplo, 5)
-    const municipioSelect = document.getElementById(`municipio_id_${id}`);
-
-    // Cuando se cambia el estado
-    estadoSelect.addEventListener("change", async function () {
-      const estadoId = this.value;
-      municipioSelect.innerHTML = "";
-      municipioSelect.disabled = true;
-
-      if (!estadoId) {
-        municipioSelect.innerHTML = '<option value="">Seleccione un estado primero</option>';
-        return;
-      }
-
-      municipioSelect.innerHTML = '<option value="">Cargando municipios...</option>';
-
-      try {
-        // Petición al backend para traer municipios del estado seleccionado
-        const response = await fetch(`{{ url('admin/localidad/municipios') }}/${estadoId}`);
-        if (!response.ok) throw new Error("Error en la respuesta del servidor");
-
-        const municipios = await response.json();
-        console.log(`Municipios del estado ${estadoId}:`, municipios);
-
-        municipioSelect.innerHTML = "";
-
-        if (municipios.length > 0) {
-          municipioSelect.innerHTML += '<option value="">Seleccione un municipio</option>';
-          municipios.forEach(m => {
-            municipioSelect.innerHTML += `<option value="${m.id}">${m.nombre_municipio}</option>`;
-          });
-          municipioSelect.disabled = false;
-        } else {
-          municipioSelect.innerHTML = '<option value="">No hay municipios disponibles</option>';
-        }
-
-      } catch (error) {
-        console.error("Error al cargar municipios:", error);
-        municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
-      }
-    });
-  });
-});
-</script>

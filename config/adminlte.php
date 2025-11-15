@@ -372,6 +372,14 @@ return [
             'active' => ['admin/prefijo_telefono', 'admin/prefijo_telefono/*'],
         ],
 
+        // Instituciones de Procedencia
+        [
+            'text' => 'Instituciones de Procedencia',
+            'url' => 'admin/institucion_procedencia',
+            'icon' => 'fas fa-fw fa-university',
+            'active' => ['admin/institucion_procedencia', 'admin/institucion_procedencia/*'],
+        ],
+
         // Separador
         ['header' => 'ADMINISTRACIÓN'],
 

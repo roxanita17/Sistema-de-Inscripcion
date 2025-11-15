@@ -1,121 +1,66 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Gestión de Instituciones de Procedencia')
 
 @section('content_header')
-    <h1>Municipio</h1>
+    <div class="content-header-modern">
+        <div class="header-content">
+
+            <div class="header-title">
+                <div class="icon-wrapper">
+                    <i class="fas fa-school"></i>
+                </div>
+                <div>
+                    <h1 class="title-main">Gestión de Instituciones de Procedencia</h1>
+                    <p class="title-subtitle">Administración de las instituciones registradas en el sistema</p>
+                </div>
+            </div>
+
+            {{-- Botón crear --}}
+            <button type="button"
+                class="btn-create"
+                data-bs-toggle="modal"
+                data-bs-target="#modalCrear"
+                @if (!$anioEscolarActivo) disabled @endif
+                title="{{ $anioEscolarActivo ? 'Crear Institución' : 'Debe registrar un año escolar activo para realizar esta acción.' }}">
+                <i class="fas fa-plus"></i>
+                <span>Nueva Institución</span>
+            </button>
+
+        </div>
+    </div>
 @stop
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
+{{-- Estilos --}}
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+@stop
 
 @section('content')
-<div class="container mt-4">
-
-    {{-- Contenedor de alertas --}}
-    <div id="contenedorAlertas">
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            </div>
-        @endif
-    </div>
-
-    @include('admin.localidad.modales.createModal')
-    {{-- Botón para abrir la modal de crear estado --}}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearLocalidad">
-        <i class="fas fa-plus"></i> Crear Localidad
-    </button>
-
-    {{-- Tabla de años escolares --}}
-    <div class="table-responsive">
-        <table class="table table-striped align-middle text-center" id="tablaAnioEscolar">
-            <thead class="table-primary">
-                <tr>
-                    {{-- <th>N°</th> --}}
-                    <th>Localidad</th>
-                    <th>Municipio</th>
-                    <th>Estado</th>
-                    <th>Status</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyAnioEscolar">
-                @if ($localidades->isEmpty())
-                                <tr>
-                                    <td colspan="5" style="text-align: center;">No se encontraron localidades.</td>
-                                </tr>
-                            @endif
-                
-                @foreach ($localidades as $datos)
-                @if ($datos->status == true)
-                    <tr>
-                        {{-- @if ($datos->status == true)
-                            <td>{{ $loop->iteration }}</td>
-                        @endif --}}
-                        <td>{{ $datos->nombre_localidad }}</td>
-                        <td>{{ $datos->municipio->nombre_municipio }}</td>
-                        <td>{{ $datos->municipio->estado->nombre_estado }}</td>
-                        <td>
-                            @if ($datos->status == true)
-                                <span class="badge bg-success">Activo</span>
-                            @else
-                                <span class="badge bg-danger">Inactivo</span>
-                            @endif
-                        </td>
-                        <td>
-
-                            {{-- Editar --}}
-                            <a href="#viewModalEditar{{ $datos->id }}" 
-                                class="btn btn-warning btn-sm" 
-                                title="Editar"
-                                data-bs-toggle="modal" 
-                                data-bs-target="#viewModalEditar{{ $datos->id }}">
-                                <i class="fas fa-pen text-white" ></i>
-                            </a>
-
-                            @include('admin.localidad.modales.editModal')
-
-                            <!-- Eliminar -->
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar{{ $datos->id }}" title="Inactivar">
-                                <i class="fas fa-trash text-white"></i>
-                            </button>
-                            <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-body">
-                                            ¿Estás seguro de que deseas eliminar esta localidad?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <form action="{{ url('admin/localidad/' . $datos->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                @endif
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
-
-
-
-
+    @livewire('admin.institucion-procedencia-index')
 @endsection
 
+@section('js')
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('cerrarModal', () => {
+            const modales = document.querySelectorAll('.modal.show');
+            modales.forEach(modal => {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            });
 
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        });
+    });
+</script>
+@stop

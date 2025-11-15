@@ -14,6 +14,19 @@ class InstitucionProcedencia extends Model
 
     protected $fillable = [
         'nombre_institucion',
+        'localidad_id',
         'status',
     ];
+
+    public function localidad(){
+    return $this->belongsTo(Localidad::class, "localidad_id", "id");
+    }
+
+    public function municipio(){
+    return $this->belongsTo(Municipio::class, "municipio_id", "id");
+    }
+
+    public function estado(){
+        return $this->belongsTo(Estado::class, "estado_id", "id");
+    }
 }

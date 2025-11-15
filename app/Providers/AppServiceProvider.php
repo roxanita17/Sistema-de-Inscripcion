@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Livewire\Livewire;
+use App\Livewire\Admin\InstitucionProcedenciaIndex;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Pagination\Paginator;
@@ -22,5 +24,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+        Livewire::component('admin.institucion-procedencia-index', InstitucionProcedenciaIndex::class);
     }
 }
