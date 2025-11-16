@@ -13,7 +13,6 @@ class InstitucionProcedenciaSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('Insertando instituciones de procedencia...');
 
         $instituciones = [
             // AMAZONAS - Alto Orinoco (localidad_id: 1)
@@ -295,7 +294,6 @@ class InstitucionProcedenciaSeeder extends Seeder
             ['localidad_id' => 462, 'nombre_institucion' => 'Liceo Fermín Toro'],
         ];
 
-        $this->command->info('Total de instituciones a insertar: ' . count($instituciones));
 
         foreach ($instituciones as $institucion) {
             DB::table('institucion_procedencias')->insert([
@@ -307,6 +305,6 @@ class InstitucionProcedenciaSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('✅ Instituciones de procedencia insertadas correctamente.');
+        $this->command->info('Instituciones de procedencia insertadas correctamente.');
     }
 }
