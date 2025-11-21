@@ -18,6 +18,7 @@ use App\Http\Controllers\PrefijoTelefonoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EstudiosRealizadoController;
 use App\Http\Controllers\AreaEstudioRealizadoController;
+use App\Models\Docente;
 
 Route::get('/', function () {
     return view('welcome');
@@ -101,8 +102,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('institucion_procedencia.index');
-    
-    
+
 
     // ===== GRADO =====
     Route::get('grado', [GradoController::class, 'index'])->name('grado.index');
@@ -193,5 +193,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('transacciones/area_estudio_realizado/{id}', [AreaEstudioRealizadoController::class, 'destroy'])->name('transacciones.area_estudio_realizado.destroy');
     });
 
-
+        // ===== DOCENTE (LIVEWIRE)=====
+    Route::get('transacciones/docentes', function () {
+        return view('admin.transacciones.docentes.index', [
+            'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
+                ->where('cierre_anio_escolar', '>=', now())
+                ->exists()
+        ]);
+    })->name('transacciones.docentes.index');
 });

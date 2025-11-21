@@ -40,12 +40,12 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'logo' => '<b>SISTEMA DE <br> INSCRIPCIÓN</b>',
-    'logo_img' => 'vendor/adminlte/dist/img/liceo_logo.png',
+    'logo' => '<b>Sistema de Inscripción</b>',
+    'logo_img' => 'vendor/adminlte/dist/img/liceo_logo.pn',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Sistema de Inscripción',
+    'logo_img_alt' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -228,6 +228,8 @@ return [
             'active' => ['home', 'home/*'],
         ],
 
+        
+
         // Separador
         ['header' => 'GESTIÓN ACADÉMICA'],
 
@@ -239,6 +241,8 @@ return [
             'icon_color' => 'primary',
             'active' => ['admin/anio_escolar', 'admin/anio_escolar/*'],
         ],
+
+
 
         // Grados
         [
@@ -263,7 +267,7 @@ return [
             'text' => 'Asignaciones',
             'icon' => 'fas fa-fw fa-link',
             'icon_color' => 'cyan',
-            'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*'],
+            'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*', 'admin/transacciones/docente*'],
             'submenu' => [
                 [
                     'text' => 'Grados a Áreas Académicas',
