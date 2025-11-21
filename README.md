@@ -40,10 +40,6 @@ composer require spatie/laravel-permission
 
 ### 4. Configurar el archivo de entorno
 
-```bash
-cp .env.example .env
-```
-
 Edita el archivo `.env` y configura los siguientes parámetros:
 
 ```env
@@ -55,7 +51,7 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=sistema_inscripcion_proyecto
 DB_USERNAME=root
-DB_PASSWORD=tu_contraseña
+DB_PASSWORD=
 ```
 
 ### 5. Generar la clave de la aplicación
@@ -68,8 +64,8 @@ php artisan key:generate
 
 Crea la base de datos en MySQL:
 
-```sql
-CREATE DATABASE sistema_inscripcion_proyecto CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```phpMyAdmin
+sistema_inscripcion_proyecto
 ```
 
 ### 7. Publicar configuraciones de paquetes
@@ -90,13 +86,6 @@ php artisan migrate
 php artisan db:seed
 ```
 
-O si tienes seeders específicos:
-
-```bash
-php artisan db:seed --class=RolesAndPermissionsSeeder
-php artisan db:seed --class=UserSeeder
-```
-
 ### 10. Limpiar y optimizar caché
 
 ```bash
@@ -111,7 +100,6 @@ php artisan route:clear
 
 ```bash
 npm install
-npm run dev
 ```
 
 ### 12. Crear enlace simbólico para storage
@@ -123,10 +111,14 @@ php artisan storage:link
 ### 13. Iniciar el servidor de desarrollo
 
 ```bash
-php artisan serve
+npm run dev & php artisan serve
+Clickear en el server https://127.0.0.1:8000
 ```
+### 13. Datos de LogIn
 
-La aplicación estará disponible en: `http://localhost:8000`
+Email: admin@admin.com
+Password: password
+
 
 ## Credenciales por Defecto
 
