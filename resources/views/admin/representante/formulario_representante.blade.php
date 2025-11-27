@@ -25,9 +25,8 @@
                 <i class="fas fa-info-circle"></i> Los campos marcados con <span class="text-danger">(*)</span> son obligatorios
             </div>
 
-            <form id="representante-form" action="{{ route('representante.store') }}" method="POST" class="needs-validation" novalidate>
+            <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="needs-validation" novalidate>
                 @csrf
-                @method('POST')
 
                 <!-- Sección de la Madre -->
                 <div class="card card-outline card-primary mb-4">
@@ -352,7 +351,6 @@
                 </div>
              </div>
         </div>      
-        </form>                                  
             {{-- Formulario del Padre --}}
 
 <!-- Sección del Padre -->
@@ -603,7 +601,6 @@
                     <div class="form-group">
                         <label for="email-padre" class="form-label">Correo Electrónico</label>
                         <input type="email" class="form-control" id="email-padre" name="email-padre"
-                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                             title="Ingrese un correo electrónico válido (ejemplo@dominio.com)">
                         <div class="invalid-feedback">
                             Por favor ingrese un correo electrónico válido.
@@ -1242,7 +1239,6 @@
                                 </button>
                             </div>
                     </div>
-                </form>
 
             </div>
         </div>
@@ -1603,17 +1599,13 @@
             window.cargarMunicipiosInputFormulario = cargarMunicipios;
             window.cargarParroquiasInputFormulario = cargarLocalidades;
 
-            // Validación de formulario
+            // Validación de formulario (solo marca visualmente, no bloquea el envío)
             (function() {
                 'use strict';
                 window.addEventListener('load', function() {
                     const forms = document.getElementsByClassName('needs-validation');
-                    const validation = Array.prototype.filter.call(forms, function(form) {
-                        form.addEventListener('submit', function(event) {
-                            if (form.checkValidity() === false) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
+                    Array.prototype.forEach.call(forms, function(form) {
+                        form.addEventListener('submit', function() {
                             form.classList.add('was-validated');
                         }, false);
                     });

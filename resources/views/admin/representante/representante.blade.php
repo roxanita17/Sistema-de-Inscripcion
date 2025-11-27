@@ -195,9 +195,10 @@
                             <tbody id="tbody-representantes">
                                 @foreach($representantes as $rep)
                                 <tr>
-                                    <td>{{ $rep->persona->numero_cedula_persona }}</td>
-                                    <td>{{ $rep->persona->nombre_uno }}</td>
-                                    <td>{{ $rep->persona->apellido_uno }}</td>
+                                    {{-- En este proyecto Persona usa numero_documento y primer_/primer_apellido --}}
+                                    <td>{{ $rep->persona->numero_documento }}</td>
+                                    <td>{{ $rep->persona->primer_nombre }}</td>
+                                    <td>{{ $rep->persona->primer_apellido }}</td>
                                     <td>
                                         @php
                                             $tipoRepresentante = $rep->legal ? 'Representante Legal' : 'Progenitor';

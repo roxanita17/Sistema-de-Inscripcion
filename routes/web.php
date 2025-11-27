@@ -207,8 +207,30 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 // ======  REPRESENTANTE  ======
 Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function() {
-        Route::get("/", [RepresentanteController::class, 'index'])->name("index");
-        Route::post("/", [RepresentanteController::class, 'store'])->name("store");
-        Route::get("/formulario", [RepresentanteController::class, 'mostrarFormulario'])->name("formulario");
-        Route::post("/save", [RepresentanteController::class, "save"])->name("save");
+        // Vista principal (listado)
+        Route::get('/', [RepresentanteController::class, 'index'])->name('index');
+
+        // Formulario de creación
+        Route::get('/formulario', [RepresentanteController::class, 'mostrarFormulario'])->name('formulario');
+
+        // Guardar / actualizar representante (manejado por el método save del controlador)
+        Route::post('/save', [RepresentanteController::class, 'save'])->name('save');
+
+        // Formulario de edición de un representante específico
+        Route::get('/{id}/editar', [RepresentanteController::class, 'mostrarFormularioEditar'])->name('editar');
+
+        // Eliminar representante
+        Route::delete('/{id}', [RepresentanteController::class, 'delete'])->name('destroy');
+
+        // Búsqueda por cédula (AJAX)
+        Route::get('/buscar-cedula', [RepresentanteController::class, 'buscarPorCedula'])->name('buscar_cedula');
+
+        // Consultar un representante específico (AJAX)
+        Route::get('/consultar', [RepresentanteController::class, 'consultar'])->name('consultar');
+
+        // Filtrar representantes (AJAX)
+        Route::get('/filtrar', [RepresentanteController::class, 'filtar'])->name('filtrar');
+
+        // Verificar cédula duplicada (AJAX)
+        Route::get('/verificar-cedula', [RepresentanteController::class, 'verificarCedula'])->name('verificar_cedula');
     });
