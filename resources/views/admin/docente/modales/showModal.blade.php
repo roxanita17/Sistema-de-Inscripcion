@@ -146,6 +146,23 @@
                         </span>
                     </div>
 
+                    {{-- Estudios --}}
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="fas fa-graduation-cap"></i>
+                            Estudios Realizados
+                        </span>
+
+                        <span class="detail-value">
+                            @forelse ($datos->detalleEstudios as $est)
+                                • {{ $est->estudiosRealizado->estudios }} <br>
+                            @empty
+                                Sin estudios registrados
+                            @endforelse
+                        </span>
+                    </div>
+
+
                     @if ($datos->updated_at != $datos->created_at)
                     <div class="detail-item">
                         <span class="detail-label">

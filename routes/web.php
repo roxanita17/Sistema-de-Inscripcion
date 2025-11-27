@@ -203,5 +203,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('docente/{id}/edit', [DocenteController::class, 'edit'])->name('docente.edit');
         Route::post('docente/{id}/update', [DocenteController::class, 'update'])->name('docente.update');
         Route::delete('docente/{id}', [DocenteController::class, 'destroy'])->name('docente.destroy');
+        Route::get('docente/{id}/estudios', [DocenteController::class, 'estudios'])->name('docente.estudios');
     });
 });

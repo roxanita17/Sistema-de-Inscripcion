@@ -48,7 +48,7 @@ body {
    CONTENEDOR PRINCIPAL
    =================================== */
 .main-container {
-    padding: 1.5rem;
+    padding: 1rem;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -58,10 +58,10 @@ body {
    =================================== */
 .content-header-modern {
     background: white;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .header-content {
@@ -112,7 +112,6 @@ body {
     background: white;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
-    overflow: hidden;
     margin-bottom: 1.5rem;
 }
 
@@ -120,7 +119,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2rem;
+    padding: 0.5rem 2rem;
     background: linear-gradient(135deg, var(--primary-light), white);
     border-bottom: 1px solid var(--gray-200);
 }

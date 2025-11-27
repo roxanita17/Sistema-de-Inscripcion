@@ -26,6 +26,32 @@ class Docente extends Model
     ];
 
     /**
+     * Relación con DetalleDocenteEstudio
+     */
+    public function detalleDocenteEstudio()
+    {
+        return $this->hasMany(DetalleDocenteEstudio::class, 'docente_id', 'id');
+    }
+
+    /**
+     * Relación directa con estudios realizados (many-to-many)
+     */
+    public function estudiosRealizados()
+    {
+        return $this->belongsToMany(
+            EstudiosRealizado::class,
+            'detalle_docente_estudios',
+            'docente_id',
+            'estudios_id'
+        );
+    }
+
+    public function detalleEstudios()
+    {
+        return $this->hasMany(DetalleDocenteEstudio::class, 'docente_id', 'id');
+    }
+
+    /**
      * Relación con Persona
      */
     public function persona()

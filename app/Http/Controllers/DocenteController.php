@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetalleDocenteEstudio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Docente;
@@ -9,6 +10,8 @@ use App\Models\Persona;
 use App\Models\Genero;
 use App\Models\PrefijoTelefono;
 use App\Models\TipoDocumento;
+use App\Models\EstudiosRealizado;
+use App\Models\DocenteEstudioRealizado;
 
 class DocenteController extends Controller
 {
@@ -124,8 +127,8 @@ class DocenteController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.docente.index')
-                ->with('success', 'Docente registrado correctamente.');
+            return redirect()->route('admin.docente.estudios', $docente->id)
+                ->with('success', 'Docente registrado correctamente, ahora puede agregar sus estudios.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -136,15 +139,30 @@ class DocenteController extends Controller
         }
     }
 
+    public function estudios($id)
+    {
+        $docentes = Docente::with(['persona.tipoDocumento', 'persona.genero', 'prefijoTelefono'])
+            ->findOrFail($id);
+        $estudios = EstudiosRealizado::all();
+        $docenteEstudios = DetalleDocenteEstudio::all();
+
+        return view('admin.docente.estudios', compact('docentes', 'estudios', 'docenteEstudios'));
+    }
+
     /**
      * Muestra los detalles de un docente
      */
     public function show($id)
     {
-        $docente = Docente::with(['persona.tipoDocumento', 'persona.genero', 'prefijoTelefono'])
+        $docente = Docente::with([
+            'persona.tipoDocumento',
+            'persona.genero',
+            'prefijoTelefono',
+            'detalleEstudios.estudiosRealizado'
+         ])
             ->findOrFail($id);
 
-        return view('admin.docente.modales.showModal', compact('docentes'));
+        return view('admin.docente.modales.showModal', compact('docente'));
     }
 
     /**

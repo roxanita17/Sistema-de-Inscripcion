@@ -18,7 +18,7 @@
                     <i class="fas fa-user-plus"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Crear Nuevo Docente</h1>
+                    <h1 class="title-main">Paso 1 de 1. Crear Nuevo Docente</h1>
                     <p class="title-subtitle">Registra la información del docente</p>
                 </div>
             </div>
@@ -460,11 +460,11 @@
                 {{-- ========================= --}}
                 <div class="form-actions-modern">
                     <button type="reset" class="btn-secondary-modern">
-                        <i class="fas fa-undo"></i> Limpiar Formulario
+                        <i class="fas fa-arrow-left"></i> Regresar
                     </button>
 
                     <button type="submit" class="btn-primary-modern">
-                        <i class="fas fa-save"></i> Guardar Docente
+                        <i class="fas fa-save"></i> Siguiente
                     </button>
                 </div>
 
