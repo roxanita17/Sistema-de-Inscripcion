@@ -1168,8 +1168,6 @@
 @stop
 
 @section('js')
-    <!-- Select2 JS from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         // Datos de estados, municipios y localidades cargados desde Blade
         const ubicacionesData = @json($estados);
@@ -1200,19 +1198,19 @@
             console.log('Estado ID recibido:', estadoId);
             console.log('Municipio Select ID:', municipioSelectId);
             
-            const $municipioSelect = $('#' + municipioSelectId);
-            const $localidadSelect = localidadSelectId ? $('#' + localidadSelectId) : null;
+            const municipioSelect = document.getElementById(municipioSelectId);
+            const localidadSelect = localidadSelectId ? document.getElementById(localidadSelectId) : null;
             
             // Limpiar los selects
-            $municipioSelect.html('<option value="">Cargando municipios...</option>');
+            municipioSelect.innerHTML = '<option value="">Cargando municipios...</option>';
             
-            if ($localidadSelect) {
-                $localidadSelect.html('<option value="">Seleccione un municipio primero</option>');
+            if (localidadSelect) {
+                localidadSelect.innerHTML = '<option value="">Seleccione un municipio primero</option>';
             }
 
             if (!estadoId || estadoId === '') {
                 console.log('Estado ID vacío, limpiando selects');
-                $municipioSelect.html('<option value="">Seleccione un estado primero</option>');
+                municipioSelect.innerHTML = '<option value="">Seleccione un estado primero</option>';
                 return;
             }
 
@@ -1224,7 +1222,7 @@
                 
                 if (!estado) {
                     console.error('No se encontró el estado con ID:', estadoId);
-                    $municipioSelect.html('<option value="">Error: Estado no encontrado</option>');
+                    municipioSelect.innerHTML = '<option value="">Error: Estado no encontrado</option>';
                     return;
                 }
                 
@@ -1246,15 +1244,15 @@
                         options += `<option value="${id}">${nombre}</option>`;
                     });
                     
-                    $municipioSelect.html(options);
+                    municipioSelect.innerHTML = options;
                     console.log('Municipios cargados correctamente en', municipioSelectId);
                 } else {
                     console.warn('No se encontraron municipios para el estado:', estado.nombre_estado);
-                    $municipioSelect.html('<option value="">No hay municipios disponibles</option>');
+                    municipioSelect.innerHTML = '<option value="">No hay municipios disponibles</option>';
                 }
             } catch (error) {
                 console.error('Error al cargar municipios:', error);
-                $municipioSelect.html('<option value="">Error al cargar municipios</option>');
+                municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
             }
         }
 
@@ -1263,11 +1261,11 @@
             console.log('Municipio ID:', municipioId);
             console.log('Localidad Select ID:', localidadSelectId);
             
-            const $localidadSelect = $('#' + localidadSelectId);
-            $localidadSelect.html('<option value="">Cargando localidades...</option>');
+            const localidadSelect = document.getElementById(localidadSelectId);
+            localidadSelect.innerHTML = '<option value="">Cargando localidades...</option>';
 
             if (!municipioId) {
-                $localidadSelect.html('<option value="">Seleccione un municipio primero</option>');
+                localidadSelect.innerHTML = '<option value="">Seleccione un municipio primero</option>';
                 return;
             }
 
@@ -1312,81 +1310,57 @@
                         options += `<option value="${id}">${nombre}</option>`;
                     });
                     
-                    $localidadSelect.html(options);
+                    localidadSelect.innerHTML = options;
                     console.log('Localidades cargadas correctamente en', localidadSelectId);
                 } else {
                     console.warn('No se encontraron localidades para el municipio ID:', municipioId);
-                    $localidadSelect.html('<option value="">No hay localidades disponibles</option>');
+                    localidadSelect.innerHTML = '<option value="">No hay localidades disponibles</option>';
                 }
             } catch (error) {
                 console.error('Error al cargar localidades:', error);
-                $localidadSelect.html('<option value="">Error al cargar localidades</option>');
+                localidadSelect.innerHTML = '<option value="">Error al cargar localidades</option>';
             }
         }
 
-        $(document).ready(function() {
-            console.log('=== INICIALIZACIÓN ===');
-            console.log('Verificando elementos del DOM...');
-            
-            // Verificar que los elementos existan
-            console.log('Elemento #idEstado existe:', $('#idEstado').length > 0);
-            console.log('Elemento #idMunicipio existe:', $('#idMunicipio').length > 0);
-            console.log('Elemento #idparroquia existe:', $('#idparroquia').length > 0);
-            
-            // Mostrar valores actuales de los selects
-            console.log('Valor actual de #idEstado:', $('#idEstado').val());
-            console.log('Valor actual de #idMunicipio:', $('#idMunicipio').val());
-            console.log('Valor actual de #idparroquia:', $('#idparroquia').val());
-
-            // Inicializar select2
-            $('.select2').each(function() {
-                $(this).select2({
-                    theme: 'bootstrap-5',
-                    width: '100%',
-                    placeholder: 'Seleccione una opción',
-                    allowClear: true,
-                    dropdownParent: $(this).parent()
-                });
-            });
-            
+        document.addEventListener('DOMContentLoaded', function() {
             // Eventos para MADRE - con más debug
-            $('#idEstado').change(function() {
-                const estadoId = $(this).val();
+            document.getElementById('idEstado').addEventListener('change', function() {
+                const estadoId = this.value;
                 console.log('=== CAMBIO DE ESTADO (madre) ===');
                 console.log('Estado seleccionado VALUE:', estadoId);
-                console.log('Texto seleccionado:', $(this).find('option:selected').text());
+                console.log('Texto seleccionado:', this.options[this.selectedIndex].text);
                 
                 if (!estadoId) {
                     console.log('❌ Estado ID está vacío');
-                    $('#idMunicipio').html('<option value="">Seleccione un estado primero</option>');
-                    $('#idparroquia').html('<option value="">Seleccione un municipio primero</option>');
+                    document.getElementById('idMunicipio').innerHTML = '<option value="">Seleccione un estado primero</option>';
+                    document.getElementById('idparroquia').innerHTML = '<option value="">Seleccione un municipio primero</option>';
                     return;
                 }
                 
-                console.log('✅ Estado ID válido:', estadoId);
+                console.log('Estado ID válido:', estadoId);
                 cargarMunicipios(estadoId, 'idMunicipio', 'idparroquia');
             });
 
-            $('#idMunicipio').change(function() {
-                const municipioId = $(this).val();
+            document.getElementById('idMunicipio').addEventListener('change', function() {
+                const municipioId = this.value;
                 console.log('=== CAMBIO DE MUNICIPIO (madre) ===');
                 console.log('Municipio seleccionado:', municipioId);
-                console.log('Texto seleccionado:', $(this).find('option:selected').text());
+                console.log('Texto seleccionado:', this.options[this.selectedIndex].text);
                 
                 cargarLocalidades(municipioId, 'idparroquia');
             });
 
             // Eventos para PADRE
-            $('#idEstado-padre').change(function() {
-                const estadoId = $(this).val();
+            document.getElementById('idEstado-padre').addEventListener('change', function() {
+                const estadoId = this.value;
                 console.log('=== CAMBIO DE ESTADO (padre) ===');
                 console.log('Estado seleccionado:', estadoId);
                 
                 cargarMunicipios(estadoId, 'idMunicipio-padre', 'idparroquia-padre');
             });
 
-            $('#idMunicipio-padre').change(function() {
-                const municipioId = $(this).val();
+            document.getElementById('idMunicipio-padre').addEventListener('change', function() {
+                const municipioId = this.value;
                 console.log('=== CAMBIO DE MUNICIPIO (padre) ===');
                 console.log('Municipio seleccionado:', municipioId);
                 
@@ -1394,16 +1368,16 @@
             });
 
             // Eventos para REPRESENTANTE
-            $('#idEstado-representante').change(function() {
-                const estadoId = $(this).val();
+            document.getElementById('idEstado-representante').addEventListener('change', function() {
+                const estadoId = this.value;
                 console.log('=== CAMBIO DE ESTADO (representante) ===');
                 console.log('Estado seleccionado:', estadoId);
                 
                 cargarMunicipios(estadoId, 'idMunicipio-representante', 'idparroquia-representante');
             });
 
-            $('#idMunicipio-representante').change(function() {
-                const municipioId = $(this).val();
+            document.getElementById('idMunicipio-representante').addEventListener('change', function() {
+                const municipioId = this.value;
                 console.log('=== CAMBIO DE MUNICIPIO (representante) ===');
                 console.log('Municipio seleccionado:', municipioId);
                 
@@ -1422,16 +1396,18 @@
                     Array.prototype.forEach.call(forms, function(form) {
                         form.addEventListener('submit', function() {
                             // Antes de validar, si madre/padre no están presentes, quitar required de sus campos
-                            const estadoMadre = $('input[name="estado_madre"]:checked').val();
-                            if (estadoMadre && estadoMadre !== 'Presente') {
-                                const $cardMadreBody = $('#Presente_madre').closest('.card').find('.card-body').first();
-                                $cardMadreBody.find('input, select, textarea').prop('required', false);
+                            const estadoMadre = document.querySelector('input[name="estado_madre"]:checked');
+                            if (estadoMadre && estadoMadre.value !== 'Presente') {
+                                const cardMadreBody = document.getElementById('Presente_madre').closest('.card').querySelector('.card-body');
+                                const inputs = cardMadreBody.querySelectorAll('input, select, textarea');
+                                inputs.forEach(input => input.required = false);
                             }
 
-                            const estadoPadre = $('input[name="estado_padre"]:checked').val();
-                            if (estadoPadre && estadoPadre !== 'Presente') {
-                                const $cardPadreBody = $('#Presente_padre').closest('.card').find('.card-body').first();
-                                $cardPadreBody.find('input, select, textarea').prop('required', false);
+                            const estadoPadre = document.querySelector('input[name="estado_padre"]:checked');
+                            if (estadoPadre && estadoPadre.value !== 'Presente') {
+                                const cardPadreBody = document.getElementById('Presente_padre').closest('.card').querySelector('.card-body');
+                                const inputs = cardPadreBody.querySelectorAll('input, select, textarea');
+                                inputs.forEach(input => input.required = false);
                             }
 
                             form.classList.add('was-validated');
@@ -1447,21 +1423,26 @@
             const verificarCedulaUrl = "{{ route('representante.verificar_cedula') }}";
             const buscarCedulaUrl    = "{{ route('representante.buscar_cedula') }}";
 
-            function marcarCedulaError($input, mensaje) {
-                $input.addClass('is-invalid');
-                const errorId = $input.attr('id') + '-error';
-                let $error = $('#' + errorId);
-                if ($error.length === 0) {
-                    $error = $('<small class="text-danger" id="' + errorId + '"></small>');
-                    $input.closest('.form-group, .input-group').after($error);
+            function marcarCedulaError(input, mensaje) {
+                input.classList.add('is-invalid');
+                const errorId = input.id + '-error';
+                let errorElement = document.getElementById(errorId);
+                if (!errorElement) {
+                    errorElement = document.createElement('small');
+                    errorElement.className = 'text-danger';
+                    errorElement.id = errorId;
+                    input.closest('.form-group, .input-group').after(errorElement);
                 }
-                $error.text(mensaje);
+                errorElement.textContent = mensaje;
             }
 
-            function limpiarCedulaError($input) {
-                $input.removeClass('is-invalid');
-                const errorId = $input.attr('id') + '-error';
-                $('#' + errorId).text('');
+            function limpiarCedulaError(input) {
+                input.classList.remove('is-invalid');
+                const errorId = input.id + '-error';
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                    errorElement.textContent = '';
+                }
             }
 
             function cedulaSeRepiteEnFormulario(valor, idActual) {
@@ -1469,8 +1450,8 @@
                 const ids = ['cedula', 'cedula-padre', 'cedula-representante'];
                 let contador = 0;
                 ids.forEach(function(id) {
-                    const $campo = $('#' + id);
-                    if ($campo.length && $campo.val() === valor) {
+                    const campo = document.getElementById(id);
+                    if (campo && campo.value === valor) {
                         contador++;
                     }
                 });
@@ -1478,165 +1459,178 @@
             }
 
             function verificarCedulaCampo(selector, personaIdSelector) {
-                const $input = $(selector);
-                if ($input.length === 0) return;
+                const input = document.querySelector(selector);
+                if (!input) return;
 
-                $input.on('blur', function() {
-                    const valor = $input.val();
-                    limpiarCedulaError($input);
+                input.addEventListener('blur', function() {
+                    const valor = this.value;
+                    limpiarCedulaError(this);
                     if (!valor) return;
 
                     // Verificar repetición dentro del mismo formulario
-                    if (cedulaSeRepiteEnFormulario(valor, $input.attr('id'))) {
-                        marcarCedulaError($input, 'Esta cédula ya se está usando en otro bloque del formulario');
+                    if (cedulaSeRepiteEnFormulario(valor, this.id)) {
+                        marcarCedulaError(this, 'Esta cédula ya se está usando en otro bloque del formulario');
                         return;
                     }
 
                     // Verificar contra la base de datos
-                    const personaId = personaIdSelector ? $(personaIdSelector).val() : '';
+                    const personaId = personaIdSelector ? document.querySelector(personaIdSelector)?.value : '';
 
-                    $.ajax({
-                        url: verificarCedulaUrl,
-                        method: 'GET',
-                        data: {
-                            cedula: valor,
-                            persona_id: personaId
-                        },
-                        success: function(resp) {
-                            console.log('Cedula OK', selector, resp);
-                            limpiarCedulaError($input);
-                        },
-                        error: function(xhr) {
-                            if (xhr.status === 409 && xhr.responseJSON && xhr.responseJSON.message) {
-                                marcarCedulaError($input, xhr.responseJSON.message);
-                            } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                                marcarCedulaError($input, xhr.responseJSON.message);
-                            } else {
-                                console.error('Error al verificar cédula', xhr);
+                    fetch(`${verificarCedulaUrl}?cedula=${valor}&persona_id=${personaId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => { throw err; });
                             }
-                        }
-                    });
+                            return response.json();
+                        })
+                        .then(resp => {
+                            console.log('Cedula OK', selector, resp);
+                            limpiarCedulaError(input);
+                        })
+                        .catch(error => {
+                            if (error.message) {
+                                marcarCedulaError(input, error.message);
+                            } else {
+                                console.error('Error al verificar cédula', error);
+                            }
+                        });
                 });
             }
 
             // Aplicar validación en tiempo real a las tres cédulas principales
             verificarCedulaCampo('#cedula', null); // Madre
             verificarCedulaCampo('#cedula-padre', null); // Padre
-            verificarCedulaCampo('#cedula-representante', '#persona-id-representante'); // Representante legal (puede estar en edición)
+            verificarCedulaCampo('#cedula-representante', '#persona-id-representante'); // Representante legal
 
             // ================================
             // BLOQUEO / DESBLOQUEO DE SECCIONES
             // ================================
 
-            function toggleSeccionPorEstado(nombreEstado, $cardBody, excepcionesNames) {
-                const $radios = $('input[name="' + nombreEstado + '"]');
-                if ($radios.length === 0 || $cardBody.length === 0) return;
+            function toggleSeccionPorEstado(nombreEstado, cardBody, excepcionesNames) {
+                const radios = document.querySelectorAll(`input[name="${nombreEstado}"]`);
+                if (radios.length === 0 || !cardBody) return;
 
                 function aplicarEstado() {
-                    const valor = $radios.filter(':checked').val();
+                    const valor = Array.from(radios).find(r => r.checked)?.value;
                     const esPresente = valor === 'Presente';
 
-                    $cardBody.find('input, select, textarea').each(function() {
-                        const name = $(this).attr('name');
+                    const inputs = cardBody.querySelectorAll('input, select, textarea');
+                    inputs.forEach(input => {
+                        const name = input.name;
                         if (name && excepcionesNames.includes(name)) {
                             return; // no tocar radios de estado
                         }
 
                         if (esPresente) {
                             // habilitar
-                            $(this).prop('disabled', false);
-                            const wasRequired = $(this).data('was-required');
-                            if (wasRequired) {
-                                $(this).prop('required', true);
+                            input.disabled = false;
+                            const wasRequired = input.dataset.wasRequired;
+                            if (wasRequired === 'true') {
+                                input.required = true;
                             }
                         } else {
                             // deshabilitar
-                            if ($(this).prop('required')) {
-                                $(this).data('was-required', true);
+                            if (input.required) {
+                                input.dataset.wasRequired = 'true';
                             }
-                            $(this).prop('required', false);
-                            $(this).prop('disabled', true);
+                            input.required = false;
+                            input.disabled = true;
                         }
                     });
                 }
 
                 // Inicialmente, si no hay selección, bloqueamos todo excepto los radios de estado
-                if ($radios.filter(':checked').length === 0) {
-                    $cardBody.find('input, select, textarea').each(function() {
-                        const name = $(this).attr('name');
+                if (!Array.from(radios).find(r => r.checked)) {
+                    const inputs = cardBody.querySelectorAll('input, select, textarea');
+                    inputs.forEach(input => {
+                        const name = input.name;
                         if (name && excepcionesNames.includes(name)) {
                             return;
                         }
-                        if ($(this).prop('required')) {
-                            $(this).data('was-required', true);
+                        if (input.required) {
+                            input.dataset.wasRequired = 'true';
                         }
-                        $(this).prop('required', false).prop('disabled', true);
+                        input.required = false;
+                        input.disabled = true;
                     });
                 } else {
                     aplicarEstado();
                 }
 
-                let valorPrevio = $radios.filter(':checked').val() || null;
+                let valorPrevio = Array.from(radios).find(r => r.checked)?.value || null;
 
-                $radios.on('change', function() {
-                    const valorNuevo = $(this).val();
-                    if (valorNuevo === 'Ausente') {
-                        const confirmado = confirm('Marcar como AUSENTE bloqueará permanentemente la edición de esta sección en este formulario. ¿Desea continuar?');
-                        if (!confirmado) {
-                            // Volver al valor previo
-                            if (valorPrevio) {
-                                $radios.filter('[value="' + valorPrevio + '"]').prop('checked', true);
-                            } else {
-                                $radios.prop('checked', false);
+                radios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        const valorNuevo = this.value;
+                        if (valorNuevo === 'Ausente') {
+                            const confirmado = confirm('Marcar como AUSENTE bloqueará permanentemente la edición de esta sección en este formulario. ¿Desea continuar?');
+                            if (!confirmado) {
+                                // Volver al valor previo
+                                if (valorPrevio) {
+                                    radios.forEach(r => r.checked = r.value === valorPrevio);
+                                } else {
+                                    radios.forEach(r => r.checked = false);
+                                }
+                                return;
                             }
-                            return;
                         }
-                    }
-                    valorPrevio = valorNuevo;
-                    aplicarEstado();
+                        valorPrevio = valorNuevo;
+                        aplicarEstado();
+                    });
                 });
             }
 
             // Madre: tomar el card-body de la primera tarjeta (Datos de la Madre)
-            const $cardMadreBody = $('#Presente_madre').closest('.card').find('.card-body').first();
-            toggleSeccionPorEstado('estado_madre', $cardMadreBody, ['estado_madre']);
+            const cardMadreBody = document.getElementById('Presente_madre').closest('.card').querySelector('.card-body');
+            toggleSeccionPorEstado('estado_madre', cardMadreBody, ['estado_madre']);
 
             // Refuerzo específico: asegurar bloqueo de ocupación y convive de la madre cuando está Ausente
             function aplicarBloqueoCamposMadre() {
-                const estadoMadreVal = $('input[name="estado_madre"]:checked').val();
+                const estadoMadreVal = document.querySelector('input[name="estado_madre"]:checked')?.value;
                 const esPresenteMadre = estadoMadreVal === 'Presente';
 
-                const $ocupacionMadre = $('#ocupacion-madre');
-                const $otraOcupacionMadre = $('#otra-ocupacion');
-                const $conviveSiMadre = $('#convive-si');
-                const $conviveNoMadre = $('#convive-no');
+                const ocupacionMadre = document.getElementById('ocupacion-madre');
+                const otraOcupacionMadre = document.getElementById('otra-ocupacion');
+                const conviveSiMadre = document.getElementById('convive-si');
+                const conviveNoMadre = document.getElementById('convive-no');
 
                 if (esPresenteMadre) {
-                    $ocupacionMadre.prop('disabled', false).prop('required', true);
-                    // "Otra ocupación" solo requerida si el contenedor está visible
-                    if ($('#otra-ocupacion-container').is(':visible')) {
-                        $otraOcupacionMadre.prop('disabled', false).prop('required', true);
-                    } else {
-                        $otraOcupacionMadre.prop('disabled', true).prop('required', false);
+                    if (ocupacionMadre) {
+                        ocupacionMadre.disabled = false;
+                        ocupacionMadre.required = true;
                     }
-                    $conviveSiMadre.prop('disabled', false);
-                    $conviveNoMadre.prop('disabled', false);
+                    // "Otra ocupación" solo requerida si el contenedor está visible
+                    const otraOcupacionContainer = document.getElementById('otra-ocupacion-container');
+                    if (otraOcupacionMadre && otraOcupacionContainer) {
+                        otraOcupacionMadre.disabled = !otraOcupacionContainer.style.display || otraOcupacionContainer.style.display !== 'none';
+                        otraOcupacionMadre.required = !otraOcupacionContainer.style.display || otraOcupacionContainer.style.display !== 'none';
+                    }
+                    if (conviveSiMadre) conviveSiMadre.disabled = false;
+                    if (conviveNoMadre) conviveNoMadre.disabled = false;
                 } else {
                     // Ausente u otro estado: bloquear relación familiar de la madre
-                    $ocupacionMadre.prop('disabled', true).prop('required', false);
-                    $otraOcupacionMadre.prop('disabled', true).prop('required', false);
-                    $conviveSiMadre.prop('disabled', true);
-                    $conviveNoMadre.prop('disabled', true);
+                    if (ocupacionMadre) {
+                        ocupacionMadre.disabled = true;
+                        ocupacionMadre.required = false;
+                    }
+                    if (otraOcupacionMadre) {
+                        otraOcupacionMadre.disabled = true;
+                        otraOcupacionMadre.required = false;
+                    }
+                    if (conviveSiMadre) conviveSiMadre.disabled = true;
+                    if (conviveNoMadre) conviveNoMadre.disabled = true;
                 }
             }
 
             // Aplicar una vez al cargar y cada vez que cambie el estado de la madre
             aplicarBloqueoCamposMadre();
-            $('input[name="estado_madre"]').on('change', aplicarBloqueoCamposMadre);
+            document.querySelectorAll('input[name="estado_madre"]').forEach(radio => {
+                radio.addEventListener('change', aplicarBloqueoCamposMadre);
+            });
 
             // Padre: card-body de la tarjeta de Datos del Padre
-            const $cardPadreBody = $('#Presente_padre').closest('.card').find('.card-body').first();
-            toggleSeccionPorEstado('estado_padre', $cardPadreBody, ['estado_padre']);
+            const cardPadreBody = document.getElementById('Presente_padre').closest('.card').querySelector('.card-body');
+            toggleSeccionPorEstado('estado_padre', cardPadreBody, ['estado_padre']);
 
             // ================================
             // REPRESENTANTE LEGAL COMO PROGENITOR
@@ -1649,221 +1643,266 @@
                 const representante = resp.data;
                 const legal = resp.data.legal || {};
 
-                $('#persona-id-representante').val(persona.id || '');
-                $('#representante-id').val(representante.id || '');
+                document.getElementById('persona-id-representante').value = persona.id || '';
+                document.getElementById('representante-id').value = representante.id || '';
 
-                $('#primer-nombre-representante').val(persona.primer_nombre || '');
-                $('#segundo-nombre-representante').val(persona.segundo_nombre || '');
-                $('#tercer-nombre-representante').val(persona.tercer_nombre || '');
-                $('#primer-apellido-representante').val(persona.primer_apellido || '');
-                $('#segundo-apellido-representante').val(persona.segundo_apellido || '');
-                $('#fechaNacimiento-representante').val(persona.fecha_nacimiento || '');
-                $('#sexo-representante').val(persona.genero_id || '').trigger('change');
+                document.getElementById('primer-nombre-representante').value = persona.primer_nombre || '';
+                document.getElementById('segundo-nombre-representante').value = persona.segundo_nombre || '';
+                document.getElementById('tercer-nombre-representante').value = persona.tercer_nombre || '';
+                document.getElementById('primer-apellido-representante').value = persona.primer_apellido || '';
+                document.getElementById('segundo-apellido-representante').value = persona.segundo_apellido || '';
+                document.getElementById('fechaNacimiento-representante').value = persona.fecha_nacimiento || '';
+                
+                const sexoRepresentante = document.getElementById('sexo-representante');
+                if (sexoRepresentante) {
+                    sexoRepresentante.value = persona.genero_id || '';
+                }
 
                 // Otros campos opcionales si existen
-                $('#telefono-representante').val(persona.telefono || '');
-                $('#lugar-nacimiento-representante').val(persona.direccion || '');
+                const telefonoRepresentante = document.getElementById('telefono-representante');
+                const lugarNacimientoRepresentante = document.getElementById('lugar-nacimiento-representante');
+                if (telefonoRepresentante) telefonoRepresentante.value = persona.telefono || '';
+                if (lugarNacimientoRepresentante) lugarNacimientoRepresentante.value = persona.direccion || '';
 
                 // Correo: preferir el correo del representante legal, si no, el email de la persona
                 const correo = legal.correo_representante || persona.email || '';
-                $('#correo-representante').val(correo);
+                document.getElementById('correo-representante').value = correo;
             }
 
-            function copiarDesdeMadreOPadreSiCoincide(cedula) {
-                if (!cedula) return false;
+function copiarDesdeMadreOPadreSiCoincide(cedula) {
+    if (!cedula) return false;
 
-                // Madre
-                if ($('#cedula').length && $('#cedula').val() === cedula) {
-                    $('#primer-nombre-representante').val($('#primer-nombre').val());
-                    $('#segundo-nombre-representante').val($('#segundo-nombre').val());
-                    $('#tercer-nombre-representante').val($('#tercer-nombre').val());
-                    $('#primer-apellido-representante').val($('#primer-apellido').val());
-                    $('#segundo-apellido-representante').val($('#segundo-apellido').val());
-                    $('#fechaNacimiento-representante').val($('#fechaNacimiento').val());
-                    $('#sexo-representante').val($('#sexo').val()).trigger('change');
-                    $('#telefono-representante').val($('#telefono').val());
-                    $('#lugar-nacimiento-representante').val($('#lugar-nacimiento').val());
-
-                    // Copiar ocupación y convive desde madre
-                    const ocupacionMadre = $('#ocupacion-madre').val();
-                    if (ocupacionMadre) {
-                        $('#ocupacion-representante').val(ocupacionMadre);
+    // Función para copiar ubicación
+    const copiarUbicacion = (prefijoOrigen, prefijoDestino) => {
+        const estado = document.getElementById(`${prefijoOrigen}Estado`).value;
+        const municipio = document.getElementById(`${prefijoOrigen}Municipio`).value;
+        const parroquia = document.getElementById(`id${prefijoOrigen === '' ? 'parroquia' : 'parroquia-padre'}`).value;
+        
+        if (estado) {
+            document.getElementById('idEstado-representante').value = estado;
+            cargarMunicipios(estado, 'idMunicipio-representante', 'idparroquia-representante');
+            
+            if (municipio) {
+                setTimeout(() => {
+                    document.getElementById('idMunicipio-representante').value = municipio;
+                    cargarLocalidades(municipio, 'idparroquia-representante');
+                    
+                    if (parroquia) {
+                        setTimeout(() => {
+                            document.getElementById('idparroquia-representante').value = parroquia;
+                        }, 100);
                     }
-
-                    const conviveMadre = $('input[name="convive"]:checked').val();
-                    if (conviveMadre === 'si') {
-                        $('input[name="convive-representante"][value="si"]').prop('checked', true);
-                    } else if (conviveMadre === 'no') {
-                        $('input[name="convive-representante"][value="no"]').prop('checked', true);
-                    }
-
-                    // Copiar ubicación y prefijo
-                    const estadoMadre = $('#idEstado').val();
-                    const municipioMadre = $('#idMunicipio').val();
-                    const parroquiaMadre = $('#idparroquia').val();
-                    const prefijoMadre = $('#prefijo').val();
-
-                    if (estadoMadre) {
-                        $('#idEstado-representante').val(estadoMadre);
-                        cargarMunicipios(estadoMadre, 'idMunicipio-representante', 'idparroquia-representante');
-                        if (municipioMadre) {
-                            $('#idMunicipio-representante').val(municipioMadre);
-                            cargarLocalidades(municipioMadre, 'idparroquia-representante');
-                            if (parroquiaMadre) {
-                                $('#idparroquia-representante').val(parroquiaMadre);
-                            }
-                        }
-                    }
-
-                    if (prefijoMadre) {
-                        $('#prefijo-representante').val(prefijoMadre);
-                    }
-                    return true;
-                }
-
-                // Padre
-                if ($('#cedula-padre').length && $('#cedula-padre').val() === cedula) {
-                    $('#primer-nombre-representante').val($('#primer-nombre-padre').val());
-                    $('#segundo-nombre-representante').val($('#segundo-nombre-padre').val());
-                    $('#tercer-nombre-representante').val(''); // no hay tercer nombre padre en el formulario
-                    $('#primer-apellido-representante').val($('#primer-apellido-padre').val());
-                    $('#segundo-apellido-representante').val($('#segundo-apellido-padre').val());
-                    $('#fechaNacimiento-representante').val($('#fechaNacimiento-padre').val());
-                    $('#sexo-representante').val($('#genero-padre').val()).trigger('change');
-                    $('#telefono-representante').val($('#telefono-padre').val());
-                    $('#lugar-nacimiento-representante').val($('#lugar-nacimiento-padre').val());
-
-                    // Copiar ocupación y convive desde padre
-                    const ocupacionPadre = $('#ocupacion-padre').val();
-                    if (ocupacionPadre) {
-                        $('#ocupacion-representante').val(ocupacionPadre);
-                    }
-
-                    const convivePadre = $('input[name="convive-padre"]:checked').val();
-                    if (convivePadre === '1' || convivePadre === 'si') {
-                        $('input[name="convive-representante"][value="si"]').prop('checked', true);
-                    } else if (convivePadre === '0' || convivePadre === 'no') {
-                        $('input[name="convive-representante"][value="no"]').prop('checked', true);
-                    }
-
-                    // Copiar ubicación y prefijo desde padre
-                    const estadoPadre = $('#idEstado-padre').val();
-                    const municipioPadre = $('#idMunicipio-padre').val();
-                    const parroquiaPadre = $('#idparroquia-padre').val();
-                    const prefijoPadre = $('#prefijo-padre').val();
-
-                    if (estadoPadre) {
-                        $('#idEstado-representante').val(estadoPadre);
-                        cargarMunicipios(estadoPadre, 'idMunicipio-representante', 'idparroquia-representante');
-                        if (municipioPadre) {
-                            $('#idMunicipio-representante').val(municipioPadre);
-                            cargarLocalidades(municipioPadre, 'idparroquia-representante');
-                            if (parroquiaPadre) {
-                                $('#idparroquia-representante').val(parroquiaPadre);
-                            }
-                        }
-                    }
-
-                    if (prefijoPadre) {
-                        $('#prefijo-representante').val(prefijoPadre);
-                    }
-                    return true;
-                }
-
-                return false;
+                }, 100);
             }
+        }
+    };
+
+    // Función para copiar teléfono y prefijo
+    const copiarTelefonoYPrefijo = (prefijoOrigen) => {
+        const telefono = document.getElementById(`${prefijoOrigen}telefono`).value;
+        const prefijo = document.getElementById(`${prefijoOrigen}prefijo`).value;
+        
+        if (telefono) document.getElementById('telefono-representante').value = telefono;
+        if (prefijo) document.getElementById('prefijo-representante').value = prefijo;
+    };
+
+    // Función para copiar lugar de nacimiento
+    const copiarLugarNacimiento = (prefijoOrigen) => {
+        const lugarNacimiento = document.getElementById(`lugar-nacimiento${prefijoOrigen}`).value;
+        if (lugarNacimiento) {
+            document.getElementById('lugar-nacimiento-representante').value = lugarNacimiento;
+        }
+    };
+
+    // Función para copiar ocupación
+    const copiarOcupacion = (prefijoOrigen) => {
+        const ocupacion = document.getElementById(`ocupacion-${prefijoOrigen}`).value;
+        const ocupacionRepresentante = document.getElementById('ocupacion-representante');
+        if (ocupacion && ocupacionRepresentante) {
+            ocupacionRepresentante.value = ocupacion;
+        }
+    };
+
+    // Función para copiar convivencia
+    const copiarConvivencia = (prefijoOrigen) => {
+        const convive = document.querySelector(`input[name="convive${prefijoOrigen}"]:checked`);
+        const conviveSiRepresentante = document.querySelector('input[name="convive-representante"][value="si"]');
+        const conviveNoRepresentante = document.querySelector('input[name="convive-representante"][value="no"]');
+        
+        if (convive) {
+            if (convive.value === 'si' || convive.value === '1') {
+                conviveSiRepresentante.checked = true;
+            } else if (convive.value === 'no' || convive.value === '0') {
+                conviveNoRepresentante.checked = true;
+            }
+        }
+    };
+
+    // MADRE
+    const cedulaMadre = document.getElementById('cedula');
+    if (cedulaMadre && cedulaMadre.value === cedula) {
+        // Copiar datos personales
+        document.getElementById('primer-nombre-representante').value = document.getElementById('primer-nombre').value || '';
+        document.getElementById('segundo-nombre-representante').value = document.getElementById('segundo-nombre').value || '';
+        document.getElementById('tercer-nombre-representante').value = document.getElementById('tercer-nombre').value || '';
+        document.getElementById('primer-apellido-representante').value = document.getElementById('primer-apellido').value || '';
+        document.getElementById('segundo-apellido-representante').value = document.getElementById('segundo-apellido').value || '';
+        document.getElementById('fechaNacimiento-representante').value = document.getElementById('fechaNacimiento').value || '';
+        
+        const sexoRepresentante = document.getElementById('sexo-representante');
+        const sexoMadre = document.getElementById('sexo');
+        if (sexoRepresentante && sexoMadre) sexoRepresentante.value = sexoMadre.value;
+        
+        // Copiar datos adicionales
+        copiarLugarNacimiento('');
+        copiarTelefonoYPrefijo('');
+        copiarUbicacion('', '');
+        copiarOcupacion('madre');
+        copiarConvivencia('');
+
+        return true;
+    }
+
+    // PADRE
+    const cedulaPadre = document.getElementById('cedula-padre');
+    if (cedulaPadre && cedulaPadre.value === cedula) {
+        // Copiar datos personales
+        document.getElementById('primer-nombre-representante').value = document.getElementById('primer-nombre-padre').value || '';
+        document.getElementById('segundo-nombre-representante').value = document.getElementById('segundo-nombre-padre').value || '';
+        document.getElementById('tercer-nombre-representante').value = document.getElementById('tercer-nombre-padre')?.value || '';
+        document.getElementById('primer-apellido-representante').value = document.getElementById('primer-apellido-padre').value || '';
+        document.getElementById('segundo-apellido-representante').value = document.getElementById('segundo-apellido-padre')?.value || '';
+        document.getElementById('fechaNacimiento-representante').value = document.getElementById('fechaNacimiento-padre').value || '';
+        
+        const sexoRepresentante = document.getElementById('sexo-representante');
+        const generoPadre = document.getElementById('genero-padre');
+        if (sexoRepresentante && generoPadre) sexoRepresentante.value = generoPadre.value;
+        
+        // Copiar datos adicionales
+        copiarLugarNacimiento('-padre');
+        copiarTelefonoYPrefijo('padre-');
+        copiarUbicacion('padre-', 'padre-');
+        copiarOcupacion('padre');
+        copiarConvivencia('-padre');
+
+        return true;
+    }
+
+    return false;
+}
 
             // Función para mostrar/ocultar el campo de organización
             function toggleOrganizacion() {
-                const mostrar = $('input[name="pertenece-organizacion"]:checked').val() === 'si';
-                const $campoOrganizacion = $('#campo_organizacion');
-                const $inputOrganizacion = $('#cual-organizacion');
+                const mostrar = document.querySelector('input[name="pertenece-organizacion"]:checked')?.value === 'si';
+                const campoOrganizacion = document.getElementById('campo_organizacion');
+                const inputOrganizacion = document.getElementById('cual-organizacion');
                 
-                $campoOrganizacion.toggle(mostrar);
-                $inputOrganizacion.prop('required', mostrar);
-                
-                if (!mostrar) {
-                    $inputOrganizacion.val('');
+                if (campoOrganizacion) {
+                    campoOrganizacion.style.display = mostrar ? 'block' : 'none';
+                }
+                if (inputOrganizacion) {
+                    inputOrganizacion.required = mostrar;
+                    if (!mostrar) {
+                        inputOrganizacion.value = '';
+                    }
                 }
             }
 
             // Manejar cambios en la opción de pertenencia a organización
-            $('input[name="pertenece-organizacion"]').on('change', toggleOrganizacion);
+            document.querySelectorAll('input[name="pertenece-organizacion"]').forEach(radio => {
+                radio.addEventListener('change', toggleOrganizacion);
+            });
             toggleOrganizacion(); // Estado inicial
 
             // Estado inicial: bloquear completamente el bloque de representante legal
-            const $seccionRep = $('#datos-representante');
-            $seccionRep.hide();
-            $seccionRep.find('input, select, textarea').prop('disabled', true);
+            const seccionRep = document.getElementById('datos-representante');
+            if (seccionRep) {
+                seccionRep.style.display = 'none';
+                const inputs = seccionRep.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => input.disabled = true);
+            }
 
-            $('input[name="tipo_representante"]').on('change', function() {
-                const tipo = $(this).val();
-                const $form = $(this).closest('form');
+            document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const tipo = this.value;
+                    const seccionRep = document.getElementById('datos-representante');
 
-                if (!tipo) {
-                    // Sin selección: ocultar y bloquear todo
-                    $seccionRep.hide();
-                    $seccionRep.find('input, select, textarea').prop('disabled', true);
-                    return;
-                }
-
-                // Mostrar la sección y habilitar campos
-                $seccionRep.show();
-                $seccionRep.find('input, select, textarea').prop('disabled', false);
-
-                // Si es progenitor_representante, intentar copiar datos del padre/madre
-                if (tipo === 'progenitor_representante') {
-                    // Determinar si el padre o la madre está presente
-                    const padrePresente = $('input[name="estado_padre"]:checked').val() === 'Presente';
-                    const madrePresente = $('input[name="estado_madre"]:checked').val() === 'Presente';
-                    
-                    // Obtener los valores de los campos de cédula
-                    const cedulaPadre = $('#cedula-padre').val();
-                    const cedulaMadre = $('#cedula').val();
-                    
-                    // Obtener los valores de los campos de correo
-                    const correoPadre = $('#email-padre').val();
-                    const correoMadre = $('#email').val();
-                    
-                    // Obtener los tipos de documento
-                    const tipoDocPadre = $('#tipo-ci-padre').val();
-                    const tipoDocMadre = $('#tipo-ci').val();
-                    
-                    // Si el padre está presente, copiar sus datos
-                    if (padrePresente && cedulaPadre) {
-                        $('#cedula-representante').val(cedulaPadre);
-                        if (tipoDocPadre) {
-                            $('#tipo-ci-representante').val(tipoDocPadre);
+                    if (!tipo) {
+                        // Sin selección: ocultar y bloquear todo
+                        if (seccionRep) {
+                            seccionRep.style.display = 'none';
+                            const inputs = seccionRep.querySelectorAll('input, select, textarea');
+                            inputs.forEach(input => input.disabled = true);
                         }
-                        if (correoPadre) {
-                            $('#correo-representante').val(correoPadre);
-                        }
-                        console.log('Datos copiados del padre:', { cedula: cedulaPadre, correo: correoPadre });
-                    } 
-                    // Si la madre está presente, copiar sus datos
-                    else if (madrePresente && cedulaMadre) {
-                        $('#cedula-representante').val(cedulaMadre);
-                        if (tipoDocMadre) {
-                            $('#tipo-ci-representante').val(tipoDocMadre);
-                        }
-                        if (correoMadre) {
-                            $('#correo-representante').val(correoMadre);
-                        }
-                        console.log('Datos copiados de la madre:', { cedula: cedulaMadre, correo: correoMadre });
+                        return;
                     }
-                    
-                    // Forzar el evento blur en la cédula para buscar datos adicionales
-                    if ($('#cedula-representante').val()) {
-                        $('#cedula-representante').trigger('blur');
+
+                    // Mostrar la sección y habilitar campos
+                    if (seccionRep) {
+                        seccionRep.style.display = 'block';
+                        const inputs = seccionRep.querySelectorAll('input, select, textarea');
+                        inputs.forEach(input => input.disabled = false);
                     }
-                }
+
+                    // Si es progenitor_representante, intentar copiar datos del padre/madre
+                    if (tipo === 'progenitor_representante') {
+                        // Determinar si el padre o la madre está presente
+                        const padrePresente = document.querySelector('input[name="estado_padre"]:checked')?.value === 'Presente';
+                        const madrePresente = document.querySelector('input[name="estado_madre"]:checked')?.value === 'Presente';
+                        
+                        // Obtener los valores de los campos de cédula
+                        const cedulaPadre = document.getElementById('cedula-padre')?.value;
+                        const cedulaMadre = document.getElementById('cedula')?.value;
+                        
+                        // Obtener los valores de los campos de correo
+                        const correoPadre = document.getElementById('email-padre')?.value;
+                        const correoMadre = document.getElementById('email')?.value;
+                        
+                        // Obtener los tipos de documento
+                        const tipoDocPadre = document.getElementById('tipo-ci-padre')?.value;
+                        const tipoDocMadre = document.getElementById('tipo-ci')?.value;
+                        
+                        // Si el padre está presente, copiar sus datos
+                        if (padrePresente && cedulaPadre) {
+                            document.getElementById('cedula-representante').value = cedulaPadre;
+                            const tipoCiRepresentante = document.getElementById('tipo-ci-representante');
+                            if (tipoCiRepresentante && tipoDocPadre) {
+                                tipoCiRepresentante.value = tipoDocPadre;
+                            }
+                            const correoRepresentante = document.getElementById('correo-representante');
+                            if (correoRepresentante && correoPadre) {
+                                correoRepresentante.value = correoPadre;
+                            }
+                            console.log('Datos copiados del padre:', { cedula: cedulaPadre, correo: correoPadre });
+                        } 
+                        // Si la madre está presente, copiar sus datos
+                        else if (madrePresente && cedulaMadre) {
+                            document.getElementById('cedula-representante').value = cedulaMadre;
+                            const tipoCiRepresentante = document.getElementById('tipo-ci-representante');
+                            if (tipoCiRepresentante && tipoDocMadre) {
+                                tipoCiRepresentante.value = tipoDocMadre;
+                            }
+                            const correoRepresentante = document.getElementById('correo-representante');
+                            if (correoRepresentante && correoMadre) {
+                                correoRepresentante.value = correoMadre;
+                            }
+                            console.log('Datos copiados de la madre:', { cedula: cedulaMadre, correo: correoMadre });
+                        }
+                        
+                        // Forzar el evento blur en la cédula para buscar datos adicionales
+                        const cedulaRepresentante = document.getElementById('cedula-representante');
+                        if (cedulaRepresentante && cedulaRepresentante.value) {
+                            cedulaRepresentante.dispatchEvent(new Event('blur'));
+                        }
+                    }
+                });
             });
 
             // Al salir de la cédula del representante, si el tipo es progenitor_representante,
             // primero intentamos copiar desde madre/padre; si no coincide, buscamos en BD
-            $('#cedula-representante').on('blur', function() {
-                const tipo = $('input[name="tipo_representante"]:checked').val();
-                const cedula = $(this).val();
+            document.getElementById('cedula-representante')?.addEventListener('blur', function() {
+                const tipo = document.querySelector('input[name="tipo_representante"]:checked')?.value;
+                const cedula = this.value;
 
                 if (tipo !== 'progenitor_representante' || !cedula) {
                     return;
@@ -1876,41 +1915,30 @@
                 }
 
                 // 2) Si no coincide con madre/padre, buscar en BD
-                $.ajax({
-                    url: buscarCedulaUrl,
-                    method: 'GET',
-                    data: { cedula: cedula },
-                    success: function(resp) {
+                fetch(`${buscarCedulaUrl}?cedula=${cedula}`)
+                    .then(response => response.json())
+                    .then(resp => {
                         if (resp && resp.status === 'success') {
                             rellenarRepresentanteDesdeRespuesta(resp);
                         }
-                    },
-                    error: function(xhr) {
-                        console.error('Error al buscar cédula para representante legal como progenitor', xhr);
-                    }
-                });
+                    })
+                    .catch(error => {
+                        console.error('Error al buscar cédula para representante legal como progenitor', error);
+                    });
             });
 
             // Otras funciones
-            $('input[name*="telefono"]').on('input', function() {
-                $(this).val($(this).val().replace(/[^0-9]/g, ''));
+            document.querySelectorAll('input[name*="telefono"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
             });
 
-            $('input[name*="cedula"]').on('input', function() {
-                $(this).val($(this).val().replace(/[^0-9]/g, '').substring(0, 8));
+            document.querySelectorAll('input[name*="cedula"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '').substring(0, 8);
+                });
             });
-
-            console.log('✅ Todos los event listeners configurados');
-
-            // TEST: Simular un cambio de estado para probar
-            console.log('=== TEST AUTOMÁTICO ===');
-            console.log('Primeros 3 estados disponibles:');
-            ubicacionesData.slice(0, 3).forEach((estado, index) => {
-                console.log(`${index + 1}. ${estado.nombre_estado} (ID: ${estado.id})`);
-            });
-            
-            // Agregar opción de test al select de estados
-            $('#idEstado').append('<option value="1">[TEST] Amazonas</option>');
         });
     </script>
 @stop
