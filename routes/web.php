@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AnioEscolarController;
+use App\Http\Controllers\RepresentanteController;
 use App\Http\Controllers\BancoController;
 use App\Http\Controllers\EtniaIndigenaController;
 use App\Http\Controllers\OcupacionController;
@@ -201,4 +202,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('transacciones.docentes.index');
+
 });
+
+// ======  REPRESENTANTE  ======
+Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function() {
+        Route::get("/", [RepresentanteController::class, 'index'])->name("index");
+        Route::post("/", [RepresentanteController::class, 'store'])->name("store");
+        Route::get("/formulario", [RepresentanteController::class, 'mostrarFormulario'])->name("formulario");
+        Route::post("/save", [RepresentanteController::class, "save"])->name("save");
+    });

@@ -16,4 +16,9 @@ class Ocupacion extends Model
         'nombre_ocupacion',
         'status',
     ];
+
+    public function representantes()
+    {
+        return $this->hasMany(Representante::class, 'ocupacion_representante', 'id');
+    }
 }

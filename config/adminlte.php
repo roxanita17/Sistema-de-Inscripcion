@@ -385,6 +385,18 @@ return [
         ],
 
         // Separador
+        ['header' => 'GESTIÓN ACADÉMICA'],
+
+        // Representantes
+        [
+            'text' => 'Representantes',
+            'url' => 'representante',
+            'icon' => 'fas fa-fw fa-user-tie',
+            'icon_color' => 'info',
+            'active' => ['representante', 'representante/*'],
+        ],
+
+        // Separador
         ['header' => 'ADMINISTRACIÓN'],
 
         // Roles y Permisos
