@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Docente extends Model
 {
@@ -24,6 +25,21 @@ class Docente extends Model
     protected $casts = [
         'status' => 'boolean',
     ];
+
+    public function scopeBuscar($query, $buscar)
+    {
+        if (!empty($buscar)) {
+            $query->whereHas('persona', function ($q) use ($buscar) {
+                $q->where(DB::raw("CONCAT(primer_nombre, ' ', primer_apellido)"), 'LIKE', "%{$buscar}%")
+                ->orWhere('cedula', 'LIKE', "%{$buscar}%")
+                ->orWhere('primer_nombre', 'LIKE', "%{$buscar}%")
+                ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                ->orWhere('codigo', 'LIKE', "%{$buscar}%");
+            });
+        }
+
+        return $query;
+}
 
     /**
      * Relación con DetalleDocenteEstudio
@@ -48,7 +64,7 @@ class Docente extends Model
 
     public function detalleEstudios()
     {
-        return $this->hasMany(DetalleDocenteEstudio::class, 'docente_id', 'id');
+        return $this->hasMany(DetalleDocenteEstudio::class, 'docente_id', 'id')->where('status', true);
     }
 
     /**

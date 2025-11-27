@@ -133,18 +133,7 @@
                     </div> --}}
 
                     {{-- Separador --}}
-                    <div style="border-top: 2px dashed var(--gray-200); margin: 1rem 0;"></div>
-
-                    {{-- Auditoría --}}
-                    <div class="detail-item">
-                        <span class="detail-label">
-                            <i class="fas fa-calendar-plus"></i>
-                            Registrado el
-                        </span>
-                        <span class="detail-value">
-                            {{ $datos->created_at->format('d/m/Y H:i:s') }}
-                        </span>
-                    </div>
+                    <div style="border-top: 2px dashed var(--gray-200); margin: 1rem 0;"></div>                    
 
                     {{-- Estudios --}}
                     <div class="detail-item">
@@ -162,6 +151,16 @@
                         </span>
                     </div>
 
+                    {{-- Auditoria --}}
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="fas fa-calendar-plus"></i>
+                            Registrado el
+                        </span>
+                        <span class="detail-value">
+                            {{ $datos->created_at->format('d/m/Y H:i:s') }}
+                        </span>
+                    </div>
 
                     @if ($datos->updated_at != $datos->created_at)
                     <div class="detail-item">

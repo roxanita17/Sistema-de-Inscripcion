@@ -1,5 +1,5 @@
 <!-- Modal Crear Grado -->
-<div class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+<div class="modal fade" id="modalCrearEstudio" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearEstudioLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
 
@@ -8,7 +8,7 @@
                 <div class="modal-icon-create">
                     <i class="fas fa-plus-circle"></i>
                 </div>
-                <h5 class="modal-title-create" id="modalCrearLabel">Nuevo Estudio Realizado</h5>
+                <h5 class="modal-title-create" id="modalCrearEstudioLabel">Nuevo Estudio Realizado</h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                     <i class="fas fa-times"></i>
                 </button>

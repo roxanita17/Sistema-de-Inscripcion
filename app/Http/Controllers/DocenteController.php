@@ -30,6 +30,7 @@ class DocenteController extends Controller
      */
     public function index()
     {
+        $buscar = request('buscar');
         $personas = Persona::all();
         $prefijos = PrefijoTelefono::all();
 
@@ -38,11 +39,12 @@ class DocenteController extends Controller
                 $query->where('status', true);
             })
             ->where('status', true)
+            ->buscar($buscar)
             ->paginate(10);
         
         $anioEscolarActivo = $this->verificarAnioEscolar();
         
-        return view('admin.docente.index', compact('docentes', 'anioEscolarActivo', 'personas', 'prefijos'));
+        return view('admin.docente.index', compact('docentes', 'anioEscolarActivo', 'personas', 'prefijos', 'buscar'));
     }
 
     /**
@@ -67,14 +69,18 @@ class DocenteController extends Controller
         // VALIDACIÓN
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'cedula' => 'required|string|max:20',
+            'cedula' => 'required|string|max:20|unique:personas,cedula',
             'primer_nombre' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
             'tercer_nombre' => 'nullable|string|max:50',
             'primer_apellido' => 'required|string|max:50',
             'segundo_apellido' => 'nullable|string|max:50',
             'genero' => 'required|exists:generos,id',
-            'fecha_nacimiento' => 'required|date|before:today',
+            'fecha_nacimiento' => [
+                'required',
+                'date',
+                'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+            ],
             'correo' => 'nullable|email|max:100',
             'direccion' => 'nullable|string|max:255',
             'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
@@ -90,7 +96,7 @@ class DocenteController extends Controller
             'primer_apellido.required' => 'El primer apellido es obligatorio',
             'genero.required' => 'El género es obligatorio',
             'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
-            'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
+            'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento debe corresponder a una persona mayor de 18 años',
             'correo.email' => 'El correo electrónico no tiene un formato válido',
         ]);
 
@@ -139,32 +145,6 @@ class DocenteController extends Controller
         }
     }
 
-    public function estudios($id)
-    {
-        $docentes = Docente::with(['persona.tipoDocumento', 'persona.genero', 'prefijoTelefono'])
-            ->findOrFail($id);
-        $estudios = EstudiosRealizado::all();
-        $docenteEstudios = DetalleDocenteEstudio::all();
-
-        return view('admin.docente.estudios', compact('docentes', 'estudios', 'docenteEstudios'));
-    }
-
-    /**
-     * Muestra los detalles de un docente
-     */
-    public function show($id)
-    {
-        $docente = Docente::with([
-            'persona.tipoDocumento',
-            'persona.genero',
-            'prefijoTelefono',
-            'detalleEstudios.estudiosRealizado'
-         ])
-            ->findOrFail($id);
-
-        return view('admin.docente.modales.showModal', compact('docente'));
-    }
-
     /**
      * Muestra el formulario de edición
      */
@@ -189,7 +169,7 @@ class DocenteController extends Controller
         // VALIDACIÓN (excluyendo la cédula actual)
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'cedula' => 'required|string|max:20',
+            'cedula' => 'required|string|max:20 |unique:personas,cedula,' . $persona->id,
             'primer_nombre' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
             'tercer_nombre' => 'nullable|string|max:50',
@@ -235,8 +215,8 @@ class DocenteController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.docente.index')
-                ->with('success', 'Docente actualizado correctamente.');
+            return redirect()->route('admin.docente.estudios', $docente->id)
+                ->with('success', 'Docente actualizado correctamente, ahora puede editar sus estudios.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -245,6 +225,38 @@ class DocenteController extends Controller
                 ->withInput()
                 ->with('error', 'Error al actualizar: ' . $e->getMessage());
         }
+    }
+
+        /**
+     * Muestra los detalles de un docente
+     */
+    public function show($id)
+    {
+        $docente = Docente::with([
+                'persona.tipoDocumento',
+                'persona.genero',
+                'prefijoTelefono',
+                'detalleEstudios' => function ($q) {
+                    $q->where('status', true);   
+                },
+                'detalleEstudios.estudiosRealizado'
+            ])
+            ->findOrFail($id);
+
+            return view('admin.docente.modales.showModal', compact('docente'));
+        }
+
+    /**
+     * Registro de estudios del docente, componente livewire
+     */
+    public function estudios($id)
+    {
+        $docentes = Docente::with(['persona.tipoDocumento', 'persona.genero', 'prefijoTelefono'])
+            ->findOrFail($id);
+        $estudios = EstudiosRealizado::all();
+        $docenteEstudios = DetalleDocenteEstudio::all();
+
+        return view('admin.docente.estudios', compact('docentes', 'estudios', 'docenteEstudios'));
     }
 
     /**

@@ -106,6 +106,26 @@
                     <p>{{ $docentes->total() }} registros encontrados</p>
                 </div>
             </div>
+            {{-- Buscador --}}
+            <form action="{{ route('admin.docente.index') }}">
+                <div class="form-group-modern mb-2">
+                    <div class="search-modern"> 
+                        <i class="fas fa-search"></i>
+                        <input type="text"
+                        name="buscar"
+                        id="buscar"
+                        class="form-control-modern"
+                        placeholder="Buscar..."
+                        value="{{ request('buscar') }}"
+                        >
+                    </div>
+                    <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
+                            <i class="fas fa-info-circle"></i>
+                            Buscar por cédula, nombre, apellido, código
+                    </small>
+                </div>
+            </form>
+
             <div class="header-right">
                 <div class="date-badge">
                     <i class="fas fa-calendar-alt"></i>
@@ -133,7 +153,7 @@
                         {{-- Si no hay docentes, se muestra mensaje vacío --}}
                         @if ($docentes->isEmpty())
                             <tr>
-                                <td colspan="4">
+                                <td colspan="7">
                                     <div class="empty-state">
                                         <div class="empty-icon">
                                             <i class="fas fa-inbox"></i> 

@@ -83,6 +83,8 @@
                     </small>
                 </div>
 
+                
+
                 <div class="col-md-4 d-flex align-items-end">
                     <button class="btn-primary-modern w-100"
                             wire:click="agregarEstudio"
@@ -106,7 +108,7 @@
         <div class="card-header-modern">
             <div class="header-left">
                 <div class="header-icon">
-                    <i class="fas fa-list-check"></i>
+                    <i class="fas fa-check-circle"></i>
                 </div>
                 <div>
                     <h3>Estudios Asignados</h3>
@@ -126,15 +128,15 @@
                 <table class="table-modern">
                     <thead>
                         <tr>
-                            <th style="text-align: center; width: 80px;">#</th>
+                            <th >#</th>
                             <th>Estudio Realizado</th>
-                            <th style="text-align: center; width: 180px;">Fecha de Registro</th>
-                            <th style="text-align: center; width: 150px;">Acciones</th>
+                            <th style="text-align: center;">Fecha de Registro</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($estudiosAsignados as $index => $detalle)
-                            <tr class="table-row-hover">
+                            <tr class="">
                                 <td style="text-align: center;">
                                     <span class="number-badge">{{ $index + 1 }}</span>
                                 </td>
@@ -177,9 +179,7 @@
                             <tr>
                                 <td colspan="4">
                                     <div class="empty-state">
-                                        <div class="empty-icon">
-                                            <i class="fas fa-graduation-cap"></i>
-                                        </div>
+                                        
                                         <h4>No hay estudios asignados</h4>
                                         <p>Agregue estudios realizados usando el formulario superior</p>
                                     </div>
@@ -192,10 +192,22 @@
                 
             </div>
         </div>
+        <br>
+        <hr>
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-end">
+                <a type="button" 
+                class="btn-create px-4 py-2"
+                href="{{ route('admin.docente.index') }}">
+                    <i class="fas fa-save"></i> Guardar
+                </a>
+            </div>
+        </div>  
+        <br>
+
     </div>
-    <button type="submit" class="btn-primary-modern" wire:click="guardar">
-        <i class="fas fa-save"></i> Guardar
-    </button>
+    
+    
 </div>
 
 
@@ -218,11 +230,8 @@
         });
     });
 
-    // Auto-cerrar alertas después de 5 segundos
-    setTimeout(function() {
-        $('.alert-modern').fadeOut('slow', function() {
-            $(this).remove();
-        });
-    }, 5000);
+
+    
+
 </script>
 @endpush

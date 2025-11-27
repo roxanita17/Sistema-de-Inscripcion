@@ -101,7 +101,7 @@
                                 id="tipo_documento_id"
                                 class="form-control-modern @error('tipo_documento_id') is-invalid @enderror"
                                 required>
-                            <option value="">Seleccione</option>
+                            <option selected disabled>Seleccione</option>
                             @foreach ($tipoDocumentos as $item)
                                 <option value="{{ $item->id }}" {{ old('tipo_documento_id') == $item->id ? 'selected' : '' }}>
                                     {{ $item->nombre }}
@@ -320,7 +320,7 @@
                         @enderror
                         <small class="form-text-modern">
                             <i class="fas fa-info-circle"></i>
-                            Debe ser una fecha anterior a hoy
+                            La fecha debe corresponder a una persona mayor de 18 años
                         </small>
                     </div>
 
@@ -365,7 +365,7 @@
                         </label>
                         <select name="prefijo_id"
                                 class="form-control-modern @error('prefijo_id') is-invalid @enderror">
-                            <option value="">Seleccione</option>
+                            <option selected disabled>Seleccione</option>
                             @foreach ($prefijos as $item)
                                 <option value="{{ $item->id }}" {{ old('prefijo_id') == $item->id ? 'selected' : '' }}>
                                     {{ $item->prefijo }}
@@ -455,9 +455,7 @@
 
                 </div> {{-- row --}}
 
-                {{-- ========================= --}}
-                {{--      BOTONES FINALES      --}}
-                {{-- ========================= --}}
+                {{-- Botones de acción --}}
                 <div class="form-actions-modern">
                     <button type="reset" class="btn-secondary-modern">
                         <i class="fas fa-arrow-left"></i> Regresar
@@ -473,30 +471,6 @@
         </div>
         
     </div>
-
-    {{-- Card informativa --}}
-    <div class="card-modern" style="margin-top: 1.5rem;">
-        <div class="card-body-modern" style="padding: 1.5rem;">
-            <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                <div style="width: 48px; height: 48px; background: var(--info); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;">
-                    <i class="fas fa-lightbulb" style="font-size: 1.25rem;"></i>
-                </div>
-                <div>
-                    <h4 style="font-size: 1rem; font-weight: 600; color: var(--gray-900); margin: 0 0 0.5rem 0;">
-                        Información Importante
-                    </h4>
-                    <ul style="margin: 0; padding-left: 1.25rem; color: var(--gray-700); font-size: 0.875rem;">
-                        <li style="margin-bottom: 0.25rem;">Los campos marcados con <span style="color: var(--danger); font-weight: 600;">*</span> son obligatorios</li>
-                        <li style="margin-bottom: 0.25rem;">La cédula debe ser única en el sistema</li>
-                        <li style="margin-bottom: 0.25rem;">El prefijo y teléfono son opcionales pero recomendados</li>
-                        <li style="margin-bottom: 0.25rem;">El código del docente puede asignarse posteriormente</li>
-                        <li>Verifique todos los datos antes de guardar</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 @endsection

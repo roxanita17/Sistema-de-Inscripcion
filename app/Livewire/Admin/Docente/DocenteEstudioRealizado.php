@@ -94,6 +94,7 @@ class DocenteEstudioRealizado extends Component
         }
     }
 
+
     public function eliminarEstudio($detalleId)
     {
         DB::beginTransaction();
@@ -111,7 +112,9 @@ class DocenteEstudioRealizado extends Component
             // Recargar datos
             $this->cargarDatos();
 
-            session()->flash('success', 'Estudio eliminado correctamente.');
+            session()->flash('success', 'Estado eliminado correctamente.');
+            $this->dispatch('cerrarModal');
+            $this->resetPage();
             
         } catch (Exception $e) {
             DB::rollBack();
@@ -124,4 +127,5 @@ class DocenteEstudioRealizado extends Component
     {
         return view('livewire.admin.docente.docente-estudio-realizado');
     }
+    
 }

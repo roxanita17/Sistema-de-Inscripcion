@@ -28,7 +28,7 @@
             <button type="button" 
                     class="btn-create" 
                     data-bs-toggle="modal" 
-                    data-bs-target="#modalCrear"
+                    data-bs-target="#modalCrearEstudio"
                     @if(!$anioEscolarActivo) disabled @endif
                     title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nueva Asignación' }}">
                 <i class="fas fa-plus"></i>

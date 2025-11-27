@@ -453,42 +453,18 @@
 
                 </div> {{-- row --}}
 
-                {{-- ========================= --}}
-                {{--      BOTONES FINALES      --}}
-                {{-- ========================= --}}
+                {{-- Botones de acción --}}
                 <div class="form-actions-modern">
-                    <a href="{{ route('admin.docente.index') }}" class="btn-secondary-modern">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
+                    <button type="reset" class="btn-secondary-modern">
+                        <i class="fas fa-arrow-left"></i> Regresar
+                    </button>
 
                     <button type="submit" class="btn-primary-modern">
-                        <i class="fas fa-save"></i> Actualizar Docente
+                        <i class="fas fa-save"></i> Siguiente
                     </button>
                 </div>
 
             </form>
-        </div>
-    </div>
-
-    {{-- Card informativa --}}
-    <div class="card-modern" style="margin-top: 1.5rem;">
-        <div class="card-body-modern" style="padding: 1.5rem;">
-            <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                <div style="width: 48px; height: 48px; background: var(--warning); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 1.25rem;"></i>
-                </div>
-                <div>
-                    <h4 style="font-size: 1rem; font-weight: 600; color: var(--gray-900); margin: 0 0 0.5rem 0;">
-                        Nota sobre la Edición
-                    </h4>
-                    <ul style="margin: 0; padding-left: 1.25rem; color: var(--gray-700); font-size: 0.875rem;">
-                        <li style="margin-bottom: 0.25rem;">Estás editando información existente del docente</li>
-                        <li style="margin-bottom: 0.25rem;">Si cambias la cédula, asegúrate de que no esté duplicada</li>
-                        <li style="margin-bottom: 0.25rem;">Los campos marcados con <span style="color: var(--danger); font-weight: 600;">*</span> son obligatorios</li>
-                        <li>Los cambios se aplicarán inmediatamente al guardar</li>
-                    </ul>
-                </div>
-            </div>
         </div>
     </div>
 
