@@ -335,15 +335,6 @@
                     </div>
                         <small id="representante_legal-error" class="error-message text-danger"></small>
                     </div>
-                            <div>
-                                <button type="button" class="btn btn-primary me-2" id="guardar-madre" 
-                                        onclick="">
-                                    <i class="bi bi-save"></i> Guardar datos de la madre
-                                </button>
-                                <button type="button" class="btn btn-warning me-2" id="marcar-ausente-madre" style="display: none;" disabled>
-                                    <i class="bi bi-person-x"></i> Marcar como Ausente
-                                </button>
-                            </div>
 
                             </div>
                         </div>
@@ -378,13 +369,6 @@
                     <label class="form-check-label d-flex align-items-center" for="Ausente_padre">
                         <i class="fas fa-user-times me-2"></i>
                         <span>Ausente</span>
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" value="Difunto" name="estado_padre" id="Difunto_padre">
-                    <label class="form-check-label d-flex align-items-center" for="Difunto_padre">
-                        <i class="fas fa-cross me-2"></i>
-                        <span>Difunto</span>
                     </label>
                 </div>
             </div>
@@ -684,19 +668,6 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-between mt-4">
-            <button type="button" class="btn btn-secondary" onclick="history.back()">
-                <i class="fas fa-arrow-left me-1"></i> Volver
-            </button>
-            <div>
-                <button type="button" class="btn btn-warning me-2" id="marcar-ausente-padre">
-                    <i class="fas fa-user-times me-1"></i> Marcar como Ausente
-                </button>
-                <button type="submit" class="btn btn-primary" id="guardar-padre">
-                    <i class="fas fa-save me-1"></i> Guardar Datos del Padre
-                </button>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -733,187 +704,37 @@
             </div>
         </div>
 
-        <!-- Sección de Datos Personales del Representante Legal -->
-        <div id="datos-representante" style="display: none;">
-            <div class="border rounded p-4 mb-4 bg-light">
-                <h5 class="mb-4 pb-2 border-bottom">
-                    <i class="fas fa-id-card me-2"></i>Datos Personales
-                </h5>
+        {{-- Datos personales --}}
+        <!-- Sección de Datos Personales -->
+        <div class="border rounded p-4 mb-4 bg-light">
+            <h5 class="mb-4 pb-2 border-bottom">
+                <i class="fas fa-id-card me-2"></i>Datos Personales
+            </h5>
                 
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label for="tipo-ci-representante" class="form-label required">Tipo de Documento</label>
-                            <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante" required>
-                                <option value="" disabled selected>Seleccione</option>
-                                @foreach($tipoDocumentos as $tipoDoc)
-                                    <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->tipo_documento }}</option>
-                                @endforeach
-                            </select>
-                            <div class="invalid-feedback">
-                                Por favor seleccione el tipo de documento.
-                            </div>
-                        </div>
+            <div class="row identification-row">
+                {{-- DATOS DE IDENTIFICACIÓN --}}
+                <div class="col-md-2 mb-3">
+                    <div class="input-group">
+                        <label class="input-group-text" for="tipo-ci-representante"><span class="text-danger">(*)</span>Doc.</label>
+                        <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante" required>
+                            <option value="">Seleccione</option>
+                            @foreach($tipoDocumentos as $tipoDoc)
+                                <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->tipo_documento }}</option>
+                            @endforeach
+                        </select>
                     </div>
-
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label for="cedula-representante" class="form-label required">Número de Cédula</label>
-                            <input type="text" class="form-control" id="cedula-representante" name="cedula-representante"
-                                maxlength="8" pattern="[0-9]+" 
-                                title="Ingrese solo números (máximo 8 dígitos)" required>
-                            <div class="invalid-feedback">
-                                Por favor ingrese un número de cédula válido (solo números).
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label for="fechaNacimiento-representante" class="form-label required">Fecha de Nacimiento</label>
-                            <input type="date" id="fechaNacimiento-representante" name="fechaNacimiento-representante" 
-                                class="form-control" required>
-                            <div class="invalid-feedback">
-                                Por favor ingrese una fecha de nacimiento válida.
-                            </div>
-                            <small id="error-edad-representante" class="text-danger d-none">La edad debe ser mayor de 18 años</small>
-                        </div>
-                    </div>
+                    <small id="tipo-ci-representante-error" class="text-danger"></small>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label for="primer-nombre-representante" class="form-label required">Primer Nombre</label>
-                            <input type="text" class="form-control" id="primer-nombre-representante" name="primer-nombre-representante"
-                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
-                                title="Solo se permiten letras y espacios, no se aceptan números" required>
-                            <div class="invalid-feedback">
-                                Por favor ingrese un nombre válido (solo letras y espacios).
-                            </div>
-                        </div>
+                <div class="col-md-4 mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Cédula</span>
+                        <input type="text" class="form-control" id="cedula-representante" name="cedula-representante" aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-default" maxlength="8" pattern="[0-9]+" title="Ingresa solamente numeros,no se permiten letras" required>
                     </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label for="segundo-nombre-representante" class="form-label">Segundo Nombre</label>
-                            <input type="text" class="form-control" id="segundo-nombre-representante" name="segundo-nombre-representante"
-                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]*"
-                                title="Solo se permiten letras y espacios, no se aceptan números">
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label for="primer-apellido-representante" class="form-label required">Primer Apellido</label>
-                            <input type="text" class="form-control" id="primer-apellido-representante" name="primer-apellido-representante"
-                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
-                                title="Solo se permiten letras y espacios, no se aceptan números" required>
-                            <div class="invalid-feedback">
-                                Por favor ingrese un apellido válido (solo letras y espacios).
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label for="segundo-apellido-representante" class="form-label">Segundo Apellido</label>
-                            <input type="text" class="form-control" id="segundo-apellido-representante" name="segundo-apellido-representante"
-                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]*"
-                                title="Solo se permiten letras y espacios, no se aceptan números">
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label for="genero-representante" class="form-label required">Género</label>
-                            <select class="form-select" id="genero-representante" name="genero-representante" required>
-                                <option value="" disabled selected>Seleccione</option>
-                                @foreach ($generos as $genero)
-                                    <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
-                                @endforeach
-                            </select>
-                            <div class="invalid-feedback">
-                                Por favor seleccione un género.
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label for="lugar-nacimiento-representante" class="form-label required">Lugar de Nacimiento</label>
-                            <input type="text" class="form-control" id="lugar-nacimiento-representante" name="lugar-nacimiento-representante"
-                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
-                                title="Solo se permiten letras y espacios, no se aceptan números"
-                                maxlength="100" required>
-                            <div class="invalid-feedback">
-                                Por favor ingrese un lugar de nacimiento válido.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                            </div>
-                        </div>
-                        <small id="estado_representante-error" class="text-danger mt-1"></small>
-                    </div>
-                                        
-                                    
-                            
-                                                      {{-- Datos personales --}}
-                        <!-- Sección de Datos Personales -->
-                        <div class="border rounded p-4 mb-4 bg-light">
-                            <h5 class="mb-4 pb-2 border-bottom">
-                                <i class="fas fa-id-card me-2"></i>Datos Personales
-                            </h5>
-                
-                <div class="row identification-row">
-                    {{-- DATOS DE IDENTIFICACIÓN --}}
-                    <div class="col-md-2 mb-3">
-                        <div class="input-group">
-                            <label class="input-group-text" for="tipo-ci-representante"><span class="text-danger">(*)</span>Doc.</label>
-                            <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante" required>
-                                <option value="">Seleccione</option>
-                                @foreach($tipoDocumentos as $tipoDoc)
-                                    <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->tipo_documento }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <small id="tipo-ci-representante-error" class="text-danger"></small>
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Cédula</span>
-                            <input type="text" class="form-control" id="cedula-representante" name="cedula-representante" aria-label="Sizing example input"
-                                aria-describedby="inputGroup-sizing-default" maxlength="8" pattern="[0-9]+" title="Ingresa solamente numeros,no se permiten letras" required>
-                        </div>
-                        <input type="hidden" id="persona-id-representante" name="persona-id-representante">
-                        <input type="hidden" id="representante-id" name="representante-id">
-                        <small id="cedula-representante-error" class="text-danger"></small>
-                    </div>
-
-                    <div class="col-md-3 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Fecha Nacimiento</span>
-                            <input type="date" id="fechaNacimiento-representante" name="fechaNacimiento-representante" class="form-control" aria-label="Sizing example input"
-                                aria-describedby="inputGroup-sizing-default" required>
-                        </div>
-                        <small id="fechaNacimiento-representante-error" class="text-danger"></small>
-                        <small id="error-edad" class="text-danger d-none">La edad debe estar entre 10 y 17 años</small>
-                    </div>
-
-                    <div class="col-md-3 mb-3">
-                        <div class="input-group">
-                            <label class="input-group-text" for="sexo"><span class="text-danger">(*)</span>Sexo</label>
-                            <select class="form-select" id="sexo-representante" name="sexo-representante" required>
-                                <option value="">Seleccione</option>
-                                @foreach ($generos as $genero)
-                                    <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <small id="sexo-representante-error" class="text-danger"></small>
-                    </div>
+                    <input type="hidden" id="persona-id-representante" name="persona-id-representante">
+                    <input type="hidden" id="representante-id" name="representante-id">
+                    <small id="cedula-representante-error" class="text-danger"></small>
                 </div>
 
                 <div class="row">
@@ -1090,6 +911,7 @@
                                                                     aria-describedby="inputGroup-sizing-default" maxlength="254" title="No olvide caracteres especiales como el @">
                                                             </div>
                                                             <small id="correo-representante-error" class="text-danger"></small>
+                                                            
                                                         </div>
                                                         <div class="col-sm-6 mb-3">
                                                             <span><span class="text-danger">(*)</span>Pertenece a Organización Política o
@@ -1231,13 +1053,6 @@
                                                         </div>
 
                                                     </div>
-
-                            <div>
-                                <br>
-                                <button type="button" class="btn btn-primary me-2" id="guardar">
-                                    <i class="bi bi-save"></i> Guardar datos del representante legal 
-                                </button>
-                            </div>
                     </div>
 
             </div>
@@ -1606,11 +1421,475 @@
                     const forms = document.getElementsByClassName('needs-validation');
                     Array.prototype.forEach.call(forms, function(form) {
                         form.addEventListener('submit', function() {
+                            // Antes de validar, si madre/padre no están presentes, quitar required de sus campos
+                            const estadoMadre = $('input[name="estado_madre"]:checked').val();
+                            if (estadoMadre && estadoMadre !== 'Presente') {
+                                const $cardMadreBody = $('#Presente_madre').closest('.card').find('.card-body').first();
+                                $cardMadreBody.find('input, select, textarea').prop('required', false);
+                            }
+
+                            const estadoPadre = $('input[name="estado_padre"]:checked').val();
+                            if (estadoPadre && estadoPadre !== 'Presente') {
+                                const $cardPadreBody = $('#Presente_padre').closest('.card').find('.card-body').first();
+                                $cardPadreBody.find('input, select, textarea').prop('required', false);
+                            }
+
                             form.classList.add('was-validated');
                         }, false);
                     });
                 }, false);
             })();
+
+            // ================================
+            // VALIDACIÓN EN TIEMPO REAL CÉDULAS
+            // ================================
+
+            const verificarCedulaUrl = "{{ route('representante.verificar_cedula') }}";
+            const buscarCedulaUrl    = "{{ route('representante.buscar_cedula') }}";
+
+            function marcarCedulaError($input, mensaje) {
+                $input.addClass('is-invalid');
+                const errorId = $input.attr('id') + '-error';
+                let $error = $('#' + errorId);
+                if ($error.length === 0) {
+                    $error = $('<small class="text-danger" id="' + errorId + '"></small>');
+                    $input.closest('.form-group, .input-group').after($error);
+                }
+                $error.text(mensaje);
+            }
+
+            function limpiarCedulaError($input) {
+                $input.removeClass('is-invalid');
+                const errorId = $input.attr('id') + '-error';
+                $('#' + errorId).text('');
+            }
+
+            function cedulaSeRepiteEnFormulario(valor, idActual) {
+                if (!valor) return false;
+                const ids = ['cedula', 'cedula-padre', 'cedula-representante'];
+                let contador = 0;
+                ids.forEach(function(id) {
+                    const $campo = $('#' + id);
+                    if ($campo.length && $campo.val() === valor) {
+                        contador++;
+                    }
+                });
+                return contador > 1;
+            }
+
+            function verificarCedulaCampo(selector, personaIdSelector) {
+                const $input = $(selector);
+                if ($input.length === 0) return;
+
+                $input.on('blur', function() {
+                    const valor = $input.val();
+                    limpiarCedulaError($input);
+                    if (!valor) return;
+
+                    // Verificar repetición dentro del mismo formulario
+                    if (cedulaSeRepiteEnFormulario(valor, $input.attr('id'))) {
+                        marcarCedulaError($input, 'Esta cédula ya se está usando en otro bloque del formulario');
+                        return;
+                    }
+
+                    // Verificar contra la base de datos
+                    const personaId = personaIdSelector ? $(personaIdSelector).val() : '';
+
+                    $.ajax({
+                        url: verificarCedulaUrl,
+                        method: 'GET',
+                        data: {
+                            cedula: valor,
+                            persona_id: personaId
+                        },
+                        success: function(resp) {
+                            console.log('Cedula OK', selector, resp);
+                            limpiarCedulaError($input);
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 409 && xhr.responseJSON && xhr.responseJSON.message) {
+                                marcarCedulaError($input, xhr.responseJSON.message);
+                            } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                marcarCedulaError($input, xhr.responseJSON.message);
+                            } else {
+                                console.error('Error al verificar cédula', xhr);
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Aplicar validación en tiempo real a las tres cédulas principales
+            verificarCedulaCampo('#cedula', null); // Madre
+            verificarCedulaCampo('#cedula-padre', null); // Padre
+            verificarCedulaCampo('#cedula-representante', '#persona-id-representante'); // Representante legal (puede estar en edición)
+
+            // ================================
+            // BLOQUEO / DESBLOQUEO DE SECCIONES
+            // ================================
+
+            function toggleSeccionPorEstado(nombreEstado, $cardBody, excepcionesNames) {
+                const $radios = $('input[name="' + nombreEstado + '"]');
+                if ($radios.length === 0 || $cardBody.length === 0) return;
+
+                function aplicarEstado() {
+                    const valor = $radios.filter(':checked').val();
+                    const esPresente = valor === 'Presente';
+
+                    $cardBody.find('input, select, textarea').each(function() {
+                        const name = $(this).attr('name');
+                        if (name && excepcionesNames.includes(name)) {
+                            return; // no tocar radios de estado
+                        }
+
+                        if (esPresente) {
+                            // habilitar
+                            $(this).prop('disabled', false);
+                            const wasRequired = $(this).data('was-required');
+                            if (wasRequired) {
+                                $(this).prop('required', true);
+                            }
+                        } else {
+                            // deshabilitar
+                            if ($(this).prop('required')) {
+                                $(this).data('was-required', true);
+                            }
+                            $(this).prop('required', false);
+                            $(this).prop('disabled', true);
+                        }
+                    });
+                }
+
+                // Inicialmente, si no hay selección, bloqueamos todo excepto los radios de estado
+                if ($radios.filter(':checked').length === 0) {
+                    $cardBody.find('input, select, textarea').each(function() {
+                        const name = $(this).attr('name');
+                        if (name && excepcionesNames.includes(name)) {
+                            return;
+                        }
+                        if ($(this).prop('required')) {
+                            $(this).data('was-required', true);
+                        }
+                        $(this).prop('required', false).prop('disabled', true);
+                    });
+                } else {
+                    aplicarEstado();
+                }
+
+                let valorPrevio = $radios.filter(':checked').val() || null;
+
+                $radios.on('change', function() {
+                    const valorNuevo = $(this).val();
+                    if (valorNuevo === 'Ausente') {
+                        const confirmado = confirm('Marcar como AUSENTE bloqueará permanentemente la edición de esta sección en este formulario. ¿Desea continuar?');
+                        if (!confirmado) {
+                            // Volver al valor previo
+                            if (valorPrevio) {
+                                $radios.filter('[value="' + valorPrevio + '"]').prop('checked', true);
+                            } else {
+                                $radios.prop('checked', false);
+                            }
+                            return;
+                        }
+                    }
+                    valorPrevio = valorNuevo;
+                    aplicarEstado();
+                });
+            }
+
+            // Madre: tomar el card-body de la primera tarjeta (Datos de la Madre)
+            const $cardMadreBody = $('#Presente_madre').closest('.card').find('.card-body').first();
+            toggleSeccionPorEstado('estado_madre', $cardMadreBody, ['estado_madre']);
+
+            // Refuerzo específico: asegurar bloqueo de ocupación y convive de la madre cuando está Ausente
+            function aplicarBloqueoCamposMadre() {
+                const estadoMadreVal = $('input[name="estado_madre"]:checked').val();
+                const esPresenteMadre = estadoMadreVal === 'Presente';
+
+                const $ocupacionMadre = $('#ocupacion-madre');
+                const $otraOcupacionMadre = $('#otra-ocupacion');
+                const $conviveSiMadre = $('#convive-si');
+                const $conviveNoMadre = $('#convive-no');
+
+                if (esPresenteMadre) {
+                    $ocupacionMadre.prop('disabled', false).prop('required', true);
+                    // "Otra ocupación" solo requerida si el contenedor está visible
+                    if ($('#otra-ocupacion-container').is(':visible')) {
+                        $otraOcupacionMadre.prop('disabled', false).prop('required', true);
+                    } else {
+                        $otraOcupacionMadre.prop('disabled', true).prop('required', false);
+                    }
+                    $conviveSiMadre.prop('disabled', false);
+                    $conviveNoMadre.prop('disabled', false);
+                } else {
+                    // Ausente u otro estado: bloquear relación familiar de la madre
+                    $ocupacionMadre.prop('disabled', true).prop('required', false);
+                    $otraOcupacionMadre.prop('disabled', true).prop('required', false);
+                    $conviveSiMadre.prop('disabled', true);
+                    $conviveNoMadre.prop('disabled', true);
+                }
+            }
+
+            // Aplicar una vez al cargar y cada vez que cambie el estado de la madre
+            aplicarBloqueoCamposMadre();
+            $('input[name="estado_madre"]').on('change', aplicarBloqueoCamposMadre);
+
+            // Padre: card-body de la tarjeta de Datos del Padre
+            const $cardPadreBody = $('#Presente_padre').closest('.card').find('.card-body').first();
+            toggleSeccionPorEstado('estado_padre', $cardPadreBody, ['estado_padre']);
+
+            // ================================
+            // REPRESENTANTE LEGAL COMO PROGENITOR
+            // ================================
+
+            function rellenarRepresentanteDesdeRespuesta(resp) {
+                if (!resp || !resp.data || !resp.data.persona) return;
+
+                const persona = resp.data.persona;
+                const representante = resp.data;
+                const legal = resp.data.legal || {};
+
+                $('#persona-id-representante').val(persona.id || '');
+                $('#representante-id').val(representante.id || '');
+
+                $('#primer-nombre-representante').val(persona.primer_nombre || '');
+                $('#segundo-nombre-representante').val(persona.segundo_nombre || '');
+                $('#tercer-nombre-representante').val(persona.tercer_nombre || '');
+                $('#primer-apellido-representante').val(persona.primer_apellido || '');
+                $('#segundo-apellido-representante').val(persona.segundo_apellido || '');
+                $('#fechaNacimiento-representante').val(persona.fecha_nacimiento || '');
+                $('#sexo-representante').val(persona.genero_id || '').trigger('change');
+
+                // Otros campos opcionales si existen
+                $('#telefono-representante').val(persona.telefono || '');
+                $('#lugar-nacimiento-representante').val(persona.direccion || '');
+
+                // Correo: preferir el correo del representante legal, si no, el email de la persona
+                const correo = legal.correo_representante || persona.email || '';
+                $('#correo-representante').val(correo);
+            }
+
+            function copiarDesdeMadreOPadreSiCoincide(cedula) {
+                if (!cedula) return false;
+
+                // Madre
+                if ($('#cedula').length && $('#cedula').val() === cedula) {
+                    $('#primer-nombre-representante').val($('#primer-nombre').val());
+                    $('#segundo-nombre-representante').val($('#segundo-nombre').val());
+                    $('#tercer-nombre-representante').val($('#tercer-nombre').val());
+                    $('#primer-apellido-representante').val($('#primer-apellido').val());
+                    $('#segundo-apellido-representante').val($('#segundo-apellido').val());
+                    $('#fechaNacimiento-representante').val($('#fechaNacimiento').val());
+                    $('#sexo-representante').val($('#sexo').val()).trigger('change');
+                    $('#telefono-representante').val($('#telefono').val());
+                    $('#lugar-nacimiento-representante').val($('#lugar-nacimiento').val());
+
+                    // Copiar ocupación y convive desde madre
+                    const ocupacionMadre = $('#ocupacion-madre').val();
+                    if (ocupacionMadre) {
+                        $('#ocupacion-representante').val(ocupacionMadre);
+                    }
+
+                    const conviveMadre = $('input[name="convive"]:checked').val();
+                    if (conviveMadre === 'si') {
+                        $('input[name="convive-representante"][value="si"]').prop('checked', true);
+                    } else if (conviveMadre === 'no') {
+                        $('input[name="convive-representante"][value="no"]').prop('checked', true);
+                    }
+
+                    // Copiar ubicación y prefijo
+                    const estadoMadre = $('#idEstado').val();
+                    const municipioMadre = $('#idMunicipio').val();
+                    const parroquiaMadre = $('#idparroquia').val();
+                    const prefijoMadre = $('#prefijo').val();
+
+                    if (estadoMadre) {
+                        $('#idEstado-representante').val(estadoMadre);
+                        cargarMunicipios(estadoMadre, 'idMunicipio-representante', 'idparroquia-representante');
+                        if (municipioMadre) {
+                            $('#idMunicipio-representante').val(municipioMadre);
+                            cargarLocalidades(municipioMadre, 'idparroquia-representante');
+                            if (parroquiaMadre) {
+                                $('#idparroquia-representante').val(parroquiaMadre);
+                            }
+                        }
+                    }
+
+                    if (prefijoMadre) {
+                        $('#prefijo-representante').val(prefijoMadre);
+                    }
+                    return true;
+                }
+
+                // Padre
+                if ($('#cedula-padre').length && $('#cedula-padre').val() === cedula) {
+                    $('#primer-nombre-representante').val($('#primer-nombre-padre').val());
+                    $('#segundo-nombre-representante').val($('#segundo-nombre-padre').val());
+                    $('#tercer-nombre-representante').val(''); // no hay tercer nombre padre en el formulario
+                    $('#primer-apellido-representante').val($('#primer-apellido-padre').val());
+                    $('#segundo-apellido-representante').val($('#segundo-apellido-padre').val());
+                    $('#fechaNacimiento-representante').val($('#fechaNacimiento-padre').val());
+                    $('#sexo-representante').val($('#genero-padre').val()).trigger('change');
+                    $('#telefono-representante').val($('#telefono-padre').val());
+                    $('#lugar-nacimiento-representante').val($('#lugar-nacimiento-padre').val());
+
+                    // Copiar ocupación y convive desde padre
+                    const ocupacionPadre = $('#ocupacion-padre').val();
+                    if (ocupacionPadre) {
+                        $('#ocupacion-representante').val(ocupacionPadre);
+                    }
+
+                    const convivePadre = $('input[name="convive-padre"]:checked').val();
+                    if (convivePadre === '1' || convivePadre === 'si') {
+                        $('input[name="convive-representante"][value="si"]').prop('checked', true);
+                    } else if (convivePadre === '0' || convivePadre === 'no') {
+                        $('input[name="convive-representante"][value="no"]').prop('checked', true);
+                    }
+
+                    // Copiar ubicación y prefijo desde padre
+                    const estadoPadre = $('#idEstado-padre').val();
+                    const municipioPadre = $('#idMunicipio-padre').val();
+                    const parroquiaPadre = $('#idparroquia-padre').val();
+                    const prefijoPadre = $('#prefijo-padre').val();
+
+                    if (estadoPadre) {
+                        $('#idEstado-representante').val(estadoPadre);
+                        cargarMunicipios(estadoPadre, 'idMunicipio-representante', 'idparroquia-representante');
+                        if (municipioPadre) {
+                            $('#idMunicipio-representante').val(municipioPadre);
+                            cargarLocalidades(municipioPadre, 'idparroquia-representante');
+                            if (parroquiaPadre) {
+                                $('#idparroquia-representante').val(parroquiaPadre);
+                            }
+                        }
+                    }
+
+                    if (prefijoPadre) {
+                        $('#prefijo-representante').val(prefijoPadre);
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+
+            // Función para mostrar/ocultar el campo de organización
+            function toggleOrganizacion() {
+                const mostrar = $('input[name="pertenece-organizacion"]:checked').val() === 'si';
+                const $campoOrganizacion = $('#campo_organizacion');
+                const $inputOrganizacion = $('#cual-organizacion');
+                
+                $campoOrganizacion.toggle(mostrar);
+                $inputOrganizacion.prop('required', mostrar);
+                
+                if (!mostrar) {
+                    $inputOrganizacion.val('');
+                }
+            }
+
+            // Manejar cambios en la opción de pertenencia a organización
+            $('input[name="pertenece-organizacion"]').on('change', toggleOrganizacion);
+            toggleOrganizacion(); // Estado inicial
+
+            // Estado inicial: bloquear completamente el bloque de representante legal
+            const $seccionRep = $('#datos-representante');
+            $seccionRep.hide();
+            $seccionRep.find('input, select, textarea').prop('disabled', true);
+
+            $('input[name="tipo_representante"]').on('change', function() {
+                const tipo = $(this).val();
+                const $form = $(this).closest('form');
+
+                if (!tipo) {
+                    // Sin selección: ocultar y bloquear todo
+                    $seccionRep.hide();
+                    $seccionRep.find('input, select, textarea').prop('disabled', true);
+                    return;
+                }
+
+                // Mostrar la sección y habilitar campos
+                $seccionRep.show();
+                $seccionRep.find('input, select, textarea').prop('disabled', false);
+
+                // Si es progenitor_representante, intentar copiar datos del padre/madre
+                if (tipo === 'progenitor_representante') {
+                    // Determinar si el padre o la madre está presente
+                    const padrePresente = $('input[name="estado_padre"]:checked').val() === 'Presente';
+                    const madrePresente = $('input[name="estado_madre"]:checked').val() === 'Presente';
+                    
+                    // Obtener los valores de los campos de cédula
+                    const cedulaPadre = $('#cedula-padre').val();
+                    const cedulaMadre = $('#cedula').val();
+                    
+                    // Obtener los valores de los campos de correo
+                    const correoPadre = $('#email-padre').val();
+                    const correoMadre = $('#email').val();
+                    
+                    // Obtener los tipos de documento
+                    const tipoDocPadre = $('#tipo-ci-padre').val();
+                    const tipoDocMadre = $('#tipo-ci').val();
+                    
+                    // Si el padre está presente, copiar sus datos
+                    if (padrePresente && cedulaPadre) {
+                        $('#cedula-representante').val(cedulaPadre);
+                        if (tipoDocPadre) {
+                            $('#tipo-ci-representante').val(tipoDocPadre);
+                        }
+                        if (correoPadre) {
+                            $('#correo-representante').val(correoPadre);
+                        }
+                        console.log('Datos copiados del padre:', { cedula: cedulaPadre, correo: correoPadre });
+                    } 
+                    // Si la madre está presente, copiar sus datos
+                    else if (madrePresente && cedulaMadre) {
+                        $('#cedula-representante').val(cedulaMadre);
+                        if (tipoDocMadre) {
+                            $('#tipo-ci-representante').val(tipoDocMadre);
+                        }
+                        if (correoMadre) {
+                            $('#correo-representante').val(correoMadre);
+                        }
+                        console.log('Datos copiados de la madre:', { cedula: cedulaMadre, correo: correoMadre });
+                    }
+                    
+                    // Forzar el evento blur en la cédula para buscar datos adicionales
+                    if ($('#cedula-representante').val()) {
+                        $('#cedula-representante').trigger('blur');
+                    }
+                }
+            });
+
+            // Al salir de la cédula del representante, si el tipo es progenitor_representante,
+            // primero intentamos copiar desde madre/padre; si no coincide, buscamos en BD
+            $('#cedula-representante').on('blur', function() {
+                const tipo = $('input[name="tipo_representante"]:checked').val();
+                const cedula = $(this).val();
+
+                if (tipo !== 'progenitor_representante' || !cedula) {
+                    return;
+                }
+
+                // 1) Intentar copiar desde los datos ya cargados en este formulario (madre/padre)
+                const copiadoLocal = copiarDesdeMadreOPadreSiCoincide(cedula);
+                if (copiadoLocal) {
+                    return; // no hace falta ir a BD
+                }
+
+                // 2) Si no coincide con madre/padre, buscar en BD
+                $.ajax({
+                    url: buscarCedulaUrl,
+                    method: 'GET',
+                    data: { cedula: cedula },
+                    success: function(resp) {
+                        if (resp && resp.status === 'success') {
+                            rellenarRepresentanteDesdeRespuesta(resp);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error al buscar cédula para representante legal como progenitor', xhr);
+                    }
+                });
+            });
 
             // Otras funciones
             $('input[name*="telefono"]').on('input', function() {

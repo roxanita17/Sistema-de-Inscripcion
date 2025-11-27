@@ -154,7 +154,7 @@ class RepresentanteController extends Controller
         $generos = Genero::where('status', true)->orderBy('genero', 'ASC')->get();
         $prefijos_telefono= PrefijoTelefono::where('status', true)->orderBy('prefijo', 'ASC')->get();
         
-        return view("modules.representante.formulario_representante", compact(
+        return view("admin.representante.formulario_representante", compact(
             'representante', 'estados', 'municipios', 'parroquias_cargadas', 'bancos', 'generos', 'prefijos_telefono', 'ocupaciones'
         ));
     }
@@ -196,14 +196,23 @@ class RepresentanteController extends Controller
         'nombre_tres'           => $request->input('tercer-nombre-representante'),
         'apellido_uno'          => $request->input('primer-apellido-representante'),
         'apellido_dos'          => $request->input('segundo-apellido-representante'),
-        'fecha_nacimiento_personas' => $request->input('fechaNacimiento-representante'),
-        'sexo_representante'    => $request->input('sexo-representante'),
+
+        // Fecha de nacimiento: tomar la del representante y, si está vacía, usar madre o padre
+        'fecha_nacimiento_personas' => $request->input('fechaNacimiento-representante')
+                                        ?: $request->input('fechaNacimiento')        // madre
+                                        ?: $request->input('fechaNacimiento-padre'), // padre
+
+        // Género del representante: tomar el del bloque de representante, y si viene vacío usar madre o padre
+        'sexo_representante'    => $request->input('sexo-representante')
+                                    ?: $request->input('sexo')           // madre
+                                    ?: $request->input('genero-padre'),  // padre
+
         'tipo_cedula_persona'   => $request->input('tipo-ci-representante'),
 
         // Ubicación
-        'estado_id'    => $request->input('idEstado-representante'),
-        'municipio_id' => $request->input('idMunicipio-representante'),
-        'parroquia_id' => $request->input('idparroquia-representante'),
+        'estado_id'    => $request->input('idEstado-representante') ?: $request->input('idEstado-padre') ?: $request->input('idEstado'),
+        'municipio_id' => $request->input('idMunicipio-representante') ?: $request->input('idMunicipio-padre') ?: $request->input('idMunicipio'),
+        'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia'),
 
         // Teléfono (se almacena completo en Persona.telefono)
         'telefono_personas' => $request->input('telefono-representante'),
@@ -254,13 +263,13 @@ class RepresentanteController extends Controller
 
         // Validación completa con exists - usando los nombres que realmente envía el JS
         $validator = \Validator::make($request->all(), [
-            'numero_cedula_persona' => 'required|string|min:1',
+            'numero_cedula_persona' => 'required|string',
             'nombre_uno' => 'required|string|min:1',
             'apellido_uno' => 'required|string|min:1',
             'estado_id' => 'required|integer|min:1|exists:estados,id',
             'municipio_id' => 'required|integer|min:1|exists:municipios,id',
-            // En este proyecto las parroquias se almacenan en la tabla "localidads"
-            'parroquia_id' => 'required|integer|min:1|exists:localidads,id',
+            // En este proyecto las parroquias se almacenan en la tabla "localidads"; permitir que sea opcional
+            'parroquia_id' => 'nullable|integer|exists:localidads,id',
             // Campos obligatorios para Persona
             'sexo_representante' => 'required|exists:generos,id',
             'tipo_cedula_persona' => 'required|exists:tipo_documentos,id',
@@ -296,18 +305,29 @@ class RepresentanteController extends Controller
             ], 422);
         }
     } else {
-        // Validación normal para peticiones no AJAX
-        $request->validate([
+        // Validación normal para peticiones no AJAX, pero con logging de errores
+        $validator = \Validator::make($request->all(), [
             'numero_cedula_persona' => 'required',
             'nombre_uno' => 'required',
             'apellido_uno' => 'required',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
-            // En este proyecto las parroquias se almacenan en la tabla "localidads"
-            'parroquia_id' => 'required|exists:localidads,id',
+            // En este proyecto las parroquias se almacenan en la tabla "localidads"; permitir que sea opcional
+            'parroquia_id' => 'nullable|exists:localidads,id',
             'sexo_representante' => 'required|exists:generos,id',
             'tipo_cedula_persona' => 'required|exists:tipo_documentos,id',
         ]);
+
+        if ($validator->fails()) {
+            Log::error('Errores de validación (no AJAX)', [
+                'errors' => $validator->errors()->toArray(),
+                'request_all' => $request->all(),
+            ]);
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
     }
 
     Log::info('Campos geográficos recibidos:', [
