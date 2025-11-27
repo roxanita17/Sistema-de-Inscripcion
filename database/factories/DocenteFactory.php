@@ -1,0 +1,40 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Docente;
+use App\Models\Persona;
+use App\Models\TipoDocumento;
+use App\Models\Genero;
+use App\Models\PrefijoTelefono;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class DocenteFactory extends Factory
+{
+    protected $model = Docente::class;
+
+    public function definition(): array
+    {
+        return [
+            'primer_telefono'  => $this->faker->numerify('#######'),
+            'segundo_telefono' => $this->faker->optional()->numerify('#######'),
+            'codigo'           => $this->faker->optional()->bothify('DOC-###'),
+            'dependencia'      => $this->faker->optional()->randomElement([
+                'Matemáticas',
+                'Ciencias Sociales',
+                'Castellano',
+                'Educación Física',
+                'Coordinación Académica',
+            ]),
+            
+            'prefijo_id'       => PrefijoTelefono::inRandomOrder()->value('id'),
+            'persona_id'       => Persona::inRandomOrder()->value('id'),
+            'status'           => true,
+        ];
+    }
+
+    /**
+     * Crear persona asociada automáticamente
+     */
+    
+}

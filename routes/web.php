@@ -18,6 +18,7 @@ use App\Http\Controllers\PrefijoTelefonoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EstudiosRealizadoController;
 use App\Http\Controllers\AreaEstudioRealizadoController;
+use App\Http\Controllers\DocenteController;
 use App\Models\Docente;
 
 Route::get('/', function () {
@@ -193,12 +194,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('transacciones/area_estudio_realizado/{id}', [AreaEstudioRealizadoController::class, 'destroy'])->name('transacciones.area_estudio_realizado.destroy');
     });
 
-        // ===== DOCENTE (LIVEWIRE)=====
-    Route::get('transacciones/docentes', function () {
-        return view('admin.transacciones.docentes.index', [
-            'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
-                ->where('cierre_anio_escolar', '>=', now())
-                ->exists()
-        ]);
-    })->name('transacciones.docentes.index');
+    // ===== DOCENTE ======
+    Route::get('docente', [DocenteController::class, 'index'])->name('docente.index');
+    
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::get('docente/create', [DocenteController::class, 'create'])->name('docente.create');
+        Route::post('docente/store', [DocenteController::class, 'store'])->name('docente.store');
+        Route::get('docente/{id}/edit', [DocenteController::class, 'edit'])->name('docente.edit');
+        Route::post('docente/{id}/update', [DocenteController::class, 'update'])->name('docente.update');
+        Route::delete('docente/{id}', [DocenteController::class, 'destroy'])->name('docente.destroy');
+    });
 });

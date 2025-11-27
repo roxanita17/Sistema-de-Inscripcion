@@ -228,6 +228,14 @@ return [
             'active' => ['home', 'home/*'],
         ],
 
+       [
+            'text' => 'Docentes',
+            'url' => 'admin/docente',
+            'icon' => 'fas fa-fw fa-tachometer-alt',
+            'icon_color' => 'primary',
+            'active' => ['admin/docente', 'admin/docente/*'],
+        ],
+
         
 
         // Separador

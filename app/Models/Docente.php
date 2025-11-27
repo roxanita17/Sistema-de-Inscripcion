@@ -19,8 +19,10 @@ class Docente extends Model
         'status',
         'prefijo_id',
         'persona_id',
-        'status' => 'boolean',
+    ];
 
+    protected $casts = [
+        'status' => 'boolean',
     ];
 
     /**
@@ -44,12 +46,16 @@ class Docente extends Model
      */
     public function getNombreCompletoAttribute()
     {
+        if (!$this->persona) {
+            return '';
+        }
+        
         return trim(
             $this->persona->primer_nombre . ' ' .
-            $this->persona->segundo_nombre . ' ' .
-            $this->persona->tercer_nombre . ' ' .
+            ($this->persona->segundo_nombre ?? '') . ' ' .
+            ($this->persona->tercer_nombre ?? '') . ' ' .
             $this->persona->primer_apellido . ' ' .
-            $this->persona->segundo_apellido
+            ($this->persona->segundo_apellido ?? '')
         );
     }
 

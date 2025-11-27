@@ -16,7 +16,7 @@ class TipoDocumentoSeeder extends Seeder
         ];
 
         foreach ($tiposDocumento as $tipoDocumento) {
-            TipoDocumento::firstOrCreate(['tipo_documento' => $tipoDocumento,
+            TipoDocumento::firstOrCreate(['nombre' => $tipoDocumento,
         'status' => true]);
         }
 

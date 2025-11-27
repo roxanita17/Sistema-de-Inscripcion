@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AnioEscolar;
+use App\Models\Docente;
 use App\Models\EtniaIndigena;
 use App\Models\Estado;
 use App\Models\Municipio;
@@ -17,6 +18,7 @@ use App\Models\Banco;
 use App\Models\PrefijoTelefono;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\Persona;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
@@ -26,15 +28,18 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
+        
+
         $this->command->info('Iniciando seeders...');
 
 
-       /*  AnioEscolar::factory(1)->create([
+
+        AnioEscolar::factory(1)->create([
             'inicio_anio_escolar' => '2025-01-01',
-            'cierre_anio_escolar' => '2025-12-31',
-            'extencion_anio_escolar' => '2026-01-01',
+            'cierre_anio_escolar' => '2026-12-31',
+            'extencion_anio_escolar' => '2027-01-01',
             'status' => 'Activo',
-        ]); */
+        ]); 
 
 
         User::factory()->create([
@@ -63,7 +68,15 @@ class DatabaseSeeder extends Seeder
             GeneroSeeder::class,
             LateralidadSeeder::class,
             OrdenNacimientoSeeder::class,
+            TipoDocumentoSeeder::class,
+            
         ]);
+
+        $this->command->info('Factory de personas ejecutado correctamente.');
+
+        Persona::factory()->count(10)->create();
+        $this->command->info('Factory de docentes ejecutado correctamente.');
+        Docente::factory()->count(10)->create();
         $this->command->info('¡Base de datos poblada con éxito!');
 
     }

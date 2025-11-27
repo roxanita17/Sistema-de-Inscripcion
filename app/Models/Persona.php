@@ -17,20 +17,20 @@ class Persona extends Model
         'tercer_nombre',
         'primer_apellido',
         'segundo_apellido',
-        'numero_documento',
+        'cedula',
         'fecha_nacimiento',
         'direccion',
-        'telefono',
-        'email',
+        'email', 
         'status',
         'tipo_documento_id',
         'genero_id',
         'localidad_id',
+    ];
+
+    protected $casts = [
         'fecha_nacimiento' => 'date',
         'status' => 'boolean',
     ];
-
-
 
     /**
      * Relación con TipoDocumento
@@ -71,10 +71,10 @@ class Persona extends Model
     {
         return trim(
             $this->primer_nombre . ' ' .
-            $this->segundo_nombre . ' ' .
-            $this->tercer_nombre . ' ' .
+            ($this->segundo_nombre ?? '') . ' ' .
+            ($this->tercer_nombre ?? '') . ' ' .
             $this->primer_apellido . ' ' .
-            $this->segundo_apellido
+            ($this->segundo_apellido ?? '')
         );
     }
 
@@ -83,6 +83,6 @@ class Persona extends Model
      */
     public function getEdadAttribute()
     {
-        return $this->fecha_nacimiento->age ?? null;
+        return $this->fecha_nacimiento ? $this->fecha_nacimiento->age : null;
     }
 }
