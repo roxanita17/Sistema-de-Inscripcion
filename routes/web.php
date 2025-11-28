@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AnioEscolarController;
+use App\Http\Controllers\RepresentanteController;
 use App\Http\Controllers\BancoController;
 use App\Http\Controllers\EtniaIndigenaController;
 use App\Http\Controllers\OcupacionController;
@@ -194,7 +195,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('transacciones/area_estudio_realizado/{id}', [AreaEstudioRealizadoController::class, 'destroy'])->name('transacciones.area_estudio_realizado.destroy');
     });
 
-        // ===== DOCENTE (LIVEWIRE)=====
+    // ===== DOCENTE (LIVEWIRE)=====
     Route::get('transacciones/docentes', function () {
         return view('admin.transacciones.docentes.index', [
             'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
@@ -203,14 +204,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ]);
     })->name('transacciones.docentes.index');
 
-
     Route::get("/Estudiante",[EstudianteController::class, 'estudianteView'])->name("admin.estudiante.inicio");
-            // Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario")->middleware(["auth"]);
     Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario")->middleware(["auth"]);
 
     // ===== ESTUDIANTE =====
     Route::prefix("estudiante")->group(function(){
-
         Route::get("/formularioEstudiante/{id}",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario.editar")->middleware(["auth"]);
         Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("admin.estudiante.verificar-cedula")->middleware(["auth"]);
         Route::post("/save",[EstudianteController::class, 'save'])->middleware(["auth"]);
@@ -221,9 +219,39 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete("/eliminar/{id}",[EstudianteController::class, 'eliminar'])->middleware(["auth"]);
         // para consultar un estudiante
         Route::get('/consultar/{id}',[EstudianteController::class,"consultar"])->middleware(["auth"]);
-         Route::get('/listar',[EstudianteController::class,"listar"])->middleware(["auth"]); // Para listar TODOS los estudiantes
-         // filtros y búsquedas
-         Route::get('/filtrar',[EstudianteController::class,'filtrar'])->name('admin.estudiante.filtrar')->middleware(['auth']);
-         Route::get('/buscar',[EstudianteController::class,'buscar'])->name('admin.estudiante.buscar')->middleware(['auth']);
+        Route::get('/listar',[EstudianteController::class,"listar"])->middleware(["auth"]); // Para listar TODOS los estudiantes
+        // filtros y búsquedas
+        Route::get('/filtrar',[EstudianteController::class,'filtrar'])->name('admin.estudiante.filtrar')->middleware(['auth']);
+        Route::get('/buscar',[EstudianteController::class,'buscar'])->name('admin.estudiante.buscar')->middleware(['auth']);
     });
+});
+
+// ======  REPRESENTANTE  ======
+Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function() {
+    // Vista principal (listado)
+    Route::get('/', [RepresentanteController::class, 'index'])->name('index');
+
+    // Formulario de creación
+    Route::get('/formulario', [RepresentanteController::class, 'mostrarFormulario'])->name('formulario');
+
+    // Guardar / actualizar representante (manejado por el método save del controlador)
+    Route::post('/save', [RepresentanteController::class, 'save'])->name('save');
+
+    // Formulario de edición de un representante específico
+    Route::get('/{id}/editar', [RepresentanteController::class, 'mostrarFormularioEditar'])->name('editar');
+
+    // Eliminar representante
+    Route::delete('/{id}', [RepresentanteController::class, 'delete'])->name('destroy');
+
+    // Búsqueda por cédula (AJAX)
+    Route::get('/buscar-cedula', [RepresentanteController::class, 'buscarPorCedula'])->name('buscar_cedula');
+
+    // Consultar un representante específico (AJAX)
+    Route::get('/consultar', [RepresentanteController::class, 'consultar'])->name('consultar');
+
+    // Filtrar representantes (AJAX)
+    Route::get('/filtrar', [RepresentanteController::class, 'filtar'])->name('filtrar');
+
+    // Verificar cédula duplicada (AJAX)
+    Route::get('/verificar-cedula', [RepresentanteController::class, 'verificarCedula'])->name('verificar_cedula');
 });
