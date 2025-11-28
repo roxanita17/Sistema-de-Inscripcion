@@ -19,6 +19,7 @@ use App\Models\PrefijoTelefono;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Persona;
+use App\Models\DetalleDocenteEstudio;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
@@ -28,7 +29,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-        
+
 
         $this->command->info('Iniciando seeders...');
 
@@ -39,7 +40,7 @@ class DatabaseSeeder extends Seeder
             'cierre_anio_escolar' => '2026-12-31',
             'extencion_anio_escolar' => '2027-01-01',
             'status' => 'Activo',
-        ]); 
+        ]);
 
 
         User::factory()->create([
@@ -69,14 +70,14 @@ class DatabaseSeeder extends Seeder
             LateralidadSeeder::class,
             OrdenNacimientoSeeder::class,
             TipoDocumentoSeeder::class,
-            
+
         ]);
 
-        /* $this->command->info('Factory de personas ejecutado correctamente.');
-
+        $this->command->info('Factory de personas ejecutado correctamente.');
         Persona::factory()->count(10)->create();
         $this->command->info('Factory de docentes ejecutado correctamente.');
-        Docente::factory()->count(10)->create(); */
+        Docente::factory()->count(10)->create();
+        DetalleDocenteEstudio::factory()->count(10)->create();
         $this->command->info('¡Base de datos poblada con éxito!');
 
     }

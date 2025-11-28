@@ -27,8 +27,10 @@ class DocenteFactory extends Factory
                 'Coordinación Académica',
             ]),
             
+
             'prefijo_id'       => PrefijoTelefono::inRandomOrder()->value('id'),
             'persona_id'       => Persona::inRandomOrder()->value('id'),
+
             'status'           => true,
         ];
     }
@@ -36,5 +38,5 @@ class DocenteFactory extends Factory
     /**
      * Crear persona asociada automáticamente
      */
-    
+
 }
