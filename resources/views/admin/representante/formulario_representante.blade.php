@@ -443,6 +443,14 @@
                             title="Solo se permiten letras y espacios, no se aceptan números">
                     </div>
                 </div>
+                <div class="col-md-4 mb-3">
+                        <div class="form-group">
+                            <label for="tercer-nombre" class="form-label">Tercer Nombre</label>
+                            <input type="text" class="form-control" id="tercer-nombre" name="tercer-nombre"
+                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]*"
+                                title="Solo se permiten letras y espacios, no se aceptan números">
+                        </div>
+                    </div>
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
@@ -581,16 +589,6 @@
                     </div>
                 </div>
 
-                <div class="col-md-5 mb-3">
-                    <div class="form-group">
-                        <label for="email-padre" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="email-padre" name="email-padre"
-                            title="Ingrese un correo electrónico válido (ejemplo@dominio.com)">
-                        <div class="invalid-feedback">
-                            Por favor ingrese un correo electrónico válido.
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -1789,7 +1787,7 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
     }
 
     return false;
-}
+}3
 
             // Función para mostrar/ocultar el campo de organización
             function toggleOrganizacion() {

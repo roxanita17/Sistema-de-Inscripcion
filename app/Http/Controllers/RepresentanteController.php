@@ -779,46 +779,64 @@ class RepresentanteController extends Controller
     }
 
     /**
-     * Elimina un representante y sus datos relacionados
+     * Elimina (borrado suave) un representante y sus datos relacionados
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  int $id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function delete(Request $request): JsonResponse
+    public function delete(Request $request, $id): JsonResponse|\Illuminate\Http\RedirectResponse
     {
-        Log::info('=== INICIANDO ELIMINACIÓN DE REPRESENTANTE ===', ['id' => $request->id]);
+        $representanteId = $id ?? $request->id ?? $request->input('id');
+        Log::info('=== INICIANDO ELIMINACIÓN DE REPRESENTANTE ===', ['id' => $representanteId]);
 
-        $representante = Representante::with(['persona', 'legal'])->find($request->id);
+        $representante = Representante::with(['persona', 'legal'])->find($representanteId);
         if (!$representante) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Representante no encontrado',
-            ], 404);
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Representante no encontrado',
+                ], 404);
+            }
+
+            return redirect()->route('representante.index')
+                ->with('error', 'Representante no encontrado');
         }
 
         DB::beginTransaction();
         try {
-            // Si tiene datos legales, eliminar primero
+            // Si tiene datos legales, eliminar primero (soft delete también)
             if ($representante->legal) {
                 $representante->legal->delete();
             }
 
-            // Eliminar el representante
+            // Eliminar (soft delete) el representante
             $representante->delete();
 
             DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Representante eliminado exitosamente',
-            ], 200);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Representante eliminado exitosamente',
+                ], 200);
+            }
+
+            return redirect()->route('representante.index')
+                ->with('success', 'Representante eliminado exitosamente');
         } catch (\Throwable $th) {
             Log::error('Error al eliminar representante: ' . $th->getMessage());
             Log::error('Stack trace: ' . $th->getTraceAsString());
             DB::rollBack();
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al eliminar el representante: ' . $th->getMessage(),
-            ], 500);
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Error al eliminar el representante: ' . $th->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->route('representante.index')
+                ->with('error', 'Error al eliminar el representante: ' . $th->getMessage());
         }
     }
 
