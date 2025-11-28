@@ -18,6 +18,7 @@ use App\Http\Controllers\PrefijoTelefonoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EstudiosRealizadoController;
 use App\Http\Controllers\AreaEstudioRealizadoController;
+use App\Http\Controllers\EstudianteController;
 use App\Models\Docente;
 
 Route::get('/', function () {
@@ -33,16 +34,16 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // ============================================
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     // ===== AÑO ESCOLAR (SIEMPRE ACCESIBLE - SIN VERIFICACIÓN) =====
     Route::get('anio_escolar', [AnioEscolarController::class, 'index'])->name('anio_escolar.index');
     Route::post('anio_escolar/modales/store', [AnioEscolarController::class, 'store'])->name('anio_escolar.modales.store');
     Route::post('anio_escolar/{id}/extender', [AnioEscolarController::class, 'extender'])->name('anio_escolar.modales.extender');
     Route::delete('anio_escolar/{id}', [AnioEscolarController::class, 'destroy'])->name('anio_escolar.destroy');
-    
+
     // ===== BANCOS =====
     Route::get('banco', [BancoController::class, 'index'])->name('banco.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('banco/modales/store', [BancoController::class, 'store'])->name('banco.modales.store');
         Route::post('banco/{id}/update', [BancoController::class, 'update'])->name('banco.modales.update');
@@ -51,7 +52,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ETNIA INDÍGENA =====
     Route::get('etnia_indigena', [EtniaIndigenaController::class, 'index'])->name('etnia_indigena.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('etnia_indigena/modales/store', [EtniaIndigenaController::class, 'store'])->name('etnia_indigena.modales.store');
         Route::post('etnia_indigena/{id}/update', [EtniaIndigenaController::class, 'update'])->name('etnia_indigena.modales.update');
@@ -60,7 +61,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== OCUPACIÓN =====
     Route::get('ocupacion', [OcupacionController::class, 'index'])->name('ocupacion.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('ocupacion/modales/store', [OcupacionController::class, 'store'])->name('ocupacion.modales.store');
         Route::post('ocupacion/{id}/update', [OcupacionController::class, 'update'])->name('ocupacion.modales.update');
@@ -106,7 +107,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== GRADO =====
     Route::get('grado', [GradoController::class, 'index'])->name('grado.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('grado/modales/store', [GradoController::class, 'store'])->name('grado.modales.store');
         Route::post('grado/{id}/update', [GradoController::class, 'update'])->name('grado.modales.update');
@@ -115,7 +116,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ÁREA DE FORMACIÓN =====
     Route::get('area_formacion', [AreaFormacionController::class, 'index'])->name('area_formacion.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('area_formacion/modales/store', [AreaFormacionController::class, 'store'])->name('area_formacion.modales.store');
         Route::post('area_formacion/{id}/update', [AreaFormacionController::class, 'update'])->name('area_formacion.modales.update');
@@ -131,7 +132,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== EXPRESIÓN LITERARIA =====
     Route::get('expresion_literaria', [ExpresionLiterariaController::class, 'index'])->name('expresion_literaria.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('expresion_literaria/modales/store', [ExpresionLiterariaController::class, 'store'])->name('expresion_literaria.modales.store');
         Route::post('expresion_literaria/{id}/update', [ExpresionLiterariaController::class, 'update'])->name('expresion_literaria.modales.update');
@@ -140,7 +141,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== DISCAPACIDAD =====
     Route::get('discapacidad', [DiscapacidadController::class, 'index'])->name('discapacidad.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('discapacidad/modales/store', [DiscapacidadController::class, 'store'])->name('discapacidad.modales.store');
         Route::post('discapacidad/{id}/update', [DiscapacidadController::class, 'update'])->name('discapacidad.modales.update');
@@ -149,7 +150,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== GRADO ÁREA FORMACIÓN (TRANSACCIÓN) =====
     Route::get('transacciones/grado_area_formacion', [GradoAreaFormacionController::class, 'index'])->name('transacciones.grado_area_formacion.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('transacciones/grado_area_formacion/modales/store', [GradoAreaFormacionController::class, 'store'])->name('transacciones.grado_area_formacion.modales.store');
         Route::post('transacciones/grado_area_formacion/{id}/update', [GradoAreaFormacionController::class, 'update'])->name('transacciones.grado_area_formacion.modales.update');
@@ -158,7 +159,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== PREFIJO DE TELÉFONO =====
     Route::get('prefijo_telefono', [PrefijoTelefonoController::class, 'index'])->name('prefijo_telefono.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('prefijo_telefono/modales/store', [PrefijoTelefonoController::class, 'store'])->name('prefijo_telefono.modales.store');
         Route::post('prefijo_telefono/{id}/update', [PrefijoTelefonoController::class, 'update'])->name('prefijo_telefono.modales.update');
@@ -168,7 +169,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ===== ROLES =====
     Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
     Route::get('roles/permisos/{id}', [RoleController::class, 'permisos'])->name('roles.permisos');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('roles/modales/store', [RoleController::class, 'store'])->name('roles.modales.store');
         Route::post('roles/{id}/update', [RoleController::class, 'update'])->name('roles.modales.update');
@@ -177,7 +178,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ESTUDIOS REALIZADOS =====
     Route::get('estudios_realizados', [EstudiosRealizadoController::class, 'index'])->name('estudios_realizados.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('estudios_realizados/modales/store', [EstudiosRealizadoController::class, 'store'])->name('estudios_realizados.modales.store');
         Route::post('estudios_realizados/{id}/update', [EstudiosRealizadoController::class, 'update'])->name('estudios_realizados.modales.update');
@@ -186,7 +187,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ÁREA ESTUDIO REALIZADO (TRANSACCIÓN) =====
     Route::get('transacciones/area_estudio_realizado', [AreaEstudioRealizadoController::class, 'index'])->name('transacciones.area_estudio_realizado.index');
-    
+
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('transacciones/area_estudio_realizado/modales/store', [AreaEstudioRealizadoController::class, 'store'])->name('transacciones.area_estudio_realizado.modales.store');
         Route::post('transacciones/area_estudio_realizado/{id}/update', [AreaEstudioRealizadoController::class, 'update'])->name('transacciones.area_estudio_realizado.modales.update');
@@ -201,4 +202,28 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('transacciones.docentes.index');
+
+
+    Route::get("/Estudiante",[EstudianteController::class, 'estudianteView'])->name("admin.estudiante.inicio");
+            // Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario")->middleware(["auth"]);
+    Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario")->middleware(["auth"]);
+
+    // ===== ESTUDIANTE =====
+    Route::prefix("estudiante")->group(function(){
+
+        Route::get("/formularioEstudiante/{id}",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario.editar")->middleware(["auth"]);
+        Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("admin.estudiante.verificar-cedula")->middleware(["auth"]);
+        Route::post("/save",[EstudianteController::class, 'save'])->middleware(["auth"]);
+        // Si alguien accede por GET accidentalmente, redirigir al formulario
+        Route::get('/save', function () {
+            return redirect()->route('admin.admin.estudiante.formulario');
+        })->middleware(['auth']);
+        Route::delete("/eliminar/{id}",[EstudianteController::class, 'eliminar'])->middleware(["auth"]);
+        // para consultar un estudiante
+        Route::get('/consultar/{id}',[EstudianteController::class,"consultar"])->middleware(["auth"]);
+         Route::get('/listar',[EstudianteController::class,"listar"])->middleware(["auth"]); // Para listar TODOS los estudiantes
+         // filtros y búsquedas
+         Route::get('/filtrar',[EstudianteController::class,'filtrar'])->name('admin.estudiante.filtrar')->middleware(['auth']);
+         Route::get('/buscar',[EstudianteController::class,'buscar'])->name('admin.estudiante.buscar')->middleware(['auth']);
+    });
 });

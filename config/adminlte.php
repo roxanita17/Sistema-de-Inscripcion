@@ -3,7 +3,7 @@
 
 
 return [
-    
+
 
     /*
     |--------------------------------------------------------------------------
@@ -200,7 +200,7 @@ return [
     | Custom CSS
     |--------------------------------------------------------------------------
     */
-    
+
     'custom_css' => [
         'css/admin-custom.css',
     ],
@@ -228,7 +228,7 @@ return [
             'active' => ['home', 'home/*'],
         ],
 
-        
+
 
         // Separador
         ['header' => 'GESTIÓN ACADÉMICA'],
@@ -245,6 +245,22 @@ return [
 
 
         // Grados
+        [
+            'text' => 'Grados',
+            'url' => 'admin/grado',
+            'icon' => 'fas fa-fw fa-layer-group',
+            'icon_color' => 'primary',
+            'active' => ['admin/grado', 'admin/grado/*'],
+        ],
+
+        // Estudiantes
+        [
+            'text' => 'Estudiantes',
+            'url' => 'admin/Estudiante',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'icon_color' => 'primary',
+            'active' => ['admin/Estudiante', 'admin/Estudiante/*'],
+        ],
         [
             'text' => 'Grados',
             'url' => 'admin/grado',
