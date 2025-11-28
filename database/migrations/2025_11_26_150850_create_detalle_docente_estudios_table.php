@@ -25,9 +25,9 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->timestamps();
 
-            // Evita duplicados del mismo grado y área con un nombre más corto para el índice
-            $table->unique(['docente_id', 'estudios_id'], 'docente_estudios_unique');
-                });
+            
+           
+        });
     }
 
     /**

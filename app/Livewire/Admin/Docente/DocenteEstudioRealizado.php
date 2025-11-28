@@ -55,6 +55,7 @@ class DocenteEstudioRealizado extends Component
             // Verificar si ya existe la combinación docente-estudio
             $existe = DetalleDocenteEstudio::where('docente_id', $this->docente->id)
                 ->where('estudios_id', $this->estudiosId)
+                ->where('status', true)
                 ->exists();
 
             if ($existe) {
@@ -94,7 +95,6 @@ class DocenteEstudioRealizado extends Component
         }
     }
 
-
     public function eliminarEstudio($detalleId)
     {
         DB::beginTransaction();
@@ -102,6 +102,7 @@ class DocenteEstudioRealizado extends Component
             // Buscar el detalle
             $detalle = DetalleDocenteEstudio::where('id', $detalleId)
                 ->where('docente_id', $this->docente->id)
+                ->where('status', true)
                 ->firstOrFail();
 
             // Eliminación lógica
@@ -112,9 +113,7 @@ class DocenteEstudioRealizado extends Component
             // Recargar datos
             $this->cargarDatos();
 
-            session()->flash('success', 'Estado eliminado correctamente.');
-            $this->dispatch('cerrarModal');
-            $this->resetPage();
+            session()->flash('success', 'Estudio eliminado correctamente.');
             
         } catch (Exception $e) {
             DB::rollBack();
@@ -127,5 +126,4 @@ class DocenteEstudioRealizado extends Component
     {
         return view('livewire.admin.docente.docente-estudio-realizado');
     }
-    
 }

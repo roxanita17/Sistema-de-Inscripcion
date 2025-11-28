@@ -83,8 +83,6 @@
                     </small>
                 </div>
 
-                
-
                 <div class="col-md-4 d-flex align-items-end">
                     <button class="btn-primary-modern w-100"
                             wire:click="agregarEstudio"
@@ -202,7 +200,7 @@
                     <i class="fas fa-save"></i> Guardar
                 </a>
             </div>
-        </div>  
+        </div>
         <br>
 
     </div>
@@ -230,8 +228,11 @@
         });
     });
 
-
-    
-
+    // Auto-cerrar alertas después de 5 segundos
+    setTimeout(function() {
+        $('.alert-modern').fadeOut('slow', function() {
+            $(this).remove();
+        });
+    }, 5000);
 </script>
 @endpush
