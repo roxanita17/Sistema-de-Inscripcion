@@ -74,10 +74,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->command->info('Factory de personas ejecutado correctamente.');
-        Persona::factory()->count(10)->create();
+        Persona::factory()->count(5)->create();
         $this->command->info('Factory de docentes ejecutado correctamente.');
-        Docente::factory()->count(10)->create();
-        DetalleDocenteEstudio::factory()->count(10)->create();
+        Docente::factory()->count(5)->create();
+        DetalleDocenteEstudio::factory()->count(5)->create();
         $this->command->info('¡Base de datos poblada con éxito!');
 
     }

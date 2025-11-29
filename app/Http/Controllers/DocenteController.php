@@ -24,7 +24,7 @@ class DocenteController extends Controller
             ->orWhere('status', 'Extendido')
             ->exists();
     }
-    
+
     /**
      * Muestra el listado de docentes
      */
@@ -41,9 +41,9 @@ class DocenteController extends Controller
             ->where('status', true)
             ->buscar($buscar)
             ->paginate(10);
-        
+
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        
+
         return view('admin.docente.index', compact('docentes', 'anioEscolarActivo', 'personas', 'prefijos', 'buscar'));
     }
 
@@ -138,7 +138,7 @@ class DocenteController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return back()
                 ->withInput()
                 ->with('error', 'Error: ' . $e->getMessage());
@@ -220,7 +220,7 @@ class DocenteController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return back()
                 ->withInput()
                 ->with('error', 'Error al actualizar: ' . $e->getMessage());
@@ -237,7 +237,7 @@ class DocenteController extends Controller
                 'persona.genero',
                 'prefijoTelefono',
                 'detalleEstudios' => function ($q) {
-                    $q->where('status', true);   
+                    $q->where('status', true);
                 },
                 'detalleEstudios.estudiosRealizado'
             ])
@@ -281,7 +281,7 @@ class DocenteController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return back()->with('error', 'Error al eliminar: ' . $e->getMessage());
         }
     }

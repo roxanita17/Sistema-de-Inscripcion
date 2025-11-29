@@ -260,9 +260,6 @@
         padding: 0;
     }
 
-    .table-wrapper {
-        overflow-x: auto;
-    }
 
     .table-modern {
         width: 100%;
@@ -579,6 +576,25 @@
         background: #dc2626;
         box-shadow: var(--shadow-md);
     }
+
+    
+.badge-estudio-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    background: var(--success-light);
+    color: var(--success);
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin: 0.2rem 0;
+}
+
+.text-muted {
+    color: var(--gray-400);
+    font-style: italic;
+}
 
     /* Responsive */
     @media (max-width: 768px) {

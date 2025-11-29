@@ -32,8 +32,10 @@ class DetalleDocenteEstudio extends Model
     /**
      * Relación: pertenece a un estudio realizado
      */
-    public function estudiosRealizado()  // ← CAMBIADO el nombre
+    public function estudiosRealizado() 
     {
         return $this->belongsTo(EstudiosRealizado::class, 'estudios_id', 'id');
     }
+
+    
 }

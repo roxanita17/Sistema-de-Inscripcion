@@ -62,6 +62,30 @@ class Docente extends Model
         );
     }
 
+    public function asignacionesAreas() 
+    {
+        // hasManyThrough(Target, Through, firstKeyOnThrough, secondKeyOnTarget, localKey, secondLocalKey)
+        return $this->hasManyThrough(
+            DocenteAreaGrado::class,
+            DetalleDocenteEstudio::class,
+            'docente_id',                    // FK en detalle_docente_estudios que apunta a docentes.id
+            'docente_estudio_realizado_id',  // FK en docente_area_grados que apunta a detalle_docente_estudios.id
+            'id',                            // PK local en docentes
+            'id'                             // PK local en detalle_docente_estudios
+        );
+    }
+
+    public function asignacionesAreasActivas()
+    {
+        return $this->asignacionesAreas()->where('docente_area_grados.status', true);
+    }
+
+    public function docenteAreaGrado()
+    {
+        return $this->hasMany(DocenteAreaGrado::class, 'docente_estudio_realizado_id');
+    }
+
+
     public function detalleEstudios()
     {
         return $this->hasMany(DetalleDocenteEstudio::class, 'docente_id', 'id')->where('status', true);

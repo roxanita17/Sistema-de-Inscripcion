@@ -20,9 +20,13 @@ class Grado extends Model
     ];
 
     public function areas_formacion()
-{
-    return $this->belongsToMany(AreaFormacion::class, 'grado_area_formacions')
-                ->withPivot('status')
-                ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(AreaFormacion::class, 'grado_area_formacions')
+                    ->withPivot('status')
+                    ->withTimestamps();
+    }
+
+    public function total(){
+        return Grado::where('status', true)->count();
+    }
 }

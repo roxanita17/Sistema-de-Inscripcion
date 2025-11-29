@@ -25,7 +25,7 @@ class AreaEstudioRealizadoController extends Controller
      */
     public function index()
     {
-        $areaEstudioRealizado = AreaEstudioRealizado::with(['area_formacion', 'estudio_realizado'])
+        $areaEstudioRealizado = AreaEstudioRealizado::with(['areaFormacion', 'estudiosRealizado'])
             ->join('area_formacions', 'area_formacions.id', '=', 'area_estudio_realizados.area_formacion_id')
             ->orderBy('area_formacions.nombre_area_formacion', 'asc')
             ->select('area_estudio_realizados.*')
@@ -39,11 +39,15 @@ class AreaEstudioRealizadoController extends Controller
             ->orderBy('estudios', 'asc')
             ->get();
 
-        // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
-        return view('admin.transacciones.area_estudio_realizado.index', compact('areaEstudioRealizado', 'area_formacion', 'estudios', 'anioEscolarActivo'));
+        return view(
+            'admin.transacciones.area_estudio_realizado.index',
+            compact('areaEstudioRealizado', 'area_formacion', 'estudios', 'anioEscolarActivo')
+        );
     }
+
+
 
 
     /**
