@@ -8,12 +8,12 @@ use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
 use App\Models\Banco;
+use App\Models\PrefijoTelefono;
 use App\Models\Ocupacion;
 use App\Models\TipoCuenta;
 use App\Models\TipoDocumento;
 use App\Models\AnoEscolar;
 use App\Models\Genero;
-use App\Models\PrefijoTelefono;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -80,30 +80,8 @@ class RepresentanteController extends Controller
             // En este proyecto la parroquia se modela con Localidad (tabla localidads)
             'localidads'
         ])->paginate(10);
-
-        // Catálogos necesarios para el modal de edición (mismo origen que en mostrarFormulario)
-        $estados = Estado::with(['municipio' => function($query) {
-            $query->with(['localidades'])->orderBy('nombre_municipio', 'ASC');
-        }])->orderBy('nombre_estado', 'ASC')->get();
-
-        $bancos = Banco::where('status', true)->orderBy('nombre_banco', 'ASC')->get();
-        $prefijos_telefono = PrefijoTelefono::where('status', true)->orderBy('prefijo', 'ASC')->get();
-        $ocupaciones = Ocupacion::where('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
-        $tipoDocumentos = TipoDocumento::where('status', true)->get();
-        $generos = Genero::where('status', true)->orderBy('genero', 'ASC')->get();
-        $prefijos_telefono = PrefijoTelefono::where('status', true)->orderBy('prefijo', 'ASC')->get();
-
-        return view("admin.representante.representante", compact(
-            'representantes',
-            'anioEscolarActivo',
-            'estados',
-            'bancos',
-            'prefijos_telefono',
-            'ocupaciones',
-            'tipoDocumentos',
-            'generos',
-            'prefijos_telefono'
-        ));
+        
+        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
     }
 
     /**
@@ -123,10 +101,9 @@ class RepresentanteController extends Controller
         $ocupaciones = Ocupacion::WHERE('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
         $tipoDocumentos = TipoDocumento::WHERE('status', true)->get();
         $generos = Genero::WHERE('status', true)->get();
-        $prefijos_telefono = PrefijoTelefono::WHERE('status', true)->orderBy('prefijo', 'ASC')->get();
         
         return view("admin.representante.formulario_representante", 
-            compact('estados', 'bancos', 'prefijos_telefono', 'ocupaciones', 'tipoDocumentos', 'generos', 'prefijos_telefono'));
+            compact('estados', 'bancos', 'prefijos_telefono', 'ocupaciones', 'tipoDocumentos', 'generos'));
     }
 
 
@@ -139,7 +116,6 @@ class RepresentanteController extends Controller
 
     public function mostrarFormularioEditar($id)
     {
-        
         $representante = Representante::with([
             'persona', 
             'legal', 
@@ -177,7 +153,6 @@ class RepresentanteController extends Controller
         $ocupaciones = Ocupacion::where('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
         $generos = Genero::where('status', true)->orderBy('genero', 'ASC')->get();
         $prefijos_telefono= PrefijoTelefono::where('status', true)->orderBy('prefijo', 'ASC')->get();
-        $prefijos_telefono = PrefijoTelefono::where('status', true)->orderBy('prefijo', 'ASC')->get();
         
         return view("admin.representante.formulario_representante", compact(
             'representante', 'estados', 'municipios', 'parroquias_cargadas', 'bancos', 'generos', 'prefijos_telefono', 'ocupaciones'
@@ -241,7 +216,7 @@ class RepresentanteController extends Controller
 
         // Teléfono (se almacena completo en Persona.telefono)
         'telefono_personas' => $request->input('telefono-representante'),
-        'prefijo_id' => $request->input('prefijo-representante'),
+
         // Ocupación y convivencia
         'ocupacion_representante'             => $request->input('ocupacion-representante'),
         'convivenciaestudiante_representante' => $request->input('convive-representante'),
@@ -405,15 +380,13 @@ class RepresentanteController extends Controller
         "primer_apellido" => $request->input('apellido_uno'),
         "segundo_apellido" => $request->input('apellido_dos'),
         "numero_documento" => $request->input('numero_cedula_persona'),
-        "fecha_nacimiento" => $request->input('fecha-nacimiento-representante'),
-        // Se asume que sexo-representante corresponde al id en la tabla generos
-        "genero_id" => $request->input('sexo-representante'),
+        "fecha_nacimiento" => $request->input('fecha_nacimiento_personas'),
+        // Se asume que sexo_representante corresponde al id en la tabla generos
+        "genero_id" => $request->input('sexo_representante'),
         // Localidad/parroquia seleccionada
         "localidad_id" => $request->input('parroquia_id'),
         // Teléfono completo
         "telefono" => $request->input('telefono_personas'),
-        // Prefijo de teléfono
-        "prefijo_id" => $request->input('prefijo_id'),
         // Tipo de documento (foráneo a tipo_documentos)
         "tipo_documento_id" => $request->input('tipo_cedula_persona'),
         // Dirección de residencia (si se envía desde el formulario)

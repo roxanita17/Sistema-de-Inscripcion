@@ -393,16 +393,14 @@
                                 <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->tipo_documento }}</option>
                             @endforeach
                         </select>
-                        <div class="invalid-feedback">
-                            Por favor seleccione el tipo de documento.
-                        </div>
                     </div>
+                    <small id="tipo-ci-padre-error" class="text-danger"></small>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
                         <label for="cedula-padre" class="form-label required">Número de Cédula</label>
-                        <input type="text" class="form-control" id="cedula-padre" name="cedula-padre" 
+                        <input type="text" class="form-control" id="cedula-padre" name="cedula-padre"
                             maxlength="8" pattern="[0-9]+" 
                             title="Ingrese solo números (máximo 8 dígitos)" required>
                         <div class="invalid-feedback">
@@ -413,8 +411,8 @@
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
-                        <label for="fecha-nacimiento-padre" class="form-label required">Fecha de Nacimiento</label>
-                        <input type="date" id="fecha-nacimiento-padre" name="fecha-nacimiento-padre" 
+                        <label for="fechaNacimiento-padre" class="form-label required">Fecha de Nacimiento</label>
+                        <input type="date" id="fechaNacimiento-padre" name="fechaNacimiento-padre" 
                             class="form-control" required>
                         <div class="invalid-feedback">
                             Por favor ingrese una fecha de nacimiento válida.
@@ -447,8 +445,8 @@
                 </div>
                 <div class="col-md-4 mb-3">
                         <div class="form-group">
-                            <label for="tercer-nombre-padre" class="form-label">Tercer Nombre</label>
-                            <input type="text" class="form-control" id="tercer-nombre-padre" name="tercer-nombre-padre"
+                            <label for="tercer-nombre" class="form-label">Tercer Nombre</label>
+                            <input type="text" class="form-control" id="tercer-nombre" name="tercer-nombre"
                                 pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]*"
                                 title="Solo se permiten letras y espacios, no se aceptan números">
                         </div>
@@ -477,17 +475,8 @@
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
-                        <label for="lugar-nacimiento-padre" class="form-label">Lugar de Nacimiento</label>
-                        <input type="text" class="form-control" id="lugar-nacimiento-padre" name="lugar-nacimiento-padre"
-                            pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                            title="Solo se permiten letras y espacios">
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <div class="form-group">
-                        <label for="sexo-padre" class="form-label required">Género</label>
-                        <select class="form-select" id="sexo-padre" name="sexo-padre" required>
+                        <label for="genero-padre" class="form-label required">Género</label>
+                        <select class="form-select" id="genero-padre" name="genero-padre" required>
                             <option value="" disabled selected>Seleccione</option>
                             @foreach ($generos as $genero)
                                 <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
@@ -497,21 +486,28 @@
                             Por favor seleccione un género.
                         </div>
                     </div>
-                </div>  
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label for="lugar-nacimiento-padre" class="form-label required">Lugar de Nacimiento</label>
+                        <input type="text" class="form-control" id="lugar-nacimiento-padre" name="lugar-nacimiento-padre"
+                            pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
+                            title="Solo se permiten letras y espacios, no se aceptan números"
+                            maxlength="100" required>
+                        <div class="invalid-feedback">
+                            Por favor ingrese un lugar de nacimiento válido.
+                        </div>
+                    </div>
+                </div>    
             </div>
-        </div>
+
+        <!-- Sección de Dirección y Contactos -->
         <div class="border rounded p-4 mb-4 bg-light">
             <h5 class="mb-4 pb-2 border-bottom">
                 <i class="fas fa-address-book me-2"></i>Dirección y Contactos
             </h5>
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <div class="form-group">
-                        <label for="lugar-nacimiento-padre" class="form-label">Lugar de Nacimiento</label>
-                        <input type="text" class="form-control" id="lugar-nacimiento-padre" name="lugar-nacimiento-padre">
-                    </div>
-                </div>  
-            </div>
+            
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
@@ -562,12 +558,7 @@
                     </div>
                 </div>
             </div>
-        </div>  
-        <!-- Sección de Dirección y Contactos -->
-        <div class="border rounded p-4 mb-4 bg-light">
-            <h5 class="mb-4 pb-2 border-bottom">
-                <i class="fas fa-address-book me-2"></i>Dirección y Contactos
-            </h5>
+
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <div class="form-group">
@@ -665,6 +656,14 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <div class="form-group">
+                        <label for="observaciones-padre" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones-padre" name="observaciones-padre" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -765,7 +764,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">Tercer Nombre</span>
                             <input type="text" class="form-control" id="tercer-nombre-representante" name="tercer-nombre-representante"
@@ -773,36 +772,14 @@
                         </div>
                         <small id="tercer-nombre-representante-error" class="text-danger"></small>
                     </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <div class="input-group">
-                            <label class="input-group-text" for="sexo-representante"><span class="text-danger">(*)</span>Género</label>
-                            <select class="form-select" id="sexo-representante" name="sexo-representante" required>
-                                <option value="">Seleccione</option>
-                                @foreach($generos as $genero)
-                                    <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <small id="sexo-representante-error" class="text-danger"></small>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text"><span class="text-danger">(*)</span>Fecha Nac.</span>
-                            <input type="date" class="form-control" id="fecha-nacimiento-representante" name="fecha-nacimiento-representante" 
-                                aria-label="Fecha de Nacimiento" required>
-                        </div>
-                        <small id="fecha-nacimiento-representante-error" class="text-danger"></small>
-                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Sección de Dirección y Contactos -->
-        <div class="border rounded p-4 mb-4 bg-light">
-            <h5 class="mb-4 pb-2 border-bottom">
-                <i class="fas fa-address-book me-2"></i>Dirección y Contactos
-            </h5>
+
+                        <!-- Sección de Dirección y Contactos -->
+                        <div class="border rounded p-4 mb-4 bg-light">
+                            <h5 class="mb-4 pb-2 border-bottom">
+                                <i class="fas fa-address-book me-2"></i>Dirección y Contactos
+                            </h5>
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -877,255 +854,205 @@
                 </div>
             </div>
 
-            <!-- Sección de Relación Familiar con el Estudiante -->
-            <div class="border rounded p-4 mb-4 bg-light">
-                <h5 class="mb-4 pb-2 border-bottom">
-                    <i class="fas fa-users me-2"></i>Relación Familiar con el Estudiante
-                </h5>
+            <div class="border border-primary rounded px-3 py-3 mt-3">
+
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label for="ocupacion-representante" class="form-label required">Ocupación</label>
+                        <div class="input-group">
+                                            <h4 class="mb-3">Relación Familiar Con El Estudiante</h4>
+                            <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Ocupación</span>
                             <select name="ocupacion-representante" id="ocupacion-representante" class="form-select" required>
-                                <option value="" disabled selected>Seleccione una opción</option>
+                                <option value="" disabled selected>Seleccione</option>
+                                <!-- Opciones de ocupación -->
                                 @foreach($ocupaciones as $ocupacion)
                                     <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
                                 @endforeach
                             </select>
-                            <div class="invalid-feedback">
-                                Por favor seleccione una ocupación.
-                            </div>
-                            <small id="ocupacion-representante-error" class="text-danger"></small>
                         </div>
+                        <small id="ocupacion-representante-error" class="text-danger"></small>
                     </div>
                     
                     <div class="col-md-6 mb-3">
-                        <div class="form-group" id="otra-ocupacion-container" style="display:none">
-                            <label for="otra-ocupacion-representante" class="form-label required">Especifique la ocupación</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
-                                <input type="text" class="form-control" id="otra-ocupacion-representante" 
-                                    name="otra-ocupacion-representante" maxlength="50"
-                                    title="Solo se permiten letras y espacios, no se aceptan números"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
-                            </div>
-                            <div class="invalid-feedback">
-                                Por favor ingrese una ocupación válida (solo letras y espacios).
-                            </div>
-                            <small id="otra-ocupacion-error-representante" class="text-danger"></small>
+                        <div class="input-group" id="otra-ocupacion-container" style="display:none">
+                            <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Otra Ocupación</span>
+                            <input type="text" class="form-control" aria-label="Sizing example input" id="otra-ocupacion-representante" name="otra-ocupacion-representante"
+                                aria-describedby="inputGroup-sizing-default" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios,no se aceptan números" required>
                         </div>
+                        <small id="otra-ocupacion-error-representante" class="text-danger"></small>
                     </div>
                 </div>
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label class="form-label d-block required">¿Convive con el Estudiante?</label>
-                            <div class="d-flex mt-1">
-                                <div class="form-check me-3">
-                                    <input class="form-check-input" type="radio" id="convive-si-representante" 
-                                        name="convive-representante" value="si" required>
-                                    <label class="form-check-label" for="convive-si-representante">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="convive-no-representante" 
-                                        name="convive-representante" value="no" required>
-                                    <label class="form-check-label" for="convive-no-representante">No</label>
-                                </div>
+                        <span><span class="text-danger">(*)</span>Convive con el Estudiante?</span>
+                        <div class="d-flex mt-1">
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="radio" id="convive-si" name="convive-representante" value="si">
+                                <label class="form-check-label" for="convive-si-representante">Si</label>
                             </div>
-                            <div class="invalid-feedback">
-                                Por favor indique si convive con el estudiante.
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="convive-no-representante" name="convive-representante" value="no">
+                                <label class="form-check-label" for="convive-no-representante">No</label>
                             </div>
-                            <small id="convive-representante-error" class="text-danger"></small>
                         </div>
+                        <small id="convive-representante-error" class="error-message text-danger"></small>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Sección de Conectividad y Participación Ciudadana -->
-            <div class="border rounded p-4 mb-4 bg-light">
-                <h5 class="mb-4 pb-2 border-bottom">
-                        <i class="fas fa-wifi me-2"></i>Conectividad y Participación Ciudadana
-                    </h5>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label for="correo-representante" class="form-label">Correo Electrónico</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="correo-representante" 
-                                        name="correo-representante" maxlength="254" 
-                                        title="No olvide incluir el símbolo @ en la dirección de correo"
-                                        placeholder="ejemplo@correo.com">
-                                </div>
-                                <small id="correo-representante-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label class="form-label d-block">
-                                    <span class="text-danger">(*)</span> ¿Pertenece a alguna Organización Política o Comunitaria?
-                                </label>
-                                <div class="d-flex mt-1">
-                                    <div class="form-check me-3">
-                                        <input class="form-check-input" type="radio"
-                                            id="opcion_si" name="pertenece-organizacion" value="si">
-                                        <label class="form-check-label" for="opcion_si">
-                                            Sí
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio"
-                                            id="opcion_no" name="pertenece-organizacion" value="no" checked>
-                                        <label class="form-check-label" for="opcion_no">
-                                            No
-                                        </label>
-                                    </div>
-                                </div>
-                                <small id="pertenece-organizacion-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-12 mb-3">
-                            <div id="campo_organizacion" class="form-group" style="display: none">
-                                <label for="cual-organizacion" class="form-label">
-                                    <span class="text-danger">(*)</span> Especifique la organización
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-sitemap"></i></span>
-                                    <input type="text" class="form-control" id="cual-organizacion" 
-                                        name="cual-organizacion" maxlength="50"
-                                        title="Ingrese el nombre de la organización (solo letras y espacios)"
-                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
-                                </div>
-                                <small id="cual-organizacion-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </div>                                                   <div class="row">
+                                                                <h4 class=" p-3">Conectividad Y Participación Ciudadana</h4>
+                                                        <div class="col-sm-6 mb-3">
+                                                            <div class="input-group mb-3">
+                                                                <span class="input-group-text"
+                                                                    id="inputGroup-sizing-default">Correo</span>
+                                                                <input type="email" class="form-control" id="correo-representante" name="correo-representante"
+                                                                    aria-label="Sizing example input"
+                                                                    aria-describedby="inputGroup-sizing-default" maxlength="254" title="No olvide caracteres especiales como el @">
+                                                            </div>
+                                                            <small id="correo-representante-error" class="text-danger"></small>
+                                                            
+                                                        </div>
+                                                        <div class="col-sm-6 mb-3">
+                                                            <span><span class="text-danger">(*)</span>Pertenece a Organización Política o
+                                                                Comunitaria?</span>
+                                                            <div class="d-flex mt-1">
+                                                                <div class="form-check me-3" >
+                                                                    <input class="form-check-input" type="radio"
+                                                                        id="opcion_si" name="pertenece-organizacion" value="si">
+                                                                    <label class="form-check-label" for="opcion_si">
+                                                                        Si
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="radio"
+                                                                        id="opcion_no" name="pertenece-organizacion" value="no">
+                                                                    <label class="form-check-label" for="opcion_no">
+                                                                        No
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <small id="pertenece-organizacion-error" class="text-danger"></small>
+                                                        </div>
+                                                        <div class="col-sm-12 mb-3">
+                                                            <div id="campo_organizacion" class="input-group mb-3" style="display: none">
+                                                                <span class="input-group-text" >A
+                                                                    cual:</span>
+                                                                <input type="text" class="form-control" id="cual-organizacion" name="cual-organizacion"
+                                                                    aria-label="Sizing example input" title="Ingrese la Organizacion Política O Comunitaria Al Que Pertenece, no se aceptan numeros"
+                                                                    aria-describedby="inputGroup-sizing-default"  maxlength="30">
+                                                            </div>
+                                                            <small id="cual-organizacion-error" class="text-danger d-none " ></small>
+                                                        </div>
 
-                <!-- Sección de Identificación Familiar y Datos de Cuenta -->
-                <div class="border rounded p-4 mb-4 bg-light">
-                    <h5 class="mb-4 pb-2 border-bottom">
-                        <i class="fas fa-id-card me-2"></i>Identificación Familiar y Datos de Cuenta
-                    </h5>
-                    
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="parentesco" class="form-label required">Parentesco</label>
-                                <select class="form-select" id="parentesco" name="parentesco" required>
-                                    <option value="" disabled selected>Seleccione</option>
-                                    <option value="Papá">Papá</option>
-                                    <option value="Mamá">Mamá</option>
-                                    <option value="Hermano">Hermano</option>
-                                    <option value="Hermana">Hermana</option>
-                                    <option value="Abuelo">Abuelo</option>
-                                    <option value="Abuela">Abuela</option>
-                                    <option value="Tío">Tío</option>
-                                    <option value="Tía">Tía</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Por favor seleccione un parentesco.
-                                </div>
-                                <small id="parentesco-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="carnet-patria" class="form-label">Carnet de la Patria Afiliado a</label>
-                                <select class="form-select" id="carnet-patria" name="carnet-patria">
-                                    <option value="" selected>Seleccione</option>
-                                    <option value="1">Padre</option>
-                                    <option value="2">Madre</option>
-                                </select>
-                                <small id="carnet-patria-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="codigo" class="form-label required">Código</label>
-                                <input type="text" class="form-control" id="codigo" name="codigo"
-                                    maxlength="10" pattern="[0-9]+" 
-                                    title="Ingrese solo números (máximo 10 dígitos)" required>
-                                <div class="invalid-feedback">
-                                    Por favor ingrese un código válido (solo números).
-                                </div>
-                                <small id="codigo-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="serial" class="form-label required">Serial</label>
-                                <input type="text" class="form-control" id="serial" name="serial"
-                                    maxlength="9" pattern="[0-9]+" 
-                                    title="Ingrese solo números (máximo 9 dígitos)" required>
-                                <div class="invalid-feedback">
-                                    Por favor ingrese un serial válido (solo números).
-                                </div>
-                                <small id="serial-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="tipo-cuenta" class="form-label required">Tipo de Cuenta</label>
-                                <select class="form-select" id="tipo-cuenta" name="tipo-cuenta" required>
-                                    <option value="" disabled selected>Seleccione</option>
-                                    <option value="1">Corriente</option>
-                                    <option value="2">Ahorro</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Por favor seleccione un tipo de cuenta.
-                                </div>
-                                <small id="tipo-cuenta-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="banco-representante" class="form-label required">Banco</label>
-                                <select class="form-select" id="banco-representante" name="banco-representante" required>
-                                    <option value="" disabled selected>Seleccione</option>
-                                    @foreach ($bancos as $banco)
-                                        <option value="{{ $banco->id }}">{{ $banco->nombre_banco }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="invalid-feedback">
-                                    Por favor seleccione un banco.
-                                </div>
-                                <small id="banco-representante-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sección de Dirección de Habitación -->
-                <div class="border rounded p-4 mb-4 bg-light">
-                    <h5 class="mb-4 pb-2 border-bottom">
-                        <i class="fas fa-home me-2"></i>Dirección de Habitación
-                    </h5>
-                    <div class="form-group">
-                        <label for="direccion-habitacion" class="form-label required">Dirección Completa</label>
-                        <textarea class="form-control" id="direccion-habitacion" name="direccion-habitacion" 
-                            rows="3" maxlength="200" 
-                            placeholder="Ej: Barrio Araguaney, Avenida 5 entre calles 8 y 9, Casa #12-34" 
-                            title="Ingrese su dirección completa incluyendo puntos de referencia"
-                            required></textarea>
-                        <div class="invalid-feedback">
-                            Por favor ingrese una dirección válida.
-                        </div>
-                        <small id="direccion-habitacion-error" class="text-danger"></small>
-                    </div>
-                </div>
                                                     </div>
-                </div>
+
+                                                </div>
+
+                                                <div class="border border-primary rounded px-1 py-1 mt-2">
+                                                        <div class="row">
+                                                            <h4 class=" p-3">Identificación Familiar Y Datos De Cuenta</h4>
+                                                        <div class="col-md-4 mb-3">
+                                                            <div class="input-group mb-3">
+                                                                <label class="input-group-text"
+                                                                    for="inputGroupSelect01"><span class="text-danger">(*)</span>Parentesco</label>
+                                                                <select class="form-select" id="parentesco" name="parentesco" required>
+                                                                    <option value="">Seleccione parentesco</option>
+                                                                    <option value="Papá">Papá</option>
+                                                                    <option value="Mamá">Mamá</option>
+                                                                    <option value="Hermano">Hermano</option>
+                                                                    <option value="Hermana">Hermana</option>
+                                                                    <option value="Abuelo">Abuelo</option>
+                                                                    <option value="Abuela">Abuela</option>
+                                                                    <option value="Tío">Tío</option>
+                                                                    <option value="Tía">Tía</option>
+                                                                    <option value="Otro">Otro</option>
+                                                                </select>
+                                                                <small id="parentesco-error" class="text-danger"></small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <div class="input-group mb-3">
+                                                                <label class="input-group-text" for="inputGroupSelect01"><span
+                                                                        class="text-danger">(*)</span>Carnet de la
+                                                                    Patria Afiliada a:</label>
+                                                                <select class="form-select" id="carnet-patria" name="carnet-patria">
+                                                                    <option value=""></option>
+                                                                    <option value="1">Padre</option>
+                                                                    <option value="2">Madre</option>
+                                                                </select>
+                                                            </div>
+                                                            <small id="carnet-patria-error" class="text-danger " ></small>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <div class="input-group mb-3">
+                                                                <span class="input-group-text" id="inputGroup-sizing-default"><span
+                                                                        class="text-danger">(*)</span>Código</span>
+                                                                <input type="text" class="form-control" id="codigo" name="codigo"
+                                                                    aria-label="Sizing example input"
+                                                                    aria-describedby="inputGroup-sizing-default" maxlength="10" pattern="[0-9]+" title="Ingresa solamente numeros,no se permiten letras">
+                                                            </div>
+                                                            <small id="codigo-error" class="text-danger " ></small>
+                                                        </div>
+
+                                                    </div>
+
+
+                                                            <div class="row">
+                                                                <div class="col-md-4 mb-3">
+                                                                    <div class="input-group mb-3">
+                                                                        <span class="input-group-text" ><span
+                                                                                class="text-danger">(*)</span>Serial:</span>
+                                                                        <input type="text" class="form-control" id="serial" name="serial"
+                                                                            aria-label="Sizing example input"
+                                                                            aria-describedby="inputGroup-sizing-default" maxlength="9" pattern="[0-9]+" title="Ingresa solamente números, máximo 9 dígitos">
+                                                                    </div>
+                                                                    <small id="serial-error" class="text-danger" ></small>
+                                                                </div>
+
+                                                                <div class="col-md-4 mb-3">
+                                                                    <div class="input-group mb-3">
+                                                                        <label class="input-group-text" for="inputGroupSelect01"><span
+                                                                                class="text-danger">(*)</span>Tipo de Cuenta:</label>
+                                                                        <select class="form-select" id="tipo-cuenta" name="tipo-cuenta">
+                                                                            <option value=""></option>
+                                                                            <option value="1">Corriente</option>
+                                                                            <option value="2">Ahorro</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <small id="tipo-cuenta-error" class="text-danger"></small>
+                                                                </div>
+
+                                                                <div class="col-md-4 mb-3">
+                                                                    <div class="input-group mb-3">
+                                                                        <label class="input-group-text" for="inputGroupSelect01"><span
+                                                                                class="text-danger">(*)</span>Banco</label>
+                                                                        <select class="form-select" id="banco-representante" name="banco-representante">
+                                                                            <option value="">Seleccione</option>
+                                                                            @foreach ($bancos as $banco)
+                                                                                <option value="{{ $banco->id }}">{{ $banco->nombre_banco }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                    <small id="banco-representante-error" class="text-danger"></small>
+                                                                </div>
+                                                            </div>
+
+                                                </div>
+
+                                                    <div class="border border-primary rounded px-1 py-1 mt-2">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <div class="mb-3">
+                                                                        <h4 class=" p-3">Dirección de Habitación</h4>
+                                                                        <textarea class="form-control" id="direccion-habitacion" name="direccion-habitacion" rows="3" maxlength="50" title="Coloque su Dirección Calle, Avenida..." placeholder="E.j : Barrio Araguaney Avenida 5 calle 9" required></textarea>
+                                                                        <small id="direccion-habitacion-error" class="text-danger"></small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                    </div>
+
             </div>
         </div>
 
@@ -1139,7 +1066,7 @@
                             <i class="fas fa-times me-1"></i> Cancelar
                         </a>
                     </div>
-                </div>
+                </div><!-- Fin Sección Madre -->
             </form>
     </div>
 </div>

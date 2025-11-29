@@ -16,9 +16,4 @@ class PrefijoTelefono extends Model
         'prefijo',
         'status',
     ];
-
-    public function persona()
-    {
-        return $this->hasMany(Persona::class, 'prefijo_id', 'id');
-    }
 }

@@ -27,8 +27,6 @@ return new class extends Migration
             $table->foreignId('tipo_documento_id')->constrained('tipo_documentos')->cascadeOnDelete();
             $table->foreignId('genero_id')->constrained('generos')->cascadeOnDelete();
             $table->foreignId('localidad_id')->constrained('localidads')->cascadeOnDelete();
-            $table->unsignedBigInteger("prefijo_id");
-            $table->foreign("prefijo_id")->references("id")->on("prefijo_telefonos")->onDelete("cascade")->onUpdate("cascade");
             $table->timestamps();
         });
     }
