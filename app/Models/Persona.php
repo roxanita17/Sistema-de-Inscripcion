@@ -28,6 +28,7 @@ class Persona extends Model
         'localidad_id',
         'fecha_nacimiento' => 'date',
         'status' => 'boolean',
+        'prefijo_id',
     ];
 
 
@@ -46,6 +47,14 @@ class Persona extends Model
     public function genero()
     {
         return $this->belongsTo(Genero::class, 'genero_id', 'id');
+    }
+
+    /**
+     * Relación con Representante
+     */
+    public function representante()
+    {
+        return $this->hasOne(\App\Models\Representante::class, 'persona_id', 'id');
     }
 
     /**
@@ -84,5 +93,10 @@ class Persona extends Model
     public function getEdadAttribute()
     {
         return $this->fecha_nacimiento->age ?? null;
+    }
+
+    public function prefijo_telefono()
+    {
+        return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
     }
 }
