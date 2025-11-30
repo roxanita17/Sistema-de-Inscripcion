@@ -228,23 +228,32 @@ return [
             'active' => ['home', 'home/*'],
         ],
 
-        // Estudiantes
+        //Alumnos
         [
-            'text' => 'Estudiantes',
-            'url' => 'admin/Estudiante',
+            'text' => 'Alumnos',
+            'url' => 'admin/alumnos',
             'icon' => 'fas fa-fw fa-user-graduate',
             'icon_color' => 'primary',
-            'active' => ['admin/Estudiante', 'admin/Estudiante/*'],
+            'active' => ['admin/alumnos', 'admin/alumnos/*'],
         ],
+
+        // Estudiantes
+       /*  [
+            'text' => 'Estudiantes',
+            'url' => 'admin/estudiante/inicio',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'icon_color' => 'primary',
+            'active' => ['admin/estudiante/inicio', 'admin/estudiante/inicio/*'],
+        ], */
         // NUEVO INGRESO
-        [
+        /* [
             'text' => 'Nuevo Ingreso',
             'url' => 'admin/nuevo_ingreso',
             'icon' => 'fas fa-fw fa-clipboard-list',
             'icon_color' => 'primary',
             'active' => ['admin/nuevo_ingreso', 'admin/nuevo_ingreso/*'],
         ],
-
+ */
         //Representantes
 
         [
@@ -253,6 +262,38 @@ return [
             'icon' => 'fas fa-fw fa-user-tie',
             'icon_color' => 'info',
             'active' => ['representante', 'representante/*'],
+        ],
+
+        // ============================================================
+        //  GESTIÓN DOCENTES
+        // ============================================================
+        ['header' => 'GESTIÓN DE DOCENTES'],
+
+        [
+            'text' => 'Docentes',
+            'icon' => 'fas fa-chalkboard-teacher',
+            'submenu' => [
+                [
+                    'text' => 'Listado de Docentes',
+                    'url'  => 'admin/docente',
+                    'icon' => 'fas fa-user',
+                ],
+                [
+                    'text' => 'Asignar Materias',
+                    'url'  => 'admin/transacciones/docente_area_grado',
+                    'icon' => 'fas fa-book-reader',
+                ],
+                [
+                    'text' => 'Estudios Realizados',
+                    'url'  => 'admin/estudios_realizados',
+                    'icon' => 'fas fa-user-graduate',
+                ],
+                [
+                    'text' => 'Expresiones Literarias',
+                    'url'  => 'admin/expresion_literaria',
+                    'icon' => 'fas fa-feather-alt',
+                ],
+            ],
         ],
 
 

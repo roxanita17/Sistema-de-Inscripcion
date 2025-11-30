@@ -24,7 +24,7 @@ use App\Http\Controllers\NuevoIngresoController;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\DocenteAreaGradoController;
 use App\Http\Controllers\DashboardController;
-use App\Models\Docente;
+use App\Http\Controllers\AlumnoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -221,21 +221,28 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('transacciones/docente_area_grado/{id}/edit', [DocenteAreaGradoController::class, 'edit'])->name('transacciones.docente_area_grado.edit');
         Route::post('transacciones/docente_area_grado/{id}/update', [DocenteAreaGradoController::class, 'update'])->name('transacciones.docente_area_grado.update');
         Route::delete('transacciones/docente_area_grado/{id}', [DocenteAreaGradoController::class, 'destroy'])->name('transacciones.docente_area_grado.destroy');
-Route::delete('transacciones/docente_area_grado/{id}/destroy-asignacion', [DocenteAreaGradoController::class, 'destroyAsignacion'])->name('transacciones.docente_area_grado.destroyAsignacion');
-
+        Route::delete('transacciones/docente_area_grado/{id}/destroy-asignacion', [DocenteAreaGradoController::class, 'destroyAsignacion'])->name('transacciones.docente_area_grado.destroyAsignacion');
     });
 
-    
+    // ===== DASHBOARD ======
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    // ===== ALUMNOS ======
+    Route::get('alumnos', [AlumnoController::class, 'index'])->name('alumnos.index');
+    Route::get('alumnos/create', [AlumnoController::class, 'create'])->name('alumnos.create');
+    Route::post('alumnos/store', [AlumnoController::class, 'store'])->name('alumnos.store');
+    Route::get('alumnos/{id}/edit', [AlumnoController::class, 'edit'])->name('alumnos.edit');
+    Route::post('alumnos/{id}/update', [AlumnoController::class, 'update'])->name('alumnos.update');
+    Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
 });
 
+
+
 // RUTAS PARA EL PROCESO DE INSCRIPCION DE NUEVO INGRESO----------------------------------------------------------
-            Route::prefix('inscripcion')->group(function () {
+            Route::prefix('admin/inscripcion')->group(function () {
         //  Formulario del estudiante
         Route::get('/estudiante', [NuevoIngresoController::class, 'showEstudianteForm'])
-            ->name('inscripcion.estudiante')
+            ->name('admin.inscripcion.estudiante')
             ->middleware(["auth"]);
 
           Route::post('/estudiante/store', [NuevoIngresoController::class, 'storeEstudiante'])
@@ -275,53 +282,60 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
     });
 
     // NUEVO INGRESO 
-    Route::prefix('nuevo_ingreso')->group(function () {
+    Route::prefix('admin/nuevo_ingreso')->group(function () {
     // Página principal (listado)
     Route::get('/', [NuevoIngresoController::class, 'index'])
-        ->name('nuevo_ingreso.index')
+        ->name('admin.nuevo_ingreso.index')
         ->middleware(['auth']);
     // Listar y buscar inscripciones
     Route::get('/listar', [NuevoIngresoController::class, 'listarInscripciones'])
-        ->name('inscripciones.listar')
+        ->name('admin.inscripciones.listar')
         ->middleware(["auth"]);
 
     Route::get('/buscar', [NuevoIngresoController::class, 'buscar'])
-        ->name('nuevo_ingreso.buscar')
+        ->name('admin.nuevo_ingreso.buscar')
         ->middleware(["auth"]);
 
     // Ver detalles de una inscripción
     Route::get('/detalle/{id}', [NuevoIngresoController::class, 'verDetalle'])
-        ->name('inscripciones.detalle')
+        ->name('admin.inscripciones.detalle')
         ->middleware(["auth"]);
 
     // Cambiar estado de inscripción (ya no la uso por que pa que xd )
     Route::post('/cambiar-estado/{id}', [NuevoIngresoController::class, 'cambiarEstado'])
-        ->name('inscripciones.cambiarEstado')
+        ->name('admin.inscripciones.cambiarEstado')
         ->middleware(["auth"]);
 
     // Editar y eliminar inscripciones
-       Route::get('/editar/{id}', [NuevoIngresoController::class, 'editar'])->name('nuevo_ingreso.editar');
-    Route::put('/actualizar/{id}', [NuevoIngresoController::class, 'actualizar'])->name('nuevo_ingreso.actualizar');
-    Route::delete('/eliminar/{id}', [NuevoIngresoController::class, 'eliminar'])->name('nuevo_ingreso.eliminar');
+       Route::get('/editar/{id}', [NuevoIngresoController::class, 'editar'])->name('admin.nuevo_ingreso.editar');
+    Route::put('/actualizar/{id}', [NuevoIngresoController::class, 'actualizar'])->name('admin.nuevo_ingreso.actualizar');
+    Route::delete('/eliminar/{id}', [NuevoIngresoController::class, 'eliminar'])->name('admin.nuevo_ingreso.eliminar');
 
 });
 
     // --------
 
-    Route::get("/Estudiante",[EstudianteController::class, 'estudianteView'])->name("estudiante.inicio");
-    Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario")->middleware(["auth"]);
+    Route::get("admin/estudiante/inicio",[EstudianteController::class, 'estudianteView'])->name("admin.estudiante.inicio");
+    Route::get("admin/estudiante/formulario",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario")->middleware(["auth"]);
+
 
     // ===== ESTUDIANTE =====
-    Route::prefix("estudiante")->group(function(){
+
+    Route::prefix("admin/estudiante")->group(function(){
         Route::get("/formularioEstudiante/{id}",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario.editar")->middleware(["auth"]);
-        Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("estudiante.verificar-cedula")->middleware(["auth"]);
+
+        Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("admin.estudiante.verificar-cedula")->middleware(["auth"]);
+
         Route::post("/save",[EstudianteController::class, 'save'])->middleware(["auth"]);
+
         // Si alguien accede por GET accidentalmente, redirigir al formulario
         Route::get('/save', function () {
             return redirect()->route('admin.estudiante.formulario');
         })->middleware(['auth']);
+
         Route::delete("/eliminar/{id}",[EstudianteController::class, 'eliminar'])->middleware(["auth"]);
         // para consultar un estudiante
+
         Route::get('/consultar/{id}',[EstudianteController::class,"consultar"])->middleware(["auth"]);
         Route::get('/listar',[EstudianteController::class,"listar"])->middleware(["auth"]); // Para listar TODOS los estudiantes
         // filtros y búsquedas

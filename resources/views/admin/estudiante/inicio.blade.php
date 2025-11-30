@@ -32,9 +32,9 @@
                             <i class="bi bi-plus-lg"></i> Registrar
                         </button> --}}
 
-                        <button class="btn btn-primary me-2" onclick="irHa('{{route('admin.estudiante.formulario')}}')">
-    <i class="bi bi-plus-lg"></i> Registrar
-</button>
+                        <a href="{{route('admin.estudiante.formulario')}}" class="btn btn-primary me-2">
+                            <i class="bi bi-plus-lg"></i> Registrar
+                        </a>
 
                         {{-- <a href="{{ route('dashboard.admin') }}" class="btn btn-secondary">
                             <i class="bi bi-box-arrow-left"></i> Volver
@@ -140,7 +140,7 @@
 @stop
 
 @section('js')
-    <script>
+    {{-- <script>
         const tablaBody = document.getElementById('tabla');
         const buscador = document.getElementById('buscador');
         let debounceTimer = null;
@@ -263,5 +263,5 @@
         function irHa(url) {
             window.location.href = url;
         }
-    </script>
+    </script> --}}
 @stop

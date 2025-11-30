@@ -25,9 +25,9 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Lista de Estudiantes Inscritos</h3>
                     <div class="card-tools">
-                        <button class="btn btn-primary btn-sm mr-2" onclick="irHa('{{route('admin.inscripcion.estudiante')}}')" @disabled(!$anoActivo)>
+                        <a href="{{route('admin.inscripcion.estudiante')}}" class="btn btn-primary btn-sm mr-2" @disabled(!$anoActivo)>
                             <i class="fas fa-plus"></i> Inscribir
-                        </button>
+                        </a>
                         <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
                             <i class="fas fa-arrow-left"></i> Volver
                         </a>
