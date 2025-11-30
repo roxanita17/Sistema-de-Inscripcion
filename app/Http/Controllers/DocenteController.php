@@ -110,7 +110,7 @@ class DocenteController extends Controller
                 'tercer_nombre' => $request->tercer_nombre,
                 'primer_apellido' => $request->primer_apellido,
                 'segundo_apellido' => $request->segundo_apellido,
-                'cedula' => $request->cedula,
+                'cedula' => $request->cedula ,
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,
@@ -169,14 +169,18 @@ class DocenteController extends Controller
         // VALIDACIÓN (excluyendo la cédula actual)
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'cedula' => 'required|string|max:20 |unique:personas,cedula,' . $persona->id,
+            'cedula' => 'required|string|max:20|unique:personas,cedula,' . $persona->cedula,
             'primer_nombre' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
             'tercer_nombre' => 'nullable|string|max:50',
             'primer_apellido' => 'required|string|max:50',
             'segundo_apellido' => 'nullable|string|max:50',
             'genero' => 'required|exists:generos,id',
-            'fecha_nacimiento' => 'required|date|before:today',
+            'fecha_nacimiento' => [
+                'required',
+                'date',
+                'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+            ],
             'correo' => 'nullable|email|max:100',
             'direccion' => 'nullable|string|max:255',
             'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
@@ -184,6 +188,16 @@ class DocenteController extends Controller
             'segundo_telefono' => 'nullable|string|max:20',
             'codigo' => 'nullable|string|max:50',
             'dependencia' => 'nullable|string|max:100',
+        ], [
+            'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
+            'cedula.required' => 'La cédula es obligatoria',
+            'cedula.unique' => 'Esta cédula ya está registrada',
+            'primer_nombre.required' => 'El primer nombre es obligatorio',
+            'primer_apellido.required' => 'El primer apellido es obligatorio',
+            'genero.required' => 'El género es obligatorio',
+            'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
+            'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento debe corresponder a una persona mayor de 18 años',
+            'correo.email' => 'El correo electrónico no tiene un formato válido',
         ]);
 
         DB::beginTransaction();

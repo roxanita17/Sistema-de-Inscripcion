@@ -100,6 +100,26 @@
                 </div>
             </div>
 
+            {{-- Buscador --}}
+            <form action="{{ route('admin.transacciones.docente_area_grado.index') }}">
+                <div class="form-group-modern mb-2">
+                    <div class="search-modern"> 
+                        <i class="fas fa-search"></i>
+                        <input type="text"
+                        name="buscar"
+                        id="buscar"
+                        class="form-control-modern"
+                        placeholder="Buscar..."
+                        value="{{ request('buscar') }}"
+                        >
+                    </div>
+                    <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
+                            <i class="fas fa-info-circle"></i>
+                            Buscar por cédula, nombre, apellido, código
+                    </small>
+                </div>
+            </form>
+
             <div class="header-right">
                 <div class="date-badge">
                     <i class="fas fa-calendar-alt"></i>
@@ -187,6 +207,14 @@
                                 <td>
                                     <div class="action-buttons">
 
+                                        {{-- Ver detalles --}}
+                                            <button class="action-btn btn-view" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#viewModal{{ $docente->id }}" 
+                                                title="Ver Detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+
                                         {{-- Editar grado --}}
                                         <a class="action-btn btn-edit"
                                             href="{{ route('admin.transacciones.docente_area_grado.edit', $docente->id) }}"
@@ -205,6 +233,9 @@
                                     </div>
                                 </td>
                             </tr>
+                            {{-- Ruta de ver detalle --}}
+                            @include('admin.transacciones.docente_area_grado.modales.showModal')
+
                              {{-- Modal de confirmación para eliminar --}}               
                             <div class="modal fade" id="confirmarEliminar{{ $docente->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $docente->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">

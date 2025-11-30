@@ -39,7 +39,7 @@ class Docente extends Model
         }
 
         return $query;
-}
+    }
 
     /**
      * Relación con DetalleDocenteEstudio

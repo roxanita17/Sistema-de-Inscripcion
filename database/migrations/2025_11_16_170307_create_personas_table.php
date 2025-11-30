@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('tercer_nombre')->nullable();
             $table->string('primer_apellido');
             $table->string('segundo_apellido')->nullable();
-            $table->string('cedula');
+            $table->string('cedula')->unique();
             $table->date('fecha_nacimiento');
             $table->string('direccion')->nullable();
             $table->string('email')->nullable();

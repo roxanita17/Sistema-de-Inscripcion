@@ -8,6 +8,7 @@ use App\Models\Docente;
 use App\Models\Grado;
 use App\Models\AnioEscolar;
 use App\Models\User;
+use App\Models\Persona;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller

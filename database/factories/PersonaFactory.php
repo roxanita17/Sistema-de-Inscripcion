@@ -15,7 +15,7 @@ public function definition(): array
         'tercer_nombre' => $this->faker->optional()->firstName(),
         'primer_apellido' => $this->faker->lastName(),
         'segundo_apellido' => $this->faker->lastName(),
-        'cedula' => $this->faker->unique()->randomNumber(8),
+        'cedula' => $this->faker->unique()->randomNumber(8 ) ,
         'fecha_nacimiento' => $this->faker->date(),
         'direccion' => $this->faker->address(),
         'email' => $this->faker->email(),

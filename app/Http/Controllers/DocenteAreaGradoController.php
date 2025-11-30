@@ -28,19 +28,24 @@ class DocenteAreaGradoController extends Controller
      */
     public function index()
     {
+        $buscar = request('buscar');
+
         $docentes = Docente::with([
                 'persona',
-                'asignacionesAreas.areaEstudios.areaFormacion', // cargar relaciones para mostrar materia -> areaFormacion
+                'asignacionesAreas.areaEstudios.areaFormacion',
             ])
             ->whereHas('asignacionesAreasActivas')
             ->whereHas('persona', fn($q) => $q->where('status', true))
             ->where('status', true)
+            ->buscar($buscar)
             ->paginate(10);
 
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
-        return view('admin.transacciones.docente_area_grado.index', compact('docentes', 'anioEscolarActivo'));
+        return view('admin.transacciones.docente_area_grado.index', compact('docentes', 'anioEscolarActivo', 'buscar'
+        ));
     }
+
 
     public function create()
     {
@@ -66,7 +71,6 @@ class DocenteAreaGradoController extends Controller
             $docente = Docente::with('persona')->findOrFail($id);
             $persona = $docente->persona;
 
-            // Inactivar registros dependientes que puedan bloquear (en vez de borrar)
             // 1) DetalleDocenteEstudio
             DetalleDocenteEstudio::where('docente_id', $docente->id)
                 ->update(['status' => false]);
@@ -76,7 +80,7 @@ class DocenteAreaGradoController extends Controller
                 $q->where('docente_id', $docente->id);
             })->update(['status' => false]);
 
-            // Inactivar docente y persona (el enfoque actual es lógica vía campo `status`)
+            // Inactivar docente y persona 
             $docente->update(['status' => false]);
 
             if ($persona) {

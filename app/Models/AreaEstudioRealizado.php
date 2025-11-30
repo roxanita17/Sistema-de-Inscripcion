@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class AreaEstudioRealizado extends Model
 {
@@ -18,6 +19,22 @@ class AreaEstudioRealizado extends Model
     protected $casts = [
         'status' => 'boolean',
     ];
+
+    public function scopeBuscar($query, $buscar)
+    {
+        if (!empty($buscar)) {
+            $query->whereHas('areaFormacion', function ($q) use ($buscar) {
+                $q->where('nombre_area_formacion', 'LIKE', "%{$buscar}%");
+
+            });
+
+            $query->orWhereHas('estudiosRealizado', function ($q) use ($buscar) {
+                $q->where('estudios', 'LIKE', "%{$buscar}%");
+            });
+        }
+
+        return $query;
+    }
 
     /**  Área de formación  */
     public function areaFormacion()

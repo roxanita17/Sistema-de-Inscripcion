@@ -25,10 +25,12 @@ class AreaEstudioRealizadoController extends Controller
      */
     public function index()
     {
+        $buscar = request('buscar');
         $areaEstudioRealizado = AreaEstudioRealizado::with(['areaFormacion', 'estudiosRealizado'])
             ->join('area_formacions', 'area_formacions.id', '=', 'area_estudio_realizados.area_formacion_id')
             ->orderBy('area_formacions.nombre_area_formacion', 'asc')
             ->select('area_estudio_realizados.*')
+            ->buscar($buscar)
             ->paginate(10);
 
         $area_formacion = AreaFormacion::where('status', true)
@@ -43,7 +45,7 @@ class AreaEstudioRealizadoController extends Controller
 
         return view(
             'admin.transacciones.area_estudio_realizado.index',
-            compact('areaEstudioRealizado', 'area_formacion', 'estudios', 'anioEscolarActivo')
+            compact('areaEstudioRealizado', 'area_formacion', 'estudios', 'anioEscolarActivo', 'buscar')
         );
     }
 

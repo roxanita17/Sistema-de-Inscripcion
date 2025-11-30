@@ -12,6 +12,8 @@
         --warning: #f59e0b;
         --warning-light: #fef3c7;
         --info: #3b82f6;
+        --info-light: #eef2ff;
+        --info-dark: #255bb3;
         --gray-50: #f9fafb;
         --gray-100: #f3f4f6;
         --gray-200: #e5e7eb;
@@ -583,8 +585,8 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.35rem 0.7rem;
-    background: var(--success-light);
-    color: var(--success);
+    background: var(--info-light);
+    color: var(--info-dark);
     border-radius: 6px;
     font-weight: 600;
     font-size: 0.8rem;
