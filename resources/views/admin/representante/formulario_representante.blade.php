@@ -25,7 +25,7 @@
                 <i class="fas fa-info-circle"></i> Los campos marcados con <span class="text-danger">(*)</span> son obligatorios
             </div>
 
-            <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="needs-validation" novalidate>
+            <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="needs-validation">
                 @csrf
 
                 <!-- Sección de la Madre -->
@@ -102,8 +102,9 @@
                         <div class="form-group">
                             <label for="cedula" class="form-label required">Número de Cédula</label>
                             <input type="text" class="form-control" id="cedula" name="cedula" 
-                                maxlength="8" pattern="[0-9]+" 
-                                title="Ingrese solo números (máximo 8 dígitos)" required>
+                                maxlength="8" pattern="\d{6,8}" 
+                                title="Ingrese solo números (entre 6 y 8 dígitos)" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             <div class="invalid-feedback">
                                 Por favor ingrese un número de cédula válido (solo números).
                             </div>
@@ -393,16 +394,17 @@
                                 <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->tipo_documento }}</option>
                             @endforeach
                         </select>
+                        <div class="invalid-feedback">
+                            Por favor seleccione el tipo de documento.
+                        </div>
                     </div>
-                    <small id="tipo-ci-padre-error" class="text-danger"></small>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
                         <label for="cedula-padre" class="form-label required">Número de Cédula</label>
-                        <input type="text" class="form-control" id="cedula-padre" name="cedula-padre"
-                            maxlength="8" pattern="[0-9]+" 
-                            title="Ingrese solo números (máximo 8 dígitos)" required>
+                        <input type="text" class="form-control" id="cedula-padre" name="cedula-padre" 
+                            maxlength="8" required>
                         <div class="invalid-feedback">
                             Por favor ingrese un número de cédula válido (solo números).
                         </div>
@@ -411,8 +413,8 @@
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
-                        <label for="fechaNacimiento-padre" class="form-label required">Fecha de Nacimiento</label>
-                        <input type="date" id="fechaNacimiento-padre" name="fechaNacimiento-padre" 
+                        <label for="fecha-nacimiento-padre" class="form-label required">Fecha de Nacimiento</label>
+                        <input type="date" id="fecha-nacimiento-padre" name="fecha-nacimiento-padre" 
                             class="form-control" required>
                         <div class="invalid-feedback">
                             Por favor ingrese una fecha de nacimiento válida.
@@ -443,6 +445,14 @@
                             title="Solo se permiten letras y espacios, no se aceptan números">
                     </div>
                 </div>
+                <div class="col-md-4 mb-3">
+                        <div class="form-group">
+                            <label for="tercer-nombre-padre" class="form-label">Tercer Nombre</label>
+                            <input type="text" class="form-control" id="tercer-nombre-padre" name="tercer-nombre-padre"
+                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]*"
+                                title="Solo se permiten letras y espacios, no se aceptan números">
+                        </div>
+                    </div>
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
@@ -467,8 +477,8 @@
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
-                        <label for="genero-padre" class="form-label required">Género</label>
-                        <select class="form-select" id="genero-padre" name="genero-padre" required>
+                        <label for="sexo-padre" class="form-label required">Género</label>
+                        <select class="form-select" id="sexo-padre" name="sexo-padre" required>
                             <option value="" disabled selected>Seleccione</option>
                             @foreach ($generos as $genero)
                                 <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
@@ -478,28 +488,21 @@
                             Por favor seleccione un género.
                         </div>
                     </div>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <div class="form-group">
-                        <label for="lugar-nacimiento-padre" class="form-label required">Lugar de Nacimiento</label>
-                        <input type="text" class="form-control" id="lugar-nacimiento-padre" name="lugar-nacimiento-padre"
-                            pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
-                            title="Solo se permiten letras y espacios, no se aceptan números"
-                            maxlength="100" required>
-                        <div class="invalid-feedback">
-                            Por favor ingrese un lugar de nacimiento válido.
-                        </div>
-                    </div>
-                </div>    
+                </div>  
             </div>
-
-        <!-- Sección de Dirección y Contactos -->
+        </div>
         <div class="border rounded p-4 mb-4 bg-light">
             <h5 class="mb-4 pb-2 border-bottom">
                 <i class="fas fa-address-book me-2"></i>Dirección y Contactos
             </h5>
-            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="form-group">
+                        <label for="lugar-nacimiento-padre" class="form-label">Lugar de Nacimiento *</label>
+                        <input type="text" class="form-control" id="lugar-nacimiento-padre" name="lugar-nacimiento-padre">
+                    </div>
+                </div>  
+            </div>
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
@@ -550,7 +553,12 @@
                     </div>
                 </div>
             </div>
-
+        </div>  
+        <!-- Sección de Dirección y Contactos -->
+        <div class="border rounded p-4 mb-4 bg-light">
+            <h5 class="mb-4 pb-2 border-bottom">
+                <i class="fas fa-address-book me-2"></i>Dirección y Contactos
+            </h5>
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <div class="form-group">
@@ -581,16 +589,6 @@
                     </div>
                 </div>
 
-                <div class="col-md-5 mb-3">
-                    <div class="form-group">
-                        <label for="email-padre" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="email-padre" name="email-padre"
-                            title="Ingrese un correo electrónico válido (ejemplo@dominio.com)">
-                        <div class="invalid-feedback">
-                            Por favor ingrese un correo electrónico válido.
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -658,14 +656,6 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12 mb-3">
-                    <div class="form-group">
-                        <label for="observaciones-padre" class="form-label">Observaciones</label>
-                        <textarea class="form-control" id="observaciones-padre" name="observaciones-padre" rows="2"></textarea>
-                    </div>
-                </div>
-            </div>
         </div>
 
     </div>
@@ -729,8 +719,9 @@
                 <div class="col-md-4 mb-3">
                     <div class="input-group">
                         <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Cédula</span>
-                        <input type="text" class="form-control" id="cedula-representante" name="cedula-representante" aria-label="Sizing example input"
-                            aria-describedby="inputGroup-sizing-default" maxlength="8" pattern="[0-9]+" title="Ingresa solamente numeros,no se permiten letras" required>
+                        <input type="text" class="form-control" id="cedula-representante" name="cedula-representante" 
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" 
+                            maxlength="8" required>
                     </div>
                     <input type="hidden" id="persona-id-representante" name="persona-id-representante">
                     <input type="hidden" id="representante-id" name="representante-id">
@@ -766,7 +757,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">Tercer Nombre</span>
                             <input type="text" class="form-control" id="tercer-nombre-representante" name="tercer-nombre-representante"
@@ -774,14 +765,36 @@
                         </div>
                         <small id="tercer-nombre-representante-error" class="text-danger"></small>
                     </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group">
+                            <label class="input-group-text" for="sexo-representante"><span class="text-danger">(*)</span>Género</label>
+                            <select class="form-select" id="sexo-representante" name="sexo-representante" required>
+                                <option value="">Seleccione</option>
+                                @foreach($generos as $genero)
+                                    <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <small id="sexo-representante-error" class="text-danger"></small>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text"><span class="text-danger">(*)</span>Fecha Nac.</span>
+                            <input type="date" class="form-control" id="fecha-nacimiento-representante" name="fecha-nacimiento-representante" 
+                                aria-label="Fecha de Nacimiento" required>
+                        </div>
+                        <small id="fecha-nacimiento-representante-error" class="text-danger"></small>
+                    </div>
                 </div>
             </div>
-
-                        <!-- Sección de Dirección y Contactos -->
-                        <div class="border rounded p-4 mb-4 bg-light">
-                            <h5 class="mb-4 pb-2 border-bottom">
-                                <i class="fas fa-address-book me-2"></i>Dirección y Contactos
-                            </h5>
+        </div>
+        <!-- Sección de Dirección y Contactos -->
+        <div class="border rounded p-4 mb-4 bg-light">
+            <h5 class="mb-4 pb-2 border-bottom">
+                <i class="fas fa-address-book me-2"></i>Dirección y Contactos
+            </h5>
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -856,205 +869,254 @@
                 </div>
             </div>
 
-            <div class="border border-primary rounded px-3 py-3 mt-3">
-
+            <!-- Sección de Relación Familiar con el Estudiante -->
+            <div class="border rounded p-4 mb-4 bg-light">
+                <h5 class="mb-4 pb-2 border-bottom">
+                    <i class="fas fa-users me-2"></i>Relación Familiar con el Estudiante
+                </h5>
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <div class="input-group">
-                                            <h4 class="mb-3">Relación Familiar Con El Estudiante</h4>
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Ocupación</span>
+                        <div class="form-group">
+                            <label for="ocupacion-representante" class="form-label required">Ocupación</label>
                             <select name="ocupacion-representante" id="ocupacion-representante" class="form-select" required>
-                                <option value="" disabled selected>Seleccione</option>
-                                <!-- Opciones de ocupación -->
+                                <option value="" disabled selected>Seleccione una opción</option>
                                 @foreach($ocupaciones as $ocupacion)
                                     <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
                                 @endforeach
                             </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione una ocupación.
+                            </div>
+                            <small id="ocupacion-representante-error" class="text-danger"></small>
                         </div>
-                        <small id="ocupacion-representante-error" class="text-danger"></small>
                     </div>
                     
                     <div class="col-md-6 mb-3">
-                        <div class="input-group" id="otra-ocupacion-container" style="display:none">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Otra Ocupación</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" id="otra-ocupacion-representante" name="otra-ocupacion-representante"
-                                aria-describedby="inputGroup-sizing-default" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios,no se aceptan números" required>
+                        <div class="form-group" id="otra-ocupacion-container" style="display:none">
+                            <label for="otra-ocupacion-representante" class="form-label required">Especifique la ocupación</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                                <input type="text" class="form-control" id="otra-ocupacion-representante" 
+                                    name="otra-ocupacion-representante" maxlength="50"
+                                    title="Solo se permiten letras y espacios, no se aceptan números"
+                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
+                            </div>
+                            <div class="invalid-feedback">
+                                Por favor ingrese una ocupación válida (solo letras y espacios).
+                            </div>
+                            <small id="otra-ocupacion-error-representante" class="text-danger"></small>
                         </div>
-                        <small id="otra-ocupacion-error-representante" class="text-danger"></small>
                     </div>
                 </div>
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <span><span class="text-danger">(*)</span>Convive con el Estudiante?</span>
-                        <div class="d-flex mt-1">
-                            <div class="form-check me-3">
-                                <input class="form-check-input" type="radio" id="convive-si" name="convive-representante" value="si">
-                                <label class="form-check-label" for="convive-si-representante">Si</label>
+                        <div class="form-group">
+                            <label class="form-label d-block required">¿Convive con el Estudiante?</label>
+                            <div class="d-flex mt-1">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="radio" id="convive-si-representante" 
+                                        name="convive-representante" value="si" required>
+                                    <label class="form-check-label" for="convive-si-representante">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="convive-no-representante" 
+                                        name="convive-representante" value="no" required>
+                                    <label class="form-check-label" for="convive-no-representante">No</label>
+                                </div>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" id="convive-no-representante" name="convive-representante" value="no">
-                                <label class="form-check-label" for="convive-no-representante">No</label>
+                            <div class="invalid-feedback">
+                                Por favor indique si convive con el estudiante.
+                            </div>
+                            <small id="convive-representante-error" class="text-danger"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Conectividad y Participación Ciudadana -->
+                <div class="border rounded p-4 mb-4 bg-light">
+                    <h5 class="mb-4 pb-2 border-bottom">
+                        <i class="fas fa-wifi me-2"></i>Conectividad y Participación Ciudadana
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="correo-representante" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="correo-representante" 
+                                        name="correo-representante" maxlength="254" 
+                                        title="No olvide incluir el símbolo @ en la dirección de correo"
+                                        placeholder="ejemplo@correo.com">
+                                </div>
+                                <small id="correo-representante-error" class="text-danger"></small>
                             </div>
                         </div>
-                        <small id="convive-representante-error" class="error-message text-danger"></small>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="form-label d-block">
+                                    <span class="text-danger">(*)</span> ¿Pertenece a alguna Organización Política o Comunitaria?
+                                </label>
+                                <div class="d-flex mt-1">
+                                    <div class="form-check me-3">
+                                        <input class="form-check-input" type="radio"
+                                            id="opcion_si" name="pertenece-organizacion" value="si">
+                                        <label class="form-check-label" for="opcion_si">
+                                            Sí
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio"
+                                            id="opcion_no" name="pertenece-organizacion" value="no" checked>
+                                        <label class="form-check-label" for="opcion_no">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                <small id="pertenece-organizacion-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12 mb-3">
+                            <div id="campo_organizacion" class="form-group" style="display: none">
+                                <label for="cual-organizacion" class="form-label">
+                                    <span class="text-danger">(*)</span> Especifique la organización
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-sitemap"></i></span>
+                                    <input type="text" class="form-control" id="cual-organizacion" 
+                                        name="cual-organizacion" maxlength="50"
+                                        title="Ingrese el nombre de la organización (solo letras y espacios)"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
+                                </div>
+                                <small id="cual-organizacion-error" class="text-danger"></small>
+                            </div>
+                        </div>
                     </div>
-                </div>                                                   <div class="row">
-                                                                <h4 class=" p-3">Conectividad Y Participación Ciudadana</h4>
-                                                        <div class="col-sm-6 mb-3">
-                                                            <div class="input-group mb-3">
-                                                                <span class="input-group-text"
-                                                                    id="inputGroup-sizing-default">Correo</span>
-                                                                <input type="email" class="form-control" id="correo-representante" name="correo-representante"
-                                                                    aria-label="Sizing example input"
-                                                                    aria-describedby="inputGroup-sizing-default" maxlength="254" title="No olvide caracteres especiales como el @">
-                                                            </div>
-                                                            <small id="correo-representante-error" class="text-danger"></small>
-                                                            
-                                                        </div>
-                                                        <div class="col-sm-6 mb-3">
-                                                            <span><span class="text-danger">(*)</span>Pertenece a Organización Política o
-                                                                Comunitaria?</span>
-                                                            <div class="d-flex mt-1">
-                                                                <div class="form-check me-3" >
-                                                                    <input class="form-check-input" type="radio"
-                                                                        id="opcion_si" name="pertenece-organizacion" value="si">
-                                                                    <label class="form-check-label" for="opcion_si">
-                                                                        Si
-                                                                    </label>
-                                                                </div>
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="radio"
-                                                                        id="opcion_no" name="pertenece-organizacion" value="no">
-                                                                    <label class="form-check-label" for="opcion_no">
-                                                                        No
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <small id="pertenece-organizacion-error" class="text-danger"></small>
-                                                        </div>
-                                                        <div class="col-sm-12 mb-3">
-                                                            <div id="campo_organizacion" class="input-group mb-3" style="display: none">
-                                                                <span class="input-group-text" >A
-                                                                    cual:</span>
-                                                                <input type="text" class="form-control" id="cual-organizacion" name="cual-organizacion"
-                                                                    aria-label="Sizing example input" title="Ingrese la Organizacion Política O Comunitaria Al Que Pertenece, no se aceptan numeros"
-                                                                    aria-describedby="inputGroup-sizing-default"  maxlength="30">
-                                                            </div>
-                                                            <small id="cual-organizacion-error" class="text-danger d-none " ></small>
-                                                        </div>
+                </div>
 
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="border border-primary rounded px-1 py-1 mt-2">
-                                                        <div class="row">
-                                                            <h4 class=" p-3">Identificación Familiar Y Datos De Cuenta</h4>
-                                                        <div class="col-md-4 mb-3">
-                                                            <div class="input-group mb-3">
-                                                                <label class="input-group-text"
-                                                                    for="inputGroupSelect01"><span class="text-danger">(*)</span>Parentesco</label>
-                                                                <select class="form-select" id="parentesco" name="parentesco" required>
-                                                                    <option value="">Seleccione parentesco</option>
-                                                                    <option value="Papá">Papá</option>
-                                                                    <option value="Mamá">Mamá</option>
-                                                                    <option value="Hermano">Hermano</option>
-                                                                    <option value="Hermana">Hermana</option>
-                                                                    <option value="Abuelo">Abuelo</option>
-                                                                    <option value="Abuela">Abuela</option>
-                                                                    <option value="Tío">Tío</option>
-                                                                    <option value="Tía">Tía</option>
-                                                                    <option value="Otro">Otro</option>
-                                                                </select>
-                                                                <small id="parentesco-error" class="text-danger"></small>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <div class="input-group mb-3">
-                                                                <label class="input-group-text" for="inputGroupSelect01"><span
-                                                                        class="text-danger">(*)</span>Carnet de la
-                                                                    Patria Afiliada a:</label>
-                                                                <select class="form-select" id="carnet-patria" name="carnet-patria">
-                                                                    <option value=""></option>
-                                                                    <option value="1">Padre</option>
-                                                                    <option value="2">Madre</option>
-                                                                </select>
-                                                            </div>
-                                                            <small id="carnet-patria-error" class="text-danger " ></small>
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <div class="input-group mb-3">
-                                                                <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                                                        class="text-danger">(*)</span>Código</span>
-                                                                <input type="text" class="form-control" id="codigo" name="codigo"
-                                                                    aria-label="Sizing example input"
-                                                                    aria-describedby="inputGroup-sizing-default" maxlength="10" pattern="[0-9]+" title="Ingresa solamente numeros,no se permiten letras">
-                                                            </div>
-                                                            <small id="codigo-error" class="text-danger " ></small>
-                                                        </div>
-
-                                                    </div>
-
-
-                                                            <div class="row">
-                                                                <div class="col-md-4 mb-3">
-                                                                    <div class="input-group mb-3">
-                                                                        <span class="input-group-text" ><span
-                                                                                class="text-danger">(*)</span>Serial:</span>
-                                                                        <input type="text" class="form-control" id="serial" name="serial"
-                                                                            aria-label="Sizing example input"
-                                                                            aria-describedby="inputGroup-sizing-default" maxlength="9" pattern="[0-9]+" title="Ingresa solamente números, máximo 9 dígitos">
-                                                                    </div>
-                                                                    <small id="serial-error" class="text-danger" ></small>
-                                                                </div>
-
-                                                                <div class="col-md-4 mb-3">
-                                                                    <div class="input-group mb-3">
-                                                                        <label class="input-group-text" for="inputGroupSelect01"><span
-                                                                                class="text-danger">(*)</span>Tipo de Cuenta:</label>
-                                                                        <select class="form-select" id="tipo-cuenta" name="tipo-cuenta">
-                                                                            <option value=""></option>
-                                                                            <option value="1">Corriente</option>
-                                                                            <option value="2">Ahorro</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <small id="tipo-cuenta-error" class="text-danger"></small>
-                                                                </div>
-
-                                                                <div class="col-md-4 mb-3">
-                                                                    <div class="input-group mb-3">
-                                                                        <label class="input-group-text" for="inputGroupSelect01"><span
-                                                                                class="text-danger">(*)</span>Banco</label>
-                                                                        <select class="form-select" id="banco-representante" name="banco-representante">
-                                                                            <option value="">Seleccione</option>
-                                                                            @foreach ($bancos as $banco)
-                                                                                <option value="{{ $banco->id }}">{{ $banco->nombre_banco }}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                    <small id="banco-representante-error" class="text-danger"></small>
-                                                                </div>
-                                                            </div>
-
-                                                </div>
-
-                                                    <div class="border border-primary rounded px-1 py-1 mt-2">
-                                                            <div class="row">
-                                                                <div class="col-12">
-                                                                    <div class="mb-3">
-                                                                        <h4 class=" p-3">Dirección de Habitación</h4>
-                                                                        <textarea class="form-control" id="direccion-habitacion" name="direccion-habitacion" rows="3" maxlength="50" title="Coloque su Dirección Calle, Avenida..." placeholder="E.j : Barrio Araguaney Avenida 5 calle 9" required></textarea>
-                                                                        <small id="direccion-habitacion-error" class="text-danger"></small>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
+                <!-- Sección de Identificación Familiar y Datos de Cuenta -->
+                <div class="border rounded p-4 mb-4 bg-light">
+                    <h5 class="mb-4 pb-2 border-bottom">
+                        <i class="fas fa-id-card me-2"></i>Identificación Familiar y Datos de Cuenta
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="parentesco" class="form-label required">Parentesco</label>
+                                <select class="form-select" id="parentesco" name="parentesco" required>
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="Papá">Papá</option>
+                                    <option value="Mamá">Mamá</option>
+                                    <option value="Hermano">Hermano</option>
+                                    <option value="Hermana">Hermana</option>
+                                    <option value="Abuelo">Abuelo</option>
+                                    <option value="Abuela">Abuela</option>
+                                    <option value="Tío">Tío</option>
+                                    <option value="Tía">Tía</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un parentesco.
+                                </div>
+                                <small id="parentesco-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="carnet-patria" class="form-label">Carnet de la Patria Afiliado a</label>
+                                <select class="form-select" id="carnet-patria" name="carnet-patria">
+                                    <option value="" selected>Seleccione</option>
+                                    <option value="1">Padre</option>
+                                    <option value="2">Madre</option>
+                                </select>
+                                <small id="carnet-patria-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="codigo" class="form-label required">Código</label>
+                                <input type="text" class="form-control" id="codigo" name="codigo"
+                                    maxlength="10" pattern="[0-9]+" 
+                                    title="Ingrese solo números (máximo 10 dígitos)" required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese un código válido (solo números).
+                                </div>
+                                <small id="codigo-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="serial" class="form-label required">Serial</label>
+                                <input type="text" class="form-control" id="serial" name="serial"
+                                    maxlength="9" pattern="[0-9]+" 
+                                    title="Ingrese solo números (máximo 9 dígitos)" required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese un serial válido (solo números).
+                                </div>
+                                <small id="serial-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="tipo-cuenta" class="form-label required">Tipo de Cuenta</label>
+                                <select class="form-select" id="tipo-cuenta" name="tipo-cuenta" required>
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="1">Corriente</option>
+                                    <option value="2">Ahorro</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un tipo de cuenta.
+                                </div>
+                                <small id="tipo-cuenta-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="banco-representante" class="form-label required">Banco</label>
+                                <select class="form-select" id="banco-representante" name="banco-representante" required>
+                                    <option value="" disabled selected>Seleccione</option>
+                                    @foreach ($bancos as $banco)
+                                        <option value="{{ $banco->id }}">{{ $banco->nombre_banco }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un banco.
+                                </div>
+                                <small id="banco-representante-error" class="text-danger"></small>
+                            </div>
+                        </div>
                     </div>
-
+                </div>
+                
+                <!-- Sección de Dirección de Habitación -->
+                <div class="border rounded p-4 mb-4 bg-light">
+                    <h5 class="mb-4 pb-2 border-bottom">
+                        <i class="fas fa-home me-2"></i>Dirección de Habitación
+                    </h5>
+                    <div class="form-group">
+                        <label for="direccion-habitacion" class="form-label required">Dirección Completa</label>
+                        <textarea class="form-control" id="direccion-habitacion" name="direccion-habitacion" 
+                            rows="3" maxlength="200" 
+                            placeholder="Ej: Barrio Araguaney, Avenida 5 entre calles 8 y 9, Casa #12-34" 
+                            title="Ingrese su dirección completa incluyendo puntos de referencia"
+                            required></textarea>
+                        <div class="invalid-feedback">
+                            Por favor ingrese una dirección válida.
+                        </div>
+                        <small id="direccion-habitacion-error" class="text-danger"></small>
+                    </div>
+                </div>
+                                                    </div>
+                </div>
             </div>
         </div>
 
@@ -1068,7 +1130,7 @@
                             <i class="fas fa-times me-1"></i> Cancelar
                         </a>
                     </div>
-                </div><!-- Fin Sección Madre -->
+                </div>
             </form>
     </div>
 </div>
@@ -1168,7 +1230,7 @@
 @stop
 
 @section('js')
-    <script>
+       <script>
         // Datos de estados, municipios y localidades cargados desde Blade
         const ubicacionesData = @json($estados);
         
@@ -1191,6 +1253,112 @@
                 }
             }
         }
+
+        // Función para cargar municipios del representante
+        window.cargarMunicipiosRepresentante = function(estadoId) {
+            console.log('=== INICIO cargarMunicipiosRepresentante ===');
+            console.log('Estado ID recibido:', estadoId);
+            
+            const municipioSelect = document.getElementById('idMunicipio-representante');
+            const parroquiaSelect = document.getElementById('idparroquia-representante');
+            
+            if (!municipioSelect) {
+                console.error('No se encontró el select de municipio del representante');
+                return;
+            }
+
+            // Limpiar selects
+            municipioSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+            if (parroquiaSelect) {
+                parroquiaSelect.innerHTML = '<option value="">Seleccione un municipio primero</option>';
+            }
+
+            if (!estadoId) {
+                municipioSelect.innerHTML = '<option value="">Seleccione un estado</option>';
+                return;
+            }
+
+            try {
+                // Buscar el estado en los datos cargados
+                const estado = ubicacionesData.find(e => e.id == estadoId);
+                
+                if (!estado) {
+                    console.error('No se encontró el estado con ID:', estadoId);
+                    municipioSelect.innerHTML = '<option value="">Error: Estado no encontrado</option>';
+                    return;
+                }
+
+                // Usar la propiedad 'municipio' (singular) según la estructura de datos
+                const municipios = estado.municipio || [];
+                console.log(`Encontrados ${municipios.length} municipios para el estado ${estadoId}`);
+                
+                if (municipios.length > 0) {
+                    let options = '<option value="">Seleccione un municipio</option>';
+                    
+                    municipios.forEach(municipio => {
+                        const nombre = municipio.nombre_municipio || municipio.nombre || 'Municipio sin nombre';
+                        options += `<option value="${municipio.id}">${nombre}</option>`;
+                    });
+                    
+                    municipioSelect.innerHTML = options;
+                } else {
+                    municipioSelect.innerHTML = '<option value="">No hay municipios disponibles</option>';
+                }
+            } catch (error) {
+                console.error('Error al cargar municipios:', error);
+                municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
+            }
+            
+            console.log('=== FIN cargarMunicipiosRepresentante ===');
+        };
+
+        // Función para cargar parroquias del representante
+        window.cargarParroquiasRepresentante = function(municipioId) {
+            console.log('=== INICIO cargarParroquiasRepresentante ===');
+            console.log('Municipio ID:', municipioId);
+            
+            const selectParroquia = document.getElementById('idparroquia-representante');
+            if (!selectParroquia) {
+                console.error('No se encontró el select de parroquia del representante');
+                return;
+            }
+
+            // Limpiar opciones existentes
+            selectParroquia.innerHTML = '<option value="">Seleccione</option>';
+            
+            if (!municipioId) {
+                console.log('No se proporcionó ID de municipio');
+                return;
+            }
+
+            // Buscar el municipio seleccionado en los datos cargados
+            let municipioEncontrado = null;
+            
+            // Buscar en todos los estados
+            for (const estado of ubicacionesData) {
+                // Verificar si el estado tiene la propiedad 'municipio' (singular)
+                if (estado.municipio) {
+                    municipioEncontrado = estado.municipio.find(m => m.id == municipioId);
+                    if (municipioEncontrado) break;
+                }
+            }
+
+            if (municipioEncontrado && municipioEncontrado.localidades) {
+                console.log(`Encontradas ${municipioEncontrado.localidades.length} parroquias para el municipio ${municipioId}`);
+                
+                // Agregar opciones de parroquias
+                municipioEncontrado.localidades.forEach(parroquia => {
+                    const option = document.createElement('option');
+                    option.value = parroquia.id;
+                    option.textContent = parroquia.nombre_parroquia || parroquia.nombre;
+                    selectParroquia.appendChild(option);
+                });
+            } else {
+                console.log('No se encontraron parroquias para el municipio', municipioId);
+            }
+            
+            console.log('=== FIN cargarParroquiasRepresentante ===');
+        };
 
         // Funciones para cargar ubicaciones
         function cargarMunicipios(estadoId, municipioSelectId, localidadSelectId) {
@@ -1447,15 +1615,36 @@
 
             function cedulaSeRepiteEnFormulario(valor, idActual) {
                 if (!valor) return false;
+                
+                // Si es el campo de cédula del representante y está seleccionado "Progenitor como Representante", no marcar como duplicado
+                if (idActual === 'cedula-representante') {
+                    const progenitorRep = document.querySelector('input[name="tipo_representante"][value="progenitor_representante"]:checked');
+                    if (progenitorRep) {
+                        return false; // No marcar como duplicado si es progenitor representante
+                    }
+                }
+
                 const ids = ['cedula', 'cedula-padre', 'cedula-representante'];
                 let contador = 0;
-                ids.forEach(function(id) {
+
+                ids.forEach(id => {
+                    // No comparar consigo mismo
+                    if (id === idActual) return;
+                    
                     const campo = document.getElementById(id);
-                    if (campo && campo.value === valor) {
+                    if (campo && campo.value && campo.value === valor) {
+                        // Si es el campo de cédula del representante y está seleccionado "Progenitor como Representante", no contar como duplicado
+                        if (id === 'cedula-representante') {
+                            const progenitorRep = document.querySelector('input[name="tipo_representante"][value="progenitor_representante"]:checked');
+                            if (progenitorRep) {
+                                return; // No contar este campo si es progenitor representante
+                            }
+                        }
                         contador++;
                     }
                 });
-                return contador > 1;
+
+                return contador > 0; // Cambiado a > 0 para marcar como duplicado si se encuentra en cualquier otro campo
             }
 
             function verificarCedulaCampo(selector, personaIdSelector) {
@@ -1463,9 +1652,18 @@
                 if (!input) return;
 
                 input.addEventListener('blur', function() {
-                    const valor = this.value;
+                    const valor = this.value.trim();
                     limpiarCedulaError(this);
                     if (!valor) return;
+
+                    // Verificar si es el campo de cédula del representante y está seleccionado "Progenitor como Representante"
+                    const esProgenitorRepresentante = document.querySelector('input[name="tipo_representante"][value="progenitor_representante"]:checked') !== null;
+                    
+                    if (this.id === 'cedula-representante' && esProgenitorRepresentante) {
+                        // No validar cédula duplicada si es progenitor representante
+                        limpiarCedulaError(this);
+                        return;
+                    }
 
                     // Verificar repetición dentro del mismo formulario
                     if (cedulaSeRepiteEnFormulario(valor, this.id)) {
@@ -1669,123 +1867,296 @@
                 document.getElementById('correo-representante').value = correo;
             }
 
+// Función segura para obtener un elemento por ID
+const getElement = (id) => document.getElementById(id);
+
+// Función segura para establecer un valor en un elemento
+const setValue = (id, value) => {
+    const element = getElement(id);
+    if (element) element.value = value || '';
+};
+
+// Función para establecer valores en selects dependientes
+function setSelectValue(selectId, value, callback) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    
+    select.value = value;
+    if (select.value === value) {
+        // Disparar evento change para actualizar selects dependientes
+        select.dispatchEvent(new Event('change'));
+        if (callback) callback();
+    } else {
+        // Si el valor no se establece de inmediato, esperar un momento y volver a intentar
+        setTimeout(() => {
+            setSelectValue(selectId, value, callback);
+        }, 100);
+    }
+}
+
 function copiarDesdeMadreOPadreSiCoincide(cedula) {
-    if (!cedula) return false;
+    if (!cedula || !cedula.trim()) return false;
+    
+    // Limpiar errores previos
+    const errorElement = getElement('error-copia-datos');
+    if (errorElement) errorElement.remove();
 
     // Función para copiar ubicación
     const copiarUbicacion = (prefijoOrigen, prefijoDestino) => {
-        const estado = document.getElementById(`${prefijoOrigen}Estado`).value;
-        const municipio = document.getElementById(`${prefijoOrigen}Municipio`).value;
-        const parroquia = document.getElementById(`id${prefijoOrigen === '' ? 'parroquia' : 'parroquia-padre'}`).value;
-        
-        if (estado) {
-            document.getElementById('idEstado-representante').value = estado;
-            cargarMunicipios(estado, 'idMunicipio-representante', 'idparroquia-representante');
+        try {
+            const estadoEl = getElement(`${prefijoOrigen}Estado`);
+            const municipioEl = getElement(`${prefijoOrigen}Municipio`);
+            const parroquiaEl = getElement(`id${prefijoOrigen === '' ? 'parroquia' : 'parroquia-padre'}`);
             
-            if (municipio) {
-                setTimeout(() => {
-                    document.getElementById('idMunicipio-representante').value = municipio;
-                    cargarLocalidades(municipio, 'idparroquia-representante');
+            if (estadoEl && estadoEl.value) {
+                const estado = estadoEl.value;
+                setValue('idEstado-representante', estado);
+                
+                // Cargar municipios y manejar la carga asíncrona
+                if (typeof cargarMunicipios === 'function') {
+                    cargarMunicipios(estado, 'idMunicipio-representante', 'idparroquia-representante');
                     
-                    if (parroquia) {
+                    if (municipioEl && municipioEl.value) {
+                        const municipio = municipioEl.value;
                         setTimeout(() => {
-                            document.getElementById('idparroquia-representante').value = parroquia;
+                            setValue('idMunicipio-representante', municipio);
+                            
+                            if (typeof cargarLocalidades === 'function') {
+                                cargarLocalidades(municipio, 'idparroquia-representante');
+                                
+                                if (parroquiaEl && parroquiaEl.value) {
+                                    setTimeout(() => {
+                                        setValue('idparroquia-representante', parroquiaEl.value);
+                                    }, 100);
+                                }
+                            }
                         }, 100);
                     }
-                }, 100);
+                }
             }
+        } catch (error) {
+            console.error('Error al copiar ubicación:', error);
         }
     };
 
     // Función para copiar teléfono y prefijo
     const copiarTelefonoYPrefijo = (prefijoOrigen) => {
-        const telefono = document.getElementById(`${prefijoOrigen}telefono`).value;
-        const prefijo = document.getElementById(`${prefijoOrigen}prefijo`).value;
-        
-        if (telefono) document.getElementById('telefono-representante').value = telefono;
-        if (prefijo) document.getElementById('prefijo-representante').value = prefijo;
+        try {
+            const telefonoEl = getElement(`${prefijoOrigen}telefono`);
+            const prefijoEl = getElement(`${prefijoOrigen}prefijo`);
+            
+            if (telefonoEl && telefonoEl.value) setValue('telefono-representante', telefonoEl.value);
+            if (prefijoEl && prefijoEl.value) setValue('prefijo-representante', prefijoEl.value);
+        } catch (error) {
+            console.error('Error al copiar teléfono y prefijo:', error);
+        }
     };
 
     // Función para copiar lugar de nacimiento
     const copiarLugarNacimiento = (prefijoOrigen) => {
-        const lugarNacimiento = document.getElementById(`lugar-nacimiento${prefijoOrigen}`).value;
-        if (lugarNacimiento) {
-            document.getElementById('lugar-nacimiento-representante').value = lugarNacimiento;
+        try {
+            const lugarNacimientoEl = getElement(`lugar-nacimiento${prefijoOrigen}`);
+            if (lugarNacimientoEl && lugarNacimientoEl.value) {
+                setValue('lugar-nacimiento-representante', lugarNacimientoEl.value);
+            }
+        } catch (error) {
+            console.error('Error al copiar lugar de nacimiento:', error);
         }
     };
 
     // Función para copiar ocupación
     const copiarOcupacion = (prefijoOrigen) => {
-        const ocupacion = document.getElementById(`ocupacion-${prefijoOrigen}`).value;
-        const ocupacionRepresentante = document.getElementById('ocupacion-representante');
-        if (ocupacion && ocupacionRepresentante) {
-            ocupacionRepresentante.value = ocupacion;
+        try {
+            const ocupacionEl = getElement(`ocupacion-${prefijoOrigen}`);
+            const ocupacionRepresentanteEl = getElement('ocupacion-representante');
+            
+            if (ocupacionEl && ocupacionEl.value && ocupacionRepresentanteEl) {
+                ocupacionRepresentanteEl.value = ocupacionEl.value;
+            }
+        } catch (error) {
+            console.error('Error al copiar ocupación:', error);
         }
     };
 
     // Función para copiar convivencia
     const copiarConvivencia = (prefijoOrigen) => {
-        const convive = document.querySelector(`input[name="convive${prefijoOrigen}"]:checked`);
-        const conviveSiRepresentante = document.querySelector('input[name="convive-representante"][value="si"]');
-        const conviveNoRepresentante = document.querySelector('input[name="convive-representante"][value="no"]');
-        
-        if (convive) {
-            if (convive.value === 'si' || convive.value === '1') {
-                conviveSiRepresentante.checked = true;
-            } else if (convive.value === 'no' || convive.value === '0') {
-                conviveNoRepresentante.checked = true;
+        try {
+            const convive = document.querySelector(`input[name="convive${prefijoOrigen}"]:checked`);
+            const conviveSiRepresentante = document.querySelector('input[name="convive-representante"][value="si"]');
+            const conviveNoRepresentante = document.querySelector('input[name="convive-representante"][value="no"]');
+            
+            if (convive && conviveSiRepresentante && conviveNoRepresentante) {
+                if (convive.value === 'si' || convive.value === '1') {
+                    conviveSiRepresentante.checked = true;
+                } else if (convive.value === 'no' || convive.value === '0') {
+                    conviveNoRepresentante.checked = true;
+                }
             }
+        } catch (error) {
+            console.error('Error al copiar convivencia:', error);
+        }
+    };
+
+    // Función para copiar datos personales
+    const copiarDatosPersonales = (prefijoOrigen, esMadre = true) => {
+        try {
+            // Mapeo de campos para padre/madre
+            const campos = [
+                { origen: 'primer-nombre', destino: 'primer-nombre-representante' },
+                { origen: 'segundo-nombre', destino: 'segundo-nombre-representante' },
+                { origen: 'tercer-nombre', destino: 'tercer-nombre-representante' },
+                { origen: 'primer-apellido', destino: 'primer-apellido-representante' },
+                { origen: 'segundo-apellido', destino: 'segundo-apellido-representante' }
+            ];
+
+            // Copiar cada campo si existe
+            campos.forEach(campo => {
+                const valor = getElement(`${campo.origen}${prefijoOrigen}`)?.value;
+                if (valor !== undefined) {
+                    setValue(campo.destino, valor);
+                }
+            });
+
+            // Copiar fecha de nacimiento (manejar tanto con prefijo como sin él)
+            const fechaNacimiento = getElement(`fechaNacimiento${prefijoOrigen}`)?.value || 
+                                  getElement('fecha-nacimiento' + (esMadre ? '' : '-padre'))?.value ||
+                                  getElement('fecha-nacimiento' + prefijoOrigen.toLowerCase())?.value;
+            
+            if (fechaNacimiento) {
+                setValue('fecha-nacimiento-representante', fechaNacimiento);
+            }
+
+            // Copiar teléfono y prefijo
+            const telefono = getElement(`telefono${prefijoOrigen}`)?.value;
+            const prefijo = getElement(`prefijo${prefijoOrigen}`)?.value;
+            if (telefono) setValue('telefono-representante', telefono);
+            if (prefijo) setValue('prefijo-representante', prefijo);
+
+            // Copiar género (usando el campo correcto para padre)
+            const generoId = esMadre ? 
+                getElement('sexo')?.value : 
+                getElement('sexo-padre')?.value;
+            
+            if (generoId) {
+                setValue('sexo-representante', generoId);
+                // Disparar evento change para actualizar selects dependientes si es necesario
+                const selectGenero = getElement('sexo-representante');
+                if (selectGenero) {
+                    selectGenero.dispatchEvent(new Event('change'));
+                }
+            }
+            
+            // Copiar ubicación
+            const prefijoUbicacion = esMadre ? '' : '-padre';
+            const estado = getElement(`idEstado${prefijoUbicacion}`)?.value;
+            const municipio = getElement(`idMunicipio${prefijoUbicacion}`)?.value;
+            const parroquia = getElement(`idparroquia${prefijoUbicacion}`)?.value;
+            const lugarNacimiento = getElement(`lugar-nacimiento${prefijoUbicacion}`)?.value;
+            
+            // Establecer lugar de nacimiento
+            if (lugarNacimiento) {
+                setValue('lugar-nacimiento-representante', lugarNacimiento);
+            }
+            
+            // Establecer ubicación (estado, municipio, parroquia)
+            if (estado) {
+                // Usar setTimeout para asegurar que los selects se hayan cargado
+                setTimeout(() => {
+                    setSelectValue('idEstado-representante', estado, () => {
+                        if (municipio) {
+                            setTimeout(() => {
+                                setSelectValue('idMunicipio-representante', municipio, () => {
+                                    if (parroquia) {
+                                        setTimeout(() => {
+                                            setSelectValue('idparroquia-representante', parroquia);
+                                        }, 500);
+                                    }
+                                });
+                            }, 500);
+                        }
+                    });
+                }, 100);
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error al copiar datos personales:', error);
+            return false;
         }
     };
 
     // MADRE
-    const cedulaMadre = document.getElementById('cedula');
-    if (cedulaMadre && cedulaMadre.value === cedula) {
-        // Copiar datos personales
-        document.getElementById('primer-nombre-representante').value = document.getElementById('primer-nombre').value || '';
-        document.getElementById('segundo-nombre-representante').value = document.getElementById('segundo-nombre').value || '';
-        document.getElementById('tercer-nombre-representante').value = document.getElementById('tercer-nombre').value || '';
-        document.getElementById('primer-apellido-representante').value = document.getElementById('primer-apellido').value || '';
-        document.getElementById('segundo-apellido-representante').value = document.getElementById('segundo-apellido').value || '';
-        document.getElementById('fechaNacimiento-representante').value = document.getElementById('fechaNacimiento').value || '';
-        
-        const sexoRepresentante = document.getElementById('sexo-representante');
-        const sexoMadre = document.getElementById('sexo');
-        if (sexoRepresentante && sexoMadre) sexoRepresentante.value = sexoMadre.value;
-        
-        // Copiar datos adicionales
-        copiarLugarNacimiento('');
-        copiarTelefonoYPrefijo('');
-        copiarUbicacion('', '');
-        copiarOcupacion('madre');
-        copiarConvivencia('');
+    try {
+        const cedulaMadre = getElement('cedula');
+        if (cedulaMadre?.value === cedula) {
+            // Copiar datos personales
+            copiarDatosPersonales('', true);
+            
+            // Copiar datos adicionales
+            copiarLugarNacimiento('');
+            copiarTelefonoYPrefijo('');
+            copiarUbicacion('', '');
+            copiarOcupacion('madre');
+            copiarConvivencia('');
 
-        return true;
+            return true;
+        }
+    } catch (error) {
+        console.error('Error al copiar datos de la madre:', error);
     }
 
     // PADRE
-    const cedulaPadre = document.getElementById('cedula-padre');
-    if (cedulaPadre && cedulaPadre.value === cedula) {
-        // Copiar datos personales
-        document.getElementById('primer-nombre-representante').value = document.getElementById('primer-nombre-padre').value || '';
-        document.getElementById('segundo-nombre-representante').value = document.getElementById('segundo-nombre-padre').value || '';
-        document.getElementById('tercer-nombre-representante').value = document.getElementById('tercer-nombre-padre')?.value || '';
-        document.getElementById('primer-apellido-representante').value = document.getElementById('primer-apellido-padre').value || '';
-        document.getElementById('segundo-apellido-representante').value = document.getElementById('segundo-apellido-padre')?.value || '';
-        document.getElementById('fechaNacimiento-representante').value = document.getElementById('fechaNacimiento-padre').value || '';
-        
-        const sexoRepresentante = document.getElementById('sexo-representante');
-        const generoPadre = document.getElementById('genero-padre');
-        if (sexoRepresentante && generoPadre) sexoRepresentante.value = generoPadre.value;
-        
-        // Copiar datos adicionales
-        copiarLugarNacimiento('-padre');
-        copiarTelefonoYPrefijo('padre-');
-        copiarUbicacion('padre-', 'padre-');
-        copiarOcupacion('padre');
-        copiarConvivencia('-padre');
+    try {
+        const cedulaPadre = getElement('cedula-padre');
+        if (cedulaPadre?.value === cedula) {
+            // Copiar datos personales
+            copiarDatosPersonales('-padre', false);
+            
+            // Copiar datos adicionales
+            copiarLugarNacimiento('-padre');
+            copiarTelefonoYPrefijo('padre-');
+            copiarUbicacion('padre-', 'padre-');
+            copiarOcupacion('padre');
+            copiarConvivencia('-padre');
 
-        return true;
+            return true;
+        }
+    } catch (error) {
+        console.error('Error al copiar datos del padre:', error);
+    }
+
+    // Si no coincide con ninguno, mostrar mensaje
+    try {
+        const seccionRep = getElement('datos-representante');
+        if (seccionRep) {
+            // Remover mensaje anterior si existe
+            const mensajeAnterior = getElement('error-copia-datos');
+            if (mensajeAnterior) mensajeAnterior.remove();
+            
+            // Crear y mostrar nuevo mensaje
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'error-copia-datos';
+            errorDiv.className = 'alert alert-warning mt-3';
+            errorDiv.textContent = 'No se encontró un progenitor con esta cédula. Complete los datos manualmente.';
+            
+            // Insertar después del campo de cédula
+            const cedulaField = getElement('cedula-representante');
+            if (cedulaField?.parentNode) {
+                cedulaField.parentNode.insertBefore(errorDiv, cedulaField.nextSibling);
+            } else {
+                seccionRep.insertBefore(errorDiv, seccionRep.firstChild);
+            }
+        }
+        
+        // Limpiar campos de representante excepto la cédula
+        const campos = document.querySelectorAll('#datos-representante input[type="text"], #datos-representante input[type="email"], #datos-representante input[type="tel"], #datos-representante select');
+        campos.forEach(campo => {
+            if (campo.id !== 'cedula-representante') {
+                campo.value = '';
+            }
+        });
+    } catch (error) {
+        console.error('Error al mostrar mensaje de error:', error);
     }
 
     return false;
@@ -1814,34 +2185,117 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
             });
             toggleOrganizacion(); // Estado inicial
 
-            // Estado inicial: bloquear completamente el bloque de representante legal
-            const seccionRep = document.getElementById('datos-representante');
-            if (seccionRep) {
-                seccionRep.style.display = 'none';
-                const inputs = seccionRep.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => input.disabled = true);
+            // Variable global para la sección de representante
+            let seccionRep = null;
+
+            // Función para habilitar/deshabilitar la sección de representante legal
+            function toggleSeccionRepresentante(habilitar) {
+                // Inicializar seccionRep si aún no está definida
+                if (!seccionRep) {
+                    seccionRep = document.getElementById('datos-representante');
+                    if (!seccionRep) return;
+                }
+                
+                // Mostrar/ocultar la sección
+                seccionRep.style.display = habilitar ? 'block' : 'none';
+                
+                // Obtener todos los campos del formulario dentro de la sección
+                const formControls = seccionRep.querySelectorAll('input, select, textarea, button');
+                
+                // Habilitar/deshabilitar todos los campos
+                formControls.forEach(control => {
+                    if (control.type === 'button' || control.type === 'submit') {
+                        // Para botones, solo deshabilitar si es necesario
+                        control.disabled = !habilitar;
+                    } else if (control.type !== 'hidden') {
+                        // Para otros controles de formulario
+                        control.disabled = !habilitar;
+                        control.classList.toggle('bg-light', !habilitar);
+                        control.readOnly = !habilitar;
+                        
+                        // Si es un select, forzar la actualización del estilo
+                        if (control.tagName === 'SELECT' && typeof $.fn.select2 === 'function') {
+                            $(control).select2({
+                                disabled: !habilitar
+                            });
+                        }
+                    }
+                });
+                
+                // Si se deshabilita, limpiar validaciones
+                if (!habilitar) {
+                    const errores = seccionRep.querySelectorAll('.is-invalid, .invalid-feedback');
+                    errores.forEach(el => el.remove());
+                }
+                
+                // Forzar actualización de Select2
+                if (typeof $.fn.select2 === 'function') {
+                    $('select').select2();
+                }
             }
 
+            // Inicialización cuando el DOM esté listo
+            document.addEventListener('DOMContentLoaded', function() {
+                // Obtener referencia a la sección
+                seccionRep = document.getElementById('datos-representante');
+                
+                // Ocultar la sección por defecto
+                if (seccionRep) {
+                    seccionRep.style.display = 'none';
+                }
+                
+                // Verificar si hay un radio button seleccionado por defecto
+                const radioSeleccionado = document.querySelector('input[name="tipo_representante"]:checked');
+                if (radioSeleccionado) {
+                    toggleSeccionRepresentante(true);
+                }
+            });
+
+            // Manejar cambios en los radio buttons de tipo de representante
             document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     const tipo = this.value;
-                    const seccionRep = document.getElementById('datos-representante');
-
-                    if (!tipo) {
-                        // Sin selección: ocultar y bloquear todo
-                        if (seccionRep) {
-                            seccionRep.style.display = 'none';
-                            const inputs = seccionRep.querySelectorAll('input, select, textarea');
-                            inputs.forEach(input => input.disabled = true);
+                    
+                    // Limpiar errores de validación de cédula cuando se selecciona 'Progenitor como Representante'
+                    if (tipo === 'progenitor_representante') {
+                        const cedulaRepresentante = document.getElementById('cedula-representante');
+                        if (cedulaRepresentante) {
+                            limpiarCedulaError(cedulaRepresentante);
+                            
+                            // Si hay un valor en la cédula del representante, forzar la validación
+                            if (cedulaRepresentante.value) {
+                                cedulaRepresentante.dispatchEvent(new Event('blur'));
+                            }
                         }
-                        return;
                     }
-
-                    // Mostrar la sección y habilitar campos
-                    if (seccionRep) {
-                        seccionRep.style.display = 'block';
-                        const inputs = seccionRep.querySelectorAll('input, select, textarea');
-                        inputs.forEach(input => input.disabled = false);
+                    
+                    if (tipo) {
+                        // Si se selecciona alguna opción, habilitar la sección
+                        toggleSeccionRepresentante(true);
+                        
+                        // Si es 'progenitor_representante', limpiar el campo de cédula para que el usuario lo llene
+                        if (tipo === 'progenitor_representante') {
+                            const cedulaRepresentante = document.getElementById('cedula-representante');
+                            if (cedulaRepresentante) {
+                                // Limpiar el campo de cédula y enfocarlo para que el usuario lo llene
+                                cedulaRepresentante.value = '';
+                                cedulaRepresentante.focus();
+                                
+                                // Agregar evento para copiar datos cuando se ingrese la cédula
+                                const handleCedulaBlur = function() {
+                                    if (cedulaRepresentante.value.trim() !== '') {
+                                        copiarDesdeMadreOPadreSiCoincide(cedulaRepresentante.value);
+                                    }
+                                };
+                                
+                                // Remover cualquier evento anterior para evitar duplicados
+                                cedulaRepresentante.removeEventListener('blur', handleCedulaBlur);
+                                cedulaRepresentante.addEventListener('blur', handleCedulaBlur);
+                            }
+                        }
+                    } else {
+                        // Sin selección: ocultar y bloquear todo
+                        toggleSeccionRepresentante(false);
                     }
 
                     // Si es progenitor_representante, intentar copiar datos del padre/madre
@@ -1940,5 +2394,991 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
                 });
             });
         });
+        
+        // Función para mostrar errores
+function mostrarError(elemento, mensaje) {
+    if (!elemento) return;
+    
+    const grupo = elemento.closest('.form-group') || elemento.closest('.input-group') || elemento.closest('.mb-3');
+    if (!grupo) return;
+
+    let errorElement = grupo.querySelector('.invalid-feedback');
+    if (!errorElement) {
+        errorElement = document.createElement('div');
+        errorElement.className = 'invalid-feedback d-block';
+        grupo.appendChild(errorElement);
+    }
+    errorElement.textContent = mensaje;
+    
+    // Añadir clases de error
+    elemento.classList.add('is-invalid');
+    if (elemento.tagName === 'SELECT') {
+        elemento.classList.add('border-danger');
+    }
+}
+
+// Función para limpiar errores
+function limpiarError(elemento) {
+    if (!elemento) return;
+    
+    const grupo = elemento.closest('.form-group') || elemento.closest('.input-group') || elemento.closest('.mb-3');
+    if (!grupo) return;
+
+    const errorElement = grupo.querySelector('.invalid-feedback');
+    if (errorElement) {
+        errorElement.remove();
+    }
+    
+    elemento.classList.remove('is-invalid');
+    if (elemento.tagName === 'SELECT') {
+        elemento.classList.remove('border-danger');
+    }
+}
+
+// Validar campo requerido
+function validarRequerido(input) {
+    if (!input) return false;
+    if (!input.value.trim()) {
+        mostrarError(input, 'Este campo es obligatorio');
+        return false;
+    }
+    limpiarError(input);
+    return true;
+}
+
+// Validar selección de opción
+function validarSeleccion(select) {
+    if (!select) return false;
+    if (!select.value) {
+        mostrarError(select, 'Debe seleccionar una opción');
+        return false;
+    }
+    limpiarError(select);
+    return true;
+}
+
+// Función para verificar si se ha seleccionado "Progenitor como Representante"
+function esProgenitorRepresentante() {
+    return document.querySelector('input[name="tipo_representante"][value="progenitor_representante"]:checked') !== null;
+}
+
+// Validar cédula (solo verifica que no esté vacío si es requerido)
+function validarCedula(input) {
+    if (!input) return true;  // No hay input, no validar
+    
+    const cedula = input.value.trim();
+    if (input.required && !cedula) {
+        mostrarError(input, 'La cédula es obligatoria');
+        return false;
+    }
+    
+    limpiarError(input);
+    return true;
+}
+
+// Validar teléfono
+function validarTelefono(input) {
+    if (!input) return false;
+    const telefono = input.value.trim();
+    if (!telefono) {
+        mostrarError(input, 'El teléfono es obligatorio');
+        return false;
+    }
+    if (!/^\d{7,11}$/.test(telefono)) {
+        mostrarError(input, 'El teléfono debe tener entre 7 y 11 dígitos');
+        return false;
+    }
+    limpiarError(input);
+    return true;
+}
+
+// Validar fecha de nacimiento
+function validarFechaNacimiento(input) {
+    if (!input) return false;
+    if (!input.value) {
+        mostrarError(input, 'La fecha de nacimiento es obligatoria');
+        return false;
+    }
+    
+    const fechaNacimiento = new Date(input.value);
+    const hoy = new Date();
+    const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    
+    if (fechaNacimiento > hoy) {
+        mostrarError(input, 'La fecha no puede ser futura');
+        return false;
+    }
+    if (edad < 18) {
+        mostrarError(input, 'El representante debe ser mayor de edad');
+        return false;
+    }
+    
+    limpiarError(input);
+    return true;
+}
+
+// Configurar validación en tiempo real para un campo
+function configurarValidacion(input, validacion) {
+    if (!input) return;
+    
+    // Validar al perder el foco
+    input.addEventListener('blur', function() {
+        // No validar cédula de representante si es "Progenitor como Representante"
+        if (this.id === 'cedula-representante' && esProgenitorRepresentante()) {
+            limpiarError(this);
+            return;
+        }
+        validacion(this);
+    });
+
+    // Limpiar errores al escribir
+    input.addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+            limpiarError(this);
+        }
+    });
+    
+    // Si es el campo de cédula del representante, agregar evento para el cambio de tipo de representante
+    if (input.id === 'cedula-representante') {
+        document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'progenitor_representante') {
+                    limpiarError(input);
+                } else {
+                    // Si cambia a otro tipo, validar la cédula
+                    validarCedula(input);
+                }
+            });
+        });
+    }
+}
+
+// Configurar validación para selects
+function configurarValidacionSelect(select) {
+    if (!select) return;
+    
+    select.addEventListener('change', function() {
+        if (this.value) {
+            limpiarError(this);
+        } else {
+            validarSeleccion(this);
+        }
+    });
+}
+
+// Configurar validaciones para la madre
+function configurarValidacionesMadre() {
+    const camposMadre = {
+        // Datos personales
+        'primer-nombre': validarRequerido,
+        'primer-apellido': validarRequerido,
+        'cedula': validarCedula,
+        'fechaNacimiento': validarFechaNacimiento,
+        'sexo': validarSeleccion,
+        'lugar-nacimiento': validarRequerido,
+        // Ubicación
+        'idEstado': validarSeleccion,
+        'idMunicipio': validarSeleccion,
+        'idparroquia': validarSeleccion,
+        // Contacto
+        'prefijo': validarSeleccion,
+        'telefono': validarTelefono,
+        // Relación familiar
+        'ocupacion-madre': validarRequerido,
+        'convive': validarSeleccion
+    };
+
+    Object.entries(camposMadre).forEach(([id, validacion]) => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            if (elemento.tagName === 'SELECT') {
+                configurarValidacionSelect(elemento);
+            } else if (elemento.type === 'radio' || elemento.type === 'checkbox') {
+                // Para radios, configurar en todos los del mismo nombre
+                const radioName = elemento.name;
+                const radioGroup = document.querySelectorAll(`input[name="${radioName}"]`);
+                if (radioGroup.length > 0) {
+                    radioGroup.forEach(radio => {
+                        radio.addEventListener('change', () => {
+                            const selected = document.querySelector(`input[name="${radioName}"]:checked`);
+                            if (!selected) {
+                                mostrarError(radio, 'Debe seleccionar una opción');
+                            } else {
+                                limpiarError(radio);
+                                // Limpiar errores de otros radios del mismo grupo
+                                radioGroup.forEach(r => limpiarError(r));
+                            }
+                        });
+                    });
+                }
+            } else {
+                configurarValidacion(elemento, validacion);
+            }
+        }
+    });
+}
+
+// Configurar validaciones para el padre
+function configurarValidacionesPadre() {
+    const camposPadre = {
+        // Datos personales
+        'primer-nombre-padre': validarRequerido,
+        'primer-apellido-padre': validarRequerido,
+        'cedula-padre': validarCedula,
+        'fechaNacimiento-padre': validarFechaNacimiento,
+        'genero-padre': validarSeleccion,
+        'lugar-nacimiento-padre': validarRequerido,
+        // Ubicación
+        'idEstado-padre': validarSeleccion,
+        'idMunicipio-padre': validarSeleccion,
+        'idparroquia-padre': validarSeleccion,
+        // Contacto
+        'prefijo-padre': validarSeleccion,
+        'telefono-padre': validarTelefono,
+        // Relación familiar
+        'ocupacion-padre': validarRequerido,
+        'convive-padre': validarSeleccion
+    };
+
+    Object.entries(camposPadre).forEach(([id, validacion]) => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            if (elemento.tagName === 'SELECT') {
+                configurarValidacionSelect(elemento);
+            } else if (elemento.type === 'radio' || elemento.type === 'checkbox') {
+                const radioName = elemento.name;
+                const radioGroup = document.querySelectorAll(`input[name="${radioName}"]`);
+                if (radioGroup.length > 0) {
+                    radioGroup.forEach(radio => {
+                        radio.addEventListener('change', () => {
+                            const selected = document.querySelector(`input[name="${radioName}"]:checked`);
+                            if (!selected) {
+                                mostrarError(radio, 'Debe seleccionar una opción');
+                            } else {
+                                limpiarError(radio);
+                                // Limpiar errores de otros radios del mismo grupo
+                                radioGroup.forEach(r => limpiarError(r));
+                            }
+                        });
+                    });
+                }
+            } else {
+                configurarValidacion(elemento, validacion);
+            }
+        }
+    });
+}
+
+// Configurar validaciones para el representante legal
+function configurarValidacionesRepresentante() {
+    const camposRepresentante = {
+        // Datos personales
+        'primer-nombre-representante': validarRequerido,
+        'primer-apellido-representante': validarRequerido,
+        'cedula-representante': validarCedula,
+        'fechaNacimiento-representante': validarFechaNacimiento,
+        'sexo-representante': validarSeleccion,
+        'lugar-nacimiento-representante': validarRequerido,
+        // Ubicación
+        'idEstado-representante': validarSeleccion,
+        'idMunicipio-representante': validarSeleccion,
+        'idparroquia-representante': validarSeleccion,
+        // Contacto
+        'prefijo-representante': validarSeleccion,
+        'telefono-representante': validarTelefono,
+        // Relación familiar
+        'ocupacion-representante': validarRequerido,
+        'convive-representante': validarSeleccion,
+        // Datos legales
+        'parentesco': validarSeleccion,
+        'tipo-cuenta': validarSeleccion,
+        'banco-representante': validarSeleccion
+    };
+
+    Object.entries(camposRepresentante).forEach(([id, validacion]) => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            if (elemento.tagName === 'SELECT') {
+                configurarValidacionSelect(elemento);
+            } else if (elemento.type === 'radio' || elemento.type === 'checkbox') {
+                const radioName = elemento.name;
+                const radioGroup = document.querySelectorAll(`input[name="${radioName}"]`);
+                if (radioGroup.length > 0) {
+                    radioGroup.forEach(radio => {
+                        radio.addEventListener('change', () => {
+                            const selected = document.querySelector(`input[name="${radioName}"]:checked`);
+                            if (!selected) {
+                                mostrarError(radio, 'Debe seleccionar una opción');
+                            } else {
+                                limpiarError(radio);
+                                // Limpiar errores de otros radios del mismo grupo
+                                radioGroup.forEach(r => limpiarError(r));
+                            }
+                        });
+                    });
+                }
+            } else {
+                configurarValidacion(elemento, validacion);
+            }
+        }
+    });
+}
+
+// Función para inicializar las validaciones
+function inicializarValidaciones() {
+    // Configurar validaciones
+    configurarValidacionesMadre();
+    configurarValidacionesPadre();
+    configurarValidacionesRepresentante();
+
+    // Validar formulario antes de enviar
+    const formulario = document.querySelector('form');
+    if (formulario) {
+        // Guardar el manejador original si existe
+        const originalSubmit = formulario.onsubmit;
+
+        // Agregar nuestro manejador
+        formulario.addEventListener('submit', function(e) {
+            let valido = true;
+            
+            // Limpiar errores previos
+            const erroresPrevios = formulario.querySelectorAll('.is-invalid');
+            erroresPrevios.forEach(el => el.classList.remove('is-invalid'));
+            
+            const mensajesError = formulario.querySelectorAll('.invalid-feedback');
+            mensajesError.forEach(el => el.remove());
+            
+            // Validar todos los campos requeridos
+            const requiredInputs = formulario.querySelectorAll('[required]');
+            requiredInputs.forEach(input => {
+                if (input.offsetParent !== null) { // Solo validar campos visibles
+                    if (input.type === 'radio' || input.type === 'checkbox') {
+                        const name = input.name;
+                        const radioGroup = Array.from(document.querySelectorAll(`input[name="${name}"]`));
+                        const isRequired = radioGroup.some(radio => radio.required);
+                        
+                        if (isRequired) {
+                            const checked = formulario.querySelector(`input[name="${name}"]:checked`);
+                            if (!checked) {
+                                const firstRadio = radioGroup[0];
+                                mostrarError(firstRadio, 'Debe seleccionar una opción');
+                                valido = false;
+                            }
+                        }
+                    } else if (input.required && !input.value.trim()) {
+                        mostrarError(input, 'Este campo es obligatorio');
+                        valido = false;
+                    }
+                }
+            });
+
+            if (!valido) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                
+                // Desplazarse al primer error
+                const primerError = formulario.querySelector('.is-invalid');
+                if (primerError) {
+                    primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    primerError.focus();
+                }
+                return false;
+            }
+            
+            // Si hay un manejador original, ejecutarlo
+            if (originalSubmit) {
+                const result = originalSubmit.call(formulario, e);
+                if (result === false) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            
+            return true;
+        }, true); // Usar captura para asegurarnos de ejecutarnos primero
+    }
+}
+
+// Función para validar un campo individual con validaciones específicas
+function validarCampo(campo, mensajeError) {
+    if (!campo) return false;
+    
+    const valor = campo.value.trim();
+    let esValido = true;
+    let mensaje = '';
+    
+    // Validar campo requerido
+    const esRequerido = campo.required || campo.getAttribute('required') !== null;
+    
+    // Campos que siempre son obligatorios independientemente del atributo required
+    const camposObligatorios = [
+        'lugar-nacimiento-representante',
+        'carnet-patria',
+        'codigo-carnet',
+        'serial-carnet'
+    ];
+    
+    // Verificar si el campo es obligatorio
+    const esCampoObligatorio = camposObligatorios.includes(campo.id) || 
+                              (campo.id.includes('lugar-nacimiento') && !campo.id.includes('lugar-nacimiento-madre') && !campo.id.includes('lugar-nacimiento-padre'));
+    
+    // Forzar el atributo required si es un campo obligatorio
+    if (esCampoObligatorio) {
+        campo.required = true;
+    }
+    
+    if ((esRequerido || esCampoObligatorio) && valor === '') {
+        esValido = false;
+        mensaje = 'Este campo es obligatorio';
+    }
+    
+    // Validaciones específicas por tipo de campo
+    if (esValido && valor !== '') {
+        // Validar nombres (solo letras, espacios y caracteres especiales comunes en nombres)
+        if (campo.id.includes('nombre') || campo.id.includes('apellido') || 
+            campo.name.includes('nombre') || campo.name.includes('apellido')) {
+            const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s'-]+$/;
+            if (!nombreRegex.test(valor)) {
+                esValido = false;
+                mensaje = 'Solo se permiten letras y espacios en este campo';
+            }
+        }
+        // Validar ubicaciones (estado, municipio, parroquia, lugar de nacimiento)
+        else if (campo.id.includes('lugar-nacimiento') || 
+                campo.id.includes('idEstado') || 
+                campo.id.includes('idMunicipio') || 
+                campo.id.includes('idparroquia')) {
+            if (valor === '' || valor === 'Seleccione') {
+                esValido = false;
+                mensaje = 'Este campo es obligatorio';
+                
+                // Asegurarse de que el campo se marque como inválido visualmente
+                if (campo.id === 'lugar-nacimiento-representante') {
+                    campo.classList.add('is-invalid');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'invalid-feedback';
+                    errorDiv.textContent = mensaje;
+                    
+                    // Insertar el mensaje de error después del campo
+                    const parent = campo.parentNode;
+                    if (parent && !parent.querySelector('.invalid-feedback')) {
+                        parent.appendChild(errorDiv);
+                    }
+                }
+            }
+        }
+        // Validar Carnet de la Patria
+        else if (campo.id === 'carnet-patria') {
+            if (valor === '' || valor === 'Seleccione') {
+                esValido = false;
+                mensaje = 'Debe seleccionar una opción';
+            } else if (valor !== '0') { // Si no es 'No aplica'
+                // Validar campos de código y serial si está afiliado
+                const codigoCarnet = document.getElementById('codigo-carnet');
+                const serialCarnet = document.getElementById('serial-carnet');
+                
+                if (codigoCarnet && codigoCarnet.value.trim() === '') {
+                    esValido = false;
+                    mostrarError(codigoCarnet, 'El código del carnet es obligatorio');
+                }
+                
+                if (serialCarnet && serialCarnet.value.trim() === '') {
+                    esValido = false;
+                    mostrarError(serialCarnet, 'El serial del carnet es obligatorio');
+                }
+            }
+        }
+        // Validar formato de código y serial de carnet
+        else if (campo.id === 'codigo-carnet' || campo.id === 'serial-carnet') {
+            if (valor !== '') {
+                // Validar que solo contenga números y letras
+                const codigoRegex = /^[A-Za-z0-9]+$/;
+                if (!codigoRegex.test(valor)) {
+                    esValido = false;
+                    mensaje = 'Solo se permiten letras y números';
+                } else if (valor.length < 5) {
+                    esValido = false;
+                    mensaje = 'Debe tener al menos 5 caracteres';
+                }
+            } else {
+                // Si el campo está vacío, verificar si es obligatorio
+                const carnetAfiliado = document.getElementById('carnet-patria');
+                if (carnetAfiliado && carnetAfiliado.value !== '0' && carnetAfiliado.value !== '') {
+                    esValido = false;
+                    mensaje = 'Este campo es obligatorio';
+                }
+            }
+        }
+        // Validar email
+        if (campo.type === 'email' || campo.getAttribute('data-type') === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(valor)) {
+                esValido = false;
+                mensaje = 'Ingrese un correo electrónico válido';
+            }
+        }
+        // Validar números
+        else if (campo.type === 'number' || campo.getAttribute('data-type') === 'number') {
+            if (isNaN(valor)) {
+                esValido = false;
+                mensaje = 'Ingrese un número válido';
+            } else {
+                const min = campo.getAttribute('min');
+                const max = campo.getAttribute('max');
+                const numVal = parseFloat(valor);
+                
+                if (min !== null && numVal < parseFloat(min)) {
+                    esValido = false;
+                    mensaje = `El valor mínimo permitido es ${min}`;
+                } else if (max !== null && numVal > parseFloat(max)) {
+                    esValido = false;
+                    mensaje = `El valor máximo permitido es ${max}`;
+                }
+            }
+        }
+        // Validar teléfono
+        else if (campo.id.includes('telefono') || campo.getAttribute('data-type') === 'phone') {
+            const phoneRegex = /^[0-9\s\-\(\)]+$/;
+            if (!phoneRegex.test(valor)) {
+                esValido = false;
+                mensaje = 'Ingrese un número de teléfono válido';
+            }
+        }
+        // Validación de cédula/RIF eliminada para permitir cualquier valor
+        // Se mantiene el comentario para referencia
+    }
+    
+    if (!esValido) {
+        mostrarError(campo, mensaje || mensajeError);
+        return false;
+    }
+    
+    limpiarError(campo);
+    return true;
+}
+
+// Función para validar un grupo de radio buttons o checkboxes
+function validarRadioGroup(nombreGrupo, mensajeError) {
+    const inputs = document.querySelectorAll(`input[name="${nombreGrupo}"]`);
+    if (inputs.length === 0) return true;
+    
+    const esRadio = inputs[0].type === 'radio';
+    const seleccionado = Array.from(inputs).some(input => input.checked);
+    const esRequerido = inputs[0].required || inputs[0].getAttribute('required') !== null;
+    
+    // Solo validar si es requerido
+    if (esRequerido && !seleccionado) {
+        const primerInput = inputs[0];
+        const errorElement = primerInput.closest('.form-group') || primerInput.closest('.form-check');
+        mostrarError(errorElement, mensajeError || `Debe seleccionar ${esRadio ? 'una opción' : 'al menos una opción'}`);
+        return false;
+    }
+    
+    // Limpiar errores si es válido
+    if (seleccionado) {
+        inputs.forEach(input => {
+            const errorElement = input.closest('.form-group') || input.closest('.form-check');
+            limpiarError(errorElement);
+        });
+    }
+    
+    return true;
+}
+
+// Función para validar la sección de la madre
+function validarSeccionMadre() {
+    let valido = true;
+    
+    // Validar estado de la madre
+    if (!validarRadioGroup('estado_madre', 'Debe seleccionar el estado de la madre')) {
+        valido = false;
+    }
+    
+    // Si la madre está presente, validar sus datos
+    if (document.querySelector('input[name="estado_madre"]:checked')?.value === 'Presente') {
+        const camposMadre = [
+            { id: 'tipo-ci', mensaje: 'Seleccione el tipo de documento' },
+            { id: 'cedula', mensaje: 'Ingrese el número de cédula' },
+            { id: 'primer-nombre', mensaje: 'Ingrese el primer nombre' },
+            { id: 'primer-apellido', mensaje: 'Ingrese el primer apellido' },
+            { id: 'sexo', mensaje: 'Seleccione el género' },
+            { id: 'lugar-nacimiento', mensaje: 'Ingrese el lugar de nacimiento' },
+            { id: 'idEstado', mensaje: 'Seleccione el estado' },
+            { id: 'idMunicipio', mensaje: 'Seleccione el municipio' },
+            { id: 'idparroquia', mensaje: 'Seleccione la parroquia' },
+            { id: 'prefijo', mensaje: 'Seleccione el prefijo telefónico' },
+            { id: 'telefono', mensaje: 'Ingrese el número de teléfono' },
+            { id: 'ocupacion-madre', mensaje: 'Seleccione una ocupación' }
+        ];
+        
+        // Asegurarse de que los campos de ubicación sean requeridos
+        const ubicaciones = ['lugar-nacimiento', 'idEstado', 'idMunicipio', 'idparroquia'];
+        ubicaciones.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) elemento.required = true;
+        });
+        
+        camposMadre.forEach(campo => {
+            const elemento = document.getElementById(campo.id);
+            if (elemento && !validarCampo(elemento, campo.mensaje)) {
+                valido = false;
+            }
+        });
+    }
+    
+    return valido;
+}
+
+// Función para validar la sección del padre
+function validarSeccionPadre() {
+    let valido = true;
+    
+    // Validar estado del padre
+    if (!validarRadioGroup('estado_padre', 'Debe seleccionar el estado del padre')) {
+        valido = false;
+    }
+    
+    // Si el padre está presente, validar sus datos
+    if (document.querySelector('input[name="estado_padre"]:checked')?.value === 'Presente') {
+        const camposPadre = [
+            { id: 'tipo-ci-padre', mensaje: 'Seleccione el tipo de documento' },
+            { id: 'cedula-padre', mensaje: 'Ingrese el número de cédula' },
+            { id: 'primer-nombre-padre', mensaje: 'Ingrese el primer nombre' },
+            { id: 'primer-apellido-padre', mensaje: 'Ingrese el primer apellido' },
+            { id: 'sexo-padre', mensaje: 'Seleccione el género' },
+            { id: 'lugar-nacimiento-padre', mensaje: 'Ingrese el lugar de nacimiento' },
+            { id: 'idEstado-padre', mensaje: 'Seleccione el estado' },
+            { id: 'idMunicipio-padre', mensaje: 'Seleccione el municipio' },
+            { id: 'idparroquia-padre', mensaje: 'Seleccione la parroquia' },
+            { id: 'prefijo-padre', mensaje: 'Seleccione el prefijo telefónico' },
+            { id: 'telefono-padre', mensaje: 'Ingrese el número de teléfono' },
+            { id: 'ocupacion-padre', mensaje: 'Seleccione una ocupación' }
+        ];
+        
+        // Asegurarse de que los campos de ubicación sean requeridos
+        const ubicaciones = ['lugar-nacimiento-padre', 'idEstado-padre', 'idMunicipio-padre', 'idparroquia-padre'];
+        ubicaciones.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) elemento.required = true;
+        });
+        
+        camposPadre.forEach(campo => {
+            const elemento = document.getElementById(campo.id);
+            if (elemento && !validarCampo(elemento, campo.mensaje)) {
+                valido = false;
+            }
+        });
+    }
+    
+    return valido;
+}
+
+// Función para validar la sección del representante legal
+function validarSeccionRepresentante() {
+    let valido = true;
+    
+    // Validar tipo de representante
+    if (!validarRadioGroup('tipo_representante', 'Seleccione el tipo de representante')) {
+        valido = false;
+    }
+    
+    const camposRepresentante = [
+        { id: 'tipo-ci-representante', mensaje: 'Seleccione el tipo de documento' },
+        { id: 'cedula-representante', mensaje: 'Ingrese el número de cédula' },
+        { id: 'primer-nombre-representante', mensaje: 'Ingrese el primer nombre' },
+        { id: 'primer-apellido-representante', mensaje: 'Ingrese el primer apellido' },
+        { id: 'sexo-representante', mensaje: 'Seleccione el género' },
+        { id: 'lugar-nacimiento-representante', mensaje: 'Ingrese el lugar de nacimiento' },
+        { id: 'idEstado-representante', mensaje: 'Seleccione el estado' },
+        { id: 'idMunicipio-representante', mensaje: 'Seleccione el municipio' },
+        { id: 'idparroquia-representante', mensaje: 'Seleccione la parroquia' },
+        { id: 'prefijo-representante', mensaje: 'Seleccione el prefijo telefónico' },
+        { id: 'telefono-representante', mensaje: 'Ingrese el número de teléfono' },
+        { id: 'parentesco', mensaje: 'Seleccione el parentesco' },
+        { id: 'banco-representante', mensaje: 'Seleccione el banco' },
+        { id: 'tipo-cuenta-representante', mensaje: 'Seleccione el tipo de cuenta' },
+        { id: 'numero-cuenta-representante', mensaje: 'Ingrese el número de cuenta' },
+        { id: 'carnet-patria', mensaje: 'Seleccione la opción de Carnet de la Patria' },
+        { id: 'codigo-carnet', mensaje: 'Ingrese el código del carnet' },
+        { id: 'serial-carnet', mensaje: 'Ingrese el serial del carnet' }
+    ];
+    
+    // Asegurarse de que los campos de ubicación sean requeridos
+    const ubicaciones = [
+        'lugar-nacimiento-representante', 
+        'idEstado-representante', 
+        'idMunicipio-representante', 
+        'idparroquia-representante'
+    ];
+    
+    ubicaciones.forEach(id => {
+        const elemento = document.getElementById(id);
+        if (elemento) elemento.required = true;
+    });
+    
+    camposRepresentante.forEach(campo => {
+        const elemento = document.getElementById(campo.id);
+        if (elemento && !validarCampo(elemento, campo.mensaje)) {
+            valido = false;
+        }
+    });
+    
+    return valido;
+}
+
+// Función para validar todo el formulario
+function validarFormularioCompleto() {
+    // Limpiar errores previos
+    document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+    
+    // Validar cada sección
+    const validoMadre = validarSeccionMadre();
+    const validoPadre = validarSeccionPadre();
+    const validoRepresentante = validarSeccionRepresentante();
+    
+    // Si hay errores, desplazarse al primero
+    if (!validoMadre || !validoPadre || !validoRepresentante) {
+        const primerError = document.querySelector('.is-invalid');
+        if (primerError) {
+            primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            primerError.focus();
+        }
+        return false;
+    }
+    
+    return true;
+}
+
+// Función para agregar validación en tiempo real
+function agregarValidacionEnTiempoReal() {
+    // Validar campos de texto, email, número, teléfono y selects
+    document.querySelectorAll('input[type="text"], input[type="email"], input[type="number"], input[type="tel"], textarea, select').forEach(input => {
+        if (input.type === 'file') return;
+        
+        // Marcar como requerido si es un campo de ubicación o del Carnet de la Patria
+        if (input.id.includes('lugar-nacimiento') || 
+            input.id.includes('idEstado') || 
+            input.id.includes('idMunicipio') || 
+            input.id.includes('idparroquia') ||
+            input.id === 'carnet-patria' ||
+            input.id === 'codigo-carnet' ||
+            input.id === 'serial-carnet') {
+            input.required = true;
+            
+            // Agregar clase de Bootstrap para estilos de campo requerido
+            if (!input.classList.contains('is-required')) {
+                input.classList.add('is-required');
+            }
+        }
+        
+        // Validar campos del Carnet de la Patria cuando cambian
+        if (input.id === 'carnet-patria') {
+            input.addEventListener('change', function() {
+                const codigoCarnet = document.getElementById('codigo-carnet');
+                const serialCarnet = document.getElementById('serial-carnet');
+                
+                // Mostrar/ocultar campos según la selección
+                if (this.value === '0') { // No aplica
+                    if (codigoCarnet) codigoCarnet.required = false;
+                    if (serialCarnet) serialCarnet.required = false;
+                } else {
+                    if (codigoCarnet) codigoCarnet.required = true;
+                    if (serialCarnet) serialCarnet.required = true;
+                }
+                
+                validarCampo(this, 'Seleccione una opción');
+            });
+        }
+        
+        // Validar al salir del campo
+        input.addEventListener('blur', function() {
+            // Validar siempre los campos obligatorios, independientemente de si tienen valor o no
+            if (this.required || this.id.includes('lugar-nacimiento') || this.value.trim() !== '') {
+                validarCampo(this, 'Este campo es obligatorio');
+            }
+        });
+        
+        // Validar mientras se escribe (solo si ya tiene un valor)
+        input.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                validarCampo(this, 'Este campo es obligatorio');
+            } else {
+                limpiarError(this);
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        // Validar cambios en selects de ubicación
+        if (input.tagName === 'SELECT' && 
+            (input.id.includes('idEstado') || 
+             input.id.includes('idMunicipio') || 
+             input.id.includes('idparroquia'))) {
+            input.addEventListener('change', function() {
+                validarCampo(this, 'Este campo es obligatorio');
+            });
+        }
+    });
+    
+    // Validar radio buttons y checkboxes
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const name = this.name;
+            const formGroup = this.closest('.form-group') || this.closest('.form-check');
+            
+            if (this.type === 'radio') {
+                validarRadioGroup(name);
+            } 
+            else if (this.required) {
+                const checked = document.querySelectorAll(`input[name="${name}"]:checked`).length > 0;
+                if (!checked) {
+                    mostrarError(formGroup, 'Debe seleccionar al menos una opción');
+                } else {
+                    limpiarError(formGroup);
+                }
+            }
+        });
+    });
+}
+
+// Inicializar validaciones cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar validación en tiempo real
+    agregarValidacionEnTiempoReal();
+    
+    // Configurar el evento de envío del formulario
+    const formulario = document.getElementById('representante-form');
+    if (formulario) {
+        formulario.addEventListener('submit', function(e) {
+            if (!validarFormularioCompleto()) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Desplazarse al primer error
+                const primerError = document.querySelector('.is-invalid');
+                if (primerError) {
+                    primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    primerError.focus();
+                }
+                
+                return false;
+            }
+            return true;
+        });
+    }
+});
+
+// ================= VALIDACIÓN DE FECHAS DE NACIMIENTO =================
+/**
+ * Valida si la fecha de nacimiento corresponde a una persona mayor de 18 años
+ * Muestra una advertencia visual si es menor de edad
+ * @param {HTMLInputElement} fechaInput - Elemento input de tipo fecha
+ * @returns {boolean} - Siempre retorna true para permitir cualquier fecha
+ */
+function validarEdad(fechaInput) {
+    // Si no hay input o no tiene valor, limpiar estilos y salir
+    if (!fechaInput || !fechaInput.value) {
+        limpiarEstiloEdad(fechaInput);
+        return true;
+    }
+    
+    // Calcular la edad exacta
+    const fechaNacimiento = new Date(fechaInput.value);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+    
+    // Ajustar la edad si aún no ha cumplido años este año
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+        edad--;
+    }
+    
+    // Obtener el contenedor del campo y verificar si ya existe una advertencia
+    const grupo = fechaInput.closest('.form-group') || fechaInput.closest('.input-group');
+    let advertencia = grupo ? grupo.querySelector('.advertencia-edad') : null;
+    
+    // Verificar si es menor de 18 años
+    if (edad < 18) {
+        // Crear mensaje de advertencia
+        const mensaje = 'Advertencia: La persona es menor de 18 años';
+        
+        // Crear elemento de advertencia si no existe
+        if (!advertencia && grupo) {
+            advertencia = document.createElement('small');
+            advertencia.className = 'form-text text-danger advertencia-edad';
+            grupo.appendChild(advertencia);
+        }
+        
+        // Actualizar el texto de la advertencia
+        if (advertencia) {
+            advertencia.textContent = mensaje;
+        }
+        
+        // Resaltar el campo en rojo
+        fechaInput.classList.add('is-invalid');
+        fechaInput.classList.remove('is-valid');
+    } else {
+        // Si es mayor de edad, limpiar cualquier advertencia previa
+        limpiarEstiloEdad(fechaInput);
+    }
+    
+    return true; // Siempre permitir cualquier fecha
+}
+
+/**
+ * Limpia los estilos y mensajes de advertencia de un campo de fecha
+ * @param {HTMLInputElement} input - Elemento input a limpiar
+ */
+function limpiarEstiloEdad(input) {
+    if (!input) return;
+    
+    // Buscar y eliminar el mensaje de advertencia si existe
+    const grupo = input.closest('.form-group') || input.closest('.input-group');
+    if (grupo) {
+        const advertencia = grupo.querySelector('.advertencia-edad');
+        if (advertencia) {
+            advertencia.remove();
+        }
+    }
+    // Restaurar estilos por defecto
+    input.classList.remove('is-invalid', 'is-valid');
+}
+
+/**
+ * Configura los eventos de validación para todos los campos de fecha
+ */
+function configurarValidacionFechas() {
+    // IDs de todos los campos de fecha que necesitan validación
+    const fechas = [
+        'fecha-nacimiento-representante', // Fecha de nacimiento del representante
+        'fecha-nacimiento-padre',        // Fecha de nacimiento del padre
+        'fechaNacimiento'                // Fecha de nacimiento de la madre
+    ];
+
+    // Configurar eventos para cada campo de fecha
+    fechas.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            // Validar cuando cambia la fecha
+            input.addEventListener('change', function() {
+                validarEdad(this);
+            });
+            
+            // También validar cuando el campo pierde el foco
+            input.addEventListener('blur', function() {
+                validarEdad(this);
+            });
+        }
+    });
+}
+
+// Inicializar la validación cuando el DOM esté completamente cargado
+if (document.readyState === 'loading') {
+    // Si el DOM aún no está listo, esperar a que cargue
+    document.addEventListener('DOMContentLoaded', configurarValidacionFechas);
+} else {
+    // Si el DOM ya está listo, ejecutar directamente
+    configurarValidacionFechas();
+}
     </script>
 @stop

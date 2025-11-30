@@ -182,6 +182,54 @@ class RepresentanteController extends Controller
         'content_type' => $request->header('Content-Type')
     ]);
 
+    // Verificar si es un progenitor que también es representante
+    $tipoRepresentante = $request->input('tipo_representante');
+    $esProgenitorRepresentante = ($tipoRepresentante === 'progenitor_representante');
+        
+    // Determinar si estamos usando datos de la madre o del padre
+    $cedulaRepresentante = $request->input('cedula-representante');
+    $cedulaMadre = $request->input('cedula');
+    $cedulaPadre = $request->input('cedula-padre');
+        
+    $usandoDatosMadre = !empty($cedulaMadre) && $cedulaMadre === $cedulaRepresentante;
+    $usandoDatosPadre = !empty($cedulaPadre) && $cedulaPadre === $cedulaRepresentante;
+    $cedulaProgenitor = null;
+    $tipoProgenitor = null;
+        
+    if ($usandoDatosMadre) {
+        $cedulaProgenitor = $cedulaMadre;
+        $tipoProgenitor = 'madre';
+    } elseif ($usandoDatosPadre) {
+        $cedulaProgenitor = $cedulaPadre;
+        $tipoProgenitor = 'padre';
+    }
+        
+    // Si es progenitor representante pero no se pudo determinar la cédula, intentar con la cédula del representante
+    if ($esProgenitorRepresentante && !$cedulaProgenitor && $cedulaRepresentante) {
+        // Verificar si la cédula del representante coincide con la madre o el padre
+        if ($cedulaRepresentante === $cedulaMadre) {
+            $cedulaProgenitor = $cedulaMadre;
+            $tipoProgenitor = 'madre';
+            $usandoDatosMadre = true;
+        } elseif ($cedulaRepresentante === $cedulaPadre) {
+            $cedulaProgenitor = $cedulaPadre;
+            $tipoProgenitor = 'padre';
+            $usandoDatosPadre = true;
+        }
+    }
+        
+    Log::info('Tipo de representante:', [
+        'tipo_representante' => $tipoRepresentante,
+        'esProgenitorRepresentante' => $esProgenitorRepresentante,
+        'usandoDatosMadre' => $usandoDatosMadre,
+        'usandoDatosPadre' => $usandoDatosPadre,
+        'cedulaProgenitor' => $cedulaProgenitor,
+        'tipoProgenitor' => $tipoProgenitor,
+        'cedulaRepresentante' => $cedulaRepresentante,
+        'cedulaMadre' => $cedulaMadre,
+        'cedulaPadre' => $cedulaPadre
+    ]);
+
     // =============================================================
     // MAPEO DE CAMPOS DESDE EL FORMULARIO BLADE AL CONTROLADOR
     // =============================================================
@@ -350,11 +398,13 @@ class RepresentanteController extends Controller
 
     $personaExistente = $query->first();
 
-    if ($personaExistente) {
+    // Solo validar cédula duplicada si NO es un caso de progenitor como representante
+    if ($personaExistente && !$esProgenitorRepresentante) {
         Log::warning('Intento de registrar cédula duplicada', [
             'cedula' => $cedula,
             'persona_existente_id' => $personaExistente->id,
-            'persona_actual_id' => $personaId
+            'persona_actual_id' => $personaId,
+            'esProgenitorRepresentante' => $esProgenitorRepresentante
         ]);
 
         if ($request->ajax()) {
@@ -376,6 +426,7 @@ class RepresentanteController extends Controller
         "id" => $request->id ?? $request->persona_id,
         "primer_nombre" => $request->input('nombre_uno'),
         "segundo_nombre" => $request->input('nombre_dos'),
+        "prefijo_id" => $request->input('prefijo-representante'), // Añadir prefijo_id
         "tercer_nombre" => $request->input('nombre_tres'),
         "primer_apellido" => $request->input('apellido_uno'),
         "segundo_apellido" => $request->input('apellido_dos'),
@@ -445,18 +496,121 @@ class RepresentanteController extends Controller
     try {
         $persona = null;
         $isUpdate = false;
+        $representante = null;
 
-        // VERIFICAR SI ES ACTUALIZACIÓN O CREACIÓN
-        if(!empty($datosPersona["id"])) {
+        // CASO ESPECIAL: Progenitor como representante
+        if ($esProgenitorRepresentante) {
+            if (!$cedulaProgenitor) {
+                $errorMsg = 'No se pudo determinar la cédula del progenitor. Asegúrese de que la cédula del representante coincida con la de la madre o el padre.';
+                Log::error($errorMsg, [
+                    'cedula_representante' => $cedulaRepresentante,
+                    'cedula_madre' => $cedulaMadre,
+                    'cedula_padre' => $cedulaPadre
+                ]);
+                throw new \Exception($errorMsg);
+            }
+            
+            Log::info('Procesando progenitor como representante', [
+                'cedula' => $cedulaProgenitor,
+                'tipo_progenitor' => $tipoProgenitor
+            ]);
+            
+            // 1. Verificar si los datos del formulario están completos
+            $fechaNacimiento = $request->input('fecha-nacimiento-padre');
+            $prefijoId = $request->input('prefijo-padre'); // Obtener el prefijo del padre
+            
+            $datosCompletos = !empty($datosPersona['primer_nombre']) && 
+                             !empty($datosPersona['primer_apellido']) && 
+                             !empty($fechaNacimiento);
+            
+            // Asegurarse de que los campos obligatorios estén en el formato correcto
+            if ($fechaNacimiento) {
+                $datosPersona['fecha_nacimiento'] = $fechaNacimiento;
+            }
+            
+            // Incluir el prefijo_id en los datos de la persona
+            if ($prefijoId) {
+                $datosPersona['prefijo_id'] = $prefijoId;
+            }
+            
+            if ($datosCompletos) {
+                Log::info('Usando datos completos del formulario para el progenitor', [
+                    'cedula' => $cedulaProgenitor,
+                    'nombres' => $datosPersona['primer_nombre'] . ' ' . $datosPersona['primer_apellido']
+                ]);
+                
+                // Crear o actualizar con los datos del formulario
+                $persona = Persona::updateOrCreate(
+                    ['numero_documento' => $cedulaProgenitor],
+                    $datosPersona
+                );
+                $isUpdate = true;
+            } else {
+                // 2. Si los datos del formulario no están completos, buscar en la base de datos
+                Log::info('Buscando datos del progenitor en la base de datos', [
+                    'cedula' => $cedulaProgenitor
+                ]);
+                
+                $persona = Persona::where('numero_documento', $cedulaProgenitor)->first();
+                
+                if ($persona) {
+                    $isUpdate = true;
+                    Log::info('Progenitor encontrado en la base de datos', [
+                        'persona_id' => $persona->id,
+                        'nombres' => $persona->nombre_uno . ' ' . $persona->apellido_uno
+                    ]);
+                    
+                    // Actualizar solo los campos que no están vacíos en el formulario
+                    $camposActualizables = [
+                        'telefono_personas', 'correo_persona', 'direccion_habitacion',
+                        'estado_id', 'municipio_id', 'parroquia_id'
+                    ];
+                    
+                    foreach ($camposActualizables as $campo) {
+                        if (!empty($datosPersona[$campo])) {
+                            $persona->$campo = $datosPersona[$campo];
+                        }
+                    }
+                    
+                    $persona->save();
+                } else {
+                    // 3. Si no se encuentra en la base de datos, lanzar error con mensaje claro
+                    $errorMsg = "No se encontró al {$tipoProgenitor} con cédula {$cedulaProgenitor} en la base de datos. " .
+                              "Por favor, complete todos los campos requeridos o asegúrese de que el {$tipoProgenitor} esté registrado previamente.";
+                    Log::error($errorMsg, [
+                        'cedula_progenitor' => $cedulaProgenitor,
+                        'tipo_progenitor' => $tipoProgenitor,
+                        'datos_disponibles' => $datosPersona
+                    ]);
+                    throw new \Exception($errorMsg);
+                }
+            }
+            
+            // Buscar o crear el representante
+            $representante = Representante::updateOrCreate(
+                ['persona_id' => $persona->id],
+                $datosRepresentante
+            );
+            
+            Log::info('Datos del representante actualizados', [
+                'persona_id' => $persona->id,
+                'representante_id' => $representante->id,
+                'tipo_progenitor' => $tipoProgenitor,
+                'usando_datos_formulario' => $datosCompletos ? 'Sí' : 'No',
+                'usando_datos_bd' => !$datosCompletos ? 'Sí' : 'No'
+            ]);
+        } 
+        // VERIFICAR SI ES ACTUALIZACIÓN O CREACIÓN NORMAL
+        elseif (!empty($datosPersona["id"])) {
             $persona = Persona::with(['representante', 'representante.legal'])->find($datosPersona["id"]);
             if($persona) {
                 $isUpdate = true;
             }
         }
 
-        if($isUpdate) {
-            // === MODO ACTUALIZACIÓN ===
-            Log::info('=== MODO ACTUALIZACIÓN ===');
+        if($isUpdate && !$esProgenitorRepresentante) {
+            // === MODO ACTUALIZACIÓN NORMAL (no para progenitor como representante) ===
+            Log::info('=== MODO ACTUALIZACIÓN NORMAL ===');
             
             // 1. Actualizar persona
             $persona->update($datosPersona);
@@ -473,6 +627,13 @@ class RepresentanteController extends Controller
                 $representante = Representante::create($datosRepresentante);
                 Log::info('Representante creado: ID ' . $representante->id);
             }
+        } elseif ($esProgenitorRepresentante) {
+            // Ya se manejó el caso de progenitor como representante, solo registrar
+            Log::info('=== MODO PROGENITOR COMO REPRESENTANTE ===');
+            Log::info('Datos del progenitor actualizados como representante', [
+                'persona_id' => $persona->id,
+                'representante_id' => $representante->id
+            ]);
 
             // 3. Manejar representante legal
             if($request->es_representate_legal == true) {
@@ -537,6 +698,7 @@ class RepresentanteController extends Controller
             $personaMadre->localidad_id     = $request->input('idparroquia');
             $personaMadre->telefono         = $request->input('telefono');
             $personaMadre->tipo_documento_id = $request->input('tipo-ci');
+            $personaMadre->prefijo_id       = $request->input('prefijo');
             $personaMadre->direccion        = $request->input('lugar-nacimiento');
             $personaMadre->status           = $personaMadre->status ?? true;
 
@@ -574,11 +736,12 @@ class RepresentanteController extends Controller
             $personaPadre->segundo_nombre   = $request->input('segundo-nombre-padre');
             $personaPadre->primer_apellido  = $request->input('primer-apellido-padre');
             $personaPadre->segundo_apellido = $request->input('segundo-apellido-padre');
-            $personaPadre->fecha_nacimiento = $request->input('fechaNacimiento-padre');
-            $personaPadre->genero_id        = $request->input('genero-padre');
+            $personaPadre->fecha_nacimiento = $request->input('fecha-nacimiento-padre');
+            $personaPadre->genero_id        = $request->input('sexo-padre');
             $personaPadre->localidad_id     = $request->input('idparroquia-padre');
             $personaPadre->telefono         = $request->input('telefono-padre');
             $personaPadre->tipo_documento_id = $request->input('tipo-ci-padre');
+            $personaPadre->prefijo_id       = $request->input('prefijo-padre');
             $personaPadre->direccion        = $request->input('direccion-padre');
             $personaPadre->status           = $personaPadre->status ?? true;
 
@@ -779,46 +942,64 @@ class RepresentanteController extends Controller
     }
 
     /**
-     * Elimina un representante y sus datos relacionados
+     * Elimina (borrado suave) un representante y sus datos relacionados
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  int $id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function delete(Request $request): JsonResponse
+    public function delete(Request $request, $id): JsonResponse|\Illuminate\Http\RedirectResponse
     {
-        Log::info('=== INICIANDO ELIMINACIÓN DE REPRESENTANTE ===', ['id' => $request->id]);
+        $representanteId = $id ?? $request->id ?? $request->input('id');
+        Log::info('=== INICIANDO ELIMINACIÓN DE REPRESENTANTE ===', ['id' => $representanteId]);
 
-        $representante = Representante::with(['persona', 'legal'])->find($request->id);
+        $representante = Representante::with(['persona', 'legal'])->find($representanteId);
         if (!$representante) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Representante no encontrado',
-            ], 404);
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Representante no encontrado',
+                ], 404);
+            }
+
+            return redirect()->route('representante.index')
+                ->with('error', 'Representante no encontrado');
         }
 
         DB::beginTransaction();
         try {
-            // Si tiene datos legales, eliminar primero
+            // Si tiene datos legales, eliminar primero (soft delete también)
             if ($representante->legal) {
                 $representante->legal->delete();
             }
 
-            // Eliminar el representante
+            // Eliminar (soft delete) el representante
             $representante->delete();
 
             DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Representante eliminado exitosamente',
-            ], 200);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Representante eliminado exitosamente',
+                ], 200);
+            }
+
+            return redirect()->route('representante.index')
+                ->with('success', 'Representante eliminado exitosamente');
         } catch (\Throwable $th) {
             Log::error('Error al eliminar representante: ' . $th->getMessage());
             Log::error('Stack trace: ' . $th->getTraceAsString());
             DB::rollBack();
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al eliminar el representante: ' . $th->getMessage(),
-            ], 500);
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Error al eliminar el representante: ' . $th->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->route('representante.index')
+                ->with('error', 'Error al eliminar el representante: ' . $th->getMessage());
         }
     }
 
