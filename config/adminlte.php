@@ -261,6 +261,14 @@ return [
             'icon_color' => 'primary',
             'active' => ['admin/Estudiante', 'admin/Estudiante/*'],
         ],
+        // NUEVO INGRESO
+        [
+            'text' => 'Nuevo Ingreso',
+            'url' => 'admin/nuevo_ingreso',
+            'icon' => 'fas fa-fw fa-clipboard-list',
+            'icon_color' => 'primary',
+            'active' => ['admin/nuevo_ingreso', 'admin/nuevo_ingreso/*'],
+        ],
         [
             'text' => 'Grados',
             'url' => 'admin/grado',

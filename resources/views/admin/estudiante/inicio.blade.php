@@ -32,7 +32,7 @@
                             <i class="bi bi-plus-lg"></i> Registrar
                         </button> --}}
 
-                        <button class="btn btn-primary me-2" onclick="irHa('{{route('admin.admin.estudiante.formulario')}}')">
+                        <button class="btn btn-primary me-2" onclick="irHa('{{route('admin.estudiante.formulario')}}')">
     <i class="bi bi-plus-lg"></i> Registrar
 </button>
 
@@ -153,7 +153,7 @@
                 const nombre = [p.primer_nombre, p.segundo_nombre].filter(Boolean).join(' ');
                 const apellido = [p.primer_apellido, p.segundo_apellido].filter(Boolean).join(' ');
                 const estado = item.status || '';
-                const editUrl = `{{ route('admin.admin.estudiante.formulario.editar', ['id' => '__ID__']) }}`.replace('__ID__', item.id);
+                const editUrl = `{{ route('admin.estudiante.formulario.editar', ['id' => '__ID__']) }}`.replace('__ID__', item.id);
                 return `
                     <tr>
                         <td>${cedula}</td>
@@ -184,7 +184,7 @@
         async function buscar(q, page = 1) {
             if (!q) { return cargarLista(page); }
             try {
-                const res = await fetch(`{{ route('admin.admin.estudiante.buscar') }}?q=${encodeURIComponent(q)}&page=${page}`, {
+                const res = await fetch(`{{ route('admin.estudiante.buscar') }}?q=${encodeURIComponent(q)}&page=${page}`, {
                     headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
                 });
                 const json = await res.json();

@@ -20,6 +20,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EstudiosRealizadoController;
 use App\Http\Controllers\AreaEstudioRealizadoController;
 use App\Http\Controllers\EstudianteController;
+use App\Http\Controllers\NuevoIngresoController;
 use App\Models\Docente;
 
 Route::get('/', function () {
@@ -204,25 +205,102 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ]);
     })->name('transacciones.docentes.index');
 
-    Route::get("/Estudiante",[EstudianteController::class, 'estudianteView'])->name("admin.estudiante.inicio");
-    Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario")->middleware(["auth"]);
+    // RUTAS PARA EL PROCESO DE INSCRIPCION DE NUEVO INGRESO----------------------------------------------------------
+            Route::prefix('inscripcion')->group(function () {
+        //  Formulario del estudiante
+        Route::get('/estudiante', [NuevoIngresoController::class, 'showEstudianteForm'])
+            ->name('inscripcion.estudiante')
+            ->middleware(["auth"]);
+
+          Route::post('/estudiante/store', [NuevoIngresoController::class, 'storeEstudiante'])
+        ->name('inscripcion.store.estudiante')
+        ->middleware(["auth"]);
+
+    //  Formulario del representante
+    Route::get('/representante', [NuevoIngresoController::class, 'showRepresentanteForm'])
+        ->name('inscripcion.representante')
+        ->middleware(["auth"]);
+
+    // Guardar datos del representante en sesión (Paso 2) - RUTA CORREGIDA
+    Route::post('/representante/store', [NuevoIngresoController::class, 'storeRepresentante'])
+        ->name('inscripcion.store.representante')
+        ->middleware(["auth"]);
+
+    // Formulario final de inscripción
+    Route::get('/final', [NuevoIngresoController::class, 'showFinalForm'])
+        ->name('inscripcion.final')
+        ->middleware(["auth"]);
+
+    // Completar inscripción (transacción final)
+    Route::post('/completar', [NuevoIngresoController::class, 'completarInscripcion'])
+        ->name('inscripcion.completar')
+        ->middleware(["auth"]);
+
+        // Página de inscripción completada
+        Route::get('/completada', [NuevoIngresoController::class, 'completada'])
+            ->name('inscripcion.completada')
+            ->middleware(["auth"]);
+
+        // EMpezar de nuevo Inscripcion
+        Route::post('/reset', [NuevoIngresoController::class, 'resetInscripcion'])
+            ->name('inscripcion.reset')
+            ->middleware(["auth"]);
+
+    });
+
+    // NUEVO INGRESO 
+    Route::prefix('nuevo_ingreso')->group(function () {
+    // Página principal (listado)
+    Route::get('/', [NuevoIngresoController::class, 'index'])
+        ->name('nuevo_ingreso.index')
+        ->middleware(['auth']);
+    // Listar y buscar inscripciones
+    Route::get('/listar', [NuevoIngresoController::class, 'listarInscripciones'])
+        ->name('inscripciones.listar')
+        ->middleware(["auth"]);
+
+    Route::get('/buscar', [NuevoIngresoController::class, 'buscar'])
+        ->name('nuevo_ingreso.buscar')
+        ->middleware(["auth"]);
+
+    // Ver detalles de una inscripción
+    Route::get('/detalle/{id}', [NuevoIngresoController::class, 'verDetalle'])
+        ->name('inscripciones.detalle')
+        ->middleware(["auth"]);
+
+    // Cambiar estado de inscripción (ya no la uso por que pa que xd )
+    Route::post('/cambiar-estado/{id}', [NuevoIngresoController::class, 'cambiarEstado'])
+        ->name('inscripciones.cambiarEstado')
+        ->middleware(["auth"]);
+
+    // Editar y eliminar inscripciones
+       Route::get('/editar/{id}', [NuevoIngresoController::class, 'editar'])->name('nuevo_ingreso.editar');
+    Route::put('/actualizar/{id}', [NuevoIngresoController::class, 'actualizar'])->name('nuevo_ingreso.actualizar');
+    Route::delete('/eliminar/{id}', [NuevoIngresoController::class, 'eliminar'])->name('nuevo_ingreso.eliminar');
+
+});
+
+    // --------
+
+    Route::get("/Estudiante",[EstudianteController::class, 'estudianteView'])->name("estudiante.inicio");
+    Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario")->middleware(["auth"]);
 
     // ===== ESTUDIANTE =====
     Route::prefix("estudiante")->group(function(){
-        Route::get("/formularioEstudiante/{id}",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario.editar")->middleware(["auth"]);
-        Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("admin.estudiante.verificar-cedula")->middleware(["auth"]);
+        Route::get("/formularioEstudiante/{id}",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario.editar")->middleware(["auth"]);
+        Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("estudiante.verificar-cedula")->middleware(["auth"]);
         Route::post("/save",[EstudianteController::class, 'save'])->middleware(["auth"]);
         // Si alguien accede por GET accidentalmente, redirigir al formulario
         Route::get('/save', function () {
-            return redirect()->route('admin.admin.estudiante.formulario');
+            return redirect()->route('admin.estudiante.formulario');
         })->middleware(['auth']);
         Route::delete("/eliminar/{id}",[EstudianteController::class, 'eliminar'])->middleware(["auth"]);
         // para consultar un estudiante
         Route::get('/consultar/{id}',[EstudianteController::class,"consultar"])->middleware(["auth"]);
         Route::get('/listar',[EstudianteController::class,"listar"])->middleware(["auth"]); // Para listar TODOS los estudiantes
         // filtros y búsquedas
-        Route::get('/filtrar',[EstudianteController::class,'filtrar'])->name('admin.estudiante.filtrar')->middleware(['auth']);
-        Route::get('/buscar',[EstudianteController::class,'buscar'])->name('admin.estudiante.buscar')->middleware(['auth']);
+        Route::get('/filtrar',[EstudianteController::class,'filtrar'])->name('estudiante.filtrar')->middleware(['auth']);
+        Route::get('/buscar',[EstudianteController::class,'buscar'])->name('estudiante.buscar')->middleware(['auth']);
     });
 });
 
@@ -254,4 +332,7 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
 
     // Verificar cédula duplicada (AJAX)
     Route::get('/verificar-cedula', [RepresentanteController::class, 'verificarCedula'])->name('verificar_cedula');
+
+
+
 });

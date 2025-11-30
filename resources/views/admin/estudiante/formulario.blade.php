@@ -24,7 +24,7 @@
                             Registrar Estudiante
                         @endif
                     </h3>
-                    <a href="{{ route('admin.admin.estudiante.inicio') }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.estudiante.inicio') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Volver
                     </a>
                 </div>
@@ -504,7 +504,7 @@
                                     <i class="fas fa-save"></i> Guardar Estudiante
                                 @endif
                             </button>
-                            <a href="{{ route('admin.admin.estudiante.inicio') }}" class="btn btn-danger">
+                            <a href="{{ route('admin.estudiante.inicio') }}" class="btn btn-danger">
                                 <i class="fas fa-times"></i> Cancelar
                             </a>
                         </div>
@@ -693,8 +693,8 @@
 <script>
     // import axios from "axios";
     // ========== CONFIGURACIÓN INICIAL ==========
-    window.verificarCedulaUrl = "{{ route('admin.admin.estudiante.verificar-cedula') }}";
-    const url_pantalla_principal_modulo_estudiante = "{{ route('admin.admin.estudiante.inicio') }}";
+    window.verificarCedulaUrl = "{{ route('admin.estudiante.verificar-cedula') }}";
+    const url_pantalla_principal_modulo_estudiante = "{{ route('admin.estudiante.inicio') }}";
 
     window.instituciones = @json($instituciones);
     window.estados = @json($estados);

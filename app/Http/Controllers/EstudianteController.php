@@ -511,56 +511,232 @@ class EstudianteController extends Controller
         // ]);
 
         // Validación de campos requeridos - ACEPTAR AMBOS NOMBRES
-    $validator = \Validator::make($request->all(), [
-        'nombre_uno' => 'required_without:primer-nombre|string|max:255',
-        'primer-nombre' => 'required_without:nombre_uno|string|max:255',
-        'apellido_uno' => 'required_without:primer-apellido|string|max:255',
-        'primer-apellido' => 'required_without:apellido_uno|string|max:255',
-        'numero_cedula_persona' => 'required_without_all:cedula,numero_documento|string|max:12',
-        'cedula' => 'required_without_all:numero_cedula_persona,numero_documento|string|max:12',
-        'numero_documento' => 'required_without_all:numero_cedula_persona,cedula|string|max:12',
-        'tipo_documento_id' => 'required_without_all:tipo-ci,tipo_ci,tipo_documento|exists:tipo_documentos,id',
-        'tipo-ci' => 'required_without_all:tipo_documento_id,tipo_ci,tipo_documento|string',
-        'tipo_ci' => 'required_without_all:tipo_documento_id,tipo-ci,tipo_documento|string',
-        'tipo_documento' => 'sometimes|string',
-        'fecha_nacimiento_personas' => 'required_without:fechaNacimiento|date',
-        'fechaNacimiento' => 'required_without:fecha_nacimiento_personas|date',
-        'sexo' => 'required|string|in:Masculino,Femenino',
-        'estado_id' => 'required_without:idEstado|exists:estados,id',
-        'idEstado' => 'required_without:estado_id|exists:estados,id',
-        'municipio_id' => 'required_without:idMunicipio|exists:municipios,id',
-        'idMunicipio' => 'required_without:municipio_id|exists:municipios,id',
-        'localidad_id' => 'required_without_all:parroquia_id,idparroquia|exists:localidads,id',
-        'parroquia_id' => 'required_without_all:localidad_id,idparroquia|exists:localidads,id',
-        'idparroquia' => 'required_without_all:localidad_id,parroquia_id|exists:localidads,id',
-        'institucion_id' => 'required_without:intitucion-procedencia|exists:institucion_procedencias,id',
-        'intitucion-procedencia' => 'required_without:institucion_id|exists:institucion_procedencias,id',
-        'expresion_literaria' => 'required_without:expresion-literaria|string',
-        'expresion-literaria' => 'required_without:expresion_literaria|string',
-        'ano_ergreso_estudiante' => 'required_without:año-egreso|date',
-        'año-egreso' => 'required_without:ano_ergreso_estudiante|date',
-        'orden_nacimiento_estudiante' => 'required_without_all:orden-nacimiento-estudiante,orden_nacimiento,orden-nacimiento|integer|between:1,6',
-        'orden-nacimiento-estudiante' => 'required_without_all:orden_nacimiento_estudiante,orden_nacimiento,orden-nacimiento|integer|between:1,6',
-        'orden_nacimiento' => 'required_without_all:orden_nacimiento_estudiante,orden-nacimiento-estudiante,orden-nacimiento|integer|between:1,6',
-        'orden-nacimiento' => 'required_without_all:orden_nacimiento_estudiante,orden-nacimiento-estudiante,orden_nacimiento|integer|between:1,6',
-        'lateralidad_estudiante' => 'required_without:lateralidad-estudiante|string|in:izquierda,derecha,ambidiestro',
-        'lateralidad-estudiante' => 'required_without:lateralidad_estudiante|string|in:izquierda,derecha,ambidiestro',
-        'talla_estudiante' => 'required|integer|between:120,180',
-        'peso_estudiante' => 'required|numeric|between:20,100',
-        'talla_camisa' => 'required|string|in:XS,S,M,L,XL',
-        'talla_zapato' => 'required|integer|between:30,45',
-        'talla_pantalon' => 'required|string|in:XS,S,M,L,XL',
-        'pueblo_indigena_estudiante' => 'required_without:pueblo_indigena|string|in:si,no',
-        'pueblo_indigena' => 'required_without:pueblo_indigena_estudiante|string|in:si,no',
-        'posee_discapacidad_estudiante' => 'required_without:salud_estudiante|string|in:si,no',
-        'salud_estudiante' => 'required_without:posee_discapacidad_estudiante|string|in:si,no',
-    ], [
-        'required' => 'El campo :attribute es obligatorio.',
-        'required_without' => 'El campo :attribute es obligatorio.',
-        'exists' => 'El :attribute seleccionado no es válido.',
-        'in' => 'El :attribute seleccionado no es válido.',
-        'between' => 'El :attribute debe estar entre :min y :max.',
-    ]);
+    // $validator = \Validator::make($request->all(), [
+    //     'nombre_uno' => 'required_without:primer-nombre|string|max:255',
+    //     'primer-nombre' => 'required_without:nombre_uno|string|max:255',
+    //     'apellido_uno' => 'required_without:primer-apellido|string|max:255',
+    //     'primer-apellido' => 'required_without:apellido_uno|string|max:255',
+    //     'cedula' => 'required_without_all:cedula,numero_documento|string|max:12',
+        
+    //     'numero_documento' => 'required_without_all:numero_cedula_persona,cedula|string|max:12',
+    //     'tipo_documento_id' => 'required_without_all:tipo-ci,tipo_ci,tipo_documento|exists:tipo_documentos,id',
+        
+    //     'tipo_documento' => 'sometimes|string',
+    //     'fecha_nacimiento_personas' => 'required_without:fechaNacimiento|date',
+    //     'fechaNacimiento' => 'required_without:fecha_nacimiento_personas|date',
+    //     'sexo' => 'required|string|in:Masculino,Femenino',
+    //     'estado_id' => 'required_without:idEstado|exists:estados,id',
+    //     'idEstado' => 'required_without:estado_id|exists:estados,id',
+    //     'municipio_id' => 'required_without:idMunicipio|exists:municipios,id',
+    //     'idMunicipio' => 'required_without:municipio_id|exists:municipios,id',
+    //     'localidad_id' => 'required_without_all:parroquia_id,idparroquia|exists:localidads,id',
+    //     'parroquia_id' => 'required_without_all:localidad_id,idparroquia|exists:localidads,id',
+    //     'idparroquia' => 'required_without_all:localidad_id,parroquia_id|exists:localidads,id',
+    //     'institucion_id' => 'required_without:intitucion-procedencia|exists:institucion_procedencias,id',
+    //     'intitucion-procedencia' => 'required_without:institucion_id|exists:institucion_procedencias,id',
+    //     'expresion_literaria' => 'required_without:expresion-literaria|string',
+    //     'expresion-literaria' => 'required_without:expresion_literaria|string',
+    //     'ano_ergreso_estudiante' => 'required_without:año-egreso|date',
+    //     'año-egreso' => 'required_without:ano_ergreso_estudiante|date',
+    //     'orden_nacimiento_estudiante' => 'required_without_all:orden-nacimiento-estudiante,orden_nacimiento,orden-nacimiento|integer|between:1,6',
+    //     'orden-nacimiento-estudiante' => 'required_without_all:orden_nacimiento_estudiante,orden_nacimiento,orden-nacimiento|integer|between:1,6',
+    //     'orden_nacimiento' => 'required_without_all:orden_nacimiento_estudiante,orden-nacimiento-estudiante,orden-nacimiento|integer|between:1,6',
+    //     'orden-nacimiento' => 'required_without_all:orden_nacimiento_estudiante,orden-nacimiento-estudiante,orden_nacimiento|integer|between:1,6',
+    //     'lateralidad_estudiante' => 'required_without:lateralidad-estudiante|string|in:izquierda,derecha,ambidiestro',
+    //     'lateralidad-estudiante' => 'required_without:lateralidad_estudiante|string|in:izquierda,derecha,ambidiestro',
+    //     'talla_estudiante' => 'required|integer|between:120,180',
+    //     'peso_estudiante' => 'required|numeric|between:20,100',
+    //     'talla_camisa' => 'required|string|in:XS,S,M,L,XL',
+    //     'talla_zapato' => 'required|integer|between:30,45',
+    //     'talla_pantalon' => 'required|string|in:XS,S,M,L,XL',
+    //     'pueblo_indigena_estudiante' => 'required_without:pueblo_indigena|string|in:si,no',
+    //     'pueblo_indigena' => 'required_without:pueblo_indigena_estudiante|string|in:si,no',
+    //     'posee_discapacidad_estudiante' => 'required_without:salud_estudiante|string|in:si,no',
+    //     'salud_estudiante' => 'required_without:posee_discapacidad_estudiante|string|in:si,no',
+    // ], [
+    //     'required' => 'El campo :attribute es obligatorio.',
+    //     'required_without' => 'El campo :attribute es obligatorio.',
+    //     'exists' => 'El :attribute seleccionado no es válido.',
+    //     'in' => 'El :attribute seleccionado no es válido.',
+    //     'between' => 'El :attribute debe estar entre :min y :max.',
+    // ]);
+
+//     $validator = \Validator::make($request->all(), [
+//     // Campos de nombre (usar uno u otro)
+//     'nombre_uno' => 'required_without:primer-nombre|string|max:255',
+//     'primer-nombre' => 'required_without:nombre_uno|string|max:255',
+    
+//     // Campos de apellido (usar uno u otro)
+//     'apellido_uno' => 'required_without:primer-apellido|string|max:255',
+//     'primer-apellido' => 'required_without:apellido_uno|string|max:255',
+    
+//     // Documento de identidad (usar uno de los tres)
+//     'cedula' => 'required_without_all:numero_documento,numero_cedula_persona|string|max:12',
+//     'numero_documento' => 'required_without_all:cedula,numero_cedula_persona|string|max:12',
+//     'numero_cedula_persona' => 'required_without_all:cedula,numero_documento|string|max:12',
+    
+//     // Tipo documento (usar uno de los cuatro)
+//     'tipo_documento_id' => 'required_without_all:exists:tipo_documentos,id',
+    
+    
+//     // Fecha nacimiento (usar una u otra)
+//     'fecha_nacimiento_personas' => 'required_without:fechaNacimiento|date',
+//     'fechaNacimiento' => 'required_without:fecha_nacimiento_personas|date',
+    
+//     // Sexo (siempre requerido)
+//     'sexo' => 'required|string|in:Masculino,Femenino',
+    
+//     // Estado (usar uno u otro)
+//     'estado_id' => 'required_without:idEstado|exists:estados,id',
+//     'idEstado' => 'required_without:estado_id|exists:estados,id',
+    
+//     // Municipio (usar uno u otro)
+//     'municipio_id' => 'required_without:idMunicipio|exists:municipios,id',
+//     'idMunicipio' => 'required_without:municipio_id|exists:municipios,id',
+    
+//     // Localidad/Parroquia (usar uno de los tres)
+//     'localidad_id' => 'required_without_all:parroquia_id,idparroquia|exists:localidads,id',
+//     'parroquia_id' => 'required_without_all:localidad_id,idparroquia|exists:localidads,id',
+//     'idparroquia' => 'required_without_all:localidad_id,parroquia_id|exists:localidads,id',
+    
+//     // Institución (usar una u otra)
+//     'institucion_id' => 'required_without:intitucion-procedencia|exists:institucion_procedencias,id',
+//     'intitucion-procedencia' => 'required_without:institucion_id|exists:institucion_procedencias,id',
+    
+//     // Expresión literaria (usar una u otra)
+//     'expresion_literaria' => 'required_without:expresion-literaria|string',
+//     'expresion-literaria' => 'required_without:expresion_literaria|string',
+    
+//     // Año egreso (usar uno u otro)
+//     'ano_ergreso_estudiante' => 'required_without:año-egreso|date',
+//     'año-egreso' => 'required_without:ano_ergreso_estudiante|date',
+    
+//     // Orden nacimiento (usar uno de los cuatro)
+//     'orden_nacimiento_estudiante' => 'required_without_all:orden-nacimiento-estudiante,orden_nacimiento,orden-nacimiento|integer|between:1,6',
+//     'orden-nacimiento-estudiante' => 'required_without_all:orden_nacimiento_estudiante,orden_nacimiento,orden-nacimiento|integer|between:1,6',
+//     'orden_nacimiento' => 'required_without_all:orden_nacimiento_estudiante,orden-nacimiento-estudiante,orden-nacimiento|integer|between:1,6',
+//     'orden-nacimiento' => 'required_without_all:orden_nacimiento_estudiante,orden-nacimiento-estudiante,orden_nacimiento|integer|between:1,6',
+    
+//     // Lateralidad (usar una u otra)
+//     'lateralidad_estudiante' => 'required_without:lateralidad-estudiante|string|in:izquierda,derecha,ambidiestro',
+//     'lateralidad-estudiante' => 'required_without:lateralidad_estudiante|string|in:izquierda,derecha,ambidiestro',
+    
+//     // Medidas físicas (siempre requeridas)
+//     'talla_estudiante' => 'required|integer|between:120,180',
+//     'peso_estudiante' => 'required|numeric|between:20,100',
+//     'talla_camisa' => 'required|string|in:XS,S,M,L,XL',
+//     'talla_zapato' => 'required|integer|between:30,45',
+//     'talla_pantalon' => 'required|string|in:XS,S,M,L,XL',
+    
+//     // Pueblo indígena (usar uno u otro)
+//     'pueblo_indigena_estudiante' => 'required_without:pueblo_indigena|string|in:si,no',
+//     'pueblo_indigena' => 'required_without:pueblo_indigena_estudiante|string|in:si,no',
+    
+//     // Discapacidad (usar uno u otro)
+//     'posee_discapacidad_estudiante' => 'required_without:salud_estudiante|string|in:si,no',
+//     'salud_estudiante' => 'required_without:posee_discapacidad_estudiante|string|in:si,no',
+
+// ], [
+//     'required' => 'El campo :attribute es obligatorio.',
+//     'required_without' => 'El campo :attribute es obligatorio.',
+//     'required_without_all' => 'El campo :attribute es obligatorio.',
+//     'exists' => 'El :attribute seleccionado no es válido.',
+//     'in' => 'El :attribute seleccionado no es válido.',
+//     'between' => 'El :attribute debe estar entre :min y :max.',
+//     'string' => 'El campo :attribute debe ser texto.',
+//     'integer' => 'El campo :attribute debe ser un número entero.',
+//     'numeric' => 'El campo :attribute debe ser un número.',
+//     'date' => 'El campo :attribute debe ser una fecha válida.',
+// ]);
+
+$validator = \Validator::make($request->all(), [
+    // Campos de nombre (usar uno u otro)
+    'nombre_uno' => 'required_without:primer-nombre|string|max:255',
+    'primer-nombre' => 'required_without:nombre_uno|string|max:255',
+    
+    // Campos de apellido (usar uno u otro)
+    'apellido_uno' => 'required_without:primer-apellido|string|max:255',
+    'primer-apellido' => 'required_without:apellido_uno|string|max:255',
+    
+    // Documento de identidad (usar uno de los tres - simplificado)
+    'cedula' => 'sometimes|required|string|max:12',
+    'numero_documento' => 'sometimes|required|string|max:12',
+    'numero_cedula_persona' => 'sometimes|required|string|max:12',
+    
+    // Tipo documento (usar uno de los cuatro - simplificado)
+    'tipo_documento_id' => 'sometimes|required|exists:tipo_documentos,id',
+    'tipo-ci' => 'sometimes|required|string|in:V,E,J,P,G', // Ajusta los valores según tus necesidades
+    'tipo_ci' => 'sometimes|required|string|in:V,E,J,P,G',
+    'tipo_documento' => 'sometimes|required|string',
+    
+    // Fecha nacimiento (usar una u otra)
+    'fecha_nacimiento_personas' => 'required_without:fechaNacimiento|date',
+    'fechaNacimiento' => 'required_without:fecha_nacimiento_personas|date',
+    
+    // Sexo (siempre requerido)
+    'sexo' => 'required|string|in:Masculino,Femenino',
+    
+    // Estado (usar uno u otro)
+    'estado_id' => 'required_without:idEstado|exists:estados,id',
+    'idEstado' => 'required_without:estado_id|exists:estados,id',
+    
+    // Municipio (usar uno u otro)
+    'municipio_id' => 'required_without:idMunicipio|exists:municipios,id',
+    'idMunicipio' => 'required_without:municipio_id|exists:municipios,id',
+    
+    // Localidad/Parroquia (usar uno de los tres - simplificado)
+    'localidad_id' => 'sometimes|required|exists:localidads,id',
+    'parroquia_id' => 'sometimes|required|exists:localidads,id',
+    'idparroquia' => 'sometimes|required|exists:localidads,id',
+    
+    // Institución (usar una u otra)
+    'institucion_id' => 'required_without:intitucion-procedencia|exists:institucion_procedencias,id',
+    'intitucion-procedencia' => 'required_without:institucion_id|exists:institucion_procedencias,id',
+    
+    // Expresión literaria (usar una u otra)
+    'expresion_literaria' => 'required_without:expresion-literaria|string',
+    'expresion-literaria' => 'required_without:expresion_literaria|string',
+    
+    // Año egreso (usar uno u otro)
+    'ano_ergreso_estudiante' => 'required_without:año-egreso|date',
+    'año-egreso' => 'required_without:ano_ergreso_estudiante|date',
+    
+    // Orden nacimiento (usar uno de los cuatro - simplificado)
+    'orden_nacimiento_estudiante' => 'sometimes|required|integer|between:1,6',
+    'orden-nacimiento-estudiante' => 'sometimes|required|integer|between:1,6',
+    'orden_nacimiento' => 'sometimes|required|integer|between:1,6',
+    'orden-nacimiento' => 'sometimes|required|integer|between:1,6',
+    
+    // Lateralidad (usar una u otra)
+    'lateralidad_estudiante' => 'required_without:lateralidad-estudiante|string|in:izquierda,derecha,ambidiestro',
+    'lateralidad-estudiante' => 'required_without:lateralidad_estudiante|string|in:izquierda,derecha,ambidiestro',
+    
+    // Medidas físicas (siempre requeridas)
+    'talla_estudiante' => 'required|integer|between:120,180',
+    'peso_estudiante' => 'required|numeric|between:20,100',
+    'talla_camisa' => 'required|string|in:XS,S,M,L,XL',
+    'talla_zapato' => 'required|integer|between:30,45',
+    'talla_pantalon' => 'required|string|in:XS,S,M,L,XL',
+    
+    // Pueblo indígena (usar uno u otro)
+    'pueblo_indigena_estudiante' => 'required_without:pueblo_indigena|string|in:si,no',
+    'pueblo_indigena' => 'required_without:pueblo_indigena_estudiante|string|in:si,no',
+    
+    // Discapacidad (usar uno u otro)
+    'posee_discapacidad_estudiante' => 'required_without:salud_estudiante|string|in:si,no',
+    'salud_estudiante' => 'required_without:posee_discapacidad_estudiante|string|in:si,no',
+
+], [
+    'required' => 'El campo :attribute es obligatorio.',
+    'required_without' => 'El campo :attribute es obligatorio.',
+    'exists' => 'El :attribute seleccionado no es válido.',
+    'in' => 'El :attribute seleccionado no es válido.',
+    'between' => 'El :attribute debe estar entre :min y :max.',
+    'string' => 'El campo :attribute debe ser texto.',
+    'integer' => 'El campo :attribute debe ser un número entero.',
+    'numeric' => 'El campo :attribute debe ser un número.',
+    'date' => 'El campo :attribute debe ser una fecha válida.',
+]);
 
     if ($validator->fails()) {
         return response()->json([
