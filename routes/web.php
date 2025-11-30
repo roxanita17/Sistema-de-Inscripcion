@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AnioEscolarController;
+use App\Http\Controllers\RepresentanteController;
 use App\Http\Controllers\BancoController;
 use App\Http\Controllers\EtniaIndigenaController;
 use App\Http\Controllers\OcupacionController;
@@ -18,6 +19,8 @@ use App\Http\Controllers\PrefijoTelefonoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EstudiosRealizadoController;
 use App\Http\Controllers\AreaEstudioRealizadoController;
+use App\Http\Controllers\EstudianteController;
+use App\Http\Controllers\NuevoIngresoController;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\DocenteAreaGradoController;
 use App\Http\Controllers\DashboardController;
@@ -226,6 +229,137 @@ Route::delete('transacciones/docente_area_grado/{id}/destroy-asignacion', [Docen
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+});
+
+// RUTAS PARA EL PROCESO DE INSCRIPCION DE NUEVO INGRESO----------------------------------------------------------
+            Route::prefix('inscripcion')->group(function () {
+        //  Formulario del estudiante
+        Route::get('/estudiante', [NuevoIngresoController::class, 'showEstudianteForm'])
+            ->name('inscripcion.estudiante')
+            ->middleware(["auth"]);
+
+          Route::post('/estudiante/store', [NuevoIngresoController::class, 'storeEstudiante'])
+        ->name('inscripcion.store.estudiante')
+        ->middleware(["auth"]);
+
+    //  Formulario del representante
+    Route::get('/representante', [NuevoIngresoController::class, 'showRepresentanteForm'])
+        ->name('inscripcion.representante')
+        ->middleware(["auth"]);
+
+    // Guardar datos del representante en sesión (Paso 2) - RUTA CORREGIDA
+    Route::post('/representante/store', [NuevoIngresoController::class, 'storeRepresentante'])
+        ->name('inscripcion.store.representante')
+        ->middleware(["auth"]);
+
+    // Formulario final de inscripción
+    Route::get('/final', [NuevoIngresoController::class, 'showFinalForm'])
+        ->name('inscripcion.final')
+        ->middleware(["auth"]);
+
+    // Completar inscripción (transacción final)
+    Route::post('/completar', [NuevoIngresoController::class, 'completarInscripcion'])
+        ->name('inscripcion.completar')
+        ->middleware(["auth"]);
+
+        // Página de inscripción completada
+        Route::get('/completada', [NuevoIngresoController::class, 'completada'])
+            ->name('inscripcion.completada')
+            ->middleware(["auth"]);
+
+        // EMpezar de nuevo Inscripcion
+        Route::post('/reset', [NuevoIngresoController::class, 'resetInscripcion'])
+            ->name('inscripcion.reset')
+            ->middleware(["auth"]);
+
+    });
+
+    // NUEVO INGRESO 
+    Route::prefix('nuevo_ingreso')->group(function () {
+    // Página principal (listado)
+    Route::get('/', [NuevoIngresoController::class, 'index'])
+        ->name('nuevo_ingreso.index')
+        ->middleware(['auth']);
+    // Listar y buscar inscripciones
+    Route::get('/listar', [NuevoIngresoController::class, 'listarInscripciones'])
+        ->name('inscripciones.listar')
+        ->middleware(["auth"]);
+
+    Route::get('/buscar', [NuevoIngresoController::class, 'buscar'])
+        ->name('nuevo_ingreso.buscar')
+        ->middleware(["auth"]);
+
+    // Ver detalles de una inscripción
+    Route::get('/detalle/{id}', [NuevoIngresoController::class, 'verDetalle'])
+        ->name('inscripciones.detalle')
+        ->middleware(["auth"]);
+
+    // Cambiar estado de inscripción (ya no la uso por que pa que xd )
+    Route::post('/cambiar-estado/{id}', [NuevoIngresoController::class, 'cambiarEstado'])
+        ->name('inscripciones.cambiarEstado')
+        ->middleware(["auth"]);
+
+    // Editar y eliminar inscripciones
+       Route::get('/editar/{id}', [NuevoIngresoController::class, 'editar'])->name('nuevo_ingreso.editar');
+    Route::put('/actualizar/{id}', [NuevoIngresoController::class, 'actualizar'])->name('nuevo_ingreso.actualizar');
+    Route::delete('/eliminar/{id}', [NuevoIngresoController::class, 'eliminar'])->name('nuevo_ingreso.eliminar');
+
+});
+
+    // --------
+
+    Route::get("/Estudiante",[EstudianteController::class, 'estudianteView'])->name("estudiante.inicio");
+    Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario")->middleware(["auth"]);
+
+    // ===== ESTUDIANTE =====
+    Route::prefix("estudiante")->group(function(){
+        Route::get("/formularioEstudiante/{id}",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario.editar")->middleware(["auth"]);
+        Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("estudiante.verificar-cedula")->middleware(["auth"]);
+        Route::post("/save",[EstudianteController::class, 'save'])->middleware(["auth"]);
+        // Si alguien accede por GET accidentalmente, redirigir al formulario
+        Route::get('/save', function () {
+            return redirect()->route('admin.estudiante.formulario');
+        })->middleware(['auth']);
+        Route::delete("/eliminar/{id}",[EstudianteController::class, 'eliminar'])->middleware(["auth"]);
+        // para consultar un estudiante
+        Route::get('/consultar/{id}',[EstudianteController::class,"consultar"])->middleware(["auth"]);
+        Route::get('/listar',[EstudianteController::class,"listar"])->middleware(["auth"]); // Para listar TODOS los estudiantes
+        // filtros y búsquedas
+        Route::get('/filtrar',[EstudianteController::class,'filtrar'])->name('estudiante.filtrar')->middleware(['auth']);
+        Route::get('/buscar',[EstudianteController::class,'buscar'])->name('estudiante.buscar')->middleware(['auth']);
+    });
+
+
+// ======  REPRESENTANTE  ======
+Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function() {
+    // Vista principal (listado)
+    Route::get('/', [RepresentanteController::class, 'index'])->name('index');
+
+    // Formulario de creación
+    Route::get('/formulario', [RepresentanteController::class, 'mostrarFormulario'])->name('formulario');
+
+    // Guardar / actualizar representante (manejado por el método save del controlador)
+    Route::post('/save', [RepresentanteController::class, 'save'])->name('save');
+
+    // Formulario de edición de un representante específico
+    Route::get('/{id}/editar', [RepresentanteController::class, 'mostrarFormularioEditar'])->name('editar');
+
+    // Eliminar representante
+    Route::delete('/{id}', [RepresentanteController::class, 'delete'])->name('destroy');
+
+    // Búsqueda por cédula (AJAX)
+    Route::get('/buscar-cedula', [RepresentanteController::class, 'buscarPorCedula'])->name('buscar_cedula');
+
+    // Consultar un representante específico (AJAX)
+    Route::get('/consultar', [RepresentanteController::class, 'consultar'])->name('consultar');
+
+    // Filtrar representantes (AJAX)
+    Route::get('/filtrar', [RepresentanteController::class, 'filtar'])->name('filtrar');
+
+    // Verificar cédula duplicada (AJAX)
+    Route::get('/verificar-cedula', [RepresentanteController::class, 'verificarCedula'])->name('verificar_cedula');
+
 
 
 });
+

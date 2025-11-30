@@ -222,43 +222,41 @@ return [
         // Panel principal
         [
             'text' => 'Panel Principal',
-            'url'  => 'home',
-            'icon' => 'fas fa-home',
+            'url' => 'home',
+            'icon' => 'fas fa-fw fa-tachometer-alt',
+            'icon_color' => 'primary',
+            'active' => ['home', 'home/*'],
         ],
 
+        // Estudiantes
+        [
+            'text' => 'Estudiantes',
+            'url' => 'admin/Estudiante',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'icon_color' => 'primary',
+            'active' => ['admin/Estudiante', 'admin/Estudiante/*'],
+        ],
+        // NUEVO INGRESO
+        [
+            'text' => 'Nuevo Ingreso',
+            'url' => 'admin/nuevo_ingreso',
+            'icon' => 'fas fa-fw fa-clipboard-list',
+            'icon_color' => 'primary',
+            'active' => ['admin/nuevo_ingreso', 'admin/nuevo_ingreso/*'],
+        ],
 
-        // ============================================================
-        //  GESTIÓN DOCENTES
-        // ============================================================
-        ['header' => 'GESTIÓN DE DOCENTES'],
+        //Representantes
 
         [
-            'text' => 'Docentes',
-            'icon' => 'fas fa-chalkboard-teacher',
-            'submenu' => [
-                [
-                    'text' => 'Listado de Docentes',
-                    'url'  => 'admin/docente',
-                    'icon' => 'fas fa-user',
-                ],
-                [
-                    'text' => 'Asignar Materias',
-                    'url'  => 'admin/transacciones/docente_area_grado',
-                    'icon' => 'fas fa-book-reader',
-                ],
-                [
-                    'text' => 'Estudios Realizados',
-                    'url'  => 'admin/estudios_realizados',
-                    'icon' => 'fas fa-user-graduate',
-                ],
-                [
-                    'text' => 'Expresiones Literarias',
-                    'url'  => 'admin/expresion_literaria',
-                    'icon' => 'fas fa-feather-alt',
-                ],
-            ],
+            'text' => 'Representantes',
+            'url' => 'representante',
+            'icon' => 'fas fa-fw fa-user-tie',
+            'icon_color' => 'info',
+            'active' => ['representante', 'representante/*'],
         ],
 
+
+        
 
         // ============================================================
         //  GESTIÓN ACADÉMICA
@@ -272,8 +270,28 @@ return [
         ],
 
         [
-            'text'   => 'Grados y Materias',
-            'icon'   => 'fas fa-layer-group',
+            'text' => 'Grados',
+            'url' => 'admin/grado',
+            'icon' => 'fas fa-fw fa-layer-group',
+            'icon_color' => 'primary',
+            'active' => ['admin/grado', 'admin/grado/*'],
+        ],
+
+        // Áreas de Formación
+        [
+            'text' => 'Áreas de Formación',
+            'url' => 'admin/area_formacion',
+            'icon' => 'fas fa-fw fa-book-open',
+            'icon_color' => 'primary',
+            'active' => ['admin/area_formacion', 'admin/area_formacion/*'],
+        ],
+
+        // Asignaciones
+        [
+            'text' => 'Asignaciones',
+            'icon' => 'fas fa-fw fa-link',
+            'icon_color' => 'cyan',
+            'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*', 'admin/transacciones/docente*'],
             'submenu' => [
                 [
                     'text' => 'Grados',
@@ -372,6 +390,18 @@ return [
             'text' => 'Instituciones de Procedencia',
             'url'  => 'admin/institucion_procedencia',
             'icon' => 'fas fa-school',
+        ],
+
+        // Separador
+        ['header' => 'GESTIÓN ACADÉMICA'],
+
+        // Representantes
+        [
+            'text' => 'Representantes',
+            'url' => 'representante',
+            'icon' => 'fas fa-fw fa-user-tie',
+            'icon_color' => 'info',
+            'active' => ['representante', 'representante/*'],
         ],
 
 

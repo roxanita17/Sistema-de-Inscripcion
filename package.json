@@ -18,6 +18,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@ttskch/select2-bootstrap4-theme": "^1.5.2",
         "bootstrap-select": "^1.13.18",
         "select2": "^4.1.0-rc.0"
     }
