@@ -21,6 +21,9 @@ use App\Models\User;
 use App\Models\Persona;
 use App\Models\DetalleDocenteEstudio;
 use App\Models\Alumno;
+use App\Models\Representante;
+use App\Models\RepresentanteLegal;
+use App\Models\Inscripcion;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
@@ -82,6 +85,11 @@ class DatabaseSeeder extends Seeder
         $this->command->info('¡Base de datos poblada con éxito!');
         Alumno::factory()->count(10)->create();
         $this->command->info('Factory de alumnos ejecutado correctamente.');
-
+        Representante::factory()->count(10)->create();
+        $this->command->info('Factory de representantes ejecutado correctamente.');
+        RepresentanteLegal::factory()->count(10)->create();
+        $this->command->info('Factory de representantes legales ejecutado correctamente.');
+        Inscripcion::factory()->count(10)->create();
+        $this->command->info('Factory de inscripciones ejecutado correctamente.');
     }
 }

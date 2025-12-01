@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ejecucion_percentil', function (Blueprint $table) {
+        Schema::create('indice_pesos', function (Blueprint $table) {
             $table->id();
-            $table->string('fecha_ejecucion');
-            $table->string('total_evaluados');
-            $table->string('parametros');
-            $table->foreignId('grado_id')->constrained('grados')->cascadeOnDelete();
+            $table->integer('indice');
+            $table->integer('min_kg');
+            $table->integer('max_kg');
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ejecucion_percentil');
+        Schema::dropIfExists('indice_pesos');
     }
 };

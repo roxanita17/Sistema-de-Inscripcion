@@ -25,6 +25,7 @@ use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\DocenteAreaGradoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AlumnoController;
+use App\Http\Controllers\InscripcionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -234,6 +235,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('alumnos/{id}/edit', [AlumnoController::class, 'edit'])->name('alumnos.edit');
     Route::post('alumnos/{id}/update', [AlumnoController::class, 'update'])->name('alumnos.update');
     Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
+
+    // ===== INSCRIPCION ======
+    Route::get('transacciones/inscripcion', [InscripcionController::class, 'index'])->name('transacciones.inscripcion.index');
 });
 
 

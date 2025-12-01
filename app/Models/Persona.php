@@ -26,6 +26,9 @@ class Persona extends Model
         'genero_id',
         'localidad_id',
         'prefijo_id',
+    ];
+
+    protected $casts = [
         'fecha_nacimiento' => 'date',
         'status' => 'boolean',
     ];

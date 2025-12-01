@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('inscripcions', function (Blueprint $table) {
             $table->id();
-            $table->string('contrato_convivencia');
             $table->foreignId('alumno_id')->constrained('alumnos')->cascadeOnDelete();
             $table->foreignId('representante_id')->constrained('representantes')->cascadeOnDelete();
             $table->foreignId('grado_id')->constrained('grados')->cascadeOnDelete();
-            $table->boolean('status')->default(true);
+            $table->string('status')->default('Activo');
             $table->timestamps();
         });
     }

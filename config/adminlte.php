@@ -237,6 +237,15 @@ return [
             'active' => ['admin/alumnos', 'admin/alumnos/*'],
         ],
 
+        //Inscripciones
+        [
+            'text' => 'Inscripciones',
+            'url' => 'admin/transacciones/inscripcion',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'icon_color' => 'primary',
+            'active' => ['admin/transacciones/inscripcion', 'admin/transacciones/inscripcion/*'],
+        ],
+
         // Estudiantes
        /*  [
             'text' => 'Estudiantes',

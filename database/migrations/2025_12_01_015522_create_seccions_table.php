@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('entrada_percentil', function (Blueprint $table) {
+        Schema::create('seccions', function (Blueprint $table) {
             $table->id();
-            $table->string('edad_util');
-            $table->string('estatura_util');
-            $table->string('peso_util');
-            $table->string('puntaje');
+            $table->string('nombre');
+            $table->integer('cantidad_actual');
             $table->foreignId('grado_id')->constrained('grados')->cascadeOnDelete();
-            $table->foreignId('ejecucion_percentil_id')->constrained('ejecucion_percentil')->cascadeOnDelete();
-
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
@@ -30,12 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('entrada_percentil');
+        Schema::dropIfExists('seccions');
     }
 };
-
-/* 
-table de indices
-
-
-*/

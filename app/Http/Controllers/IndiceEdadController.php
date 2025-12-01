@@ -2,27 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Inscripcion;
+use App\Models\IndiceEdad;
 use Illuminate\Http\Request;
 
-class InscripcionController extends Controller
+class IndiceEdadController extends Controller
 {
-    private function verificarAnioEscolar()
-    {
-        return \App\Models\AnioEscolar::where('status', 'Activo')
-            ->orWhere('status', 'Extendido')
-            ->exists();
-    }
-    
-
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $anioEscolarActivo = $this->verificarAnioEscolar();
-        $inscripciones = Inscripcion::paginate(10);
-        return view('admin.transacciones.inscripcion.index', compact('inscripciones', 'anioEscolarActivo'));
+        //
     }
 
     /**
@@ -44,7 +34,7 @@ class InscripcionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Inscripcion $inscripcion)
+    public function show(IndiceEdad $indiceEdad)
     {
         //
     }
@@ -52,7 +42,7 @@ class InscripcionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Inscripcion $inscripcion)
+    public function edit(IndiceEdad $indiceEdad)
     {
         //
     }
@@ -60,7 +50,7 @@ class InscripcionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Inscripcion $inscripcion)
+    public function update(Request $request, IndiceEdad $indiceEdad)
     {
         //
     }
@@ -68,7 +58,7 @@ class InscripcionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Inscripcion $inscripcion)
+    public function destroy(IndiceEdad $indiceEdad)
     {
         //
     }

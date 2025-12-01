@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seccion', function (Blueprint $table) {
+        Schema::create('indice_estaturas', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('cantidad_actual');
-            $table->foreignId('grado_id')->constrained('grados')->cascadeOnDelete();
+            $table->integer('indice');
+            $table->integer('min_cm');
+            $table->integer('max_cm');
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seccion');
+        Schema::dropIfExists('indice_estaturas');
     }
 };

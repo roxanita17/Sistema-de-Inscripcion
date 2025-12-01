@@ -49,10 +49,10 @@ $table->foreign("institucion_id")->references("id")->on("institucion_procedencia
 
             $table->string("documentos_estudiante",255)->nullable();
             $table->enum("status",[
-                Estudiante::STATUS_ACTIVO,
-                Estudiante::STATUS_EN_ESPERA,
-                Estudiante::STATUS_INACTIVO,
-            ])->default(Estudiante::STATUS_EN_ESPERA);
+                'Activo',
+                'En Espera',
+                'Inactivo',
+            ])->default('Activo');
             $table->timestamps();
             $table->softDeletes();
         });
