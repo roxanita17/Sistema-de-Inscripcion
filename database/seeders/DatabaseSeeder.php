@@ -4,18 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\AnioEscolar;
 use App\Models\Docente;
-use App\Models\EtniaIndigena;
-use App\Models\Estado;
-use App\Models\Municipio;
-use App\Models\Localidad;
-use App\Models\EstudiosRealizado;
-use App\Models\AreaEstudioRealizado;
-use App\Models\GradoAreaFormacion;
-use App\Models\Discapacidad;
-use App\Models\Ocupacion;
-use App\Models\ExpresionLiteraria;
-use App\Models\Banco;
-use App\Models\PrefijoTelefono;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Persona;
@@ -74,7 +62,9 @@ class DatabaseSeeder extends Seeder
             LateralidadSeeder::class,
             OrdenNacimientoSeeder::class,
             TipoDocumentoSeeder::class,
-
+            IndiceEdadSeeder::class,
+            IndicePesoSeeder::class,
+            IndiceEstaturaSeeder::class,
         ]);
 
         $this->command->info('Factory de personas ejecutado correctamente.');

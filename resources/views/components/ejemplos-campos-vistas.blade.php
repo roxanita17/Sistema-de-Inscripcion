@@ -24,7 +24,7 @@
                         <h1 class="title-main">Biblioteca de Campos de Formulario</h1>
                         <p class="title-subtitle">Todos los tipos de campos disponibles con estilos modernos</p>
                     </div>
-                </div>
+                </div> 
             </div>
         </div>
 

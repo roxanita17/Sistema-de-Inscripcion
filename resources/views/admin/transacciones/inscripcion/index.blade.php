@@ -22,6 +22,17 @@
                     <p class="title-subtitle">Administración de los inscripciones</p>
                 </div>
             </div>
+            
+
+            {{-- boton del percentil --}}
+            <form action="{{ route('admin.transacciones.inscripcion.generar.secciones', $grado->id) }}" method="POST">
+                @csrf
+                <button class="btn btn-primary">
+                    Generar Secciones Automáticamente
+                </button>
+            </form>
+
+
 
             {{-- Botón que abre la ventana modal para crear un nuevo banco --}}
             <button type="button" 

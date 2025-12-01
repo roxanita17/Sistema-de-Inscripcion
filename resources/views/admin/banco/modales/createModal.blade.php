@@ -30,7 +30,7 @@
                         </label>
                         <input type="text" 
                             name="codigo_banco" 
-                            inputmode="numeric"
+                            inputmode="numeric" 
                             id="codigo_banco" 
                             class="form-control-modern" 
                             placeholder="Ingrese el codigo"

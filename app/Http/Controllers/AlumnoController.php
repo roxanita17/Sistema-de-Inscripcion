@@ -3,6 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alumno;
+use App\Models\Discapacidad;
+use App\Models\EtniaIndigena;
+use App\Models\ExpresionLiteraria;
+use App\Models\InstitucionProcedencia;
+use App\Models\Lateralidad;
+use App\Models\OrdenNacimiento;
+use App\Models\Persona;
+use App\Models\TipoDocumento;
+use App\Models\Genero;
+use App\Models\Localidad;
+use App\Models\Municipio;
+use App\Models\Estado;
+
 use Illuminate\Http\Request;
 
 
@@ -35,7 +48,23 @@ class AlumnoController extends Controller
      */
     public function create()
     {
-        //
+        $orden_nacimiento = OrdenNacimiento::all();
+        $discapacidad = Discapacidad::all();
+        $etnia_indigena = EtniaIndigena::all();
+        $expresion_literaria= ExpresionLiteraria::all();
+        $lateralidad = Lateralidad::all();
+        $institucion_procedencia = InstitucionProcedencia::all();
+        $persona = Persona::all();
+        $tipo_documento = TipoDocumento::all();
+        $genero = Genero::all();
+        $localidad = Localidad::all();
+        $municipio = Municipio::all();
+        $estado = Estado::all();
+
+
+        $alumnos = Alumno::all();
+        return view('admin.alumnos.create', compact('persona',  'alumnos', 'orden_nacimiento', 'discapacidad', 'etnia_indigena', 'expresion_literaria', 'lateralidad', 'institucion_procedencia', 'tipo_documento', 'genero', 'localidad', 'municipio', 'estado'));
+
     }
 
     /**

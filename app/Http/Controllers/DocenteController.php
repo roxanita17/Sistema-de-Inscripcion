@@ -69,7 +69,7 @@ class DocenteController extends Controller
         // VALIDACIÓN
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'cedula' => 'required|string|max:20|unique:personas,cedula',
+            'cedula' => 'required|string|max:20',
             'primer_nombre' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
             'tercer_nombre' => 'nullable|string|max:50',
@@ -169,7 +169,7 @@ class DocenteController extends Controller
         // VALIDACIÓN (excluyendo la cédula actual)
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'cedula' => 'required|string|max:20|unique:personas,cedula,' . $persona->cedula,
+            'cedula' => 'required|string|max:20' . $persona->cedula,
             'primer_nombre' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
             'tercer_nombre' => 'nullable|string|max:50',
@@ -290,7 +290,7 @@ class DocenteController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.docente.index')
+            return redirect()->route(route: 'admin.docente.index')
                 ->with('success', 'Docente eliminado correctamente.');
 
         } catch (\Exception $e) {

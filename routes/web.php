@@ -26,6 +26,7 @@ use App\Http\Controllers\DocenteAreaGradoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\EntradasPercentilController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -226,19 +227,31 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     });
 
     // ===== DASHBOARD ======
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // ===== ALUMNOS ======
-    Route::get('alumnos', [AlumnoController::class, 'index'])->name('alumnos.index');
-    Route::get('alumnos/create', [AlumnoController::class, 'create'])->name('alumnos.create');
+    Route::get('alumnos', [AlumnoController::class, 'index'])->name('admin.alumnos.index');
+
     Route::post('alumnos/store', [AlumnoController::class, 'store'])->name('alumnos.store');
+
     Route::get('alumnos/{id}/edit', [AlumnoController::class, 'edit'])->name('alumnos.edit');
+
     Route::post('alumnos/{id}/update', [AlumnoController::class, 'update'])->name('alumnos.update');
+    
     Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
 
     // ===== INSCRIPCION ======
-    Route::get('transacciones/inscripcion', [InscripcionController::class, 'index'])->name('transacciones.inscripcion.index');
+    Route::get('transacciones/inscripcion', [InscripcionController::class, 'index'])
+        ->name('transacciones.inscripcion.index');
+
+    Route::post('transacciones/inscripcion/{grado}/generar-secciones', [InscripcionController::class, 'generarSecciones'])->name('transacciones.inscripcion.generar.secciones');
+
+
+
+    //===== PERCENTIL ======
+    Route::get('transacciones/percentil', [EntradasPercentilController::class, 'index'])->name('transacciones.percentil.index');
 });
+
+Route::get('admin/alumnos/create', [AlumnoController::class, 'create'])->name('admin.alumnos.create');
 
 
 

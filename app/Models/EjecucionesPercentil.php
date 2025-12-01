@@ -15,4 +15,20 @@ class EjecucionesPercentil extends Model
         'total_evaluados',
         'status',
     ];
+
+        /**
+     * Relación con Secciones
+     */
+    public function secciones()
+    {
+        return $this->hasMany(Seccion::class, 'ejecucion_percentil_id');
+    }
+
+    /**
+     * Relación con EntradasPercentil
+     */
+    public function entradas()
+    {
+        return $this->hasMany(EntradasPercentil::class, 'ejecucion_percentil_id');
+    }
 }

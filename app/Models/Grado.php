@@ -15,7 +15,7 @@ class Grado extends Model
         'numero_grado',
         'capacidad_max',
         'min_seccion',
-        'max_seccion',
+        'max_seccion', 
         'status',
     ];
 

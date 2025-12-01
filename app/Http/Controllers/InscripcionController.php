@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Inscripcion;
 use Illuminate\Http\Request;
+use App\Models\Grado;
+use App\Services\SectionDistributorService;
 
 class InscripcionController extends Controller
 {
+
+
     private function verificarAnioEscolar()
     {
         return \App\Models\AnioEscolar::where('status', 'Activo')
@@ -14,16 +18,27 @@ class InscripcionController extends Controller
             ->exists();
     }
     
-
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Grado $grado)
     {
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        $inscripciones = Inscripcion::paginate(10);
-        return view('admin.transacciones.inscripcion.index', compact('inscripciones', 'anioEscolarActivo'));
+        $inscripciones = Inscripcion::where('grado_id', $grado->id)
+            ->with(['alumno.persona', 'representante.persona', 'grado'])
+            ->paginate(10);
+
+        return view('admin.transacciones.inscripcion.index', compact('inscripciones', 'anioEscolarActivo', 'grado'));
     }
+
+    public function generarSecciones($gradoId)
+    {
+        $grado = Grado::findOrFail($gradoId);
+        $servicio = app(SectionDistributorService::class);
+        $resultado = $servicio->procesarGrado($grado);
+        return back()->with('success', "Secciones generadas: {$resultado['total_secciones']}");
+    }
+
 
     /**
      * Show the form for creating a new resource.

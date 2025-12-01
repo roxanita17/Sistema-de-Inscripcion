@@ -22,7 +22,7 @@ class InscripcionFactory extends Factory
         return [
             'alumno_id' => Alumno::inRandomOrder()->first()->id,
             'representante_id' => Representante::inRandomOrder()->first()->id,
-            'grado_id' => Grado::inRandomOrder()->first()->id,
+            'grado_id' => 1,
             'status' => 'Activo',
         ];
     }

@@ -20,13 +20,27 @@ class Seccion extends Model
         'status',
     ];
 
+    /**
+     * Relación con Grado
+     */
     public function grado()
     {
         return $this->belongsTo(Grado::class);
     }
 
-    public function ejecucion_percentil()
+    /**
+     * Relación con EjecucionesPercentil
+     */
+    public function ejecucionPercentil()
     {
-        return $this->belongsTo(EjecucionesPercentil::class);
+        return $this->belongsTo(EjecucionesPercentil::class, 'ejecucion_percentil_id');
+    }
+
+    /**
+     * Relación con EntradasPercentil
+     */
+    public function entradasPercentil()
+    {
+        return $this->hasMany(EntradasPercentil::class, 'seccion_id');
     }
 }

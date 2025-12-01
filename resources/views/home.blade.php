@@ -374,7 +374,7 @@
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="quick-actions">
-                <a {{-- href="{{ route('admin.estudiante.create') }}" --}} class="action-card">
+                <a href="{{url('admin/alumnos') }}" class="action-card">
                     <div class="action-icon">
                         <i class="fas fa-user-plus"></i>
                     </div>
@@ -407,13 +407,6 @@
                         <i class="fas fa-layer-group"></i>
                     </div>
                     <p class="action-title">Grados</p>
-                </a>
-
-                <a href="#" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-                    <p class="action-title">Reportes</p>
                 </a>
             </div>
         </div>

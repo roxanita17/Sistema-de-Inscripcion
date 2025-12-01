@@ -21,6 +21,13 @@ class Alumno extends Model
 
     protected $fillable = [
         'numero_zonificacion',
+        'institucion_procedencia_id',
+        'expresion_literaria_id',
+        'orden_nacimiento_id',
+        'discapacidad_id',
+        'etnia_indigena_id',
+        'lateralidad_id',
+        'persona_id',
         'anio_egreso',
         'talla_camisa',
         'talla_pantalon',
@@ -81,6 +88,11 @@ class Alumno extends Model
     public function persona()
     {
         return $this->belongsTo(Persona::class, 'persona_id', 'id');
+    }
+
+    public function institucionProcedencia()
+    {
+        return $this->belongsTo(InstitucionProcedencia::class, 'institucion_procedencia_id', 'id');
     }
 }
 

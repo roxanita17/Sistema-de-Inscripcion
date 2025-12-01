@@ -92,7 +92,7 @@
                 <div class="row">
 
                     {{-- Tipo de documento --}}
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-4 mb-3"> 
                         <label class="form-label-modern">
                             <i class="fas fa-id-card-alt"></i>
                             Tipo de Documento <span class="required-badge">*</span>

@@ -26,6 +26,8 @@ return new class extends Migration
             $table->foreignId('expresion_literaria_id')->constrained('expresion_literarias')->cascadeOnDelete();
             $table->foreignId('lateralidad_id')->constrained('lateralidads')->cascadeOnDelete();
             $table->foreignId('persona_id')->constrained('personas')->cascadeOnDelete();
+            $table->foreignId('institucion_procedencia_id')->constrained('institucion_procedencias')->cascadeOnDelete();
+
             $table->string('status')->default('Activo');
             $table->timestamps();
         });
