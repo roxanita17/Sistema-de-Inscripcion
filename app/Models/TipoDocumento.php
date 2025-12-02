@@ -11,4 +11,5 @@ class TipoDocumento extends Model
     protected $fillable = [
         'tipo_documento',
     ];
+    
 }

@@ -19,6 +19,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class RepresentanteController extends Controller
 {
@@ -1005,7 +1007,7 @@ class RepresentanteController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | VALIDATION METHODS
+    | VALIDACIONES
     |--------------------------------------------------------------------------
     */
 
@@ -1048,4 +1050,24 @@ class RepresentanteController extends Controller
             'message' => 'Cédula disponible',
         ], 200);
     }
+    /*
+    |--------------------------------------------------------------------------
+    | REPORTES
+    |--------------------------------------------------------------------------
+    */
+
+    public function reportePDF(Request $request)
+    {
+        $filtro = $request->all();
+        $representantes = Representante::reportePDF($filtro);
+
+        if($representantes->isEmpty()){
+            return response()->json('No se encontraron representantes', 404);
+        }
+
+
+        $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes'));
+        return $pdf->stream('representantes.pdf');
+    }
+
 }

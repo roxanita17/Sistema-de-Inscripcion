@@ -46,11 +46,17 @@
                 <div class="card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="card-title mb-0">Listado de Representantes</h3>
-                        <form class="d-flex" role="search">
-                            <input class="form-control" type="search"
-                                   placeholder="Buscar por cédula, nombre o apellido" aria-label="Search"
-                                   id="buscador">
-                        </form>
+                        <div class="d-flex gap-2">
+                            
+                            <form class="d-flex" role="search">
+                                <input class="form-control" type="search"
+                                       placeholder="Buscar por cédula, nombre o apellido" aria-label="Search"
+                                       id="buscador">
+                            </form>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalGenerarReporte">
+                                <i class="fas fa-file-pdf me-1"></i> Generar Reporte
+                            </button>
+                        </div>
                     </div>
 
                     <div class="card-body p-0">
@@ -109,8 +115,7 @@
                                                     title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar' }}">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
-
-                                            
+                                        </div>
                                     </td>
                                         </tr>
                                     {{-- Modal de confirmación para eliminar representante --}}
@@ -172,8 +177,79 @@
     </div>
 @endsection
 
+<!-- Modal Generar Reporte -->
+<div class="modal fade" id="modalGenerarReporte" tabindex="-1" aria-labelledby="modalGenerarReporteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalGenerarReporteLabel">
+                    <i class="fas fa-file-pdf me-2"></i>Generar Reporte
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formReporte" action="{{ route('representante.reporte_pdf') }}" method="GET" target="_blank">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tipo_representante" class="form-label">Tipo de Representante</label>
+                        <select class="form-select" id="tipo_representante" name="es_legal">
+                            <option value="">Todos los representantes</option>
+                            <option value="1">Solo representantes legales</option>
+                            <option value="0">Solo representantes no legales</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-download me-1"></i> Generar PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section('js')
     <script>
+        // Configuración de fechas por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer rango de fechas por defecto (mes actual)
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            
+            // Formatear fechas para el input date (YYYY-MM-DD)
+            const formatDate = (date) => {
+                const d = new Date(date);
+                let month = '' + (d.getMonth() + 1);
+                let day = '' + d.getDate();
+                const year = d.getFullYear();
+
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
+
+                return [year, month, day].join('-');
+            };
+
+            // Establecer valores por defecto
+            document.getElementById('fecha_inicio').value = formatDate(firstDay);
+            document.getElementById('fecha_fin').value = formatDate(today);
+
+            // Validación de fechas
+            document.getElementById('formReporte').addEventListener('submit', function(e) {
+                const fechaInicio = document.getElementById('fecha_inicio').value;
+                const fechaFin = document.getElementById('fecha_fin').value;
+                
+                if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'La fecha de inicio no puede ser mayor a la fecha de fin',
+                        confirmButtonColor: '#3085d6',
+                    });
+                }
+            });
+        });
         function llenarModalRepresentante(persona, representante, legal, banco) {
             try {
                 console.log('=== llenarModalRepresentante llamado ===');

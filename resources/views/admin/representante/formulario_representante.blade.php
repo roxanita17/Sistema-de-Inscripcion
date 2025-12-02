@@ -3269,12 +3269,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ================= VALIDACIÓN DE FECHAS DE NACIMIENTO =================
-/**
- * Valida si la fecha de nacimiento corresponde a una persona mayor de 18 años
- * Muestra una advertencia visual si es menor de edad
- * @param {HTMLInputElement} fechaInput - Elemento input de tipo fecha
- * @returns {boolean} - Siempre retorna true para permitir cualquier fecha
- */
+// Función para validar que la fecha corresponde a una persona mayor de 18 años
 function validarEdad(fechaInput) {
     // Si no hay input o no tiene valor, limpiar estilos y salir
     if (!fechaInput || !fechaInput.value) {
