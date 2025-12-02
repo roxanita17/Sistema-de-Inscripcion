@@ -388,11 +388,11 @@ class RepresentanteController extends Controller
 
     // VALIDACIÓN DE CÉDULA DUPLICADA
     // En el modelo Persona la cédula se almacena en el campo numero_documento
-    $cedula = $request->input('numero_cedula_persona');
+    $numero_documento = $request->input('numero_cedula_persona');
     $personaId = $request->id ?? $request->persona_id;
 
     // Buscar persona con la misma cédula, excluyendo la persona actual si estamos editando
-    $query = Persona::where('numero_documento', $cedula);
+    $query = Persona::where('numero_documento', $numero_documento);
 
     if ($personaId) {
         $query->where('id', '!=', $personaId);
@@ -403,7 +403,7 @@ class RepresentanteController extends Controller
     // Solo validar cédula duplicada si NO es un caso de progenitor como representante
     if ($personaExistente && !$esProgenitorRepresentante) {
         Log::warning('Intento de registrar cédula duplicada', [
-            'cedula' => $cedula,
+            'cedula' => $numero_documento,
             'persona_existente_id' => $personaExistente->id,
             'persona_actual_id' => $personaId,
             'esProgenitorRepresentante' => $esProgenitorRepresentante
@@ -432,7 +432,7 @@ class RepresentanteController extends Controller
         "tercer_nombre" => $request->input('nombre_tres'),
         "primer_apellido" => $request->input('apellido_uno'),
         "segundo_apellido" => $request->input('apellido_dos'),
-        "cedula" => $request->input('numero_cedula_persona'),
+        "numero_documento" => $request->input('numero_cedula_persona'),
         "fecha_nacimiento" => $request->input('fecha_nacimiento_personas'),
         // Se asume que sexo_representante corresponde al id en la tabla generos
         "genero_id" => $request->input('sexo_representante'),
@@ -513,7 +513,7 @@ class RepresentanteController extends Controller
             }
             
             Log::info('Procesando progenitor como representante', [
-                'cedula' => $cedulaProgenitor,
+                'numero_documento' => $cedulaProgenitor,
                 'tipo_progenitor' => $tipoProgenitor
             ]);
             
@@ -537,7 +537,7 @@ class RepresentanteController extends Controller
             
             if ($datosCompletos) {
                 Log::info('Usando datos completos del formulario para el progenitor', [
-                    'cedula' => $cedulaProgenitor,
+                    'numero_documento' => $cedulaProgenitor,
                     'nombres' => $datosPersona['primer_nombre'] . ' ' . $datosPersona['primer_apellido']
                 ]);
                 
@@ -550,7 +550,7 @@ class RepresentanteController extends Controller
             } else {
                 // 2. Si los datos del formulario no están completos, buscar en la base de datos
                 Log::info('Buscando datos del progenitor en la base de datos', [
-                    'cedula' => $cedulaProgenitor
+                    'numero_documento' => $cedulaProgenitor
                 ]);
                 
                 $persona = Persona::where('numero_documento', $cedulaProgenitor)->first();
@@ -576,15 +576,46 @@ class RepresentanteController extends Controller
                     
                     $persona->save();
                 } else {
-                    // 3. Si no se encuentra en la base de datos, lanzar error con mensaje claro
-                    $errorMsg = "No se encontró al {$tipoProgenitor} con cédula {$cedulaProgenitor} en la base de datos. " .
-                              "Por favor, complete todos los campos requeridos o asegúrese de que el {$tipoProgenitor} esté registrado previamente.";
-                    Log::error($errorMsg, [
-                        'cedula_progenitor' => $cedulaProgenitor,
-                        'tipo_progenitor' => $tipoProgenitor,
-                        'datos_disponibles' => $datosPersona
+                    // 3. Si no se encuentra en la base de datos, crear un nuevo registro con los datos disponibles
+                    Log::info('Creando nuevo registro para el progenitor', [
+                        'numero_documento' => $cedulaProgenitor,
+                        'tipo_progenitor' => $tipoProgenitor
                     ]);
-                    throw new \Exception($errorMsg);
+                    
+                    // Asegurarse de que los campos requeridos tengan valores por defecto si están vacíos
+                    $datosPersona = array_merge([
+                        'numero_documento' => $cedulaProgenitor,
+                        'status' => true,
+                        'tipo_documento_id' => $datosPersona['tipo_documento_id'] ?? 1, // Valor por defecto para tipo de documento
+                        'genero_id' => $datosPersona['genero_id'] ?? 1, // Valor por defecto para género
+                        'localidad_id' => $datosPersona['localidad_id'] ?? 1, // Valor por defecto para localidad
+                        'prefijo_id' => $datosPersona['prefijo_id'] ?? 1, // Valor por defecto para prefijo
+                        'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
+                        'primer_apellido' => $datosPersona['primer_apellido'] ?? 'SIN APELLIDO',
+                        'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->format('Y-m-d')
+                    ], $datosPersona);
+                    
+                    try {
+                        $persona = Persona::create($datosPersona);
+                        $isUpdate = false;
+                        
+                        Log::info('Nuevo registro creado para el progenitor', [
+                            'persona_id' => $persona->id,
+                            'numero_documento' => $persona->numero_documento,
+                            'nombres' => $persona->primer_nombre . ' ' . $persona->primer_apellido
+                        ]);
+                    } catch (\Exception $e) {
+                        $errorMsg = "Error al crear el registro del {$tipoProgenitor} con cédula {$cedulaProgenitor}: " . $e->getMessage();
+                        Log::error($errorMsg, [
+                            'exception' => $e,
+                            'datos_persona' => $datosPersona
+                        ]);
+                        
+                        return response()->json([
+                            'success' => false,
+                            'message' => $errorMsg
+                        ], 500);
+                    }
                 }
             }
             
@@ -686,7 +717,7 @@ class RepresentanteController extends Controller
 
         $cedulaMadre = $request->input('cedula');
         if ($cedulaMadre) {
-            Log::info('Procesando datos de la madre', ['cedula' => $cedulaMadre]);
+            Log::info('Procesando datos de la madre', ['numero_documento' => $cedulaMadre]);
 
             $personaMadre = Persona::firstOrNew(['numero_documento' => $cedulaMadre]);
 
@@ -815,17 +846,17 @@ class RepresentanteController extends Controller
     public function buscarPorCedula(Request $request): JsonResponse
     {
             // En el modelo Persona la cédula se almacena en numero_documento
-        $cedula = $request->get('cedula');
-        Log::info(" Buscando cédula: " . $cedula);
+        $numero_documento = $request->get('cedula');
+        Log::info(" Buscando cédula: " . $numero_documento);
         
-        if(!$cedula){
+        if(!$numero_documento){
             return response()->json([
                 'status' => 'error',
                 'message' => 'Debe indicar la cédula',
             ], 422);
         }
 
-        $persona = Persona::where('numero_documento', $cedula)->first();
+        $persona = Persona::where('numero_documento', $numero_documento)->first();
         Log::info("Persona encontrada: " . ($persona ? 'SÍ (ID: ' . $persona->id . ')' : 'NO'));
         
         if(!$persona){
@@ -1019,10 +1050,10 @@ class RepresentanteController extends Controller
      */
     public function verificarCedula(Request $request): JsonResponse
     {
-        $cedula = $request->input('cedula');
+        $numero_documento = $request->input('cedula');
         $personaId = $request->input('persona_id'); // Para excluir la persona actual en edición
 
-        if (!$cedula) {
+        if (!$numero_documento) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Debe proporcionar una cédula',
@@ -1030,7 +1061,7 @@ class RepresentanteController extends Controller
         }
 
         // Buscar persona con la misma cédula, excluyendo la persona actual si estamos editando
-        $query = Persona::where('numero_documento', $cedula);
+        $query = Persona::where('numero_documento', $numero_documento);
 
         if ($personaId) {
             $query->where('id', '!=', $personaId);

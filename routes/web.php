@@ -391,6 +391,10 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
         // Verificar cédula duplicada (AJAX)
         Route::get('/verificar-cedula', [RepresentanteController::class, 'verificarCedula'])->name('verificar_cedula');
 
-        // Generar reporte PDF
-        Route::get('/reporte-pdf', [RepresentanteController::class, 'reportePDF'])->name('reporte_pdf');
-    });
+    // Generar reporte PDF
+    Route::get('/reporte-pdf', [RepresentanteController::class, 'reportePDF'])->name('reporte_pdf');
+
+});
+
+    
+ 
