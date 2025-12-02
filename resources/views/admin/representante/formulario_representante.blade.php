@@ -100,8 +100,8 @@
 
                     <div class="col-md-4 mb-3">
                         <div class="form-group">
-                            <label for="cedula" class="form-label required">Número de Cédula</label>
-                            <input type="text" class="form-control" id="cedula" name="cedula" 
+                            <label for="numero_documento" class="form-label required">Número de Cédula</label>
+                            <input type="text" class="form-control" id="numero_documento" name="numero_documento" 
                                 maxlength="8" pattern="\d{6,8}" 
                                 title="Ingrese solo números (entre 6 y 8 dígitos)" required
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')">
@@ -402,8 +402,8 @@
 
                 <div class="col-md-4 mb-3">
                     <div class="form-group">
-                        <label for="cedula-padre" class="form-label required">Número de Cédula</label>
-                        <input type="text" class="form-control" id="cedula-padre" name="cedula-padre" 
+                        <label for="numero_documento-padre" class="form-label required">Número de Cédula</label>
+                        <input type="text" class="form-control" id="numero_documento-padre" name="numero_documento-padre" 
                             maxlength="8" required>
                         <div class="invalid-feedback">
                             Por favor ingrese un número de cédula válido (solo números).
@@ -719,13 +719,13 @@
                 <div class="col-md-4 mb-3">
                     <div class="input-group">
                         <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Cédula</span>
-                        <input type="text" class="form-control" id="cedula-representante" name="cedula-representante" 
+                        <input type="text" class="form-control" id="numero_documento-representante" name="numero_documento-representante" 
                             aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" 
                             maxlength="8" required>
                     </div>
                     <input type="hidden" id="persona-id-representante" name="persona-id-representante">
                     <input type="hidden" id="representante-id" name="representante-id">
-                    <small id="cedula-representante-error" class="text-danger"></small>
+                    <small id="numero_documento-representante-error" class="text-danger"></small>
                 </div>
 
                 <div class="row">
@@ -1588,10 +1588,10 @@
             // VALIDACIÓN EN TIEMPO REAL CÉDULAS
             // ================================
 
-            const verificarCedulaUrl = "{{ route('representante.verificar_cedula') }}";
-            const buscarCedulaUrl    = "{{ route('representante.buscar_cedula') }}";
+            const verificarnumero_documentoUrl = "{{ route('representante.verificar_numero_documento') }}";
+            const buscarnumero_documentoUrl    = "{{ route('representante.buscar_numero_documento') }}";
 
-            function marcarCedulaError(input, mensaje) {
+            function marcarnumero_documentoError(input, mensaje) {
                 input.classList.add('is-invalid');
                 const errorId = input.id + '-error';
                 let errorElement = document.getElementById(errorId);
@@ -1604,7 +1604,7 @@
                 errorElement.textContent = mensaje;
             }
 
-            function limpiarCedulaError(input) {
+            function limpiarnumero_documentoError(input) {
                 input.classList.remove('is-invalid');
                 const errorId = input.id + '-error';
                 const errorElement = document.getElementById(errorId);
@@ -1613,18 +1613,18 @@
                 }
             }
 
-            function cedulaSeRepiteEnFormulario(valor, idActual) {
+            function numero_documentoSeRepiteEnFormulario(valor, idActual) {
                 if (!valor) return false;
                 
                 // Si es el campo de cédula del representante y está seleccionado "Progenitor como Representante", no marcar como duplicado
-                if (idActual === 'cedula-representante') {
+                if (idActual === 'numero_documento-representante') {
                     const progenitorRep = document.querySelector('input[name="tipo_representante"][value="progenitor_representante"]:checked');
                     if (progenitorRep) {
                         return false; // No marcar como duplicado si es progenitor representante
                     }
                 }
 
-                const ids = ['cedula', 'cedula-padre', 'cedula-representante'];
+                const ids = ['numero_documento', 'numero_documento-padre', 'numero_documento-representante'];
                 let contador = 0;
 
                 ids.forEach(id => {
@@ -1634,7 +1634,7 @@
                     const campo = document.getElementById(id);
                     if (campo && campo.value && campo.value === valor) {
                         // Si es el campo de cédula del representante y está seleccionado "Progenitor como Representante", no contar como duplicado
-                        if (id === 'cedula-representante') {
+                        if (id === 'numero_documento-representante') {
                             const progenitorRep = document.querySelector('input[name="tipo_representante"][value="progenitor_representante"]:checked');
                             if (progenitorRep) {
                                 return; // No contar este campo si es progenitor representante
@@ -1647,34 +1647,34 @@
                 return contador > 0; // Cambiado a > 0 para marcar como duplicado si se encuentra en cualquier otro campo
             }
 
-            function verificarCedulaCampo(selector, personaIdSelector) {
+            function verificarnumero_documentoCampo(selector, personaIdSelector) {
                 const input = document.querySelector(selector);
                 if (!input) return;
 
                 input.addEventListener('blur', function() {
                     const valor = this.value.trim();
-                    limpiarCedulaError(this);
+                    limpiarnumero_documentoError(this);
                     if (!valor) return;
 
                     // Verificar si es el campo de cédula del representante y está seleccionado "Progenitor como Representante"
                     const esProgenitorRepresentante = document.querySelector('input[name="tipo_representante"][value="progenitor_representante"]:checked') !== null;
                     
-                    if (this.id === 'cedula-representante' && esProgenitorRepresentante) {
+                    if (this.id === 'numero_documento-representante' && esProgenitorRepresentante) {
                         // No validar cédula duplicada si es progenitor representante
-                        limpiarCedulaError(this);
+                        limpiarnumero_documentoError(this);
                         return;
                     }
 
                     // Verificar repetición dentro del mismo formulario
-                    if (cedulaSeRepiteEnFormulario(valor, this.id)) {
-                        marcarCedulaError(this, 'Esta cédula ya se está usando en otro bloque del formulario');
+                    if (numero_documentoSeRepiteEnFormulario(valor, this.id)) {
+                        marcarnumero_documentoError(this, 'Esta cédula ya se está usando en otro bloque del formulario');
                         return;
                     }
 
                     // Verificar contra la base de datos
                     const personaId = personaIdSelector ? document.querySelector(personaIdSelector)?.value : '';
 
-                    fetch(`${verificarCedulaUrl}?cedula=${valor}&persona_id=${personaId}`)
+                    fetch(`${verificarnumero_documentoUrl}?numero_documento=${valor}&persona_id=${personaId}`)
                         .then(response => {
                             if (!response.ok) {
                                 return response.json().then(err => { throw err; });
@@ -1682,12 +1682,12 @@
                             return response.json();
                         })
                         .then(resp => {
-                            console.log('Cedula OK', selector, resp);
-                            limpiarCedulaError(input);
+                            console.log('numero_documento OK', selector, resp);
+                            limpiarnumero_documentoError(input);
                         })
                         .catch(error => {
                             if (error.message) {
-                                marcarCedulaError(input, error.message);
+                                marcarnumero_documentoError(input, error.message);
                             } else {
                                 console.error('Error al verificar cédula', error);
                             }
@@ -1696,9 +1696,9 @@
             }
 
             // Aplicar validación en tiempo real a las tres cédulas principales
-            verificarCedulaCampo('#cedula', null); // Madre
-            verificarCedulaCampo('#cedula-padre', null); // Padre
-            verificarCedulaCampo('#cedula-representante', '#persona-id-representante'); // Representante legal
+            verificarnumero_documentoCampo('#numero_documento', null); // Madre
+            verificarnumero_documentoCampo('#numero_documento-padre', null); // Padre
+            verificarnumero_documentoCampo('#numero_documento-representante', '#persona-id-representante'); // Representante legal
 
             // ================================
             // BLOQUEO / DESBLOQUEO DE SECCIONES
@@ -1894,8 +1894,8 @@ function setSelectValue(selectId, value, callback) {
     }
 }
 
-function copiarDesdeMadreOPadreSiCoincide(cedula) {
-    if (!cedula || !cedula.trim()) return false;
+function copiarDesdeMadreOPadreSiCoincide(numero_documento) {
+    if (!numero_documento || !numero_documento.trim()) return false;
     
     // Limpiar errores previos
     const errorElement = getElement('error-copia-datos');
@@ -2087,8 +2087,8 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
 
     // MADRE
     try {
-        const cedulaMadre = getElement('cedula');
-        if (cedulaMadre?.value === cedula) {
+        const numero_documentoMadre = getElement('numero_documento');
+        if (numero_documentoMadre?.value === numero_documento) {
             // Copiar datos personales
             copiarDatosPersonales('', true);
             
@@ -2107,8 +2107,8 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
 
     // PADRE
     try {
-        const cedulaPadre = getElement('cedula-padre');
-        if (cedulaPadre?.value === cedula) {
+        const numero_documentoPadre = getElement('numero_documento-padre');
+        if (numero_documentoPadre?.value === numero_documento) {
             // Copiar datos personales
             copiarDatosPersonales('-padre', false);
             
@@ -2140,9 +2140,9 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
             errorDiv.textContent = 'No se encontró un progenitor con esta cédula. Complete los datos manualmente.';
             
             // Insertar después del campo de cédula
-            const cedulaField = getElement('cedula-representante');
-            if (cedulaField?.parentNode) {
-                cedulaField.parentNode.insertBefore(errorDiv, cedulaField.nextSibling);
+            const numero_documentoField = getElement('numero_documento-representante');
+            if (numero_documentoField?.parentNode) {
+                numero_documentoField.parentNode.insertBefore(errorDiv, numero_documentoField.nextSibling);
             } else {
                 seccionRep.insertBefore(errorDiv, seccionRep.firstChild);
             }
@@ -2151,7 +2151,7 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
         // Limpiar campos de representante excepto la cédula
         const campos = document.querySelectorAll('#datos-representante input[type="text"], #datos-representante input[type="email"], #datos-representante input[type="tel"], #datos-representante select');
         campos.forEach(campo => {
-            if (campo.id !== 'cedula-representante') {
+            if (campo.id !== 'numero_documento-representante') {
                 campo.value = '';
             }
         });
@@ -2258,13 +2258,13 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
                     
                     // Limpiar errores de validación de cédula cuando se selecciona 'Progenitor como Representante'
                     if (tipo === 'progenitor_representante') {
-                        const cedulaRepresentante = document.getElementById('cedula-representante');
-                        if (cedulaRepresentante) {
-                            limpiarCedulaError(cedulaRepresentante);
+                        const numero_documentoRepresentante = document.getElementById('numero_documento-representante');
+                        if (numero_documentoRepresentante) {
+                            limpiarnumero_documentoError(numero_documentoRepresentante);
                             
                             // Si hay un valor en la cédula del representante, forzar la validación
-                            if (cedulaRepresentante.value) {
-                                cedulaRepresentante.dispatchEvent(new Event('blur'));
+                            if (numero_documentoRepresentante.value) {
+                                numero_documentoRepresentante.dispatchEvent(new Event('blur'));
                             }
                         }
                     }
@@ -2275,22 +2275,22 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
                         
                         // Si es 'progenitor_representante', limpiar el campo de cédula para que el usuario lo llene
                         if (tipo === 'progenitor_representante') {
-                            const cedulaRepresentante = document.getElementById('cedula-representante');
-                            if (cedulaRepresentante) {
+                            const numero_documentoRepresentante = document.getElementById('numero_documento-representante');
+                            if (numero_documentoRepresentante) {
                                 // Limpiar el campo de cédula y enfocarlo para que el usuario lo llene
-                                cedulaRepresentante.value = '';
-                                cedulaRepresentante.focus();
+                                numero_documentoRepresentante.value = '';
+                                numero_documentoRepresentante.focus();
                                 
                                 // Agregar evento para copiar datos cuando se ingrese la cédula
-                                const handleCedulaBlur = function() {
-                                    if (cedulaRepresentante.value.trim() !== '') {
-                                        copiarDesdeMadreOPadreSiCoincide(cedulaRepresentante.value);
+                                const handlenumero_documentoBlur = function() {
+                                    if (numero_documentoRepresentante.value.trim() !== '') {
+                                        copiarDesdeMadreOPadreSiCoincide(numero_documentoRepresentante.value);
                                     }
                                 };
                                 
                                 // Remover cualquier evento anterior para evitar duplicados
-                                cedulaRepresentante.removeEventListener('blur', handleCedulaBlur);
-                                cedulaRepresentante.addEventListener('blur', handleCedulaBlur);
+                                numero_documentoRepresentante.removeEventListener('blur', handlenumero_documentoBlur);
+                                numero_documentoRepresentante.addEventListener('blur', handlenumero_documentoBlur);
                             }
                         }
                     } else {
@@ -2305,8 +2305,8 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
                         const madrePresente = document.querySelector('input[name="estado_madre"]:checked')?.value === 'Presente';
                         
                         // Obtener los valores de los campos de cédula
-                        const cedulaPadre = document.getElementById('cedula-padre')?.value;
-                        const cedulaMadre = document.getElementById('cedula')?.value;
+                        const numero_documentoPadre = document.getElementById('numero_documento-padre')?.value;
+                        const numero_documentoMadre = document.getElementById('numero_documento')?.value;
                         
                         // Obtener los valores de los campos de correo
                         const correoPadre = document.getElementById('email-padre')?.value;
@@ -2317,8 +2317,8 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
                         const tipoDocMadre = document.getElementById('tipo-ci')?.value;
                         
                         // Si el padre está presente, copiar sus datos
-                        if (padrePresente && cedulaPadre) {
-                            document.getElementById('cedula-representante').value = cedulaPadre;
+                        if (padrePresente && numero_documentoPadre) {
+                            document.getElementById('numero_documento-representante').value = numero_documentoPadre;
                             const tipoCiRepresentante = document.getElementById('tipo-ci-representante');
                             if (tipoCiRepresentante && tipoDocPadre) {
                                 tipoCiRepresentante.value = tipoDocPadre;
@@ -2327,11 +2327,11 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
                             if (correoRepresentante && correoPadre) {
                                 correoRepresentante.value = correoPadre;
                             }
-                            console.log('Datos copiados del padre:', { cedula: cedulaPadre, correo: correoPadre });
+                            console.log('Datos copiados del padre:', { numero_documento: numero_documentoPadre, correo: correoPadre });
                         } 
                         // Si la madre está presente, copiar sus datos
-                        else if (madrePresente && cedulaMadre) {
-                            document.getElementById('cedula-representante').value = cedulaMadre;
+                        else if (madrePresente && numero_documentoMadre) {
+                            document.getElementById('numero_documento-representante').value = numero_documentoMadre;
                             const tipoCiRepresentante = document.getElementById('tipo-ci-representante');
                             if (tipoCiRepresentante && tipoDocMadre) {
                                 tipoCiRepresentante.value = tipoDocMadre;
@@ -2340,13 +2340,13 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
                             if (correoRepresentante && correoMadre) {
                                 correoRepresentante.value = correoMadre;
                             }
-                            console.log('Datos copiados de la madre:', { cedula: cedulaMadre, correo: correoMadre });
+                            console.log('Datos copiados de la madre:', { numero_documento: numero_documentoMadre, correo: correoMadre });
                         }
                         
                         // Forzar el evento blur en la cédula para buscar datos adicionales
-                        const cedulaRepresentante = document.getElementById('cedula-representante');
-                        if (cedulaRepresentante && cedulaRepresentante.value) {
-                            cedulaRepresentante.dispatchEvent(new Event('blur'));
+                        const numero_documentoRepresentante = document.getElementById('numero_documento-representante');
+                        if (numero_documentoRepresentante && numero_documentoRepresentante.value) {
+                            numero_documentoRepresentante.dispatchEvent(new Event('blur'));
                         }
                     }
                 });
@@ -2354,22 +2354,22 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
 
             // Al salir de la cédula del representante, si el tipo es progenitor_representante,
             // primero intentamos copiar desde madre/padre; si no coincide, buscamos en BD
-            document.getElementById('cedula-representante')?.addEventListener('blur', function() {
+            document.getElementById('numero_documento-representante')?.addEventListener('blur', function() {
                 const tipo = document.querySelector('input[name="tipo_representante"]:checked')?.value;
-                const cedula = this.value;
+                const numero_documento = this.value;
 
-                if (tipo !== 'progenitor_representante' || !cedula) {
+                if (tipo !== 'progenitor_representante' || !numero_documento) {
                     return;
                 }
 
                 // 1) Intentar copiar desde los datos ya cargados en este formulario (madre/padre)
-                const copiadoLocal = copiarDesdeMadreOPadreSiCoincide(cedula);
+                const copiadoLocal = copiarDesdeMadreOPadreSiCoincide(numero_documento);
                 if (copiadoLocal) {
                     return; // no hace falta ir a BD
                 }
 
                 // 2) Si no coincide con madre/padre, buscar en BD
-                fetch(`${buscarCedulaUrl}?cedula=${cedula}`)
+                fetch(`${buscarnumero_documentoUrl}?numero_documento=${numero_documento}`)
                     .then(response => response.json())
                     .then(resp => {
                         if (resp && resp.status === 'success') {
@@ -2388,7 +2388,7 @@ function copiarDesdeMadreOPadreSiCoincide(cedula) {
                 });
             });
 
-            document.querySelectorAll('input[name*="cedula"]').forEach(input => {
+            document.querySelectorAll('input[name*="numero_documento"]').forEach(input => {
                 input.addEventListener('input', function() {
                     this.value = this.value.replace(/[^0-9]/g, '').substring(0, 8);
                 });
@@ -2463,11 +2463,11 @@ function esProgenitorRepresentante() {
 }
 
 // Validar cédula (solo verifica que no esté vacío si es requerido)
-function validarCedula(input) {
+function validarnumero_documento(input) {
     if (!input) return true;  // No hay input, no validar
     
-    const cedula = input.value.trim();
-    if (input.required && !cedula) {
+    const numero_documento = input.value.trim();
+    if (input.required && !numero_documento) {
         mostrarError(input, 'La cédula es obligatoria');
         return false;
     }
@@ -2524,7 +2524,7 @@ function configurarValidacion(input, validacion) {
     // Validar al perder el foco
     input.addEventListener('blur', function() {
         // No validar cédula de representante si es "Progenitor como Representante"
-        if (this.id === 'cedula-representante' && esProgenitorRepresentante()) {
+        if (this.id === 'numero_documento-representante' && esProgenitorRepresentante()) {
             limpiarError(this);
             return;
         }
@@ -2539,14 +2539,14 @@ function configurarValidacion(input, validacion) {
     });
     
     // Si es el campo de cédula del representante, agregar evento para el cambio de tipo de representante
-    if (input.id === 'cedula-representante') {
+    if (input.id === 'numero_documento-representante') {
         document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 if (this.value === 'progenitor_representante') {
                     limpiarError(input);
                 } else {
                     // Si cambia a otro tipo, validar la cédula
-                    validarCedula(input);
+                    validarnumero_documento(input);
                 }
             });
         });
@@ -2572,7 +2572,7 @@ function configurarValidacionesMadre() {
         // Datos personales
         'primer-nombre': validarRequerido,
         'primer-apellido': validarRequerido,
-        'cedula': validarCedula,
+        'numero_documento': validarnumero_documento,
         'fechaNacimiento': validarFechaNacimiento,
         'sexo': validarSeleccion,
         'lugar-nacimiento': validarRequerido,
@@ -2624,7 +2624,7 @@ function configurarValidacionesPadre() {
         // Datos personales
         'primer-nombre-padre': validarRequerido,
         'primer-apellido-padre': validarRequerido,
-        'cedula-padre': validarCedula,
+        'numero_documento-padre': validarnumero_documento,
         'fechaNacimiento-padre': validarFechaNacimiento,
         'genero-padre': validarSeleccion,
         'lugar-nacimiento-padre': validarRequerido,
@@ -2675,7 +2675,7 @@ function configurarValidacionesRepresentante() {
         // Datos personales
         'primer-nombre-representante': validarRequerido,
         'primer-apellido-representante': validarRequerido,
-        'cedula-representante': validarCedula,
+        'numero_documento-representante': validarnumero_documento,
         'fechaNacimiento-representante': validarFechaNacimiento,
         'sexo-representante': validarSeleccion,
         'lugar-nacimiento-representante': validarRequerido,
@@ -2998,7 +2998,7 @@ function validarSeccionMadre() {
     if (document.querySelector('input[name="estado_madre"]:checked')?.value === 'Presente') {
         const camposMadre = [
             { id: 'tipo-ci', mensaje: 'Seleccione el tipo de documento' },
-            { id: 'cedula', mensaje: 'Ingrese el número de cédula' },
+            { id: 'numero_documento', mensaje: 'Ingrese el número de cédula' },
             { id: 'primer-nombre', mensaje: 'Ingrese el primer nombre' },
             { id: 'primer-apellido', mensaje: 'Ingrese el primer apellido' },
             { id: 'sexo', mensaje: 'Seleccione el género' },
@@ -3042,7 +3042,7 @@ function validarSeccionPadre() {
     if (document.querySelector('input[name="estado_padre"]:checked')?.value === 'Presente') {
         const camposPadre = [
             { id: 'tipo-ci-padre', mensaje: 'Seleccione el tipo de documento' },
-            { id: 'cedula-padre', mensaje: 'Ingrese el número de cédula' },
+            { id: 'numero_documento-padre', mensaje: 'Ingrese el número de cédula' },
             { id: 'primer-nombre-padre', mensaje: 'Ingrese el primer nombre' },
             { id: 'primer-apellido-padre', mensaje: 'Ingrese el primer apellido' },
             { id: 'sexo-padre', mensaje: 'Seleccione el género' },
@@ -3084,7 +3084,7 @@ function validarSeccionRepresentante() {
     
     const camposRepresentante = [
         { id: 'tipo-ci-representante', mensaje: 'Seleccione el tipo de documento' },
-        { id: 'cedula-representante', mensaje: 'Ingrese el número de cédula' },
+        { id: 'numero_documento-representante', mensaje: 'Ingrese el número de cédula' },
         { id: 'primer-nombre-representante', mensaje: 'Ingrese el primer nombre' },
         { id: 'primer-apellido-representante', mensaje: 'Ingrese el primer apellido' },
         { id: 'sexo-representante', mensaje: 'Seleccione el género' },

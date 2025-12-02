@@ -26,7 +26,7 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <p><strong>Cédula:</strong> 
-                            {{ $docente->persona->tipoDocumento->nombre }}-{{ $docente->persona->cedula }}
+                            {{ $docente->persona->tipoDocumento->nombre }}-{{ $docente->persona->numero_documento }}
                         </p>
                         <p><strong>Nombre completo:</strong> 
                             {{ $docente->persona->primer_nombre }}

@@ -34,7 +34,7 @@ class AlumnoCreate extends Component
     // Datos del Estudiante
     public $tipo_documento_id;
     public $tipos_documentos = [];
-    public $cedula;
+    public $numero_documento;
     public $fecha_nacimiento;
     public $edad = 0;
     public $meses = 0;
@@ -92,11 +92,11 @@ class AlumnoCreate extends Component
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'anio_egreso' => 'required|date',
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'cedula' => [
+            'numero_documento' => [
                 'required',
                 'string',
                 'max:15',
-                'unique:personas,cedula' . ($this->persona_id ? ',' . $this->persona_id : '')
+                'unique:personas,numero_documento' . ($this->persona_id ? ',' . $this->persona_id : '')
             ],
             'fecha_nacimiento' => 'required|date|before:today',
             'primer_nombre' => 'required|string|max:50',
@@ -126,7 +126,7 @@ class AlumnoCreate extends Component
     {
         $messages = [
             'institucion_procedencia_id.required' => 'La institución es obligatoria',
-            'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
+            'numero_documento.unique' => 'Esta cédula ya está registrada en el sistema',
             'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a la fecha actual',
             'talla_estudiante.between' => 'La estatura debe estar entre 50 y 250 cm',
@@ -171,7 +171,7 @@ class AlumnoCreate extends Component
         // Datos de Persona
         $this->persona_id = $persona->id;
         $this->tipo_documento_id = $persona->tipo_documento_id;
-        $this->cedula = $persona->cedula;
+        $this->numero_documento = $persona->numero_documento;
         $this->fecha_nacimiento = $persona->fecha_nacimiento->format('Y-m-d');
         $this->primer_nombre = $persona->primer_nombre;
         $this->segundo_nombre = $persona->segundo_nombre;
@@ -269,7 +269,7 @@ class AlumnoCreate extends Component
                 'primer_apellido' => $this->primer_apellido,
                 'segundo_apellido' => $this->segundo_apellido,
                 'tipo_documento_id' => $this->tipo_documento_id,
-                'cedula' => $this->cedula,
+                'numero_documento' => $this->numero_documento,
                 'genero_id' => $this->genero_id,
                 'fecha_nacimiento' => $this->fecha_nacimiento,
                 'localidad_id' => $this->localidad_id,

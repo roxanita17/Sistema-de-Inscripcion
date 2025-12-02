@@ -184,20 +184,20 @@
 
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="cedula" class="form-label-modern">
+                            <label for="numero_documento" class="form-label-modern">
                                 <i class="fas fa-id-card"></i>
                                 Cédula
                                 <span class="required-badge">*</span>
                             </label>
                             <input type="text" 
-                                   wire:model="cedula" 
-                                   class="form-control-modern @error('cedula') is-invalid @enderror"
+                                   wire:model="numero_documento" 
+                                   class="form-control-modern @error('numero_documento') is-invalid @enderror"
                                    maxlength="8"
                                    pattern="[0-9]+" 
                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                                    inputmode="numeric"
                                    placeholder="12345678">
-                            @error('cedula')
+                            @error('numero_documento')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>

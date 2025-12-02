@@ -30,6 +30,9 @@ class DocenteAreaGrado extends Component
 
     public $modoEditar = false;
 
+    public $asignacionAEliminar = null;
+
+
 
     /**
      * MÉTODO QUE SE EJECUTA AL CARGAR EL COMPONENTE

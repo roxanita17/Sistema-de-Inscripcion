@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger("ocupacion_representante");
             $table->foreign("ocupacion_representante")->references("id")->on("ocupacions")->onDelete("cascade")->onUpdate("cascade");
             $table->string("convivenciaestudiante_representante");
+            
             $table->timestamps();
             $table->softDeletes();
         });

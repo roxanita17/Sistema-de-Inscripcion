@@ -23,7 +23,7 @@
                 <div class="alert-modern alert-error alert alert-dismissible fade show">
                     <div class="alert-icon">
                         <i class="fas fa-exclamation-circle"></i>
-                    </div>
+                    </div> 
                     <div class="alert-content">
                         <h4>Error</h4>
                         <p>{{ session('error') }}</p>
@@ -72,7 +72,7 @@
                         @foreach ($docentes as $docente)
                             @if($docente->detalleEstudios->count() > 0)
                                 <option value="{{ $docente->id }}"
-                                    data-subtext="{{ $docente->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docente->persona->cedula }}">
+                                    data-subtext="{{ $docente->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docente->persona->numero_documento }}">
                                 {{ $docente->nombre_completo }}
                                 @if($docente->codigo)
                                     ({{ $docente->codigo }})
@@ -148,7 +148,7 @@
                                     Número de Cédula
                                 </span>
                                 <span class="info-value">
-                                    {{ $docenteSeleccionado->persona->tipoDocumento->tipo_documento ?? 'N/A' }}-{{ $docenteSeleccionado->persona->cedula }}
+                                    {{ $docenteSeleccionado->persona->tipoDocumento->tipo_documento ?? 'N/A' }}-{{ $docenteSeleccionado->persona->numero_documento }}
                                 </span>
                             </div>
                             
@@ -448,16 +448,11 @@
                                 <td style="text-align: center;">
                                     <div class="action-buttons">
                                         <button class="action-btn btn-delete"
-                                                wire:click="eliminarAsignacion({{ $detalle->id }})"
-                                                wire:confirm="¿Está seguro de eliminar este Asignacion?"
-                                                wire:loading.attr="disabled"
+                                                wire:click="$set('asignacionAEliminar', {{ $detalle->id }})"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEliminarAsignacion"
                                                 title="Eliminar">
-                                            <span wire:loading.remove wire:target="eliminarAsignacion({{ $detalle->id }})">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </span>
-                                            <span wire:loading wire:target="eliminarAsignacion({{ $detalle->id }})">
-                                                <i class="fas fa-spinner fa-spin"></i>
-                                            </span>
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -467,6 +462,55 @@
                         
                     </tbody>
                 </table>
+                <!-- MODAL ELIMINAR ASIGNACIÓN -->
+                <div wire:ignore.self class="modal fade" id="modalEliminarAsignacion" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content modal-modern">
+
+                            <div class="modal-header-delete">
+                                <div class="modal-icon-delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                                <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                                <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body-delete">
+                                <p>¿Deseas eliminar esta asignación?</p>
+
+                                <p class="delete-warning">
+                                    Esta acción es irreversible.
+                                </p>
+                            </div>
+
+                            <div class="modal-footer-delete">
+                                <div class="footer-buttons">
+                                    <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                        Cancelar
+                                    </button>
+
+                                    <button class="btn-modal-delete"
+                                            wire:click="eliminarAsignacion({{ $asignacionAEliminar }})"
+                                            wire:loading.attr="disabled"
+                                            data-bs-dismiss="modal">
+                                        <span wire:loading.remove wire:target="eliminarAsignacion">
+                                            Eliminar
+                                        </span>
+                                        <span wire:loading wire:target="eliminarAsignacion">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            Eliminando...
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
                 
             </div>
         </div>

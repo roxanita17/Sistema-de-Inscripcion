@@ -31,7 +31,7 @@ class Docente extends Model
         if (!empty($buscar)) {
             $query->whereHas('persona', function ($q) use ($buscar) {
                 $q->where(DB::raw("CONCAT(primer_nombre, ' ', primer_apellido)"), 'LIKE', "%{$buscar}%")
-                ->orWhere('cedula', 'LIKE', "%{$buscar}%")
+                ->orWhere('numero_documento', 'LIKE', "%{$buscar}%")
                 ->orWhere('primer_nombre', 'LIKE', "%{$buscar}%")
                 ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
                 ->orWhere('codigo', 'LIKE', "%{$buscar}%");

@@ -17,7 +17,7 @@ class Persona extends Model
         'tercer_nombre',
         'primer_apellido',
         'segundo_apellido',
-        'cedula',
+        'numero_documento',
         'fecha_nacimiento',
         'direccion',
         'email', 

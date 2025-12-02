@@ -50,7 +50,7 @@
                         <form role="search">
                             <div class="input-group">
                                 <input class="form-control" type="search"
-                                       placeholder="Buscar Por Nombre, Apellido o Cedula al Estudiante..."
+                                       placeholder="Buscar Por Nombre, Apellido o numero_documento al Estudiante..."
                                        aria-label="Search" id="buscador"/>
                             </div>
                         </form>
@@ -149,14 +149,14 @@
             if (!Array.isArray(items)) { tablaBody.innerHTML = ''; return; }
             tablaBody.innerHTML = items.map(item => {
                 const p = item.persona || {};
-                const cedula = p.numero_documento || '';
+                const numero_documento = p.numero_documento || '';
                 const nombre = [p.primer_nombre, p.segundo_nombre].filter(Boolean).join(' ');
                 const apellido = [p.primer_apellido, p.segundo_apellido].filter(Boolean).join(' ');
                 const estado = item.status || '';
                 const editUrl = `{{ route('admin.estudiante.formulario.editar', ['id' => '__ID__']) }}`.replace('__ID__', item.id);
                 return `
                     <tr>
-                        <td>${cedula}</td>
+                        <td>${numero_documento}</td>
                         <td>${nombre}</td>
                         <td>${apellido}</td>
                         <td>${estado}</td>

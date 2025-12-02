@@ -59,7 +59,7 @@
 
             <div class="info-item">
                 <span class="info-label"><i class="fas fa-id-card"></i> Cédula:</span>
-                <span class="info-value">{{ $docentes->persona->tipoDocumento->nombre }}-{{ $docentes->persona->cedula }}</span>
+                <span class="info-value">{{ $docentes->persona->tipoDocumento->nombre }}-{{ $docentes->persona->numero_documento }}</span>
             </div>
 
             <div class="info-item">
@@ -125,16 +125,7 @@
                 <span class="info-value">{{ $docentes->persona->email ?? '—' }}</span>
             </div>
 
-            <div class="info-item">
-                <span class="info-label"><i class="fas fa-phone"></i> Teléfono:</span>
-                <span class="info-value">
-                    @if ($docentes->prefijoTelefono)
-                        ({{ $docentes->prefijoTelefono->prefijo }}) {{ $docentes->primer_telefono }}
-                    @else
-                        Sin registrar
-                    @endif
-                </span>
-            </div>
+            
 
             <div class="info-item">
                 <span class="info-label"><i class="fas fa-building"></i> Dependencia:</span>

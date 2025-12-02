@@ -59,7 +59,7 @@
                             <i class="fas fa-id-badge"></i>
                             C.I.
                         </span>
-                        <span class="detail-value" id="modal-cedula"></span>
+                        <span class="detail-value" id="modal-numero_documento"></span>
                     </div>
 
                     <div class="detail-item">

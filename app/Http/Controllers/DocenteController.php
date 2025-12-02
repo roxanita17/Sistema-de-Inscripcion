@@ -69,7 +69,7 @@ class DocenteController extends Controller
         // VALIDACIÓN
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'cedula' => 'required|string|max:20',
+            'numero_documento' => 'required|string|max:20',
             'primer_nombre' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
             'tercer_nombre' => 'nullable|string|max:50',
@@ -90,8 +90,8 @@ class DocenteController extends Controller
             'dependencia' => 'nullable|string|max:100',
         ], [
             'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
-            'cedula.required' => 'La cédula es obligatoria',
-            'cedula.unique' => 'Esta cédula ya está registrada',
+            'numero_documento.required' => 'La cédula es obligatoria',
+            'numero_documento.unique' => 'Esta cédula ya está registrada',
             'primer_nombre.required' => 'El primer nombre es obligatorio',
             'primer_apellido.required' => 'El primer apellido es obligatorio',
             'genero.required' => 'El género es obligatorio',
@@ -110,7 +110,11 @@ class DocenteController extends Controller
                 'tercer_nombre' => $request->tercer_nombre,
                 'primer_apellido' => $request->primer_apellido,
                 'segundo_apellido' => $request->segundo_apellido,
+<<<<<<< HEAD
                 'numero_documento' => $request->cedula,
+=======
+                'numero_documento' => $request->numero_documento ,
+>>>>>>> origin/nohely
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,
@@ -169,7 +173,11 @@ class DocenteController extends Controller
         // VALIDACIÓN (excluyendo la cédula actual)
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
+<<<<<<< HEAD
             'cedula' => 'required|string|max:20|unique:personas,cedula,' . $persona->id,
+=======
+            'numero_documento' => 'required|string|max:20' . $persona->numero_documento,
+>>>>>>> origin/nohely
             'primer_nombre' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
             'tercer_nombre' => 'nullable|string|max:50',
@@ -190,8 +198,8 @@ class DocenteController extends Controller
             'dependencia' => 'nullable|string|max:100',
         ], [
             'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
-            'cedula.required' => 'La cédula es obligatoria',
-            'cedula.unique' => 'Esta cédula ya está registrada',
+            'numero_documento.required' => 'La cédula es obligatoria',
+            'numero_documento.unique' => 'Esta cédula ya está registrada',
             'primer_nombre.required' => 'El primer nombre es obligatorio',
             'primer_apellido.required' => 'El primer apellido es obligatorio',
             'genero.required' => 'El género es obligatorio',
@@ -210,7 +218,11 @@ class DocenteController extends Controller
                 'tercer_nombre' => $request->tercer_nombre,
                 'primer_apellido' => $request->primer_apellido,
                 'segundo_apellido' => $request->segundo_apellido,
+<<<<<<< HEAD
                 'numero_documento' => $request->cedula,
+=======
+                'numero_documento' => $request->numero_documento,
+>>>>>>> origin/nohely
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,

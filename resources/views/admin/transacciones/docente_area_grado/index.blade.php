@@ -147,7 +147,7 @@
                                 
                                 <td style="padding-left: 1rem; font-weight: 600; color: var(--gray-900); font-size: 0.95rem; text-align: center;">
                                     <span>
-                                        {{ $docente->persona->tipoDocumento->nombre ?? ' ' }}-{{ $docente->persona->cedula }}
+                                        {{ $docente->persona->tipoDocumento->nombre ?? ' ' }}-{{ $docente->persona->numero_documento }}
                                     </span>
                                 </td>
                                 

@@ -220,7 +220,7 @@ function cargarEstudiantesInscritos(buscar = '') {
                         </div>
                     </td>
                     <td>
-                        <span class="badge bg-primary">${estudiante.cedula}</span>
+                        <span class="badge bg-primary">${estudiante.numero_documento}</span>
                     </td>
                     <td>
                         ${new Date(estudiante.fecha_inscripcion).toLocaleDateString('es-ES')}
@@ -299,8 +299,8 @@ function verDetalle(id) {
 
                 const documentosLista = {
                     'partida_nacimiento': 'Partida de Nacimiento',
-                    'copia_cedula_representante': 'Copia de Cédula del Representante',
-                    'copia_cedula_estudiante': 'Copia de Cédula del Estudiante',
+                    'copia_numero_documento_representante': 'Copia de Cédula del Representante',
+                    'copia_numero_documento_estudiante': 'Copia de Cédula del Estudiante',
                     'boletin_6to_grado': 'Boletín de 6to Grado',
                     'certificado_calificaciones': 'Certificado de Calificaciones',
                     'constancia_aprobacion_primaria': 'Constancia de Aprobación Primaria',
@@ -360,7 +360,7 @@ function verDetalle(id) {
                     <div class="col-md-6">
                         <h6 class="border-bottom pb-2 mb-3">Información del Estudiante</h6>
                         <p><strong>Nombre completo:</strong> ${estudiante.estudiante?.persona?.nombre_uno || ''} ${estudiante.estudiante?.persona?.apellido_uno || ''}</p>
-                        <p><strong>Cédula:</strong> ${estudiante.estudiante?.persona?.tipo_cedula_persona || ''}-${estudiante.estudiante?.persona?.numero_cedula_persona || ''}</p>
+                        <p><strong>Cédula:</strong> ${estudiante.estudiante?.persona?.tipo_numero_documento_persona || ''}-${estudiante.estudiante?.persona?.numero_numero_documento_persona || ''}</p>
                         <p><strong>Fecha nacimiento:</strong> ${estudiante.estudiante?.persona?.fecha_nacimiento_personas ? new Date(estudiante.estudiante.persona.fecha_nacimiento_personas).toLocaleDateString('es-ES') : ''}</p>
                         <p><strong>Sexo:</strong> ${estudiante.estudiante?.persona?.sexo || ''}</p>
                     </div>
@@ -379,7 +379,7 @@ function verDetalle(id) {
                     <div class="col-12">
                         <h6 class="border-bottom pb-2 mb-3">Información del Representante</h6>
                         <p><strong>Nombre:</strong> ${estudiante.representante.persona?.nombre_uno || ''} ${estudiante.representante.persona?.apellido_uno || ''}</p>
-                        <p><strong>Cédula:</strong> ${estudiante.representante.persona?.tipo_cedula_persona || ''}-${estudiante.representante.persona?.numero_cedula_persona || ''}</p>
+                        <p><strong>Cédula:</strong> ${estudiante.representante.persona?.tipo_numero_documento_persona || ''}-${estudiante.representante.persona?.numero_numero_documento_persona || ''}</p>
                         <p><strong>Teléfono:</strong> ${estudiante.representante.persona?.prefijo_telefono_personas || ''} ${estudiante.representante.persona?.telefono_personas || ''}</p>
                         <p><strong>Ocupación:</strong> ${estudiante.representante.ocupacion_representante || ''}</p>
                     </div>
