@@ -40,13 +40,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <p><strong>Teléfono:</strong>
-                            @if($docente->prefijoTelefono)
-                                ({{ $docente->prefijoTelefono->prefijo }}) {{ $docente->primer_telefono }}
-                            @else
-                                No registrado
-                            @endif
-                        </p>
+                        
                         <p><strong>Correo:</strong> 
                             {{ $docente->persona->email ?? 'Sin registrar' }}
                         </p>

@@ -229,13 +229,13 @@ return [
         ],
 
         //Alumnos
-        /* [
+        [
             'text' => 'Alumnos',
             'url' => 'admin/alumnos',
             'icon' => 'fas fa-fw fa-user-graduate',
             'icon_color' => 'primary',
             'active' => ['admin/alumnos', 'admin/alumnos/*'],
-        ], */
+        ],
 
         //Inscripciones
        /*  [
@@ -452,16 +452,9 @@ return [
         ],
 
         // Separador
-        ['header' => 'GESTIÓN ACADÉMICA'],
 
         // Representantes
-        [
-            'text' => 'Representantes',
-            'url' => 'representante',
-            'icon' => 'fas fa-fw fa-user-tie',
-            'icon_color' => 'info',
-            'active' => ['representante', 'representante/*'],
-        ],
+        
 
 
         // ============================================================

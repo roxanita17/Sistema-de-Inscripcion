@@ -66,24 +66,24 @@ class AlumnoCreate extends Component
     public $talla_pantalon;
     
     // Pertenencia Étnica
-    public $pertenece_pueblo_indigena = 'no';
+   /*  public $pertenece_pueblo_indigena = 'no';
     public $cual_pueblo_indigena;
-    public $etniasIndigenas = []; 
+    public $etniasIndigenas = [];  */
     
     // Salud
-    public $presenta_discapacidad = 'no';
+  /*   public $presenta_discapacidad = 'no';
     public $cual_discapacidad;
     public $discapacidades = [];
-    public $direccion;
+    public $direccion; */
     
     // Datos para selects
     public $instituciones;
 
     protected $listeners = ['pertenecePuebloActualizado' => 'setPertenencia'];
 
-    public function setPertenencia($val) {
+/*     public function setPertenencia($val) {
         $this->pertenece_pueblo_indigena = $val;
-    }
+    } */
 
     protected function rules()
     {
@@ -111,12 +111,12 @@ class AlumnoCreate extends Component
             'peso_estudiante' => 'required|numeric|between:2,300',
             'talla_camisa' => 'required',
             'talla_zapato' => 'required|integer',
-            'talla_pantalon' => 'required',
+            'talla_pantalon' => 'required',/* 
             'pertenece_pueblo_indigena' => 'required|in:si,no',
             'cual_pueblo_indigena' => 'required_if:pertenece_pueblo_indigena,si|nullable|exists:etnia_indigenas,id',
             'presenta_discapacidad' => 'required|in:si,no',
             'cual_discapacidad' => 'required_if:presenta_discapacidad,si|nullable|exists:discapacidads,id',
-            'direccion' => 'required|string|max:500',
+            'direccion' => 'required|string|max:500', */
         ];
 
         return $rules;
@@ -152,9 +152,9 @@ class AlumnoCreate extends Component
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
         $this->generos = \App\Models\Genero::where('status', true)->get();
         $this->lateralidades = \App\Models\Lateralidad::where('status', true)->get();
-        $this->orden_nacimientos = \App\Models\OrdenNacimiento::where('status', true)->get();
+        $this->orden_nacimientos = \App\Models\OrdenNacimiento::where('status', true)->get();/* 
         $this->etniasIndigenas = \App\Models\EtniaIndigena::where('status', true)->get();
-        $this->discapacidades = \App\Models\Discapacidad::where('status', true)->get();
+        $this->discapacidades = \App\Models\Discapacidad::where('status', true)->get(); */
     }
 
     public function cargarDatosIniciales()
@@ -180,8 +180,8 @@ class AlumnoCreate extends Component
         $this->segundo_apellido = $persona->segundo_apellido;
         $this->genero_id = $persona->genero_id;
         $this->localidad_id = $persona->localidad_id;
-        $this->direccion = $persona->direccion;
-        
+/*         $this->direccion = $persona->direccion;
+ */        
         // Datos de Alumno
         $this->numero_zonificacion = $alumno->numero_zonificacion;
         $this->institucion_procedencia_id = $alumno->institucion_procedencia_id;
@@ -193,17 +193,17 @@ class AlumnoCreate extends Component
         $this->peso_estudiante = $alumno->peso;
         $this->talla_estudiante = $alumno->estatura;
         $this->lateralidad_id = $alumno->lateralidad_id;
-        $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
+        $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;/* 
         $this->cual_discapacidad = $alumno->discapacidad_id;
-        $this->cual_pueblo_indigena = $alumno->etnia_indigena_id;
+        $this->cual_pueblo_indigena = $alumno->etnia_indigena_id; */
         
         // Actualizar selects dependientes
         $this->updatedEstadoId($persona->localidad->municipio->estado_id);
         $this->updatedMunicipioId($persona->localidad->municipio_id);
         
         // Actualizar banderas
-        $this->presenta_discapacidad = $alumno->discapacidad_id ? 'si' : 'no';
-        $this->pertenece_pueblo_indigena = $alumno->etnia_indigena_id ? 'si' : 'no';
+   /*      $this->presenta_discapacidad = $alumno->discapacidad_id ? 'si' : 'no';
+        $this->pertenece_pueblo_indigena = $alumno->etnia_indigena_id ? 'si' : 'no'; */
         
         // Calcular edad
         $this->updatedFechaNacimiento($this->fecha_nacimiento);
@@ -247,19 +247,17 @@ class AlumnoCreate extends Component
 
     public function save()
     {
-/*         $this->validate($this->rules());
- */
-        dd($this->all());
-        try {
+        $this->validate($this->rules());
+ 
+       /*  \Log::info('Datos del formulario:', [
+            'pertenece_pueblo_indigena' => $this->pertenece_pueblo_indigena,
+            'cual_pueblo_indigena' => $this->cual_pueblo_indigena,
+            'presenta_discapacidad' => $this->presenta_discapacidad,
+            'cual_discapacidad' => $this->cual_discapacidad,
+        ]); */
+
+        try {   
             DB::beginTransaction();
-
-            \Log::info('Datos del formulario:', [
-                'pertenece_pueblo_indigena' => $this->pertenece_pueblo_indigena,
-                'cual_pueblo_indigena' => $this->cual_pueblo_indigena,
-                'presenta_discapacidad' => $this->presenta_discapacidad,
-                'cual_discapacidad' => $this->cual_discapacidad,
-            ]);
-
             
             // Crear o actualizar Persona
             $personaData = [
@@ -273,8 +271,8 @@ class AlumnoCreate extends Component
                 'genero_id' => $this->genero_id,
                 'fecha_nacimiento' => $this->fecha_nacimiento,
                 'localidad_id' => $this->localidad_id,
-                'direccion' => $this->direccion,
-                'status' => true,
+/*                 'direccion' => $this->direccion,
+ */                'status' => true,
             ];
 
             $persona = Persona::updateOrCreate(['id' => $this->persona_id], $personaData);
@@ -292,9 +290,9 @@ class AlumnoCreate extends Component
                 'peso' => $this->peso_estudiante,
                 'estatura' => $this->talla_estudiante,
                 'lateralidad_id' => $this->lateralidad_id,
-                'orden_nacimiento_id' => $this->orden_nacimiento_id,
+                'orden_nacimiento_id' => $this->orden_nacimiento_id,/* 
                 'discapacidad_id' => $this->presenta_discapacidad === 'si' ? $this->cual_discapacidad : null,
-                'etnia_indigena_id' => $this->pertenece_pueblo_indigena === 'si' ? $this->cual_pueblo_indigena : null,
+                'etnia_indigena_id' => $this->pertenece_pueblo_indigena === 'si' ? $this->cual_pueblo_indigena : null,  */               
                 'status' => 'Activo',
             ];
 

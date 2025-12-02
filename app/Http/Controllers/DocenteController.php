@@ -122,11 +122,11 @@ class DocenteController extends Controller
 
             // 2. GUARDAR DOCENTE
             $docente = Docente::create([
-                'primer_telefono' => $request->primer_telefono,
-                'segundo_telefono' => $request->segundo_telefono,
+                /* 'primer_telefono' => $request->primer_telefono,
+                'segundo_telefono' => $request->segundo_telefono, */
                 'codigo' => $request->codigo,
                 'dependencia' => $request->dependencia,
-                'prefijo_id' => $request->prefijo_id,
+                /* 'prefijo_id' => $request->prefijo_id, */
                 'persona_id' => $persona->id,
                 'status' => true,
             ]);
@@ -183,9 +183,9 @@ class DocenteController extends Controller
             ],
             'correo' => 'nullable|email|max:100',
             'direccion' => 'nullable|string|max:255',
-            'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
+            /* 'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
             'primer_telefono' => 'nullable|string|max:20',
-            'segundo_telefono' => 'nullable|string|max:20',
+            'segundo_telefono' => 'nullable|string|max:20', */
             'codigo' => 'nullable|string|max:50',
             'dependencia' => 'nullable|string|max:100',
         ], [
@@ -220,12 +220,12 @@ class DocenteController extends Controller
 
             // 2. ACTUALIZAR DOCENTE
             $docente->update([
-                'primer_telefono' => $request->primer_telefono,
-                'segundo_telefono' => $request->segundo_telefono,
+                /* 'primer_telefono' => $request->primer_telefono,
+                'segundo_telefono' => $request->segundo_telefono, */
                 'codigo' => $request->codigo,
                 'dependencia' => $request->dependencia,
-                'prefijo_id' => $request->prefijo_id,
-            ]);
+/*                 'prefijo_id' => $request->prefijo_id,
+ */            ]);
 
             DB::commit();
 

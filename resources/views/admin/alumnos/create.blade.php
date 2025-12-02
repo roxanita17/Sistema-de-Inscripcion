@@ -24,10 +24,12 @@
                     <p class="title-subtitle">Formulario de registro de estudiantes</p>
                 </div>
             </div>
-            <a href="{{ route('admin.estudiante.inicio') }}" class="btn-create" style="background: var(--gray-500);">
+
+            <a href="{{ route('admin.alumnos.index') }}" class="btn-create" style="background: var(--gray-500);">
                 <i class="fas fa-arrow-left"></i>
                 <span>Volver</span>
             </a>
+            
         </div>
     </div>
 @stop

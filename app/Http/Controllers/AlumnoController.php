@@ -69,6 +69,7 @@ class AlumnoController extends Controller
         'expresiones' => ExpresionLiteraria::all(),
         'lateralidades' => Lateralidad::all(),
         'personas' => Persona::all(),
+        'instituciones' => InstitucionProcedencia::all(),
     ]);
     }
 
