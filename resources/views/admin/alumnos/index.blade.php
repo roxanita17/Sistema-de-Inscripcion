@@ -153,7 +153,7 @@
                                 <tr class="table-row-hover row-12" style="text-align: center">
                                    
                                     <td class="tittle-main" style="font-weight: 700">
-                                        {{ $datos->persona->cedula }}
+                                        {{ $datos->persona->numero_documento }}
                                     </td>
                                     <td style="text-align: left">
                                         {{ $datos->persona->primer_nombre }} {{ $datos->persona->primer_apellido }}

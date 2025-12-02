@@ -342,7 +342,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::prefix("admin/estudiante")->group(function(){
         Route::get("/formularioEstudiante/{id}",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario.editar")->middleware(["auth"]);
 
-        Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("admin.estudiante.verificar-cedula")->middleware(["auth"]);
+        Route::post("/verificar-numero_documento", [EstudianteController::class,"verificarnumero_documento"])->name("admin.estudiante.verificar-numero_documento")->middleware(["auth"]);
 
         Route::post("/save",[EstudianteController::class, 'save'])->middleware(["auth"]);
 
@@ -380,7 +380,7 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
     Route::delete('/{id}', [RepresentanteController::class, 'delete'])->name('destroy');
 
     // Búsqueda por cédula (AJAX)
-    Route::get('/buscar-cedula', [RepresentanteController::class, 'buscarPorCedula'])->name('buscar_cedula');
+    Route::get('/buscar-numero_documento', [RepresentanteController::class, 'buscarPornumero_documento'])->name('buscar_numero_documento');
 
     // Consultar un representante específico (AJAX)
     Route::get('/consultar', [RepresentanteController::class, 'consultar'])->name('consultar');
@@ -389,7 +389,7 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
     Route::get('/filtrar', [RepresentanteController::class, 'filtar'])->name('filtrar');
 
         // Verificar cédula duplicada (AJAX)
-        Route::get('/verificar-cedula', [RepresentanteController::class, 'verificarCedula'])->name('verificar_cedula');
+        Route::get('/verificar-numero_documento', [RepresentanteController::class, 'verificarnumero_documento'])->name('verificar_numero_documento');
 
     // Generar reporte PDF
     Route::get('/reporte-pdf', [RepresentanteController::class, 'reportePDF'])->name('reporte_pdf');

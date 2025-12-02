@@ -263,7 +263,7 @@
                 document.getElementById('modal-segundo-nombre').textContent = persona.segundo_nombre || '';
                 document.getElementById('modal-primer-apellido').textContent = persona.primer_apellido || '';
                 document.getElementById('modal-segundo-apellido').textContent = persona.segundo_apellido || '';
-                document.getElementById('modal-cedula').textContent = persona.numero_documento || '';
+                document.getElementById('modal-numero_documento').textContent = persona.numero_documento || '';
                 document.getElementById('modal-lugar-nacimiento').textContent = persona.fecha_nacimiento || persona.lugar_nacimiento || '';
 
                 // Contacto básico

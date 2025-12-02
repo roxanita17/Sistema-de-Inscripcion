@@ -34,7 +34,7 @@
                             <i class="fas fa-id-card"></i> Cédula
                         </span>
                         <span class="detail-value">
-                            {{ $datos->persona->tipoDocumento->nombre }}-{{ $datos->persona->cedula }}
+                            {{ $datos->persona->tipoDocumento->nombre }}-{{ $datos->persona->numero_documento }}
                         </span>
                     </div>
 

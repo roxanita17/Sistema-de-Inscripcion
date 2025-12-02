@@ -162,8 +162,8 @@ class NuevoIngresoController extends Controller
 
         try {
             $validated = $request->validate([
-                'tipo_cedula_persona' => 'required',
-                'numero_cedula_persona' => 'required',
+                'tipo_numero_documento_persona' => 'required',
+                'numero_numero_documento_persona' => 'required',
                 'fecha_nacimiento_personas' => 'required|date',
                 'primer_nombre' => 'required|string|max:255',
                 'segundo_nombre' => 'nullable|string|max:255',
@@ -255,8 +255,8 @@ class NuevoIngresoController extends Controller
         try {
             // campos de progenitor solamente
             $validated = $request->validate([
-                'tipo_cedula_persona' => 'required|in:V,E,J',
-                'numero_cedula_persona' => 'required|numeric|digits_between:1,8',
+                'tipo_numero_documento_persona' => 'required|in:V,E,J',
+                'numero_numero_documento_persona' => 'required|numeric|digits_between:1,8',
                 'genero_id' => 'required|exists:generos,id',
                 'primer_nombre' => 'required|string|max:255',
                 'segundo_nombre' => 'nullable|string|max:255',
@@ -493,7 +493,7 @@ class NuevoIngresoController extends Controller
                             $nuevoIngreso->estudiante_apellido1 . ' ' .
                             ($nuevoIngreso->estudiante_apellido2 ? ' ' . $nuevoIngreso->estudiante_apellido2 : '');
 
-            $cedula = $nuevoIngreso->estudiante_tipo_cedula . '-' . $nuevoIngreso->estudiante_cedula;
+            $numero_documento = $nuevoIngreso->estudiante_tipo_numero_documento . '-' . $nuevoIngreso->estudiante_numero_documento;
 
             // Para el año escolar
             $anoEscolar = '';
@@ -505,7 +505,7 @@ class NuevoIngresoController extends Controller
                 'id' => $nuevoIngreso->id,
                 'estudiante_id' => $nuevoIngreso->estudiante_id,
                 'nombre_completo' => trim($nombreCompleto),
-                'cedula' => $cedula,
+                'numero_documento' => $numero_documento,
                 'fecha_inscripcion' => $nuevoIngreso->fecha_inscripcion,
                 'estado' => $nuevoIngreso->status,
                 'grado' => $nuevoIngreso->grado_academico,
@@ -615,8 +615,8 @@ public function editar($id)
                 'estudiantes.discapacidad_estudiante',
 
                 'estudiante_persona.id as estudiante_persona_id',
-                'estudiante_persona.tipo_cedula_persona as estudiante_tipo_cedula',
-                'estudiante_persona.numero_cedula_persona as estudiante_cedula',
+                'estudiante_persona.tipo_numero_documento_persona as estudiante_tipo_numero_documento',
+                'estudiante_persona.numero_numero_documento_persona as estudiante_numero_documento',
                 'estudiante_persona.fecha_nacimiento_personas as estudiante_fecha_nacimiento',
                 'estudiante_persona.primer_nombre as estudiante_nombre1',
                 'estudiante_persona.segundo_nombre as estudiante_nombre2',
@@ -629,8 +629,8 @@ public function editar($id)
                 'representantes.ocupacion_representante',
                 'representantes.convivenciaestudiante_representante',
                 'representante_persona.id as representante_persona_id',
-                'representante_persona.tipo_cedula_persona as representante_tipo_cedula',
-                'representante_persona.numero_cedula_persona as representante_cedula',
+                'representante_persona.tipo_numero_documento_persona as representante_tipo_numero_documento',
+                'representante_persona.numero_numero_documento_persona as representante_numero_documento',
                 'representante_persona.fecha_nacimiento_personas as representante_fecha_nacimiento',
                 'representante_persona.primer_nombre as representante_nombre1',
                 'representante_persona.segundo_nombre as representante_nombre2',
@@ -683,8 +683,8 @@ public function editar($id)
 
 //         // Validar datos del estudiante
 //         $datosEstudiante = $request->validate([
-//             'tipo_cedula_persona' => 'required',
-//             'numero_cedula_persona' => 'required',
+//             'tipo_numero_documento_persona' => 'required',
+//             'numero_numero_documento_persona' => 'required',
 //             'fecha_nacimiento_personas' => 'required|date',
 //             'nombre_uno' => 'required|string|max:255',
 //             'nombre_dos' => 'nullable|string|max:255',
@@ -712,8 +712,8 @@ public function editar($id)
 
 //         // Validar datos del representante
 //         $datosRepresentante = $request->validate([
-//             'rep_tipo_cedula_persona' => 'required|in:V,E,J',
-//             'rep_numero_cedula_persona' => 'required|numeric|digits_between:1,8',
+//             'rep_tipo_numero_documento_persona' => 'required|in:V,E,J',
+//             'rep_numero_numero_documento_persona' => 'required|numeric|digits_between:1,8',
 //             'rep_sexo' => 'required|in:Masculino,Femenino',
 //             'rep_nombre_uno' => 'required|string|max:255',
 //             'rep_nombre_dos' => 'nullable|string|max:255',
@@ -751,8 +751,8 @@ public function editar($id)
 //                       ->where('id', $nuevoIngreso->estudiante_id);
 //             })
 //             ->update([
-//                 'tipo_cedula_persona' => $datosEstudiante['tipo_cedula_persona'],
-//                 'numero_cedula_persona' => $datosEstudiante['numero_cedula_persona'],
+//                 'tipo_numero_documento_persona' => $datosEstudiante['tipo_numero_documento_persona'],
+//                 'numero_numero_documento_persona' => $datosEstudiante['numero_numero_documento_persona'],
 //                 'fecha_nacimiento_personas' => $datosEstudiante['fecha_nacimiento_personas'],
 //                 'nombre_uno' => $datosEstudiante['nombre_uno'],
 //                 'nombre_dos' => $datosEstudiante['nombre_dos'] ?? null,
@@ -792,8 +792,8 @@ public function editar($id)
 //                       ->where('id', $nuevoIngreso->representante_id);
 //             })
 //             ->update([
-//                 'tipo_cedula_persona' => $datosRepresentante['rep_tipo_cedula_persona'],
-//                 'numero_cedula_persona' => $datosRepresentante['rep_numero_cedula_persona'],
+//                 'tipo_numero_documento_persona' => $datosRepresentante['rep_tipo_numero_documento_persona'],
+//                 'numero_numero_documento_persona' => $datosRepresentante['rep_numero_numero_documento_persona'],
 //                 'fecha_nacimiento_personas' => $datosRepresentante['rep_fecha_nacimiento_personas'],
 //                 'nombre_uno' => $datosRepresentante['rep_nombre_uno'],
 //                 'nombre_dos' => $datosRepresentante['rep_nombre_dos'] ?? null,
@@ -995,7 +995,7 @@ public function buscar(Request $request)
                                     ($inscripcion->primer_apellido ? ' ' . $inscripcion->primer_apellido : '') . ' ' .
                                     ($inscripcion->segundo_apellido ? ' ' . $inscripcion->segundo_apellido : '');
 
-                    $cedula = $inscripcion->tipo_documento_id . '-' . $inscripcion->numero_documento;
+                    $numero_documento = $inscripcion->tipo_documento_id . '-' . $inscripcion->numero_documento;
                     $fechaInscripcion = \Carbon\Carbon::parse($inscripcion->fecha_inscripcion)->format('d/m/Y');
 
                     $html .= "
@@ -1013,7 +1013,7 @@ public function buscar(Request $request)
                             </div>
                         </td>
                         <td>
-                            <span class='badge bg-primary'>" . e($cedula) . "</span>
+                            <span class='badge bg-primary'>" . e($numero_documento) . "</span>
                         </td>
                         <td>
                             {$fechaInscripcion}
@@ -1084,8 +1084,8 @@ public function buscar(Request $request)
         try {
             // Validar datos del estudiante
             $datosEstudiante = $request->validate([
-                'tipo_cedula_persona' => 'required',
-                'numero_cedula_persona' => 'required',
+                'tipo_numero_documento_persona' => 'required',
+                'numero_numero_documento_persona' => 'required',
                 'fecha_nacimiento_personas' => 'required|date',
                 'primer_nombre' => 'required|string|max:255',
                 'segundo_nombre' => 'nullable|string|max:255',
@@ -1114,8 +1114,8 @@ public function buscar(Request $request)
 
             // Validar datos del representante
             $datosRepresentante = $request->validate([
-                'rep_tipo_cedula_persona' => 'required|in:V,E,J',
-                'rep_numero_cedula_persona' => 'required|numeric|digits_between:1,8',
+                'rep_tipo_numero_documento_persona' => 'required|in:V,E,J',
+                'rep_numero_numero_documento_persona' => 'required|numeric|digits_between:1,8',
                 'rep_genero_id' => 'required|exists:generos,id',
                 'rep_primer_nombre' => 'required|string|max:255',
                 'rep_segundo_nombre' => 'nullable|string|max:255',

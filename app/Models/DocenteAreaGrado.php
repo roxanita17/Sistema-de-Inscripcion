@@ -23,7 +23,7 @@ class DocenteAreaGrado extends Model
 
 /**
  * Scope para búsqueda general:
- * busca por persona (nombre/cedula), por estudios realizados y por materias/áreas asignadas.
+ * busca por persona (nombre/numero_documento), por estudios realizados y por materias/áreas asignadas.
  */
 public function scopeBuscar($query, $buscar)
 {
@@ -39,7 +39,7 @@ public function scopeBuscar($query, $buscar)
             $p->where(DB::raw("CONCAT(primer_nombre, ' ', primer_apellido)"), 'LIKE', "%{$buscar}%")
               ->orWhere('primer_nombre', 'LIKE', "%{$buscar}%")
               ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
-              ->orWhere('cedula', 'LIKE', "%{$buscar}%");
+              ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
         });
 
         // 2) Estudios realizados del docente (DetalleDocenteEstudio -> EstudiosRealizado.estudios)

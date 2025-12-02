@@ -124,17 +124,17 @@
                             Cédula <span class="required-badge">*</span>
                         </label>
                         <input type="text" 
-                            name="cedula" 
+                            name="numero_documento" 
                             inputmode="numeric"
-                            id="cedula"
+                            id="numero_documento"
                             pattern="[0-9]+" 
                             maxlength="8" 
                             oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                            class="form-control-modern @error('cedula') is-invalid @enderror"
-                            value="{{ old('cedula', $docente->persona->cedula) }}"
+                            class="form-control-modern @error('numero_documento') is-invalid @enderror"
+                            value="{{ old('numero_documento', $docente->persona->numero_documento) }}"
                             placeholder="12345678"
                             required>
-                        @error('cedula')
+                        @error('numero_documento')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i>
                                 {{ $message }}
@@ -354,61 +354,9 @@
                         </small>
                     </div>
 
-                    {{-- Prefijo teléfono --}}
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label-modern">
-                            <i class="fas fa-phone-square"></i>
-                            Prefijo
-                        </label>
-                        <select name="prefijo_id"
-                                class="form-control-modern @error('prefijo_id') is-invalid @enderror">
-                            <option value="">Seleccione</option>
-                            @foreach ($prefijos as $item)
-                                <option value="{{ $item->id }}" 
-                                    {{ (old('prefijo_id', $docente->prefijo_id) == $item->id) ? 'selected' : '' }}>
-                                    {{ $item->prefijo }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('prefijo_id')
-                            <div class="invalid-feedback-modern">
-                                <i class="fas fa-exclamation-circle"></i>
-                                {{ $message }}
-                            </div>
-                        @enderror
-                        <small class="form-text-modern">
-                            <i class="fas fa-info-circle"></i>
-                            0412, 0414, 0424, etc.
-                        </small>
-                    </div>
+                    
 
-                    {{-- Teléfono 1 --}}
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label-modern">
-                            <i class="fas fa-phone"></i>
-                            Teléfono principal
-                        </label>
-                        <input type="text" 
-                            name="primer_telefono"
-                            inputmode="numeric"
-                            id="primer_telefono"
-                            pattern="[0-9]+" 
-                            maxlength="7" 
-                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                            class="form-control-modern @error('primer_telefono') is-invalid @enderror"
-                            value="{{ old('primer_telefono', $docente->primer_telefono) }}"
-                            placeholder="1234567">
-                        @error('primer_telefono')
-                            <div class="invalid-feedback-modern">
-                                <i class="fas fa-exclamation-circle"></i>
-                                {{ $message }}
-                            </div>
-                        @enderror
-                        <small class="form-text-modern">
-                            <i class="fas fa-info-circle"></i>
-                            7 dígitos sin prefijo
-                        </small>
-                    </div>
+                    
 
                     {{-- Dependencia --}}
                     <div class="col-md-6 mb-3">

@@ -341,9 +341,9 @@
                                     <input type="checkbox" 
                                            class="checkbox-modern" 
                                            name="documentos[]" 
-                                           value="copia_cedula_representante" 
-                                           id="copia_cedula_representante">
-                                    <label for="copia_cedula_representante" class="checkbox-label-modern">
+                                           value="copia_numero_documento_representante" 
+                                           id="copia_numero_documento_representante">
+                                    <label for="copia_numero_documento_representante" class="checkbox-label-modern">
                                         <i class="fas fa-id-card"></i>
                                         Copia de Cédula del Representante
                                     </label>
@@ -353,9 +353,9 @@
                                     <input type="checkbox" 
                                            class="checkbox-modern" 
                                            name="documentos[]" 
-                                           value="copia_cedula_estudiante" 
-                                           id="copia_cedula_estudiante">
-                                    <label for="copia_cedula_estudiante" class="checkbox-label-modern">
+                                           value="copia_numero_documento_estudiante" 
+                                           id="copia_numero_documento_estudiante">
+                                    <label for="copia_numero_documento_estudiante" class="checkbox-label-modern">
                                         <i class="fas fa-id-card"></i>
                                         Copia de Cédula del Estudiante
                                     </label>

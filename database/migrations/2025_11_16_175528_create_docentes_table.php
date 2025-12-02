@@ -10,12 +10,10 @@ return new class extends Migration
     {
         Schema::create('docentes', function (Blueprint $table) {
             $table->id();
-            $table->string('primer_telefono')->nullable(); 
             $table->string('segundo_telefono')->nullable(); 
             $table->string('codigo')->nullable();
             $table->string('dependencia')->nullable();
             $table->boolean('status')->default(true);
-            $table->foreignId('prefijo_id')->nullable()->constrained('prefijo_telefonos')->cascadeOnDelete(); 
             $table->foreignId('persona_id')->constrained('personas')->cascadeOnDelete();
             $table->timestamps();
         });

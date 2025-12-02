@@ -72,7 +72,7 @@
                         @foreach ($docentes as $docente)
                             @if($docente->detalleEstudios->count() > 0)
                                 <option value="{{ $docente->id }}"
-                                    data-subtext="{{ $docente->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docente->persona->cedula }}">
+                                    data-subtext="{{ $docente->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docente->persona->numero_documento }}">
                                 {{ $docente->nombre_completo }}
                                 @if($docente->codigo)
                                     ({{ $docente->codigo }})
@@ -148,7 +148,7 @@
                                     Número de Cédula
                                 </span>
                                 <span class="info-value">
-                                    {{ $docenteSeleccionado->persona->tipoDocumento->tipo_documento ?? 'N/A' }}-{{ $docenteSeleccionado->persona->cedula }}
+                                    {{ $docenteSeleccionado->persona->tipoDocumento->tipo_documento ?? 'N/A' }}-{{ $docenteSeleccionado->persona->numero_documento }}
                                 </span>
                             </div>
                             

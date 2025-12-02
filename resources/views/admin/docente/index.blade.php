@@ -167,7 +167,7 @@
                             {{-- Se recorren las docentes existentes --}}
                             @foreach ($docentes as $datos)
                                 <tr class="table-row-hover row-12" style="text-align: center">
-                                    <td class="title-main">{{ $datos->persona->cedula }}</td>
+                                    <td class="title-main">{{ $datos->persona->numero_documento }}</td>
                                     <td >{{ $datos->persona->primer_nombre }}</td>
                                     <td >{{ $datos->persona->primer_apellido }}</td>
                                     <td >{{ $datos->codigo }}</td>
