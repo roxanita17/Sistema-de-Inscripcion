@@ -110,7 +110,7 @@ class DocenteController extends Controller
                 'tercer_nombre' => $request->tercer_nombre,
                 'primer_apellido' => $request->primer_apellido,
                 'segundo_apellido' => $request->segundo_apellido,
-                'cedula' => $request->cedula ,
+                'numero_documento' => $request->cedula,
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,
@@ -169,7 +169,7 @@ class DocenteController extends Controller
         // VALIDACIÓN (excluyendo la cédula actual)
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'cedula' => 'required|string|max:20' . $persona->cedula,
+            'cedula' => 'required|string|max:20|unique:personas,cedula,' . $persona->id,
             'primer_nombre' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
             'tercer_nombre' => 'nullable|string|max:50',
@@ -210,7 +210,7 @@ class DocenteController extends Controller
                 'tercer_nombre' => $request->tercer_nombre,
                 'primer_apellido' => $request->primer_apellido,
                 'segundo_apellido' => $request->segundo_apellido,
-                'cedula' => $request->cedula,
+                'numero_documento' => $request->cedula,
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,

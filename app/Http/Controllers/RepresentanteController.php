@@ -387,12 +387,12 @@ class RepresentanteController extends Controller
     ]);
 
     // VALIDACIÓN DE CÉDULA DUPLICADA
-    // En el modelo Persona la cédula se almacena en el campo numero_documento
+    // En el modelo Persona la cédula se almacena en el campo cedula
     $cedula = $request->input('numero_cedula_persona');
     $personaId = $request->id ?? $request->persona_id;
 
     // Buscar persona con la misma cédula, excluyendo la persona actual si estamos editando
-    $query = Persona::where('numero_documento', $cedula);
+    $query = Persona::where('cedula', $cedula);
 
     if ($personaId) {
         $query->where('id', '!=', $personaId);
@@ -543,7 +543,7 @@ class RepresentanteController extends Controller
                 
                 // Crear o actualizar con los datos del formulario
                 $persona = Persona::updateOrCreate(
-                    ['numero_documento' => $cedulaProgenitor],
+                    ['cedula' => $cedulaProgenitor],
                     $datosPersona
                 );
                 $isUpdate = true;
@@ -553,7 +553,7 @@ class RepresentanteController extends Controller
                     'cedula' => $cedulaProgenitor
                 ]);
                 
-                $persona = Persona::where('numero_documento', $cedulaProgenitor)->first();
+                $persona = Persona::where('cedula', $cedulaProgenitor)->first();
                 
                 if ($persona) {
                     $isUpdate = true;
@@ -688,7 +688,7 @@ class RepresentanteController extends Controller
         if ($cedulaMadre) {
             Log::info('Procesando datos de la madre', ['cedula' => $cedulaMadre]);
 
-            $personaMadre = Persona::firstOrNew(['numero_documento' => $cedulaMadre]);
+            $personaMadre = Persona::firstOrNew(['cedula' => $cedulaMadre]);
 
             $personaMadre->primer_nombre    = $request->input('primer-nombre');
             $personaMadre->segundo_nombre   = $request->input('segundo-nombre');
@@ -732,7 +732,7 @@ class RepresentanteController extends Controller
         if ($cedulaPadre) {
             Log::info('Procesando datos del padre', ['cedula' => $cedulaPadre]);
 
-            $personaPadre = Persona::firstOrNew(['numero_documento' => $cedulaPadre]);
+            $personaPadre = Persona::firstOrNew(['cedula' => $cedulaPadre]);
 
             $personaPadre->primer_nombre    = $request->input('primer-nombre-padre');
             $personaPadre->segundo_nombre   = $request->input('segundo-nombre-padre');
@@ -814,7 +814,7 @@ class RepresentanteController extends Controller
      */
     public function buscarPorCedula(Request $request): JsonResponse
     {
-            // En el modelo Persona la cédula se almacena en numero_documento
+            // En el modelo Persona la cédula se almacena en el campo cedula
         $cedula = $request->get('cedula');
         Log::info(" Buscando cédula: " . $cedula);
         
@@ -825,7 +825,7 @@ class RepresentanteController extends Controller
             ], 422);
         }
 
-        $persona = Persona::where('numero_documento', $cedula)->first();
+        $persona = Persona::where('cedula', $cedula)->first();
         Log::info("Persona encontrada: " . ($persona ? 'SÍ (ID: ' . $persona->id . ')' : 'NO'));
         
         if(!$persona){
@@ -1026,11 +1026,11 @@ class RepresentanteController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Debe proporcionar una cédula',
-            ], 422);
+            ]);
         }
 
         // Buscar persona con la misma cédula, excluyendo la persona actual si estamos editando
-        $query = Persona::where('numero_documento', $cedula);
+        $query = Persona::where('cedula', $cedula);
 
         if ($personaId) {
             $query->where('id', '!=', $personaId);

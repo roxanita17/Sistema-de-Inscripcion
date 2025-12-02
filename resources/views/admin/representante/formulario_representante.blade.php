@@ -88,7 +88,7 @@
                             <select class="form-select" id="tipo-ci" name="tipo-ci" required>
                                 <option value="" disabled selected>Seleccione</option>
                                 @foreach($tipoDocumentos as $tipoDoc)
-                                    <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->tipo_documento }}</option>
+                                    <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
                                 @endforeach
                             </select>
                             <div class="invalid-feedback">
