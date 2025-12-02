@@ -62,17 +62,23 @@ class AlumnoController extends Controller
         $estado = Estado::all();
 
 
-        $alumnos = Alumno::all();
-        return view('admin.alumnos.create', compact('persona',  'alumnos', 'orden_nacimiento', 'discapacidad', 'etnia_indigena', 'expresion_literaria', 'lateralidad', 'institucion_procedencia', 'tipo_documento', 'genero', 'localidad', 'municipio', 'estado'));
-
+        return view('admin.alumnos.create', [
+        'ordenes' => OrdenNacimiento::all(),
+        'discapacidades' => Discapacidad::all(),
+        'etnias' => EtniaIndigena::all(),
+        'expresiones' => ExpresionLiteraria::all(),
+        'lateralidades' => Lateralidad::all(),
+        'personas' => Persona::all(),
+    ]);
     }
 
+    
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        return view('admin.alumnos.index');
     }
 
     /**

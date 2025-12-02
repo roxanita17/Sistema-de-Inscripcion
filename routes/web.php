@@ -229,7 +229,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ===== DASHBOARD ======
 
     // ===== ALUMNOS ======
-    Route::get('alumnos', [AlumnoController::class, 'index'])->name('admin.alumnos.index');
+    Route::get('alumnos', [AlumnoController::class, 'index'])->name('alumnos.index');
+
+    Route::get('alumnos/create', [AlumnoController::class, 'create'])->name('alumnos.create');
 
     Route::post('alumnos/store', [AlumnoController::class, 'store'])->name('alumnos.store');
 
@@ -251,7 +253,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('transacciones/percentil', [EntradasPercentilController::class, 'index'])->name('transacciones.percentil.index');
 });
 
-Route::get('admin/alumnos/create', [AlumnoController::class, 'create'])->name('admin.alumnos.create');
 
 
 
