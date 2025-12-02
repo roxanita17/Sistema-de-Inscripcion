@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alumno;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Grado;
+use App\Models\Docente;
+use App\Models\AnioEscolar;
 
 class HomeController extends Controller
 {
@@ -23,6 +28,27 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $totalGrados = Grado::where('status', true)->count();
+        $totalUsuarios = User::count();
+        $totalDocentes = Docente::whereHas('persona', function($query) {
+            $query->where('status', true);
+        })
+        ->where('status', true)
+        ->count();
+        $totalEstudiantes = Alumno::where('status', 'Activo')
+        ->count();
+
+        // Año escolar activo
+        $anioEscolar = AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->first();
+        
+        $anioEscolarActivo = $anioEscolar 
+            ? $anioEscolar->inicio_anio_escolar->format('Y') . '-' . $anioEscolar->cierre_anio_escolar->format('Y')
+            : 'No definido';
+
+
+
+        return view('home', compact('totalUsuarios', 'totalGrados', 'totalDocentes', 'totalEstudiantes', 'anioEscolarActivo'));
     }
 }

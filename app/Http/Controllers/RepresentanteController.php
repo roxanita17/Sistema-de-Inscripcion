@@ -432,7 +432,7 @@ class RepresentanteController extends Controller
         "tercer_nombre" => $request->input('nombre_tres'),
         "primer_apellido" => $request->input('apellido_uno'),
         "segundo_apellido" => $request->input('apellido_dos'),
-        "numero_documento" => $request->input('numero_cedula_persona'),
+        "cedula" => $request->input('numero_cedula_persona'),
         "fecha_nacimiento" => $request->input('fecha_nacimiento_personas'),
         // Se asume que sexo_representante corresponde al id en la tabla generos
         "genero_id" => $request->input('sexo_representante'),

@@ -141,7 +141,7 @@ class InstitucionProcedenciaIndex extends Component
     }
 
     // ========================================
-    // CRUD
+    // CRUD 
     // ========================================
 
     public function resetInputFields()

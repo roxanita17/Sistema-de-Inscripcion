@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
             <div class="modal-header-edit">
-                <div class="modal-icon-edit">
+                <div class="modal-icon-edit"> 
                     <i class="fas fa-pen"></i>
                 </div>
                 <h5 class="modal-title-edit" id="viewModalEditarLabel{{ $datos->id }}">Editar Asignación</h5>

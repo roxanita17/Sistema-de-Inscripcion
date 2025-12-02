@@ -3,7 +3,7 @@
 
 
 return [
-    
+
 
     /*
     |--------------------------------------------------------------------------
@@ -200,7 +200,7 @@ return [
     | Custom CSS
     |--------------------------------------------------------------------------
     */
-    
+
     'custom_css' => [
         'css/admin-custom.css',
     ],
@@ -213,13 +213,13 @@ return [
 
     'menu' => [
 
-        // Buscador en el sidebar
+        // Buscador
         [
             'type' => 'sidebar-menu-search',
             'text' => 'Buscar...',
         ],
 
-        // Dashboard
+        // Panel principal
         [
             'text' => 'Panel Principal',
             'url' => 'home',
@@ -228,23 +228,106 @@ return [
             'active' => ['home', 'home/*'],
         ],
 
-        
-
-        // Separador
-        ['header' => 'GESTIÓN ACADÉMICA'],
-
-        // Año Escolar
+        //Alumnos
         [
-            'text' => 'Año Escolar',
-            'url' => 'admin/anio_escolar',
-            'icon' => 'fas fa-fw fa-calendar-alt',
+            'text' => 'Alumnos',
+            'url' => 'admin/alumnos',
+            'icon' => 'fas fa-fw fa-user-graduate',
             'icon_color' => 'primary',
-            'active' => ['admin/anio_escolar', 'admin/anio_escolar/*'],
+            'active' => ['admin/alumnos', 'admin/alumnos/*'],
+        ],
+
+        //Inscripciones
+        [
+            'text' => 'Inscripciones',
+            'url' => 'admin/transacciones/inscripcion',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'icon_color' => 'primary',
+            'active' => ['admin/transacciones/inscripcion', 'admin/transacciones/inscripcion/*'],
+        ],
+
+        //Percentil
+        [
+            'text' => 'Estudiantes Asignados',
+            'url' => 'admin/transacciones/percentil',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'icon_color' => 'primary',
+            'active' => ['admin/transacciones/percentil', 'admin/transacciones/percentil/*'],
+        ],
+
+        // Estudiantes
+       [
+            'text' => 'Estudiantes',
+            'url' => 'admin/estudiante/inicio',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'icon_color' => 'primary',
+            'active' => ['admin/estudiante/inicio', 'admin/estudiante/inicio/*'],
+        ],
+        // NUEVO INGRESO
+        /* [
+            'text' => 'Nuevo Ingreso',
+            'url' => 'admin/nuevo_ingreso',
+            'icon' => 'fas fa-fw fa-clipboard-list',
+            'icon_color' => 'primary',
+            'active' => ['admin/nuevo_ingreso', 'admin/nuevo_ingreso/*'],
+        ],
+ */
+        //Representantes
+
+        [
+            'text' => 'Representantes',
+            'url' => 'representante',
+            'icon' => 'fas fa-fw fa-user-tie',
+            'icon_color' => 'info',
+            'active' => ['representante', 'representante/*'],
+        ],
+
+        // ============================================================
+        //  GESTIÓN DOCENTES
+        // ============================================================
+        ['header' => 'GESTIÓN DE DOCENTES'],
+
+        [
+            'text' => 'Docentes',
+            'icon' => 'fas fa-chalkboard-teacher',
+            'submenu' => [
+                [
+                    'text' => 'Listado de Docentes',
+                    'url'  => 'admin/docente',
+                    'icon' => 'fas fa-user',
+                ],
+                [
+                    'text' => 'Asignar Materias',
+                    'url'  => 'admin/transacciones/docente_area_grado',
+                    'icon' => 'fas fa-book-reader',
+                ],
+                [
+                    'text' => 'Estudios Realizados',
+                    'url'  => 'admin/estudios_realizados',
+                    'icon' => 'fas fa-user-graduate',
+                ],
+                [
+                    'text' => 'Expresiones Literarias',
+                    'url'  => 'admin/expresion_literaria',
+                    'icon' => 'fas fa-feather-alt',
+                ],
+            ],
         ],
 
 
+        
 
-        // Grados
+        // ============================================================
+        //  GESTIÓN ACADÉMICA
+        // ============================================================
+        ['header' => 'GESTIÓN ACADÉMICA'],
+
+        [
+            'text' => 'Año Escolar',
+            'url'  => 'admin/anio_escolar',
+            'icon' => 'fas fa-calendar-alt',
+        ],
+
         [
             'text' => 'Grados',
             'url' => 'admin/grado',
@@ -270,118 +353,102 @@ return [
             'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*', 'admin/transacciones/docente*'],
             'submenu' => [
                 [
-                    'text' => 'Grados a Áreas Académicas',
-                    'url' => 'admin/transacciones/grado_area_formacion',
-                    'icon' => 'fas fa-fw fa-arrow-right',
-                    'active' => ['admin/transacciones/grado_area_formacion', 'admin/transacciones/grado_area_formacion/*'],
+                    'text' => 'Grados',
+                    'url'  => 'admin/grado',
+                    'icon' => 'fas fa-list-ol',
                 ],
                 [
-                    'text' => 'Áreas a Estudios Realizados',
-                    'url' => 'admin/transacciones/area_estudio_realizado',
-                    'icon' => 'fas fa-fw fa-arrow-right',
-                    'active' => ['admin/transacciones/area_estudio_realizado', 'admin/transacciones/area_estudio_realizado/*'],
+                    'text' => 'Áreas Académicas',
+                    'url'  => 'admin/area_formacion',
+                    'icon' => 'fas fa-book-open',
+                ],
+                [
+                    'text' => 'Grado → Área Académica',
+                    'url'  => 'admin/transacciones/grado_area_formacion',
+                    'icon' => 'fas fa-link',
+                ],
+                [
+                    'text' => 'Área → Estudios Realizados',
+                    'url'  => 'admin/transacciones/area_estudio_realizado',
+                    'icon' => 'fas fa-arrow-right',
                 ],
             ],
         ],
 
-        // Separador
+
+        // ============================================================
+        //  DATOS PERSONALES
+        // ============================================================
         ['header' => 'DATOS PERSONALES'],
 
-        // Personas
         [
             'text' => 'Etnias Indígenas',
-            'url' => 'admin/etnia_indigena',
-            'icon' => 'fas fa-fw fa-feather-alt',
-            'active' => ['admin/etnia_indigena', 'admin/etnia_indigena/*'],
+            'url'  => 'admin/etnia_indigena',
+            'icon' => 'fas fa-users',
         ],
 
         [
             'text' => 'Discapacidades',
-            'url' => 'admin/discapacidad',
-            'icon' => 'fas fa-fw fa-wheelchair',
-            'active' => ['admin/discapacidad', 'admin/discapacidad/*'],
+            'url'  => 'admin/discapacidad',
+            'icon' => 'fas fa-wheelchair',
         ],
 
         [
             'text' => 'Ocupaciones',
-            'url' => 'admin/ocupacion',
-            'icon' => 'fas fa-fw fa-briefcase',
-            'active' => ['admin/ocupacion', 'admin/ocupacion/*'],
+            'url'  => 'admin/ocupacion',
+            'icon' => 'fas fa-briefcase',
         ],
 
-        // Separador
-        ['header' => 'DOCENTES'],
 
-        [
-            'text' => 'Estudios Realizados',
-            'url' => 'admin/estudios_realizados',
-            'icon' => 'fas fa-fw fa-user-graduate',
-            'active' => ['admin/estudios_realizados', 'admin/estudios_realizados/*'],
-        ],
-
-        [
-            'text' => 'Expresiones Literarias',
-            'url' => 'admin/expresion_literaria',
-            'icon' => 'fas fa-fw fa-pen-fancy',
-            'active' => ['admin/expresion_literaria', 'admin/expresion_literaria/*'],
-        ],
-
-        // Separador
+        // ============================================================
+        //  UBICACIÓN GEOGRÁFICA
+        // ============================================================
         ['header' => 'UBICACIÓN GEOGRÁFICA'],
 
-        // Ubicaciones (agrupadas)
         [
             'text' => 'Ubicaciones',
-            'icon' => 'fas fa-fw fa-map-marked-alt',
-            'icon_color' => 'cyan',
-            'active' => ['admin/estado*', 'admin/municipio*', 'admin/localidad*'],
+            'icon' => 'fas fa-map-marked-alt',
             'submenu' => [
                 [
                     'text' => 'Estados',
-                    'url' => 'admin/estado',
-                    'icon' => 'fas fa-fw fa-globe-americas',
-                    'active' => ['admin/estado', 'admin/estado/*'],
+                    'url'  => 'admin/estado',
+                    'icon' => 'fas fa-globe',
                 ],
                 [
                     'text' => 'Municipios',
-                    'url' => 'admin/municipio',
-                    'icon' => 'fas fa-fw fa-city',
-                    'active' => ['admin/municipio', 'admin/municipio/*'],
+                    'url'  => 'admin/municipio',
+                    'icon' => 'fas fa-city',
                 ],
                 [
                     'text' => 'Localidades',
-                    'url' => 'admin/localidad',
-                    'icon' => 'fas fa-fw fa-home',
-                    'active' => ['admin/localidad', 'admin/localidad/*'],
+                    'url'  => 'admin/localidad',
+                    'icon' => 'fas fa-home',
                 ],
             ],
         ],
 
-        // Separador
+
+        // ============================================================
+        //  CONFIGURACIÓN GENERAL
+        // ============================================================
         ['header' => 'CONFIGURACIÓN GENERAL'],
 
-        // Bancos
         [
             'text' => 'Bancos',
-            'url' => 'admin/banco',
-            'icon' => 'fas fa-fw fa-university',
-            'active' => ['admin/banco', 'admin/banco/*'],
+            'url'  => 'admin/banco',
+            'icon' => 'fas fa-university',
         ],
 
-        // Prefijos de Teléfono
         [
             'text' => 'Prefijos de Teléfono',
-            'url' => 'admin/prefijo_telefono',
-            'icon' => 'fas fa-fw fa-phone-alt',
-            'active' => ['admin/prefijo_telefono', 'admin/prefijo_telefono/*'],
+            'url'  => 'admin/prefijo_telefono',
+            'icon' => 'fas fa-phone',
         ],
 
-        // Instituciones de Procedencia
         [
             'text' => 'Instituciones de Procedencia',
-            'url' => 'admin/institucion_procedencia',
-            'icon' => 'fas fa-fw fa-university',
-            'active' => ['admin/institucion_procedencia', 'admin/institucion_procedencia/*'],
+            'url'  => 'admin/institucion_procedencia',
+            'icon' => 'fas fa-school',
         ],
 
         // Separador
@@ -396,18 +463,19 @@ return [
             'active' => ['representante', 'representante/*'],
         ],
 
-        // Separador
+
+        // ============================================================
+        //  ADMINISTRACIÓN
+        // ============================================================
         ['header' => 'ADMINISTRACIÓN'],
 
-        // Roles y Permisos
         [
             'text' => 'Roles y Permisos',
-            'url' => 'admin/roles',
-            'icon' => 'fas fa-fw fa-user-shield',
-            'icon_color' => 'warning',
-            'active' => ['admin/roles', 'admin/roles/*'],
+            'url'  => 'admin/roles',
+            'icon' => 'fas fa-user-shield',
         ],
     ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -453,7 +521,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',

@@ -40,7 +40,6 @@ class EstudiosRealizadoSeeder extends Seeder
 
             // --- ÁREA DE SALUD ---
             ['estudios' => 'Medicina','status'=> true,],
-            ['estudios' => 'Odontología','status'=> true,],
             ['estudios' => 'Enfermería','status'=> true,],
             ['estudios' => 'Bioanálisis','status'=> true,],
             ['estudios' => 'Nutrición y Dietética','status'=> true,],

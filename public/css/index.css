@@ -12,6 +12,8 @@
         --warning: #f59e0b;
         --warning-light: #fef3c7;
         --info: #3b82f6;
+        --info-light: #eef2ff;
+        --info-dark: #255bb3;
         --gray-50: #f9fafb;
         --gray-100: #f3f4f6;
         --gray-200: #e5e7eb;
@@ -194,7 +196,6 @@
         background: white;
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-md);
-        overflow: hidden;
     }
 
     .card-header-modern {
@@ -261,9 +262,6 @@
         padding: 0;
     }
 
-    .table-wrapper {
-        overflow-x: auto;
-    }
 
     .table-modern {
         width: 100%;
@@ -581,6 +579,25 @@
         box-shadow: var(--shadow-md);
     }
 
+    
+.badge-estudio-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    background: var(--info-light);
+    color: var(--info-dark);
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin: 0.2rem 0;
+}
+
+.text-muted {
+    color: var(--gray-400);
+    font-style: italic;
+}
+
     /* Responsive */
     @media (max-width: 768px) {
         .main-container {
@@ -616,3 +633,238 @@
             flex-wrap: wrap;
         }
     }
+
+    /* ==================================
+   ESTILOS PARA FORMULARIOS MODERNOS
+   ================================== */
+
+/* Labels modernos */
+.form-label-modern {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-label-modern i {
+    color: var(--primary);
+    font-size: 0.95rem;
+}
+
+.required-badge {
+    color: var(--danger);
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* Inputs y selects modernos */
+.form-control-modern {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    color: var(--gray-700);
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-control-modern:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-control-modern:disabled {
+    background: var(--gray-100);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.form-control-modern.is-invalid {
+    border-color: var(--danger);
+}
+
+/* Texto de ayuda */
+.form-text-modern {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    margin-top: 0.4rem;
+}
+
+.form-text-modern i {
+    font-size: 0.75rem;
+}
+
+/* Mensajes de error */
+.invalid-feedback-modern {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    padding: 0.5rem;
+    background: var(--danger-light);
+    border-radius: 6px;
+}
+
+/* Grupos de checkboxes */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.checkbox-item-modern {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.checkbox-item-modern:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.checkbox-modern {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    margin-right: 0;
+}
+
+.checkbox-label-modern {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--gray-700);
+    font-weight: 500;
+    margin-left: 0.75rem;
+    user-select: none;
+}
+
+.checkbox-label-modern i {
+    color: var(--primary);
+    font-size: 0.95rem;
+}
+
+/* Textarea moderno */
+textarea.form-control-modern {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+}
+
+/* Botones modernos */
+.btn-primary-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.75rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary-modern:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary-modern:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-cancel-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.75rem;
+    background: white;
+    color: var(--gray-700);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-cancel-modern:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-400);
+    color: var(--gray-900);
+    text-decoration: none;
+}
+
+/* Gap utility */
+.gap-3 {
+    gap: 1rem;
+}
+
+/* Form groups */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+/* Select2 personalizado */
+.select2-container--bootstrap4 .select2-selection {
+    border: 2px solid var(--gray-200) !important;
+    border-radius: var(--radius) !important;
+    padding: 0.5rem !important;
+    min-height: 46px !important;
+}
+
+.select2-container--bootstrap4 .select2-selection:focus,
+.select2-container--bootstrap4.select2-container--focus .select2-selection {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+.select2-container--bootstrap4 .select2-results__option {
+    padding: 0.75rem 1rem !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-control-modern {
+        font-size: 16px; /* Evita zoom en móviles */
+    }
+    
+    .checkbox-item-modern {
+        padding: 0.6rem;
+    }
+    
+    .btn-primary-modern,
+    .btn-cancel-modern {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+}
