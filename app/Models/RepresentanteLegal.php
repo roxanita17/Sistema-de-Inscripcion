@@ -32,6 +32,11 @@ class RepresentanteLegal extends Model
     public function representante(){
         return $this->belongsTo(Representante::class,"representante_id","id");
     }
+    
+    public function prefijo()
+{
+    return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id');
+}
 
     public function banco()
     {

@@ -99,13 +99,13 @@
                                             </button>
 
                                             {{-- Editar grado --}}
-                                            <button class="action-btn btn-edit"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target=""
+                                            <a class="action-btn btn-edit"
+                                                    href="{{ route('representante.editar', $rep->id) }}"
+                                                    title="Editar"
                                                     @if(!$anioEscolarActivo) disabled @endif
                                                     title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
                                                 <i class="fas fa-pen"></i>
-                                            </button>
+                                            </a>
 
                                             {{-- Eliminar representante --}}
                                             <button class="action-btn btn-delete"
@@ -257,6 +257,18 @@
                 console.log('representante:', representante);
                 console.log('legal:', legal);
                 console.log('banco:', banco);
+
+                // Actualizar el título con el tipo de representante
+                const tipoBadge = document.getElementById('tipo-representante-badge');
+                if (legal && legal.id) {
+                    // Es representante legal
+                    tipoBadge.textContent = 'Representante Legal';
+                    tipoBadge.className = 'text-white fw-medium';
+                } else {
+                    // Es progenitor
+                    tipoBadge.textContent = 'Progenitor';
+                    tipoBadge.className = 'text-white fw-medium';
+                }
 
                 // Datos personales
                 document.getElementById('modal-primer-nombre').textContent = persona.primer_nombre || '';

@@ -9,8 +9,10 @@
                 <div class="modal-icon-view">
                     <i class="fas fa-user-circle"></i>
                 </div>
-                <h5 class="modal-title-view" id="modalVerDetalleRegistroLabel">
-                    Detalles del Representante
+                <h5 class="modal-title-view d-flex align-items-center justify-content-center gap-2 w-100 text-white" id="modalVerDetalleRegistroLabel">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Detalles</span>
+                    <span id="tipo-representante-badge" class="badge"></span>
                 </h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                     <i class="fas fa-times"></i>

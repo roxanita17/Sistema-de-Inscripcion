@@ -65,6 +65,11 @@ class Persona extends Model
         return $this->hasOne(Docente::class, 'persona_id', 'id');
     }
 
+//relacion con el representante
+    public function representante()
+    {
+        return $this->hasOne(Representante::class, 'persona_id');
+    }
     /**
      * Accessor para obtener el nombre completo
      */

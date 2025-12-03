@@ -272,7 +272,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ->name('inscripcion.representante')
         ->middleware(["auth"]);
 
-    // Guardar datos del representante en sesión (Paso 2) - RUTA CORREGIDA
+    // Guardar datos del representante en sesión 
     Route::post('/representante/store', [NuevoIngresoController::class, 'storeRepresentante'])
         ->name('inscripcion.store.representante')
         ->middleware(["auth"]);
@@ -296,6 +296,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('/reset', [NuevoIngresoController::class, 'resetInscripcion'])
             ->name('inscripcion.reset')
             ->middleware(["auth"]);
+
 
     });
 
@@ -332,7 +333,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
     // --------
-
+/*
     Route::get("admin/estudiante/inicio",[EstudianteController::class, 'estudianteView'])->name("admin.estudiante.inicio");
     Route::get("admin/estudiante/formulario",[EstudianteController::class, 'formularioEstudianteView'])->name("admin.estudiante.formulario")->middleware(["auth"]);
 
@@ -361,7 +362,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/buscar',[EstudianteController::class,'buscar'])->name('estudiante.buscar')->middleware(['auth']);
     });
 
-
+*/
 // ======  REPRESENTANTE  ======
 Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function() {
     // Vista principal (listado)
@@ -393,7 +394,6 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
 
     // Generar reporte PDF
     Route::get('/reporte-pdf', [RepresentanteController::class, 'reportePDF'])->name('reporte_pdf');
-
 });
 
     

@@ -86,6 +86,8 @@ class RepresentanteController extends Controller
         return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
     }
 
+
+    
     /**
      * Muestra el formulario para crear un nuevo representante
      * 
@@ -116,50 +118,71 @@ class RepresentanteController extends Controller
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
 
-    public function mostrarFormularioEditar($id)
-    {
-        $representante = Representante::with([
-            'persona', 
-            'legal', 
-            'legal.banco',
-            'municipios',
-            // Relación con localidad/parroquia en este proyecto
-            'localidads'
-        ])->find($id);
-        
-        if (!$representante) {
-            return redirect()->route('vista.representante')->with('error', 'Representante no encontrado');
+public function mostrarFormularioEditar($id)
+{
+    $representante = Representante::with([
+        'persona',
+        'estado',
+        'municipios',  // Relación en Representante (plural)
+        'localidads',  // Relación en Representante (plural)
+        'legal' => function($query) {
+            $query->with(['banco', 'prefijo']);
         }
+    ])->findOrFail($id);
 
-        // Asegurar que la ocupación esté disponible en el objeto representante
-        if ($representante->ocupacion_representante) {
-            $representante->ocupacion_representante = $representante->ocupacion_representante;
-        } elseif ($representante->persona && $representante->persona->ocupacion_representante) {
-            $representante->ocupacion_representante = $representante->persona->ocupacion_representante;
-        }
-
-        // Logs para depuración
-        Log::info('Datos del representante para edición:', [
-            'id' => $representante->id,
-            'ocupacion_representante' => $representante->ocupacion_representante,
-            'persona' => $representante->persona ? [
-                'id' => $representante->persona->id,
-                'ocupacion_representante' => $representante->persona->ocupacion_representante ?? 'No definida'
-            ] : 'Sin datos de persona'
-        ]);
-
-        $estados = Estado::query()->with("municipio")->orderBy("nombre_estado", "ASC")->get();
-        $municipios = Municipio::with('localidades')->orderBy('nombre_municipio', 'ASC')->get();
-        $parroquias_cargadas = Localidad::with('municipio.estado')->orderBy('nombre_localidad', 'ASC')->get();
-        $bancos = Banco::where('status', true)->orderBy('nombre_banco', 'ASC')->get();
-        $ocupaciones = Ocupacion::where('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
-        $generos = Genero::where('status', true)->orderBy('genero', 'ASC')->get();
-        $prefijos_telefono= PrefijoTelefono::where('status', true)->orderBy('prefijo', 'ASC')->get();
+    // Cargar estados con sus relaciones
+    $estados = Estado::where('status', true)
+        ->with(['municipio' => function($query) {
+            $query->where('status', true)
+                  ->with(['localidades' => function($q) {
+                      $q->where('status', true);
+                  }]);
+        }])
+        ->orderBy('nombre_estado', 'ASC')
+        ->get();
         
-        return view("admin.representante.formulario_representante", compact(
-            'representante', 'estados', 'municipios', 'parroquias_cargadas', 'bancos', 'generos', 'prefijos_telefono', 'ocupaciones'
-        ));
-    }
+    // Cargar municipios para el select
+    $municipios = Municipio::where('status', true)
+        ->orderBy('nombre_municipio', 'ASC')
+        ->get();
+        
+    $bancos = Banco::where('status', true)
+        ->orderBy('nombre_banco', 'ASC')
+        ->get();
+        
+    $ocupaciones = Ocupacion::where('status', true)
+        ->orderBy('nombre_ocupacion', 'ASC')
+        ->get();
+        
+    $generos = Genero::where('status', true)
+        ->orderBy('genero', 'ASC')
+        ->get();
+        
+    $prefijos_telefono = PrefijoTelefono::where('status', true)
+        ->orderBy('prefijo', 'ASC')
+        ->get();
+        
+    $tipoDocumentos = TipoDocumento::where('status', true)
+        ->orderBy('nombre', 'ASC')
+        ->get();
+
+    // localidades
+    $parroquias_cargadas = Localidad::where('status', true)
+        ->orderBy('nombre_localidad', 'ASC')
+        ->get();
+
+    return view("admin.representante.modales.editarModal", compact(
+        'representante', 
+        'estados', 
+        'municipios',  // Asegúrate de incluir esta variable
+        'bancos', 
+        'ocupaciones', 
+        'generos', 
+        'prefijos_telefono', 
+        'tipoDocumentos',
+        'parroquias_cargadas'
+    ));
+}
 
     /*
     |--------------------------------------------------------------------------
@@ -176,13 +199,25 @@ class RepresentanteController extends Controller
     
     public function save(Request $request)
     {
-    Log::info('=== INICIANDO GUARDADO DE REPRESENTANTE ===', [
-        'request_data' => $request->all(),
-        'method' => $request->method(),
-        'wants_json' => $request->wantsJson(),
-        'is_ajax' => $request->ajax(),
-        'content_type' => $request->header('Content-Type')
-    ]);
+
+    \Log::info('=== ACCEDIENDO A save() ===');
+    \Log::info('Route name:', [$request->route()->getName()]);
+    \Log::info('Route action:', [$request->route()->getActionName()]);
+    \Log::info('Request path:', [$request->path()]);
+    \Log::info('Request method:', [$request->method()]);
+        // Determinar si es una actualización o creación
+        $isUpdate = $request->has('id') || $request->has('representante_id');
+        $id = $request->input('id', $request->input('representante_id'));
+        
+        Log::info('=== ' . ($isUpdate ? 'ACTUALIZANDO' : 'CREANDO') . ' REPRESENTANTE ===', [
+            'request_data' => $request->all(),
+            'method' => $request->method(),
+            'wants_json' => $request->wantsJson(),
+            'is_ajax' => $request->ajax(),
+            'content_type' => $request->header('Content-Type'),
+            'is_update' => $isUpdate,
+            'id' => $id
+        ]);
 
     // Verificar si es un progenitor que también es representante
     $tipoRepresentante = $request->input('tipo_representante');
@@ -1008,30 +1043,34 @@ class RepresentanteController extends Controller
 
             // Eliminar (soft delete) el representante
             $representante->delete();
-
+            
             DB::commit();
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Representante eliminado exitosamente',
-                ], 200);
+                    'message' => 'Representante eliminado exitosamente'
+                ]);
             }
 
             return redirect()->route('representante.index')
-                ->with('success', 'Representante eliminado exitosamente');
+                ->with('success', '¡El representante ha sido eliminado exitosamente!');
+                
         } catch (\Throwable $th) {
-            Log::error('Error al eliminar representante: ' . $th->getMessage());
-            Log::error('Stack trace: ' . $th->getTraceAsString());
             DB::rollBack();
+            \Log::error('Error al eliminar representante: ' . $th->getMessage(), [
+                'exception' => $th,
+                'trace' => $th->getTraceAsString()
+            ]);
+
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Error al eliminar el representante: ' . $th->getMessage(),
+                    'message' => 'Error al eliminar el representante: ' . $th->getMessage()
                 ], 500);
             }
 
-            return redirect()->route('representante.index')
+            return redirect()->back()
                 ->with('error', 'Error al eliminar el representante: ' . $th->getMessage());
         }
     }

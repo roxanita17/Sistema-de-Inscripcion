@@ -210,11 +210,7 @@ class DocenteController extends Controller
                 'tercer_nombre' => $request->tercer_nombre,
                 'primer_apellido' => $request->primer_apellido,
                 'segundo_apellido' => $request->segundo_apellido,
-<<<<<<< HEAD
-                'numero_documento' => $request->cedula,
-=======
                 'numero_documento' => $request->numero_documento,
->>>>>>> origin/nohely
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,

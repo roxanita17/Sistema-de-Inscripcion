@@ -1,0 +1,444 @@
+                @csrf
+                <input type="hidden" name="id" value="{{ $representante->id }}">
+                <input type="hidden" name="es_legal" id="es_legal" value="1">
+
+                <!-- Sección de Datos Personales -->
+                <div class="border rounded p-4 mb-4 bg-light">
+                    <h5 class="mb-4 pb-2 border-bottom">
+                        <i class="fas fa-id-card me-2"></i> Datos Personales
+                    </h5>
+                    @if(isset($representante))
+                        <input type="hidden" name="id" value="{{ $representante->id }}">
+                    @endif
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-id-card me-2"></i> Tipo de Documento <span class="required-badge">*</span>
+                            </label>
+                            <select class="form-select" id="tipo_documento_id" name="tipo_documento_id" required>
+                                <option value="" disabled selected>Seleccione</option>
+                                @foreach($tipoDocumentos as $tipoDoc)
+                                    <option value="{{ $tipoDoc->id }}" 
+                                        {{ old('tipo_documento_id', $representante->persona->tipo_documento_id ?? '') == $tipoDoc->id ? 'selected' : '' }}>
+                                        {{ $tipoDoc->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione el tipo de documento.
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-id-card me-2"></i> Número de Cédula <span class="required-badge">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="numero_documento" name="numero_documento" 
+                                   value="{{ old('numero_documento', $representante->persona->numero_documento ?? '') }}"
+                                   maxlength="8" pattern="\d{6,8}" 
+                                   title="Ingrese solo números (entre 6 y 8 dígitos)" required
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <div class="invalid-feedback">
+                                Por favor ingrese un número de cédula válido (solo números).
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-calendar-alt me-2"></i> Fecha de Nacimiento <span class="required-badge">*</span>
+                            </label>
+                            <input type="date" class="form-control" id="fecha_nacimiento" 
+                                   name="fecha_nacimiento" 
+                                   value="{{ old('fecha_nacimiento', $representante->persona->fecha_nacimiento ? \Carbon\Carbon::parse($representante->persona->fecha_nacimiento)->format('Y-m-d') : '') }}"
+                                   required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese una fecha de nacimiento válida.
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-user me-2"></i> Primer Nombre <span class="required-badge">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="primer_nombre" name="primer_nombre"
+                                   value="{{ old('primer_nombre', $representante->persona->primer_nombre ?? '') }}"
+                                   pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
+                                   title="Solo se permiten letras y espacios, no se aceptan números" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese un nombre válido (solo letras y espacios).
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-user me-2"></i> Segundo Nombre
+                            </label>
+                            <input type="text" class="form-control" id="segundo_nombre" name="segundo_nombre"
+                                   value="{{ old('segundo_nombre', $representante->persona->segundo_nombre ?? '') }}"
+                                   pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+                                   title="Solo se permiten letras y espacios, no se aceptan números">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-user me-2"></i> Tercer Nombre
+                            </label>
+                            <input type="text" class="form-control" id="tercer_nombre" name="tercer_nombre"
+                                   value="{{ old('tercer_nombre', $representante->persona->tercer_nombre ?? '') }}"
+                                   pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+                                   title="Solo se permiten letras y espacios, no se aceptan números">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-user me-2"></i> Primer Apellido <span class="required-badge">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="primer_apellido" name="primer_apellido"
+                                   value="{{ old('primer_apellido', $representante->persona->primer_apellido ?? '') }}"
+                                   pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
+                                   title="Solo se permiten letras y espacios, no se aceptan números" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese un apellido válido (solo letras y espacios).
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-user me-2"></i> Segundo Apellido
+                            </label>
+                            <input type="text" class="form-control" id="segundo_apellido" name="segundo_apellido"
+                                   value="{{ old('segundo_apellido', $representante->persona->segundo_apellido ?? '') }}"
+                                   pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+                                   title="Solo se permiten letras y espacios, no se aceptan números">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-venus-mars me-2"></i> Género <span class="required-badge">*</span>
+                            </label>
+                            <select class="form-select" id="genero_id" name="genero_id" required>
+                                <option value="" disabled selected>Seleccione</option>
+                                @foreach($generos as $genero)
+                                    <option value="{{ $genero->id }}" 
+                                        {{ old('genero_id', $representante->persona->genero_id ?? '') == $genero->id ? 'selected' : '' }}>
+                                        {{ $genero->genero }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione un género.
+                            </div>
+                        </div>
+
+                       <div class="col-md-6">
+                            <label for="prefijo_telefono" class="form-label">Prefijo</label>
+                            <select class="form-select" id="prefijo_telefono" name="prefijo_telefono" required>
+                                <option value="">Seleccione</option>
+                                @foreach($prefijos_telefono as $prefijo)
+                                    <option value="{{ $prefijo->id }}" 
+                                        {{ old('prefijo_telefono', $representante->persona->prefijo_id ?? '') == $prefijo->id ? 'selected' : '' }}>
+                                        {{ $prefijo->prefijo }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione un prefijo de teléfono.
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="telefono_movil" class="form-label">Teléfono Móvil</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="text" class="form-control" id="telefono_movil" name="telefono_movil" 
+                                    value="{{ old('telefono_movil', $representante->persona->telefono ?? '') }}" 
+                                    pattern="[0-9]+" 
+                                    title="Ingrese solo números"
+                                    required>
+                            </div>
+                            <div class="invalid-feedback">
+                                Por favor ingrese un número de teléfono válido (solo números).
+                            </div>
+                        </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-briefcase me-2"></i> Ocupación
+                            </label>
+                            <select class="form-select" id="ocupacion_id" name="ocupacion_id">
+                                <option value="" selected>Seleccione</option>
+                                @foreach($ocupaciones as $ocupacion)
+                                    <option value="{{ $ocupacion->id }}" 
+                                        {{ old('ocupacion_id', $representante->ocupacion_representante ?? '') == $ocupacion->id ? 'selected' : '' }}>
+                                        {{ $ocupacion->nombre_ocupacion }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Fila para Estado, Municipio y Parroquia -->
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label-modern">
+                                    <i class="fas fa-map-marker-alt me-2"></i> Estado <span class="required-badge">*</span>
+                                </label>
+                                <select class="form-select" id="estado_id" name="estado_id" required>
+                                    <option value="" disabled selected>Seleccione</option>
+                                    @foreach($estados as $estado)
+                                        <option value="{{ $estado->id }}" 
+                                            {{ old('estado_id', $representante->estado_id ?? '') == $estado->id ? 'selected' : '' }}>
+                                            {{ $estado->nombre_estado }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un estado.
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label-modern">
+                                    <i class="fas fa-map-marker-alt me-2"></i> Municipio <span class="required-badge">*</span>
+                                </label>
+                                    <select class="form-select" id="municipio_id" name="municipio_id" required disabled>
+                                        <option value="" disabled>Seleccione</option>
+                                        @foreach($municipios as $municipio)
+                                            <option value="{{ $municipio->id }}" 
+                                                data-estado-id="{{ $municipio->estado_id }}"
+                                                {{ $representante->municipio_id == $municipio->id ? 'selected' : '' }}>
+                                                {{ $municipio->nombre_municipio }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un municipio.
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label-modern">
+                                    <i class="fas fa-map-marker-alt me-2"></i> Parroquia <span class="required-badge">*</span>
+                                </label>
+                                <select class="form-select" id="parroquia_id" name="parroquia_id" required disabled>
+                                    <option value="" disabled>Seleccione</option>
+                                    @foreach($parroquias_cargadas as $parroquia)
+                                        <option value="{{ $parroquia->id }}" 
+                                            data-municipio-id="{{ $parroquia->municipio_id }}"
+                                            {{ $representante->parroquia_id == $parroquia->id ? 'selected' : '' }}>
+                                            {{ $parroquia->nombre_localidad }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione una parroquia.
+                                </div>
+                            </div>
+                        </div>
+
+                    
+                </div>
+
+                <!-- Sección de Conectividad y Participación Ciudadana -->
+                <div id="seccion-conectividad" class="border rounded p-4 mb-4 bg-light">
+                    <h5 class="mb-4 pb-2 border-bottom">
+                        <i class="fas fa-wifi me-2"></i> Conectividad y Participación Ciudadana
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="correo-representante" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="correo-representante" 
+                                           name="correo_representante" maxlength="254" 
+                                           title="No olvide incluir el símbolo @ en la dirección de correo"
+                                           placeholder="ejemplo@correo.com"
+                                           value="{{ old('correo_representante', $representante->persona->email ?? '') }}">
+                                </div>
+                                <small id="correo-representante-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                         <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="form-label d-block">
+                                    <span class="required-badge">(*)</span> ¿Pertenece a alguna Organización Política o Comunitaria?
+                                </label>
+                                <div class="d-flex mt-1">
+                                    <div class="form-check me-3">
+                                        @php
+                                            $valorOrganizacion = old('pertenece_organizacion');
+                                            if (is_null($valorOrganizacion) && isset($representante->legal)) {
+                                                $valorOrganizacion = $representante->legal->pertenece_a_organizacion_representante ? 1 : 0;
+                                            }
+                                            $valorOrganizacion = $valorOrganizacion ?? 0;
+                                        @endphp
+                                        <input class="form-check-input" type="radio"
+                                            id="pertenece_organizacion_si" name="pertenece_organizacion" 
+                                            value="1" 
+                                            {{ $valorOrganizacion == 1 ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="pertenece_organizacion_si">
+                                            Sí
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio"
+                                            id="pertenece_organizacion_no" name="pertenece_organizacion" 
+                                            value="0" 
+                                            {{ $valorOrganizacion == 0 ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="pertenece_organizacion_no">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                <small id="pertenece-organizacion-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12 mb-3">
+                            <div id="campo_organizacion" class="form-group" 
+                                 style="display: {{ old('pertenece_organizacion', $representante->legal ? ($representante->legal->pertenece_a_organizacion_representante ? 1 : 0) : 0) == 1 ? 'block' : 'none' }};">
+                                    <span class="required-badge">(*)</span> Especifique la organización
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-sitemap"></i></span>
+                                    <input type="text" class="form-control" id="cual-organizacion" 
+                                           name="cual-organizacion" maxlength="50"
+                                           value="{{ old('cual-organizacion', $representante->legal->cual_organizacion_representante ?? '') }}"
+                                           title="Ingrese el nombre de la organización (solo letras y espacios)"
+                                           pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
+                                </div>
+                                <small id="cual-organizacion-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Identificación Familiar y Datos de Cuenta -->
+                <div id="seccion-identificacion-familiar" class="border rounded p-4 mb-4 bg-light">
+                    <h5 class="mb-4 pb-2 border-bottom">
+                        <i class="fas fa-id-card me-2"></i> Identificación Familiar y Datos de Cuenta
+                    </h5>
+                    
+                    <div class="row">
+                        <!-- Fila 1 -->
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="parentesco" class="form-label">Parentesco</label>
+                                <select class="form-select" id="parentesco" name="parentesco" required>
+                                    <option value="" disabled {{ !$representante->legal || !$representante->legal->parentesco ? 'selected' : '' }}>Seleccione</option>
+                                    <option value="Padre" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Padre' ? 'selected' : '' }}>Padre</option>
+                                    <option value="Madre" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Madre' ? 'selected' : '' }}>Madre</option>
+                                    <option value="Hermano" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Hermano' ? 'selected' : '' }}>Hermano</option>
+                                    <option value="Hermana" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Hermana' ? 'selected' : '' }}>Hermana</option>
+                                    <option value="Abuelo" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Abuelo' ? 'selected' : '' }}>Abuelo</option>
+                                    <option value="Abuela" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Abuela' ? 'selected' : '' }}>Abuela</option>
+                                    <option value="Tío" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Tío' ? 'selected' : '' }}>Tío</option>
+                                    <option value="Tía" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Tía' ? 'selected' : '' }}>Tía</option>
+                                    <option value="Otro" {{ old('parentesco', $representante->legal->parentesco ?? '') == 'Otro' ? 'selected' : '' }}>Otro</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un parentesco.
+                                </div>
+                                <small id="parentesco-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="carnet_patria_afiliado" class="form-label">Carnet de la Patria Afiliado a</label>
+                                <select class="form-select" id="carnet_patria_afiliado" name="carnet_patria_afiliado">
+                                    <option value="" {{ !isset($representante->legal) || $representante->legal->carnet_patria_afiliado === null || $representante->legal->carnet_patria_afiliado === '' ? 'selected' : '' }}>Seleccione</option>
+                                    <option value="1" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '1' ? 'selected' : '' }}>Padre</option>
+                                    <option value="2" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '2' ? 'selected' : '' }}>Madre</option>
+                                    <option value="3" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '3' ? 'selected' : '' }}>Hijo</option>
+                                    <option value="4" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '4' ? 'selected' : '' }}>Hija</option>
+                                    <option value="5" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '5' ? 'selected' : '' }}>Abuelo</option>
+                                    <option value="6" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '6' ? 'selected' : '' }}>Abuela</option>
+                                    <option value="7" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '7' ? 'selected' : '' }}>Tutor</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione una opción.
+                                </div>
+                                <small id="carnet-patria-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="codigo_carnet" class="form-label">Código</label>
+                                <input type="text" class="form-control" id="codigo_carnet" name="codigo_carnet"
+                                       value="{{ old('codigo_carnet', $representante->legal->codigo_carnet_patria_representante ?? '') }}"
+                                       maxlength="10" pattern="[0-9]+" 
+                                       title="Ingrese solo números (máximo 10 dígitos)">
+                                <div class="invalid-feedback">
+                                    Por favor ingrese un código válido (solo números).
+                                </div>
+                                <small id="codigo-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="serial_carnet" class="form-label">Serial</label>
+                                <input type="text" class="form-control" id="serial_carnet" name="serial_carnet"
+                                       value="{{ old('serial_carnet', $representante->legal->serial_carnet_patria_representante ?? '') }}"
+                                       maxlength="9" pattern="[0-9]+" 
+                                       title="Ingrese solo números (máximo 9 dígitos)">
+                                <div class="invalid-feedback">
+                                    Por favor ingrese un serial válido (solo números).
+                                </div>
+                                <small id="serial-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="tipo_cuenta" class="form-label">Tipo de Cuenta</label>
+                                <select class="form-select" id="tipo_cuenta" name="tipo_cuenta">
+                                    <option value="" {{ !$representante->legal || !$representante->legal->tipo_cuenta ? 'selected' : '' }}>Seleccione</option>
+                                    <option value="Corriente" {{ old('tipo_cuenta', $representante->legal->tipo_cuenta ?? '') == 'Corriente' ? 'selected' : '' }}>Corriente</option>
+                                    <option value="Ahorro" {{ old('tipo_cuenta', $representante->legal->tipo_cuenta ?? '') == 'Ahorro' ? 'selected' : '' }}>Ahorro</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un tipo de cuenta.
+                                </div>
+                                <small id="tipo-cuenta-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="banco_id" class="form-label">Banco</label>
+                                <select class="form-select" id="banco_id" name="banco_id">
+                                    <option value="">Seleccione</option>
+                                    @foreach($bancos as $banco)
+                                        <option value="{{ $banco->id }}"
+                                            {{ old('banco_id', $representante->legal->banco_id ?? '') == $banco->id ? 'selected' : '' }}>
+                                            {{ $banco->nombre_banco }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un banco.
+                                </div>
+                                <small id="banco-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label for="direccion_habitacion" class="form-label">Dirección de Habitación</label>
+                                <textarea class="form-control" id="direccion_habitacion" name="direccion_habitacion" 
+                                    rows="3" maxlength="200" required
+                                    placeholder="Ej: Barrio Araguaney, Avenida 5 entre calles 8 y 9, Casa #12-34" 
+                                    title="Ingrese su dirección completa incluyendo puntos de referencia">{{ old('direccion_habitacion', $representante->persona->direccion ?? '') }}</textarea>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese una dirección válida.
+                                </div>
+                                <small id="direccion-habitacion-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
