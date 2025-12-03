@@ -47,9 +47,6 @@
                         <p><strong>Dependencia:</strong> 
                             {{ $docente->dependencia ?? 'Sin especificar' }}
                         </p>
-                        <p><strong>Telefono:</strong> 
-                            {{ $docente->persona->prefijoTelefono->prefijo }}-{{ $docente->primer_telefono }}
-                        </p>
                     </div>
                 </div>
 

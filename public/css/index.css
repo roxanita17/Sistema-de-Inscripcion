@@ -8,6 +8,8 @@
         --success: #10b981;
         --success-light: #d1fae5;
         --danger: #ef4444;
+        --pink: #ec4899;
+        --pink-light: #fce7f3;
         --danger-light: #fee2e2;
         --warning: #f59e0b;
         --warning-light: #fef3c7;
@@ -587,6 +589,19 @@
     padding: 0.35rem 0.7rem;
     background: var(--info-light);
     color: var(--info-dark);
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin: 0.2rem 0;
+}
+
+.badge-madre-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    background: var(--pink-light);
+    color: var(--pink);
     border-radius: 6px;
     font-weight: 600;
     font-size: 0.8rem;

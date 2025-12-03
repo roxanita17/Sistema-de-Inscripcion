@@ -134,9 +134,9 @@ class DocenteAreaGrado extends Component
             'persona.prefijoTelefono',
             'detalleDocenteEstudio.estudiosRealizado'
         ])->find($this->docenteId);
-
+ 
         $this->cargarMateriasPorEstudios();
-        $this->cargarGrados();
+        $this->cargarGrados(); 
         $this->cargarAsignaciones();
 
         session()->flash('success', 'Docente seleccionado correctamente.');
@@ -174,8 +174,6 @@ class DocenteAreaGrado extends Component
             ->sortBy('areaFormacion.nombre_area_formacion')
             ->values();
 }
-
-
 
     /**
      * CARGA LISTA DE GRADOS

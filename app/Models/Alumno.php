@@ -100,6 +100,24 @@ class Alumno extends Model
         return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
     }
 
+    /**
+     * Relación con Inscripciones
+     */
+    public function inscripciones()
+    {
+        return $this->hasMany(Inscripcion::class, 'alumno_id', 'id');
+    }
+
+    /**
+     * Obtener la inscripción activa del alumno
+     */
+    public function inscripcionActiva()
+    {
+        return $this->hasOne(Inscripcion::class, 'alumno_id', 'id')
+                    ->where('status', true)
+                    ->latest('fecha_inscripcion');
+    }
+
 
 }
 
