@@ -7,6 +7,7 @@ use App\Models\OrdenNacimiento;
 use App\Models\Discapacidad;
 use App\Models\EtniaIndigena;
 use App\Models\ExpresionLiteraria;
+use App\Models\InstitucionProcedencia;
 use App\Models\Lateralidad;
 use App\Models\Persona;
 
@@ -23,7 +24,7 @@ class AlumnoFactory extends Factory
     public function definition(): array
     {
         return [
-            'numero_zonificacion'  => $this->faker->numerify('#######'),
+            'numero_zonificacion'  => $this->faker->numerify('###'),
             'anio_egreso' => $this->faker->date('Y-m-d'),
             'talla_camisa' => $this->faker->numberBetween(36, 46),
             'talla_pantalon' => $this->faker->numberBetween(36, 46),
@@ -33,8 +34,7 @@ class AlumnoFactory extends Factory
             
 
             'orden_nacimiento_id'       => OrdenNacimiento::inRandomOrder()->value('id'),
-            'discapacidad_id'       => Discapacidad::inRandomOrder()->value('id'),
-            'etnia_indigena_id'       => EtniaIndigena::inRandomOrder()->value('id'),
+            'institucion_procedencia_id'       => InstitucionProcedencia::inRandomOrder()->value('id'),
             'expresion_literaria_id'       => ExpresionLiteraria::inRandomOrder()->value('id'),
             'lateralidad_id'       => Lateralidad::inRandomOrder()->value('id'),
             'persona_id'       => Persona::inRandomOrder()->value('id'),

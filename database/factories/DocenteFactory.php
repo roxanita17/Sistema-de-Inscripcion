@@ -16,8 +16,7 @@ class DocenteFactory extends Factory
     public function definition(): array
     {
         return [
-            'primer_telefono'  => $this->faker->numerify('#######'),
-            'segundo_telefono' => $this->faker->optional()->numerify('#######'),
+            
             'codigo'           => $this->faker->optional()->bothify('DOC-###'),
             'dependencia'      => $this->faker->optional()->randomElement([
                 'Matemáticas',
@@ -28,7 +27,7 @@ class DocenteFactory extends Factory
             ]),
             
 
-            'prefijo_id'       => PrefijoTelefono::inRandomOrder()->value('id'),
+            
             'persona_id'       => Persona::inRandomOrder()->value('id'),
 
             'status'           => true,

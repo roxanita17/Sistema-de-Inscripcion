@@ -374,13 +374,20 @@
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="quick-actions">
-                {{-- <a href="{{url('admin/alumnos') }}" class="action-card">
+                <a href="{{url('admin/alumnos') }}" class="action-card">
                     <div class="action-icon">
                         <i class="fas fa-user-plus"></i>
                     </div>
                     <p class="action-title">Nuevo Estudiante</p>
                 </a>
- --}}
+
+                <a href="{{url('representante') }}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <p class="action-title">Nuevo Representante</p>
+                </a>
+
                 <a href="{{ route('admin.docente.create') }}" class="action-card">
                     <div class="action-icon">
                         <i class="fas fa-user-tie"></i>

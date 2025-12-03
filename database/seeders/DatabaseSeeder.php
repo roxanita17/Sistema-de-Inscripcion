@@ -72,14 +72,15 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Factory de docentes ejecutado correctamente.');
         Docente::factory()->count(5)->create();
         DetalleDocenteEstudio::factory()->count(5)->create();
-        $this->command->info('¡Base de datos poblada con éxito!');
-       /* Alumno::factory()->count(10)->create();
-        $this->command->info('Factory de alumnos ejecutado correctamente.');
         Representante::factory()->count(10)->create();
         $this->command->info('Factory de representantes ejecutado correctamente.');
         RepresentanteLegal::factory()->count(10)->create();
-        $this->command->info('Factory de representantes legales ejecutado correctamente.'); 
-        Inscripcion::factory()->count(10)->create();
-        $this->command->info('Factory de inscripciones ejecutado correctamente.'); */
+        $this->command->info('Factory de alumnos ejecutado correctamente.');
+        Alumno::factory()->count(10)->create();
+        
+
+
+        $this->command->info('¡Base de datos poblada con éxito!');
+
     }
 }

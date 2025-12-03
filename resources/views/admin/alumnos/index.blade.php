@@ -183,16 +183,17 @@
                                     <td>
                                         <div class="action-buttons">
 
-                                            {{-- Editar banco --}}
-                                            <button class="action-btn btn-edit" 
+                                            {{-- Ver detalles --}}
+                                            <button class="action-btn btn-view" 
                                                 data-bs-toggle="modal" 
-                                                data-bs-target="#viewModalEditar{{-- {{ $datos->id }} --}}" 
-                                                @if(!$anioEscolarActivo) disabled @endif
-                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
-                                                <i class="fas fa-pen"></i>
+                                                data-bs-target="#viewModal{{ $datos->id }}" 
+                                                title="Ver Detalles">
+                                                <i class="fas fa-eye"></i>
                                             </button>
 
-                                            {{-- Eliminar banco --}}
+                                            
+
+                                            {{-- Eliminar estudiante --}}
                                             <button class="action-btn btn-delete" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#confirmarEliminar{{-- {{ $datos->id }} --}}" 
@@ -205,9 +206,10 @@
                                     </td>
                                 </tr>
 
-                                {{-- Modal de editar --}}
-{{--                                 @include('admin.banco.modales.editModal')
- --}}
+                                {{-- Modal de ver --}}
+                                @include('admin.alumnos.modales.showModal')
+                                
+
                                 {{-- Modal de confirmación para eliminar --}}
                                 <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">

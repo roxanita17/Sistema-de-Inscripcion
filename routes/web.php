@@ -229,7 +229,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ===== DASHBOARD ======
 
     // ===== ALUMNOS ======
-    Route::get('alumnos', [AlumnoController::class, 'index'])->name('alumnos.index');
+    Route::get('alumnos',  [AlumnoController::class, 'index'])->name('alumnos.index');
 
     Route::get('alumnos/create', [AlumnoController::class, 'create'])->name('alumnos.create');
 

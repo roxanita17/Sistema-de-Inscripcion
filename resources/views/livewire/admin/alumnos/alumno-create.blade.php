@@ -623,7 +623,7 @@
 
         {{-- Card: Pertenencia Étnica --}}
         {{-- Card: Pertenencia Étnica --}}
-        <div class="card-modern mb-4">
+       {{--  <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #14b8a6, #0f766e);">
@@ -670,10 +670,10 @@
                                     <label for="pueblo_no_js" class="radio-label-modern">
                                         <i class="fas fa-times-circle"></i> No
                                     </label>
-                                </div>
+                                </div> --}}
 
                                 <!-- input oculto que recibe el valor real de Livewire -->
-                                <input type="hidden"
+                                {{-- <input type="hidden"
                                     id="pertenece_pueblo_indigena"
                                     wire:model="pertenece_pueblo_indigena"
                                     value="no">
@@ -705,10 +705,10 @@
             </div>
         </div>
 
-
+ --}}
 
         {{-- Card: Salud del Estudiante --}}
-        <div class="card-modern mb-4">
+       {{--  <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #f43f5e, #be123c);">
@@ -756,10 +756,10 @@
                                     <label for="discapacidad_no" class="radio-label-modern">
                                         <i class="fas fa-times-circle"></i> No
                                     </label>
-                                </div>
+                                </div> --}}
 
                                 <!-- hidden sincronizado con Livewire -->
-                                <input type="hidden"
+                                {{-- <input type="hidden"
                                     id="presenta_discapacidad_js"
                                     wire:model="presenta_discapacidad"
                                     value="no">
@@ -767,10 +767,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Campos condicionados -->
-                <div id="discapacidad-fields" style="display:none; margin-top: .75rem;">
+                {{-- <div id="discapacidad-fields" style="display:none; margin-top: .75rem;">
                                 <label class="form-label-modern">
                                     <i class="fas fa-landmark"></i>
                                     ¿A cuál pertenece?
@@ -787,14 +787,8 @@
                                     @endforeach
                                 </select>
                             </div>
-
                     </div>
-                </div>
-
-
-    
-
-
+                </div> --}}
         {{-- Botones de Acción --}}
         <div class="card-modern">
             <div class="card-body-modern" style="padding: 2rem;">
