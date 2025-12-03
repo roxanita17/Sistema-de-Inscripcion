@@ -342,6 +342,12 @@
         color: var(--success);
     }
 
+    .status-pending {
+        background: var(--warning-light);
+        color: var(--warning);
+    }
+
+
     .status-inactive {
         background: var(--danger-light);
         color: var(--danger);
@@ -361,6 +367,10 @@
 
     .status-active .status-dot {
         background: var(--success);
+    }
+
+    .status-pending .status-dot {
+        background: var(--warning);
     }
 
     .status-inactive .status-dot {

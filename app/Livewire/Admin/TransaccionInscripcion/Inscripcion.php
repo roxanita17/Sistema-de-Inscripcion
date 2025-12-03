@@ -34,6 +34,8 @@ class Inscripcion extends Component
     public $representantes = []; // Representantes legales
     public $grados = [];
 
+    public $documentos = [];
+
     // Campos del formulario
     public $fecha_inscripcion;
     public $observaciones;
@@ -43,6 +45,8 @@ class Inscripcion extends Component
         'alumnoId' => 'required|exists:alumnos,id',
         'gradoId' => 'required|exists:grados,id',
         'fecha_inscripcion' => 'required|date',
+        'documentos' => 'array',
+        'documentos.*' => 'string',
     ];
 
     protected $messages = [
@@ -243,7 +247,7 @@ class Inscripcion extends Component
      */
     public function registrar()
     {
-        // Validación personalizada: al menos un representante
+        // Validación: al menos un representante
         if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
             session()->flash('error', 'Debe seleccionar al menos un representante (padre, madre o representante legal)');
             return;
@@ -254,34 +258,44 @@ class Inscripcion extends Component
         DB::beginTransaction();
 
         try {
-            // Verificar inscripción duplicada
-            $inscripcionExistente = ModeloInscripcion::where('alumno_id', $this->alumnoId)
-                ->where('grado_id', $this->gradoId)
-                ->where('status', true)
-                ->first();
+            // Lista de todos los documentos requeridos
+            $documentosRequeridos = [
+                'partida_nacimiento',
+                'copia_cedula_representante',
+                'copia_cedula_estudiante',
+                'boletin_6to_grado',
+                'certificado_calificaciones',
+                'constancia_aprobacion_primaria',
+                'foto_estudiante',
+                'foto_representante',
+                'carnet_vacunacion',
+                'autorizacion_tercero'
+            ];
 
-            if ($inscripcionExistente) {
-                session()->flash('error', 'Este alumno ya está inscrito en este grado');
-                return;
-            }
+            // Verificar si faltan documentos
+            $documentosFaltantes = array_diff($documentosRequeridos, $this->documentos ?? []);
+            $todosLosDocumentos = empty($documentosFaltantes);
+            
+            // Determinar el estado de la inscripción
+            $estadoInscripcion = $todosLosDocumentos ? 'Activo' : 'Pendiente';
 
-            // Crear inscripción
-            ModeloInscripcion::create([
+            // Guardar inscripción
+            $inscripcion = ModeloInscripcion::create([
                 'alumno_id' => $this->alumnoId,
                 'grado_id' => $this->gradoId,
-                'padre_id' => $this->padreId,
-                'madre_id' => $this->madreId,
-                'representante_legal_id' => $this->representanteLegalId,
+                'padre_id' => $this->padreId ?: null,
+                'madre_id' => $this->madreId ?: null,
+                'representante_legal_id' => $this->representanteLegalId ?: null,
+                'documentos' => $this->documentos ?? [],
+                'estado_documentos' => $todosLosDocumentos ? 'Completos' : 'Incompletos',
                 'fecha_inscripcion' => $this->fecha_inscripcion,
                 'observaciones' => $this->observaciones,
-                'status' => true,
+                'status' => $estadoInscripcion,
             ]);
-
             DB::commit();
 
             session()->flash('success', 'Inscripción registrada exitosamente');
 
-            // Limpiar formulario
             $this->limpiar();
 
             return redirect()->route('admin.transacciones.inscripcion.index');
@@ -291,6 +305,7 @@ class Inscripcion extends Component
             session()->flash('error', 'Error al registrar la inscripción: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Limpiar formulario y selecciones
@@ -313,6 +328,8 @@ class Inscripcion extends Component
         $this->fecha_inscripcion = now()->format('Y-m-d');
         $this->dispatch('resetSelects');
     }
+
+    
 
     // Render
     public function render()

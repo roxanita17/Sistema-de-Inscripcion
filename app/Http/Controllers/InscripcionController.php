@@ -38,4 +38,11 @@ class InscripcionController extends Controller
 
         return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos'));
     }
+
+    public function destroy($id)
+    {
+        Inscripcion::eliminar($id);
+        
+        return redirect()->route('admin.transacciones.inscripcion.index')->with('success', 'Inscripción eliminada correctamente');
+    }
 }

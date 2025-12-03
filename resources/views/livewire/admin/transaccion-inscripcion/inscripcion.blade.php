@@ -106,16 +106,30 @@
                                     {{ $alumnoSeleccionado->persona->primer_nombre }} 
                                     {{ $alumnoSeleccionado->persona->segundo_nombre }} 
                                     {{ $alumnoSeleccionado->persona->primer_apellido }}
+                                    {{ $alumnoSeleccionado->persona->segundo_apellido }}
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <strong>Documento:</strong><br>
                                     {{ $alumnoSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $alumnoSeleccionado->persona->numero_documento }}
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <strong>Edad:</strong><br>
                                     {{ $alumnoSeleccionado->persona->fecha_nacimiento->age ?? 'N/A' }} años
                                 </div>
+                                <div class="col-md-2">
+                                    <strong>Género:</strong><br>
+                                    {{ $alumnoSeleccionado->persona->genero->genero ?? 'N/A' }}
+
+                                    
+                                </div>
+                                <div class="col-md-2">
+                                    <strong>Fecha de Nacimiento:</strong><br>
+                                    {{ $alumnoSeleccionado->persona->fecha_nacimiento->format('d/m/Y') ?? 'N/A' }}
+
+                                </div>
+                                
                             </div>
+                              
                         </div>
                     </div>
                 </div>
@@ -212,6 +226,178 @@
         </div>
     </div>
 
+                    {{-- Card: Documentos Entregados --}}
+            {{-- <div class="card-modern mb-4">
+                <div class="card-header-modern">
+                    <div class="header-left">
+                        <div class="header-icon" style="background: linear-gradient(135deg, var(--warning), #d97706);">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <div>
+                            <h3>Documentos Entregados</h3>
+                            <p>Marque los documentos que el estudiante ha entregado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body-modern" style="padding: 2rem;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="checkbox-group">
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="partida_nacimiento" 
+                                           id="partida_nacimiento">
+                                    <label for="partida_nacimiento" class="checkbox-label-modern">
+                                        <i class="fas fa-file-alt"></i>
+                                        Partida de Nacimiento
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="copia_cedula_representante" 
+                                           id="copia_cedula_representante">
+                                    <label for="copia_cedula_representante" class="checkbox-label-modern">
+                                        <i class="fas fa-id-card"></i>
+                                        Copia de Cédula del Representante
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="copia_cedula_estudiante" 
+                                           id="copia_cedula_estudiante">
+                                    <label for="copia_cedula_estudiante" class="checkbox-label-modern">
+                                        <i class="fas fa-id-card"></i>
+                                        Copia de Cédula del Estudiante
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="boletin_6to_grado" 
+                                           id="boletin_6to_grado">
+                                    <label for="boletin_6to_grado" class="checkbox-label-modern">
+                                        <i class="fas fa-file-alt"></i>
+                                        Boletín de 6to Grado
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="certificado_calificaciones" 
+                                           id="certificado_calificaciones">
+                                    <label for="certificado_calificaciones" class="checkbox-label-modern">
+                                        <i class="fas fa-certificate"></i>
+                                        Certificado de Calificaciones
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="checkbox-group">
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="constancia_aprobacion_primaria" 
+                                           id="constancia_aprobacion_primaria">
+                                    <label for="constancia_aprobacion_primaria" class="checkbox-label-modern">
+                                        <i class="fas fa-stamp"></i>
+                                        Constancia de Aprobación Primaria
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="foto_estudiante" 
+                                           id="foto_estudiante">
+                                    <label for="foto_estudiante" class="checkbox-label-modern">
+                                        <i class="fas fa-camera"></i>
+                                        Fotografía Tipo Carnet Del Estudiante
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="foto_representante" 
+                                           id="foto_representante">
+                                    <label for="foto_representante" class="checkbox-label-modern">
+                                        <i class="fas fa-camera"></i>
+                                        Fotografía Tipo Carnet Del Representante
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="carnet_vacunacion" 
+                                           id="carnet_vacunacion">
+                                    <label for="carnet_vacunacion" class="checkbox-label-modern">
+                                        <i class="fas fa-syringe"></i>
+                                        Carnet de Vacunación Vigente
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-item-modern">
+                                    <input type="checkbox" 
+                                           class="checkbox-modern" 
+                                           name="documentos[]" 
+                                           value="autorizacion_tercero" 
+                                           id="autorizacion_tercero">
+                                    <label for="autorizacion_tercero" class="checkbox-label-modern">
+                                        <i class="fas fa-file-signature"></i>
+                                        Autorización Firmada (si inscribe un tercero)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+            @foreach ([
+                'partida_nacimiento' => 'Partida de Nacimiento',
+                'copia_cedula_representante' => 'Copia de Cédula del Representante',
+                'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
+                'boletin_6to_grado' => 'Boletín de 6to Grado',
+                'certificado_calificaciones' => 'Certificado de Calificaciones',
+                'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
+                'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
+                'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
+                'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
+                'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)'
+            ] as $documento => $etiqueta)
+                <div class="checkbox-item-modern">
+                    <input type="checkbox" 
+                        id="{{ $documento }}" 
+                        wire:model.live="documentos"
+                        value="{{ $documento }}"
+                        class="checkbox-modern">
+                    <label for="{{ $documento }}" class="checkbox-label-modern">
+                        <i class="fas fa-{{ $documento === 'carnet_vacunacion' ? 'syringe' : ($documento === 'foto_estudiante' || $documento === 'foto_representante' ? 'camera' : ($documento === 'autorizacion_tercero' ? 'file-signature' : 'file-alt')) }}"></i>
+                        {{ $etiqueta }}
+                    </label>
+                </div>
+            @endforeach
+
+
     {{-- Card: Datos de la Inscripción --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
@@ -269,6 +455,8 @@
                         @enderror
                     </div>
                 </div>
+
+
 
                 
 

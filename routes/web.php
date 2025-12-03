@@ -244,16 +244,20 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ===== INSCRIPCIONES ======
     Route::prefix('transacciones')->name('transacciones.')->group(function () {
 
-        // AQUÍ debes colocar tu ruta correcta:
         Route::get('inscripcion', [InscripcionController::class, 'index'])
             ->name('inscripcion.index');
 
+        Route::get('inscripcion/create', function () {
+            return view('admin.transacciones.inscripcion.create');
+        })->name('inscripcion.create');
+
+        Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
+            ->name('inscripcion.destroy');
+        
 
     });
 
-        Route::get('admin/transacciones/inscripcion/create', function () {
-        return view('admin.transacciones.inscripcion.create');
-    })->name('transacciones.inscripcion.create');
+    
 
         
    

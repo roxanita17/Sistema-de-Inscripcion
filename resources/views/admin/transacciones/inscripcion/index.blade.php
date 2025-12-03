@@ -158,9 +158,13 @@
 
                                     {{-- STATUS --}}
                                     <td>
-                                        @if ($datos->status)
+                                        @if ($datos->status === 'Activo')
                                             <span class="status-badge status-active">
                                                 <span class="status-dot"></span> Activo
+                                            </span>
+                                        @elseif ($datos->status === 'Pendiente')
+                                            <span class="status-badge status-pending">
+                                                <span class="status-dot"></span> Pendiente
                                             </span>
                                         @else
                                             <span class="status-badge status-inactive">
@@ -174,24 +178,25 @@
                                         <div class="action-buttons">
 
                                             {{-- VER --}}
-                                            <a {{-- href="{{ route('admin.inscripciones.show', $datos->id) }}" --}}
-                                               class="action-btn btn-edit"
-                                               title="Ver">
+                                            <button class="action-btn btn-view" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#viewModal{{ $datos->id }}" 
+                                                title="Ver Detalles">
                                                 <i class="fas fa-eye"></i>
-                                            </a>
+                                            </button>
 
                                             {{-- EDITAR --}}
-                                            <a {{-- href="{{ route('admin.inscripciones.edit', $datos->id) }}" --}}
+                                            {{-- <a href="{{ route('admin.inscripciones.edit', $datos->id) }}"
                                                class="action-btn btn-edit"
                                                @if(!$anioEscolarActivo) disabled @endif
                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
                                                 <i class="fas fa-pen"></i>
-                                            </a>
+                                            </a> --}}
 
                                             {{-- ELIMINAR --}}
                                             <button class="action-btn btn-delete"
                                                 data-bs-toggle="modal"
-                                               {{--  data-bs-target="#confirmarEliminar{{ $datos->id }}" --}}
+                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
                                                 @if(!$anioEscolarActivo) disabled @endif
                                                 title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Eliminar' }}">
                                                 <i class="fas fa-trash-alt"></i>
@@ -200,9 +205,11 @@
                                         </div>
                                     </td>
                                 </tr>
+                                {{-- Modal de ver --}}
+                                @include('admin.transacciones.inscripcion.modales.showModal')
 
                                 {{-- MODAL ELIMINAR --}}
-                                <div class="modal fade" {{-- id="confirmarEliminar{{ $datos->id }}"  --}}tabindex="-1">
+                                <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content modal-modern">
                                             <div class="modal-header-delete">
@@ -217,7 +224,7 @@
                                                 <p class="delete-warning">Esta acción no se puede deshacer.</p>
                                             </div>
                                             <div class="modal-footer-delete">
-                                                <form {{-- action="{{ route('admin.inscripciones.destroy', $datos->id) }}"  --}}
+                                                <form action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}" 
                                                     method="POST" class="w-100">
                                                     @csrf
                                                     @method('DELETE')

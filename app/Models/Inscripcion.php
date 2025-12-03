@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+
 
 class Inscripcion extends Model
 {
@@ -19,12 +21,15 @@ class Inscripcion extends Model
         'madre_id',
         'representante_legal_id',
         'fecha_inscripcion',
+        'documentos',
+        'estado_documentos',
         'status',
     ];
 
     protected $casts = [
+        'documentos' => 'array',
         'fecha_inscripcion' => 'date',
-        'status' => 'boolean',
+        'status' => 'string',
     ];
 
     /**
@@ -145,5 +150,15 @@ class Inscripcion extends Model
     public function getRepresentantePrincipalAttribute()
     {
         return $this->padre ?? $this->madre ?? $this->representanteLegal;
+    }
+
+    public static function eliminar($id)
+    {
+        return DB::table('inscripcions')
+            ->where('id', $id)
+            ->update([
+                'status' => 'Inactivo',
+                'updated_at' => now()
+            ]);
     }
 }
