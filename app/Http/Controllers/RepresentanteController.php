@@ -543,11 +543,7 @@ class RepresentanteController extends Controller
                 
                 // Crear o actualizar con los datos del formulario
                 $persona = Persona::updateOrCreate(
-<<<<<<< HEAD
-                    ['cedula' => $cedulaProgenitor],
-=======
                     ['numero_documento' => $numero_documentoProgenitor],
->>>>>>> origin/nohely
                     $datosPersona
                 );
                 $isUpdate = true;
@@ -557,11 +553,7 @@ class RepresentanteController extends Controller
                     'numero_documento' => $numero_documentoProgenitor
                 ]);
                 
-<<<<<<< HEAD
-                $persona = Persona::where('cedula', $cedulaProgenitor)->first();
-=======
                 $persona = Persona::where('numero_documento', $numero_documentoProgenitor)->first();
->>>>>>> origin/nohely
                 
                 if ($persona) {
                     $isUpdate = true;
@@ -727,11 +719,7 @@ class RepresentanteController extends Controller
         if ($numero_documentoMadre) {
             Log::info('Procesando datos de la madre', ['numero_documento' => $numero_documentoMadre]);
 
-<<<<<<< HEAD
-            $personaMadre = Persona::firstOrNew(['cedula' => $cedulaMadre]);
-=======
             $personaMadre = Persona::firstOrNew(['numero_documento' => $numero_documentoMadre]);
->>>>>>> origin/nohely
 
             $personaMadre->primer_nombre    = $request->input('primer-nombre');
             $personaMadre->segundo_nombre   = $request->input('segundo-nombre');
@@ -775,11 +763,7 @@ class RepresentanteController extends Controller
         if ($numero_documentoPadre) {
             Log::info('Procesando datos del padre', ['numero_documento' => $numero_documentoPadre]);
 
-<<<<<<< HEAD
-            $personaPadre = Persona::firstOrNew(['cedula' => $cedulaPadre]);
-=======
             $personaPadre = Persona::firstOrNew(['numero_documento' => $numero_documentoPadre]);
->>>>>>> origin/nohely
 
             $personaPadre->primer_nombre    = $request->input('primer-nombre-padre');
             $personaPadre->segundo_nombre   = $request->input('segundo-nombre-padre');
@@ -861,15 +845,9 @@ class RepresentanteController extends Controller
      */
     public function buscarPornumero_documento(Request $request): JsonResponse
     {
-<<<<<<< HEAD
-            // En el modelo Persona la cédula se almacena en el campo cedula
-        $cedula = $request->get('cedula');
-        Log::info(" Buscando cédula: " . $cedula);
-=======
             // En el modelo Persona la cédula se almacena en numero_documento
         $numero_documento = $request->get('numero_documento');
         Log::info(" Buscando cédula: " . $numero_documento);
->>>>>>> origin/nohely
         
         if(!$numero_documento){
             return response()->json([
@@ -878,11 +856,7 @@ class RepresentanteController extends Controller
             ], 422);
         }
 
-<<<<<<< HEAD
-        $persona = Persona::where('cedula', $cedula)->first();
-=======
         $persona = Persona::where('numero_documento', $numero_documento)->first();
->>>>>>> origin/nohely
         Log::info("Persona encontrada: " . ($persona ? 'SÍ (ID: ' . $persona->id . ')' : 'NO'));
         
         if(!$persona){
@@ -1087,11 +1061,7 @@ class RepresentanteController extends Controller
         }
 
         // Buscar persona con la misma cédula, excluyendo la persona actual si estamos editando
-<<<<<<< HEAD
-        $query = Persona::where('cedula', $cedula);
-=======
         $query = Persona::where('numero_documento', $numero_documento);
->>>>>>> origin/nohely
 
         if ($personaId) {
             $query->where('id', '!=', $personaId);
