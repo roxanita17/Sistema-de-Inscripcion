@@ -86,7 +86,7 @@ class DocenteController extends Controller
             'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
             'primer_telefono' => 'nullable|string|max:20',
             'segundo_telefono' => 'nullable|string|max:20',
-            'codigo' => 'nullable|string|max:50',
+            'codigo' => 'nullable|numeric',
             'dependencia' => 'nullable|string|max:100',
         ], [
             'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
@@ -184,7 +184,7 @@ class DocenteController extends Controller
             'direccion' => 'nullable|string|max:255',
             'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
             'primer_telefono' => 'nullable|string|max:20',
-            'codigo' => 'nullable|string|max:50',
+            'codigo' => 'nullable|numeric',
             'dependencia' => 'nullable|string|max:100',
         ], [
             'tipo_documento_id.required' => 'El tipo de documento es obligatorio',

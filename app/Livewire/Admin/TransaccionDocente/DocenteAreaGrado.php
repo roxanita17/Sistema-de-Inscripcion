@@ -63,14 +63,19 @@ class DocenteAreaGrado extends Component
     {
         $this->docenteSeleccionado = Docente::with([
             'persona',
+            'persona.prefijoTelefono',
+            'persona.tipoDocumento',
+            'persona.genero',
             'detalleEstudios.estudiosRealizado',
             'docenteAreaGrado.areaEstudios.areaFormacion',
             'docenteAreaGrado.grado'
         ])->findOrFail($this->docenteId);
 
+
         $this->estudios = $this->docenteSeleccionado->detalleEstudios;
         $this->asignaciones = $this->docenteSeleccionado->docenteAreaGrado;
     }
+
 
 
     /**
@@ -81,7 +86,7 @@ class DocenteAreaGrado extends Component
         $this->docentes = Docente::with([
             'persona.tipoDocumento',
             'persona.genero',
-            'prefijoTelefono',
+            'persona.prefijoTelefono',
             'detalleDocenteEstudio.estudiosRealizado'
         ])
         ->whereHas('persona', fn($q) => $q->where('status', true))
@@ -126,7 +131,7 @@ class DocenteAreaGrado extends Component
         $this->docenteSeleccionado = Docente::with([
             'persona.tipoDocumento',
             'persona.genero',
-            'prefijoTelefono',
+            'persona.prefijoTelefono',
             'detalleDocenteEstudio.estudiosRealizado'
         ])->find($this->docenteId);
 

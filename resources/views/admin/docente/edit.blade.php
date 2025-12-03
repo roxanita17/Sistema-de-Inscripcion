@@ -154,9 +154,13 @@
                         </label>
                         <input type="text"
                             name="codigo"
+                            inputmode="numeric"
+                            pattern="[0-9]+"
+                            maxlength="9"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                             class="form-control-modern @error('codigo') is-invalid @enderror"
                             value="{{ old('codigo', $docente->codigo) }}"
-                            placeholder="DOC-001">
+                            placeholder="79322403">
                         @error('codigo')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i>

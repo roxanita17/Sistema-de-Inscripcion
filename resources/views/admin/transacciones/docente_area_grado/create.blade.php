@@ -69,29 +69,6 @@
     {{-- Componente Livewire para búsqueda de docente --}}
     <livewire:admin.transaccion-docente.docente-area-grado />
 
-    {{-- Formulario de asignación (se mostrará cuando haya docente seleccionado) --}}
-    {{-- Este formulario enviará a la ruta store --}}
-    {{--
-    <form action="{{ route('admin.transacciones.docente_area_grado.store') }}" method="POST" class="form-modern">
-        @csrf
-
-        <div class="card-modern mt-4">
-            <div class="card-header-modern">
-                <div class="header-left">
-                    <div class="header-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <div>
-                        <h3>Asignación de Materias</h3>
-                        <p>Seleccione área, grado y sección</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-body-modern" style="padding: 2rem;">
-
-                {{-- Aquí irán los selects de área, grado, sección --}}
-
                 {{-- Botones de acción --}}
                 <div class="form-actions-modern">
                     <a href="{{ route('admin.transacciones.docente_area_grado.index') }}" class="btn-secondary-modern">
