@@ -72,7 +72,7 @@
                         @foreach ($docentes as $docente)
                             @if($docente->detalleEstudios->count() > 0)
                                 <option value="{{ $docente->id }}"
-                                    data-subtext="{{ $docente->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docente->persona->numero_documento }}">
+                                    data-subtext="{{ $docente->persona->tipo_documento->nombre ?? 'N/A' }}-{{ $docente->persona->numero_documento }}">
                                 {{ $docente->nombre_completo }}
                                 @if($docente->codigo)
                                     ({{ $docente->codigo }})
@@ -148,15 +148,15 @@
                                     Número de Cédula
                                 </span>
                                 <span class="info-value">
-                                    {{ $docenteSeleccionado->persona->tipoDocumento->tipo_documento ?? 'N/A' }}-{{ $docenteSeleccionado->persona->numero_documento }}
+                                    {{ $docenteSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docenteSeleccionado->persona->numero_documento }}
                                 </span>
                             </div>
-                            
+
                             @if($docenteSeleccionado->codigo)
                             <div class="info-item">
                                 <span class="info-label">
-                                    <i class="fas fa-hashtag"></i>
-                                    Código
+                                    <i class="fas fa-id-card"></i>
+                                    Codigo
                                 </span>
                                 <span class="info-value">
                                     {{ $docenteSeleccionado->codigo }}
@@ -194,6 +194,17 @@
                                     </span>
                                 </span>
                             </div>
+                            @if($docenteSeleccionado->persona->genero)
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <i class="fas fa-venus-mars"></i>
+                                    Genero
+                                </span>
+                                <span class="info-value">
+                                    {{ $docenteSeleccionado->persona->genero->genero }}
+                                </span>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -209,6 +220,27 @@
                             <h4>Información de Contacto</h4>
                         </div>
                         <div class="info-group">
+                            @if($docenteSeleccionado->persona->prefijoTelefono)
+                        
+                            <div class="info-item">
+                            <span class="info-label"> 
+                                <i class="fas fa-phone"></i>
+                                Teléfono
+                            </span>
+                            <span class="info-value">
+                                @if($docenteSeleccionado->primer_telefono)
+                                    {{ $docenteSeleccionado->persona->prefijoTelefono->prefijo }} - {{ $docenteSeleccionado->primer_telefono }}
+
+                                @else
+                                    N/A
+                                @endif
+                            </span>
+                        </div>
+                            @endif
+                        </div>
+
+
+                        <div class="info-group" style="margin-top:1rem">
                             @if($docenteSeleccionado->dependencia)
                             <div class="info-item">
                                 <span class="info-label">

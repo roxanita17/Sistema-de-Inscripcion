@@ -2,89 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Inscripcion;
-use Illuminate\Http\Request;
-use App\Models\Grado;
-use App\Services\SectionDistributorService;
+use App\Models\Persona;
+use App\Models\Genero;
+use App\Models\TipoDocumento;
+use App\Models\Alumno;
 
 class InscripcionController extends Controller
 {
-
-
+      /**
+     * Verifica si hay un año escolar activo
+     */
     private function verificarAnioEscolar()
     {
         return \App\Models\AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->exists();
     }
-    
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Grado $grado)
+    public function index()
     {
+        // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        $inscripciones = Inscripcion::where('grado_id', $grado->id)
-            ->with(['alumno.persona', 'representante.persona', 'grado'])
-            ->paginate(10);
-
-        return view('admin.transacciones.inscripcion.index', compact('inscripciones', 'anioEscolarActivo', 'grado'));
+        $inscripciones = Inscripcion::paginate(10);
+        return view('admin.transacciones.inscripcion.index', compact('anioEscolarActivo', 'inscripciones'));
     }
 
-    public function generarSecciones($gradoId)
-    {
-        $grado = Grado::findOrFail($gradoId);
-        $servicio = app(SectionDistributorService::class);
-        $resultado = $servicio->procesarGrado($grado);
-        return back()->with('success', "Secciones generadas: {$resultado['total_secciones']}");
-    }
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $this->verificarAnioEscolar();
+        $personas = Persona::all();
+        $generos = Genero::all();
+        $tipoDocumentos = TipoDocumento::all();
+        $alumnos = Alumno::all();
+
+        return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Inscripcion $inscripcion)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Inscripcion $inscripcion)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Inscripcion $inscripcion)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Inscripcion $inscripcion)
-    {
-        //
+        Inscripcion::eliminar($id);
+        
+        return redirect()->route('admin.transacciones.inscripcion.index')->with('success', 'Inscripción eliminada correctamente');
     }
 }

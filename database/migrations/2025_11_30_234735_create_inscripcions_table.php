@@ -6,24 +6,50 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('inscripcions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('alumno_id')->constrained('alumnos')->cascadeOnDelete();
-            $table->foreignId('representante_id')->constrained('representantes')->cascadeOnDelete();
-            $table->foreignId('grado_id')->constrained('grados')->cascadeOnDelete();
+
+            // Relaciones
+            $table->foreignId('alumno_id')
+                  ->constrained('alumnos')
+                  ->onDelete('cascade');
+
+            $table->foreignId('grado_id')
+                  ->constrained('grados')
+                  ->onDelete('cascade');
+
+            $table->foreignId('padre_id')
+                  ->nullable()
+                  ->constrained('representantes')
+                  ->nullOnDelete();
+
+            $table->foreignId('madre_id')
+                  ->nullable()
+                  ->constrained('representantes')
+                  ->nullOnDelete();
+
+            $table->unsignedBigInteger('representante_legal_id')->nullable();
+            $table->foreign('representante_legal_id')
+                  ->references('id')
+                  ->on('representante_legal')
+                  ->nullOnDelete();
+
+            // Campos de documentos
+            $table->json('documentos')->nullable(); // Quitar AFTER
+            $table->string('estado_documentos')->default('Pendiente'); // Quitar AFTER
+
+            // Fecha de inscripción
+            $table->date('fecha_inscripcion'); // No se puede default(now()) en date
+
             $table->string('status')->default('Activo');
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('inscripcions');

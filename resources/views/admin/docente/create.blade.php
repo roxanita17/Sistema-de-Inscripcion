@@ -56,6 +56,12 @@
             </div>
         </div>
     @endif
+    @if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
 
     {{-- Formulario de creación --}}
     <div class="card-modern">
@@ -157,9 +163,13 @@
                         </label>
                         <input type="text"
                             name="codigo"
+                            inputmode="numeric"
+                            pattern="[0-9]+"
+                            maxlength="9"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                             class="form-control-modern @error('codigo') is-invalid @enderror"
                             value="{{ old('codigo') }}"
-                            placeholder="DOC-001">
+                            placeholder="79322403">
                         @error('codigo')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i>
@@ -335,6 +345,55 @@
 
                 <div class="row">
 
+                    {{-- Prefijo de telefono --}}
+                    <div class="col-md-2 mb-3"> 
+                        <label class="form-label-modern">
+                            <i class="fas fa-id-card-alt"></i>
+                            Prefijo 
+                        </label>
+                        <select name="prefijo_id" 
+                                id="prefijo_id"
+                                class="form-control-modern @error('prefijo_id') is-invalid @enderror"
+                               >
+                            <option selected disabled>Seleccione</option>
+                            @foreach ($prefijos as $item)
+                                <option value="{{ $item->id }}" {{ old('prefijo_id') == $item->id ? 'selected' : '' }}>
+                                    {{ $item->prefijo }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('prefijo_id')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Primer telefono --}}
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label-modern">
+                            <i class="fas fa-phone"></i>
+                            Numero de teléfono
+                        </label>
+                        <input type="text" 
+                            name="primer_telefono"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            maxlength="10"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                            class="form-control-modern @error('primer_telefono') is-invalid @enderror"
+                            value="{{ old('primer_telefono') }}"
+                            placeholder="Ej: 12345678">
+                        @error('primer_telefono')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+
                     {{-- Correo --}}
                     <div class="col-md-6 mb-3">
                         <label class="form-label-modern">
@@ -406,9 +465,9 @@
 
                 {{-- Botones de acción --}}
                 <div class="form-actions-modern">
-                    <button type="reset" class="btn-secondary-modern">
+                    <a href="{{ route('admin.docente.index') }}" class="btn-secondary-modern">
                         <i class="fas fa-arrow-left"></i> Regresar
-                    </button>
+                    </a>
 
                     <button type="submit" class="btn-primary-modern">
                         <i class="fas fa-save"></i> Siguiente

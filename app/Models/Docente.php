@@ -18,7 +18,6 @@ class Docente extends Model
         'codigo',
         'dependencia',
         'status',
-        'prefijo_id',
         'persona_id',
     ];
 
@@ -82,8 +81,16 @@ class Docente extends Model
 
     public function docenteAreaGrado()
     {
-        return $this->hasMany(DocenteAreaGrado::class, 'docente_estudio_realizado_id');
+        return $this->hasManyThrough(
+            DocenteAreaGrado::class,
+            DetalleDocenteEstudio::class,
+            'docente_id', // fk detalle → docente
+            'docente_estudio_realizado_id', // fk area_grado → detalle
+            'id', // docente
+            'id'  // detalle
+        );
     }
+
 
 
     public function detalleEstudios()
@@ -99,13 +106,6 @@ class Docente extends Model
         return $this->belongsTo(Persona::class, 'persona_id', 'id');
     }
 
-    /**
-     * Relación con PrefijoTelefono
-     */
-    public function prefijoTelefono()
-    {
-        return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
-    }
 
     /**
      * Accessor para obtener el nombre completo

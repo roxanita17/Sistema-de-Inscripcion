@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('docentes', function (Blueprint $table) {
             $table->id();
-            $table->string('segundo_telefono')->nullable(); 
+            $table->string('primer_telefono')->nullable(); 
             $table->string('codigo')->nullable();
             $table->string('dependencia')->nullable();
             $table->boolean('status')->default(true);

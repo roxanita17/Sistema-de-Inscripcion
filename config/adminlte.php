@@ -238,13 +238,13 @@ return [
         ],
 
         //Inscripciones
-       /*  [
+        [
             'text' => 'Inscripciones',
             'url' => 'admin/transacciones/inscripcion',
             'icon' => 'fas fa-fw fa-user-graduate',
             'icon_color' => 'primary',
             'active' => ['admin/transacciones/inscripcion', 'admin/transacciones/inscripcion/*'],
-        ], */
+        ],
 
         //Percentil
         /* [
@@ -255,23 +255,6 @@ return [
             'active' => ['admin/transacciones/percentil', 'admin/transacciones/percentil/*'],
         ], */
 
-        // Estudiantes
-      /*  [
-            'text' => 'Estudiantes',
-            'url' => 'admin/estudiante/inicio',
-            'icon' => 'fas fa-fw fa-user-graduate',
-            'icon_color' => 'primary',
-            'active' => ['admin/estudiante/inicio', 'admin/estudiante/inicio/*'],
-        ], */
-        // NUEVO INGRESO
-        /* [
-            'text' => 'Nuevo Ingreso',
-            'url' => 'admin/nuevo_ingreso',
-            'icon' => 'fas fa-fw fa-clipboard-list',
-            'icon_color' => 'primary',
-            'active' => ['admin/nuevo_ingreso', 'admin/nuevo_ingreso/*'],
-        ],
- */
         //Representantes
 
         [

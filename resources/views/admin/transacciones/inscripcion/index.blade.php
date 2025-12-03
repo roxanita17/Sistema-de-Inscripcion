@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
@@ -10,7 +9,6 @@
 @section('title', 'Gestión de inscripciones')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -19,31 +17,19 @@
                 </div>
                 <div>
                     <h1 class="title-main">Gestión de inscripciones</h1>
-                    <p class="title-subtitle">Administración de los inscripciones</p>
+                    <p class="title-subtitle">Administración de las inscripciones</p>
                 </div>
             </div>
-            
 
-            {{-- boton del percentil --}}
-            <form action="{{ route('admin.transacciones.inscripcion.generar.secciones', $grado->id) }}" method="POST">
-                @csrf
-                <button class="btn btn-primary">
-                    Generar Secciones Automáticamente
-                </button>
-            </form>
+            {{-- CORREGIDO – dice "Nuevo Banco" → ahora "Nueva Inscripción" --}}
+            <a href="{{ route('admin.transacciones.inscripcion.create') }}"
 
-
-
-            {{-- Botón que abre la ventana modal para crear un nuevo banco --}}
-            <button type="button" 
-                class="btn-create" 
-                data-bs-toggle="modal" 
-                data-bs-target="#modalCrear"
+                class="btn-create"
                 @if(!$anioEscolarActivo) disabled @endif
-                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nuevo banco' }}">
+                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                 <i class="fas fa-plus"></i>
-                <span>Nuevo Banco</span>
-            </button>
+                <span>Nueva inscripción</span>
+            </a>
         </div>
     </div>
 @stop
@@ -51,10 +37,6 @@
 @section('content')
 <div class="main-container">
 
-    {{-- Modal para crear un nuevo banco --}}
-    @include('admin.banco.modales.createModal')
-
-    {{-- Alerta si NO hay año escolar activo --}}
     @if (!$anioEscolarActivo)
         <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
             <div class="d-flex align-items-center">
@@ -62,7 +44,7 @@
                 <div>
                     <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
                     <p class="mb-0">
-                        Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> inscripciones hasta que se registre un año escolar activo.
+                        Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> inscripciones.
                         <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
                     </p>
                 </div>
@@ -70,34 +52,29 @@
         </div>
     @endif
 
-    {{-- Sección de alertas de éxito o error --}}
     @if (session('success') || session('error'))
         <div class="alerts-container">
             @if (session('success'))
-                <div class="alert-modern alert-success alert alert-dismissible fade show" role="alert">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
+                <div class="alert-modern alert-success alert alert-dismissible fade show">
+                    <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
                     <div class="alert-content">
                         <h4>Éxito</h4>
                         <p>{{ session('success') }}</p>
                     </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             @endif
 
             @if (session('error'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
+                <div class="alert-modern alert-error alert alert-dismissible fade show">
+                    <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
                     <div class="alert-content">
                         <h4>Error</h4>
                         <p>{{ session('error') }}</p>
                     </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -105,16 +82,11 @@
         </div>
     @endif 
 
-    {{-- Contenedor principal de la tabla de inscripciones --}}
     <div class="card-modern">
         <div class="card-header-modern">
             <div class="header-left">
-                <div class="header-icon">
-                    <i class="fas fa-list-ul"></i>
-                </div>
-                <div>
-                    <h3>Listado de inscripciones</h3>
-                </div>
+                <div class="header-icon"><i class="fas fa-list-ul"></i></div>
+                <div><h3>Listado de inscripciones</h3></div>
             </div>
             <div class="header-right">
                 <div class="date-badge">
@@ -124,75 +96,107 @@
             </div>
         </div>
 
-        {{-- Cuerpo de la tarjeta con la tabla --}}
         <div class="card-body-modern">
             <div class="table-wrapper">
                 <table class="table-modern overflow-hidden hidden">
                     <thead>
-                        <tr style="text-align: center">
-                            <th style="text-align: center">Estudiante</th>
-                            <th>Representante</th>
+                        <tr class="text-center">
+                            <th style="font-weight: bold">#</th>
+                            <th class="text-center">Estudiante</th>
+                            <th class="text-center">Representante Legal</th>
+                            <th class="text-center">Parentesco</th>
                             <th>Grado</th>
-                            <th style="text-align: center">Estado</th>
-                            <th style="text-align: center">Acciones</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody style="text-align: center">
-                        {{-- Si no hay inscripciones, se muestra mensaje vacío --}}
+
+                    <tbody class="text-center">
                         @if ($inscripciones->isEmpty())
                             <tr>
-                                <td colspan="4">
+                                <td colspan="5">
                                     <div class="empty-state">
-                                        <div class="empty-icon">
-                                            <i class="fas fa-inbox"></i> 
-                                        </div>
-                                        <h4>No hay inscripciones registrados</h4>
-                                        <p>Agrega un nuevo banco con el botón superior</p>
+                                        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                                        <h4>No hay inscripciones registradas</h4>
+                                        <p>Agrega una nueva inscripción con el botón superior</p>
                                     </div>
                                 </td>
                             </tr>
                         @else
-                            {{-- Se recorren los inscripciones existentes --}}
                             @foreach ($inscripciones as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">
-                                   
-                                    <td class="tittle-main" style="font-weight: 700">
-                                            Peso: {{ $datos->alumno->peso}}, Estatura: {{ $datos->alumno->estatura}}, Edad: {{ $datos->alumno->persona->fecha_nacimiento->age}} 
-                                    </td>
-                                    <td style="text-align: left">
-                                        {{ $datos->representante->persona->primer_nombre}} 
+                                <tr class="table-row-hover row-12">
 
+                                    {{-- NUMERO --}}
+                                    <td style="font-weight: bold">{{ $index + 1 }}</td>
+
+                                    {{-- ESTUDIANTE --}}
+                                    <td class="tittle-main fw-bold">
+                                        {{ $datos->alumno->persona->primer_nombre }}
+                                        {{ $datos->alumno->persona->primer_apellido }}
+                                        <br>
+                                        <small>
+                                            Edad: {{ $datos->alumno->persona->fecha_nacimiento->age }} |
+                                            Peso: {{ $datos->alumno->peso }} |
+                                            Estatura: {{ $datos->alumno->estatura }}
+                                        </small>
                                     </td>
-                                    <td>{{ $datos->grado->numero_grado }}</td>
+
+                                    {{-- REPRESENTANTE LEGAL --}}
+                                    <td class="text-center">
+                                        {{ $datos->representanteLegal->representante->persona->primer_nombre }}
+                                        {{ $datos->representanteLegal->representante->persona->primer_apellido }}
+                                    </td>
+
+                                    {{-- PARENTESCO --}}
                                     <td>
-                                        @if ($datos->status)
+                                        
+                                        {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
+                                    </td>
+
+                                    {{-- GRADO --}}
+                                    <td>{{ $datos->grado->numero_grado }}</td>
+
+                                    {{-- STATUS --}}
+                                    <td>
+                                        @if ($datos->status === 'Activo')
                                             <span class="status-badge status-active">
-                                                <span class="status-dot"></span>
-                                                Activo
+                                                <span class="status-dot"></span> Activo
+                                            </span>
+                                        @elseif ($datos->status === 'Pendiente')
+                                            <span class="status-badge status-pending">
+                                                <span class="status-dot"></span> Pendiente
                                             </span>
                                         @else
                                             <span class="status-badge status-inactive">
-                                                <span class="status-dot"></span>
-                                                Inactivo
+                                                <span class="status-dot"></span> Inactivo
                                             </span>
                                         @endif
                                     </td>
+
+                                    {{-- ACCIONES --}}
                                     <td>
                                         <div class="action-buttons">
 
-                                            {{-- Editar banco --}}
-                                            <button class="action-btn btn-edit" 
+                                            {{-- VER --}}
+                                            <button class="action-btn btn-view" 
                                                 data-bs-toggle="modal" 
-                                                data-bs-target="#viewModalEditar{{ $datos->id }}" 
-                                                @if(!$anioEscolarActivo) disabled @endif
-                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
-                                                <i class="fas fa-pen"></i>
+                                                data-bs-target="#viewModal{{ $datos->id }}" 
+                                                title="Ver Detalles">
+                                                <i class="fas fa-eye"></i>
                                             </button>
 
-                                            {{-- Eliminar banco --}}
-                                            <button class="action-btn btn-delete" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#confirmarEliminar{{ $datos->id }}" 
+                                            {{-- EDITAR --}}
+                                            {{-- <a href="{{ route('admin.inscripciones.edit', $datos->id) }}"
+                                               class="action-btn btn-edit"
+                                               @if(!$anioEscolarActivo) disabled @endif
+                                               title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
+                                                <i class="fas fa-pen"></i>
+                                            </a> --}}
+
+                                            {{-- ELIMINAR --}}
+                                            <button class="action-btn btn-delete"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
                                                 @if(!$anioEscolarActivo) disabled @endif
                                                 title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Eliminar' }}">
                                                 <i class="fas fa-trash-alt"></i>
@@ -201,31 +205,27 @@
                                         </div>
                                     </td>
                                 </tr>
+                                {{-- Modal de ver --}}
+                                @include('admin.transacciones.inscripcion.modales.showModal')
 
-                                {{-- Modal de editar --}}
-{{--                                 @include('admin.banco.modales.editModal')
- --}}
-                                {{-- Modal de confirmación para eliminar --}}
-                                <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
+                                {{-- MODAL ELIMINAR --}}
+                                <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content modal-modern">
                                             <div class="modal-header-delete">
-                                                <div class="modal-icon-delete">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </div>
+                                                <div class="modal-icon-delete"><i class="fas fa-trash-alt"></i></div>
                                                 <h5 class="modal-title-delete">Confirmar Eliminación</h5>
-                                                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                                                <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </div>
                                             <div class="modal-body-delete">
-                                                <p>¿Deseas eliminar este banco?</p>
-                                                <p class="delete-warning">
-                                                    Esta acción no se puede deshacer.
-                                                </p>
+                                                <p>¿Deseas eliminar esta inscripción?</p>
+                                                <p class="delete-warning">Esta acción no se puede deshacer.</p>
                                             </div>
                                             <div class="modal-footer-delete">
-                                                <form {{-- action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"  --}}method="POST" class="w-100">
+                                                <form action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}" 
+                                                    method="POST" class="w-100">
                                                     @csrf
                                                     @method('DELETE')
                                                     <div class="footer-buttons">
@@ -238,18 +238,19 @@
                                     </div>
                                 </div>
 
-                        @endforeach
+                            @endforeach
                         @endif
                     </tbody>
                 </table>
             </div>
         </div>
 
-        {{-- Paginación moderna --}}
         <div class="mt-3">
             <x-pagination :paginator="$inscripciones" />
         </div>
+
     </div>
 </div>
-
 @endsection
+
+

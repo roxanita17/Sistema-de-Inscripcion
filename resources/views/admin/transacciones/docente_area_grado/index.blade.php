@@ -137,6 +137,7 @@
                             <th>Docente</th>
                             <th style="text-align: center;">Estudios Realizados</th>
                             <th style="text-align: center;">Áreas de Formación</th>
+                            <th style="text-align: center;">Grado</th>
                             <th style="text-align: center; width: 120px;">Estado</th>
                             <th style="text-align: center; width: 150px;">Acciones</th>
                         </tr>
@@ -179,9 +180,24 @@
                                     @php $asigs = $docente->asignacionesAreas->where('status', true); @endphp
 
                                     @forelse($asigs as $asign)
-                                        <span class="badge-estudio-small" title="{{ optional($asign->areaEstudios->areaFormacion)->nombre_area_formacion }}">
+                                        <span style="font-weight: bold; margin-bottom: 2rem;" title="{{ optional($asign->areaEstudios->areaFormacion)->nombre_area_formacion }}">
                                             <i class="fas fa-graduation-cap"></i>
                                             {{ Str::limit(optional($asign->areaEstudios->areaFormacion)->nombre_area_formacion ?? $asign->areaEstudios->id, 20) }}
+                                        </span>
+                                        @if(!$loop->last) <br> @endif
+                                    @empty
+                                        <span class="text-muted" style="font-size: 0.85rem;">
+                                            <i class="fas fa-minus-circle"></i> Sin materias asignadas
+                                        </span>
+                                    @endforelse
+                                </td>
+                                <td style="text-align: center;">
+                                    @php $asigs = $docente->asignacionesAreas->where('status', true); @endphp
+
+                                    @forelse($asigs as $asign)  
+                                        <span style="font-weight: bold; margin-bottom: 2rem;" title="{{ optional($asign->grado)->numero_grado }}">
+                                            <i class="fas "></i>
+                                            {{ $asign->grado->numero_grado }}
                                         </span>
                                         @if(!$loop->last) <br> @endif
                                     @empty

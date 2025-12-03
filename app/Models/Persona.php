@@ -50,6 +50,15 @@ class Persona extends Model
     }
 
     /**
+     * Relación con PrefijoTelefono
+     */
+    public function prefijoTelefono()
+    {
+        return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
+    }
+
+
+    /**
      * Relación con Localidad
      */
     public function localidad()

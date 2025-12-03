@@ -154,9 +154,13 @@
                         </label>
                         <input type="text"
                             name="codigo"
+                            inputmode="numeric"
+                            pattern="[0-9]+"
+                            maxlength="9"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                             class="form-control-modern @error('codigo') is-invalid @enderror"
                             value="{{ old('codigo', $docente->codigo) }}"
-                            placeholder="DOC-001">
+                            placeholder="79322403">
                         @error('codigo')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i>
@@ -354,9 +358,53 @@
                         </small>
                     </div>
 
-                    
+                    {{-- Prefijo Telefono --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-modern">
+                            <i class="fas fa-phone"></i>
+                            Prefijo Telefono
+                        </label>
+                        <select name="prefijo_id"
+                                id="prefijoTelefono"
+                                class="form-control-modern 
+                                @error('prefijo_id') is-invalid @enderror">
+                            <option value="" disabled selected>Seleccione</option>
+                            @foreach ($prefijos as $item)
+                                <option value="{{ $item->id }}"
+                                    {{ (old('prefijo_id', $docente->persona->prefijo_id) == $item->id) ? 'selected' : '' }}>
+                                    {{ $item->prefijo }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('prefijo_id')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
 
-                    
+                    {{-- Primer Telefono --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-modern">
+                            <i class="fas fa-phone"></i>
+                            Primer Telefono
+                        </label>
+                        <input type="text" name="primer_telefono"
+                            class="form-control-modern 
+                            @error('primer_telefono') is-invalid @enderror"
+                            id="primer_telefono"
+                            maxlength="8"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                            value="{{ old('primer_telefono', $docente->primer_telefono) }}"
+                            placeholder="Ej: 12345678">
+                        @error('primer_telefono')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
 
                     {{-- Dependencia --}}
                     <div class="col-md-6 mb-3">
@@ -403,9 +451,9 @@
 
                 {{-- Botones de acción --}}
                 <div class="form-actions-modern">
-                    <button type="reset" class="btn-secondary-modern">
+                    <a href="{{ route('admin.docente.index') }}" class="btn-secondary-modern">
                         <i class="fas fa-arrow-left"></i> Regresar
-                    </button>
+                    </a>
 
                     <button type="submit" class="btn-primary-modern">
                         <i class="fas fa-save"></i> Siguiente

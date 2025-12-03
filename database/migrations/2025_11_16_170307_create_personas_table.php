@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreignId('tipo_documento_id')->constrained('tipo_documentos')->cascadeOnDelete();
             $table->foreignId('genero_id')->constrained('generos')->cascadeOnDelete();
             $table->foreignId('localidad_id')->nullable()->constrained('localidads')->cascadeOnDelete();
-                        $table->foreignId('prefijo_id')->nullable()->constrained('prefijo_telefonos')->cascadeOnDelete();
+            $table->foreignId('prefijo_id')->nullable()->constrained('prefijo_telefonos')->cascadeOnDelete();
 
             $table->timestamps();
         });

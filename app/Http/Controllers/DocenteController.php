@@ -34,7 +34,7 @@ class DocenteController extends Controller
         $personas = Persona::all();
         $prefijos = PrefijoTelefono::all();
 
-        $docentes = Docente::with(['persona', 'prefijoTelefono'])
+        $docentes = Docente::with(['persona'])
             ->whereHas('persona', function($query) {
                 $query->where('status', true);
             })
@@ -44,7 +44,7 @@ class DocenteController extends Controller
 
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
-        return view('admin.docente.index', compact('docentes', 'anioEscolarActivo', 'personas', 'prefijos', 'buscar'));
+        return view('admin.docente.index', compact('docentes', 'anioEscolarActivo', 'personas', 'buscar'));
     }
 
     /**
@@ -86,7 +86,7 @@ class DocenteController extends Controller
             'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
             'primer_telefono' => 'nullable|string|max:20',
             'segundo_telefono' => 'nullable|string|max:20',
-            'codigo' => 'nullable|string|max:50',
+            'codigo' => 'nullable|numeric',
             'dependencia' => 'nullable|string|max:100',
         ], [
             'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
@@ -118,15 +118,14 @@ class DocenteController extends Controller
                 'tipo_documento_id' => $request->tipo_documento_id,
                 'genero_id' => $request->genero,
                 'localidad_id' => null,
+                'prefijo_id' => $request->prefijo_id,
             ]);
 
             // 2. GUARDAR DOCENTE
             $docente = Docente::create([
-                /* 'primer_telefono' => $request->primer_telefono,
-                'segundo_telefono' => $request->segundo_telefono, */
+                'primer_telefono' => $request->primer_telefono,
                 'codigo' => $request->codigo,
                 'dependencia' => $request->dependencia,
-                /* 'prefijo_id' => $request->prefijo_id, */
                 'persona_id' => $persona->id,
                 'status' => true,
             ]);
@@ -183,10 +182,9 @@ class DocenteController extends Controller
             ],
             'correo' => 'nullable|email|max:100',
             'direccion' => 'nullable|string|max:255',
-            /* 'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
+            'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
             'primer_telefono' => 'nullable|string|max:20',
-            'segundo_telefono' => 'nullable|string|max:20', */
-            'codigo' => 'nullable|string|max:50',
+            'codigo' => 'nullable|numeric',
             'dependencia' => 'nullable|string|max:100',
         ], [
             'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
@@ -216,16 +214,15 @@ class DocenteController extends Controller
                 'email' => $request->correo,
                 'tipo_documento_id' => $request->tipo_documento_id,
                 'genero_id' => $request->genero,
+                'prefijo_id' => $request->prefijo_id,
             ]);
 
             // 2. ACTUALIZAR DOCENTE
             $docente->update([
-                /* 'primer_telefono' => $request->primer_telefono,
-                'segundo_telefono' => $request->segundo_telefono, */
+                'primer_telefono' => $request->primer_telefono,
                 'codigo' => $request->codigo,
                 'dependencia' => $request->dependencia,
-/*                 'prefijo_id' => $request->prefijo_id,
- */            ]);
+            ]);
 
             DB::commit();
 
@@ -249,7 +246,7 @@ class DocenteController extends Controller
         $docente = Docente::with([
                 'persona.tipoDocumento',
                 'persona.genero',
-                'prefijoTelefono',
+                'persona.prefijoTelefono',
                 'detalleEstudios' => function ($q) {
                     $q->where('status', true);
                 },
@@ -265,7 +262,7 @@ class DocenteController extends Controller
      */
     public function estudios($id)
     {
-        $docentes = Docente::with(['persona.tipoDocumento', 'persona.genero', 'prefijoTelefono'])
+        $docentes = Docente::with(['persona.tipoDocumento', 'persona.genero', 'persona.prefijoTelefono'])
             ->findOrFail($id);
         $estudios = EstudiosRealizado::all();
         $docenteEstudios = DetalleDocenteEstudio::all();

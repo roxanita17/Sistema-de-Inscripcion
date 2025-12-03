@@ -106,8 +106,8 @@
                     <div class="detail-item">
                         <span class="detail-label"><i class="fas fa-phone"></i> Teléfono</span>
                         <span class="detail-value">
-                            @if ($datos->prefijoTelefono)
-                                ({{ $datos->prefijoTelefono->prefijo }}) {{ $datos->primer_telefono }}
+                            @if ($datos->persona->prefijoTelefono)
+                                {{ $datos->persona->prefijoTelefono->prefijo }}-{{ $datos->primer_telefono }}
                             @else
                                 Sin registrar
                             @endif
