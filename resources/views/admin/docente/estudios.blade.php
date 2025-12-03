@@ -125,6 +125,11 @@
                 <span class="info-value">{{ $docentes->persona->email ?? '—' }}</span>
             </div>
 
+            <div class="info-item">
+                <span class="info-label"><i class="fas fa-phone"></i> Telefono:</span>
+                <span class="info-value">{{ $docentes->persona->prefijoTelefono->prefijo }}-{{ $docentes->primer_telefono ?? '—' }}</span>
+            </div>
+
             
 
             <div class="info-item">

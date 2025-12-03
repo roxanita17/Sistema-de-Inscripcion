@@ -18,7 +18,6 @@ class Docente extends Model
         'codigo',
         'dependencia',
         'status',
-        'prefijo_id',
         'persona_id',
     ];
 
@@ -99,13 +98,6 @@ class Docente extends Model
         return $this->belongsTo(Persona::class, 'persona_id', 'id');
     }
 
-    /**
-     * Relación con PrefijoTelefono
-     */
-    public function prefijoTelefono()
-    {
-        return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
-    }
 
     /**
      * Accessor para obtener el nombre completo
