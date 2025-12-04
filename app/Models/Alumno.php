@@ -118,6 +118,52 @@ class Alumno extends Model
                     ->latest('fecha_inscripcion');
     }
 
+    //REPORTES
+
+    public static function ReportePDF(){
+        $query = DB::table("alumnos")
+        ->select(
+            // Datos del alumno
+            'alumnos.id',
+            'alumnos.talla_camisa',
+            'alumnos.talla_pantalon',
+            'alumnos.tallas_zapato',
+            'alumnos.peso',
+            'alumnos.estatura',
+            'alumnos.anio_egreso',
+
+            // Datos de persona
+            'personas.primer_nombre',
+            'personas.segundo_nombre',
+            'personas.tercer_nombre',
+            'personas.primer_apellido',
+            'personas.segundo_apellido',
+            'personas.numero_documento',
+            'personas.fecha_nacimiento',
+            'generos.genero as nombre_genero',
+            'tipo_documentos.nombre as tipo_documento',
+
+            
+            'etnia_indigenas.nombre as etnia',
+            'lateralidads.lateralidad',
+            'expresion_literarias.letra_expresion_literaria',
+            'orden_nacimientos.orden_nacimiento',
+            'discapacidads.nombre_discapacidad',
+            'institucion_procedencias.nombre_institucion'
+        )
+        ->join("personas", "personas.id", "=", "alumnos.persona_id")
+        ->leftJoin("discapacidads", "discapacidads.id", "=", "alumnos.discapacidad_id")
+        ->leftJoin("institucion_procedencias", "institucion_procedencias.id", "=", "alumnos.institucion_procedencia_id")
+        ->leftJoin("orden_nacimientos", "orden_nacimientos.id", "=", "alumnos.orden_nacimiento_id")
+        ->leftJoin("etnia_indigenas", "etnia_indigenas.id", "=", "alumnos.etnia_indigena_id")
+        ->leftJoin("lateralidads", "lateralidads.id", "=", "alumnos.lateralidad_id")
+        ->leftJoin("expresion_literarias", "expresion_literarias.id", "=", "alumnos.expresion_literaria_id")
+        ->leftJoin("generos", "generos.id", "=", "personas.genero_id")
+        ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id");
+        
+        return $query->get();
+    }
+
 
 }
 
