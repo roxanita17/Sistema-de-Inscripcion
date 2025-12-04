@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Ficha del Docente - {{ $docente->numero_documento ?? 'N/A' }}</title>
+    <title>Reporte General de Docentes</title>
     <style>
         body { 
             font-family: DejaVu Sans, Arial, sans-serif;
@@ -193,113 +193,55 @@
 
         <!-- Encabezado del documento -->
         <div class="header">
-            <h2>FICHA INDIVIDUAL DEL DOCENTE</h2>
-            <p>Cédula: {{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</p>
+            <h2>LISTA GENERAL DE DOCENTES</h2>
             <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
-        <!-- Sección de Datos Personales -->
+        <!-- Tabla de docentes -->
         <div class="section">
-            <div class="section-title">INFORMACIÓN PERSONAL</div>
-            <table class="info-grid">
-                <tr class="info-item">
-                    <td class="info-label">Cédula de Identidad:</td>
-                    <td class="info-value">{{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Nombres:</td>
-                    <td class="info-value">
-                        {{ $docente->primer_nombre ?? 'N/A' }}
-                        {{ $docente->segundo_nombre ?? '' }}
-                        {{ $docente->tercer_nombre ?? '' }}
-                    </td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Apellidos:</td>
-                    <td class="info-value">
-                        {{ $docente->primer_apellido ?? 'N/A' }}
-                        {{ $docente->segundo_apellido ?? '' }}
-                    </td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Fecha de Nacimiento:</td>
-                    <td class="info-value">
-                        @if($docente->fecha_nacimiento)
-                            {{ \Carbon\Carbon::parse($docente->fecha_nacimiento)->format('d/m/Y') }}
-                            ({{ \Carbon\Carbon::parse($docente->fecha_nacimiento)->age }} años)
-                        @else
-                            N/A
-                        @endif
-                    </td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Género:</td>
-                    <td class="info-value">{{ $docente->genero->nombre ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Correo Electrónico:</td>
-                    <td class="info-value">{{ $docente->persona->email ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Teléfono Principal:</td>
-                    <td class="info-value">{{ $docente->primer_telefono ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Teléfono Secundario:</td>
-                    <td class="info-value">{{ $docente->segundo_telefono ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Dirección:</td>
-                    <td class="info-value">{{ $docente->persona->direccion ?? 'N/A' }}</td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Sección de Estudios Realizados -->
-        <div class="section">
-            <div class="section-title">ESTUDIOS REALIZADOS</div>
-            @if(isset($estudios) && $estudios->count() > 0)
-                <table class="table-grid">
-                    <thead>
-                        <tr>
-                            <th width="5%">#</th>
-                            <th width="40%">Estudio</th>
-                            <th width="30%">Área de Formación</th>
-                            <th width="25%">Grado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($estudios as $key => $estudio)
-                        <tr>
-                            <td class="text-center">{{ $key + 1 }}</td>
-                            <td>{{ $estudio->nombre_estudio ?? 'N/A' }}</td>
-                            <td>{{ $estudio->nombre_area ?? 'N/A' }}</td>
-                            <td>{{ $estudio->nombre_grado ?? 'N/A' }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <table class="info-grid">
-                    <tr class="info-item">
-                        <td class="info-value" colspan="2" style="padding: 20px; text-align: center;">
-                            No se encontraron registros de estudios
+            <table class="table-grid" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="15%">Cédula</th>
+                        <th width="30%">Nombres y Apellidos</th>
+                        <th width="15%">Género</th>
+                        <th width="40%">Estudios Realizados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($docentes as $docente)
+                    <tr>
+                        <td>{{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</td>
+                        <td>
+                            {{ $docente->primer_nombre ?? '' }}
+                            {{ $docente->segundo_nombre ?? '' }}
+                            {{ $docente->primer_apellido ?? '' }}
+                            {{ $docente->segundo_apellido ?? '' }}
+                        </td>
+                        <td>{{ $docente->genero ?? 'N/A' }}</td>
+                        <td>
+                            @if(isset($docente->detalleDocenteEstudio) && $docente->detalleDocenteEstudio->count() > 0)
+                                @foreach($docente->detalleDocenteEstudio as $key => $detalle)
+                                    • {{ $detalle->estudiosRealizado->estudios ?? 'N/A' }}<br>
+                                @endforeach
+                            @else
+                                Sin estudios registrados
+                            @endif
                         </td>
                     </tr>
-                </table>
-            @endif
-        </div>
-
-        <!-- Firma del docente -->
-        <div class="signature">
-            <div class="signature-line">
-                Firma del Docente
-            </div>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="text-center">No hay docentes registrados</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
         <!-- Pie de página -->
         <div class="footer">
-            Generado el {{ now()->format('d/m/Y H:i:s') }}
+            <p>Total de docentes: {{ $docentes->count() }}</p>
+            <p>Generado el {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
     </div>
 </body>

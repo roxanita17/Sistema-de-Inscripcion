@@ -224,7 +224,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('transacciones/docente_area_grado/{id}/update', [DocenteAreaGradoController::class, 'update'])->name('transacciones.docente_area_grado.update');
         Route::delete('transacciones/docente_area_grado/{id}', [DocenteAreaGradoController::class, 'destroy'])->name('transacciones.docente_area_grado.destroy');
         Route::delete('transacciones/docente_area_grado/{id}/destroy-asignacion', [DocenteAreaGradoController::class, 'destroyAsignacion'])->name('transacciones.docente_area_grado.destroyAsignacion');
+
     });
+
+    //===== RUTA REPORTES DOCENTE ======
+    Route::get('docente/reporte/{id}', [DocenteController::class, 'reportePDF'])->name('docente.reportePDF');
+    Route::get('docente/reporte-general', [DocenteController::class, 'reporteGeneralPDF'])->name('docente.reporteGeneralPDF');
+
+    // ===== DASHBOARD ======
 
     // ===== ALUMNOS ======
     Route::get('alumnos',  [AlumnoController::class, 'index'])->name('alumnos.index');
@@ -241,7 +248,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     //Reportes
     Route::get('alumnos/reportes', [AlumnoController::class, 'reportePDF'])->name('alumnos.reportePDF');
-Route::get('alumnos/reportes/general', [AlumnoController::class, 'reporteGeneralPDF'])->name('alumnos.reporteGeneralPDF');
+    Route::get('alumnos/reportes/general', [AlumnoController::class, 'reporteGeneralPDF'])->name('alumnos.reporteGeneralPDF');
     // ===== INSCRIPCIONES ======
     Route::prefix('transacciones')->name('transacciones.')->group(function () {
 

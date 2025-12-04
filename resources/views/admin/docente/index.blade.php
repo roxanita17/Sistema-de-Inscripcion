@@ -23,7 +23,9 @@
                     <p class="title-subtitle">Administración de los docentes</p>
                 </div>
             </div>
-
+<a href="{{ route('admin.docente.reporteGeneralPDF') }}" class="btn btn-primary">
+    <i class="fas fa-file-pdf"></i> Generar Reporte General
+</a>
             {{-- Botón que abre la ventana modal para crear una nueva docente --}}
             <a type="button"
                     class="btn-create"
@@ -214,6 +216,14 @@
                                                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar' }}">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
+
+                                            {{-- Botón de reporte individual --}}
+                                            <a href="{{ route('admin.docente.reportePDF', $datos->id) }}" 
+                                            class="action-btn btn-success" 
+                                            title="Generar reporte PDF"
+                                            target="_blank">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
 
                                             
                                     </td>
