@@ -228,7 +228,7 @@
                                             </button>
 
                                             {{-- Botón de reporte individual --}}
-                                            <a href="{{ route('admin.alumnos.reportePDF') }}" 
+                                            <a href="{{ route('admin.alumnos.reporte.individual', ['id' => $datos->id]) }}" 
                                             class="action-btn btn-success" 
                                             title="Generar reporte PDF"
                                             target="_blank"

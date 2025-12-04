@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Ficha del Docente - {{ $docente->numero_documento ?? 'N/A' }}</title>
+    <title>Ficha del Estudiante - {{ $alumno->numero_documento ?? 'N/A' }}</title>
     <style>
+
         body { 
             font-family: DejaVu Sans, Arial, sans-serif;
             font-size: 10pt;
@@ -111,17 +112,10 @@
             color: white;
             padding: 15px 20px;
             margin: 0 auto 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
         }
         .institution-header img {
             max-height: 70px;
             max-width: 70px;
-        }
-        .institution-text {
-            text-align: center;
         }
         .institution-header h1 {
             margin: 0 0 5px 0;
@@ -146,36 +140,6 @@
             word-break: break-word;
             overflow-wrap: break-word;
         }
-        .table-grid {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        .table-grid th {
-            background-color: #f8f9fa;
-            padding: 8px 10px;
-            text-align: left;
-            border: 1px solid #dee2e6;
-            font-weight: 700;
-        }
-        .table-grid td {
-            padding: 8px 10px;
-            border: 1px solid #dee2e6;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .signature {
-            margin-top: 50px;
-            text-align: right;
-        }
-        .signature-line {
-            border-top: 1px solid #000;
-            width: 200px;
-            margin-left: auto;
-            padding-top: 5px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -193,40 +157,43 @@
 
         <!-- Encabezado del documento -->
         <div class="header">
-            <h2>FICHA INDIVIDUAL DEL DOCENTE</h2>
-            <p>Cédula: {{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</p>
+            <h2>FICHA INDIVIDUAL DEL ESTUDIANTE</h2>
+            <h2>{{ $alumno->persona->primer_nombre ?? 'N/A' }} {{ $alumno->persona->primer_apellido ?? 'N/A' }}</h2>
+            <p>Cédula:  {{ $alumno->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $alumno->persona->numero_documento ?? 'N/A' }}</p>
             <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
-        <!-- Sección de Datos Personales -->
-        <div class="section">
-            <div class="section-title">INFORMACIÓN PERSONAL</div>
+        <!-- Sección de Datos del Estudiante -->
+             <div class="section">
+            <div class="section-title">DATOS PERSONALES</div>
             <table class="info-grid">
-                <tr class="info-item">
-                    <td class="info-label">Cédula de Identidad:</td>
-                    <td class="info-value">{{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</td>
-                </tr>
                 <tr class="info-item">
                     <td class="info-label">Nombres:</td>
                     <td class="info-value">
-                        {{ $docente->primer_nombre ?? 'N/A' }}
-                        {{ $docente->segundo_nombre ?? '' }}
-                        {{ $docente->tercer_nombre ?? '' }}
+                        {{ $alumno->persona->primer_nombre ?? 'N/A' }}
+                        {{ $alumno->persona->segundo_nombre ?? '' }}
+                        {{ $alumno->persona->tercer_nombre ?? '' }}
                     </td>
                 </tr>
                 <tr class="info-item">
                     <td class="info-label">Apellidos:</td>
                     <td class="info-value">
-                        {{ $docente->primer_apellido ?? 'N/A' }}
-                        {{ $docente->segundo_apellido ?? '' }}
+                        {{ $alumno->persona->primer_apellido ?? 'N/A' }}
+                        {{ $alumno->persona->segundo_apellido ?? '' }}
+                    </td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Cédula:</td>
+                    <td class="info-value">
+                        {{ $alumno->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $alumno->persona->numero_documento ?? 'N/A' }}
                     </td>
                 </tr>
                 <tr class="info-item">
                     <td class="info-label">Fecha de Nacimiento:</td>
                     <td class="info-value">
-                        @if($docente->fecha_nacimiento)
-                            {{ \Carbon\Carbon::parse($docente->fecha_nacimiento)->format('d/m/Y') }}
-                            ({{ \Carbon\Carbon::parse($docente->fecha_nacimiento)->age }} años)
+                        @if($alumno->persona->fecha_nacimiento)
+                            {{ \Carbon\Carbon::parse($alumno->persona->fecha_nacimiento)->format('d/m/Y') }}
+                            ({{ \Carbon\Carbon::parse($alumno->persona->fecha_nacimiento)->age }} años)
                         @else
                             N/A
                         @endif
@@ -234,72 +201,69 @@
                 </tr>
                 <tr class="info-item">
                     <td class="info-label">Género:</td>
-                    <td class="info-value">{{ $docente->genero->nombre ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Correo Electrónico:</td>
-                    <td class="info-value">{{ $docente->persona->email ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Teléfono Principal:</td>
-                    <td class="info-value">{{ $docente->primer_telefono ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Teléfono Secundario:</td>
-                    <td class="info-value">{{ $docente->segundo_telefono ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Dirección:</td>
-                    <td class="info-value">{{ $docente->persona->direccion ?? 'N/A' }}</td>
+                    <td class="info-value">{{ $alumno->persona->genero->genero ?? 'N/A' }}</td>
                 </tr>
             </table>
         </div>
 
-        <!-- Sección de Estudios Realizados -->
         <div class="section">
-            <div class="section-title">ESTUDIOS REALIZADOS</div>
-            @if(isset($estudios) && $estudios->count() > 0)
-                <table class="table-grid">
-                    <thead>
-                        <tr>
-                            <th width="5%">#</th>
-                            <th width="40%">Estudio</th>
-                            <th width="30%">Área de Formación</th>
-                            <th width="25%">Grado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($estudios as $key => $estudio)
-                        <tr>
-                            <td class="text-center">{{ $key + 1 }}</td>
-                            <td>{{ $estudio->nombre_estudio ?? 'N/A' }}</td>
-                            <td>{{ $estudio->nombre_area ?? 'N/A' }}</td>
-                            <td>{{ $estudio->nombre_grado ?? 'N/A' }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <table class="info-grid">
-                    <tr class="info-item">
-                        <td class="info-value" colspan="2" style="padding: 20px; text-align: center;">
-                            No se encontraron registros de estudios
-                        </td>
-                    </tr>
-                </table>
-            @endif
-        </div>
-
-        <!-- Firma del docente -->
-        <div class="signature">
-            <div class="signature-line">
-                Firma del Docente
-            </div>
-        </div>
-
-        <!-- Pie de página -->
-        <div class="footer">
-            Generado el {{ now()->format('d/m/Y H:i:s') }}
+            <div class="section-title">INFORMACIÓN ACADÉMICA Y DE SALUD</div>
+            <table class="info-grid">
+                <tr class="info-item">
+                    <td class="info-label">Institución:</td>
+                    <td class="info-value">{{ $alumno->institucionProcedencia->nombre_institucion ?? 'N/A' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Expresión literaria:</td>
+                    <td class="info-value">{{ $alumno->expresionLiteraria->letra_expresion_literaria ?? 'N/A' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Discapacidad:</td>
+                    <td class="info-value">{{ $alumno->discapacidad ? 'Sí' : 'No' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Orden de nacimiento:</td>
+                    <td class="info-value">{{ $alumno->ordenNacimiento->orden_nacimiento ?? 'N/A' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Estatura:</td>
+                    <td class="info-value">{{ $alumno->estatura ?? 'N/A' }} m</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Peso:</td>
+                    <td class="info-value">{{ $alumno->peso ?? 'N/A' }} kg</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Talla camisa:</td>
+                    <td class="info-value">{{ $alumno->talla_camisa ?? 'N/A' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Talla pantalón:</td>
+                    <td class="info-value">{{ $alumno->talla_pantalon ?? 'N/A' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Talla de zapatos:</td>
+                    <td class="info-value">{{ $alumno->tallas_zapato ?? 'N/A' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Lateralidad:</td>
+                    <td class="info-value">{{ $alumno->lateralidad->lateralidad ?? 'N/A' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Etnia Indígena:</td>
+                    <td class="info-value">{{ $alumno->etniaIndigena->nombre ?? 'N/A' }}</td>
+                </tr>
+                <tr class="info-item">
+                    <td class="info-label">Año de egreso:</td>
+                    <td class="info-value">
+                        @if($alumno->anio_egreso)
+                            {{ \Carbon\Carbon::parse($alumno->anio_egreso)->format('Y') }}
+                        @else
+                            N/A
+                        @endif
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 </body>
