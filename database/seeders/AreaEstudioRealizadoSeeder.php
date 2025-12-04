@@ -72,6 +72,21 @@ class AreaEstudioRealizadoSeeder extends Seeder
             // --- SOBERANÍA NACIONAL ---
             ['area' => 'Soberania Nacional', 'titulo' => 'Ciencia Política'],
 
+            ['area' => 'Prácticas del Lenguaje', 'titulo' => 'Filosofía'],
+            ['area' => 'Arte y Patrimonio', 'titulo' => 'Fisioterapia'],
+            ['area' => 'Ciencias Naturales', 'titulo' => 'Ingeniería Mecánica'],
+            ['area' => 'Ciencias Naturales', 'titulo' => 'Ingeniería de Telecomunicaciones'],
+            ['area' => 'Matemáticas', 'titulo' => 'Ingeniería en Informática'],
+            ['area' => 'Matemáticas', 'titulo' => 'Profesor en Matemáticas'],
+            ['area' => 'Matemáticas', 'titulo' => 'Licenciatura en Comercio Internacional'],
+            ['area' => 'Matemáticas', 'titulo' => 'Licenciatura en Gerencia de Recursos Humanos'],
+            ['area' => 'Biología', 'titulo' => 'Medicina Veterinaria'],
+            ['area' => 'Biología', 'titulo' => 'Sociología'],
+            ['area' => 'Matemáticas', 'titulo' => 'Técnico Superior Universitario en Administración'],
+            ['area' => 'Matemáticas', 'titulo' => 'Técnico Superior Universitario en Construcción Civil'],
+            ['area' => 'Matemáticas', 'titulo' => 'Técnico Superior Universitario en Electrónica'],
+            ['area' => 'Matemáticas', 'titulo' => 'Técnico Superior Universitario en Mecánica Industrial'],
+
         ];
 
         foreach ($asignaciones as $asignacion) {

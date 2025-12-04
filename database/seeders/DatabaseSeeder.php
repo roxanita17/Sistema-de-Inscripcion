@@ -65,18 +65,16 @@ class DatabaseSeeder extends Seeder
             IndiceEdadSeeder::class,
             IndicePesoSeeder::class,
             IndiceEstaturaSeeder::class,
+            PersonaSeeder::class,
+            AlumnoSeeder::class,
+            DocenteSeeder::class,
         ]);
 
-        $this->command->info('Factory de personas ejecutado correctamente.');
-        Persona::factory()->count(10)->create();
-        $this->command->info('Factory de docentes ejecutado correctamente.');
-        Docente::factory()->count(5)->create();
-        DetalleDocenteEstudio::factory()->count(5)->create();
+        
+        
         Representante::factory()->count(10)->create();
         $this->command->info('Factory de representantes ejecutado correctamente.');
         RepresentanteLegal::factory()->count(10)->create();
-        $this->command->info('Factory de alumnos ejecutado correctamente.');
-        Alumno::factory()->count(10)->create();
         
 
 
