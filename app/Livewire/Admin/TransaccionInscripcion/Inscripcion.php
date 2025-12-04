@@ -32,7 +32,7 @@ class Inscripcion extends Component
     public $padres = [];
     public $madres = [];
     public $representantes = []; // Representantes legales
-    public $grados = [];
+    public $grados = 1;
 
     public $documentos = [];
 
@@ -43,7 +43,7 @@ class Inscripcion extends Component
     // Reglas y mensajes de validación
     protected $rules = [
         'alumnoId' => 'required|exists:alumnos,id',
-        'gradoId' => 'required|exists:grados,id',
+        'gradoId' => 'nullable|integer|min:1',
         'fecha_inscripcion' => 'required|date',
         'documentos' => 'array',
         'documentos.*' => 'string',
@@ -62,8 +62,8 @@ class Inscripcion extends Component
         $this->cargarPadres();
         $this->cargarMadres();
         $this->cargarRepresentantesLegales();
-        $this->cargarGrados();
-        
+/*         $this->cargarGrados();
+ */        
         // Establece la fecha actual como fecha por defecto
         $this->fecha_inscripcion = now()->format('Y-m-d');
     }
@@ -155,12 +155,12 @@ class Inscripcion extends Component
     /**
      * Cargar lista de grados
      */
-    public function cargarGrados()
+   /*  public function cargarGrados()
     {
         $this->grados = Grado::where('status', true)
             ->orderBy('numero_grado', 'asc')
             ->get();
-    }
+    } */
 
     // Métodos de actualización de selects
 
@@ -282,7 +282,7 @@ class Inscripcion extends Component
             // Guardar inscripción
             $inscripcion = ModeloInscripcion::create([
                 'alumno_id' => $this->alumnoId,
-                'grado_id' => $this->gradoId,
+                'grado_id' => 1,
                 'padre_id' => $this->padreId ?: null,
                 'madre_id' => $this->madreId ?: null,
                 'representante_legal_id' => $this->representanteLegalId ?: null,
@@ -317,7 +317,7 @@ class Inscripcion extends Component
             'padreId',
             'madreId',
             'representanteLegalId',
-            'gradoId',
+            'grados',
             'observaciones',
             'alumnoSeleccionado',
             'padreSeleccionado',
@@ -329,7 +329,6 @@ class Inscripcion extends Component
         $this->dispatch('resetSelects');
     }
 
-    
 
     // Render
     public function render()

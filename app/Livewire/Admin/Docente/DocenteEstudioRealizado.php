@@ -17,6 +17,9 @@ class DocenteEstudioRealizado extends Component
     public $estudios;
     public $estudiosAsignados = [];
 
+    public $estudioSeleccionado = null;
+
+
     public function mount(Docente $docente)
     {
         $this->docente = $docente;

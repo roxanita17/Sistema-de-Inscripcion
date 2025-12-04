@@ -8,6 +8,7 @@ use App\Models\Persona;
 use App\Models\Genero;
 use App\Models\TipoDocumento;
 use App\Models\Alumno;
+use App\Models\Grado;
 
 class InscripcionController extends Controller
 {
@@ -25,7 +26,8 @@ class InscripcionController extends Controller
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
         $inscripciones = Inscripcion::paginate(10);
-        return view('admin.transacciones.inscripcion.index', compact('anioEscolarActivo', 'inscripciones'));
+        $grados = Grado::all();
+        return view('admin.transacciones.inscripcion.index', compact('anioEscolarActivo', 'inscripciones', 'grados'));
     }
 
     public function create()
@@ -35,8 +37,9 @@ class InscripcionController extends Controller
         $generos = Genero::all();
         $tipoDocumentos = TipoDocumento::all();
         $alumnos = Alumno::all();
+        $grados = Grado::all();
 
-        return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos'));
+        return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
     }
 
     public function destroy($id)

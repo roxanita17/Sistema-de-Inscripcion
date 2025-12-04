@@ -156,20 +156,17 @@
                                         {{ $detalle->created_at->format('d/m/Y') }}
                                     </span>
                                 </td>
-                                <td style="text-align: center;">
+                                <td style="text-align: center;"> 
                                     <div class="action-buttons">
                                         <button class="action-btn btn-delete"
-                                                wire:click="eliminarEstudio({{ $detalle->id }})"
-                                                wire:confirm="¿Está seguro de eliminar este estudio?"
-                                                wire:loading.attr="disabled"
+                                                wire:click="$set('estudioSeleccionado', {{ $detalle->id }})"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEliminarEstudio"
                                                 title="Eliminar">
-                                            <span wire:loading.remove wire:target="eliminarEstudio({{ $detalle->id }})">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </span>
-                                            <span wire:loading wire:target="eliminarEstudio({{ $detalle->id }})">
-                                                <i class="fas fa-spinner fa-spin"></i>
-                                            </span>
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
+
+
                                     </div>
                                 </td>
                             </tr>
@@ -187,6 +184,50 @@
                         
                     </tbody>
                 </table>
+                <!-- Modal eliminar estudio -->
+                <div wire:ignore.self class="modal fade" id="modalEliminarEstudio" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content modal-modern">
+                            <div class="modal-header-delete">
+                                <div class="modal-icon-delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                                <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                                <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body-delete">
+                                <p>¿Deseas eliminar este estudio?</p>
+                                <p class="delete-warning">Esta acción es irreversible.</p>
+                            </div>
+
+                            <div class="modal-footer-delete">
+                                <div class="footer-buttons">
+                                    <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                        Cancelar
+                                    </button>
+
+                                    <button class="btn-modal-delete"
+                                            wire:click="eliminarEstudio({{ $estudioSeleccionado }})"
+                                            wire:loading.attr="disabled"
+                                            data-bs-dismiss="modal">
+                                        <span wire:loading.remove wire:target="eliminarEstudio({{ $estudioSeleccionado }})">
+                                            Eliminar
+                                        </span>
+                                        <span wire:loading wire:target="eliminarEstudio({{ $estudioSeleccionado }})">
+                                            <i class="fas fa-spinner fa-spin"></i> Eliminando...
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
                 
             </div>
         </div>

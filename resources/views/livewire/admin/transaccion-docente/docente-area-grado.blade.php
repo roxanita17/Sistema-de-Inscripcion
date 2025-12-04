@@ -551,10 +551,7 @@
     </div>
     @endif
 
-    {{-- Estilos inline para evitar conflictos --}}
-    <style>
-    
-    </style>
+
 
     @section('js')
         <script>

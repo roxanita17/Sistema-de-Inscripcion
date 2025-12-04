@@ -3,6 +3,7 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
+
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
 
@@ -87,6 +88,13 @@
             <div class="header-left">
                 <div class="header-icon"><i class="fas fa-list-ul"></i></div>
                 <div><h3>Listado de inscripciones</h3></div>
+            </div>
+            <div class="header-right">
+                <div class="date-badge">
+                    <i class="fas fa-hashtag"></i>
+                    
+                    <span>Capacidad Máxima de Cupos: {{ $inscripciones->first()?->grado->capacidad_max ?? 'N/A' }} estudiantes</span>
+                </div>
             </div>
             <div class="header-right">
                 <div class="date-badge">
