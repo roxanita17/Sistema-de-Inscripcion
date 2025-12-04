@@ -1036,14 +1036,16 @@
                                 </select>
                                 <small id="carnet-patria-error" class="text-danger"></small>
                             </div>
-                        </div>
+                        </div> 
                         
                         <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <label for="codigo" class="form-label required">Código</label>
                                 <input type="text" class="form-control" id="codigo" name="codigo"
                                     maxlength="10" pattern="[0-9]+" 
-                                    title="Ingrese solo números (máximo 10 dígitos)" required>
+                                    title="Ingrese solo números (máximo 10 dígitos)" required
+                                    inputmode="numeric" 
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                 <div class="invalid-feedback">
                                     Por favor ingrese un código válido (solo números).
                                 </div>
@@ -1056,7 +1058,9 @@
                                 <label for="serial" class="form-label required">Serial</label>
                                 <input type="text" class="form-control" id="serial" name="serial"
                                     maxlength="9" pattern="[0-9]+" 
-                                    title="Ingrese solo números (máximo 9 dígitos)" required>
+                                    title="Ingrese solo números (máximo 9 dígitos)" required
+                                     inputmode="numeric" 
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                 <div class="invalid-feedback">
                                     Por favor ingrese un serial válido (solo números).
                                 </div>
