@@ -133,4 +133,55 @@ class Docente extends Model
         $prefijo = $this->prefijoTelefono->prefijo ?? '';
         return $prefijo . $this->primer_telefono;
     }
+
+public static function reportePDF($id)
+{
+    // Cargar el docente con las relaciones necesarias
+    $docente = Docente::select([
+        'docentes.*',
+        'personas.*',
+        'tipo_documentos.abreviatura as tipo_documento_abreviatura',
+        'generos.nombre as genero_nombre',
+        'estudios_realizados.estudios as nombre_estudio',
+        'area_formacions.nombre_area_formacion as nombre_area',
+        'grado_area_formacions.codigo as nombre_grado'
+    ])
+    ->leftJoin('personas', 'personas.id', '=', 'docentes.persona_id')
+    ->leftJoin('tipo_documentos', 'tipo_documentos.id', '=', 'personas.tipo_documento_id')
+    ->leftJoin('generos', 'generos.id', '=', 'personas.genero_id')
+    ->leftJoin('detalle_docente_estudios', 'detalle_docente_estudios.docente_id', '=', 'docentes.id')
+    ->leftJoin('estudios_realizados', 'estudios_realizados.id', '=', 'detalle_docente_estudios.estudios_id')
+    ->leftJoin('docente_area_grados', 'docente_area_grados.docente_estudio_realizado_id', '=', 'detalle_docente_estudios.id')
+    ->leftJoin('area_formacions', 'area_formacions.id', '=', 'docente_area_grados.area_estudio_realizado_id')
+    ->leftJoin('grado_area_formacions', 'grado_area_formacions.id', '=', 'docente_area_grados.grado_id')
+    ->find($id);
+
+    if (!$docente) {
+        return response('No se encontró el docente solicitado', 404);
+    }
+
+    // Verificar si se cargaron los datos de la persona
+    if ($docente->persona) {
+        // Mapear los datos de la persona al objeto docente
+        $docente->tipo_documento = $docente->tipo_documento_abreviatura ?? 'N/A';
+        $docente->numero_documento = $docente->persona->numero_documento ?? 'N/A';
+        $docente->primer_nombre = $docente->persona->primer_nombre ?? 'N/A';
+        $docente->segundo_nombre = $docente->persona->segundo_nombre ?? 'N/A';
+        $docente->tercer_nombre = $docente->persona->tercer_nombre ?? 'N/A';
+        $docente->primer_apellido = $docente->persona->primer_apellido ?? 'N/A';
+        $docente->segundo_apellido = $docente->persona->segundo_apellido ?? 'N/A';
+        $docente->fecha_nacimiento = $docente->persona->fecha_nacimiento ?? 'N/A';
+        $docente->genero = $docente->persona->genero->nombre ?? 'N/A';
+        $docente->email = $docente->persona->email ?? 'N/A';
+        $docente->direccion = $docente->persona->direccion ?? 'N/A';
+        $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
+    }
+
+    $pdf = PDF::loadView('admin.docente.reportes.individual_PDF', [
+        'docente' => $docente
+    ]);
+
+    return $pdf->stream('docente_' . ($docente->numero_documento ?? $docente->id) . '.pdf');
+}
+    
 }
