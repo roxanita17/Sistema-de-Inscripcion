@@ -35,14 +35,15 @@ class AlumnoController extends Controller
      */
     public function index()
     {
+        $buscar = request('buscar');
          // Se obtienen todos los alumnos ordenados por código
-        $alumnos = Alumno::where('status', 'Activo')->paginate(10);
+        $alumnos = Alumno::where('status', 'Activo')->buscar($buscar)->paginate(10);
 
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Se envían los datos a la vista
-        return view('admin.alumnos.index', compact('alumnos', 'anioEscolarActivo'));
+        return view('admin.alumnos.index', compact('alumnos', 'anioEscolarActivo', 'buscar'));
     }
 
     /**

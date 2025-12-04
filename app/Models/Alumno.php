@@ -118,6 +118,23 @@ class Alumno extends Model
                     ->latest('fecha_inscripcion');
     }
 
+
+    /**
+     * Scope para buscar alumnos
+     */
+    public function scopeBuscar($query, $buscar)
+    {
+        if (!empty($buscar)) {
+            $query->whereHas('persona', function ($q) use ($buscar) {
+                $q->where('primer_nombre', 'LIKE', "%{$buscar}%")
+                  ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                  ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
+            });
+        }
+
+        return $query;
+    }
+
     //REPORTES
 
     public static function ReportePDF(){
