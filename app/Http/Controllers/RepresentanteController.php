@@ -197,6 +197,67 @@ public function mostrarFormularioEditar($id)
      * @return \Illuminate\Http\JsonResponse
      */
     
+    /**
+     * Parse a date string into Y-m-d format
+     *
+     * @param string|null $dateString
+     * @return string|null
+     */
+    private function parseDate($dateString)
+    {
+        if (empty($dateString)) {
+            return null;
+        }
+
+        $formats = [
+            'd/m/Y', 'd-m-Y', 'd.m.Y', // Common date formats
+            'Y-m-d', 'Y/m/d', 'Y.m.d', // Alternative formats
+        ];
+
+        foreach ($formats as $format) {
+            try {
+                return \Carbon\Carbon::createFromFormat($format, $dateString)->format('Y-m-d');
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        // If no format matched, try PHP's strtotime as a fallback
+        try {
+            return \Carbon\Carbon::parse($dateString)->format('Y-m-d');
+        } catch (\Exception $e) {
+            Log::error('Error al analizar la fecha: ' . $dateString, [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * Validate if a date string matches any of the expected formats
+     *
+     * @param string $dateString
+     * @return bool
+     */
+    private function isValidDate($dateString)
+    {
+        if (empty($dateString)) {
+            return false;
+        }
+
+        $formats = ['d/m/Y', 'd-m-Y', 'd.m.Y', 'Y-m-d', 'Y/m/d', 'Y.m.d'];
+        
+        foreach ($formats as $format) {
+            $d = \DateTime::createFromFormat($format, $dateString);
+            if ($d && $d->format($format) === $dateString) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     public function save(Request $request)
     {
 
@@ -282,10 +343,9 @@ public function mostrarFormularioEditar($id)
         'apellido_uno'          => $request->input('primer-apellido-representante'),
         'apellido_dos'          => $request->input('segundo-apellido-representante'),
 
-        // Fecha de nacimiento: tomar la del representante y, si está vacía, usar madre o padre
-        'fecha_nacimiento_personas' => $request->input('fechaNacimiento-representante')
-                                        ?: $request->input('fechaNacimiento')        // madre
-                                        ?: $request->input('fechaNacimiento-padre'), // padre
+        // Fecha de nacimiento: tomar la del representante y formatear correctamente
+        'fecha_nacimiento' => $this->parseDate($request->input('fecha-nacimiento-representante')),
+        'fecha_nacimiento_personas' => $this->parseDate($request->input('fecha-nacimiento-representante')),
 
         // Género del representante: tomar el del bloque de representante, y si viene vacío usar madre o padre
         'sexo_representante'    => $request->input('sexo-representante')
@@ -346,70 +406,70 @@ public function mostrarFormularioEditar($id)
             'localidad_existe' => \DB::table('localidads')->where('id', $request->localidad_id)->exists(),
         ]);
 
-        // Validación completa con exists - usando los nombres que realmente envía el JS
-        $validator = \Validator::make($request->all(), [
-            'numero_numero_documento_persona' => 'required|string',
-            'nombre_uno' => 'required|string|min:1',
-            'apellido_uno' => 'required|string|min:1',
-            'estado_id' => 'required|integer|min:1|exists:estados,id',
-            'municipio_id' => 'required|integer|min:1|exists:municipios,id',
-            // En este proyecto las parroquias se almacenan en la tabla "localidads"; permitir que sea opcional
-            'parroquia_id' => 'nullable|integer|exists:localidads,id',
-            // Campos obligatorios para Persona
-            'sexo_representante' => 'required|exists:generos,id',
-            'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
-        ]);
-
-        if ($validator->fails()) {
-            Log::error('Errores de validación detallados', [
-                'errors' => $validator->errors()->toArray(),
-                'request_all' => $request->all(),
-                'request_has' => [
-                    'numero_numero_documento_persona' => $request->has('numero_numero_documento_persona') ? 'YES (' . $request->input('numero_numero_documento_persona') . ')' : 'NO',
-                    'nombre_uno' => $request->has('nombre_uno') ? 'YES (' . $request->input('nombre_uno') . ')' : 'NO',
-                    'apellido_uno' => $request->has('apellido_uno') ? 'YES (' . $request->input('apellido_uno') . ')' : 'NO',
-                    'estado_id' => $request->has('estado_id') ? 'YES (' . $request->input('estado_id') . ')' : 'NO',
-                    'municipio_id' => $request->has('municipio_id') ? 'YES (' . $request->input('municipio_id') . ')' : 'NO',
-                    'parroquia_id' => $request->has('parroquia_id') ? 'YES (' . $request->input('parroquia_id') . ')' : 'NO',
-                ],
-                'validation_rules' => [
-                    'numero_numero_documento_persona' => 'required|string|min:1',
-                    'nombre_uno' => 'required|string|min:1',
-                    'apellido_uno' => 'required|string|min:1',
-                    'estado_id' => 'required|integer|min:1|exists:estados,id',
-                    'municipio_id' => 'required|integer|min:1|exists:municipios,id',
-                    'parroquia_id' => 'required|integer|min:1|exists:localidads,id',
-                    'sexo_representante' => 'required|exists:generos,id',
-                    'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
-                ]
-            ]);
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error de validación',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-    } else {
-        // Validación normal para peticiones no AJAX, pero con logging de errores
-        $validator = \Validator::make($request->all(), [
-            'numero_numero_documento_persona' => 'required',
-            'nombre_uno' => 'required',
-            'apellido_uno' => 'required',
+        // Reglas de validación base para representantes
+        $rules = [
+            'numero_numero_documento_persona' => 'required|string|max:20',
+            'primer-nombre-representante' => 'required|string|max:50',
+            'primer-apellido-representante' => 'required|string|max:50',
+            'fecha-nacimiento-representante' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (!$this->isValidDate($value)) {
+                        $fail('El formato de la fecha debe ser DD/MM/YYYY');
+                    }
+                }
+            ],
+            'telefono-representante' => 'required|string|max:20',
+            'correo-representante' => 'required|email|max:100',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
-            // En este proyecto las parroquias se almacenan en la tabla "localidads"; permitir que sea opcional
             'parroquia_id' => 'nullable|exists:localidads,id',
             'sexo_representante' => 'required|exists:generos,id',
             'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
-        ]);
+        ];
+
+        // Mensajes de error personalizados
+        $messages = [
+            'numero_numero_documento_persona.required' => 'El número de documento es obligatorio',
+            'primer-nombre-representante.required' => 'El primer nombre es obligatorio',
+            'primer-apellido-representante.required' => 'El primer apellido es obligatorio',
+            'fecha-nacimiento-representante.required' => 'La fecha de nacimiento es obligatoria',
+            'fecha-nacimiento-representante' => 'El formato de la fecha debe ser DD/MM/YYYY',
+            'telefono-representante.required' => 'El teléfono es obligatorio',
+            'correo-representante.required' => 'El correo electrónico es obligatorio',
+            'correo-representante.email' => 'El correo electrónico debe ser una dirección válida',
+            'estado_id.required' => 'El estado es obligatorio',
+            'municipio_id.required' => 'El municipio es obligatorio',
+            'sexo_representante.required' => 'El género es obligatorio',
+            'tipo_numero_documento_persona.required' => 'El tipo de documento es obligatorio',
+        ];
+
+        $validator = \Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
-            Log::error('Errores de validación (no AJAX)', [
+            $errorMessage = $validator->errors()->first();
+            $allErrors = $validator->errors()->all();
+            
+            Log::error('Errores de validación al guardar representante', [
                 'errors' => $validator->errors()->toArray(),
-                'request_all' => $request->all(),
+                'all_errors' => $allErrors,
+                'request_data' => $request->except(['_token', 'password', 'password_confirmation']),
+                'error_message' => $errorMessage,
+                'is_progenitor_representante' => $esProgenitorRepresentante,
+                'tipo_representante' => $tipoRepresentante,
             ]);
 
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $errorMessage,
+                    'errors' => $validator->errors(),
+                    'all_errors' => $allErrors
+                ], 422);
+            }
+
             return redirect()->back()
+                ->with('error', 'Error de validación: ' . $errorMessage)
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -681,6 +741,11 @@ public function mostrarFormularioEditar($id)
             Log::info('=== MODO ACTUALIZACIÓN NORMAL ===');
             
             // 1. Actualizar persona
+            Log::info('Actualizando persona con datos:', [
+                'persona_id' => $persona->id,
+                'datos_persona' => $datosPersona
+            ]);
+            
             $persona->update($datosPersona);
             Log::info('Persona actualizada: ID ' . $persona->id);
 
@@ -728,6 +793,10 @@ public function mostrarFormularioEditar($id)
             Log::info('=== MODO CREACIÓN ===');
             
             // 1. Crear persona
+            Log::info('Creando nueva persona con datos:', [
+                'datos_persona' => $datosPersona
+            ]);
+            
             $persona = Persona::create($datosPersona);
             Log::info('Persona creada: ID ' . $persona->id);
 
