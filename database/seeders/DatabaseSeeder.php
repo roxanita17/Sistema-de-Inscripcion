@@ -68,6 +68,7 @@ class DatabaseSeeder extends Seeder
             PersonaSeeder::class,
             AlumnoSeeder::class,
             DocenteSeeder::class,
+            DetalleDocenteEstudioSeeder::class,
         ]);
 
         
