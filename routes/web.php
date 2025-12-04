@@ -239,6 +239,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     
     Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
 
+    //Reportes
+    Route::get('alumnos/reportes', [AlumnoController::class, 'reportePDF'])->name('alumnos.reportePDF');
+Route::get('alumnos/reportes/general', [AlumnoController::class, 'reporteGeneralPDF'])->name('alumnos.reporteGeneralPDF');
     // ===== INSCRIPCIONES ======
     Route::prefix('transacciones')->name('transacciones.')->group(function () {
 
@@ -303,7 +306,6 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
 
     // Generar reporte PDF
     Route::get('/reporte-pdf', [RepresentanteController::class, 'reportePDF'])->name('reporte_pdf');
-
 });
 
     

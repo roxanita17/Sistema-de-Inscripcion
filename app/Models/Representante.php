@@ -35,6 +35,7 @@ class Representante extends Model
         return $this->belongsTo(Municipio::class, "municipio_id", "id");
     }
 
+
     public function localidads(){
         return $this->belongsTo(Localidad::class,"parroquia_id","id");
     }

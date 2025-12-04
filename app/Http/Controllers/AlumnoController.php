@@ -15,6 +15,8 @@ use App\Models\Genero;
 use App\Models\Localidad;
 use App\Models\Municipio;
 use App\Models\Estado;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 use Illuminate\Http\Request;
 
@@ -114,5 +116,30 @@ class AlumnoController extends Controller
         Alumno::eliminar($id);
         
         return redirect()->route('admin.alumnos.index')->with('success', 'Alumno eliminado correctamente');
+    }
+
+    public function reportePDF(Request $request){
+        $alumnos = Alumno::ReportePDF();
+        
+        if ($alumnos->isEmpty()) {
+           return response('No se encontraron alumnosS con los criterios seleccionados', 404);
+        }
+
+        $alumno = $alumnos->first();
+
+        $pdf = PDF::loadview('admin.alumnos.reportes.general_est', compact('alumno'));
+        return $pdf->stream('alumno_' . $alumno->numero_documento . '.pdf');
+    }
+
+    public function reporteGeneralPDF(Request $request){
+        $alumnos = Alumno::ReportePDF();
+        
+        if ($alumnos->isEmpty()) {
+           return response('No se encontraron alumnosS con los criterios seleccionados', 404);
+        }
+
+
+        $pdf = PDF::loadview('admin.alumnos.reportes.Reporte_General', compact('alumnos'));
+        return $pdf->stream('alumnos.pdf');
     }
 }

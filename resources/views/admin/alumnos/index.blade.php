@@ -23,7 +23,12 @@
                 </div>
             </div>
 
-
+            <a type="button"
+                    class="btn-create"
+                    href="{{ route('admin.alumnos.reporteGeneralPDF') }}">
+                <i class="fas fa-plus"></i>
+                <span>Generar reporte general</span>
+            </a>
 
             {{-- Botón que abre la ventana modal para crear una nueva docente --}}
             <a type="button"
@@ -202,6 +207,15 @@
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
 
+                                            {{-- Botón de reporte individual --}}
+                                            <a href="{{ route('admin.alumnos.reportePDF') }}" 
+                                            class="action-btn btn-success" 
+                                            title="Generar reporte PDF"
+                                            target="_blank"
+                                            style="background-color: #28a745; border-color: #28a745;">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                            
                                         </div>
                                     </td>
                                 </tr>
