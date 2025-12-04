@@ -118,6 +118,16 @@ class Alumno extends Model
                     ->latest('fecha_inscripcion');
     }
 
+    public static function eliminar($id)
+    {
+        return DB::table('alumnos')
+            ->where('id', $id)
+            ->update([
+                'status' => false,
+                'updated_at' => now()
+            ]);
+    }
+
 
 }
 

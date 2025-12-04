@@ -125,10 +125,10 @@
                     <thead>
                         <tr style="text-align: center">
                             <th style="text-align: center">Cédula</th>
-                            <th>Nombres</th>
-                            <th>Edad</th>
-                            <th>Estatura</th>
-                            <th>Peso</th>
+                            <th style="text-align: center">Nombres</th>
+                            <th style="text-align: center">Edad</th>
+                            <th style="text-align: center">Genero</th>
+                            <th style="text-align: center">Lateralidad</th>
                             <th style="text-align: center">Estado</th>
                             <th style="text-align: center">Acciones</th>
                         </tr>
@@ -153,19 +153,19 @@
                                 <tr class="table-row-hover row-12" style="text-align: center">
                                    
                                     <td class="tittle-main" style="font-weight: 700">
-                                        {{ $datos->persona->numero_documento }}
+                                        {{ $datos->persona->tipoDocumento->nombre }}-{{ $datos->persona->numero_documento }}
                                     </td>
-                                    <td style="text-align: left">
+                                    <td style="text-align: center">
                                         {{ $datos->persona->primer_nombre }} {{ $datos->persona->primer_apellido }}
-                                    </td>
-                                    <td>
+                                    </td style="text-align: center">
+                                    <td style="text-align: center">
                                         {{ $datos->persona->fecha_nacimiento->age }}
-                                    </td>
+                                    </td >
                                     <td>
-                                        {{ $datos->estatura }}
+                                        {{ $datos->persona->genero->genero}}
                                     </td>
-                                    <td>
-                                        {{ $datos->peso }}
+                                    <td style="text-align: center">
+                                        {{ $datos->lateralidad->lateralidad}}
                                     </td>
                                     <td>
                                         @if ($datos->status)
@@ -196,7 +196,7 @@
                                             {{-- Eliminar estudiante --}}
                                             <button class="action-btn btn-delete" 
                                                 data-bs-toggle="modal" 
-                                                data-bs-target="#confirmarEliminar{{-- {{ $datos->id }} --}}" 
+                                                data-bs-target="#confirmarEliminar{{ $datos->id }}" 
                                                 @if(!$anioEscolarActivo) disabled @endif
                                                 title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Eliminar' }}">
                                                 <i class="fas fa-trash-alt"></i>

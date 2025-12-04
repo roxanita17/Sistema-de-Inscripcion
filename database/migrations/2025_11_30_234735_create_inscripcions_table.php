@@ -37,11 +37,13 @@ return new class extends Migration
                   ->nullOnDelete();
 
             // Campos de documentos
-            $table->json('documentos')->nullable(); // Quitar AFTER
-            $table->string('estado_documentos')->default('Pendiente'); // Quitar AFTER
+            $table->json('documentos')->nullable();
+            $table->string('estado_documentos')->default('Pendiente');
 
             // Fecha de inscripción
-            $table->date('fecha_inscripcion'); // No se puede default(now()) en date
+            $table->date('fecha_inscripcion');
+
+            $table->string('observaciones')->nullable();
 
             $table->string('status')->default('Activo');
 

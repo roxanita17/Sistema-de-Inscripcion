@@ -402,7 +402,7 @@
                     <p class="action-title">Año Escolar</p>
                 </a>
 
-                <a {{-- href="{{ route('admin.inscripcion.index') }}" --}} class="action-card">
+                <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="action-card">
                     <div class="action-icon">
                         <i class="fas fa-clipboard-list"></i>
                     </div>

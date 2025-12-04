@@ -226,8 +226,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('transacciones/docente_area_grado/{id}/destroy-asignacion', [DocenteAreaGradoController::class, 'destroyAsignacion'])->name('transacciones.docente_area_grado.destroyAsignacion');
     });
 
-    // ===== DASHBOARD ======
-
     // ===== ALUMNOS ======
     Route::get('alumnos',  [AlumnoController::class, 'index'])->name('alumnos.index');
 
@@ -250,6 +248,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('inscripcion/create', function () {
             return view('admin.transacciones.inscripcion.create');
         })->name('inscripcion.create');
+
+        Route::get('inscripcion/create-alumno', function () {
+            return view('admin.transacciones.inscripcion.create-alumno');
+        })->name('inscripcion.create-alumno');
 
         Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
             ->name('inscripcion.destroy');

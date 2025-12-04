@@ -59,7 +59,7 @@
 
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="row">
-                <div class="col-md-12" wire:ignore>
+                <div class="col-md-10" wire:ignore>
                     <label for="alumno_select" class="form-label-modern">
                         <i class="fas fa-user-graduate"></i>
                         Alumno
@@ -78,7 +78,9 @@
                                 {{ $alumno['nombre_completo'] }}
                             </option>
                         @endforeach
+                        
                     </select>
+                    
 
                     @error('alumnoId')
                         <div class="invalid-feedback-modern" style="display: block;">
@@ -92,7 +94,21 @@
                         Busque por nombre, apellido o cédula del alumno
                     </small>
                 </div>
+                <div class="col-md-2">
+                    <div style="margin-top: 3rem">
+                        <a {{-- href="{{ route('admin.transacciones.inscripcion.create') }}" --}}
+                            class="btn-create"
+                            style="display: block; text-align: center;">
+                            <i class="fas fa-plus"></i>
+                            <span>Nuevo Alumno</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+                
             </div>
+
 
             {{-- Información del alumno seleccionado --}}
             @if($alumnoSeleccionado)

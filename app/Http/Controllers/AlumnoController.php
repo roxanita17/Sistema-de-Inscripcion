@@ -109,8 +109,10 @@ class AlumnoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Alumno $alumno)
+    public function destroy($id)
     {
-        //
+        Alumno::eliminar($id);
+        
+        return redirect()->route('admin.alumnos.index')->with('success', 'Alumno eliminado correctamente');
     }
 }

@@ -23,6 +23,7 @@ class Inscripcion extends Model
         'fecha_inscripcion',
         'documentos',
         'estado_documentos',
+        'observaciones',
         'status',
     ];
 

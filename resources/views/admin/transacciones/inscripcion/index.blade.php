@@ -89,6 +89,21 @@
                 <div class="header-icon"><i class="fas fa-list-ul"></i></div>
                 <div><h3>Listado de inscripciones</h3></div>
             </div>
+            {{-- Buscador --}}
+            <form action="{{ route('admin.transacciones.inscripcion.index') }}">
+                <div class="form-group-modern mb-2">
+                    <div class="search-modern"> 
+                        <i class="fas fa-search"></i>
+                        <input type="text"
+                        name="buscar"
+                        id="buscar"
+                        class="form-control-modern"
+                        placeholder="Buscar..."
+                        value="{{ request('buscar') }}"
+                        >
+                    </div>
+                </div>
+            </form>
             <div class="header-right">
                 <div class="date-badge">
                     <i class="fas fa-hashtag"></i>
@@ -109,20 +124,20 @@
                 <table class="table-modern overflow-hidden hidden">
                     <thead>
                         <tr class="text-center">
-                            <th style="font-weight: bold">#</th>
+                            <th style="font-weight: bold">Cedula</th>
                             <th class="text-center">Estudiante</th>
                             <th class="text-center">Representante Legal</th>
                             <th class="text-center">Parentesco</th>
-                            <th>Grado</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th class="text-center">Grado</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
 
                     <tbody class="text-center">
                         @if ($inscripciones->isEmpty())
                             <tr>
-                                <td colspan="5">
+                                <td colspan="7">
                                     <div class="empty-state">
                                         <div class="empty-icon"><i class="fas fa-inbox"></i></div>
                                         <h4>No hay inscripciones registradas</h4>
@@ -131,11 +146,13 @@
                                 </td>
                             </tr>
                         @else
-                            @foreach ($inscripciones as $index => $datos)
+                            @foreach ($inscripciones as $datos)
                                 <tr class="table-row-hover row-12">
 
                                     {{-- NUMERO --}}
-                                    <td style="font-weight: bold">{{ $index + 1 }}</td>
+                                    <td style="font-weight: bold">
+                                        {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
+                                    </td>
 
                                     {{-- ESTUDIANTE --}}
                                     <td class="tittle-main fw-bold">
@@ -156,16 +173,16 @@
                                     </td>
 
                                     {{-- PARENTESCO --}}
-                                    <td>
+                                    <td class="text-center">
                                         
                                         {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
                                     </td>
 
                                     {{-- GRADO --}}
-                                    <td>{{ $datos->grado->numero_grado }}</td>
+                                    <td class="text-center">{{ $datos->grado->numero_grado }}</td>
 
                                     {{-- STATUS --}}
-                                    <td>
+                                    <td class="text-center">
                                         @if ($datos->status === 'Activo')
                                             <span class="status-badge status-active">
                                                 <span class="status-dot"></span> Activo

@@ -23,11 +23,14 @@ class InscripcionController extends Controller
     }
     public function index()
     {
+
+        $buscar = request('buscar');
+
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        $inscripciones = Inscripcion::paginate(10);
+        $inscripciones = Inscripcion::buscar($buscar)->paginate(10);
         $grados = Grado::all();
-        return view('admin.transacciones.inscripcion.index', compact('anioEscolarActivo', 'inscripciones', 'grados'));
+        return view('admin.transacciones.inscripcion.index', compact('anioEscolarActivo', 'inscripciones', 'grados', 'buscar'));
     }
 
     public function create()
@@ -40,6 +43,13 @@ class InscripcionController extends Controller
         $grados = Grado::all();
 
         return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
+    }
+
+    public function createAlumno()
+    {
+        
+
+        return redirect()->route('admin.transacciones.inscripcion.create');
     }
 
     public function destroy($id)
