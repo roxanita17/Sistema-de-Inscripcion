@@ -24,7 +24,8 @@
             </div>
 
             <a type="button"
-                    class="btn-create"
+                    class="btn-pdf"
+                    style="margin-left: 40rem;"
                     href="{{ route('admin.alumnos.reporteGeneralPDF') }}">
                 <i class="fas fa-plus"></i>
                 <span>Generar reporte general</span>

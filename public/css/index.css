@@ -8,6 +8,7 @@
         --success: #10b981;
         --success-light: #d1fae5;
         --danger: #ef4444;
+        --danger-pdf: #df0c0c;
         --pink: #ec4899;
         --pink-light: #fce7f3;
         --danger-light: #fee2e2;
@@ -94,6 +95,22 @@
         align-items: center;
         gap: 0.5rem;
         background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-pdf {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--danger-pdf);
         color: white;
         border: none;
         padding: 0.75rem 1.5rem;
