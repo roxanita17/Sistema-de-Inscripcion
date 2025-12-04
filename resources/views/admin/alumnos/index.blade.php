@@ -23,13 +23,7 @@
                 </div>
             </div>
 
-            <a type="button"
-                    class="btn-pdf"
-                    style="margin-left: 40rem;"
-                    href="{{ route('admin.alumnos.reporteGeneralPDF') }}">
-                <i class="fas fa-plus"></i>
-                <span>Generar reporte general</span>
-            </a>
+            
 
             {{-- Botón que abre la ventana modal para crear una nueva docente --}}
             <a type="button"
@@ -135,7 +129,14 @@
                     </small>
                 </div>
             </form>
-            <div class="header-right">
+            <div class="header-right" style="display: flex; gap: 5px;">
+
+                <a href="{{ route('admin.alumnos.reporteGeneralPDF') }}"
+                    type="button"
+                    class="btn-pdf"
+                    target="_blank">
+                    <i class="fas fa-file-pdf"></i> PDF General
+                </a>
                 <div class="date-badge">
                     <i class="fas fa-calendar-alt"></i>
                     <span>{{ now()->translatedFormat('d M Y') }}</span>

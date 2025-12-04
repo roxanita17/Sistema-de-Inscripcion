@@ -76,6 +76,7 @@ class PersonaSeeder extends Seeder
 
             ['primer_nombre'=>'Teresa','segundo_nombre'=>'Mariana','tercer_nombre'=>null,'primer_apellido'=>'Bello','segundo_apellido'=>'Serrano','numero_documento'=>'12345707','fecha_nacimiento'=>'1993-10-21','direccion'=>'Av. Libertad, Puerto Ordaz','email'=>'teresa.bello@example.com','status'=>1, 'genero_id' => 2, 'telefono' => '12345678', 'tipo_documento_id' => 1, 'created_at' => now(), 'updated_at' => now()],
 
+            /* Representante */
             ['primer_nombre'=>'Iván','segundo_nombre'=>'Alejandro','tercer_nombre'=>null,'primer_apellido'=>'Ojeda','segundo_apellido'=>'Torres','numero_documento'=>'12345708','fecha_nacimiento'=>'1989-07-17','direccion'=>'Av. Guayana, Ciudad Bolívar','email'=>'ivan.ojeda@example.com','status'=>1, 'genero_id' => 1, 'telefono' => '12345678', 'tipo_documento_id' => 2, 'created_at' => now(), 'updated_at' => now()],
 
             ['primer_nombre'=>'Laura','segundo_nombre'=>'Victoria','tercer_nombre'=>null,'primer_apellido'=>'Acosta','segundo_apellido'=>'Márquez','numero_documento'=>'12345709','fecha_nacimiento'=>'1998-01-13','direccion'=>'Urbanización Centro, Coro','email'=>'laura.acosta@example.com','status'=>1, 'genero_id' => 2, 'telefono' => '12345678', 'tipo_documento_id' => 1, 'created_at' => now(), 'updated_at' => now()],
@@ -91,7 +92,7 @@ class PersonaSeeder extends Seeder
             ['primer_nombre'=>'Víctor','segundo_nombre'=>'Hugo','tercer_nombre'=>null,'primer_apellido'=>'Villalba','segundo_apellido'=>'Castro','numero_documento'=>'12345714','fecha_nacimiento'=>'1988-05-12','direccion'=>'Calle Nueva, Tucupita','email'=>'victor.villalba@example.com','status'=>1, 'genero_id' => 1, 'telefono' => '12345678', 'tipo_documento_id' => 2, 'created_at' => now(), 'updated_at' => now()],
 
             ['primer_nombre'=>'Rosa','segundo_nombre'=>'Maribel','tercer_nombre'=>null,'primer_apellido'=>'Ortega','segundo_apellido'=>'Quintana','numero_documento'=>'12345715','fecha_nacimiento'=>'1992-07-01','direccion'=>'Parroquia Catedral, Ciudad Bolívar','email'=>'rosa.ortega@example.com','status'=>1, 'genero_id' => 2, 'telefono' => '12345678', 'tipo_documento_id' => 1, 'created_at' => now(), 'updated_at' => now()], 
-        ];
+        ]; 
 
         // unir los arrays para llegar a 40
         $personas = array_merge($personas, $extra);

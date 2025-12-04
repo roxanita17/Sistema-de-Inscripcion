@@ -249,10 +249,10 @@
                     <td class="info-label">Lateralidad:</td>
                     <td class="info-value">{{ $alumno->lateralidad->lateralidad ?? 'N/A' }}</td>
                 </tr>
-                <tr class="info-item">
+                {{-- <tr class="info-item">
                     <td class="info-label">Etnia Indígena:</td>
                     <td class="info-value">{{ $alumno->etniaIndigena->nombre ?? 'N/A' }}</td>
-                </tr>
+                </tr> --}}
                 <tr class="info-item">
                     <td class="info-label">Año de egreso:</td>
                     <td class="info-value">

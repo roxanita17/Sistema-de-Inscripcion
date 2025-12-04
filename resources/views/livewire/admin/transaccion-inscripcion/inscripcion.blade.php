@@ -245,27 +245,27 @@
             <div class="row">
                 <div class="col-md-12" wire:ignore>
                     <label for="representante_legal_select" class="form-label-modern">
-            <i class="fas fa-gavel"></i>
-            Representante Legal
-        </label>
-        
-        <select id="representante_legal_select"
-                class="form-control-modern selectpicker"
-                data-live-search="true"
-                data-size="8"
-                data-width="100%">
-            <option value="">Seleccione un representante legal (opcional)</option>
-            @foreach ($representantes as $rep)
-                <option value="{{ $rep['id'] }}"
-                        data-subtext="{{ $rep['tipo_documento'] }}-{{ $rep['numero_documento'] }}">
-                    {{ $rep['nombre_completo'] }}
-                </option>
-            @endforeach
-        </select>
+                        <i class="fas fa-gavel"></i>
+                        Representante Legal
+                    </label>
+                    
+                    <select id="representante_legal_select"
+                            class="form-control-modern selectpicker"
+                            data-live-search="true"
+                            data-size="8"
+                            data-width="100%">
+                        <option value="">Seleccione un representante legal (opcional)</option>
+                        @foreach ($representantes as $rep)
+                            <option value="{{ $rep['id'] }}"
+                                    data-subtext="{{ $rep['tipo_documento'] }}-{{ $rep['numero_documento'] }}">
+                                {{ $rep['nombre_completo'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
     {{-- Card: Documentos Entregados --}}
     <div class="card-modern mb-4">

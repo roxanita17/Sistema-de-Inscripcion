@@ -69,13 +69,13 @@ class DatabaseSeeder extends Seeder
             AlumnoSeeder::class,
             DocenteSeeder::class,
             DetalleDocenteEstudioSeeder::class,
+            RepresentanteSeeder::class,
+            RepresentanteLegalSeeder::class
         ]);
 
         
         
-        Representante::factory()->count(10)->create();
-        $this->command->info('Factory de representantes ejecutado correctamente.');
-        RepresentanteLegal::factory()->count(10)->create();
+        
         
 
 

@@ -136,16 +136,17 @@ class Inscripcion extends Component
      */
     public function cargarRepresentantesLegales()
     {
-        $this->representantes = Representante::with(['persona.tipoDocumento', 'persona.genero'])
-            ->whereHas('persona', fn($q) => $q->where('status', true))
+        $this->representantes = RepresentanteLegal::with(['representante.persona.tipoDocumento', 'representante.persona.genero'])
+            ->whereHas('representante.persona', fn($q) => $q->where('status', true))
             ->get()
-            ->map(function($rep) {
+            ->map(function($repLegal) {
+                $rep = $repLegal->representante;
                 return [
-                    'id' => $rep->id,
+                    'id' => $repLegal->id,
                     'nombre_completo' => $rep->persona->primer_nombre . ' ' .
-                                        ($rep->persona->segundo_nombre ? $rep->persona->segundo_nombre . ' ' : '') .
-                                        $rep->persona->primer_apellido . ' ' .
-                                        ($rep->persona->segundo_apellido ?? ''),
+                                      ($rep->persona->segundo_nombre ? $rep->persona->segundo_nombre . ' ' : '') .
+                                      $rep->persona->primer_apellido . ' ' .
+                                      ($rep->persona->segundo_apellido ?? ''),
                     'numero_documento' => $rep->persona->numero_documento,
                     'tipo_documento' => $rep->persona->tipoDocumento->nombre ?? 'N/A',
                 ];
@@ -226,7 +227,7 @@ class Inscripcion extends Component
 
     /**
      * Cuando se selecciona un representante legal
-     */
+     */ 
     public function updatedRepresentanteLegalId($value)
     {
         if ($value) {
@@ -285,7 +286,7 @@ class Inscripcion extends Component
                 'grado_id' => 1,
                 'padre_id' => $this->padreId ?: null,
                 'madre_id' => $this->madreId ?: null,
-                'representante_legal_id' => $this->representanteLegalId ?: null,
+                'representante_legal_id' => $this->representanteLegalId,
                 'documentos' => $this->documentos ?? [],
                 'estado_documentos' => $todosLosDocumentos ? 'Completos' : 'Incompletos',
                 'fecha_inscripcion' => $this->fecha_inscripcion,

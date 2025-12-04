@@ -298,6 +298,18 @@
 
     {{-- Estadísticas Principales --}}
     <div class="stats-grid">
+        {{-- Total Inscripciones --}}
+        <div class="stat-card primary">
+            <div class="stat-card-header">
+                <div>
+                    <div class="stat-number">{{ $totalInscripciones ?? 0 }}</div>
+                    <div class="stat-label">Total Inscripciones</div>
+                </div>
+                <div class="stat-icon primary">
+                    <i class="fas fa-book"></i>
+                </div>
+            </div>
+        </div>
         {{-- Total Estudiantes --}}
         <div class="stat-card primary">
             <div class="stat-card-header">
@@ -374,6 +386,12 @@
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="quick-actions">
+                <a href="{{url('admin/transacciones/inscripcion') }}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <p class="action-title">Nueva Inscripcion</p>
+                </a>
                 <a href="{{url('admin/alumnos') }}" class="action-card">
                     <div class="action-icon">
                         <i class="fas fa-user-plus"></i>
