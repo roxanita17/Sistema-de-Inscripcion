@@ -223,31 +223,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="form-label-modern">
-                                <i class="fas fa-calendar-alt"></i>
-                                Edad
-                            </label>
-                            <input type="text" 
-                                   wire:model="edad" 
-                                   class="form-control-modern" 
-                                   readonly>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label class="form-label-modern">
-                                <i class="fas fa-calendar"></i>
-                                Meses
-                            </label>
-                            <input type="text" 
-                                   wire:model="meses" 
-                                   class="form-control-modern" 
-                                   readonly>
-                        </div>
-                    </div>
+                    
                 </div>
 
                 <div class="row mt-3">

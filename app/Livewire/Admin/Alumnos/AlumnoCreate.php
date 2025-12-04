@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Admin\Alumnos;
 
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Persona;
@@ -90,7 +92,19 @@ class AlumnoCreate extends Component
         $rules = [
             'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
-            'anio_egreso' => 'required|date',
+            'anio_egreso' => [
+                'required',
+                'date',
+                function($attribute, $value, $fail){
+                    $anio = \Carbon\Carbon::parse($value)->year;
+                    $anioActual = \Carbon\Carbon::now()->year;
+                    if ($anio > $anioActual) {
+                        $fail('El año de egreso no puede ser mayor al año actual');
+                    } elseif ($anio < $anioActual - 7) {
+                        $fail('El año de egreso no puede ser menor al año actual menos 7 años');
+                    }
+                }
+            ],
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => [
                 'required',
@@ -98,7 +112,19 @@ class AlumnoCreate extends Component
                 'max:15',
                 'unique:personas,numero_documento' . ($this->persona_id ? ',' . $this->persona_id : '')
             ],
-            'fecha_nacimiento' => 'required|date|before:today',
+            'fecha_nacimiento' => [
+                'required',
+                'date',
+                'before:today',
+                function($attribute, $value, $fail){
+                    $fecha = Carbon::parse($value);
+                    $edad = $fecha->age;
+
+                    if ($edad < 10 || $edad > 18) {
+                        $fail('La edad del alumno debe estar entre 10 y 18 años');
+                    } 
+                }
+            ],
             'primer_nombre' => 'required|string|max:50',
             'primer_apellido' => 'required|string|max:50',
             'genero_id' => 'required|exists:generos,id',
@@ -125,12 +151,48 @@ class AlumnoCreate extends Component
     protected function messages()
     {
         $messages = [
-            'institucion_procedencia_id.required' => 'La institución es obligatoria',
-            'numero_documento.unique' => 'Esta cédula ya está registrada en el sistema',
+            'expresion_literaria_id.required' => 'La expresión literaria es obligatoria',
+            'anio_egreso.required' => 'El año de egreso es obligatorio',
+            'anio_egreso.date' => 'El año de egreso debe ser una fecha',
+            'anio_egreso.before' => 'El año de egreso debe ser anterior a la fecha actual',
+            'anio_egreso.before_or_equal' => 'El año de egreso debe ser anterior o igual a la fecha actual',
+            'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
+            'numero_documento.required' => 'El número de documento es obligatorio',
+            'numero_documento.string' => 'El número de documento debe ser una cadena de texto',
+            'numero_documento.max' => 'El número de documento debe tener un máximo de 8 caracteres',
+            'numero_documento.unique' => 'El número de documento ya está registrado',
             'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a la fecha actual',
+            'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento debe ser anterior o igual a la fecha actual',
+            'primer_nombre.required' => 'El nombre es obligatorio',
+            'primer_nombre.string' => 'El nombre debe ser una cadena de texto',
+            'primer_nombre.max' => 'El nombre debe tener un máximo de 50 caracteres',
+            'primer_apellido.required' => 'El apellido es obligatorio',
+            'primer_apellido.string' => 'El apellido debe ser una cadena de texto',
+            'primer_apellido.max' => 'El apellido debe tener un máximo de 50 caracteres',
+            'genero_id.required' => 'El género es obligatorio',
+            'genero_id.exists' => 'El género no existe',
+            'lateralidad_id.required' => 'La lateralidad es obligatoria',
+            'lateralidad_id.exists' => 'La lateralidad no existe',
+            'orden_nacimiento_id.required' => 'El orden de nacimiento es obligatorio',
+            'orden_nacimiento_id.exists' => 'El orden de nacimiento no existe',
+            'estado_id.required' => 'El estado es obligatorio',
+            'estado_id.exists' => 'El estado no existe',
+            'municipio_id.required' => 'El municipio es obligatorio',
+            'municipio_id.exists' => 'El municipio no existe',
+            'localidad_id.required' => 'La localidad es obligatoria',
+            'localidad_id.exists' => 'La localidad no existe',
             'talla_estudiante.between' => 'La estatura debe estar entre 50 y 250 cm',
+            'talla_camisa.required' => 'La talla de la camisa es obligatoria',
+            'talla_camisa.string' => 'La talla de la camisa debe ser una cadena de texto',
+            'talla_zapato.required' => 'La talla del zapato es obligatoria',
+            'talla_zapato.integer' => 'La talla del zapato debe ser un número entero',
+            'talla_pantalon.required' => 'La talla del pantalón es obligatoria',
+            'talla_pantalon.string' => 'La talla del pantalón debe ser una cadena de texto',
             'peso_estudiante.between' => 'El peso debe estar entre 2 y 300 kg',
+            'peso_estudiante.numeric' => 'El peso debe ser un número',
+            'peso_estudiante.required' => 'El peso es obligatorio',
+
         ];
 
         return $messages;
