@@ -355,9 +355,9 @@ public function reporteGeneralPDF()
             'persona.tipoDocumento',
             'persona.genero',
             'detalleDocenteEstudio.estudiosRealizado'
-        ])->get()->map(function($docente) {
+        ])->get()
+        ->map(function($docente) {
             if ($docente->persona) {
-                // Mapear los datos de la persona al objeto docente
                 $docente->tipo_documento = $docente->persona->tipoDocumento->nombre ?? 'N/A';
                 $docente->numero_documento = $docente->persona->numero_documento ?? 'N/A';
                 $docente->primer_nombre = $docente->persona->primer_nombre ?? 'N/A';
@@ -372,7 +372,14 @@ public function reporteGeneralPDF()
                 $docente->telefono = $docente->primer_telefono ?? $docente->persona->telefono ?? 'N/A';
             }
             return $docente;
-        });
+        })
+        ->sortBy(function($docente) {
+            // Ordenar por la primera letra del primer apellido
+            $primerApellido = $docente->primer_apellido ?? 
+                            ($docente->persona->primer_apellido ?? '');
+            return strtoupper(substr($primerApellido, 0, 1));
+        })
+        ->values(); // Reindexar el array después de ordenar
 
         $pdf = PDF::loadView('admin.docente.reportes.general_pdf', [
             'docentes' => $docentes

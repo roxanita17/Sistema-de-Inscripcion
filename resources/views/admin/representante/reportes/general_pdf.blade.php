@@ -143,18 +143,28 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            font-size: 10px;
+            font-size: 9px;
+            table-layout: fixed;
+            word-wrap: break-word;
         }
         th {
             background-color: #007bff;
             color: white;
-            text-align: left;
+            text-align: center;
             padding: 6px;
             border: 1px solid #dee2e6;
+            font-weight: bold;
         }
         td {
             padding: 5px;
             border: 1px solid #dee2e6;
+            word-wrap: break-word;
+            vertical-align: top;
+        }
+        td, th {
+            max-width: 100px; /* Ancho máximo para las celdas */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         tr:nth-child(even) {
             background-color: #f8f9fa;
@@ -162,7 +172,7 @@
         .footer {
             margin-top: 20px;
             text-align: right;
-            font-size: 10px;
+            font-size: 10px; 
             color: #6c757d;
         }
         .text-center {
@@ -197,16 +207,15 @@
     <table>
         <thead>
             <tr>
-                <th>#</th>
-                <th>Cédula</th>
-                <th>Nombres Completos</th>
-                <th>Teléfono</th>
-                <th>Correo</th>
-                <th>Estado</th>
-                <th>Municipio</th>
-                <th>Parroquia</th>
-                <th>Ocupación</th>
-                <th>Tipo</th>
+                <th style="width: 8%;">Cédula</th>
+                <th style="width: 15%;">Nombres Completos</th>
+                <th style="width: 8%;">Teléfono</th>
+                <th style="width: 12%;">Correo</th>
+                <th style="width: 8%;">Estado</th>
+                <th style="width: 8%;">Municipio</th>
+                <th style="width: 10%;">Parroquia</th>
+                <th style="width: 15%;">Ocupación</th>
+                <th style="width: 8%;">Tipo</th>
                 @if(isset($filtros['es_legal']) && $filtros['es_legal'])
                     <th>Banco</th>
                     <th>N° Cuenta</th>
@@ -217,25 +226,24 @@
         <tbody>
             @forelse($representantes as $index => $representante)
                 <tr>
-                    <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ $representante->numero_documento }}</td>
+                    <td style="text-align: center;">{{ $representante->numero_documento }}</td>
                     <td>
                         {{ $representante->primer_nombre }} 
                         {{ $representante->segundo_nombre ?? '' }} 
                         {{ $representante->primer_apellido }} 
                         {{ $representante->segundo_apellido ?? '' }}
                     </td>
-                    <td>{{ $representante->telefono ?? 'N/A' }}</td>
-                    <td>{{ $representante->email ?? 'N/A' }}</td>
-                    <td>{{ $representante->estado_nombre ?? 'N/A' }}</td>
-                    <td>{{ $representante->municipio_nombre ?? 'N/A' }}</td>
-                    <td>{{ $representante->localidad_nombre ?? 'N/A' }}</td>
-                    <td>{{ $representante->ocupacion_nombre ?? 'N/A' }}</td>
-                    <td>{{ $representante->parentesco ? 'Representante Legal' : 'Progenitor' }}</td>
+                    <td style="text-align: center;">{{ $representante->telefono ?? 'N/A' }}</td>
+                    <td style="word-break: break-all;">{{ $representante->email ?? 'N/A' }}</td>
+                    <td style="text-align: center;">{{ $representante->estado_nombre ?? 'N/A' }}</td>
+                    <td style="text-align: center;">{{ $representante->municipio_nombre ?? 'N/A' }}</td>
+                    <td style="text-align: center;">{{ $representante->localidad_nombre ?? 'N/A' }}</td>
+                    <td style="word-break: break-word;">{{ $representante->ocupacion_nombre ?? 'N/A' }}</td>
+                    <td style="text-align: center;">{{ $representante->parentesco ? 'Representante Legal' : 'Progenitor' }}</td>
                     @if(isset($filtros['es_legal']) && $filtros['es_legal'])
-                        <td>{{ $representante->banco_nombre ?? 'N/A' }}</td>
-                        <td>{{ $representante->codigo_carnet_patria_representante ?? 'N/A' }}</td>
-                        <td>{{ $representante->parentesco ?? 'N/A' }}</td>
+                        <td style="text-align: center;">{{ $representante->banco_nombre ?? 'N/A' }}</td>
+                        <td style="text-align: center;">{{ $representante->codigo_carnet_patria_representante ?? 'N/A' }}</td>
+                        <td style="text-align: center;">{{ $representante->parentesco ?? 'N/A' }}</td>
                     @endif
                 </tr>
             @empty
