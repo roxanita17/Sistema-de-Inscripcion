@@ -36,6 +36,18 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+//HomePage!!
+
+Route::get("/", function(){
+    return view('HomePage.Home');
+})->name("home.principal");
+
+Route::get("/vidaEstudiantil",function(){
+    return view('HomePage.vidaEstudiantil');
+})->name("home.vidaEstudiantil");
+
+
+
 // ============================================
 // RUTAS PROTEGIDAS POR AUTENTICACIÓN
 // ============================================
