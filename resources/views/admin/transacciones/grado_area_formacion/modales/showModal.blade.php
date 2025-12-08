@@ -10,7 +10,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                             </div>
                             <div class="modal-body">
-                                <p><b>Grado:</b> {{ $datos->numero_grado }}</p>
+                                <p><b>Año:</b> {{ $datos->numero_grado }}</p>
                                 <p><b>Capacidad maxima de cupos:</b> {{ $datos->capacidad_max }}</p>
                                 <p><b>Minimo de seccion:</b> {{ $datos->min_seccion }}</p>
                                 <p><b>Maximo de seccion:</b> {{ $datos->max_seccion }}</p>

@@ -133,8 +133,8 @@ class DocenteController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.docente.estudios', $docente->id)
-                ->with('success', 'Docente registrado correctamente, ahora puede agregar sus estudios.');
+        return redirect()->route('admin.docente.estudios', $docente->id)
+            ->with('success', '<span style="font-size: 1.5rem;">Docente registrado correctamente, ahora puede agregar sus estudios.</span>');
 
         } catch (\Exception $e) {
             DB::rollBack();

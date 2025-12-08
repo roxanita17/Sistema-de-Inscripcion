@@ -9,7 +9,7 @@
                     </div>
                     <div class="alert-content">
                         <h4>Éxito</h4>
-                        <p>{{ session('success') }}</p>
+                        <p>{!! session('success') !!}</p>
                     </div>
                     <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
                         <i class="fas fa-times"></i>
