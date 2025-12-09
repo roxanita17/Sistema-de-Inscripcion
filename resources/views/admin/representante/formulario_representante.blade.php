@@ -1059,7 +1059,7 @@
                                 <input type="text" class="form-control" id="serial" name="serial"
                                     maxlength="9" pattern="[0-9]+" 
                                     title="Ingrese solo números (máximo 9 dígitos)" required
-                                     inputmode="numeric" 
+                                    inputmode="numeric" 
                                     oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                 <div class="invalid-feedback">
                                     Por favor ingrese un serial válido (solo números).

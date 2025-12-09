@@ -235,16 +235,21 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ALUMNOS ======
     Route::get('alumnos',  [AlumnoController::class, 'index'])->name('alumnos.index');
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::get('alumnos/create', [AlumnoController::class, 'create'])->name('alumnos.create');
+        Route::post('alumnos/store', [AlumnoController::class, 'store'])->name('alumnos.store');
+        Route::get('alumnos/{id}/edit', [AlumnoController::class, 'edit'])->name('alumnos.edit');
 
-    Route::get('alumnos/create', [AlumnoController::class, 'create'])->name('alumnos.create');
+        Route::post('alumnos/{id}/update', [AlumnoController::class, 'update'])->name('alumnos.update');
+        
+        Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
+        
 
-    Route::post('alumnos/store', [AlumnoController::class, 'store'])->name('alumnos.store');
+    });
 
-    Route::get('alumnos/{id}/edit', [AlumnoController::class, 'edit'])->name('alumnos.edit');
-
-    Route::post('alumnos/{id}/update', [AlumnoController::class, 'update'])->name('alumnos.update');
     
-    Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
+
+   
 
     //Reportes
     //Route::get('alumnos/reportes', [AlumnoController::class, 'reportePDF'])->name('alumnos.reportePDF');

@@ -228,6 +228,17 @@ return [
             'active' => ['home', 'home/*'],
         ],
 
+        //A;o escolar
+        [
+            'text' => 'Año Escolar',
+            'url'  => 'admin/anio_escolar',
+            'icon' => 'fas fa-calendar-alt',
+        ],
+
+        ['header' => 'GESTIÓN DE INSCRIPCIONES'],
+
+        
+
         //Alumnos
         [
             'text' => 'Alumnos',
@@ -241,7 +252,7 @@ return [
         [
             'text' => 'Inscripciones',
             'url' => 'admin/transacciones/inscripcion',
-            'icon' => 'fas fa-fw fa-user-graduate',
+            'icon' => 'fas fa-fw fa-book-open',
             'icon_color' => 'primary',
             'active' => ['admin/transacciones/inscripcion', 'admin/transacciones/inscripcion/*'],
         ],
@@ -305,11 +316,7 @@ return [
         // ============================================================
         ['header' => 'GESTIÓN ACADÉMICA'],
 
-        [
-            'text' => 'Año Escolar',
-            'url'  => 'admin/anio_escolar',
-            'icon' => 'fas fa-calendar-alt',
-        ],
+        
 
         [
             'text' => 'Grados',

@@ -3,44 +3,53 @@
 namespace App\Livewire\Admin\TransaccionInscripcion;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+// Modelos
 use App\Models\Alumno;
 use App\Models\Representante;
 use App\Models\RepresentanteLegal;
 use App\Models\Grado;
 use App\Models\Inscripcion as ModeloInscripcion;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class Inscripcion extends Component
 {
-    
-    // IDs seleccionados en los selects
+    /* ============================================================
+       ===============   PROPIEDADES DEL PRINCIPALES  ===============
+       ============================================================ */
+
+    // IDs seleccionados en selects
     public $alumnoId;
     public $padreId;
     public $madreId;
     public $representanteLegalId;
     public $gradoId;
 
-    // Datos completos de las selecciones
+    // Datos completos de los seleccionados
     public $alumnoSeleccionado = null;
     public $padreSeleccionado = null;
     public $madreSeleccionado = null;
     public $representanteLegalSeleccionado = null;
 
-    // Listas para los selects
+    // Listas para selects
     public $alumnos = [];
     public $padres = [];
     public $madres = [];
-    public $representantes = []; // Representantes legales
+    public $representantes = [];
     public $grados = 1;
 
+    // Documentos seleccionados
     public $documentos = [];
 
-    // Campos del formulario
+    // Campos propios del formulario
     public $fecha_inscripcion;
     public $observaciones;
 
-    // Reglas y mensajes de validación
+    /* ============================================================
+       =====================   VALIDACIÓN   ========================
+       ============================================================ */
+
     protected $rules = [
         'alumnoId' => 'required|exists:alumnos,id',
         'gradoId' => 'nullable|integer|min:1',
@@ -55,44 +64,46 @@ class Inscripcion extends Component
         'fecha_inscripcion.required' => 'La fecha de inscripción es obligatoria',
     ];
 
-    // Método mount: inicializa datos
+    /* ============================================================
+       =====================   MOUNT   ============================
+       ============================================================ */
+
     public function mount()
     {
         $this->cargarAlumnos();
         $this->cargarPadres();
         $this->cargarMadres();
         $this->cargarRepresentantesLegales();
-/*         $this->cargarGrados();
- */        
-        // Establece la fecha actual como fecha por defecto
+
         $this->fecha_inscripcion = now()->format('Y-m-d');
     }
 
-    // Métodos de carga de listas
+    /* ============================================================
+       =======  MÉTODOS DE CARGA DE LISTAS (SELECTS) ==============
+       ============================================================ */
 
     /**
-     * Cargar lista de alumnos disponibles
+     * Cargar lista de alumnos
      */
     public function cargarAlumnos()
     {
         $this->alumnos = Alumno::with(['persona.tipoDocumento', 'persona.genero'])
             ->whereHas('persona', fn($q) => $q->where('status', true))
             ->get()
-            ->map(function($alumno) {
-                return [
-                    'id' => $alumno->id,
-                    'nombre_completo' => $alumno->persona->primer_nombre . ' ' .
-                                        ($alumno->persona->segundo_nombre ? $alumno->persona->segundo_nombre . ' ' : '') .
-                                        $alumno->persona->primer_apellido . ' ' .
-                                        ($alumno->persona->segundo_apellido ?? ''),
-                    'numero_documento' => $alumno->persona->numero_documento,
-                    'tipo_documento' => $alumno->persona->tipoDocumento->nombre ?? 'N/A'
-                ];
-            });
+            ->map(fn($alumno) => [
+                'id' => $alumno->id,
+                'nombre_completo' =>
+                    $alumno->persona->primer_nombre . ' ' .
+                    ($alumno->persona->segundo_nombre ? $alumno->persona->segundo_nombre . ' ' : '') .
+                    $alumno->persona->primer_apellido . ' ' .
+                    ($alumno->persona->segundo_apellido ?? ''),
+                'numero_documento' => $alumno->persona->numero_documento,
+                'tipo_documento' => $alumno->persona->tipoDocumento->nombre ?? 'N/A'
+            ]);
     }
 
     /**
-     * Cargar lista de padres disponibles (solo masculino)
+     * Cargar padres (masculino)
      */
     public function cargarPadres()
     {
@@ -100,7 +111,7 @@ class Inscripcion extends Component
     }
 
     /**
-     * Cargar lista de madres disponibles (solo femenino)
+     * Cargar madres (femenino)
      */
     public function cargarMadres()
     {
@@ -108,31 +119,31 @@ class Inscripcion extends Component
     }
 
     /**
-     * Obtener representantes filtrando por género
+     * Obtener representantes por género
      */
     private function obtenerRepresentantesPorGenero($genero)
     {
         return Representante::with(['persona.tipoDocumento', 'persona.genero'])
-            ->whereHas('persona', function($q) use ($genero) {
+            ->whereHas('persona', fn($q) =>
                 $q->where('status', true)
-                  ->whereHas('genero', fn($q2) => $q2->where('genero', $genero));
-            })
+                  ->whereHas('genero', fn($g) => $g->where('genero', $genero))
+            )
             ->get()
-            ->map(function($rep) {
-                return [
-                    'id' => $rep->id,
-                    'nombre_completo' => $rep->persona->primer_nombre . ' ' .
-                                        ($rep->persona->segundo_nombre ? $rep->persona->segundo_nombre . ' ' : '') .
-                                        $rep->persona->primer_apellido . ' ' .
-                                        ($rep->persona->segundo_apellido ?? ''),
-                    'numero_documento' => $rep->persona->numero_documento,
-                    'tipo_documento' => $rep->persona->tipoDocumento->nombre ?? 'N/A',
-                ];
-            })->toArray();
+            ->map(fn($rep) => [
+                'id' => $rep->id,
+                'nombre_completo' =>
+                    $rep->persona->primer_nombre . ' ' .
+                    ($rep->persona->segundo_nombre ? $rep->persona->segundo_nombre . ' ' : '') .
+                    $rep->persona->primer_apellido . ' ' .
+                    ($rep->persona->segundo_apellido ?? ''),
+                'numero_documento' => $rep->persona->numero_documento,
+                'tipo_documento' => $rep->persona->tipoDocumento->nombre ?? 'N/A',
+            ])
+            ->toArray();
     }
 
     /**
-     * Cargar lista de representantes legales
+     * Cargar representantes legales
      */
     public function cargarRepresentantesLegales()
     {
@@ -141,117 +152,86 @@ class Inscripcion extends Component
             ->get()
             ->map(function($repLegal) {
                 $rep = $repLegal->representante;
+
                 return [
                     'id' => $repLegal->id,
-                    'nombre_completo' => $rep->persona->primer_nombre . ' ' .
-                                      ($rep->persona->segundo_nombre ? $rep->persona->segundo_nombre . ' ' : '') .
-                                      $rep->persona->primer_apellido . ' ' .
-                                      ($rep->persona->segundo_apellido ?? ''),
+                    'nombre_completo' =>
+                        $rep->persona->primer_nombre . ' ' .
+                        ($rep->persona->segundo_nombre ? $rep->persona->segundo_nombre . ' ' : '') .
+                        $rep->persona->primer_apellido . ' ' .
+                        ($rep->persona->segundo_apellido ?? ''),
                     'numero_documento' => $rep->persona->numero_documento,
                     'tipo_documento' => $rep->persona->tipoDocumento->nombre ?? 'N/A',
                 ];
-            })->toArray();
+            })
+            ->toArray();
     }
 
-    /**
-     * Cargar lista de grados
-     */
-   /*  public function cargarGrados()
-    {
-        $this->grados = Grado::where('status', true)
-            ->orderBy('numero_grado', 'asc')
-            ->get();
-    } */
+    /* ============================================================
+       =========  MÉTODOS updated() PARA CARGAR DETALLES ==========
+       ============================================================ */
 
-    // Métodos de actualización de selects
-
-    /**
-     * Cuando se selecciona un alumno
-     */
     public function updatedAlumnoId($value)
     {
-        if ($value) {
-            $this->alumnoSeleccionado = Alumno::with([
-                'persona.tipoDocumento',
-                'persona.genero',
-                'persona.localidad.municipio.estado',
-                'ordenNacimiento',
-                'lateralidad',
-            ])->find($value);
-
-            // Verificar si ya tiene inscripción activa
-            $inscripcionExistente = ModeloInscripcion::where('alumno_id', $value)
-                ->where('status', true)
-                ->first();
-
-            if ($inscripcionExistente) {
-                session()->flash('warning', 'Este alumno ya tiene una inscripción activa en ' . 
-                                          $inscripcionExistente->grado->numero_grado . '° grado');
-            }
-        } else {
+        if (!$value) {
             $this->alumnoSeleccionado = null;
+            return;
+        }
+
+        $this->alumnoSeleccionado = Alumno::with([
+            'persona.tipoDocumento',
+            'persona.genero',
+            'persona.localidad.municipio.estado',
+            'ordenNacimiento',
+            'lateralidad',
+        ])->find($value);
+
+        // Verificar inscripción activa
+        $inscripcionExistente = ModeloInscripcion::where('alumno_id', $value)
+            ->where('status', true)
+            ->first();
+
+        if ($inscripcionExistente) {
+            session()->flash('warning', 'Este alumno ya tiene una inscripción activa.');
         }
     }
 
-    /**
-     * Cuando se selecciona un padre
-     */
     public function updatedPadreId($value)
     {
-        if ($value) {
-            $this->padreSeleccionado = Representante::with([
-                'persona.tipoDocumento',
-                'persona.genero',
-                'ocupacion',
-            ])->find($value);
-        } else {
-            $this->padreSeleccionado = null;
-        }
+        $this->padreSeleccionado = $value
+            ? Representante::with(['persona.tipoDocumento', 'persona.genero', 'ocupacion'])->find($value)
+            : null;
     }
 
-    /**
-     * Cuando se selecciona una madre
-     */
     public function updatedMadreId($value)
     {
-        if ($value) {
-            $this->madreSeleccionado = Representante::with([
-                'persona.tipoDocumento',
-                'persona.genero',
-                'ocupacion',
-            ])->find($value);
-        } else {
-            $this->madreSeleccionado = null;
-        } 
+        $this->madreSeleccionado = $value
+            ? Representante::with(['persona.tipoDocumento', 'persona.genero', 'ocupacion'])->find($value)
+            : null;
     }
 
-    /**
-     * Cuando se selecciona un representante legal
-     */ 
     public function updatedRepresentanteLegalId($value)
     {
-        if ($value) {
-            $this->representanteLegalSeleccionado = RepresentanteLegal::with([
-                'representante.persona.tipoDocumento',
-                'representante.persona.genero',
-                'representante.ocupacion',
-            ])->find($value);
-        } else {
-            $this->representanteLegalSeleccionado = null;
-        }
+        $this->representanteLegalSeleccionado = $value
+            ? RepresentanteLegal::with(['representante.persona.tipoDocumento', 'representante.persona.genero', 'representante.ocupacion'])->find($value)
+            : null;
     }
 
-    // Métodos de acción
+    /* ============================================================
+       =========  LISTENER (para recibir datos del formulario Alumno)
+       ============================================================ */
 
-    /**
-     * Registrar la inscripción
-     */
+    protected $listeners = ['recibirDatosAlumno' => 'guardarTodo'];
+
+    /* ============================================================
+       =========  MÉTODO registrar() – guardar inscripción SOLO
+       ============================================================ */
+
     public function registrar()
     {
-        // Validación: al menos un representante
+        // Validar que haya al menos un representante
         if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
-            session()->flash('error', 'Debe seleccionar al menos un representante (padre, madre o representante legal)');
-            return;
+            return session()->flash('error', 'Debe seleccionar al menos un representante.');
         }
 
         $this->validate();
@@ -259,7 +239,7 @@ class Inscripcion extends Component
         DB::beginTransaction();
 
         try {
-            // Lista de todos los documentos requeridos
+            // Documentos requeridos
             $documentosRequeridos = [
                 'partida_nacimiento',
                 'copia_cedula_representante',
@@ -273,44 +253,133 @@ class Inscripcion extends Component
                 'autorizacion_tercero'
             ];
 
-            // Verificar si faltan documentos
-            $documentosFaltantes = array_diff($documentosRequeridos, $this->documentos ?? []);
-            $todosLosDocumentos = empty($documentosFaltantes);
-            
-            // Determinar el estado de la inscripción
-            $estadoInscripcion = $todosLosDocumentos ? 'Activo' : 'Pendiente';
+            $faltantes = array_diff($documentosRequeridos, $this->documentos ?? []);
+            $estadoInscripcion = empty($faltantes) ? 'Activo' : 'Pendiente';
 
-            // Guardar inscripción
-            $inscripcion = ModeloInscripcion::create([
+            ModeloInscripcion::create([
                 'alumno_id' => $this->alumnoId,
                 'grado_id' => 1,
                 'padre_id' => $this->padreId ?: null,
                 'madre_id' => $this->madreId ?: null,
                 'representante_legal_id' => $this->representanteLegalId,
                 'documentos' => $this->documentos ?? [],
-                'estado_documentos' => $todosLosDocumentos ? 'Completos' : 'Incompletos',
+                'estado_documentos' => empty($faltantes) ? 'Completos' : 'Incompletos',
                 'fecha_inscripcion' => $this->fecha_inscripcion,
                 'observaciones' => $this->observaciones,
                 'status' => $estadoInscripcion,
             ]);
+
             DB::commit();
 
-            session()->flash('success', 'Inscripción registrada exitosamente');
-
+            session()->flash('success', 'Inscripción registrada exitosamente.');
             $this->limpiar();
 
             return redirect()->route('admin.transacciones.inscripcion.index');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Error al registrar la inscripción: ' . $e->getMessage());
+            session()->flash('error', 'Error: ' . $e->getMessage());
         }
     }
 
+    /* ============================================================
+        FUNCION finalizar() (pide datos del alumno al otro Livewire)
+       ============================================================ */
 
-    /**
-     * Limpiar formulario y selecciones
-     */
+    public function finalizar()
+    {
+        if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
+            return session()->flash('error', 'Debe seleccionar al menos un representante.');
+        }
+
+        $this->dispatch('solicitarDatosAlumno');
+    }
+
+    /* ============================================================
+       FUNCION guardarTodo() (Guardar Alumno y Inscripción en 1 acción)
+       ============================================================ */
+
+    public function guardarTodo($datos = [])
+    {
+        if (empty($datos)) {
+            return session()->flash('error', 'No se recibieron datos del alumno.');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // Crear persona
+            $persona = \App\Models\Persona::create([
+                'primer_nombre' => $datos['primer_nombre'],
+                'segundo_nombre' => $datos['segundo_nombre'] ?? null,
+                'tercer_nombre' => $datos['tercer_nombre'] ?? null,
+                'primer_apellido' => $datos['primer_apellido'],
+                'segundo_apellido' => $datos['segundo_apellido'] ?? null,
+                'tipo_documento_id' => $datos['tipo_documento_id'],
+                'numero_documento' => $datos['numero_documento'],
+                'genero_id' => $datos['genero_id'],
+                'fecha_nacimiento' => $datos['fecha_nacimiento'],
+                'localidad_id' => $datos['localidad_id'],
+                'status' => true,
+            ]);
+
+            // Crear alumno
+            $alumno = Alumno::create([
+                'persona_id' => $persona->id,
+                'numero_zonificacion' => $datos['numero_zonificacion'] ?? null,
+                'institucion_procedencia_id' => $datos['institucion_procedencia_id'],
+                'anio_egreso' => $datos['anio_egreso'],
+                'expresion_literaria_id' => $datos['expresion_literaria_id'],
+                'talla_camisa' => $datos['talla_camisa'],
+                'talla_pantalon' => $datos['talla_pantalon'],
+                'talla_zapato' => $datos['talla_zapato'],
+                'peso' => $datos['peso_estudiante'],
+                'estatura' => $datos['talla_estudiante'],
+                'lateralidad_id' => $datos['lateralidad_id'],
+                'orden_nacimiento_id' => $datos['orden_nacimiento_id'],
+                'status' => 'Activo',
+            ]);
+
+            // Crear inscripción
+            ModeloInscripcion::create([
+                'alumno_id' => $alumno->id,
+                'grado_id' => $this->grados,
+                'padre_id' => $this->padreId ?: null,
+                'madre_id' => $this->madreId ?: null,
+                'representante_legal_id' => $this->representanteLegalId ?: null,
+                'documentos' => $this->documentos ?? [],
+                'estado_documentos' => empty(array_diff([
+                    'partida_nacimiento',
+                    'copia_cedula_representante',
+                    'copia_cedula_estudiante',
+                    'boletin_6to_grado',
+                    'certificado_calificaciones',
+                    'constancia_aprobacion_primaria',
+                    'foto_estudiante',
+                    'foto_representante',
+                    'carnet_vacunacion',
+                    'autorizacion_tercero'
+                ], $this->documentos ?? [])) ? 'Completos' : 'Incompletos',
+                'fecha_inscripcion' => $this->fecha_inscripcion,
+                'observaciones' => $this->observaciones,
+                'status' => 'Activo',
+            ]);
+
+            DB::commit();
+
+            session()->flash('success', 'Inscripción guardada exitosamente.');
+            return redirect()->route('admin.transacciones.inscripcion.index');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Error al registrar: ' . $e->getMessage());
+        }
+    }
+
+    /* ============================================================
+       =================== FUNCION limpiar() ======================
+       ============================================================ */
+
     public function limpiar()
     {
         $this->reset([
@@ -327,11 +396,14 @@ class Inscripcion extends Component
         ]);
 
         $this->fecha_inscripcion = now()->format('Y-m-d');
+
         $this->dispatch('resetSelects');
     }
 
+    /* ============================================================
+       =================== FUNCION RENDER =========================
+       ============================================================ */
 
-    // Render
     public function render()
     {
         return view('livewire.admin.transaccion-inscripcion.inscripcion');

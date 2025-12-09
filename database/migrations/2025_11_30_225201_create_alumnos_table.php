@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('anio_egreso');
             $table->string('talla_camisa');
             $table->string('talla_pantalon');
-            $table->string('tallas_zapato');
+            $table->string('talla_zapato');
             $table->integer('peso');
             $table->integer('estatura');
             $table->foreignId('orden_nacimiento_id')->nullable()->constrained('orden_nacimientos')->cascadeOnDelete();

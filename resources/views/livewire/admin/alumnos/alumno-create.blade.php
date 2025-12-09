@@ -1,6 +1,5 @@
-<div>
     {{-- Alertas --}}
-    @if (session()->has('success') || session()->has('error'))
+{{--     @if (session()->has('success') || session()->has('error'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
                 <div class="alert-modern alert-success alert alert-dismissible fade show">
@@ -32,7 +31,7 @@
                 </div>
             @endif
         </div>
-    @endif
+    @endif --}}
 
     <form wire:submit.prevent="save">
         {{-- Card: Plantel de Procedencia --}}
@@ -766,71 +765,13 @@
                     </div>
                 </div> --}}
         {{-- Botones de Acción --}}
-        <div class="card-modern">
-            <div class="card-body-modern" style="padding: 2rem;">
-                <div class="d-flex justify-content-end gap-3">
-                    <a href="{{ route('admin.alumnos.index') }}" class="btn-cancel-modern">
-                        <i class="fas fa-times"></i>
-                        Cancelar
-                    </a>
-                    <button type="submit" class="btn-primary-modern" wire:loading.attr="disabled">
-                        <span wire:loading.remove>
-                            <i class="fas fa-save"></i>
-                            {{ $alumno_id ? 'Actualizar' : 'Guardar' }} Estudiante
-                        </span>
-                        <span wire:loading>
-                            <i class="fas fa-spinner fa-spin"></i>
-                            Guardando...
-                        </span>
-                    </button>
-                </div>
-            </div>
-        </div>
+        
     </form>
 
     {{-- Estilos adicionales para radios --}}
-    <style>
-        .radio-item-modern {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1.25rem;
-            background: var(--gray-50);
-            border-radius: var(--radius);
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-            cursor: pointer;
-        }
 
-        .radio-item-modern:hover {
-            background: var(--primary-light);
-            border-color: var(--primary);
-        }
 
-        .radio-modern {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .radio-label-modern {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            margin: 0 0 0 0.75rem;
-            font-size: 0.9rem;
-            color: var(--gray-700);
-            font-weight: 500;
-            user-select: none;
-        }
-
-        .radio-label-modern i {
-            color: var(--primary);
-        }
-    </style>
-</div>
-
+{{-- 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -882,13 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
-</script>
+</script> --}}
 
 
 
-
-
-        {{-- Continúa en el siguiente artefacto... --}}
-        {{-- (Para no exceder el límite de caracteres) --}}
-    </form>
-</div>

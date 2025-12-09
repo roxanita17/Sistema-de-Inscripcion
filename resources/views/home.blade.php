@@ -401,7 +401,7 @@
 
                 <a href="{{url('representante') }}" class="action-card">
                     <div class="action-icon">
-                        <i class="fas fa-user-plus"></i>
+                        <i class="fas fa-user-tie"></i>
                     </div>
                     <p class="action-title">Nuevo Representante</p>
                 </a>

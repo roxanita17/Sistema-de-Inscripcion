@@ -44,139 +44,19 @@
     @endif
 
     {{-- Card: Búsqueda de Alumno --}}
-    <div class="card-modern mb-4">
-        <div class="card-header-modern">
-            <div class="header-left">
-                <div class="header-icon">
-                    <i class="fas fa-user-graduate"></i>
-                </div>
-                <div>
-                    <h3>Seleccionar Alumno</h3>
-                    <p>Busque y seleccione el alumno a inscribir</p>
-                </div>
-            </div>
-        </div>
+    
+       
 
-        <div class="card-body-modern" style="padding: 2rem;">
-            <div class="row">
-                <div class="col-md-12" wire:ignore>
-                    <label for="alumno_select" class="form-label-modern">
-                        <i class="fas fa-user-graduate"></i>
-                        Alumno
-                        <span class="required-badge">*</span>
-                    </label>
-                    
-                    <select id="alumno_select"
-                            class="form-control-modern selectpicker"
-                            data-live-search="true"
-                            data-size="8"
-                            data-width="100%">
-                        <option value="">Seleccione un alumno</option>
-                        @foreach ($alumnos as $alumno)
-                            <option value="{{ $alumno['id'] }}"
-                                    data-subtext="{{ $alumno['tipo_documento'] }}-{{ $alumno['numero_documento'] }}">
-                                {{ $alumno['nombre_completo'] }}
-                            </option>
-                        @endforeach
-                        
-                    </select>
-                    
-
-                    @error('alumnoId')
-                        <div class="invalid-feedback-modern" style="display: block;">
-                            <i class="fas fa-exclamation-circle"></i>
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                    <small class="form-text-modern">
-                        <i class="fas fa-info-circle"></i>
-                        Busque por nombre, apellido o cédula del alumno
-                    </small>
-                </div>
-                {{-- <div class="col-md-2">
-                    <div class="btn-create" style="margin-top: 3rem">
-                        <a href="{{ route('admin.transacciones.inscripcion.create') }}"
-                            style="display: block; text-align: center;">
-                            <i class="fas fa-plus"></i>
-                            <span>Nuevo Alumno</span>
-                        </a>
-                        
-                    </div>
-                    
-                </div> --}}
+        <div class="card-body-modern" >
                 
-            </div>
+
+                <livewire:admin.alumnos.alumno-create>
 
 
-            {{-- Información del alumno seleccionado --}}
-            @if($alumnoSeleccionado)
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="info-card-modern p-4 shadow-sm rounded-3 bg-white">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="info-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width:30px; height:30px;">
-                                    <i class="fas fa-user-graduate"></i>
-                                </div>
-                                <h5 class="mb-0">Datos del Alumno Seleccionado</h5>
-                            </div>
-
-                            <div class="row g-3">
-                                <div class="col-md-5">
-                                    <div class="detail-item p-2">
-                                        <div class="detail-label"><i class="fas fa-user"></i> Nombre Completo</div>
-                                        <div class="detail-value">
-                                            {{ $alumnoSeleccionado->persona->primer_nombre }} 
-                                            {{ $alumnoSeleccionado->persona->segundo_nombre ?? '' }} 
-                                            {{ $alumnoSeleccionado->persona->primer_apellido }} 
-                                            {{ $alumnoSeleccionado->persona->segundo_apellido ?? '' }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3">
-                                    <div class="detail-item p-2">
-                                        <div class="detail-label"><i class="fas fa-id-card"></i> Cedula</div>
-                                        <div class="detail-value">
-                                            {{ $alumnoSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $alumnoSeleccionado->persona->numero_documento }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <div class="detail-item p-2">
-                                        <div class="detail-label"><i class="fas fa-birthday-cake"></i> Edad</div>
-                                        <div class="detail-value">
-                                            {{ $alumnoSeleccionado->persona->fecha_nacimiento->age ?? 'N/A' }} años
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3">
-                                    <div class="detail-item p-2">
-                                        <div class="detail-label"><i class="fas fa-venus-mars"></i> Género</div>
-                                        <div class="detail-value">
-                                            {{ $alumnoSeleccionado->persona->genero->genero ?? 'N/A' }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="detail-item p-2">
-                                        <div class="detail-label"><i class="fas fa-calendar-alt"></i> Fecha de Nacimiento</div>
-                                        <div class="detail-value">
-                                            {{ $alumnoSeleccionado->persona->fecha_nacimiento->format('d/m/Y') ?? 'N/A' }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>  
-                        </div>
-                    </div>
-                </div>
-            @endif
+            
 
         </div>
-    </div>
+    
 
     {{-- Card: Seleccionar Representantes --}}
     <div class="card-modern mb-4">
@@ -254,7 +134,7 @@
                             data-live-search="true"
                             data-size="8"
                             data-width="100%">
-                        <option value="">Seleccione un representante legal (opcional)</option>
+                        <option value="">Seleccione un representante legal</option>
                         @foreach ($representantes as $rep)
                             <option value="{{ $rep['id'] }}"
                                     data-subtext="{{ $rep['tipo_documento'] }}-{{ $rep['numero_documento'] }}">
@@ -416,14 +296,14 @@
                     Limpiar
                 </button>
                 <button type="button" 
-                        wire:click="registrar" 
+                        wire:click="finalizar" 
                         class="btn-primary-modern"
                         wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="registrar">
+                    <span wire:loading.remove wire:target="finalizar">
                         <i class="fas fa-save"></i>
                         Guardar Inscripción
                     </span>
-                    <span wire:loading wire:target="registrar">
+                    <span wire:loading wire:target="finalizar">
                         <i class="fas fa-spinner fa-spin"></i>
                         Guardando...
                     </span>
@@ -472,5 +352,46 @@ Livewire.on('resetSelects', () => {
     $('.selectpicker').val('').selectpicker('refresh');
 });
 </script>
+
+    <style>
+        .radio-item-modern {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .radio-item-modern:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .radio-modern {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .radio-label-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            margin: 0 0 0 0.75rem;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .radio-label-modern i {
+            color: var(--primary);
+        }
+    </style>
 @endpush
 

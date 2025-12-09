@@ -28,7 +28,7 @@ class AlumnoFactory extends Factory
             'anio_egreso' => $this->faker->date('Y-m-d'),
             'talla_camisa' => $this->faker->numberBetween(36, 46),
             'talla_pantalon' => $this->faker->numberBetween(36, 46),
-            'tallas_zapato' => $this->faker->numberBetween(36, 46),
+            'talla_zapato' => $this->faker->numberBetween(36, 46),
             'peso' => $this->faker->numberBetween(36, 46),
             'estatura' => $this->faker->numberBetween(36, 46),
             

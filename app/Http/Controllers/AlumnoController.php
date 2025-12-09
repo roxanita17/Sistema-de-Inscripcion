@@ -15,11 +15,9 @@ use App\Models\Genero;
 use App\Models\Localidad;
 use App\Models\Municipio;
 use App\Models\Estado;
+use App\Models\AnioEscolar;
 use Barryvdh\DomPDF\Facade\Pdf;
-
-
 use Illuminate\Http\Request;
-
 
 class AlumnoController extends Controller
 {
@@ -63,17 +61,10 @@ class AlumnoController extends Controller
         $localidad = Localidad::all();
         $municipio = Municipio::all();
         $estado = Estado::all();
+        $anioEscolarActivo = $this->verificarAnioEscolar();
 
 
-        return view('admin.alumnos.create', [
-        'ordenes' => OrdenNacimiento::all(),
-        'discapacidades' => Discapacidad::all(),
-        'etnias' => EtniaIndigena::all(),
-        'expresiones' => ExpresionLiteraria::all(),
-        'lateralidades' => Lateralidad::all(),
-        'personas' => Persona::all(),
-        'instituciones' => InstitucionProcedencia::all(),
-    ]);
+        return view('admin.alumnos.create',compact('anioEscolarActivo',  ));
     }
 
     

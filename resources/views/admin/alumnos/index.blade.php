@@ -25,12 +25,13 @@
 
             
 
-            {{-- Botón que abre la ventana modal para crear una nueva docente --}}
+            {{-- Botón que abre la ventana modal para crear --}}
             <a type="button"
+            @if(!$anioEscolarActivo) disabled @endif
+                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : '' }}"
                     class="btn-create"
                     href="{{ route('admin.alumnos.create') }}"
-                    @if(!$anioEscolarActivo) disabled @endif
-                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nuevo registro' }}">
+                    >
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Alumno</span>
             </a>
@@ -213,7 +214,8 @@
                                             <button class="action-btn btn-view" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#viewModal{{ $datos->id }}" 
-                                                title="Ver Detalles">
+                                                title="Ver Detalles"
+                                                >
                                                 <i class="fas fa-eye"></i>
                                             </button>
 

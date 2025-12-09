@@ -243,7 +243,7 @@
                 </tr>
                 <tr class="info-item">
                     <td class="info-label">Talla de zapatos:</td>
-                    <td class="info-value">{{ $alumno->tallas_zapato ?? 'N/A' }}</td>
+                    <td class="info-value">{{ $alumno->talla_zapato ?? 'N/A' }}</td>
                 </tr>
                 <tr class="info-item">
                     <td class="info-label">Lateralidad:</td>

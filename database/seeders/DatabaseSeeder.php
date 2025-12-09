@@ -25,16 +25,6 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('Iniciando seeders...');
 
-
-
-        AnioEscolar::factory(1)->create([
-            'inicio_anio_escolar' => '2025-01-01',
-            'cierre_anio_escolar' => '2026-12-31',
-            'extencion_anio_escolar' => '2027-01-01',
-            'status' => 'Activo',
-        ]);
-
-
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
