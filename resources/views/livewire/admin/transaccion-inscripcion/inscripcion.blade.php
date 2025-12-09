@@ -43,19 +43,10 @@
         </div>
     @endif
 
-    {{-- Card: Búsqueda de Alumno --}}
-    
-       
-
-        <div class="card-body-modern" >
-                
-
-                <livewire:admin.alumnos.alumno-create>
-
-
-            
-
-        </div>
+    {{-- Card: Formulario de alumno--}}
+    <div class="card-body-modern" >
+        <livewire:admin.alumnos.alumno-create>
+    </div>
     
 
     {{-- Card: Seleccionar Representantes --}}
@@ -142,10 +133,10 @@
                             </option>
                         @endforeach
                     </select>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Card: Documentos Entregados --}}
     <div class="card-modern mb-4">
@@ -203,8 +194,6 @@
         </div>
     </div>
 
-
-
     {{-- Card: Datos de la Inscripción --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
@@ -218,7 +207,6 @@
                 </div>
             </div>
         </div>
-
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="row">
                 {{-- <div class="col-md-4">
@@ -252,9 +240,9 @@
                             <span class="required-badge">*</span>
                         </label>
                         <input type="date" 
-                               wire:model="fecha_inscripcion" 
-                               id="fecha_inscripcion"
-                               class="form-control-modern @error('fecha_inscripcion') is-invalid @enderror">
+                            wire:model="fecha_inscripcion" 
+                            id="fecha_inscripcion"
+                            class="form-control-modern @error('fecha_inscripcion') is-invalid @enderror">
                         @error('fecha_inscripcion')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -263,56 +251,54 @@
                     </div>
                 </div>
 
-
-
-                
-
-            <div class="row mt-3">
-                <div class="col-12">
-                    <div class="form-group">
-                        <label for="observaciones" class="form-label-modern">
-                            <i class="fas fa-comment"></i>
-                            Observaciones
-                        </label>
-                        <textarea wire:model="observaciones" 
-                                  id="observaciones"
-                                  class="form-control-modern" 
-                                  rows="3"
-                                  placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="observaciones" class="form-label-modern">
+                                <i class="fas fa-comment"></i>
+                                Observaciones
+                            </label>
+                            <textarea wire:model="observaciones" 
+                                    id="observaciones"
+                                    class="form-control-modern" 
+                                    rows="3"
+                                    placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    {{-- Botones de Acción --}}
-    <div class="card-modern">
-        <div class="card-body-modern" style="padding: 2rem;">
-            <div class="d-flex justify-content-end gap-3">
-                <button type="button" 
-                        wire:click="limpiar"
-                        class="btn-cancel-modern">
-                    <i class="fas fa-broom"></i>
-                    Limpiar
-                </button>
-                <button type="button" 
-                        wire:click="finalizar" 
-                        class="btn-primary-modern"
-                        wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="finalizar">
-                        <i class="fas fa-save"></i>
-                        Guardar Inscripción
-                    </span>
-                    <span wire:loading wire:target="finalizar">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        Guardando...
-                    </span>
-                </button>
+        {{-- Botones de Acción --}}
+        <div class="card-modern">
+            <div class="card-body-modern" style="padding: 2rem;">
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="button" 
+                            wire:click="limpiar"
+                            class="btn-cancel-modern">
+                        <i class="fas fa-broom"></i>
+                        Limpiar
+                    </button>
+                    <button type="button" 
+                            wire:click="finalizar" 
+                            class="btn-primary-modern"
+                            wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="finalizar">
+                            <i class="fas fa-save"></i>
+                            Guardar Inscripción
+                        </span>
+                        <span wire:loading wire:target="finalizar">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Guardando...
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
+</div>  
+            
 
 
 @push('js')
