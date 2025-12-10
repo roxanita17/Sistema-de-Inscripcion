@@ -34,7 +34,6 @@
 
 @section('content')
 <div class="main-container">
-
     {{-- Sección de alertas de error de validación --}}
     @if ($errors->any())
         <div class="alerts-container">
@@ -56,12 +55,12 @@
             </div>
         </div>
     @endif
+    
     @if(session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
-
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     {{-- Formulario de creación --}}
     <div class="card-modern">
@@ -85,7 +84,7 @@
 
         {{-- Datos personales --}}
         <div class="card-body-modern" style="padding: 2rem;">
-            <form action="{{ route('admin.docente.store') }}" method="POST" class="form-modern">
+            <form id="docenteForm" action="{{ route('admin.docente.store') }}" method="POST" class="form-modern">
                 @csrf
 
                 {{-- ========================= --}}
@@ -200,6 +199,7 @@
                             Primer nombre <span class="required-badge">*</span>
                         </label>
                         <input type="text" name="primer_nombre"
+                            id="primer_nombre"
                             class="form-control-modern @error('primer_nombre') is-invalid @enderror"
                             value="{{ old('primer_nombre') }}"
                             placeholder="Ej: Juan"
@@ -219,6 +219,7 @@
                             Segundo nombre
                         </label>
                         <input type="text" name="segundo_nombre"
+                            id="segundo_nombre"
                             class="form-control-modern @error('segundo_nombre') is-invalid @enderror"
                             value="{{ old('segundo_nombre') }}"
                             placeholder="Ej: Carlos">
@@ -237,6 +238,7 @@
                             Tercer nombre
                         </label>
                         <input type="text" name="tercer_nombre"
+                            id="tercer_nombre"
                             class="form-control-modern @error('tercer_nombre') is-invalid @enderror"
                             value="{{ old('tercer_nombre') }}"
                             placeholder="Opcional">
@@ -255,6 +257,7 @@
                             Primer apellido <span class="required-badge">*</span>
                         </label>
                         <input type="text" name="primer_apellido"
+                            id="primer_apellido"
                             class="form-control-modern @error('primer_apellido') is-invalid @enderror"
                             value="{{ old('primer_apellido') }}"
                             placeholder="Ej: Pérez"
@@ -274,6 +277,7 @@
                             Segundo apellido
                         </label>
                         <input type="text" name="segundo_apellido"
+                            id="segundo_apellido"
                             class="form-control-modern @error('segundo_apellido') is-invalid @enderror"
                             value="{{ old('segundo_apellido') }}"
                             placeholder="Ej: Gómez">
@@ -317,6 +321,7 @@
                             Fecha de nacimiento <span class="required-badge">*</span>
                         </label>
                         <input type="date"
+                            id="fecha_nacimiento"
                             name="fecha_nacimiento"
                             class="form-control-modern @error('fecha_nacimiento') is-invalid @enderror"
                             value="{{ old('fecha_nacimiento') }}"
@@ -354,8 +359,8 @@
                         <select name="prefijo_id" 
                                 id="prefijo_id"
                                 class="form-control-modern @error('prefijo_id') is-invalid @enderror"
-                               >
-                            <option selected disabled>Seleccione</option>
+                                required>
+                            <option value="" selected disabled>Seleccione</option>
                             @foreach ($prefijos as $item)
                                 <option value="{{ $item->id }}" {{ old('prefijo_id') == $item->id ? 'selected' : '' }}>
                                     {{ $item->prefijo }}
@@ -378,10 +383,12 @@
                         </label>
                         <input type="text" 
                             name="primer_telefono"
+                            id="primer_telefono"
                             inputmode="numeric"
                             pattern="[0-9]*"
                             maxlength="10"
                             oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                            required
                             class="form-control-modern @error('primer_telefono') is-invalid @enderror"
                             value="{{ old('primer_telefono') }}"
                             placeholder="Ej: 12345678">
@@ -426,7 +433,7 @@
                             <i class="fas fa-building"></i>
                             Dependencia
                         </label>
-                        <input type="text" name="dependencia"
+                        <input type="text" name="dependencia" id="dependencia" required
                             class="form-control-modern @error('dependencia') is-invalid @enderror"
                             value="{{ old('dependencia') }}"
                             placeholder="Ej: Departamento de Matemáticas">
@@ -451,7 +458,9 @@
                         <textarea 
                             class="form-control-modern @error('direccion') is-invalid @enderror" 
                             name="direccion" 
+                            id="direccion"
                             rows="3" 
+                            required
                             placeholder="Ingrese la dirección completa">{{ old('direccion') }}</textarea>
                         @error('direccion')
                             <div class="invalid-feedback-modern">
@@ -481,4 +490,8 @@
     </div>
 </div>
 
-@endsection
+@stop
+
+@section('js')
+    <script src="{{ asset('js/validations/docente.js') }}"></script>
+@stop

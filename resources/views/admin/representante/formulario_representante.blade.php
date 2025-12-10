@@ -3,43 +3,272 @@
 
 @section('title', 'Gestión de Representantes')
 
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+    <style>
+        /* Estilos para los campos de formulario */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-control, .form-select {
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-300);
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .input-group-text {
+            background-color: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+        }
+        
+        .form-text {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+        
+        .card-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: var(--primary);
+        }
+        
+        .required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-modern {
+            padding: 0.6rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-outline-secondary {
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+        }
+        
+        .btn-outline-secondary:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-400);
+        }
+        
+        /* Estilos para las pestañas */
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background: none;
+            border-color: var(--primary);
+        }
+        
+        .nav-tabs .nav-link:hover:not(.active) {
+            border-color: transparent;
+            color: var(--primary);
+        }
+        
+        /* Estilos para los mensajes de error */
+        .invalid-feedback {
+            color: var(--danger);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+        
+        .is-invalid {
+            border-color: var(--danger) !important;
+        }
+        
+        /* Mejoras para los select2 */
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            
+            .btn-create {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .card-section {
+                padding: 1rem;
+            }
+        }
+        
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .bg-pink-100 { background-color: #fce7f3; }
+        .text-pink-600 { color: #db2777; }
+        .bg-blue-100 { background-color: #dbeafe; }
+        .text-blue-600 { color: #2563eb; }
+        .bg-purple-100 { background-color: #f3e8ff; }
+        .text-purple-600 { color: #7c3aed; }
+        .bg-indigo-100 { background-color: #e0e7ff; }
+        .text-indigo-600 { color: #4f46e5; }
+    </style>
+    @livewireStyles
+@stop
+
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>Gestión de Representantes</h1>
-        <a href="{{ route('representante.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
+    <div class="content-header-modern">
+        <div class="header-content">
+            <div class="header-title">
+                <div class="icon-wrapper">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                    <h1 class="title-main">
+                        {{ isset($representante) ? 'Editar Representante' : 'Registrar Representante' }}
+                    </h1>
+                    <p class="title-subtitle">Formulario de registro de representantes</p>
+                </div>
+            </div>
+
+            <a href="{{ route('representante.index') }}" class="btn-create">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver</span>
+            </a>
+        </div>
     </div>
 @stop
 
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Registro de Representante</h3>
+<div class="main-container">
+    <!-- Mensajes de validación -->
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>¡Error!</strong> Por favor, corrija los siguientes errores:
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <div class="card-body">
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Los campos marcados con <span class="text-danger">(*)</span> son obligatorios
+    @endif
+
+    <div class="card card-modern">
+        <div class="card-body p-4">
+            <div class="alert alert-info d-flex align-items-center mb-4">
+                <i class="fas fa-info-circle me-2"></i>
+                <div>
+                    <strong>Información importante</strong>
+                    <p class="mb-0">Los campos marcados con <span class="text-danger">(*)</span> son obligatorios. Asegúrese de completar toda la información solicitada.</p>
+                </div>
             </div>
 
-            <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="needs-validation">
+            <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="needs-validation" novalidate>
+                @csrf
                 @csrf
 
                 <!-- Sección de la Madre -->
-                <div class="card card-outline card-primary mb-4">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-female me-2"></i>Datos de la Madre
+                <div class="card card-modern mb-4">
+                    <div class="card-header-modern d-flex align-items-center">
+                        <div class="icon-box bg-pink-100 text-pink-600 me-3">
+                            <i class="fas fa-female"></i>
+                        </div>
+                        <h3 class="card-title-modern mb-0">
+                            Datos de la Madre
                         </h3>
                     </div>
                     <div class="card-body">
                         <div class="form-group mb-4">
-                            <label class="form-label fw-bold d-block mb-3">
-                                <span class="text-danger">(*)</span> Estado de la madre:
-                            </label>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-box bg-indigo-100 text-indigo-600 me-2">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <label class="form-label fw-bold mb-0 required">
+                                    Estado de la madre:
+                                </label>
+                            </div>
+                            <div class="form-text mb-2">Seleccione el estado de la madre del estudiante</div>
                             <div class="d-flex flex-wrap gap-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" value="Presente" name="estado_madre" id="Presente_madre" required>
@@ -346,10 +575,13 @@
             {{-- Formulario del Padre --}}
 
 <!-- Sección del Padre -->
-<div class="card card-outline card-primary mb-4">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="fas fa-male me-2"></i>Datos del Padre
+<div class="card card-modern mb-4">
+    <div class="card-header-modern d-flex align-items-center">
+        <div class="icon-box bg-blue-100 text-blue-600 me-3">
+            <i class="fas fa-male"></i>
+        </div>
+        <h3 class="card-title-modern mb-0">
+            Datos del Padre
         </h3>
     </div>
     <div class="card-body">
@@ -662,10 +894,13 @@
 </div>
 
 {{-- Sección del Representante Legal --}}
-<div class="card card-outline card-primary mb-4">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="fas fa-user-tie me-2"></i>Datos del Representante Legal
+<div class="card card-modern mb-4">
+    <div class="card-header-modern d-flex align-items-center">
+        <div class="icon-box bg-purple-100 text-purple-600 me-3">
+            <i class="fas fa-user-tie"></i>
+        </div>
+        <h3 class="card-title-modern mb-0">
+            Datos del Representante Legal
         </h3>
     </div>
     <div class="card-body">
@@ -877,8 +1112,8 @@
             </div>
 
             <!-- Sección de Relación Familiar con el Estudiante -->
-            <div class="border rounded p-4 mb-4 bg-light">
-                <h5 class="mb-4 pb-2 border-bottom">
+            <div class="card-section">
+                <h5 class="section-title">
                     <i class="fas fa-users me-2"></i>Relación Familiar con el Estudiante
                 </h5>
                 
@@ -1134,14 +1369,17 @@
 
                         </div><!-- Fin Sección Relación Familiar -->
                     </div><!-- Fin card-body -->
-                    <div class="card-footer text-end">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-1"></i> Guardar Datos
-                        </button>
-                        <a href="{{ route('representante.index') }}" class="btn btn-outline-secondary ms-2">
+                    <div class="d-flex justify-content-between pt-4 border-top mt-4">
+                        <a href="{{ route('representante.index') }}" class="btn btn-outline-secondary btn-modern">
                             <i class="fas fa-times me-1"></i> Cancelar
                         </a>
-                    </div>
+                        <button type="submit" class="btn btn-primary btn-modern">
+                            <i class="fas fa-save me-1"></i> {{ isset($representante) ? 'Actualizar' : 'Guardar' }} Representante
+                        </button>
+                    </div>    
+                    <a href="{{ route('representante.index') }}" class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </a>
                 </div>
             </form>
     </div>
@@ -1149,6 +1387,7 @@
 @stop
 
 @section('css')
+    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <!-- Select2 CSS from CDN -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
@@ -1242,7 +1481,45 @@
 @stop
 
 @section('js')
-       <script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <script>
+        // Inicializar Select2
+        $(document).ready(function() {
+            $('.select2').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Seleccione una opción',
+                allowClear: true
+            });
+            
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+        
+        // Validación del formulario
+        (function () {
+            'use strict'
+            
+            // Obtener todos los formularios que necesitan validación
+            var forms = document.querySelectorAll('.needs-validation')
+            
+            // Bucle sobre los formularios y evitar el envío
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
         // Datos de estados, municipios y localidades cargados desde Blade
         const ubicacionesData = @json($estados);
         
@@ -3935,5 +4212,54 @@ if (document.readyState === 'loading') {
     // Si el DOM ya está listo, ejecutar directamente
     configurarValidacionFechas();
 }
+        // Función para mostrar/ocultar campos según el estado
+        function toggleCamposPorEstado(estado, prefijo) {
+            const campos = document.querySelectorAll(`[data-depende="${prefijo}"]`);
+            const esPresente = estado === 'Presente';
+            
+            campos.forEach(campo => {
+                campo.disabled = !esPresente;
+                if (campo.required) {
+                    campo.required = esPresente;
+                }
+            });
+        }
+        
+        // Inicializar campos según el estado al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Para la madre
+            const estadoMadre = document.querySelector('input[name="estado_madre"]:checked');
+            if (estadoMadre) {
+                toggleCamposPorEstado(estadoMadre.value, 'madre');
+            }
+            
+            // Para el padre
+            const estadoPadre = document.querySelector('input[name="estado_padre"]:checked');
+            if (estadoPadre) {
+                toggleCamposPorEstado(estadoPadre.value, 'padre');
+            }
+            
+            // Event listeners para los radios de estado
+            document.querySelectorAll('input[name="estado_madre"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    toggleCamposPorEstado(this.value, 'madre');
+                });
+            });
+            
+            document.querySelectorAll('input[name="estado_padre"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    toggleCamposPorEstado(this.value, 'padre');
+                });
+            });
+            
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
     </script>
+    
+    @livewireScripts
+    @stack('scripts')
 @stop

@@ -53,25 +53,33 @@
                                        placeholder="Buscar por cédula, nombre o apellido" aria-label="Search"
                                        id="buscador">
                             </form>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalGenerarReporte">
-                                <i class="fas fa-file-pdf me-1"></i> Generar Reporte
+                            <div class="header-right" style="display: flex; gap: 5px;">
+                            <button type="button" class="btn-pdf" target="_blank" data-bs-toggle="modal" data-bs-target="#modalGenerarReporte">
+                                <i class="fas fa-file-pdf"></i> Generar Reporte
                             </button>
+                                <div class="date-badge">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>{{ now()->translatedFormat('d M Y') }}</span>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
 
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">Cédula</th>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Apellido</th>
-                                        <th scope="col">Tipo</th>
-                                        <th scope="col" class="text-end">Acción</th>
+                    <div class="card-body-modern">
+                        <div class="table-wrapper">
+                            <table class="table-modern overflow-hidden hidden">
+                                <thead>
+                                    <tr style="text-align: center">
+                                        <th style="text-align: center">Cédula</th>
+                                        <th style="text-align: center">Nombre</th>
+                                        <th style="text-align: center">Apellido</th>
+                                        <th style="text-align: center">Tipo</th>
+                                        <th style="text-align: center">Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-representantes">
+                                <tbody id="tbody-representantes" style="text-align: center">
                                     @forelse($representantes as $rep)
                                         <tr>
                                             <td>{{ $rep->persona->numero_documento ?? 'N/A' }}</td>
@@ -200,7 +208,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn-pdf">
                         <i class="fas fa-download me-1"></i> Generar PDF
                     </button>
                 </div>
