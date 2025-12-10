@@ -70,12 +70,41 @@ class Inscripcion extends Component
 
     public function mount()
     {
+        // 1) SI HAY DATOS EN SESIÓN, cargarlos primero
+        if (session()->has('inscripcion_temp')) {
+            $data = session()->get('inscripcion_temp');
+
+            $this->alumnoId = $data['alumnoId'] ?? null;
+            $this->padreId = $data['padreId'] ?? null;
+            $this->madreId = $data['madreId'] ?? null;
+            $this->representanteLegalId = $data['representanteLegalId'] ?? null;
+            $this->gradoId = $data['gradoId'] ?? 1;
+            $this->fecha_inscripcion = $data['fecha_inscripcion'] ?? now()->format('Y-m-d');
+            $this->observaciones = $data['observaciones'] ?? null;
+            $this->documentos = $data['documentos'] ?? [];
+        } else {
+            $this->fecha_inscripcion = now()->format('Y-m-d');
+        }
+
+        // 2) AHORA cargar las listas
         $this->cargarAlumnos();
         $this->cargarPadres();
         $this->cargarMadres();
         $this->cargarRepresentantesLegales();
 
-        $this->fecha_inscripcion = now()->format('Y-m-d');
+        // 3) Cargar automáticamente los detalles según los ID restaurados
+        if ($this->alumnoId) {
+            $this->updatedAlumnoId($this->alumnoId);
+        }
+        if ($this->padreId) {
+            $this->updatedPadreId($this->padreId);
+        }
+        if ($this->madreId) {
+            $this->updatedMadreId($this->madreId);
+        }
+        if ($this->representanteLegalId) {
+            $this->updatedRepresentanteLegalId($this->representanteLegalId);
+        }
     }
 
     /* ============================================================
@@ -93,7 +122,7 @@ class Inscripcion extends Component
             ->map(fn($alumno) => [
                 'id' => $alumno->id,
                 'nombre_completo' =>
-                    $alumno->persona->primer_nombre . ' ' .
+                $alumno->persona->primer_nombre . ' ' .
                     ($alumno->persona->segundo_nombre ? $alumno->persona->segundo_nombre . ' ' : '') .
                     $alumno->persona->primer_apellido . ' ' .
                     ($alumno->persona->segundo_apellido ?? ''),
@@ -124,15 +153,17 @@ class Inscripcion extends Component
     private function obtenerRepresentantesPorGenero($genero)
     {
         return Representante::with(['persona.tipoDocumento', 'persona.genero'])
-            ->whereHas('persona', fn($q) =>
+            ->whereHas(
+                'persona',
+                fn($q) =>
                 $q->where('status', true)
-                  ->whereHas('genero', fn($g) => $g->where('genero', $genero))
+                    ->whereHas('genero', fn($g) => $g->where('genero', $genero))
             )
             ->get()
             ->map(fn($rep) => [
                 'id' => $rep->id,
                 'nombre_completo' =>
-                    $rep->persona->primer_nombre . ' ' .
+                $rep->persona->primer_nombre . ' ' .
                     ($rep->persona->segundo_nombre ? $rep->persona->segundo_nombre . ' ' : '') .
                     $rep->persona->primer_apellido . ' ' .
                     ($rep->persona->segundo_apellido ?? ''),
@@ -150,13 +181,13 @@ class Inscripcion extends Component
         $this->representantes = RepresentanteLegal::with(['representante.persona.tipoDocumento', 'representante.persona.genero'])
             ->whereHas('representante.persona', fn($q) => $q->where('status', true))
             ->get()
-            ->map(function($repLegal) {
+            ->map(function ($repLegal) {
                 $rep = $repLegal->representante;
 
                 return [
                     'id' => $repLegal->id,
                     'nombre_completo' =>
-                        $rep->persona->primer_nombre . ' ' .
+                    $rep->persona->primer_nombre . ' ' .
                         ($rep->persona->segundo_nombre ? $rep->persona->segundo_nombre . ' ' : '') .
                         $rep->persona->primer_apellido . ' ' .
                         ($rep->persona->segundo_apellido ?? ''),
@@ -274,8 +305,9 @@ class Inscripcion extends Component
             session()->flash('success', 'Inscripción registrada exitosamente.');
             $this->limpiar();
 
-            return redirect()->route('admin.transacciones.inscripcion.index');
+            session()->forget('inscripcion_temp');
 
+            return redirect()->route('admin.transacciones.inscripcion.index');
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error: ' . $e->getMessage());
@@ -294,6 +326,23 @@ class Inscripcion extends Component
 
         $this->dispatch('solicitarDatosAlumno');
     }
+
+    public function irACrearRepresentante()
+    {
+        session()->put('inscripcion_temp', [
+            'alumnoId' => $this->alumnoId,
+            'padreId' => $this->padreId,
+            'madreId' => $this->madreId,
+            'representanteLegalId' => $this->representanteLegalId,
+            'gradoId' => $this->gradoId,
+            'fecha_inscripcion' => $this->fecha_inscripcion,
+            'observaciones' => $this->observaciones,
+            'documentos' => $this->documentos,
+        ]);
+
+        return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
+    }
+
 
     /* ============================================================
        FUNCION guardarTodo() (Guardar Alumno y Inscripción en 1 acción)
@@ -369,7 +418,6 @@ class Inscripcion extends Component
 
             session()->flash('success', 'Inscripción guardada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
-
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error al registrar: ' . $e->getMessage());
