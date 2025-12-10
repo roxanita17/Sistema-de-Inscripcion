@@ -109,6 +109,10 @@
                             </option>
                         @endforeach
                     </select>
+                    <a href="{{route('representante.formulario', ['from' => 'inscripcion'])}}"
+                    class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                    </a>
                 </div>
             </div>
 

@@ -27,6 +27,8 @@
 
             <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="needs-validation">
                 @csrf
+                <input type="hidden" name="from" value="{{ $from ?? '' }}">
+
 
                 <!-- Sección de la Madre -->
                 <div class="card card-outline card-primary mb-4">
@@ -1130,7 +1132,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-1"></i> Guardar Datos
                         </button>
-                        <a href="{{ route('representante.index') }}" class="btn btn-outline-secondary ms-2">
+                        <a href="{{ route('representante.formulario', ['from' => 'inscripcion']) }}" class="btn btn-outline-secondary ms-2">
                             <i class="fas fa-times me-1"></i> Cancelar
                         </a>
                     </div>

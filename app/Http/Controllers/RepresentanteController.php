@@ -96,6 +96,7 @@ class RepresentanteController extends Controller
 
     public function mostrarFormulario(){
         // Cargar estados con sus municipios y localidades anidadas
+         $from = request('from');
         $estados = Estado::with(['municipio' => function($query) {
             $query->with(['localidades'])->orderBy('nombre_municipio', 'ASC');
         }])->orderBy('nombre_estado', 'ASC')->get();
@@ -107,7 +108,7 @@ class RepresentanteController extends Controller
         $generos = Genero::WHERE('status', true)->get();
         
         return view("admin.representante.formulario_representante", 
-            compact('estados', 'bancos', 'prefijos_telefono', 'ocupaciones', 'tipoDocumentos', 'generos'));
+            compact('estados', 'bancos', 'prefijos_telefono', 'ocupaciones', 'tipoDocumentos', 'generos', 'from'));
     }
 
 
@@ -467,6 +468,8 @@ public function mostrarFormularioEditar($id)
                     'all_errors' => $allErrors
                 ], 422);
             }
+
+            
 
             return redirect()->back()
                 ->with('error', 'Error de validación: ' . $errorMessage)
@@ -917,6 +920,13 @@ public function mostrarFormularioEditar($id)
                 'data' => $representanteResponse,
             ], 200);
         }
+
+         // Si vino desde inscripcion, redirigir a la pantalla de Inscripción
+            if ($request->input('from') === 'inscripcion') {
+                return redirect()
+                    ->route('admin.transacciones.inscripcion.create') // ruta de Inscripción en tu app
+                    ->with('success', 'Representante creado. Puedes seleccionarlo ahora en Inscripción.');
+            }
 
         // Petición normal desde formulario HTML
         return redirect()->route('representante.index')->with('success', $mensaje);
