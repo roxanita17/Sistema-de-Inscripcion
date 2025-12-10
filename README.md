@@ -126,6 +126,11 @@ Comando para instalar DOMPDF:
 composer require barryvdh/laravel-dompdf
 ```
 
+### 15. Swiper
+
+```bash
+npm install swiper
+```
 ## Credenciales por Defecto
 
 Si se ejecutaron los seeders correctamente, las credenciales predeterminadas son:
