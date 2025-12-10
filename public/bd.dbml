@@ -1,0 +1,451 @@
+Table rol {
+  id integer [primary key]
+  rol varchar
+  status varchar
+  created_at timestamp
+}
+
+Table usuario {
+  id integer [primary key]
+  nombres varchar
+  email varchar
+  password varchar
+  rol_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table estado {
+  id integer [primary key]
+  nombre_estado varchar
+  status varchar
+  created_at timestamp
+}
+
+Table municipio {
+  id integer [primary key]
+  nombre_municipio varchar
+  estado_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table localidad {
+  id integer [primary key]
+  nombre_localidad varchar
+  municipio_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table personas {
+  id integer [primary key]
+  primer_nombre varchar
+  segundo_nombre varchar
+  tercer_nombre varchar
+  primer_apellido varchar
+  segundo_apellido varchar
+  tipo_documento_id int
+  cedula varchar
+  genero_id int
+  fecha_nacimiento date
+  localidad_id integer
+  prefijo_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table prefijo_telefono{
+    id integer [primary key]
+    prefijo integer
+    status boolean
+}
+
+Table docentes {
+  id integer [primary key]
+  persona_id integer
+  primer_telefono integer
+  codigo integer
+  dependencia varchar
+  status varchar
+  created_at timestamp
+}
+
+Table estudios_realizados {
+  id integer [primary key]
+  nombre_titulo varchar
+  status varchar
+  created_at timestamp
+}
+
+Table area_formacions {
+  id integer [primary key]
+  nombre_area_formacion varchar
+  status varchar
+  created_at timestamp
+}
+
+/* tabla intermedia de materia y estudios */
+Table area_estudios_realizados{
+  id integer [primary key]
+  estudios_realizados_id integer
+  area_formacion_id integer
+  status varchar
+  created_at timestamp
+
+}
+
+Table grados {
+  id integer [primary key]
+  numero_grado integer
+  cantidad_max integer
+  max_por_seccion integer
+  min_por_seccion integer
+  anio_escolar_id integer
+  status varchar
+  created_at timestamp
+}
+
+
+/* tabla intermedio entre grado y materia */
+Table grado_area_formacions {
+  id integer [primary key]
+  codigo_grado_area varchar
+  grado_id integer
+  area_formacion_id integer
+  status varchar
+  created_at timestamp
+}
+
+/* tabla de la transaccion de docente */
+Table docente_area_grado {
+  id integer [primary key]
+  docente_estudio_realizado_id integer
+  area_estudios_realizados_id integer
+  grado_id integer
+  status varchar
+  created_at timestamp
+}
+
+/* tabla intermedia de docentes y sus estudios */
+Table docente_estudio_realizado {
+  id integer [primary key]
+  docentes_id integer
+  estudios_realizados_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table institucion_procedencia {
+  id integer [primary key]
+  nombre_institucion varchar
+  localidad_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table tipo_documento {
+  id integer [primary key]
+  nombre varchar
+  status varchar
+  created_at timestamp
+}
+
+Table genero{
+  id integer [primary key]
+  nombre varchar
+  status varchar
+  created_at timestamp
+}
+
+Table estudiantes{
+  id integer [primary key]
+  numero_zonificacion integer
+  institucion_procedencia_id integer
+  anio_egreso date
+  talla_camisa integer
+  talla_pantalon integer
+  talla_zapato integer
+  peso integer
+  estatura integer
+  persona_id integer
+  orden_nacimiento_id integer
+  discapacidad_id integer
+  etnia_indigena_id integer
+  expresion_literaria_id int
+  lateralidad_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table orden_nacimiento{
+  id integer [primary key]
+  numero integer
+  status varchar
+  created_at timestamp
+}
+
+Table discapacidad{
+  id integer [primary key]
+  nombre_discapacidad varchar
+  status varchar
+  created_at timestamp
+}
+
+Table etnia_indigena{
+  id integer [primary key]
+  nombre_etnia varchar
+  status varchar
+  created_at timestamp
+}
+
+Table expresion_literaria{
+  id integer [primary key]
+  letra_expresion varchar
+  status varchar
+  created_at timestamp
+}
+
+Table lateralidad{
+  id integer [primary key]
+  nombre_lateralidad varchar
+  status varchar
+  created_at timestamp
+}
+
+Table ocupacion{
+  id integer [primary key]
+  nombre_ocupacion varchar
+  status varchar
+  created_at timestamp
+}
+
+Table banco{
+  id integer [primary key]
+  codigo_banco integer
+  nombre_banco varchar
+  status varchar
+  created_at timestamp
+}
+
+Table representante{
+  id integer [primary key]
+  persona_id integer
+  convivencia_estudiante varchar
+  ocupacion_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table representante_legal{
+  id integer [primary key]
+  correo_representante varchar
+  organizacion varchar
+  carnet_patria varchar
+  localidad_id int
+  representante_id integer
+  banco_id int
+  status varchar
+  created_at timestamp
+}
+
+Table representante_estudiante{
+  id integer [primary key]
+  tipo_representante varchar
+  representante_id integer
+  estudiante_id int
+  status varchar
+  created_at timestamp
+}
+
+Table anio_escolar{
+  id integer [primary key]
+  anio_inicio date
+  anio_fin date
+  status varchar
+  created_at timestamp
+}
+
+Table ejecuciones_percentil{
+  id integer [primary key]
+  fecha_ejecucion date
+  total_evaluados integer
+  status varchar
+  created_at timestamp
+}
+
+Table secciones{
+  id integer [primary key]
+  nombre varchar
+  cantidad_actual integer
+  grado_id integer
+  ejecucion_percentil_id integer
+  status varchar
+  created_at timestamp
+}
+
+table inscripcion{
+  id integer [primary key]
+  tipo_inscripcion varchar
+  fecha_creacion date
+  contrato_convivencia text
+  repitiente_estudiante integer
+  estudiante_id integer
+  representante_id integer
+  grado_id integer
+  status varchar
+  created_at timestamp
+}
+
+Table representante_inscripcion{
+  id integer [primary key]
+  inscripcion_id integer
+  representante_id integer
+  status varchar
+  created_at timestamp
+}
+
+
+Table indice_edad {
+  id integer [primary key]
+  indice integer           // Índice 1..30
+  min_meses integer            // Rango mínimo (edad en meses)
+  max_meses integer            // Rango máximo (edad en meses)
+  status varchar
+  created_at timestamp
+}
+
+Table indice_peso {
+  id integer [primary key]
+  indice integer           // Índice 1..30
+  min_kg numeric                // Ej: 10.1
+  max_kg numeric                // Ej: 12.6
+  status varchar
+  created_at timestamp
+}
+
+Table indice_estatura {
+  id integer [primary key]
+  indice integer           // Índice 1..30
+  min_cm numeric                // Ej: 80.1
+  max_cm numeric                // Ej: 83.6
+  status varchar
+  created_at timestamp
+}
+
+
+Table entradas_percentil {
+  id integer [primary key]
+
+  edad_meses integer
+  peso_kg numeric
+  estatura_cm numeric
+
+  indice_edad integer
+  indice_peso integer
+  indice_estatura integer
+  indice_total integer
+
+  seccion_id integer
+  ejecucion_percentil_id integer
+  inscripcion_id integer
+
+  status varchar
+  created_at timestamp
+}
+
+Ref: entradas_percentil.seccion_id > secciones.id
+Ref: entradas_percentil.ejecucion_percentil_id > ejecuciones_percentil.id
+Ref: entradas_percentil.inscripcion_id > inscripcion.id
+
+Ref: "estudios_realizados"."id" < "area_estudios_realizados"."estudios_realizados_id"
+
+Ref: "area_formacions"."id" < "area_estudios_realizados"."area_formacion_id"
+
+Ref: "prefijo_telefono"."id" < "personas"."prefijo_id"
+
+Ref: "localidad"."id" < "representante_legal"."localidad_id"
+
+
+Ref: "area_formacions"."id" < "grado_area_formacions"."area_formacion_id"
+
+Ref: "grados"."id" < "grado_area_formacions"."grado_id"
+
+Ref: "estudios_realizados"."id" < "docente_estudio_realizado"."estudios_realizados_id"
+
+Ref: "docentes"."id" < "docente_estudio_realizado"."docentes_id"
+
+Ref: "docente_estudio_realizado"."id" < "docente_area_grado"."docente_estudio_realizado_id"
+
+Ref: "area_estudios_realizados"."id" < "docente_area_grado"."area_estudios_realizados_id"
+
+Ref: "grados"."id" < "docente_area_grado"."grado_id"
+
+Ref: "estado"."id" < "municipio"."estado_id"
+
+Ref: "municipio"."id" < "localidad"."municipio_id"
+
+Ref: "localidad"."id" < "institucion_procedencia"."localidad_id"
+
+
+
+Ref: "localidad"."id" < "personas"."localidad_id"
+
+Ref: "rol"."id" < "usuario"."rol_id"
+
+Ref: "tipo_documento"."id" < "personas"."tipo_documento_id"
+
+Ref: "genero"."id" < "personas"."genero_id"
+
+Ref: "personas"."id" < "estudiantes"."persona_id"
+
+Ref: "orden_nacimiento"."id" < "estudiantes"."orden_nacimiento_id"
+
+Ref: "expresion_literaria"."id" < "estudiantes"."expresion_literaria_id"
+
+Ref: "lateralidad"."id" < "estudiantes"."lateralidad_id"
+
+Ref: "etnia_indigena"."id" < "estudiantes"."etnia_indigena_id"
+
+Ref: "discapacidad"."id" < "estudiantes"."discapacidad_id"
+
+Ref: "ocupacion"."id" < "representante"."ocupacion_id"
+
+Ref: "banco"."id" < "representante_legal"."banco_id"
+
+Ref: "personas"."id" < "representante"."persona_id"
+
+Ref: "representante"."id" < "representante_legal"."representante_id"
+
+Ref: "representante"."id" < "representante_estudiante"."representante_id"
+
+Ref: "estudiantes"."id" < "representante_estudiante"."estudiante_id"
+
+Ref: "anio_escolar"."id" < "grados"."anio_escolar_id"
+
+Ref: "grados"."id" < "secciones"."grado_id"
+
+Ref: "ejecuciones_percentil"."id" < "secciones"."ejecucion_percentil_id"
+
+Ref: "estudiantes"."id" < "inscripcion"."estudiante_id"
+
+Ref: "representante"."id" < "inscripcion"."representante_id"
+
+Ref: "inscripcion"."id" < "representante_inscripcion"."inscripcion_id"
+
+Ref: "representante"."id" < "representante_inscripcion"."representante_id"
+
+
+
+
+Ref: "grados"."id" < "inscripcion"."grado_id"
+
+Ref: "indice_peso"."id" < "entradas_percentil"."indice_peso"
+
+Ref: "indice_edad"."id" < "entradas_percentil"."indice_edad"
+
+Ref: "indice_estatura"."id" < "entradas_percentil"."indice_estatura"
+
+Ref: "personas"."id" < "docentes"."persona_id"
+
+Ref: "institucion_procedencia"."id" < "estudiantes"."institucion_procedencia_id"
