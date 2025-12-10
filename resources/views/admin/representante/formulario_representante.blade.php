@@ -684,10 +684,17 @@
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="tipo_representante" id="progenitor_representante" value="progenitor_representante">
-                    <label class="form-check-label d-flex align-items-center" for="progenitor_representante">
+                    <input class="form-check-input" type="radio" name="tipo_representante" id="progenitor_padre_representante" value="progenitor_padre_representante">
+                    <label class="form-check-label d-flex align-items-center" for="progenitor_padre_representante">
                         <i class="fas fa-users me-2"></i>
-                        <span>Progenitor como Representante</span>
+                        <span>Padre como Representante legal</span>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_representante" id="progenitor_madre_representante" value="progenitor_madre_representante">
+                    <label class="form-check-label d-flex align-items-center" for="progenitor_madre_representante">
+                        <i class="fas fa-users me-2"></i>
+                        <span>Madre como Representante legal</span>
                     </label>
                 </div>
             </div>
@@ -1035,6 +1042,7 @@
                                     <option value="" selected>Seleccione</option>
                                     <option value="1">Padre</option>
                                     <option value="2">Madre</option>
+                                    <option value="3">Otro familiar</option>
                                 </select>
                                 <small id="carnet-patria-error" class="text-danger"></small>
                             </div>
@@ -1589,6 +1597,170 @@
                     });
                 }, false);
             })();
+
+            // Función para actualizar las opciones de parentesco según el estado de los progenitores
+            function actualizarOpcionesParentesco() {
+                const parentescoSelect = document.getElementById('parentesco');
+                if (!parentescoSelect) return;
+                
+                const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
+                const estadoPadre = document.querySelector('input[name="estado_padre"]:checked')?.value;
+                const tipoRepresentante = document.querySelector('input[name="tipo_representante"]:checked')?.value;
+                
+                // Obtener todas las opciones del select
+                const opciones = parentescoSelect.options;
+                
+                // Recorrer las opciones y habilitar/deshabilitar según corresponda
+                for (let i = 0; i < opciones.length; i++) {
+                    const opcion = opciones[i];
+                    
+                    if (opcion.value === 'Mamá') {
+                        // Deshabilitar opción "Mamá" si la madre está ausente o si se seleccionó "Solo Representante Legal"
+                        opcion.disabled = (estadoMadre !== 'Presente' || tipoRepresentante === 'solo_representante');
+                        
+                        // Si la opción está seleccionada y se deshabilita, limpiar la selección
+                        if (opcion.selected && opcion.disabled) {
+                            parentescoSelect.value = '';
+                            // Disparar evento change para actualizar validaciones
+                            const event = new Event('change');
+                            parentescoSelect.dispatchEvent(event);
+                        }
+                    } else if (opcion.value === 'Papá') {
+                        // Deshabilitar opción "Papá" si el padre está ausente o si se seleccionó "Solo Representante Legal"
+                        opcion.disabled = (estadoPadre !== 'Presente' || tipoRepresentante === 'solo_representante');
+                        
+                        // Si la opción está seleccionada y se deshabilita, limpiar la selección
+                        if (opcion.selected && opcion.disabled) {
+                            parentescoSelect.value = '';
+                            // Disparar evento change para actualizar validaciones
+                            const event = new Event('change');
+                            parentescoSelect.dispatchEvent(event);
+                        }
+                    }
+                }
+                
+                // Actualizar Select2 si está en uso
+                if (typeof $.fn.select2 === 'function' && $(parentescoSelect).hasClass('select2-hidden-accessible')) {
+                    $(parentescoSelect).trigger('change.select2');
+                }
+            }
+            
+            // Función para actualizar las opciones del Carnet de la Patria según el estado de los padres
+            function actualizarOpcionesCarnetPatria() {
+                const carnetPatriaSelect = document.getElementById('carnet-patria');
+                if (!carnetPatriaSelect) return;
+                
+                const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
+                const estadoPadre = document.querySelector('input[name="estado_padre"]:checked')?.value;
+                
+                // Obtener todas las opciones del select
+                const opciones = carnetPatriaSelect.options;
+                
+                // Recorrer las opciones y habilitar/deshabilitar según corresponda
+                for (let i = 0; i < opciones.length; i++) {
+                    const opcion = opciones[i];
+                    
+                    if (opcion.value === '1') { // Opción "Padre"
+                        // Solo deshabilitar opción "Padre" si el padre está ausente
+                        opcion.disabled = (estadoPadre !== 'Presente');
+                        
+                        // Si la opción está seleccionada y se deshabilita, limpiar la selección
+                        if (opcion.selected && opcion.disabled) {
+                            carnetPatriaSelect.value = '';
+                            // Disparar evento change para actualizar validaciones
+                            const event = new Event('change');
+                            carnetPatriaSelect.dispatchEvent(event);
+                        }
+                    } else if (opcion.value === '2') { // Opción "Madre"
+                        // Solo deshabilitar opción "Madre" si la madre está ausente
+                        opcion.disabled = (estadoMadre !== 'Presente');
+                        
+                        // Si la opción está seleccionada y se deshabilita, limpiar la selección
+                        if (opcion.selected && opcion.disabled) {
+                            carnetPatriaSelect.value = '';
+                            // Disparar evento change para actualizar validaciones
+                            const event = new Event('change');
+                            carnetPatriaSelect.dispatchEvent(event);
+                        }
+                    } else if (opcion.value === '3') { // Opción "Otro familiar"
+                        // Siempre habilitar la opción "Otro familiar"
+                        opcion.disabled = false;
+                    }
+                }
+                
+                // Actualizar Select2 si está en uso
+                if (typeof $.fn.select2 === 'function' && $(carnetPatriaSelect).hasClass('select2-hidden-accessible')) {
+                    $(carnetPatriaSelect).trigger('change.select2');
+                }
+            }
+            
+            // Función para actualizar la disponibilidad de los radios de representante legal
+            function actualizarRadiosRepresentante() {
+                const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
+                const estadoPadre = document.querySelector('input[name="estado_padre"]:checked')?.value;
+                const tipoRepresentante = document.querySelector('input[name="tipo_representante"]:checked')?.value;
+                
+                const radioMadreRepresentante = document.getElementById('progenitor_madre_representante');
+                const radioPadreRepresentante = document.getElementById('progenitor_padre_representante');
+                const radioSoloRepresentante = document.getElementById('solo_representante');
+                
+                // Deshabilitar radio de madre como representante si la madre está ausente o si se seleccionó "Solo Representante Legal"
+                // Deshabilitar radio de madre como representante si la madre está ausente
+                if (radioMadreRepresentante) {
+                    radioMadreRepresentante.disabled = (estadoMadre !== 'Presente');
+                    if (radioMadreRepresentante.disabled && radioMadreRepresentante.checked) {
+                        // Si se deshabilita el radio seleccionado, seleccionar "Solo Representante Legal"
+                        radioSoloRepresentante.checked = true;
+                    }
+                }
+                
+                // Deshabilitar radio de padre como representante si el padre está ausente
+                if (radioPadreRepresentante) {
+                    radioPadreRepresentante.disabled = (estadoPadre !== 'Presente');
+                    if (radioPadreRepresentante.disabled && radioPadreRepresentante.checked) {
+                        // Si se deshabilita el radio seleccionado, seleccionar "Solo Representante Legal"
+                        radioSoloRepresentante.checked = true;
+                    }
+                }
+                
+                // Si ambos padres están ausentes, asegurarse de que solo se pueda seleccionar "Solo Representante Legal"
+                if ((estadoMadre !== 'Presente' && estadoPadre !== 'Presente') && radioSoloRepresentante) {
+                    radioSoloRepresentante.checked = true;
+                }
+                
+                // Actualizar las opciones de parentesco y carnet de la patria
+                actualizarOpcionesParentesco();
+                actualizarOpcionesCarnetPatria();
+            }
+            
+            // Agregar eventos para actualizar los radios cuando cambie el estado de los padres
+            document.querySelectorAll('input[name="estado_madre"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    actualizarRadiosRepresentante();
+                    actualizarOpcionesCarnetPatria(); // Actualizar opciones del Carnet de la Patria
+                });
+            });
+            
+            document.querySelectorAll('input[name="estado_padre"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    actualizarRadiosRepresentante();
+                    actualizarOpcionesCarnetPatria(); // Actualizar opciones del Carnet de la Patria
+                });
+            });
+            
+            // Actualizar cuando cambie el tipo de representante (solo actualizar parentesco, no carnet de la patria)
+            document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    actualizarOpcionesParentesco();
+                    // No actualizamos carnet de la patria aquí para permitir cualquier opción
+                });
+            });
+            
+            // Ejecutar al cargar la página
+            document.addEventListener('DOMContentLoaded', function() {
+                actualizarRadiosRepresentante();
+                actualizarOpcionesCarnetPatria(); // Asegurarse de que las opciones del Carnet de la Patria estén actualizadas
+            });
 
             // ================================
             // VALIDACIÓN EN TIEMPO REAL CÉDULAS
@@ -2257,21 +2429,405 @@ function copiarDesdeMadreOPadreSiCoincide(numero_documento) {
                 }
             });
 
+            // Función para habilitar/deshabilitar campos del representante
+            function toggleCamposRepresentante(deshabilitar = true) {
+                const campos = [
+                    'prefijo-representante',
+                    'tipo-ci-representante',
+                    'numero_documento-representante',
+                    'primer-nombre-representante',
+                    'segundo-nombre-representante',
+                    'tercer-nombre-representante',
+                    'primer-apellido-representante',
+                    'segundo-apellido-representante',
+                    'sexo-representante',
+                    'fecha-nacimiento-representante',
+                    'lugar-nacimiento-representante',
+                    'idEstado-representante',
+                    'idMunicipio-representante',
+                    'idparroquia-representante',
+                    'direccion-representante',
+                    'telefono-representante',
+                    'email-representante',
+                    'ocupacion-representante',
+                    'otra-ocupacion-representante',
+                    'parentesco'
+                ];
+
+                // Aplicar a todos los campos
+                campos.forEach(id => {
+                    const campo = document.getElementById(id);
+                    if (campo) {
+                        campo.disabled = deshabilitar;
+                        campo.readOnly = deshabilitar;
+                        
+                        // Manejar estilos para campos deshabilitados
+                        if (deshabilitar) {
+                            campo.classList.add('bg-light');
+                            campo.classList.add('text-muted');
+                        } else {
+                            campo.classList.remove('bg-light');
+                            campo.classList.remove('text-muted');
+                        }
+                        
+                        // Manejar select2 si está presente
+                        if (typeof $.fn.select2 === 'function' && $(campo).hasClass('select2-hidden-accessible')) {
+                            $(campo).prop('disabled', deshabilitar);
+                            $(campo).trigger('change.select2');
+                        }
+                    }
+                });
+
+                // Manejar radio buttons de convivencia
+                const radiosConvivencia = document.querySelectorAll('input[name="convive-representante"]');
+                radiosConvivencia.forEach(radio => {
+                    radio.disabled = deshabilitar;
+                });
+            }
+
+            // Función para establecer el parentesco según el tipo de representante
+            function establecerParentesco(esMadre = false) {
+                const parentescoSelect = document.getElementById('parentesco');
+                if (parentescoSelect) {
+                    const valorParentesco = esMadre ? 'Mamá' : 'Papá';
+                    
+                    // Verificar que la opción no esté deshabilitada
+                    const opcion = Array.from(parentescoSelect.options).find(opt => opt.value === valorParentesco);
+                    if (opcion && opcion.disabled) {
+                        // Si la opción está deshabilitada, no hacer nada (o manejar el error según sea necesario)
+                        return;
+                    }
+                    
+                    parentescoSelect.value = valorParentesco;
+                    
+                    // Deshabilitar el select
+                    parentescoSelect.disabled = true;
+                    parentescoSelect.classList.add('bg-light', 'text-muted');
+                    
+                    // Disparar evento change para actualizar validaciones
+                    const event = new Event('change');
+                    parentescoSelect.dispatchEvent(event);
+                    
+                    // Actualizar Select2 si está en uso
+                    if (typeof $.fn.select2 === 'function' && $(parentescoSelect).hasClass('select2-hidden-accessible')) {
+                        $(parentescoSelect).val(valorParentesco).trigger('change');
+                    }
+                }
+            }
+            
+            // Función para restablecer el campo de parentesco
+            function resetearParentesco() {
+                const parentescoSelect = document.getElementById('parentesco');
+                if (parentescoSelect) {
+                    parentescoSelect.disabled = false;
+                    parentescoSelect.value = '';
+                    parentescoSelect.classList.remove('bg-light', 'text-muted');
+                    
+                    // Disparar evento change para actualizar validaciones
+                    const event = new Event('change');
+                    parentescoSelect.dispatchEvent(event);
+                    
+                    // Actualizar Select2 si está en uso
+                    if (typeof $.fn.select2 === 'function' && $(parentescoSelect).hasClass('select2-hidden-accessible')) {
+                        $(parentescoSelect).val('').trigger('change');
+                    }
+                }
+            }
+
+            // Función para copiar datos de un progenitor al representante
+            function copiarDatosProgenitorARepresentante(esMadre = false) {
+                const prefijo = esMadre ? '' : '-padre';
+                const mensajeExito = esMadre ? 'de la madre' : 'del padre';
+                
+                // Establecer el parentesco según corresponda
+                establecerParentesco(esMadre);
+                
+                // Habilitar temporalmente los campos para poder copiar los valores
+                toggleCamposRepresentante(false);
+                
+                
+                // Mapeo de campos del progenitor al representante
+                const campos = [
+                    { origen: `prefijo${prefijo}`, destino: 'prefijo-representante' },
+                    { origen: `tipo-ci${prefijo}`, destino: 'tipo-ci-representante' },
+                    { origen: `numero_documento${prefijo}`, destino: 'numero_documento-representante' },
+                    { origen: `primer-nombre${prefijo}`, destino: 'primer-nombre-representante' },
+                    { origen: `segundo-nombre${prefijo}`, destino: 'segundo-nombre-representante' },
+                    { origen: `tercer-nombre${prefijo}`, destino: 'tercer-nombre-representante' },
+                    { origen: `primer-apellido${prefijo}`, destino: 'primer-apellido-representante' },
+                    { origen: `segundo-apellido${prefijo}`, destino: 'segundo-apellido-representante' },
+                    { origen: `sexo${prefijo}`, destino: 'sexo-representante' },
+                    // Usar 'fechaNacimiento' para la madre y 'fecha-nacimiento-padre' para el padre
+                    { 
+                        origen: esMadre ? 'fechaNacimiento' : 'fecha-nacimiento-padre', 
+                        destino: 'fecha-nacimiento-representante' 
+                    },
+                    { origen: `lugar-nacimiento${prefijo}`, destino: 'lugar-nacimiento-representante' },
+                    { 
+                        origen: `idEstado${prefijo}`, 
+                        destino: 'idEstado-representante', 
+                        esSelect: true, 
+                        callback: function() {
+                            const estadoId = document.getElementById('idEstado-representante').value;
+                            if (estadoId) {
+                                cargarMunicipios(estadoId, 'idMunicipio-representante', 'idparroquia-representante');
+                            }
+                        }
+                    },
+                    { 
+                        origen: `idMunicipio${prefijo}`, 
+                        destino: 'idMunicipio-representante', 
+                        esSelect: true, 
+                        callback: function() {
+                            const municipioId = document.getElementById('idMunicipio-representante').value;
+                            if (municipioId) {
+                                cargarLocalidades(municipioId, 'idparroquia-representante');
+                            }
+                        }
+                    },
+                    { origen: `idparroquia${prefijo}`, destino: 'idparroquia-representante', esSelect: true },
+                    { origen: `direccion${prefijo}`, destino: 'direccion-representante' },
+                    { origen: `telefono${prefijo}`, destino: 'telefono-representante' },
+                    { origen: `email${prefijo}`, destino: 'email-representante' },
+                    // Campos de ocupación - sin prefijo para la madre, con -padre para el padre
+                    { 
+                        origen: esMadre ? 'ocupacion-madre' : 'ocupacion-padre', 
+                        destino: 'ocupacion-representante', 
+                        esSelect: true,
+                        callback: function() {
+                            // Obtener referencias a los elementos necesarios
+                            const origenOcupacionId = esMadre ? 'ocupacion-madre' : 'ocupacion-padre';
+                            const origenOtraOcupacionId = esMadre ? 'otra-ocupacion' : 'otra-ocupacion-padre';
+                            
+                            const ocupacionSelect = document.getElementById(origenOcupacionId);
+                            const otraOcupacion = document.getElementById(origenOtraOcupacionId);
+                            const otraOcupacionRep = document.getElementById('otra-ocupacion-representante');
+                            const otraOcupacionContainer = document.getElementById('otra-ocupacion-container');
+                            
+                            if (ocupacionSelect && ocupacionSelect.value === 'otro' && otraOcupacion && otraOcupacionRep) {
+                                // Mostrar el campo de otra ocupación si es necesario
+                                if (otraOcupacionContainer) {
+                                    otraOcupacionContainer.style.display = 'block';
+                                }
+                                // Copiar el valor de otra ocupación
+                                otraOcupacionRep.value = otraOcupacion.value;
+                            } else if (otraOcupacionContainer) {
+                                otraOcupacionContainer.style.display = 'none';
+                            }
+                            
+                            // Forzar la actualización del select2 si está presente
+                            if (typeof $.fn.select2 === 'function') {
+                                $('#ocupacion-representante').trigger('change.select2');
+                            }
+                        }
+                    },
+                    { 
+                        origen: esMadre ? 'otra-ocupacion' : 'otra-ocupacion-padre', 
+                        destino: 'otra-ocupacion-representante',
+                        callback: function() {
+                            // Forzar la actualización del campo de texto
+                            const otraOcupacionRep = document.getElementById('otra-ocupacion-representante');
+                            if (otraOcupacionRep) {
+                                const event = new Event('input');
+                                otraOcupacionRep.dispatchEvent(event);
+                            }
+                        }
+                    }
+                ];
+                
+                // Copiar cada campo
+                campos.forEach(campo => {
+                    const origen = document.getElementById(campo.origen);
+                    const destino = document.getElementById(campo.destino);
+                    
+                    if (origen && destino) {
+                        if (campo.esSelect) {
+                            // Para selects, copiar el valor seleccionado
+                            destino.value = origen.value;
+                            // Disparar evento change si existe un callback
+                            if (campo.callback && typeof campo.callback === 'function') {
+                                campo.callback();
+                            }
+                        } else {
+                            // Para inputs normales, copiar el valor
+                            destino.value = origen.value;
+                            // Disparar evento input para activar validaciones
+                            destino.dispatchEvent(new Event('input'));
+                            if (campo.callback && typeof campo.callback === 'function') {
+                                campo.callback();
+                            }
+                        }
+                        
+                        // Disparar evento change para actualizar la interfaz
+                        destino.dispatchEvent(new Event('change'));
+                        
+                        // Aplicar estilos de solo lectura
+                        destino.classList.add('bg-light', 'text-muted');
+                        destino.readOnly = true;
+                    }
+                });
+                
+                // Deshabilitar los campos después de copiar los datos
+                toggleCamposRepresentante(true);
+                
+                // Manejar la convivencia
+                const convive = document.querySelector(`input[name="convive${prefijo}"]:checked`);
+                if (convive) {
+                    const conviveRepresentante = document.querySelector(`input[name="convive-representante"][value="${convive.value}"]`);
+                    if (conviveRepresentante) {
+                        conviveRepresentante.checked = true;
+                        // Disparar evento change para actualizar la interfaz
+                        const event = new Event('change');
+                        conviveRepresentante.dispatchEvent(event);
+                        
+                        // Forzar la actualización visual si es necesario
+                        if (typeof $.fn.select2 === 'function') {
+                            $('input[name="convive-representante"]').trigger('change');
+                        }
+                    }
+                }
+                
+                // Copiar cada campo
+                campos.forEach(campo => {
+                    const origen = document.getElementById(campo.origen);
+                    const destino = document.getElementById(campo.destino);
+                    
+                    if (origen && destino) {
+                        if (campo.esSelect) {
+                            // Para selects, copiar el valor seleccionado
+                            destino.value = origen.value;
+                            // Disparar evento change si existe un callback
+                            if (campo.callback && typeof campo.callback === 'function') {
+                                campo.callback();
+                            }
+                        } else {
+                            // Para inputs normales, copiar el valor
+                            destino.value = origen.value;
+                        }
+                        
+                        // Disparar evento input para activar validaciones
+                        destino.dispatchEvent(new Event('input'));
+                        destino.dispatchEvent(new Event('change'));
+                    }
+                });
+                
+                // Actualizar Select2 si está disponible
+                if (typeof $.fn.select2 === 'function') {
+                    $('select').select2();
+                }
+                
+                console.log(`Datos ${mensajeExito} copiados al representante`);
+            }
+            
+            // Función para copiar datos del padre al representante
+            function copiarDatosPadreARepresentante() {
+                return copiarDatosProgenitorARepresentante(false);
+            }
+            
+            // Función para copiar datos de la madre al representante
+            function copiarDatosMadreARepresentante() {
+                return copiarDatosProgenitorARepresentante(true);
+            }
+
+            // Función para restablecer los campos del representante
+            function resetearCamposRepresentante() {
+                // Habilitar todos los campos
+                toggleCamposRepresentante(false);
+                
+                // Restablecer el campo de parentesco
+                resetearParentesco();
+                
+                // Limpiar los valores
+                const campos = [
+                    'prefijo-representante',
+                    'tipo-ci-representante',
+                    'numero_documento-representante',
+                    'primer-nombre-representante',
+                    'segundo-nombre-representante',
+                    'tercer-nombre-representante',
+                    'primer-apellido-representante',
+                    'segundo-apellido-representante',
+                    'sexo-representante',
+                    'fecha-nacimiento-representante',
+                    'lugar-nacimiento-representante',
+                    'idEstado-representante',
+                    'idMunicipio-representante',
+                    'idparroquia-representante',
+                    'direccion-representante',
+                    'telefono-representante',
+                    'email-representante',
+                    'ocupacion-representante',
+                    'otra-ocupacion-representante'
+                ];
+
+                // Limpiar campos
+                campos.forEach(id => {
+                    const campo = document.getElementById(id);
+                    if (campo) {
+                        campo.value = '';
+                        campo.classList.remove('bg-light', 'text-muted');
+                        campo.readOnly = false;
+                        campo.disabled = false;
+                        
+                        // Disparar evento change para actualizar la interfaz
+                        const event = new Event('change');
+                        campo.dispatchEvent(event);
+                        
+                        // Manejar select2 si está presente
+                        if (typeof $.fn.select2 === 'function' && $(campo).hasClass('select2-hidden-accessible')) {
+                            $(campo).val(null).trigger('change');
+                        }
+                    }
+                });
+                
+                // Desmarcar radios de convivencia
+                document.querySelectorAll('input[name="convive-representante"]').forEach(radio => {
+                    radio.checked = false;
+                    radio.disabled = false;
+                });
+            }
+
             // Manejar cambios en los radio buttons de tipo de representante
             document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     const tipo = this.value;
                     
-                    // Limpiar errores de validación de cédula cuando se selecciona 'Progenitor como Representante'
-                    if (tipo === 'progenitor_representante') {
-                        const numero_documentoRepresentante = document.getElementById('numero_documento-representante');
-                        if (numero_documentoRepresentante) {
-                            limpiarnumero_documentoError(numero_documentoRepresentante);
-                            
-                            // Si hay un valor en la cédula del representante, forzar la validación
-                            if (numero_documentoRepresentante.value) {
-                                numero_documentoRepresentante.dispatchEvent(new Event('blur'));
-                            }
+                    // Restablecer campos del representante
+                    resetearCamposRepresentante();
+                    
+                    // Mostrar la sección de representante
+                    toggleSeccionRepresentante(true);
+                    
+                    // Si se selecciona "Padre como Representante legal"
+                    if (tipo === 'progenitor_padre_representante') {
+                        // Verificar si el padre está presente
+                        const padrePresente = document.querySelector('input[name="estado_padre"]:checked')?.value === 'Presente';
+                        
+                        if (padrePresente) {
+                            // Establecer el parentesco como "Padre"
+                            establecerParentesco(false);
+                            // Copiar los datos del padre al representante
+                            copiarDatosPadreARepresentante();
+                        } else {
+                            // Si el padre no está presente, seleccionar "Solo Representante Legal"
+                            document.getElementById('solo_representante').checked = true;
+                            alert('No se puede seleccionar al padre como representante porque está marcado como ausente.');
+                            return;
+                        }
+                    }
+                    // Si se selecciona "Madre como Representante legal"
+                    else if (tipo === 'progenitor_madre_representante') {
+                        // Verificar si la madre está presente
+                        const madrePresente = document.querySelector('input[name="estado_madre"]:checked')?.value === 'Presente';
+                        
+                        if (madrePresente) {
+                            // Copiar los datos de la madre al representante
+                            copiarDatosMadreARepresentante();
+                        } else {
+                            // Si la madre no está presente, seleccionar "Solo Representante Legal"
+                            document.getElementById('solo_representante').checked = true;
+                            alert('No se puede seleccionar a la madre como representante porque está marcada como ausente.');
+                            return;
                         }
                     }
                     

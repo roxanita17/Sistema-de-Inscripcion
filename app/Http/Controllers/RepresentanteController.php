@@ -1205,18 +1205,26 @@ public function mostrarFormularioEditar($id)
     |--------------------------------------------------------------------------
     */
 
-    public function reportePDF(Request $request)
-    {
-        $filtro = $request->all();
-        $representantes = Representante::reportePDF($filtro);
+public function reportePDF(Request $request)
+{
+    $filtro = $request->all();
+    
+    $representantes = Representante::reportePDF($filtro);
+    
+    // Ordenamos por la primera letra del primer apellido
+    $representantes = $representantes->sortBy(function($item) {
+        // Accedemos directamente a la propiedad si existe
+        $primerApellido = $item->primer_apellido ?? 
+                         ($item->persona->primer_apellido ?? '');
+        return strtoupper(substr($primerApellido, 0, 1));
+    });
 
-        if($representantes->isEmpty()){
-            return response()->json('No se encontraron representantes', 404);
-        }
-
-
-        $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes'));
-        return $pdf->stream('representantes.pdf');
+    if($representantes->isEmpty()){
+        return response()->json('No se encontraron representantes', 404);
     }
+
+    $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes'));
+    return $pdf->stream('representantes.pdf');
+}
 
 }

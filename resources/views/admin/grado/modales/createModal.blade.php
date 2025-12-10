@@ -8,7 +8,7 @@
                 <div class="modal-icon-create">
                     <i class="fas fa-plus-circle"></i>
                 </div>
-                <h5 class="modal-title-create" id="modalCrearGradoLabel">Nuevo Grado</h5>
+                <h5 class="modal-title-create" id="modalCrearGradoLabel">Nuevo Año</h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                     <i class="fas fa-times"></i>
                 </button>
@@ -25,7 +25,7 @@
                     {{-- Numero de grado --}}
                     <div class="form-group-modern">
                         <label for="numero_grado" class="form-label-modern">
-                            <i class="fas fa-hashtag me-2"></i> Número de Grado
+                            <i class="fas fa-hashtag me-2"></i> Número de año
                         </label>
                         <input type="text" 
                                class="form-control-modern" 

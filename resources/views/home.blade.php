@@ -347,7 +347,7 @@
             <div class="stat-card-header">
                 <div>
                     <div class="stat-number">{{ $totalGrados ?? 0 }}</div>
-                    <div class="stat-label">Grados Activos</div>
+                    <div class="stat-label">Años Activos</div>
                 </div>
                 <div class="stat-icon warning">
                     <i class="fas fa-school"></i>

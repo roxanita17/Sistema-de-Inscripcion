@@ -319,7 +319,7 @@ return [
         
 
         [
-            'text' => 'Grados',
+            'text' => 'Años',
             'url' => 'admin/grado',
             'icon' => 'fas fa-fw fa-layer-group',
             'icon_color' => 'primary',
@@ -343,7 +343,7 @@ return [
             'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*', 'admin/transacciones/docente*'],
             'submenu' => [
                 [
-                    'text' => 'Grados',
+                    'text' => 'Años',
                     'url'  => 'admin/grado',
                     'icon' => 'fas fa-list-ol',
                 ],
@@ -353,7 +353,7 @@ return [
                     'icon' => 'fas fa-book-open',
                 ],
                 [
-                    'text' => 'Grado → Área Académica',
+                    'text' => 'Años → Área Académica',
                     'url'  => 'admin/transacciones/grado_area_formacion',
                     'icon' => 'fas fa-link',
                 ],

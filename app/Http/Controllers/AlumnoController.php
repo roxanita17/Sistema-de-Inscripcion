@@ -127,15 +127,29 @@ class AlumnoController extends Controller
         return $pdf->stream('alumno_' . $alumno->persona->numero_documento . '.pdf');
     }
 
-    public function reporteGeneralPDF(Request $request){
-        $alumnos = Alumno::ReportePDF();
-        
-        if ($alumnos->isEmpty()) {
-           return response('No se encontraron alumnosS con los criterios seleccionados', 404);
-        }
+public function reporteGeneralPDF(Request $request)
+{
+    $alumnos = Alumno::ReportePDF()
+        ->map(function($alumno) {
+            // Si el alumno tiene relación con persona, usar esos datos
+            if (isset($alumno->persona)) {
+                $alumno->primer_apellido = $alumno->persona->primer_apellido ?? 'N/A';
+            }
+            return $alumno;
+        })
+        ->sortBy(function($alumno) {
+            // Ordenar por la primera letra del primer apellido
+            $primerApellido = $alumno->primer_apellido ?? 
+                            ($alumno->persona->primer_apellido ?? '');
+            return strtoupper(substr($primerApellido, 0, 1));
+        })
+        ->values(); // Reindexar el array después de ordenar
 
-
-        $pdf = PDF::loadview('admin.alumnos.reportes.Reporte_General', compact('alumnos'));
-        return $pdf->stream('alumnos.pdf');
+    if ($alumnos->isEmpty()) {
+        return response('No se encontraron alumnos con los criterios seleccionados', 404);
     }
+
+    $pdf = PDF::loadview('admin.alumnos.reportes.Reporte_General', compact('alumnos'));
+    return $pdf->stream('alumnos.pdf');
+}
 }
