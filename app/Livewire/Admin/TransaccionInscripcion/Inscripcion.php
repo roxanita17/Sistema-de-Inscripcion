@@ -47,7 +47,7 @@ class Inscripcion extends Component
     public $observaciones;
 
     /* ============================================================
-       =====================   VALIDACIÓN   ========================
+       =====================   VALIDACIÃ“N   ========================
        ============================================================ */
 
     protected $rules = [
@@ -61,7 +61,7 @@ class Inscripcion extends Component
     protected $messages = [
         'alumnoId.required' => 'Debe seleccionar un alumno',
         'gradoId.required' => 'Debe seleccionar un grado',
-        'fecha_inscripcion.required' => 'La fecha de inscripción es obligatoria',
+        'fecha_inscripcion.required' => 'La fecha de inscripciÃ³n es obligatoria',
     ];
 
     /* ============================================================
@@ -70,7 +70,7 @@ class Inscripcion extends Component
 
     public function mount()
     {
-        // 1) SI HAY DATOS EN SESIÓN, cargarlos primero
+        // 1) SI HAY DATOS EN SESIÃ“N, cargarlos primero
         if (session()->has('inscripcion_temp')) {
             $data = session()->get('inscripcion_temp');
 
@@ -92,7 +92,7 @@ class Inscripcion extends Component
         $this->cargarMadres();
         $this->cargarRepresentantesLegales();
 
-        // 3) Cargar automáticamente los detalles según los ID restaurados
+        // 3) Cargar automÃ¡ticamente los detalles segÃºn los ID restaurados
         if ($this->alumnoId) {
             $this->updatedAlumnoId($this->alumnoId);
         }
@@ -108,7 +108,7 @@ class Inscripcion extends Component
     }
 
     /* ============================================================
-       =======  MÉTODOS DE CARGA DE LISTAS (SELECTS) ==============
+       =======  MÃ‰TODOS DE CARGA DE LISTAS (SELECTS) ==============
        ============================================================ */
 
     /**
@@ -148,7 +148,7 @@ class Inscripcion extends Component
     }
 
     /**
-     * Obtener representantes por género
+     * Obtener representantes por gÃ©nero
      */
     private function obtenerRepresentantesPorGenero($genero)
     {
@@ -199,7 +199,7 @@ class Inscripcion extends Component
     }
 
     /* ============================================================
-       =========  MÉTODOS updated() PARA CARGAR DETALLES ==========
+       =========  MÃ‰TODOS updated() PARA CARGAR DETALLES ==========
        ============================================================ */
 
     public function updatedAlumnoId($value)
@@ -217,13 +217,13 @@ class Inscripcion extends Component
             'lateralidad',
         ])->find($value);
 
-        // Verificar inscripción activa
+        // Verificar inscripciÃ³n activa
         $inscripcionExistente = ModeloInscripcion::where('alumno_id', $value)
             ->where('status', true)
             ->first();
 
         if ($inscripcionExistente) {
-            session()->flash('warning', 'Este alumno ya tiene una inscripción activa.');
+            session()->flash('warning', 'Este alumno ya tiene una inscripciÃ³n activa.');
         }
     }
 
@@ -255,7 +255,7 @@ class Inscripcion extends Component
     protected $listeners = ['recibirDatosAlumno' => 'guardarTodo'];
 
     /* ============================================================
-       =========  MÉTODO registrar() – guardar inscripción SOLO
+       =========  MÃ‰TODO registrar() â€“ guardar inscripciÃ³n SOLO
        ============================================================ */
 
     public function registrar()
@@ -302,7 +302,7 @@ class Inscripcion extends Component
 
             DB::commit();
 
-            session()->flash('success', 'Inscripción registrada exitosamente.');
+            session()->flash('success', 'InscripciÃ³n registrada exitosamente.');
             $this->limpiar();
 
             session()->forget('inscripcion_temp');
@@ -345,7 +345,7 @@ class Inscripcion extends Component
 
 
     /* ============================================================
-       FUNCION guardarTodo() (Guardar Alumno y Inscripción en 1 acción)
+       FUNCION guardarTodo() (Guardar Alumno y InscripciÃ³n en 1 acciÃ³n)
        ============================================================ */
 
     public function guardarTodo($datos = [])
@@ -389,7 +389,7 @@ class Inscripcion extends Component
                 'status' => 'Activo',
             ]);
 
-            // Crear inscripción
+            // Crear inscripciÃ³n
             ModeloInscripcion::create([
                 'alumno_id' => $alumno->id,
                 'grado_id' => $this->grados,
@@ -416,7 +416,7 @@ class Inscripcion extends Component
 
             DB::commit();
 
-            session()->flash('success', 'Inscripción guardada exitosamente.');
+            session()->flash('success', 'Inscripcion guardada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
         } catch (\Exception $e) {
             DB::rollBack();
