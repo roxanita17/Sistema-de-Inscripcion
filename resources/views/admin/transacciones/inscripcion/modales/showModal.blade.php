@@ -1,6 +1,6 @@
 <!-- Modal Ver Información de la Inscripción -->
-<div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1"
-    aria-labelledby="viewModalLabel{{ $datos->id }}" aria-hidden="true">
+<div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content modal-modern shadow">
 
@@ -12,8 +12,8 @@
                 <h5 class="modal-title modal-title-view">
                     Información de la Inscripción
                 </h5>
-                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
-                        data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                    data-bs-dismiss="modal"></button>
             </div>
 
             <!-- BODY -->
@@ -28,7 +28,8 @@
                         <div class="details-card">
                             <div class="detail-item">
                                 <span class="detail-label"><i class="fas fa-id-card"></i> Cédula</span>
-                                <span class="detail-value">{{ $datos->alumno->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $datos->alumno->persona->numero_documento ?? 'N/A' }}</span>
+                                <span
+                                    class="detail-value">{{ $datos->alumno->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $datos->alumno->persona->numero_documento ?? 'N/A' }}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label"><i class="fas fa-user"></i> Nombre Completo</span>
@@ -50,15 +51,18 @@
                         <div class="details-card">
                             <div class="detail-item">
                                 <span class="detail-label"><i class="fas fa-male"></i> Padre</span>
-                                <span class="detail-value">{{ $datos->padre ? $datos->padre->persona->primer_nombre.' '.$datos->padre->persona->primer_apellido : 'No registrado' }}</span>
+                                <span
+                                    class="detail-value">{{ $datos->padre ? $datos->padre->persona->primer_nombre . ' ' . $datos->padre->persona->primer_apellido : 'No registrado' }}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label"><i class="fas fa-female"></i> Madre</span>
-                                <span class="detail-value">{{ $datos->madre ? $datos->madre->persona->primer_nombre.' '.$datos->madre->persona->primer_apellido : 'No registrada' }}</span>
+                                <span
+                                    class="detail-value">{{ $datos->madre ? $datos->madre->persona->primer_nombre . ' ' . $datos->madre->persona->primer_apellido : 'No registrada' }}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label"><i class="fas fa-user-tie"></i> Representante Legal</span>
-                                <span class="detail-value">{{ $datos->representanteLegal ? $datos->representanteLegal->representante->persona->primer_nombre.' '.$datos->representanteLegal->representante->persona->primer_apellido : 'No registrado' }}</span>
+                                <span
+                                    class="detail-value">{{ $datos->representanteLegal ? $datos->representanteLegal->representante->persona->primer_nombre . ' ' . $datos->representanteLegal->representante->persona->primer_apellido : 'No registrado' }}</span>
                             </div>
                         </div>
                     </div>
@@ -69,7 +73,8 @@
                 ======================= -->
                 <h5 class="mb-3 text-success">
                     <i class="fas fa-file-alt me-2"></i> Documentos Entregados
-                    <span class="badge-status {{ $datos->estado_documentos == 'Completos' ? 'badge-active' : 'badge-extended' }}">
+                    <span
+                        class="badge-status {{ $datos->estado_documentos == 'Completos' ? 'badge-active' : 'badge-extended' }}">
                         {{ $datos->estado_documentos }}
                     </span>
                 </h5>
@@ -88,19 +93,27 @@
                             'carnet_vacunacion' => 'Carnet de Vacunación',
                             'autorizacion_tercero' => 'Autorización Tercero',
                         ];
+
+                        // Convertir documentos en array
+                        $documentosEntregados = is_array($datos->documentos)
+                            ? $datos->documentos
+                            : (json_decode($datos->documentos, true) ?:
+                            []);
                     @endphp
 
-                    @foreach($todosDocumentos as $key => $label)
+                    @foreach ($todosDocumentos as $key => $label)
                         <div class="col-md-6">
                             <div class="detail-item">
                                 <span class="detail-label">
-                                    <i class="fas fa-{{ in_array($key, $datos->documentos ?? []) ? 'check-circle text-success' : 'times-circle text-danger' }}"></i>
+                                    <i
+                                        class="fas fa-{{ in_array($key, $documentosEntregados) ? 'check-circle text-success' : 'times-circle text-danger' }}"></i>
                                     {{ $label }}
                                 </span>
-                                <span class="detail-value">{{ in_array($key, $datos->documentos ?? []) ? 'Entregado' : 'Faltante' }}</span>
+                                <span
+                                    class="detail-value">{{ in_array($key, $documentosEntregados) ? 'Entregado' : 'Faltante' }}</span>
                             </div>
                         </div>
-                    @endforeach
+                    @endforeach 
                 </div>
 
                 <!-- ======================

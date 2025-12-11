@@ -1,6 +1,6 @@
 <div>
 
-   {{-- Alertas --}}
+    {{-- Alertas --}}
     @if (session()->has('success') || session()->has('error') || session()->has('warning'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
@@ -43,11 +43,11 @@
         </div>
     @endif
 
-    {{-- Card: Formulario de alumno--}}
-    <div class="card-body-modern" >
+    {{-- Card: Formulario de alumno --}}
+    <div class="card-body-modern">
         <livewire:admin.alumnos.alumno-create>
     </div>
-    
+
 
     {{-- Card: Seleccionar Representantes --}}
     <div class="card-modern mb-4">
@@ -64,23 +64,23 @@
         </div>
 
         <div class="card-body-modern" style="padding: 2rem;">
+
+
             {{-- Padre --}}
             <div class="row mb-3">
+
                 <div class="col-md-12" wire:ignore>
                     <label for="padre_select" class="form-label-modern">
                         <i class="fas fa-male"></i>
                         Padre
                     </label>
-                    
-                    <select id="padre_select"
-                            class="form-control-modern selectpicker"
-                            data-live-search="true"
-                            data-size="8"
-                            data-width="100%">
+
+                    <select id="padre_select" class="form-control-modern selectpicker" data-live-search="true"
+                        data-size="8" data-width="100%">
                         <option value="">Seleccione al padre (opcional)</option>
                         @foreach ($padres as $padre)
                             <option value="{{ $padre['id'] }}"
-                                    data-subtext="{{ $padre['tipo_documento'] }}-{{ $padre['numero_documento'] }}">
+                                data-subtext="{{ $padre['tipo_documento'] }}-{{ $padre['numero_documento'] }}">
                                 {{ $padre['nombre_completo'] }}
                             </option>
                         @endforeach
@@ -95,20 +95,18 @@
                         <i class="fas fa-female"></i>
                         Madre
                     </label>
-                    
-                    <select id="madre_select"
-                            class="form-control-modern selectpicker"
-                            data-live-search="true"
-                            data-size="8"
-                            data-width="100%">
+
+                    <select id="madre_select" class="form-control-modern selectpicker" data-live-search="true"
+                        data-size="8" data-width="100%">
                         <option value="">Seleccione a la madre (opcional)</option>
                         @foreach ($madres as $madre)
                             <option value="{{ $madre['id'] }}"
-                                    data-subtext="{{ $madre['tipo_documento'] }}-{{ $madre['numero_documento'] }}">
+                                data-subtext="{{ $madre['tipo_documento'] }}-{{ $madre['numero_documento'] }}">
                                 {{ $madre['nombre_completo'] }}
                             </option>
                         @endforeach
                     </select>
+
                 </div>
             </div>
 
@@ -119,21 +117,40 @@
                         <i class="fas fa-gavel"></i>
                         Representante Legal
                     </label>
-                    
-                    <select id="representante_legal_select"
-                            class="form-control-modern selectpicker"
-                            data-live-search="true"
-                            data-size="8"
-                            data-width="100%">
+
+                    <select id="representante_legal_select" class="form-control-modern selectpicker"
+                        data-live-search="true" data-size="8" data-width="100%">
                         <option value="">Seleccione un representante legal</option>
                         @foreach ($representantes as $rep)
                             <option value="{{ $rep['id'] }}"
-                                    data-subtext="{{ $rep['tipo_documento'] }}-{{ $rep['numero_documento'] }}">
+                                data-subtext="{{ $rep['tipo_documento'] }}-{{ $rep['numero_documento'] }}">
                                 {{ $rep['nombre_completo'] }}
                             </option>
                         @endforeach
                     </select>
                 </div>
+            </div>
+
+            <div class="row align-items-center mb-4 mt-4">
+
+                <div class="col-md-9">
+                    <div class="alert alert-warning d-flex align-items-start p-3 mb-0 shadow-sm" role="alert"
+                        style="border-left: 5px solid #f0ad4e;">
+                        <i class="fas fa-exclamation-triangle fa-lg me-3 mt-1"></i>
+
+                        <div class="grow">
+                            <strong class="d-block mb-1">Atención</strong>
+                            <span class="d-block">Si el representante no existe, puede crearlo ahora.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                    <button type="button" wire:click="irACrearRepresentante" class="btn-create">
+                        <i class="fas fa-plus"></i> Crear Representante
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -159,36 +176,35 @@
                 @endphp
 
                 @foreach ([
-                    'partida_nacimiento' => 'Partida de Nacimiento',
-                    'copia_cedula_representante' => 'Copia de Cédula del Representante',
-                    'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
-                    'boletin_6to_grado' => 'Boletín de 6to Grado',
-                    'certificado_calificaciones' => 'Certificado de Calificaciones',
-                    'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
-                    'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
-                    'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
-                    'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
-                    'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)'
-                ] as $documento => $etiqueta)
-                    @if($colCounter % 10 === 0 && $colCounter !== 0)
-                        </div><div class="row mt-3">
-                    @endif
+        'partida_nacimiento' => 'Partida de Nacimiento',
+        'copia_cedula_representante' => 'Copia de Cédula del Representante',
+        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
+        'boletin_6to_grado' => 'Boletín de 6to Grado',
+        'certificado_calificaciones' => 'Certificado de Calificaciones',
+        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
+        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
+        'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
+        'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
+        'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
+    ] as $documento => $etiqueta)
+                    @if ($colCounter % 10 === 0 && $colCounter !== 0)
+            </div>
+            <div class="row mt-3">
+                @endif
 
-                    <div class="col-md-6 mb-3">
-                        <div class="checkbox-item-modern">
-                            <input type="checkbox" 
-                                id="{{ $documento }}" 
-                                wire:model.live="documentos"
-                                value="{{ $documento }}"
-                                class="checkbox-modern">
-                            <label for="{{ $documento }}" class="checkbox-label-modern">
-                                <i class="fas fa-{{ $documento === 'carnet_vacunacion' ? 'syringe' : ($documento === 'foto_estudiante' || $documento === 'foto_representante' ? 'camera' : ($documento === 'autorizacion_tercero' ? 'file-signature' : 'file-alt')) }}"></i>
-                                {{ $etiqueta }}
-                            </label>
-                        </div>
+                <div class="col-md-6 mb-3">
+                    <div class="checkbox-item-modern">
+                        <input type="checkbox" id="{{ $documento }}" wire:model.live="documentos"
+                            value="{{ $documento }}" class="checkbox-modern">
+                        <label for="{{ $documento }}" class="checkbox-label-modern">
+                            <i
+                                class="fas fa-{{ $documento === 'carnet_vacunacion' ? 'syringe' : ($documento === 'foto_estudiante' || $documento === 'foto_representante' ? 'camera' : ($documento === 'autorizacion_tercero' ? 'file-signature' : 'file-alt')) }}"></i>
+                            {{ $etiqueta }}
+                        </label>
                     </div>
+                </div>
 
-                    @php $colCounter++; @endphp
+                @php $colCounter++; @endphp
                 @endforeach
             </div>
         </div>
@@ -220,7 +236,7 @@
                                 id="grado_id"
                                 class="form-control-modern @error('gradoId') is-invalid @enderror">
                             <option value="">Seleccione un grado</option>
-                            @foreach($grados as $grado)
+                            @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
                             @endforeach
                         </select>
@@ -239,9 +255,7 @@
                             Fecha de Inscripción
                             <span class="required-badge">*</span>
                         </label>
-                        <input type="date" 
-                            wire:model="fecha_inscripcion" 
-                            id="fecha_inscripcion"
+                        <input type="date" wire:model="fecha_inscripcion" id="fecha_inscripcion"
                             class="form-control-modern @error('fecha_inscripcion') is-invalid @enderror">
                         @error('fecha_inscripcion')
                             <div class="invalid-feedback-modern">
@@ -258,11 +272,8 @@
                                 <i class="fas fa-comment"></i>
                                 Observaciones
                             </label>
-                            <textarea wire:model="observaciones" 
-                                    id="observaciones"
-                                    class="form-control-modern" 
-                                    rows="3"
-                                    placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
+                            <textarea wire:model="observaciones" id="observaciones" class="form-control-modern" rows="3"
+                                placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -273,16 +284,12 @@
         <div class="card-modern">
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="button" 
-                            wire:click="limpiar"
-                            class="btn-cancel-modern">
+                    <button type="button" wire:click="limpiar" class="btn-cancel-modern">
                         <i class="fas fa-broom"></i>
                         Limpiar
                     </button>
-                    <button type="button" 
-                            wire:click="finalizar" 
-                            class="btn-primary-modern"
-                            wire:loading.attr="disabled">
+                    <button type="button" wire:click="finalizar" class="btn-primary-modern"
+                        wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="finalizar">
                             <i class="fas fa-save"></i>
                             Guardar Inscripción
@@ -297,47 +304,47 @@
         </div>
 
     </div>
-</div>  
-            
+</div>
+
 
 
 @push('js')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Inicializar selectpickers
-    $('.selectpicker').selectpicker();
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar selectpickers
+            $('.selectpicker').selectpicker();
 
-    // Sincronizar alumno con Livewire
-    $('#alumno_select').on('changed.bs.select', function () {
-        @this.set('alumnoId', $(this).val());
-    });
+            // Sincronizar alumno con Livewire
+            $('#alumno_select').on('changed.bs.select', function() {
+                @this.set('alumnoId', $(this).val());
+            });
 
-    // Sincronizar padre con Livewire
-    $('#padre_select').on('changed.bs.select', function () {
-        @this.set('padreId', $(this).val());
-    });
+            // Sincronizar padre con Livewire
+            $('#padre_select').on('changed.bs.select', function() {
+                @this.set('padreId', $(this).val());
+            });
 
-    // Sincronizar madre con Livewire
-    $('#madre_select').on('changed.bs.select', function () {
-        @this.set('madreId', $(this).val());
-    });
+            // Sincronizar madre con Livewire
+            $('#madre_select').on('changed.bs.select', function() {
+                @this.set('madreId', $(this).val());
+            });
 
-    // Sincronizar representante legal con Livewire
-    $('#representante_legal_select').on('changed.bs.select', function () {
-        @this.set('representanteLegalId', $(this).val());
-    });
-});
+            // Sincronizar representante legal con Livewire
+            $('#representante_legal_select').on('changed.bs.select', function() {
+                @this.set('representanteLegalId', $(this).val());
+            });
+        });
 
-// Refrescar selectpickers cuando Livewire actualiza
-document.addEventListener('livewire:updated', function () {
-    $('.selectpicker').selectpicker('refresh');
-});
+        // Refrescar selectpickers cuando Livewire actualiza
+        document.addEventListener('livewire:updated', function() {
+            $('.selectpicker').selectpicker('refresh');
+        });
 
-// Resetear selects cuando se limpia el formulario
-Livewire.on('resetSelects', () => {
-    $('.selectpicker').val('').selectpicker('refresh');
-});
-</script>
+        // Resetear selects cuando se limpia el formulario
+        Livewire.on('resetSelects', () => {
+            $('.selectpicker').val('').selectpicker('refresh');
+        });
+    </script>
 
     <style>
         .radio-item-modern {
@@ -380,4 +387,3 @@ Livewire.on('resetSelects', () => {
         }
     </style>
 @endpush
-
