@@ -991,7 +991,7 @@
                             </div>
                             <div class="col-md-3">
                                 <input type="text" class="form-control" id="segundo-apellido-representante" name="segundo-apellido-representante" placeholder="Segundo apellido"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios,no se aceptan números" required>
+                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios,no se aceptan números">
                                 <small class="text-danger" id="segundo-apellido-representante-error"></small>
                             </div>
                         </div>
