@@ -43,12 +43,6 @@
         </div>
     @endif
 
-    {{-- Card: Formulario de alumno --}}
-    <div class="card-body-modern">
-        <livewire:admin.alumnos.alumno-create>
-    </div>
-
-
     {{-- Card: Seleccionar Representantes --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
@@ -84,9 +78,42 @@
                                 {{ $padre['nombre_completo'] }}
                             </option>
                         @endforeach
+
                     </select>
                 </div>
+
             </div>
+            @if ($padreSeleccionado)
+                <div class="card shadow-sm mt-3">
+                    <div class="card-body">
+
+                        <h5 class="mb-3">
+                            <i class="fas fa-user text-primary"></i> Datos del Padre
+                        </h5>
+
+                        <p><strong>Nombre:</strong> {{ $padreSeleccionado->persona->primer_nombre }}
+                            {{ $padreSeleccionado->persona->segundo_nombre }}
+                            {{ $padreSeleccionado->persona->primer_apellido }}
+                            {{ $padreSeleccionado->persona->segundo_apellido }}
+                        </p>
+
+                        <p><strong>Documento:</strong>
+                            {{ $padreSeleccionado->persona->tipoDocumento->nombre }}
+                            - {{ $padreSeleccionado->persona->numero_documento }}
+                        </p>
+
+                        @if ($padreSeleccionado->ocupacion)
+                            <p><strong>Ocupación:</strong> {{ $padreSeleccionado->ocupacion->nombre_ocupacion }}</p>
+                        @endif
+
+                        <p><strong>Género:</strong> {{ $padreSeleccionado->persona->genero->genero }}</p>
+
+                    </div>
+                </div>
+            @endif
+
+
+
 
             {{-- Madre --}}
             <div class="row mb-3">
@@ -109,6 +136,34 @@
 
                 </div>
             </div>
+            @if ($madreSeleccionado)
+                <div class="card shadow-sm mt-3">
+                    <div class="card-body">
+
+                        <h5 class="mb-3">
+                            <i class="fas fa-user text-primary"></i> Datos de la Madre
+                        </h5>
+
+                        <p><strong>Nombre:</strong> {{ $madreSeleccionado->persona->primer_nombre }}
+                            {{ $madreSeleccionado->persona->segundo_nombre }}
+                            {{ $madreSeleccionado->persona->primer_apellido }}
+                            {{ $madreSeleccionado->persona->segundo_apellido }}
+                        </p>
+
+                        <p><strong>Documento:</strong>
+                            {{ $madreSeleccionado->persona->tipoDocumento->nombre }}
+                            - {{ $madreSeleccionado->persona->numero_documento }}
+                        </p>
+
+                        @if ($madreSeleccionado->ocupacion)
+                            <p><strong>Ocupación:</strong> {{ $madreSeleccionado->ocupacion->nombre_ocupacion }}</p>
+                        @endif
+
+                        <p><strong>Género:</strong> {{ $madreSeleccionado->persona->genero->genero }}</p>
+
+                    </div>
+                </div>
+            @endif
 
             {{-- Representante Legal --}}
             <div class="row">
@@ -130,12 +185,40 @@
                     </select>
                 </div>
             </div>
+            @if ($representanteLegalSeleccionado)
+                <div class="card shadow-sm mt-3">
+                    <div class="card-body">
+
+                        <h5 class="mb-3">
+                            <i class="fas fa-user text-primary"></i> Datos del representanteLegal
+                        </h5>
+
+                        <p><strong>Nombre:</strong> {{ $representanteLegalSeleccionado->representante->persona->primer_nombre }}
+                            {{ $representanteLegalSeleccionado->representante->persona->segundo_nombre }}
+                            {{ $representanteLegalSeleccionado->representante->persona->primer_apellido }}
+                            {{ $representanteLegalSeleccionado->representante->persona->segundo_apellido }}
+                        </p>
+
+                        <p><strong>Documento:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->tipoDocumento->nombre }}
+                            - {{ $representanteLegalSeleccionado->representante->persona->numero_documento }}
+                        </p>
+
+                        @if ($representanteLegalSeleccionado->representante->ocupacion)
+                            <p><strong>Ocupación:</strong> {{ $representanteLegalSeleccionado->representante->ocupacion->nombre_ocupacion }}</p>
+                        @endif
+
+                        <p><strong>Género:</strong> {{ $representanteLegalSeleccionado->representante->persona->genero->genero }}</p>
+
+                    </div>
+                </div>
+            @endif
 
             <div class="row align-items-center mb-4 mt-4">
 
                 <div class="col-md-9">
-                    <div class="alert alert-warning d-flex align-items-start p-3 mb-0 shadow-sm" role="alert"
-                        style="border-left: 5px solid #f0ad4e;">
+                    <div class="alert alert-success d-flex align-items-start p-3 mb-0 shadow-sm" role="alert"
+                        style="border-left: 5px solid #0d9006;">
                         <i class="fas fa-exclamation-triangle fa-lg me-3 mt-1"></i>
 
                         <div class="grow">
@@ -146,14 +229,43 @@
                 </div>
 
                 <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                    <button type="button" wire:click="irACrearRepresentante" class="btn-create">
+                    <button type="button" onclick="confirmarEnvio()" class="btn-create">
                         <i class="fas fa-plus"></i> Crear Representante
                     </button>
                 </div>
+                <script>
+                    function confirmarEnvio() {
+                        Swal.fire({
+                            title: '¿Desea crear un nuevo representante?',
+                            text: 'Esta acción no guardará la información actual.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, crear representante',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "{{ route('representante.formulario', ['from' => 'inscripcion']) }}";
+                            }
+                        });
+                    }
+                </script>
+
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
             </div>
         </div>
     </div>
+
+    {{-- Card: Formulario de alumno --}}
+    <div class="card-body-modern">
+        <livewire:admin.alumnos.alumno-create>
+    </div>
+
+
+
 
     {{-- Card: Documentos Entregados --}}
     <div class="card-modern mb-4">
@@ -343,6 +455,36 @@
         // Resetear selects cuando se limpia el formulario
         Livewire.on('resetSelects', () => {
             $('.selectpicker').val('').selectpicker('refresh');
+        });
+
+        //Para mostrar los datos seleccionados de padre
+        document.addEventListener('livewire:init', () => {
+            $('#padre_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
+                let value = $(this).val();
+                Livewire.dispatch('padreSeleccionadoEvento', {
+                    value: value
+                });
+            });
+        });
+
+        //Para mostrar los datos seleccionados de madre
+        document.addEventListener('livewire:init', () => {
+            $('#madre_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
+                let value = $(this).val();
+                Livewire.dispatch('madreSeleccionadoEvento', {
+                    value: value
+                });
+            });
+        });
+
+        //Para mostrar los datos seleccionados de representante legal
+        document.addEventListener('livewire:init', () => {
+            $('#representante_legal_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
+                let value = $(this).val();
+                Livewire.dispatch('representanteLegalSeleccionadoEvento', {
+                    value: value
+                });
+            });
         });
     </script>
 

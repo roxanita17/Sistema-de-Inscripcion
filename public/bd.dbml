@@ -123,6 +123,7 @@ Table docente_area_grado {
   docente_estudio_realizado_id integer
   area_estudios_realizados_id integer
   grado_id integer
+  seccion_id integer
   status varchar
   created_at timestamp
 }
@@ -365,6 +366,8 @@ Ref: "area_formacions"."id" < "area_estudios_realizados"."area_formacion_id"
 Ref: "prefijo_telefono"."id" < "personas"."prefijo_id"
 
 Ref: "localidad"."id" < "representante_legal"."localidad_id"
+
+Ref: "secciones"."id" < "docente_area_grado"."seccion_id"
 
 
 Ref: "area_formacions"."id" < "grado_area_formacions"."area_formacion_id"

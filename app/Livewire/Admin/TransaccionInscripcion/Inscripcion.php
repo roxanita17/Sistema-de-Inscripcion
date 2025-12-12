@@ -70,41 +70,12 @@ class Inscripcion extends Component
 
     public function mount()
     {
-        // 1) SI HAY DATOS EN SESIÃ“N, cargarlos primero
-        if (session()->has('inscripcion_temp')) {
-            $data = session()->get('inscripcion_temp');
-
-            $this->alumnoId = $data['alumnoId'] ?? null;
-            $this->padreId = $data['padreId'] ?? null;
-            $this->madreId = $data['madreId'] ?? null;
-            $this->representanteLegalId = $data['representanteLegalId'] ?? null;
-            $this->gradoId = $data['gradoId'] ?? 1;
-            $this->fecha_inscripcion = $data['fecha_inscripcion'] ?? now()->format('Y-m-d');
-            $this->observaciones = $data['observaciones'] ?? null;
-            $this->documentos = $data['documentos'] ?? [];
-        } else {
-            $this->fecha_inscripcion = now()->format('Y-m-d');
-        }
 
         // 2) AHORA cargar las listas
         $this->cargarAlumnos();
         $this->cargarPadres();
         $this->cargarMadres();
         $this->cargarRepresentantesLegales();
-
-        // 3) Cargar automÃ¡ticamente los detalles segÃºn los ID restaurados
-        if ($this->alumnoId) {
-            $this->updatedAlumnoId($this->alumnoId);
-        }
-        if ($this->padreId) {
-            $this->updatedPadreId($this->padreId);
-        }
-        if ($this->madreId) {
-            $this->updatedMadreId($this->madreId);
-        }
-        if ($this->representanteLegalId) {
-            $this->updatedRepresentanteLegalId($this->representanteLegalId);
-        }
     }
 
     /* ============================================================
@@ -138,6 +109,40 @@ class Inscripcion extends Component
     {
         $this->padres = $this->obtenerRepresentantesPorGenero('Masculino');
     }
+
+    public function actualizarPadreSelect($data = null)
+    {
+        $id = $data['value'] ?? null;
+
+        $this->padreId = $id;
+
+        $this->padreSeleccionado = $id
+            ? Representante::with(['persona.tipoDocumento', 'persona.genero', 'ocupacion'])->find($id)
+            : null;
+    }
+
+    public function actualizarMadreSelect($data = null)
+    {
+        $id = $data['value'] ?? null;
+
+        $this->madreId = $id;
+
+        $this->madreSeleccionado = $id
+            ? Representante::with(['persona.tipoDocumento', 'persona.genero', 'ocupacion'])->find($id)
+            : null;
+    }
+
+    public function actualizarRepresentanteLegalSelect($data = null)
+    {
+        $id = $data['value'] ?? null;
+
+        $this->representanteLegalId = $id;
+
+        $this->representanteLegalSeleccionado = $id
+            ? RepresentanteLegal::with(['representante.persona.tipoDocumento', 'representante.persona.genero', 'representante.ocupacion'])->find($id)
+            : null;
+    }
+
 
     /**
      * Cargar madres (femenino)
@@ -199,7 +204,7 @@ class Inscripcion extends Component
     }
 
     /* ============================================================
-       =========  MÃ‰TODOS updated() PARA CARGAR DETALLES ==========
+       =========  METODOS updated() PARA CARGAR DETALLES ==========
        ============================================================ */
 
     public function updatedAlumnoId($value)
@@ -252,10 +257,13 @@ class Inscripcion extends Component
        =========  LISTENER (para recibir datos del formulario Alumno)
        ============================================================ */
 
-    protected $listeners = ['recibirDatosAlumno' => 'guardarTodo'];
+    protected $listeners = [
+        'recibirDatosAlumno' => 'guardarTodo',
+        'padreSeleccionadoEvento' => 'actualizarPadreSelect'
+    ];
 
     /* ============================================================
-       =========  MÃ‰TODO registrar() â€“ guardar inscripciÃ³n SOLO
+       =========  METODO registrar() â€“ guardar inscripciÃ³n SOLO
        ============================================================ */
 
     public function registrar()
@@ -302,7 +310,7 @@ class Inscripcion extends Component
 
             DB::commit();
 
-            session()->flash('success', 'InscripciÃ³n registrada exitosamente.');
+            session()->flash('success', 'Inscripcion registrada exitosamente.');
             $this->limpiar();
 
             session()->forget('inscripcion_temp');
@@ -315,7 +323,7 @@ class Inscripcion extends Component
     }
 
     /* ============================================================
-        FUNCION finalizar() (pide datos del alumno al otro Livewire)
+       FUNCION finalizar() (pide datos del alumno al otro Livewire)
        ============================================================ */
 
     public function finalizar()
@@ -345,7 +353,7 @@ class Inscripcion extends Component
 
 
     /* ============================================================
-       FUNCION guardarTodo() (Guardar Alumno y InscripciÃ³n en 1 acciÃ³n)
+       FUNCION guardarTodo() (Guardar Alumno y Inscripción en 1 acción)
        ============================================================ */
 
     public function guardarTodo($datos = [])
@@ -389,7 +397,7 @@ class Inscripcion extends Component
                 'status' => 'Activo',
             ]);
 
-            // Crear inscripciÃ³n
+            // Crear inscripción
             ModeloInscripcion::create([
                 'alumno_id' => $alumno->id,
                 'grado_id' => $this->grados,

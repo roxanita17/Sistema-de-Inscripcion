@@ -1,5 +1,5 @@
     {{-- Alertas --}}
-{{--     @if (session()->has('success') || session()->has('error'))
+    {{--     @if (session()->has('success') || session()->has('error'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
                 <div class="alert-modern alert-success alert alert-dismissible fade show">
@@ -49,8 +49,10 @@
             </div>
 
             <div class="card-body-modern" style="padding: 2rem;">
-                <div class="alert alert-info mb-4" style="background: var(--info-light); border-left: 4px solid var(--info); padding: 1rem; border-radius: 8px;">
-                    <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger" style="font-weight: 700;">(*)</span> son obligatorios
+                <div class="alert alert-danger mb-4"
+                    style="background: var(--danger-light); border-left: 4px solid var(--danger); padding: 1rem; border-radius: 8px;">
+                    <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
+                        style="font-weight: 700;">(*)</span> son obligatorios
                 </div>
 
                 <div class="row">
@@ -58,17 +60,12 @@
                         <div class="form-group">
                             <label for="numero_zonificacion" class="form-label-modern">
                                 <i class="fas fa-hashtag"></i>
-                                Número de Zonificado
+                                Número de Zonificación
                             </label>
-                            <input type="text" 
-                            inputmode="numeric"
-                                   wire:model="numero_zonificacion" 
-                                   class="form-control-modern @error('numero_zonificacion') is-invalid @enderror"
-                                   min="0"
-                                   pattern="[0-9]+" 
-                                   maxlength="3" 
-                                   oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                                   placeholder="Ej: 001">
+                            <input type="text" wire:model.defer="numero_zonificacion" class="form-control-modern"
+                                maxlength="3" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                                placeholder="Ej: 001">
+
                             @error('numero_zonificacion')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -84,10 +81,10 @@
                                 Institución
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="institucion_procedencia_id" 
-                                    class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
+                            <select wire:model="institucion_procedencia_id"
+                                class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
                                 <option value="">Seleccione una institución</option>
-                                @foreach($instituciones as $inst)
+                                @foreach ($instituciones as $inst)
                                     <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}</option>
                                 @endforeach
                             </select>
@@ -108,17 +105,17 @@
                             </label>
                             <select wire:model="expresion_literaria_id"
                                 class="form-control-modern @error('expresion_literaria_id') is-invalid @enderror">
-                            <option value="">Seleccione</option>
-                            @foreach($expresiones_literarias as $item)
-                                <option value="{{ $item->id }}">{{ $item->letra_expresion_literaria }}</option>
-                            @endforeach
-                        </select>
+                                <option value="">Seleccione</option>
+                                @foreach ($expresiones_literarias as $item)
+                                    <option value="{{ $item->id }}">{{ $item->letra_expresion_literaria }}</option>
+                                @endforeach
+                            </select>
 
-                        @error('expresion_literaria_id')
-                            <div class="invalid-feedback-modern">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </div>
-                        @enderror
+                            @error('expresion_literaria_id')
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
 
@@ -129,9 +126,8 @@
                                 Egreso
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="date" 
-                                   wire:model="anio_egreso" 
-                                   class="form-control-modern @error('anio_egreso') is-invalid @enderror">
+                            <input type="date" wire:model="anio_egreso"
+                                class="form-control-modern @error('anio_egreso') is-invalid @enderror">
                             @error('anio_egreso')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -166,10 +162,10 @@
                                 Doc.
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="tipo_documento_id" 
-                                    class="form-control-modern @error('tipo_documento_id') is-invalid @enderror">
+                            <select wire:model="tipo_documento_id"
+                                class="form-control-modern @error('tipo_documento_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
-                                @foreach($tipos_documentos as $item)
+                                @foreach ($tipos_documentos as $item)
                                     <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                 @endforeach
                             </select>
@@ -188,14 +184,10 @@
                                 Cédula
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="text" 
-                                   wire:model="numero_documento" 
-                                   class="form-control-modern @error('numero_documento') is-invalid @enderror"
-                                   maxlength="8"
-                                   pattern="[0-9]+" 
-                                   oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                                   inputmode="numeric"
-                                   placeholder="12345678">
+                            <input type="text" wire:model="numero_documento"
+                                class="form-control-modern @error('numero_documento') is-invalid @enderror"
+                                maxlength="8" pattern="[0-9]+" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                                inputmode="numeric" placeholder="12345678">
                             @error('numero_documento')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -211,9 +203,8 @@
                                 Fecha de Nacimiento
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="date" 
-                                   wire:model="fecha_nacimiento"
-                                   class="form-control-modern @error('fecha_nacimiento') is-invalid @enderror">
+                            <input type="date" wire:model="fecha_nacimiento"
+                                class="form-control-modern @error('fecha_nacimiento') is-invalid @enderror">
                             @error('fecha_nacimiento')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -222,7 +213,7 @@
                         </div>
                     </div>
 
-                    
+
                 </div>
 
                 <div class="row mt-3">
@@ -233,10 +224,9 @@
                                 Primer Nombre
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="text" 
-                                   wire:model="primer_nombre" 
-                                   class="form-control-modern @error('primer_nombre') is-invalid @enderror"
-                                   placeholder="Primer nombre">
+                            <input type="text" wire:model="primer_nombre"
+                                class="form-control-modern @error('primer_nombre') is-invalid @enderror"
+                                placeholder="Primer nombre">
                             @error('primer_nombre')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -251,10 +241,8 @@
                                 <i class="fas fa-user"></i>
                                 Segundo Nombre
                             </label>
-                            <input type="text" 
-                                   wire:model="segundo_nombre" 
-                                   class="form-control-modern"
-                                   placeholder="Segundo nombre">
+                            <input type="text" wire:model="segundo_nombre" class="form-control-modern"
+                                placeholder="Segundo nombre">
                         </div>
                     </div>
 
@@ -264,10 +252,8 @@
                                 <i class="fas fa-user"></i>
                                 Tercer Nombre
                             </label>
-                            <input type="text" 
-                                   wire:model="tercer_nombre" 
-                                   class="form-control-modern"
-                                   placeholder="Tercer nombre">
+                            <input type="text" wire:model="tercer_nombre" class="form-control-modern"
+                                placeholder="Tercer nombre">
                         </div>
                     </div>
                 </div>
@@ -280,10 +266,9 @@
                                 Primer Apellido
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="text" 
-                                   wire:model="primer_apellido" 
-                                   class="form-control-modern @error('primer_apellido') is-invalid @enderror"
-                                   placeholder="Primer apellido">
+                            <input type="text" wire:model="primer_apellido"
+                                class="form-control-modern @error('primer_apellido') is-invalid @enderror"
+                                placeholder="Primer apellido">
                             @error('primer_apellido')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -298,10 +283,8 @@
                                 <i class="fas fa-user"></i>
                                 Segundo Apellido
                             </label>
-                            <input type="text" 
-                                   wire:model="segundo_apellido" 
-                                   class="form-control-modern"
-                                   placeholder="Segundo apellido">
+                            <input type="text" wire:model="segundo_apellido" class="form-control-modern"
+                                placeholder="Segundo apellido">
                         </div>
                     </div>
                 </div>
@@ -314,10 +297,10 @@
                                 Genero
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="genero_id" 
-                                    class="form-control-modern @error('genero_id') is-invalid @enderror">
+                            <select wire:model="genero_id"
+                                class="form-control-modern @error('genero_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
-                                @foreach($generos as $item)
+                                @foreach ($generos as $item)
                                     <option value="{{ $item->id }}">{{ $item->genero }}</option>
                                 @endforeach
                             </select>
@@ -336,10 +319,10 @@
                                 Lateralidad
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="lateralidad_id" 
-                                    class="form-control-modern @error('lateralidad_id') is-invalid @enderror">
+                            <select wire:model="lateralidad_id"
+                                class="form-control-modern @error('lateralidad_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
-                                @foreach($lateralidades as $item)
+                                @foreach ($lateralidades as $item)
                                     <option value="{{ $item->id }}">{{ $item->lateralidad }}</option>
                                 @endforeach
                             </select>
@@ -358,10 +341,10 @@
                                 Orden de Nacimiento
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="orden_nacimiento_id" 
-                                    class="form-control-modern @error('orden_nacimiento_id') is-invalid @enderror">
+                            <select wire:model="orden_nacimiento_id"
+                                class="form-control-modern @error('orden_nacimiento_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
-                                @foreach($orden_nacimientos as $item)
+                                @foreach ($orden_nacimientos as $item)
                                     <option value="{{ $item->id }}">{{ $item->orden_nacimiento }}</option>
                                 @endforeach
                             </select>
@@ -400,9 +383,9 @@
                                 <span class="required-badge">*</span>
                             </label>
                             <select wire:model.live="estado_id"
-                                    class="form-control-modern @error('estado_id') is-invalid @enderror">
+                                class="form-control-modern @error('estado_id') is-invalid @enderror">
                                 <option value="">Seleccione un estado</option>
-                                @foreach($estados as $estado)
+                                @foreach ($estados as $estado)
                                     <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
                                 @endforeach
                             </select>
@@ -421,10 +404,10 @@
                                 Municipio
                                 <span class="required-badge">*</span>
                             </label>
-                            <select  wire:model.live="municipio_id"
-                                    class="form-control-modern @error('municipio_id') is-invalid @enderror">
+                            <select wire:model.live="municipio_id"
+                                class="form-control-modern @error('municipio_id') is-invalid @enderror">
                                 <option value="">Seleccione un municipio</option>
-                                @foreach($municipios as $municipio)
+                                @foreach ($municipios as $municipio)
                                     <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
                                 @endforeach
                             </select>
@@ -443,10 +426,10 @@
                                 Localidad
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live="localidad_id" 
-                                    class="form-control-modern @error('localidad_id') is-invalid @enderror">
+                            <select wire:model.live="localidad_id"
+                                class="form-control-modern @error('localidad_id') is-invalid @enderror">
                                 <option value="">Seleccione una localidad</option>
-                                @foreach($localidades as $localidad)
+                                @foreach ($localidades as $localidad)
                                     <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}</option>
                                 @endforeach
                             </select>
@@ -486,10 +469,10 @@
                                 Talla (cm)
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="talla_estudiante" 
-                                    class="form-control-modern @error('talla_estudiante') is-invalid @enderror">
+                            <select wire:model="talla_estudiante"
+                                class="form-control-modern @error('talla_estudiante') is-invalid @enderror">
                                 <option value="">Seleccione estatura</option>
-                                @foreach(range(120, 180, 5) as $talla)
+                                @foreach (range(120, 180, 5) as $talla)
                                     <option value="{{ $talla }}">{{ $talla }} cm</option>
                                 @endforeach
                             </select>
@@ -508,13 +491,9 @@
                                 Peso (kg)
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="number" 
-                                   wire:model="peso_estudiante" 
-                                   class="form-control-modern @error('peso_estudiante') is-invalid @enderror"
-                                   step="0.1"
-                                   min="20"
-                                   max="100"
-                                   placeholder="Ej: 45.5">
+                            <input type="number" wire:model="peso_estudiante"
+                                class="form-control-modern @error('peso_estudiante') is-invalid @enderror"
+                                step="0.1" min="20" max="100" placeholder="Ej: 45.5">
                             @error('peso_estudiante')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -530,8 +509,8 @@
                                 Talla Camisa
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="talla_camisa" 
-                                    class="form-control-modern @error('talla_camisa') is-invalid @enderror">
+                            <select wire:model="talla_camisa"
+                                class="form-control-modern @error('talla_camisa') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 <option value="XS">XS</option>
                                 <option value="S">S</option>
@@ -554,10 +533,10 @@
                                 Talla Zapato
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="talla_zapato" 
-                                    class="form-control-modern @error('talla_zapato') is-invalid @enderror">
+                            <select wire:model="talla_zapato"
+                                class="form-control-modern @error('talla_zapato') is-invalid @enderror">
                                 <option value="">Seleccione</option>
-                                @foreach(range(30, 45) as $talla)
+                                @foreach (range(30, 45) as $talla)
                                     <option value="{{ $talla }}">{{ $talla }}</option>
                                 @endforeach
                             </select>
@@ -576,8 +555,8 @@
                                 Talla Pantalón
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="talla_pantalon" 
-                                    class="form-control-modern @error('talla_pantalon') is-invalid @enderror">
+                            <select wire:model="talla_pantalon"
+                                class="form-control-modern @error('talla_pantalon') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 <option value="XS">XS</option>
                                 <option value="S">S</option>
@@ -598,7 +577,7 @@
 
         {{-- Card: Pertenencia Étnica --}}
         {{-- Card: Pertenencia Étnica --}}
-       {{--  <div class="card-modern mb-4">
+        {{--  <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #14b8a6, #0f766e);">
@@ -647,8 +626,8 @@
                                     </label>
                                 </div> --}}
 
-                                <!-- input oculto que recibe el valor real de Livewire -->
-                                {{-- <input type="hidden"
+        <!-- input oculto que recibe el valor real de Livewire -->
+        {{-- <input type="hidden"
                                     id="pertenece_pueblo_indigena"
                                     wire:model="pertenece_pueblo_indigena"
                                     value="no">
@@ -665,7 +644,7 @@
                                         wire:model="cual_pueblo_indigena"
                                         class="form-control-modern">
                                     <option value="">Seleccione</option>
-                                    @foreach($etniasIndigenas as $etnia)
+                                    @foreach ($etniasIndigenas as $etnia)
                                         <option value="{{ $etnia->id }}">
                                             {{ $etnia->nombre }}
                                         </option>
@@ -683,7 +662,7 @@
  --}}
 
         {{-- Card: Salud del Estudiante --}}
-       {{--  <div class="card-modern mb-4">
+        {{--  <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #f43f5e, #be123c);">
@@ -733,8 +712,8 @@
                                     </label>
                                 </div> --}}
 
-                                <!-- hidden sincronizado con Livewire -->
-                                {{-- <input type="hidden"
+        <!-- hidden sincronizado con Livewire -->
+        {{-- <input type="hidden"
                                     id="presenta_discapacidad_js"
                                     wire:model="presenta_discapacidad"
                                     value="no">
@@ -744,8 +723,8 @@
                     </div>
                 </div> --}}
 
-                <!-- Campos condicionados -->
-                {{-- <div id="discapacidad-fields" style="display:none; margin-top: .75rem;">
+        <!-- Campos condicionados -->
+        {{-- <div id="discapacidad-fields" style="display:none; margin-top: .75rem;">
                                 <label class="form-label-modern">
                                     <i class="fas fa-landmark"></i>
                                     ¿A cuál pertenece?
@@ -755,7 +734,7 @@
                                         wire:model="cual_discapacidad"
                                         class="form-control-modern">
                                     <option value="">Seleccione</option>
-                                    @foreach($discapacidades as $item)
+                                    @foreach ($discapacidades as $item)
                                         <option value="{{ $item->id }}">
                                             {{ $item->nombre_discapacidad }}
                                         </option>
@@ -765,13 +744,13 @@
                     </div>
                 </div> --}}
         {{-- Botones de Acción --}}
-        
+
     </form>
 
     {{-- Estilos adicionales para radios --}}
 
 
-{{-- 
+    {{-- 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -824,6 +803,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script> --}}
-
-
-

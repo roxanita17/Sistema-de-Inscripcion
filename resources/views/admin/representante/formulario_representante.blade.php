@@ -244,7 +244,7 @@
             </div>
 
             <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="needs-validation" novalidate>
-                @csrf
+                <input type="hidden" name="from" value="{{ $from ?? '' }}">
                 @csrf
 
                 <!-- Sección de la Madre -->
@@ -1424,16 +1424,13 @@
                         </div><!-- Fin Sección Relación Familiar -->
                     </div><!-- Fin card-body -->
                     <div class="d-flex justify-content-between pt-4 border-top mt-4">
-                        <a href="{{ route('representante.index') }}" class="btn btn-outline-secondary btn-modern">
+                        <a href="{{ route('representante.index', ['from' => 'inscripcion']) }}" class="btn btn-outline-secondary btn-modern">
                             <i class="fas fa-times me-1"></i> Cancelar
                         </a>
                         <button type="submit" class="btn btn-primary btn-modern">
                             <i class="fas fa-save me-1"></i> {{ isset($representante) ? 'Actualizar' : 'Guardar' }} Representante
                         </button>
-                    </div>    
-                    <a href="{{ route('representante.index') }}" class="btn btn-outline-secondary ms-2">
-                        <i class="fas fa-times me-1"></i> Cancelar
-                    </a>
+                    </div>  
                 </div>
             </form>
     </div>
