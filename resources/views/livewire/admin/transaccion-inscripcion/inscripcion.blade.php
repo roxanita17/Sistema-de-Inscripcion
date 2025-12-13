@@ -1,5 +1,4 @@
 <div>
-
     {{-- Alertas --}}
     @if (session()->has('success') || session()->has('error') || session()->has('warning'))
         <div class="alerts-container mb-3">
@@ -43,7 +42,7 @@
         </div>
     @endif
 
-    {{-- Card: Seleccionar Representantes --}}
+    {{-- Seleccionar Representantes --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -56,19 +55,15 @@
                 </div>
             </div>
         </div>
-
         <div class="card-body-modern" style="padding: 2rem;">
-
 
             {{-- Padre --}}
             <div class="row mb-3">
-
                 <div class="col-md-12" wire:ignore>
                     <label for="padre_select" class="form-label-modern">
                         <i class="fas fa-male"></i>
                         Padre
                     </label>
-
                     <select id="padre_select" class="form-control-modern selectpicker" data-live-search="true"
                         data-size="8" data-width="100%">
                         <option value="">Seleccione al padre (opcional)</option>
@@ -81,7 +76,6 @@
 
                     </select>
                 </div>
-
             </div>
             @if ($padreSeleccionado)
                 <div class="card shadow-sm mt-3">
@@ -111,9 +105,6 @@
                     </div>
                 </div>
             @endif
-
-
-
 
             {{-- Madre --}}
             <div class="row mb-3">
@@ -193,7 +184,8 @@
                             <i class="fas fa-user text-primary"></i> Datos del representanteLegal
                         </h5>
 
-                        <p><strong>Nombre:</strong> {{ $representanteLegalSeleccionado->representante->persona->primer_nombre }}
+                        <p><strong>Nombre:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->primer_nombre }}
                             {{ $representanteLegalSeleccionado->representante->persona->segundo_nombre }}
                             {{ $representanteLegalSeleccionado->representante->persona->primer_apellido }}
                             {{ $representanteLegalSeleccionado->representante->persona->segundo_apellido }}
@@ -205,29 +197,31 @@
                         </p>
 
                         @if ($representanteLegalSeleccionado->representante->ocupacion)
-                            <p><strong>Ocupación:</strong> {{ $representanteLegalSeleccionado->representante->ocupacion->nombre_ocupacion }}</p>
+                            <p><strong>Ocupación:</strong>
+                                {{ $representanteLegalSeleccionado->representante->ocupacion->nombre_ocupacion }}</p>
                         @endif
 
-                        <p><strong>Género:</strong> {{ $representanteLegalSeleccionado->representante->persona->genero->genero }}</p>
+                        <p><strong>Género:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->genero->genero }}</p>
 
                     </div>
                 </div>
             @endif
 
+            {{-- Boton de crear representante --}}
             <div class="row align-items-center mb-4 mt-4">
-
                 <div class="col-md-9">
-                    <div class="alert alert-success d-flex align-items-start p-3 mb-0 shadow-sm" role="alert"
-                        style="border-left: 5px solid #0d9006;">
-                        <i class="fas fa-exclamation-triangle fa-lg me-3 mt-1"></i>
-
+                    <div class="alert alert-info d-flex align-items-start p-3 mb-0 shadow-sm" role="alert"
+                        style="border-left: 5px solid var(--primary); background: var(--primary-light);">
+                        <i class="fas fa-info-circle fa-lg me-3 mt-1"></i>
                         <div class="grow">
-                            <strong class="d-block mb-1">Atención</strong>
-                            <span class="d-block">Si el representante no existe, puede crearlo ahora.</span>
+                            <span class="d-block"><b>Atención: </b> Si el representante no existe, puede crearlo
+                                ahora.</span>
                         </div>
                     </div>
                 </div>
 
+                {{-- Alerta de sweetalert --}}
                 <div class="col-md-3 text-md-end mt-3 mt-md-0">
                     <button type="button" onclick="confirmarEnvio()" class="btn-create">
                         <i class="fas fa-plus"></i> Crear Representante
@@ -251,23 +245,127 @@
                         });
                     }
                 </script>
-
                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
             </div>
         </div>
     </div>
 
-    {{-- Card: Formulario de alumno --}}
-    <div class="card-body-modern">
-        <livewire:admin.alumnos.alumno-create>
+    {{-- Formulario de datos de procedencia --}}
+    <div class="card-modern mb-4">
+        <div class="card-body-modern">
+            <div class="card-modern mb-4">
+                <div class="card-header-modern">
+                    <div class="header-left">
+                        <div class="header-icon">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <div>
+                            <h3>Plantel de Procedencia</h3>
+                            <p>Información de la institución de origen</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body-modern" style="padding: 2rem;">
+                    <div class="alert alert-danger mb-4"
+                        style="background: var(--danger-light); border-left: 4px solid var(--danger); padding: 1rem; border-radius: 8px;">
+                        <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
+                            style="font-weight: 700;">(*)</span> son obligatorios
+                    </div>
+                    <div class="row">
+                        {{-- Numero de zonificacion --}}
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="numero_zonificacion" class="form-label-modern">
+                                    <i class="fas fa-hashtag"></i>
+                                    Número de Zonificación
+                                </label>
+                                <input type="text" wire:model.live="numero_zonificacion"
+                                    class="form-control-modern" maxlength="3" inputmode="numeric"
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Ej: 001">
+                                @error('numero_zonificacion')
+                                    <div class="invalid-feedback-modern">
+                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Institucion de procedencia --}}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="institucion_procedencia_id" class="form-label-modern">
+                                    <i class="fas fa-building"></i>
+                                    Institución de procedencia
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <select wire:model.live="institucion_procedencia_id"
+                                    class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
+                                    <option value="">Seleccione una institución</option>
+                                    @foreach ($instituciones as $inst)
+                                        <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}</option>
+                                    @endforeach
+                                </select>
+                                @error('institucion_procedencia_id')
+                                    <div class="invalid-feedback-modern">
+                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Expresion literaria --}}
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="expresion_literaria" class="form-label-modern">
+                                    <i class="fas fa-font"></i>
+                                    Literal
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <select wire:model.live="expresion_literaria_id"
+                                    class="form-control-modern @error('expresion_literaria_id') is-invalid @enderror">
+                                    <option value="">Seleccione</option>
+                                    @foreach ($expresiones_literarias as $item)
+                                        <option value="{{ $item->id }}">{{ $item->letra_expresion_literaria }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                @error('expresion_literaria_id')
+                                    <div class="invalid-feedback-modern">
+                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- fecha de egreso --}}
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="anio_egreso" class="form-label-modern">
+                                    <i class="fas fa-calendar"></i>
+                                    Egreso
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <input type="date" wire:model.live="anio_egreso"
+                                    class="form-control-modern @error('anio_egreso') is-invalid @enderror">
+                                @error('anio_egreso')
+                                    <div class="invalid-feedback-modern">
+                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <livewire:admin.alumnos.alumno-create>
+        </div>
     </div>
 
 
 
 
-    {{-- Card: Documentos Entregados --}}
+    {{-- Documentos Entregados --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -322,7 +420,7 @@
         </div>
     </div>
 
-    {{-- Card: Datos de la Inscripción --}}
+    {{-- Datos de la Inscripción --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -337,16 +435,15 @@
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="row">
-                {{-- <div class="col-md-4">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="grado_id" class="form-label-modern">
                             <i class="fas fa-layer-group"></i>
                             Grado
                             <span class="required-badge">*</span>
                         </label>
-                        <select wire:model="gradoId" 
-                                id="grado_id"
-                                class="form-control-modern @error('gradoId') is-invalid @enderror">
+                        <select wire:model.live="gradoId" id="grado_id"
+                            class="form-control-modern @error('gradoId') is-invalid @enderror">
                             <option value="">Seleccione un grado</option>
                             @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
@@ -358,7 +455,7 @@
                             </div>
                         @enderror
                     </div>
-                </div> --}}
+                </div>
 
                 <div class="col-md-4">
                     <div class="form-group">
@@ -367,7 +464,7 @@
                             Fecha de Inscripción
                             <span class="required-badge">*</span>
                         </label>
-                        <input type="date" wire:model="fecha_inscripcion" id="fecha_inscripcion"
+                        <input type="date" wire:model.live="fecha_inscripcion" id="fecha_inscripcion"
                             class="form-control-modern @error('fecha_inscripcion') is-invalid @enderror">
                         @error('fecha_inscripcion')
                             <div class="invalid-feedback-modern">
@@ -390,7 +487,34 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-6 ms-auto d-flex flex-column align-items-end gap-2">
+
+                    <div class="checkbox-item-modern">
+                        <input type="checkbox" id="acepta_normas_contrato" wire:model.live="acepta_normas_contrato"
+                            class="checkbox-modern">
+
+                        <label for="acepta_normas_contrato" class="checkbox-label-modern"
+                            style="margin-left: 2px; gap: 0">
+                            He leído y acepto
+                            <a class="text-primary " style="margin-left: 5px; padding: 0; text-decoration: none;"
+                                data-bs-toggle="modal" data-bs-target="#modalContratoConvivencia"
+                                title="Ver Detalles">
+                                las normas de convivencia
+                            </a>
+                        </label>
+                    </div>
+                    @error('acepta_normas_contrato')
+                        <div class="invalid-feedback-modern">
+                            {{ $message }}
+
+                        </div>
+                    @enderror
+                </div>
+            </div>
         </div>
+        @include('admin.transacciones.inscripcion.modales.showContratoModal')
 
         {{-- Botones de Acción --}}
         <div class="card-modern">
@@ -401,24 +525,21 @@
                         Limpiar
                     </button>
                     <button type="button" wire:click="finalizar" class="btn-primary-modern"
-                        wire:loading.attr="disabled">
+                        wire:loading.attr="disabled" @if (!$acepta_normas_contrato) disabled @endif>
                         <span wire:loading.remove wire:target="finalizar">
                             <i class="fas fa-save"></i>
                             Guardar Inscripción
                         </span>
                         <span wire:loading wire:target="finalizar">
                             <i class="fas fa-spinner fa-spin"></i>
-                            Guardando...
+                            Procesando...
                         </span>
                     </button>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
-
-
 
 @push('js')
     <script>
@@ -479,7 +600,8 @@
 
         //Para mostrar los datos seleccionados de representante legal
         document.addEventListener('livewire:init', () => {
-            $('#representante_legal_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
+            $('#representante_legal_select').on('changed.bs.select', function(e, clickedIndex, isSelected,
+                previousValue) {
                 let value = $(this).val();
                 Livewire.dispatch('representanteLegalSeleccionadoEvento', {
                     value: value

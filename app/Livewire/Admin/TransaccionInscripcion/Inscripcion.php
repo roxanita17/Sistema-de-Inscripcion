@@ -12,6 +12,8 @@ use App\Models\Representante;
 use App\Models\RepresentanteLegal;
 use App\Models\Grado;
 use App\Models\Inscripcion as ModeloInscripcion;
+use App\Models\ExpresionLiteraria;
+use App\Models\InstitucionProcedencia;
 
 class Inscripcion extends Component
 {
@@ -20,7 +22,8 @@ class Inscripcion extends Component
        ============================================================ */
 
     // IDs seleccionados en selects
-    public $alumnoId;
+
+    public $inscripcion_id;
     public $padreId;
     public $madreId;
     public $representanteLegalId;
@@ -33,11 +36,15 @@ class Inscripcion extends Component
     public $representanteLegalSeleccionado = null;
 
     // Listas para selects
-    public $alumnos = [];
     public $padres = [];
     public $madres = [];
     public $representantes = [];
-    public $grados = 1;
+    public $instituciones = [];
+
+    public $grados = [];
+
+    public $expresiones_literarias = [];
+
 
     // Documentos seleccionados
     public $documentos = [];
@@ -45,24 +52,67 @@ class Inscripcion extends Component
     // Campos propios del formulario
     public $fecha_inscripcion;
     public $observaciones;
+    public $numero_zonificacion;
+    public $institucion_procedencia_id;
+    public $expresion_literaria_id;
+    public $anio_egreso;
+
+    public $acepta_normas_contrato = false;
+
+
 
     /* ============================================================
        =====================   VALIDACIÃ“N   ========================
        ============================================================ */
 
-    protected $rules = [
-        'alumnoId' => 'required|exists:alumnos,id',
-        'gradoId' => 'nullable|integer|min:1',
-        'fecha_inscripcion' => 'required|date',
-        'documentos' => 'array',
-        'documentos.*' => 'string',
-    ];
+
+    public function rules()
+    {
+        return [
+            'inscripcion_id' => 'required|exists:inscripcions,id',
+            'numero_zonificacion' => 'required|numeric',
+            'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
+            'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
+            'gradoId' => 'required|exists:grados,id',
+            'fecha_inscripcion' => 'required|date',
+            'documentos' => 'array',
+            'documentos.*' => 'string',
+            'acepta_normas_contrato' => 'accepted',
+
+            // Campo con validación personalizada ↓↓↓↓
+            'anio_egreso' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $anio = Carbon::parse($value)->year;
+                    $actual = Carbon::now()->year;
+
+                    if ($anio > $actual) {
+                        $fail('El año de egreso no puede ser futuro.');
+                    } elseif ($anio < $actual - 7) {
+                        $fail('El año de egreso no puede ser menor al año actual menos 7 años.');
+                    }
+                }
+            ],
+        ];
+    }
 
     protected $messages = [
-        'alumnoId.required' => 'Debe seleccionar un alumno',
+        'inscripcion_id.required' => 'Debe seleccionar una inscripción',
         'gradoId.required' => 'Debe seleccionar un grado',
-        'fecha_inscripcion.required' => 'La fecha de inscripciÃ³n es obligatoria',
+        'fecha_inscripcion.required' => 'La fecha de inscripción es obligatoria',
+        'acepta_normas_contrato.accepted' => 'Debe aceptar las normas del contrato para continuar.',
+        'numero_zonificacion' => 'Este campo no debe estar vacio',
+        'expresion_literaria_id' => 'Debe seleccionar una expresión literaria',
+        'anio_egreso' => 'Debe seleccionar un año de egreso',
+        'institucion_procedencia_id' => 'Debe seleccionar una institucion de procedencia'
+
     ];
+
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
+    }
 
     /* ============================================================
        =====================   MOUNT   ============================
@@ -72,43 +122,26 @@ class Inscripcion extends Component
     {
 
         // 2) AHORA cargar las listas
-        $this->cargarAlumnos();
-        $this->cargarPadres();
-        $this->cargarMadres();
         $this->cargarRepresentantesLegales();
+        $this->cargarDatosIniciales();
+
+        $this->fecha_inscripcion = now()->format('Y-m-d');
     }
 
     /* ============================================================
-       =======  MÃ‰TODOS DE CARGA DE LISTAS (SELECTS) ==============
+       ===================   CARGAS INICIALES   ===================
        ============================================================ */
 
-    /**
-     * Cargar lista de alumnos
-     */
-    public function cargarAlumnos()
+
+    public function cargarDatosIniciales()
     {
-        $this->alumnos = Alumno::with(['persona.tipoDocumento', 'persona.genero'])
-            ->whereHas('persona', fn($q) => $q->where('status', true))
-            ->get()
-            ->map(fn($alumno) => [
-                'id' => $alumno->id,
-                'nombre_completo' =>
-                $alumno->persona->primer_nombre . ' ' .
-                    ($alumno->persona->segundo_nombre ? $alumno->persona->segundo_nombre . ' ' : '') .
-                    $alumno->persona->primer_apellido . ' ' .
-                    ($alumno->persona->segundo_apellido ?? ''),
-                'numero_documento' => $alumno->persona->numero_documento,
-                'tipo_documento' => $alumno->persona->tipoDocumento->nombre ?? 'N/A'
-            ]);
+        $this->instituciones = InstitucionProcedencia::where('status', true)->get(); // Cargar instituciones de procedencia
+        $this->expresiones_literarias = ExpresionLiteraria::where('status', true)->orderBy('letra_expresion_literaria')->get(); // Cargar exp lit
+        $this->grados = Grado::where('status', true)->get(); // Cargar grados
+        $this->padres = $this->obtenerRepresentantesPorGenero('Masculino'); // Cargar padres
+        $this->madres = $this->obtenerRepresentantesPorGenero('Femenino'); // Cargar madres
     }
 
-    /**
-     * Cargar padres (masculino)
-     */
-    public function cargarPadres()
-    {
-        $this->padres = $this->obtenerRepresentantesPorGenero('Masculino');
-    }
 
     public function actualizarPadreSelect($data = null)
     {
@@ -144,16 +177,9 @@ class Inscripcion extends Component
     }
 
 
-    /**
-     * Cargar madres (femenino)
-     */
-    public function cargarMadres()
-    {
-        $this->madres = $this->obtenerRepresentantesPorGenero('Femenino');
-    }
 
     /**
-     * Obtener representantes por gÃ©nero
+     * Obtener representantes por genero
      */
     private function obtenerRepresentantesPorGenero($genero)
     {
@@ -259,11 +285,17 @@ class Inscripcion extends Component
 
     protected $listeners = [
         'recibirDatosAlumno' => 'guardarTodo',
-        'padreSeleccionadoEvento' => 'actualizarPadreSelect'
+        'padreSeleccionadoEvento' => 'actualizarPadreSelect',
+        'acepta_normas_contrato' => 'actualizarEstadoBoton'
     ];
 
+    public function actualizarEstadoBoton($value)
+    {
+        $this->acepta_normas_contrato = $value;
+        $this->validateOnly('acepta_normas_contrato');
+    }
     /* ============================================================
-       =========  METODO registrar() â€“ guardar inscripciÃ³n SOLO
+       =========  METODO registrar() guardar inscripción SOLO
        ============================================================ */
 
     public function registrar()
@@ -297,7 +329,11 @@ class Inscripcion extends Component
 
             ModeloInscripcion::create([
                 'alumno_id' => $this->alumnoId,
-                'grado_id' => 1,
+                'numero_zonificacion' => $this->numero_zonificacion,
+                'institucion_procedencia_id' => $this->institucion_procedencia_id,
+                'anio_egreso' => $this->anio_egreso,
+                'expresion_literaria_id' => $this->expresion_literaria_id,
+                'grado_id' => $this->gradoId,
                 'padre_id' => $this->padreId ?: null,
                 'madre_id' => $this->madreId ?: null,
                 'representante_legal_id' => $this->representanteLegalId,
@@ -305,6 +341,7 @@ class Inscripcion extends Component
                 'estado_documentos' => empty($faltantes) ? 'Completos' : 'Incompletos',
                 'fecha_inscripcion' => $this->fecha_inscripcion,
                 'observaciones' => $this->observaciones,
+                'acepta_normas_contrato' => $this->acepta_normas_contrato,
                 'status' => $estadoInscripcion,
             ]);
 
@@ -328,6 +365,13 @@ class Inscripcion extends Component
 
     public function finalizar()
     {
+        if (!$this->acepta_normas_contrato) {
+            $this->addError(
+                'acepta_normas_contrato',
+                'Debe aceptar las normas para continuar.'
+            );
+            return;
+        }
         if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
             return session()->flash('error', 'Debe seleccionar al menos un representante.');
         }
@@ -383,10 +427,7 @@ class Inscripcion extends Component
             // Crear alumno
             $alumno = Alumno::create([
                 'persona_id' => $persona->id,
-                'numero_zonificacion' => $datos['numero_zonificacion'] ?? null,
-                'institucion_procedencia_id' => $datos['institucion_procedencia_id'],
-                'anio_egreso' => $datos['anio_egreso'],
-                'expresion_literaria_id' => $datos['expresion_literaria_id'],
+
                 'talla_camisa' => $datos['talla_camisa'],
                 'talla_pantalon' => $datos['talla_pantalon'],
                 'talla_zapato' => $datos['talla_zapato'],
@@ -400,7 +441,11 @@ class Inscripcion extends Component
             // Crear inscripción
             ModeloInscripcion::create([
                 'alumno_id' => $alumno->id,
-                'grado_id' => $this->grados,
+                'numero_zonificacion' => $this->numero_zonificacion,
+                'institucion_procedencia_id' => $this->institucion_procedencia_id,
+                'anio_egreso' => $this->anio_egreso,
+                'expresion_literaria_id' => $this->expresion_literaria_id,
+                'grado_id' => $this->gradoId,
                 'padre_id' => $this->padreId ?: null,
                 'madre_id' => $this->madreId ?: null,
                 'representante_legal_id' => $this->representanteLegalId ?: null,
@@ -419,8 +464,10 @@ class Inscripcion extends Component
                 ], $this->documentos ?? [])) ? 'Completos' : 'Incompletos',
                 'fecha_inscripcion' => $this->fecha_inscripcion,
                 'observaciones' => $this->observaciones,
+                'acepta_normas_contrato' => $this->acepta_normas_contrato,
                 'status' => 'Activo',
             ]);
+
 
             DB::commit();
 

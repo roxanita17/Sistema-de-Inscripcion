@@ -161,8 +161,8 @@ Table genero{
 
 Table estudiantes{
   id integer [primary key]
-  numero_zonificacion integer
-  institucion_procedencia_id integer
+
+
   anio_egreso date
   talla_camisa integer
   talla_pantalon integer
@@ -173,7 +173,6 @@ Table estudiantes{
   orden_nacimiento_id integer
   discapacidad_id integer
   etnia_indigena_id integer
-  expresion_literaria_id int
   lateralidad_id integer
   status varchar
   created_at timestamp
@@ -287,7 +286,10 @@ Table secciones{
 
 table inscripcion{
   id integer [primary key]
-  tipo_inscripcion varchar
+  numero_zonificacion integer
+  institucion_procedencia_id integer
+  expresion_literaria_id int
+  tipo_inscripcion_id varchar
   fecha_creacion date
   contrato_convivencia text
   repitiente_estudiante integer
@@ -355,9 +357,19 @@ Table entradas_percentil {
   created_at timestamp
 }
 
+Table tipo_inscripcion {
+  id integer [primary key]
+  nombre_tipo_inscripcion varchar
+  status varchar
+  created_at timestamp
+}
+
 Ref: entradas_percentil.seccion_id > secciones.id
 Ref: entradas_percentil.ejecucion_percentil_id > ejecuciones_percentil.id
 Ref: entradas_percentil.inscripcion_id > inscripcion.id
+
+Ref: "tipo_inscripcion"."id" < "inscripcion"."tipo_inscripcion_id"
+
 
 Ref: "estudios_realizados"."id" < "area_estudios_realizados"."estudios_realizados_id"
 
@@ -404,7 +416,7 @@ Ref: "personas"."id" < "estudiantes"."persona_id"
 
 Ref: "orden_nacimiento"."id" < "estudiantes"."orden_nacimiento_id"
 
-Ref: "expresion_literaria"."id" < "estudiantes"."expresion_literaria_id"
+Ref: "expresion_literaria"."id" < "inscripcion"."expresion_literaria_id"
 
 Ref: "lateralidad"."id" < "estudiantes"."lateralidad_id"
 
@@ -451,4 +463,4 @@ Ref: "indice_estatura"."id" < "entradas_percentil"."indice_estatura"
 
 Ref: "personas"."id" < "docentes"."persona_id"
 
-Ref: "institucion_procedencia"."id" < "estudiantes"."institucion_procedencia_id"
+Ref: "institucion_procedencia"."id" < "inscripcion"."institucion_procedencia_id"

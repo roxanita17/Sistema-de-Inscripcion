@@ -21,7 +21,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
+        /* AnioEscolar:: create([
+            'anio_escolar' => [
+                'inicio_anio_escolar' => '2025-01-01',
+                'cierre_anio_escolar' => '2025-12-31',
+                'status' => 'Activo',
+            ],
+        ]);
+ */
 
         $this->command->info('Iniciando seeders...');
 
@@ -56,8 +63,8 @@ class DatabaseSeeder extends Seeder
             IndicePesoSeeder::class,
             IndiceEstaturaSeeder::class,
             PersonaSeeder::class,
-            AlumnoSeeder::class,
-            DocenteSeeder::class,
+/*             AlumnoSeeder::class,
+ */            DocenteSeeder::class,
             DetalleDocenteEstudioSeeder::class,
             RepresentanteSeeder::class,
             RepresentanteLegalSeeder::class

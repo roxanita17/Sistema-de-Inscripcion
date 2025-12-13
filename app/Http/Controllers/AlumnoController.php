@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Alumno;
 use App\Models\Discapacidad;
 use App\Models\EtniaIndigena;
-use App\Models\ExpresionLiteraria;
-use App\Models\InstitucionProcedencia;
 use App\Models\Lateralidad;
 use App\Models\OrdenNacimiento;
 use App\Models\Persona;
@@ -52,9 +50,7 @@ class AlumnoController extends Controller
         $orden_nacimiento = OrdenNacimiento::all();
         $discapacidad = Discapacidad::all();
         $etnia_indigena = EtniaIndigena::all();
-        $expresion_literaria= ExpresionLiteraria::all();
         $lateralidad = Lateralidad::all();
-        $institucion_procedencia = InstitucionProcedencia::all();
         $persona = Persona::all();
         $tipo_documento = TipoDocumento::all();
         $genero = Genero::all();

@@ -9,6 +9,8 @@ use App\Models\Genero;
 use App\Models\TipoDocumento;
 use App\Models\Alumno;
 use App\Models\Grado;
+use App\Models\ExpresionLiteraria;
+use App\Models\InstitucionProcedencia;
 
 class InscripcionController extends Controller
 {
@@ -41,6 +43,8 @@ class InscripcionController extends Controller
         $tipoDocumentos = TipoDocumento::all();
         $alumnos = Alumno::all();
         $grados = Grado::all();
+        $expresion_literaria= ExpresionLiteraria::all();
+        $institucion_procedencia = InstitucionProcedencia::all();
 
         return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
     }

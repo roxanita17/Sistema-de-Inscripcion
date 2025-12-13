@@ -26,15 +26,7 @@
             
 
             {{-- Botón que abre la ventana modal para crear --}}
-            <a type="button"
-            @if(!$anioEscolarActivo) disabled @endif
-                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : '' }}"
-                    class="btn-create"
-                    href="{{ route('admin.alumnos.create') }}"
-                    >
-                <i class="fas fa-plus"></i>
-                <span>Nuevo Alumno</span>
-            </a>
+            
 
             {{-- Temporal para debug --}}
 
