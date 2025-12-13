@@ -10,7 +10,7 @@ class IndiceEstatura extends Model
     /** @use HasFactory<\Database\Factories\IndiceEstaturaFactory> */
     use HasFactory;
 
-    protected $table = 'indices_estaturas';
+    protected $table = 'indice_estaturas';
     protected $fillable = [
         'indice',
         'min_cm',

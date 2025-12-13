@@ -44,6 +44,8 @@ class PercentilService
             'indice_estatura' => $indiceEstatura,
             'indice_total' => $indiceTotal,
             'inscripcion_id' => $inscripcion->id,
+            'seccion_id' => null,
+            'ejecucion_percentil_id' => null,
             'status' => true,
         ]);
 

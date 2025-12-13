@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Inscripcion;
-use App\Models\EntradasPercentil;
 use App\Models\Seccion;
 use App\Models\EjecucionesPercentil;
 use App\Services\PercentilService;
@@ -19,16 +18,13 @@ class SectionDistributorService
         $this->percentilService = $percentilService;
     }
 
-    /**
-     * Procesa un grado completo: calcula percentiles y distribuye en secciones
-     */
     public function procesarGrado($grado)
     {
         return DB::transaction(function () use ($grado) {
-            
-            // 1. Obtener inscripciones activas del grado
+
+            // 1. Inscripciones activas
             $inscripciones = Inscripcion::where('grado_id', $grado->id)
-                ->where('status', true)
+                ->where('status', 'Activo')
                 ->with(['alumno.persona'])
                 ->get();
 
@@ -36,25 +32,28 @@ class SectionDistributorService
                 throw new \Exception('No hay inscripciones activas para este grado');
             }
 
-            // 2. Crear registro de ejecución
+            // 2. Crear ejecución
             $ejecucion = EjecucionesPercentil::create([
-                'fecha_ejecucion' => now(),
                 'total_evaluados' => $inscripciones->count(),
                 'status' => true
             ]);
 
-            // 3. Generar entradas de percentil para cada estudiante
+            // 3. Crear entradas percentil
             $entradas = collect();
 
             foreach ($inscripciones as $inscripcion) {
                 try {
-                    $entrada = $this->percentilService->crearEntradaDesdeInscripcion($inscripcion);
+                    $entrada = $this->percentilService
+                        ->crearEntradaDesdeInscripcion($inscripcion);
+
                     $entrada->ejecucion_percentil_id = $ejecucion->id;
                     $entrada->save();
+
                     $entradas->push($entrada);
                 } catch (\Exception $e) {
-                    Log::error("Error al procesar inscripción {$inscripcion->id}: " . $e->getMessage());
-                    continue;
+                    Log::error(
+                        "Error inscripción {$inscripcion->id}: {$e->getMessage()}"
+                    );
                 }
             }
 
@@ -62,22 +61,18 @@ class SectionDistributorService
                 throw new \Exception('No se pudo procesar ninguna inscripción');
             }
 
-            // 4. Ordenar por índice total (menor a mayor)
+            // 4. Ordenar
             $ordenados = $entradas->sortBy('indice_total')->values();
 
-            // 5. Calcular número de secciones necesarias
+            // 5. Calcular secciones
             $min = $grado->min_por_seccion ?? 20;
             $max = $grado->max_por_seccion ?? 30;
-            $totalEstudiantes = $ordenados->count();
+            $total = $ordenados->count();
 
-            // Número de secciones basado en el máximo por sección
-            $numSecciones = (int) ceil($totalEstudiantes / $max);
+            $numSecciones = (int) ceil($total / $max);
 
-            // Ajustar si el promedio cae por debajo del mínimo
-            $promedioEstudiantes = $totalEstudiantes / $numSecciones;
-            
-            if ($promedioEstudiantes < $min && $numSecciones > 1) {
-                $numSecciones = (int) ceil($totalEstudiantes / $min);
+            if (($total / $numSecciones) < $min && $numSecciones > 1) {
+                $numSecciones = (int) ceil($total / $min);
             }
 
             // 6. Crear secciones
@@ -96,44 +91,32 @@ class SectionDistributorService
                 );
             }
 
-            // 7. Distribuir estudiantes equitativamente
-            // Los estudiantes con menor índice van primero
-            $index = 0;
+            // 7. Distribuir estudiantes
+$tamañoBase = (int) floor($total / $numSecciones);
+$seccionesExtras = $total % $numSecciones;
 
-            foreach ($ordenados as $entrada) {
-                $seccionIndex = $index % $numSecciones;
-                $seccion = $secciones[$seccionIndex];
+$estudiantesAsignados = 0;
 
-                $entrada->seccion_id = $seccion->id;
-                $entrada->save();
-
-                $seccion->cantidad_actual++;
-                $seccion->save();
-
-                $index++;
-            }
+foreach ($secciones as $indexSeccion => $seccion) {
+    // Las primeras secciones con extras llevan un estudiante más
+    $tamañoSeccion = $tamañoBase + ($indexSeccion < $seccionesExtras ? 1 : 0);
+    
+    // Asignar estudiantes consecutivos de la lista ordenada
+    for ($i = 0; $i < $tamañoSeccion; $i++) {
+        $entrada = $ordenados[$estudiantesAsignados];
+        
+        $entrada->update(['seccion_id' => $seccion->id]);
+        $seccion->increment('cantidad_actual');
+        
+        $estudiantesAsignados++;
+    }
+}
 
             return [
                 'total_secciones' => $numSecciones,
-                'estudiantes_procesados' => $totalEstudiantes,
+                'estudiantes_procesados' => $total,
                 'ejecucion_id' => $ejecucion->id
             ];
         });
-    }
-
-    /**
-     * Valida que un grado tenga la configuración necesaria
-     */
-    public function validarGrado($grado)
-    {
-        if (!$grado->min_por_seccion || !$grado->max_por_seccion) {
-            throw new \Exception('El grado debe tener configurados los valores mínimo y máximo de estudiantes por sección');
-        }
-
-        if ($grado->min_por_seccion > $grado->max_por_seccion) {
-            throw new \Exception('El mínimo de estudiantes no puede ser mayor que el máximo');
-        }
-
-        return true;
     }
 }

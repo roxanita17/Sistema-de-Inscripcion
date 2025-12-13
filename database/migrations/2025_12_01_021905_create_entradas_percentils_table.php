@@ -20,8 +20,8 @@ return new class extends Migration
             $table->integer('indice_peso');
             $table->integer('indice_estatura');
             $table->integer('indice_total');
-            $table->foreignId('seccion_id')->constrained('seccions')->cascadeOnDelete();
-            $table->foreignId('ejecucion_percentil_id')->constrained('ejecuciones_percentils')->cascadeOnDelete();
+            $table->foreignId('seccion_id')->nullable()->constrained('seccions')->cascadeOnDelete();
+            $table->foreignId('ejecucion_percentil_id')->nullable()->constrained('ejecuciones_percentils')->cascadeOnDelete();
             $table->foreignId('inscripcion_id')->constrained('inscripcions')->cascadeOnDelete();
             $table->boolean('status')->default(true);
             $table->timestamps();

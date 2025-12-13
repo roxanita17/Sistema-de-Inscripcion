@@ -257,14 +257,14 @@ return [
             'active' => ['admin/transacciones/inscripcion', 'admin/transacciones/inscripcion/*'],
         ],
 
-        //Percentil
-        /* [
-            'text' => 'Estudiantes Asignados',
+        //Historial del percentil
+        [
+            'text' => 'Historial del Percentil',
             'url' => 'admin/transacciones/percentil',
             'icon' => 'fas fa-fw fa-user-graduate',
             'icon_color' => 'primary',
             'active' => ['admin/transacciones/percentil', 'admin/transacciones/percentil/*'],
-        ], */
+        ],
 
         //Representantes
 

@@ -10,7 +10,7 @@ class IndicePeso extends Model
     /** @use HasFactory<\Database\Factories\IndicePesoFactory> */
     use HasFactory;
 
-    protected $table = 'indices_pesos';
+    protected $table = 'indice_pesos';
     protected $fillable = [
         'indice',
         'min_kg',

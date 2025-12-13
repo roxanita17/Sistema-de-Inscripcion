@@ -22,7 +22,6 @@ class Inscripcion extends Component
        ============================================================ */
 
     // IDs seleccionados en selects
-
     public $inscripcion_id;
     public $padreId;
     public $madreId;
@@ -40,11 +39,8 @@ class Inscripcion extends Component
     public $madres = [];
     public $representantes = [];
     public $instituciones = [];
-
     public $grados = [];
-
     public $expresiones_literarias = [];
-
 
     // Documentos seleccionados
     public $documentos = [];
@@ -56,15 +52,11 @@ class Inscripcion extends Component
     public $institucion_procedencia_id;
     public $expresion_literaria_id;
     public $anio_egreso;
-
     public $acepta_normas_contrato = false;
 
-
-
     /* ============================================================
-       =====================   VALIDACIÃ“N   ========================
+       =====================   VALIDACION   ========================
        ============================================================ */
-
 
     public function rules()
     {
@@ -73,13 +65,19 @@ class Inscripcion extends Component
             'numero_zonificacion' => 'required|numeric',
             'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
-            'gradoId' => 'required|exists:grados,id',
+            'gradoId' => [
+                'required',
+                'exists:grados,id',
+                function ($attribute, $value, $fail) {
+                    if (!$this->verificarCuposDisponibles($value)) {
+                        $fail('El grado seleccionado ha alcanzado el límite de cupos disponibles.');
+                    }
+                }
+            ],
             'fecha_inscripcion' => 'required|date',
             'documentos' => 'array',
             'documentos.*' => 'string',
             'acepta_normas_contrato' => 'accepted',
-
-            // Campo con validación personalizada ↓↓↓↓
             'anio_egreso' => [
                 'required',
                 'date',
@@ -106,7 +104,6 @@ class Inscripcion extends Component
         'expresion_literaria_id' => 'Debe seleccionar una expresión literaria',
         'anio_egreso' => 'Debe seleccionar un año de egreso',
         'institucion_procedencia_id' => 'Debe seleccionar una institucion de procedencia'
-
     ];
 
     public function updated($propertyName)
@@ -115,16 +112,64 @@ class Inscripcion extends Component
     }
 
     /* ============================================================
+       ===============   VERIFICACIÓN DE CUPOS   ==================
+       ============================================================ */
+
+    /**
+     * Verifica si hay cupos disponibles en el grado
+     */
+    private function verificarCuposDisponibles($gradoId)
+    {
+        $grado = Grado::find($gradoId);
+        
+        if (!$grado) {
+            return false;
+        }
+
+        // Contar inscripciones activas para este grado
+        $inscripcionesActivas = ModeloInscripcion::where('grado_id', $gradoId)
+            ->where('status', 'Activo')
+            ->count();
+
+        // Verificar si se excede el límite (asumiendo que el campo es 'cupos' o 'limite_cupos')
+        return $inscripcionesActivas < $grado->capacidad_max;
+    }
+
+    /**
+     * Obtener información de cupos de un grado
+     */
+    public function obtenerInfoCupos($gradoId)
+    {
+        if (!$gradoId) {
+            return null;
+        }
+
+        $grado = Grado::find($gradoId);
+        
+        if (!$grado) {
+            return null;
+        }
+
+        $inscritos = ModeloInscripcion::where('grado_id', $gradoId)
+            ->where('status', 'Activo')
+            ->count();
+
+        return [
+            'total_cupos' => $grado->capacidad_max,
+            'cupos_ocupados' => $inscritos,
+            'cupos_disponibles' => $grado->capacidad_max - $inscritos,
+            'porcentaje_ocupacion' => $grado->capacidad_max > 0 ? round(($inscritos / $grado->capacidad_max) * 100, 2) : 0
+        ];
+    }
+
+    /* ============================================================
        =====================   MOUNT   ============================
        ============================================================ */
 
     public function mount()
     {
-
-        // 2) AHORA cargar las listas
         $this->cargarRepresentantesLegales();
         $this->cargarDatosIniciales();
-
         $this->fecha_inscripcion = now()->format('Y-m-d');
     }
 
@@ -132,23 +177,19 @@ class Inscripcion extends Component
        ===================   CARGAS INICIALES   ===================
        ============================================================ */
 
-
     public function cargarDatosIniciales()
     {
-        $this->instituciones = InstitucionProcedencia::where('status', true)->get(); // Cargar instituciones de procedencia
-        $this->expresiones_literarias = ExpresionLiteraria::where('status', true)->orderBy('letra_expresion_literaria')->get(); // Cargar exp lit
-        $this->grados = Grado::where('status', true)->get(); // Cargar grados
-        $this->padres = $this->obtenerRepresentantesPorGenero('Masculino'); // Cargar padres
-        $this->madres = $this->obtenerRepresentantesPorGenero('Femenino'); // Cargar madres
+        $this->instituciones = InstitucionProcedencia::where('status', true)->get();
+        $this->expresiones_literarias = ExpresionLiteraria::where('status', true)->orderBy('letra_expresion_literaria')->get();
+        $this->grados = Grado::where('status', true)->get();
+        $this->padres = $this->obtenerRepresentantesPorGenero('Masculino');
+        $this->madres = $this->obtenerRepresentantesPorGenero('Femenino');
     }
-
 
     public function actualizarPadreSelect($data = null)
     {
         $id = $data['value'] ?? null;
-
         $this->padreId = $id;
-
         $this->padreSeleccionado = $id
             ? Representante::with(['persona.tipoDocumento', 'persona.genero', 'ocupacion'])->find($id)
             : null;
@@ -157,9 +198,7 @@ class Inscripcion extends Component
     public function actualizarMadreSelect($data = null)
     {
         $id = $data['value'] ?? null;
-
         $this->madreId = $id;
-
         $this->madreSeleccionado = $id
             ? Representante::with(['persona.tipoDocumento', 'persona.genero', 'ocupacion'])->find($id)
             : null;
@@ -168,19 +207,12 @@ class Inscripcion extends Component
     public function actualizarRepresentanteLegalSelect($data = null)
     {
         $id = $data['value'] ?? null;
-
         $this->representanteLegalId = $id;
-
         $this->representanteLegalSeleccionado = $id
             ? RepresentanteLegal::with(['representante.persona.tipoDocumento', 'representante.persona.genero', 'representante.ocupacion'])->find($id)
             : null;
     }
 
-
-
-    /**
-     * Obtener representantes por genero
-     */
     private function obtenerRepresentantesPorGenero($genero)
     {
         return Representante::with(['persona.tipoDocumento', 'persona.genero'])
@@ -204,9 +236,6 @@ class Inscripcion extends Component
             ->toArray();
     }
 
-    /**
-     * Cargar representantes legales
-     */
     public function cargarRepresentantesLegales()
     {
         $this->representantes = RepresentanteLegal::with(['representante.persona.tipoDocumento', 'representante.persona.genero'])
@@ -214,7 +243,6 @@ class Inscripcion extends Component
             ->get()
             ->map(function ($repLegal) {
                 $rep = $repLegal->representante;
-
                 return [
                     'id' => $repLegal->id,
                     'nombre_completo' =>
@@ -248,13 +276,12 @@ class Inscripcion extends Component
             'lateralidad',
         ])->find($value);
 
-        // Verificar inscripciÃ³n activa
         $inscripcionExistente = ModeloInscripcion::where('alumno_id', $value)
             ->where('status', true)
             ->first();
 
         if ($inscripcionExistente) {
-            session()->flash('warning', 'Este alumno ya tiene una inscripciÃ³n activa.');
+            session()->flash('warning', 'Este alumno ya tiene una inscripción activa.');
         }
     }
 
@@ -294,6 +321,7 @@ class Inscripcion extends Component
         $this->acepta_normas_contrato = $value;
         $this->validateOnly('acepta_normas_contrato');
     }
+
     /* ============================================================
        =========  METODO registrar() guardar inscripción SOLO
        ============================================================ */
@@ -310,7 +338,12 @@ class Inscripcion extends Component
         DB::beginTransaction();
 
         try {
-            // Documentos requeridos
+            // Verificar cupos nuevamente antes de insertar
+            if (!$this->verificarCuposDisponibles($this->gradoId)) {
+                DB::rollBack();
+                return session()->flash('error', 'El grado seleccionado ha alcanzado el límite de cupos disponibles.');
+            }
+
             $documentosRequeridos = [
                 'partida_nacimiento',
                 'copia_cedula_representante',
@@ -349,7 +382,6 @@ class Inscripcion extends Component
 
             session()->flash('success', 'Inscripcion registrada exitosamente.');
             $this->limpiar();
-
             session()->forget('inscripcion_temp');
 
             return redirect()->route('admin.transacciones.inscripcion.index');
@@ -395,7 +427,6 @@ class Inscripcion extends Component
         return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
     }
 
-
     /* ============================================================
        FUNCION guardarTodo() (Guardar Alumno y Inscripción en 1 acción)
        ============================================================ */
@@ -406,10 +437,31 @@ class Inscripcion extends Component
             return session()->flash('error', 'No se recibieron datos del alumno.');
         }
 
+        // Verificar cupos antes de continuar
+        if (!$this->verificarCuposDisponibles($this->gradoId)) {
+            return session()->flash('error', 'El grado seleccionado ha alcanzado el límite de cupos disponibles.');
+        }
+
+        $documentosRequeridos = [
+            'partida_nacimiento',
+            'copia_cedula_representante',
+            'copia_cedula_estudiante',
+            'boletin_6to_grado',
+            'certificado_calificaciones',
+            'constancia_aprobacion_primaria',
+            'foto_estudiante',
+            'foto_representante',
+            'carnet_vacunacion',
+            'autorizacion_tercero'
+        ];
+
+        $faltantes = array_diff($documentosRequeridos, $this->documentos ?? []);
+        $estadoInscripcion = empty($faltantes) ? 'Activo' : 'Pendiente';
+        $estadoDocumentos  = empty($faltantes) ? 'Completos' : 'Incompletos';
+
         DB::beginTransaction();
 
         try {
-            // Crear persona
             $persona = \App\Models\Persona::create([
                 'primer_nombre' => $datos['primer_nombre'],
                 'segundo_nombre' => $datos['segundo_nombre'] ?? null,
@@ -424,10 +476,8 @@ class Inscripcion extends Component
                 'status' => true,
             ]);
 
-            // Crear alumno
             $alumno = Alumno::create([
                 'persona_id' => $persona->id,
-
                 'talla_camisa' => $datos['talla_camisa'],
                 'talla_pantalon' => $datos['talla_pantalon'],
                 'talla_zapato' => $datos['talla_zapato'],
@@ -438,7 +488,6 @@ class Inscripcion extends Component
                 'status' => 'Activo',
             ]);
 
-            // Crear inscripción
             ModeloInscripcion::create([
                 'alumno_id' => $alumno->id,
                 'numero_zonificacion' => $this->numero_zonificacion,
@@ -450,24 +499,12 @@ class Inscripcion extends Component
                 'madre_id' => $this->madreId ?: null,
                 'representante_legal_id' => $this->representanteLegalId ?: null,
                 'documentos' => $this->documentos ?? [],
-                'estado_documentos' => empty(array_diff([
-                    'partida_nacimiento',
-                    'copia_cedula_representante',
-                    'copia_cedula_estudiante',
-                    'boletin_6to_grado',
-                    'certificado_calificaciones',
-                    'constancia_aprobacion_primaria',
-                    'foto_estudiante',
-                    'foto_representante',
-                    'carnet_vacunacion',
-                    'autorizacion_tercero'
-                ], $this->documentos ?? [])) ? 'Completos' : 'Incompletos',
+                'estado_documentos' => $estadoDocumentos,
                 'fecha_inscripcion' => $this->fecha_inscripcion,
                 'observaciones' => $this->observaciones,
                 'acepta_normas_contrato' => $this->acepta_normas_contrato,
-                'status' => 'Activo',
+                'status' => $estadoInscripcion,
             ]);
-
 
             DB::commit();
 
@@ -476,6 +513,17 @@ class Inscripcion extends Component
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error al registrar: ' . $e->getMessage());
+        }
+    }
+
+    // En tu componente Livewire, puedes agregar:
+    public function updatedGradoId($value)
+    {
+        if ($value) {
+            $info = $this->obtenerInfoCupos($value);
+            if ($info) {
+                $this->dispatch('actualizarInfoCupos', $info);
+            }
         }
     }
 
@@ -499,7 +547,6 @@ class Inscripcion extends Component
         ]);
 
         $this->fecha_inscripcion = now()->format('Y-m-d');
-
         $this->dispatch('resetSelects');
     }
 
