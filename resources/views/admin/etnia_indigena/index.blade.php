@@ -238,3 +238,8 @@
 <x-pagination :paginator="$etniaIndigena" />
 
 @endsection
+
+{{-- Incluir el archivo de validaciones --}}
+@push('js')
+    <script src="{{ asset('js/validations/etnia_indigena.js') }}"></script>
+@endpush

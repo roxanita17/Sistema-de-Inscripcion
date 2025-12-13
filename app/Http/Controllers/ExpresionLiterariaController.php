@@ -17,6 +17,42 @@ class ExpresionLiterariaController extends Controller
             ->orWhere('status', 'Extendido')
             ->exists();
     }
+    
+    /**
+     * Verifica si ya existe una expresión literaria con la letra proporcionada
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'letra_expresion_literaria' => ['required', 'regex:/^[A-Za-z]$/', 'max:1'],
+            ]);
+            
+            // Convertir a mayúscula para la verificación
+            $letra = strtoupper($request->letra_expresion_literaria);
+            
+            // Verificar si ya existe una expresión literaria activa con esta letra
+            $existe = ExpresionLiteraria::where('letra_expresion_literaria', $letra)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar la expresión literaria',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * Muestra la lista de todas las expresiones literarias registradas.

@@ -350,4 +350,10 @@
     <x-pagination :paginator="$grupoEstable" />
 
 </div>
+
+{{-- Incluir el archivo de validaciones --}}
+@push('js')
+    <script src="{{ asset('js/validations/area_formacion.js') }}"></script>
+@endpush
+
 @endsection

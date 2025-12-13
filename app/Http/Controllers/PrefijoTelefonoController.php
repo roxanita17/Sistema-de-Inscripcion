@@ -154,4 +154,36 @@ class PrefijoTelefonoController extends Controller
             ->route('admin.prefijo_telefono.index')
             ->with('error', 'El prefijo no fue encontrado.');
     }
+
+    /**
+     * Verifica si un prefijo ya existe
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'prefijo' => 'required|digits_between:1,4',
+            ]);
+
+            $existe = PrefijoTelefono::where('prefijo', $request->prefijo)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el prefijo',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

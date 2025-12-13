@@ -57,6 +57,37 @@ class MunicipioController extends Controller
     /**
      * Registra un nuevo municipio en la base de datos.
      */
+    /**
+     * Verifica si ya existe un municipio con el nombre proporcionado en el estado especificado.
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'estado_id' => 'required|exists:estados,id',
+            ]);
+
+            $existe = Municipio::where('nombre_municipio', $request->nombre)
+                ->where('estado_id', $request->estado_id)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el municipio',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         // Validar los datos ingresados por el usuario antes de guardar
