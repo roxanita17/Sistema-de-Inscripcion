@@ -19,6 +19,35 @@ class OcupacionController extends Controller
     }
 
     /**
+     * Verifica si ya existe una ocupación con el nombre proporcionado.
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+            ]);
+
+            $existe = Ocupacion::where('nombre_ocupacion', $request->nombre)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar la ocupación',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Muestra la lista de ocupaciones registradas en el sistema.
      */
     public function index()

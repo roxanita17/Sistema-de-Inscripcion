@@ -27,6 +27,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\EntradasPercentilController;
+use App\Http\Controllers\InstitucionProcedenciaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,6 +54,13 @@ Route::get("/vidaEstudiantil", function () {
 // ============================================
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Rutas para Institución de Procedencia
+    Route::get('institucion-procedencia', [InstitucionProcedenciaController::class, 'index'])->name('institucion-procedencia.index');
+    Route::post('institucion-procedencia', [InstitucionProcedenciaController::class, 'store'])->name('institucion-procedencia.store');
+    Route::get('institucion-procedencia/verificar', [InstitucionProcedenciaController::class, 'verificarExistencia'])->name('institucion-procedencia.verificar');
+    Route::put('institucion-procedencia/{institucionProcedencia}', [InstitucionProcedenciaController::class, 'update'])->name('institucion-procedencia.update');
+    Route::delete('institucion-procedencia/{institucionProcedencia}', [InstitucionProcedenciaController::class, 'destroy'])->name('institucion-procedencia.destroy');
+
 
     // ===== AÑO ESCOLAR (SIEMPRE ACCESIBLE - SIN VERIFICACIÓN) =====
     Route::get('anio_escolar', [AnioEscolarController::class, 'index'])->name('anio_escolar.index');
@@ -62,6 +70,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== BANCOS =====
     Route::get('banco', [BancoController::class, 'index'])->name('banco.index');
+    Route::get('banco/verificar', [BancoController::class, 'verificarExistencia'])->name('banco.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('banco/modales/store', [BancoController::class, 'store'])->name('banco.modales.store');
@@ -71,6 +80,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ETNIA INDÍGENA =====
     Route::get('etnia_indigena', [EtniaIndigenaController::class, 'index'])->name('etnia_indigena.index');
+    Route::get('etnia_indigena/verificar', [EtniaIndigenaController::class, 'verificarExistencia'])->name('etnia_indigena.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('etnia_indigena/modales/store', [EtniaIndigenaController::class, 'store'])->name('etnia_indigena.modales.store');
@@ -80,6 +90,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== OCUPACIÓN =====
     Route::get('ocupacion', [OcupacionController::class, 'index'])->name('ocupacion.index');
+    Route::get('ocupacion/verificar', [OcupacionController::class, 'verificarExistencia'])->name('ocupacion.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('ocupacion/modales/store', [OcupacionController::class, 'store'])->name('ocupacion.modales.store');
@@ -95,6 +106,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('estado.index');
+    
+    // Ruta para verificar la existencia de un estado
+    Route::get('estado/verificar', [EstadoController::class, 'verificarExistencia'])->name('estado.verificar');
 
     // ===== MUNICIPIO (LIVEWIRE) =====
     Route::get('municipio', function () {
@@ -104,6 +118,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('municipio.index');
+    
+    // Ruta para verificar la existencia de un municipio
+    Route::get('municipio/verificar', [MunicipioController::class, 'verificarExistencia'])->name('municipio.verificar');
 
     // ===== LOCALIDAD (LIVEWIRE) =====
     Route::get('localidad', function () {
@@ -113,6 +130,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('localidad.index');
+    
+    // Ruta para verificar la existencia de una localidad
+    Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
 
     // ===== INSTITUCIÓN DE PROCEDENCIA (LIVEWIRE)=====
     Route::get('institucion_procedencia', function () {
@@ -126,6 +146,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== GRADO =====
     Route::get('grado', [GradoController::class, 'index'])->name('grado.index');
+    Route::get('grado/verificar', [GradoController::class, 'verificarExistencia'])->name('grado.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('grado/modales/store', [GradoController::class, 'store'])->name('grado.modales.store');
@@ -135,6 +156,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ÁREA DE FORMACIÓN =====
     Route::get('area_formacion', [AreaFormacionController::class, 'index'])->name('area_formacion.index');
+    Route::get('area_formacion/verificar', [AreaFormacionController::class, 'verificarExistencia'])->name('area_formacion.verificar');
+    Route::get('area_formacion/verificar-grupo-estable', [AreaFormacionController::class, 'verificarExistenciaGrupoEstable'])->name('area_formacion.verificar_grupo_estable');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('area_formacion/modales/store', [AreaFormacionController::class, 'store'])->name('area_formacion.modales.store');
@@ -151,6 +174,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== EXPRESIÓN LITERARIA =====
     Route::get('expresion_literaria', [ExpresionLiterariaController::class, 'index'])->name('expresion_literaria.index');
+    Route::get('expresion_literaria/verificar', [ExpresionLiterariaController::class, 'verificarExistencia'])->name('expresion_literaria.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('expresion_literaria/modales/store', [ExpresionLiterariaController::class, 'store'])->name('expresion_literaria.modales.store');
@@ -160,6 +184,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== DISCAPACIDAD =====
     Route::get('discapacidad', [DiscapacidadController::class, 'index'])->name('discapacidad.index');
+    Route::get('discapacidad/verificar', [DiscapacidadController::class, 'verificarExistencia'])->name('discapacidad.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('discapacidad/modales/store', [DiscapacidadController::class, 'store'])->name('discapacidad.modales.store');
@@ -178,6 +203,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== PREFIJO DE TELÉFONO =====
     Route::get('prefijo_telefono', [PrefijoTelefonoController::class, 'index'])->name('prefijo_telefono.index');
+    Route::get('prefijo_telefono/verificar', [PrefijoTelefonoController::class, 'verificarExistencia'])->name('prefijo_telefono.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('prefijo_telefono/modales/store', [PrefijoTelefonoController::class, 'store'])->name('prefijo_telefono.modales.store');
@@ -197,6 +223,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ESTUDIOS REALIZADOS =====
     Route::get('estudios_realizados', [EstudiosRealizadoController::class, 'index'])->name('estudios_realizados.index');
+    Route::get('estudios_realizados/verificar', [EstudiosRealizadoController::class, 'verificarExistencia'])->name('estudios_realizados.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('estudios_realizados/modales/store', [EstudiosRealizadoController::class, 'store'])->name('estudios_realizados.modales.store');

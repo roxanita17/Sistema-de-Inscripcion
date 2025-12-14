@@ -67,6 +67,37 @@ class LocalidadController extends Controller
         return response()->json($localidades);
     }
 
+
+    /**
+     * Verifica si ya existe una localidad con el nombre proporcionado en el municipio especificado.
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'municipio_id' => 'required|exists:municipios,id',
+            ]);
+
+            $existe = Localidad::where('nombre_localidad', $request->nombre)
+                ->where('municipio_id', $request->municipio_id)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar la localidad',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     /**
      * Registra una nueva localidad en la base de datos.
      */

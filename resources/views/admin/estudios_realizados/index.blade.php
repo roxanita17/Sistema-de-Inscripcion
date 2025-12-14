@@ -235,4 +235,8 @@
 {{-- Paginación moderna --}}
 <x-pagination :paginator="$estudiosRealizados" />
 
+@push('js')
+    <script src="{{ asset('js/validations/estudios_realizados.js') }}"></script>
+@endpush
+
 @endsection

@@ -127,6 +127,38 @@ class GradoController extends Controller
     }
 
     /**
+     * Verifica si ya existe un grado con el número proporcionado.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'numero_grado' => 'required|numeric|digits_between:1,4',
+            ]);
+
+            $existe = Grado::where('numero_grado', $request->numero_grado)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el grado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Desactiva un grado (eliminación lógica del registro).
      */
     public function destroy($id)

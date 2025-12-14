@@ -211,6 +211,70 @@ class AreaFormacionController extends Controller
     }
 
     /**
+     * Verifica si ya existe un área de formación con el nombre proporcionado.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+            ]);
+
+            $existe = AreaFormacion::where('nombre_area_formacion', $request->nombre)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el área de formación',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Verifica si ya existe un grupo estable con el nombre proporcionado.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verificarExistenciaGrupoEstable(Request $request)
+    {
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+            ]);
+
+            $existe = GrupoEstable::where('nombre_grupo_estable', $request->nombre)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistenciaGrupoEstable: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el grupo estable',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Realiza una baja lógica de un área de formación.
      */
     public function destroy($id)

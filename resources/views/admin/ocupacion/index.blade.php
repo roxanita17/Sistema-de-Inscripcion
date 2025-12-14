@@ -236,3 +236,8 @@
 <x-pagination :paginator="$ocupacion" />
 
 @endsection
+
+{{-- Incluir el archivo de validaciones --}}
+@push('js')
+    <script src="{{ asset('js/validations/ocupacion.js') }}"></script>
+@endpush

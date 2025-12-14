@@ -19,6 +19,35 @@ class DiscapacidadController extends Controller
     }
     
     /**
+     * Verifica si ya existe una discapacidad con el nombre proporcionado.
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+            ]);
+
+            $existe = Discapacidad::where('nombre_discapacidad', $request->nombre)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar la discapacidad',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Muestra el listado de todas las discapacidades registradas.
      * 
      * Los registros se ordenan alfabéticamente por el nombre de la discapacidad

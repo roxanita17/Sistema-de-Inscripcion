@@ -43,6 +43,9 @@
 @endsection
 
 @section('js')
+<!-- Incluir el archivo de validaciones -->
+<script src="{{ asset('js/validations/institucionProcedencia.js') }}"></script>
+
 <script>
     document.addEventListener('livewire:initialized', () => {
         Livewire.on('cerrarModal', () => {

@@ -244,4 +244,8 @@
 {{-- Paginación moderna --}}
 <x-pagination :paginator="$grados" />
 
+@push('js')
+    <script src="{{ asset('js/validations/grado.js') }}"></script>
+@endpush
+
 @endsection

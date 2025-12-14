@@ -134,26 +134,25 @@ class Docente extends Model
         return $prefijo . $this->primer_telefono;
     }
 
-public static function reportePDF($id)
+
+public function reportePDF($id)
 {
-    // Cargar el docente con las relaciones necesarias
-    $docente = Docente::select([
-        'docentes.*',
-        'personas.*',
-        'tipo_documentos.abreviatura as tipo_documento_abreviatura',
-        'generos.nombre as genero_nombre',
-        'estudios_realizados.estudios as nombre_estudio',
-        'area_formacions.nombre_area_formacion as nombre_area',
-        'grado_area_formacions.codigo as nombre_grado'
+    $docente = Docente::with([
+        'persona.tipoDocumento',
+        'persona.genero',
+        'detalleDocenteEstudio.estudiosRealizado',
+        'detalleDocenteEstudio.docenteAreaGrados.areaEstudioRealizado.areaFormacion',
+        'detalleDocenteEstudio.docenteAreaGrados.grado'
     ])
-    ->leftJoin('personas', 'personas.id', '=', 'docentes.persona_id')
-    ->leftJoin('tipo_documentos', 'tipo_documentos.id', '=', 'personas.tipo_documento_id')
-    ->leftJoin('generos', 'generos.id', '=', 'personas.genero_id')
-    ->leftJoin('detalle_docente_estudios', 'detalle_docente_estudios.docente_id', '=', 'docentes.id')
-    ->leftJoin('estudios_realizados', 'estudios_realizados.id', '=', 'detalle_docente_estudios.estudios_id')
+    ->leftJoin('personas', 'docentes.persona_id', '=', 'personas.id')
+    ->leftJoin('tipo_documentos', 'personas.tipo_documento_id', '=', 'tipo_documentos.id')
+    ->leftJoin('generos', 'personas.genero_id', '=', 'generos.id')
+    ->leftJoin('detalle_docente_estudios', 'docentes.id', '=', 'detalle_docente_estudios.docente_id')
+    ->leftJoin('estudios_realizados', 'detalle_docente_estudios.estudios_id', '=', 'estudios_realizados.id')
     ->leftJoin('docente_area_grados', 'docente_area_grados.docente_estudio_realizado_id', '=', 'detalle_docente_estudios.id')
-    ->leftJoin('area_formacions', 'area_formacions.id', '=', 'docente_area_grados.area_estudio_realizado_id')
-    ->leftJoin('grado_area_formacions', 'grado_area_formacions.id', '=', 'docente_area_grados.grado_id')
+    ->leftJoin('area_estudio_realizados', 'docente_area_grados.area_estudio_realizado_id', '=', 'area_estudio_realizados.id')
+    ->leftJoin('area_formacions', 'area_estudio_realizados.area_formacion_id', '=', 'area_formacions.id')
+    ->leftJoin('grado_area_formacions', 'docente_area_grados.grado_id', '=', 'grado_area_formacions.id')
     ->find($id);
 
     if (!$docente) {
@@ -176,6 +175,26 @@ public static function reportePDF($id)
         $docente->direccion = $docente->persona->direccion ?? 'N/A';
         $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
     }
+
+    // Obtener estudios realizados
+    $estudios = DB::table('estudios_realizados')
+        ->where('status', true)
+        ->get();
+
+    // Obtener las materias (áreas de formación) del docente
+    $materias = DB::table('docentes as d')
+        ->join('detalle_docente_estudios as dde', 'd.id', '=', 'dde.docente_id')
+        ->join('docente_area_grados as dag', 'dde.id', '=', 'dag.docente_estudio_realizado_id')
+        ->join('area_estudio_realizados as aer', 'dag.area_estudio_realizado_id', '=', 'aer.id')
+        ->join('area_formacions as af', 'aer.area_formacion_id', '=', 'af.id')
+        ->join('grados as g', 'dag.grado_id', '=', 'g.id')
+        ->where('d.id', $id)
+        ->where('dde.status', true)
+        ->select(
+            'af.nombre_area_formacion as materia',
+            'g.nombre as grado'
+        )
+        ->get();
 
     $pdf = PDF::loadView('admin.docente.reportes.individual_PDF', [
         'docente' => $docente

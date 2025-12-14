@@ -8,7 +8,7 @@
                 <div class="modal-icon-create">
                     <i class="fas fa-plus-circle"></i>
                 </div>
-                <h5 class="modal-title-create" id="modalCrearLabel">Nuevo Municipio</h5>
+                <h5 class="modal-title-create" id="modalCrearLabel">Nueva Localidad</h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                     <i class="fas fa-times"></i>
                 </button>
@@ -16,7 +16,7 @@
 
             {{-- Cuerpo del modal con formulario --}}
             <div class="modal-body-create">
-                <form wire:submit.prevent="store" id="formCrearMunicipio">
+                <form wire:submit.prevent="store" id="formCrearLocalidad">
                     
                     {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
