@@ -40,6 +40,7 @@
                             <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
                         </p>
                     </div>
+
                 </div>
             </div>
         @endif
@@ -81,8 +82,9 @@
 
         {{-- Contenedor principal de la tabla de entradasPercentil --}}
         <div class="card-modern">
-            <div class="card-header-modern">
-                <div class="header-left">
+            <div class="card-header-modern d-flex justify-content-between align-items-center">
+                {{-- Lado izquierdo --}}
+                <div class="header-left d-flex align-items-center">
                     <div class="header-icon">
                         <i class="fas fa-list-ul"></i>
                     </div>
@@ -90,116 +92,117 @@
                         <h3>Listado del percentil</h3>
                     </div>
                 </div>
-                <div class="header-right">
+
+                {{-- Lado derecho --}}
+                <div class="header-right d-flex align-items-center gap-2">
+                    <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#viewModal"
+                        title="Ver Detalles">
+                        <i class="fas fa-eye"></i> Resumen de secciones
+                    </button>
+
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ now()->translatedFormat('d M Y') }}</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            {{-- Cuerpo de la tarjeta con la tabla --}}
-            <div class="card-body-modern">
-                <div class="table-wrapper">
-                    <table class="table-modern overflow-hidden hidden">
-                        <thead>
-                            <tr style="text-align: center">
-                                <th style="text-align: center">Estudiante</th>
-                                <th>Seccion</th>
-                                <th>Indice Peso</th>
-                                <th>Indice Altura</th>
-                                <th>Indice Edad</th>
-                                <th>Indice total</th>
+
+        {{-- Cuerpo de la tarjeta con la tabla --}}
+        <div class="card-body-modern">
+            <div class="table-wrapper">
+                <table class="table-modern overflow-hidden hidden">
+                    <thead>
+                        <tr style="text-align: center">
+                            <th style="text-align: center">Estudiante</th>
+                            <th style="text-align: center">Seccion</th>
+                            <th style="text-align: center">Indice Peso</th>
+                            <th style="text-align: center">Indice Altura</th>
+                            <th style="text-align: center">Indice Edad</th>
+                            <th style="text-align: center">Indice total</th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center">
+                        {{-- Si no hay entradasPercentil, se muestra mensaje vacío --}}
+                        @if ($entradasPercentil->isEmpty())
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <div class="empty-icon">
+                                            <i class="fas fa-inbox"></i>
+                                        </div>
+                                        <h4>No hay estudiantes asignados registrados</h4>
+                                        <p>Agrega un nuevo estudiante con el botón superior</p>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody style="text-align: center">
-                            {{-- Si no hay entradasPercentil, se muestra mensaje vacío --}}
-                            @if ($entradasPercentil->isEmpty())
-                                <tr>
-                                    <td colspan="8">
-                                        <div class="empty-state">
-                                            <div class="empty-icon">
-                                                <i class="fas fa-inbox"></i>
+                        @else
+                            {{-- Se recorren los entradasPercentil existentes --}}
+                            @foreach ($entradasPercentil as $index => $datos)
+                                <tr class="table-row-hover row-12" style="text-align: center">
+
+                                    <td>
+                                        <div class="student-info">
+                                            <div class="student-name">
+
+                                                {{ $datos->inscripcion->alumno->persona->primer_nombre ?? '' }}
+                                                {{ $datos->inscripcion->alumno->persona->primer_apellido ?? '' }}
                                             </div>
-                                            <h4>No hay estudiantes asignados registrados</h4>
-                                            <p>Agrega un nuevo estudiante con el botón superior</p>
+
+                                            <div class="student-details">
+                                                <span>
+
+                                                    {{ $datos->inscripcion->alumno->persona->tipoDocumento->nombre }}-
+                                                    {{ $datos->inscripcion->alumno->persona->numero_documento }}
+                                                </span>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ $datos->seccion->nombre }}</td>
+                                    <style>
+                                        .student-info {
+                                            display: flex;
+                                            flex-direction: column;
+                                            gap: 4px;
+                                        }
+
+                                        .student-name {
+                                            font-weight: 600;
+                                            color: #2c3e50;
+                                            font-size: 0.95rem;
+                                        }
+
+                                        .student-details {
+                                            font-size: 0.8rem;
+                                            color: #6c757d;
+                                        }
+                                    </style>
+                                    <td>{{ $datos->indice_peso }}</td>
+                                    <td>{{ $datos->indice_estatura }}</td>
+                                    <td>{{ $datos->indice_edad }}</td>
+
+                                    <td>
+                                        <div class="number-badge">
+                                            {{ $datos->indice_total }}
                                         </div>
                                     </td>
                                 </tr>
-                            @else
-                                {{-- Se recorren los entradasPercentil existentes --}}
-                                @foreach ($entradasPercentil as $index => $datos)
-                                    <tr class="table-row-hover row-12" style="text-align: center">
+                                @include('admin.transacciones.percentil.modales.showModal')
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
 
-                                        <td>
-                                            <div class="student-info">
-                                                <div class="student-name">
-                                                    
-                                                    {{ $datos->inscripcion->alumno->persona->primer_nombre ?? '' }}
-                                                    {{ $datos->inscripcion->alumno->persona->primer_apellido ?? '' }}
-                                                </div>
-
-                                                <div class="student-details">
-                                                    <span>
-                                                        
-                                                        {{ $datos->inscripcion->alumno->peso }} kg
-                                                    </span>
-                                                    <span class="mx-2">|</span>
-                                                    <span>
-                                                        
-                                                        {{ $datos->inscripcion->alumno->estatura }} cm
-                                                    </span>
-                                                    <span class="mx-2">|</span>
-                                                    <span>
-                                                        
-                                                        {{ $datos->inscripcion->alumno->persona->fecha_nacimiento->age }}
-                                                        años
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{{ $datos->seccion->nombre }}</td>
-                                        <style>
-                                            .student-info {
-                                                display: flex;
-                                                flex-direction: column;
-                                                gap: 4px;
-                                            }
-
-                                            .student-name {
-                                                font-weight: 600;
-                                                color: #2c3e50;
-                                                font-size: 0.95rem;
-                                            }
-
-                                            .student-details {
-                                                font-size: 0.8rem;
-                                                color: #6c757d;
-                                            }
-
-                                            
-                                        </style>
-                                        <td>{{ $datos->indice_peso }}</td>
-                                        <td>{{ $datos->indice_estatura }}</td>
-                                        <td>{{ $datos->indice_edad }}</td>
-
-                                        <td>
-                                            {{ $datos->indice_total }}
-
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            {{-- Paginación moderna --}}
-            <div class="mt-3">
-                <x-pagination :paginator="$entradasPercentil" />
             </div>
         </div>
+
+        {{-- Paginación moderna --}}
+        <div class="mt-3">
+            <x-pagination :paginator="$entradasPercentil" />
+        </div>
+    </div>
     </div>
 
 @endsection

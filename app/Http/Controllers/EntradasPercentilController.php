@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Inscripcion;
 use App\Models\Grado;
 use App\Services\SectionDistributorService;
+use App\Models\Seccion;
 use Illuminate\Support\Facades\DB;
 
 class EntradasPercentilController extends Controller
@@ -35,10 +36,19 @@ class EntradasPercentilController extends Controller
                 if ($gradoId) {
                     $q->where('grado_id', $gradoId);
                 }
-            })->orderBy('indice_total', 'asc')
+            })->orderBy('seccion_id', 'asc')
             ->paginate(10);
 
-        return view('admin.transacciones.percentil.index', compact('entradasPercentil', 'anioEscolarActivo', 'gradoId'));
+        $seccionesResumen = EntradasPercentil::select('seccion_id')
+            ->with('seccion')
+            ->whereHas('inscripcion', function ($q) use ($gradoId) {
+                if ($gradoId) $q->where('grado_id', $gradoId);
+            })
+            ->groupBy('seccion_id')
+            ->selectRaw('count(*) as total_estudiantes, seccion_id')
+            ->get();
+
+        return view('admin.transacciones.percentil.index', compact('entradasPercentil', 'anioEscolarActivo', 'gradoId', 'seccionesResumen'));
     }
 
 
@@ -78,7 +88,5 @@ class EntradasPercentilController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
-        
     }
-
 }
