@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\EntradasPercentil;
+use App\Models\Seccion;
 
 class Inscripcion extends Model
 {
@@ -44,6 +45,29 @@ class Inscripcion extends Model
     public function institucionProcedencia()
     {
         return $this->belongsTo(InstitucionProcedencia::class, 'institucion_procedencia_id', 'id');
+    }
+    
+    /**
+     * Relación con EntradasPercentil
+     */
+    public function entradaPercentil()
+    {
+        return $this->hasOne(EntradasPercentil::class, 'inscripcion_id');
+    }
+    
+    /**
+     * Relación con Sección a través de EntradasPercentil
+     */
+    public function seccionAsignada()
+    {
+        return $this->hasOneThrough(
+            Seccion::class,
+            EntradasPercentil::class,
+            'inscripcion_id', // Foreign key on EntradasPercentil table
+            'id', // Foreign key on Seccion table
+            'id', // Local key on Inscripcion table
+            'seccion_id' // Local key on EntradasPercentil table
+        );
     }
     /**
      * Relación con Alumno

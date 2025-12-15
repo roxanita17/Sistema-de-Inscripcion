@@ -115,6 +115,22 @@
     box-shadow: var(--shadow-md);
 }
 
+.btn-percentil {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--info);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
 .btn-pdf {
     display: flex;
     align-items: center;
@@ -133,6 +149,12 @@
 
 .btn-create:hover {
     background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-percentil:hover {
+    background: var(--info-dark);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }

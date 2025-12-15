@@ -121,7 +121,7 @@
                 <table class="table-modern overflow-hidden hidden">
                     <thead>
                         <tr style="text-align: center">
-                            <th style="text-align: center">Grado</th>
+                            <th style="text-align: center">Año</th>
                             <th style="text-align: center">Estado</th>
                             <th style="text-align: center">Acciones</th>
                         </tr>

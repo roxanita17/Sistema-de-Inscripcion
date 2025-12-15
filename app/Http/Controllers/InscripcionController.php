@@ -13,6 +13,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use App\Models\ExpresionLiteraria;
 use App\Models\InstitucionProcedencia;
+use App\Models\EntradasPercentil;
+use App\Models\Seccion;
 
 class InscripcionController extends Controller
 {
@@ -27,12 +29,14 @@ class InscripcionController extends Controller
     }
     public function index()
     {
-
         $buscar = request('buscar');
         // Obtener todos los grados
         $grados = Grado::where('status', true)->get();
 
         $grado1 = Grado::find(1); // O usa: Grado::where('nombre', '1er Año')->first();
+        $infoCupos = null;
+        $entradasPercentil = collect();
+        $seccionesResumen = collect();
 
         if ($grado1) {
             $inscritos = Inscripcion::where('grado_id', 1)
@@ -48,15 +52,54 @@ class InscripcionController extends Controller
                     ? round(($inscritos / $grado1->capacidad_max) * 100, 2)
                     : 0
             ];
+
+            // Obtener entradas de percentil para estudiantes asignados a secciones
+            $entradasPercentil = EntradasPercentil::with([
+                'inscripcion.alumno.persona.tipoDocumento',
+                'seccion'
+            ])
+                ->whereHas('inscripcion', function ($q) use ($grado1) {
+                    $q->where('grado_id', $grado1->id);
+                })
+                ->orderBy('seccion_id')
+                ->get();
+
+            // Obtener resumen de secciones
+            $seccionesResumen = EntradasPercentil::select('seccion_id')
+                ->with('seccion')
+                ->whereHas('inscripcion', function ($q) use ($grado1) {
+                    $q->where('grado_id', $grado1->id);
+                })
+                ->groupBy('seccion_id')
+                ->selectRaw('count(*) as total_estudiantes, seccion_id')
+                ->get();
         }
-
-
 
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        $inscripciones = Inscripcion::buscar($buscar)->paginate(10);
-        $grados = Grado::all();
-        return view('admin.transacciones.inscripcion.index', compact('anioEscolarActivo', 'inscripciones', 'grados', 'buscar', 'infoCupos'));
+        $inscripciones = Inscripcion::with([
+            'alumno.persona.tipoDocumento',
+            'grado',
+            'seccionAsignada'
+        ])
+            ->select('inscripcions.*')
+            ->join('alumnos', 'inscripcions.alumno_id', '=', 'alumnos.id')
+            ->join('personas', 'alumnos.persona_id', '=', 'personas.id')
+            ->buscar($buscar)
+            ->orderBy('personas.primer_apellido', 'asc')
+            ->orderBy('personas.numero_documento', 'asc')
+            ->orderBy('personas.primer_nombre', 'asc')
+            ->paginate(10);
+
+        return view('admin.transacciones.inscripcion.index', [
+            'anioEscolarActivo' => $anioEscolarActivo,
+            'inscripciones' => $inscripciones,
+            'grados' => $grados,
+            'buscar' => $buscar,
+            'infoCupos' => $infoCupos,
+            'entradasPercentil' => $entradasPercentil,
+            'seccionesResumen' => $seccionesResumen
+        ]);
     }
 
     public function create()
