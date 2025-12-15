@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('alumnos', function (Blueprint $table) {
             $table->id();
-            $table->integer('numero_zonificacion');
-            $table->date('anio_egreso');
+            
             $table->string('talla_camisa');
             $table->string('talla_pantalon');
             $table->string('talla_zapato');
@@ -26,7 +25,6 @@ return new class extends Migration
             $table->foreignId('expresion_literaria_id')->nullable()->constrained('expresion_literarias')->cascadeOnDelete();
             $table->foreignId('lateralidad_id')->nullable()->constrained('lateralidads')->cascadeOnDelete();
             $table->foreignId('persona_id')->constrained('personas')->cascadeOnDelete();
-            $table->foreignId('institucion_procedencia_id')->constrained('institucion_procedencias')->cascadeOnDelete();
 
             $table->string('status')->default('Activo');
             $table->timestamps();

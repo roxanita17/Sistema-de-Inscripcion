@@ -14,9 +14,7 @@ use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
 use App\Models\OrdenNacimiento;
-use App\Models\ExpresionLiteraria;
 use App\Models\Lateralidad;
-use App\Models\InstitucionProcedencia;
 use App\Models\AnioEscolar;
 
 class AlumnoCreate extends Component
@@ -30,12 +28,6 @@ class AlumnoCreate extends Component
     // IDs
     public $alumno_id;
     public $persona_id;
-
-    // Procedencia
-    public $numero_zonificacion;
-    public $institucion_procedencia_id;
-    public $expresion_literaria_id;
-    public $anio_egreso;
 
     // Datos personales
     public $tipo_documento_id;
@@ -66,7 +58,6 @@ class AlumnoCreate extends Component
     public $instituciones;
     public $tipos_documentos = [];
     public $generos = [];
-    public $expresiones_literarias = [];
     public $lateralidades = [];
     public $lateralidad_id;
     public $orden_nacimiento_id;
@@ -85,32 +76,20 @@ class AlumnoCreate extends Component
     protected function rules()
     {
         return [
-            // Procedencia
-            'numero_zonificacion' => 'required|numeric',
-            'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
-            'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
-
-            'anio_egreso' => [
-                'required',
-                'date',
-                // Validación personalizada del año
-                function ($attribute, $value, $fail) {
-                    $anio = Carbon::parse($value)->year;
-                    $actual = Carbon::now()->year;
-
-                    if ($anio > $actual) {
-                        $fail('El año de egreso no puede ser futuro.');
-                    } elseif ($anio < $actual - 7) {
-                        $fail('El año de egreso no puede ser menor al año actual menos 7 años.');
-                    }
-                }
-            ],
 
             // Persona
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'numero_documento' => 'required|string|max:15|unique:personas,numero_documento,' . $this->persona_id,
+            'numero_documento' => [
+                'required',
+                'digits_between:6,8',
+                'unique:personas,numero_documento,' . $this->persona_id,
+            ],
+
             'primer_nombre' => 'required|string|max:50',
             'primer_apellido' => 'required|string|max:50',
+            'segundo_nombre' => 'nullable|string|max:50',
+            'tercer_nombre' => 'nullable|string|max:50',
+            'segundo_apellido' => 'nullable|string|max:50',
             'genero_id' => 'required|exists:generos,id',
 
             // Fecha nacimiento y edad
@@ -144,6 +123,41 @@ class AlumnoCreate extends Component
         ];
     }
 
+    protected $messages = [
+        'tipo_documento_id.required' => 'Debe seleccionar tipo de documento',
+        'numero_documento.required' => 'Debe ingresar la cédula',
+        'numero_documento.digits_between' => 'La cédula debe tener entre 6 y 8 dígitos',
+        'numero_documento.unique' => 'Esta cédula ya está registrada en el sistema',
+        'primer_nombre.required' => 'Debe ingresar un nombre',
+        'primer_apellido.required' => 'Debe ingresar un apellido',
+        'genero_id.required' => 'Debe seleccionar un genero',
+        'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
+        'fecha_nacimiento.before:today' => 'La edad debe estar entre los 10 y 18 años',
+        'talla_estudiante.required' => 'Este campo es requerido',
+        'talla_estudiante.numeric' => 'Este campo debe ser un número',
+        'talla_estudiante.between' => 'Este campo debe estar entre 50 y 250',
+        'peso_estudiante.required' => 'Este campo es requerido',
+        'peso_estudiante.numeric' => 'Este campo debe ser un número',
+        'peso_estudiante.between' => 'Este campo debe estar entre 2 y 300',
+        'talla_camisa.required' => 'Este campo es requerido',
+        'talla_zapato.required' => 'Este campo es requerido',
+        'talla_zapato.integer' => 'Este campo debe ser un número',
+        'talla_pantalon.required' => 'Este campo es requerido',
+        'estado_id.required' => 'Este campo es requerido',
+        'municipio_id.required' => 'Este campo es requerido',
+        'localidad_id.required' => 'Este campo es requerido',
+        'lateralidad_id.required' => 'Este campo es requerido',
+        'orden_nacimiento_id.required' => 'Este campo es requerido',
+
+
+
+    ];
+
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
+    }
+
 
     /* ============================================================
        ========================   MOUNT   ==========================
@@ -173,10 +187,8 @@ class AlumnoCreate extends Component
     public function cargarDatosIniciales()
     {
         // Listas para selects
-        $this->instituciones = InstitucionProcedencia::where('status', true)->get();
         $this->estados = Estado::where('status', true)->get();
 
-        $this->expresiones_literarias = ExpresionLiteraria::where('status', true)->orderBy('letra_expresion_literaria')->get();
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
         $this->generos = \App\Models\Genero::where('status', true)->get();
         $this->lateralidades = Lateralidad::where('status', true)->get();
@@ -189,7 +201,9 @@ class AlumnoCreate extends Component
        ============================================================ */
     public function cargarAlumno($id)
     {
-        $alumno = Alumno::with('persona')->findOrFail($id);
+        $alumno = Alumno::with('persona',
+        
+        )->findOrFail($id);
         $persona = $alumno->persona;
 
         // Datos personales
@@ -205,10 +219,7 @@ class AlumnoCreate extends Component
         $this->genero_id = $persona->genero_id;
 
         // Procedencia y datos físicos
-        $this->numero_zonificacion = $alumno->numero_zonificacion;
-        $this->institucion_procedencia_id = $alumno->institucion_procedencia_id;
-        $this->expresion_literaria_id = $alumno->expresion_literaria_id;
-        $this->anio_egreso = $alumno->anio_egreso->format('Y-m-d');
+
 
         $this->talla_camisa = $alumno->talla_camisa;
         $this->talla_pantalon = $alumno->talla_pantalon;
@@ -266,7 +277,6 @@ class AlumnoCreate extends Component
 
             $this->edad = $fecha->diffInYears($hoy);
             $this->meses = $fecha->diffInMonths($hoy) % 12;
-
         } catch (\Exception $e) {
             $this->edad = 0;
             $this->meses = 0;
@@ -289,10 +299,10 @@ class AlumnoCreate extends Component
                 ['id' => $this->persona_id],
                 [
                     'primer_nombre' => $this->primer_nombre,
-                    'segundo_nombre' => $this->segundo_nombre,
-                    'tercer_nombre' => $this->tercer_nombre,
+                    'segundo_nombre' => $this->segundo_nombre ?? null,
+                    'tercer_nombre' => $this->tercer_nombre ?? null,
                     'primer_apellido' => $this->primer_apellido,
-                    'segundo_apellido' => $this->segundo_apellido,
+                    'segundo_apellido' => $this->segundo_apellido ?? null,
                     'tipo_documento_id' => $this->tipo_documento_id,
                     'numero_documento' => $this->numero_documento,
                     'genero_id' => $this->genero_id,
@@ -307,10 +317,6 @@ class AlumnoCreate extends Component
                 ['id' => $this->alumno_id],
                 [
                     'persona_id' => $persona->id,
-                    'numero_zonificacion' => $this->numero_zonificacion,
-                    'institucion_procedencia_id' => $this->institucion_procedencia_id,
-                    'anio_egreso' => $this->anio_egreso,
-                    'expresion_literaria_id' => $this->expresion_literaria_id,
                     'talla_camisa' => $this->talla_camisa,
                     'talla_pantalon' => $this->talla_pantalon,
                     'talla_zapato' => $this->talla_zapato,
@@ -326,7 +332,6 @@ class AlumnoCreate extends Component
 
             session()->flash('success', 'Alumno guardado exitosamente');
             return redirect()->route('admin.alumnos.index');
-
         } catch (\Exception $e) {
 
             DB::rollBack();

@@ -41,9 +41,16 @@ return new class extends Migration
             $table->string('estado_documentos')->default('Pendiente');
 
             // Fecha de inscripción
-            $table->date('fecha_inscripcion');
-
             $table->string('observaciones')->nullable();
+
+            $table->integer('numero_zonificacion');
+            $table->date('anio_egreso');
+            $table->foreignId('institucion_procedencia_id')->constrained('institucion_procedencias')->cascadeOnDelete();
+            $table->foreignId('expresion_literaria_id')->constrained('expresion_literarias')->cascadeOnDelete();
+            $table->boolean('acepta_normas_contrato')->default(false);
+
+
+
 
             $table->string('status')->default('Activo');
 

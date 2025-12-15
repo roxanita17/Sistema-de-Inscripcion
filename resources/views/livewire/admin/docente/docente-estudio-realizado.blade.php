@@ -58,12 +58,9 @@
                     </label>
 
                     <select id="estudios_realizados_id"
-                            class="form-control-modern selectpicker @error('estudiosId') is-invalid @enderror"
-                            data-live-search="true"
-                            data-size="8"
-                            data-style="btn-default"
-                            data-width="100%"
-                            wire:model="estudiosId">
+                        class="form-control-modern selectpicker @error('estudiosId') is-invalid @enderror"
+                        data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
+                        wire:model="estudiosId">
                         <option value="">Seleccione un estudio</option>
                         @foreach ($estudios as $titulo)
                             <option value="{{ $titulo->id }}">{{ $titulo->estudios }}</option>
@@ -84,10 +81,8 @@
                 </div>
 
                 <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn-primary-modern w-100"
-                            wire:click="agregarEstudio"
-                            wire:loading.attr="disabled"
-                            style="margin-bottom: 1.5rem;">
+                    <button class="btn-primary-modern w-100" wire:click="agregarEstudio" wire:loading.attr="disabled"
+                        style="margin-bottom: 1.5rem;">
                         <span wire:loading.remove wire:target="agregarEstudio">
                             <i class="fas fa-plus"></i> Agregar Estudio
                         </span>
@@ -99,7 +94,7 @@
             </div>
         </div>
     </div>
-    
+
 
     {{-- Tabla de estudios asignados --}}
     <div class="card-modern">
@@ -126,7 +121,7 @@
                 <table class="table-modern">
                     <thead>
                         <tr>
-                            <th >#</th>
+                            <th>#</th>
                             <th>Estudio Realizado</th>
                             <th style="text-align: center;">Fecha de Registro</th>
                             <th>Acciones</th>
@@ -140,7 +135,8 @@
                                 </td>
                                 <td>
                                     <div class="cell-content" style="gap: 0.75rem;">
-                                        <div style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; flex-shrink: 0;">
+                                        <div
+                                            style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; flex-shrink: 0;">
                                             <i class="fas fa-graduation-cap"></i>
                                         </div>
                                         <div>
@@ -156,13 +152,12 @@
                                         {{ $detalle->created_at->format('d/m/Y') }}
                                     </span>
                                 </td>
-                                <td style="text-align: center;"> 
+                                <td style="text-align: center;">
                                     <div class="action-buttons">
                                         <button class="action-btn btn-delete"
-                                                wire:click="$set('estudioSeleccionado', {{ $detalle->id }})"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#modalEliminarEstudio"
-                                                title="Eliminar">
+                                            wire:click="$set('estudioSeleccionado', {{ $detalle->id }})"
+                                            data-bs-toggle="modal" data-bs-target="#modalEliminarEstudio"
+                                            title="Eliminar">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
 
@@ -174,14 +169,14 @@
                             <tr>
                                 <td colspan="4">
                                     <div class="empty-state">
-                                        
+
                                         <h4>No hay estudios asignados</h4>
                                         <p>Agregue estudios realizados usando el formulario superior</p>
                                     </div>
                                 </td>
                             </tr>
                         @endforelse
-                        
+
                     </tbody>
                 </table>
                 <!-- Modal eliminar estudio -->
@@ -210,10 +205,10 @@
                                     </button>
 
                                     <button class="btn-modal-delete"
-                                            wire:click="eliminarEstudio({{ $estudioSeleccionado }})"
-                                            wire:loading.attr="disabled"
-                                            data-bs-dismiss="modal">
-                                        <span wire:loading.remove wire:target="eliminarEstudio({{ $estudioSeleccionado }})">
+                                        wire:click="eliminarEstudio({{ $estudioSeleccionado }})"
+                                        wire:loading.attr="disabled" data-bs-dismiss="modal">
+                                        <span wire:loading.remove
+                                            wire:target="eliminarEstudio({{ $estudioSeleccionado }})">
                                             Eliminar
                                         </span>
                                         <span wire:loading wire:target="eliminarEstudio({{ $estudioSeleccionado }})">
@@ -228,16 +223,14 @@
                 </div>
 
 
-                
+
             </div>
         </div>
         <br>
         <hr>
         <div class="row">
             <div class="col-md-12 d-flex justify-content-end">
-                <a type="button" 
-                class="btn-create px-4 py-2"
-                href="{{ route('admin.docente.index') }}">
+                <a type="button" class="btn-create px-4 py-2" href="{{ route('admin.docente.index') }}">
                     <i class="fas fa-save"></i> Guardar
                 </a>
             </div>
@@ -245,35 +238,36 @@
         <br>
 
     </div>
-    
-    
+
+
 </div>
 
 
 @push('scripts')
-<script>
-    // Inicializar selectpicker
-    document.addEventListener('DOMContentLoaded', function() {
-        $('.selectpicker').selectpicker();
-        
-        // Actualizar selectpicker cuando cambie el wire:model
-        $('#estudios_realizados_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-            @this.set('estudiosId', $(this).val());
-        });
-    });
+    <script>
+        // Inicializar selectpicker
+        document.addEventListener('DOMContentLoaded', function() {
+            $('.selectpicker').selectpicker();
 
-    // Escuchar evento para resetear el select
-    document.addEventListener('livewire:load', function () {
-        Livewire.on('resetSelect', () => {
-            $('#estudios_realizados_id').val('').selectpicker('refresh');
+            // Actualizar selectpicker cuando cambie el wire:model
+            $('#estudios_realizados_id').on('changed.bs.select', function(e, clickedIndex, isSelected,
+                previousValue) {
+                @this.set('estudiosId', $(this).val());
+            });
         });
-    });
 
-    // Auto-cerrar alertas después de 5 segundos
-    setTimeout(function() {
-        $('.alert-modern').fadeOut('slow', function() {
-            $(this).remove();
+        // Escuchar evento para resetear el select
+        document.addEventListener('livewire:load', function() {
+            Livewire.on('resetSelect', () => {
+                $('#estudios_realizados_id').val('').selectpicker('refresh');
+            });
         });
-    }, 5000);
-</script>
+
+        // Auto-cerrar alertas después de 5 segundos
+        setTimeout(function() {
+            $('.alert-modern').fadeOut('slow', function() {
+                $(this).remove();
+            });
+        }, 5000);
+    </script>
 @endpush

@@ -20,19 +20,31 @@ class Inscripcion extends Model
         'padre_id',
         'madre_id',
         'representante_legal_id',
-        'fecha_inscripcion',
         'documentos',
         'estado_documentos',
         'observaciones',
+        'numero_zonificacion',
+        'institucion_procedencia_id',
+        'expresion_literaria_id',
+        'anio_egreso',
+        'acepta_normas_contrato',
         'status',
     ];
 
     protected $casts = [
         'documentos' => 'array',
-        'fecha_inscripcion' => 'date',
         'status' => 'string',
     ];
 
+    public function expresionLiteraria()
+    {
+        return $this->belongsTo(ExpresionLiteraria::class, 'expresion_literaria_id', 'id');
+    }
+
+    public function institucionProcedencia()
+    {
+        return $this->belongsTo(InstitucionProcedencia::class, 'institucion_procedencia_id', 'id');
+    }
     /**
      * Relación con Alumno
      */
@@ -79,28 +91,28 @@ class Inscripcion extends Model
     public function representantes()
     {
         $representantes = collect();
-        
+
         if ($this->padre) {
             $representantes->push([
                 'tipo' => 'Padre',
                 'representante' => $this->padre
             ]);
         }
-        
+
         if ($this->madre) {
             $representantes->push([
                 'tipo' => 'Madre',
                 'representante' => $this->madre
             ]);
         }
-        
+
         if ($this->representanteLegal) {
             $representantes->push([
                 'tipo' => 'Representante Legal',
                 'representante' => $this->representanteLegal
             ]);
         }
-        
+
         return $representantes;
     }
 
@@ -112,8 +124,8 @@ class Inscripcion extends Model
         if (!empty($buscar)) {
             $query->whereHas('alumno.persona', function ($q) use ($buscar) {
                 $q->where('primer_nombre', 'LIKE', "%{$buscar}%")
-                  ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
-                  ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
+                    ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                    ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
             });
         }
 
@@ -163,9 +175,7 @@ class Inscripcion extends Model
             ]);
     }
 
-    /*
-    * Obtener datos para reporte de inscripciones
-    */
+
     /*public static function obtenerDatosInscripcion()
 {
     $query = DB::table('inscripcions')

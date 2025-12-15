@@ -39,11 +39,11 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 //HomePage!!
 
-Route::get("/", function(){
+Route::get("/", function () {
     return view('HomePage.Home');
 })->name("home.principal");
 
-Route::get("/vidaEstudiantil",function(){
+Route::get("/vidaEstudiantil", function () {
     return view('HomePage.vidaEstudiantil');
 })->name("home.vidaEstudiantil");
 
@@ -253,7 +253,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('docente/{id}/estudiosEdit', [DocenteController::class, 'estudiosEdit'])->name('docente.estudiosEdit');
     });
 
-        // ===== TRANSACCION DOCENTE ======
+    // ===== TRANSACCION DOCENTE ======
     Route::get('transacciones/docente_area_grado', [DocenteAreaGradoController::class, 'index'])->name('transacciones.docente_area_grado.index');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
@@ -263,7 +263,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('transacciones/docente_area_grado/{id}/update', [DocenteAreaGradoController::class, 'update'])->name('transacciones.docente_area_grado.update');
         Route::delete('transacciones/docente_area_grado/{id}', [DocenteAreaGradoController::class, 'destroy'])->name('transacciones.docente_area_grado.destroy');
         Route::delete('transacciones/docente_area_grado/{id}/destroy-asignacion', [DocenteAreaGradoController::class, 'destroyAsignacion'])->name('transacciones.docente_area_grado.destroyAsignacion');
-
     });
 
     //===== RUTA REPORTES DOCENTE ======
@@ -280,15 +279,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('alumnos/{id}/edit', [AlumnoController::class, 'edit'])->name('alumnos.edit');
 
         Route::post('alumnos/{id}/update', [AlumnoController::class, 'update'])->name('alumnos.update');
-        
-        Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
-        
 
+        Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
     });
 
-    
 
-   
+
+
 
     //Reportes
     //Route::get('alumnos/reportes', [AlumnoController::class, 'reportePDF'])->name('alumnos.reportePDF');
@@ -318,21 +315,24 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     });
 
-    
 
-        
-   
+
+
+
 
 
 
     //===== PERCENTIL ======
     Route::get('transacciones/percentil', [EntradasPercentilController::class, 'index'])->name('transacciones.percentil.index');
+
+    Route::post('transacciones/percentil/boton-percentil', [EntradasPercentilController::class, 'ejecutar'])
+        ->name('transacciones.percentil.boton-percentil');
 });
 
-   
+
 
 // ======  REPRESENTANTE  ======
-Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function() {
+Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function () {
     // Vista principal (listado)
     Route::get('/', [RepresentanteController::class, 'index'])->name('index');
 
@@ -357,12 +357,9 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
     // Filtrar representantes (AJAX)
     Route::get('/filtrar', [RepresentanteController::class, 'filtar'])->name('filtrar');
 
-        // Verificar cédula duplicada (AJAX)
-        Route::get('/verificar-numero_documento', [RepresentanteController::class, 'verificarnumero_documento'])->name('verificar_numero_documento');
+    // Verificar cédula duplicada (AJAX)
+    Route::get('/verificar-numero_documento', [RepresentanteController::class, 'verificarnumero_documento'])->name('verificar_numero_documento');
 
     // Generar reporte PDF
     Route::get('/reporte-pdf', [RepresentanteController::class, 'reportePDF'])->name('reporte_pdf');
 });
-
-    
- 

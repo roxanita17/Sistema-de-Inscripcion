@@ -10,7 +10,7 @@ class IndiceEdad extends Model
     /** @use HasFactory<\Database\Factories\IndiceEdadFactory> */
     use HasFactory;
 
-    protected $table = 'indices_edads';
+    protected $table = 'indice_edads';
     protected $fillable = [
         'indice',
         'min_meses',

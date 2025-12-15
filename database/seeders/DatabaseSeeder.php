@@ -13,6 +13,7 @@ use App\Models\Representante;
 use App\Models\RepresentanteLegal;
 use App\Models\Inscripcion;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +22,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
+        AnioEscolar::create([
+            'inicio_anio_escolar' => Carbon::create(2025, 1, 1),
+            'cierre_anio_escolar' => Carbon::create(2026, 12, 31),
+            'extencion_anio_escolar' => null,
+            'status' => 'Activo',
+        ]);
 
 
         $this->command->info('Iniciando seeders...');
@@ -60,7 +67,8 @@ class DatabaseSeeder extends Seeder
             DocenteSeeder::class,
             DetalleDocenteEstudioSeeder::class,
             RepresentanteSeeder::class,
-            RepresentanteLegalSeeder::class
+            RepresentanteLegalSeeder::class,
+            InscripcionSeeder::class,
         ]);
 
         

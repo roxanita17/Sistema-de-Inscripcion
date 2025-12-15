@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\EntradasPercentil;
 use Illuminate\Http\Request;
 use App\Models\Inscripcion;
+use App\Models\Grado;
+use App\Services\SectionDistributorService;
+use App\Models\Seccion;
+use Illuminate\Support\Facades\DB;
 
 class EntradasPercentilController extends Controller
 {
@@ -27,58 +31,62 @@ class EntradasPercentilController extends Controller
 
         $gradoId = $request->grado_id; // llega desde un botón o selector
 
-        $entradasPercentil = EntradasPercentil::with(['inscripcion.estudiante', 'seccion'])
-            ->whereHas('inscripcion', function($q) use ($gradoId) {
+        $entradasPercentil = EntradasPercentil::with(['inscripcion.alumno', 'seccion'])
+            ->whereHas('inscripcion', function ($q) use ($gradoId) {
                 if ($gradoId) {
                     $q->where('grado_id', $gradoId);
                 }
-            })
+            })->orderBy('seccion_id', 'asc')
             ->paginate(10);
 
-        return view('admin.transacciones.percentil.index', compact('entradasPercentil', 'anioEscolarActivo'));
+        $seccionesResumen = EntradasPercentil::select('seccion_id')
+            ->with('seccion')
+            ->whereHas('inscripcion', function ($q) use ($gradoId) {
+                if ($gradoId) $q->where('grado_id', $gradoId);
+            })
+            ->groupBy('seccion_id')
+            ->selectRaw('count(*) as total_estudiantes, seccion_id')
+            ->get();
+
+        return view('admin.transacciones.percentil.index', compact('entradasPercentil', 'anioEscolarActivo', 'gradoId', 'seccionesResumen'));
     }
 
 
     public function store(Inscripcion $inscripcion)
     {
         $entrada = app(\App\Services\PercentilService::class)
-                    ->crearEntradaDesdeInscripcion($inscripcion);
+            ->crearEntradaDesdeInscripcion($inscripcion);
 
         return response()->json($entrada);
     }
 
-
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(EntradasPercentil $entradasPercentil)
+    public function ejecutar(Request $request, SectionDistributorService $distributor)
     {
-        //
-    }
+        $request->validate([
+            'grado_id' => 'required|exists:grados,id'
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EntradasPercentil $entradasPercentil)
-    {
-        //
-    }
+        // 1. Verificar año escolar activo
+        if (!$this->verificarAnioEscolar()) {
+            return back()->with('error', 'No existe un año escolar activo.');
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, EntradasPercentil $entradasPercentil)
-    {
-        //
-    }
+        $grado = Grado::findOrFail($request->grado_id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(EntradasPercentil $entradasPercentil)
-    {
-        //
+        try {
+
+
+            // 3. Ejecutar percentil + distribución
+            $resultado = $distributor->procesarGrado($grado);
+
+            return back()->with(
+                'success',
+                "Percentil ejecutado correctamente. 
+             Estudiantes procesados: {$resultado['estudiantes_procesados']}, 
+             Secciones creadas: {$resultado['total_secciones']}"
+            );
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

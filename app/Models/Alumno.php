@@ -20,15 +20,12 @@ class Alumno extends Model
     protected $table = 'alumnos';
 
     protected $fillable = [
-        'numero_zonificacion',
-        'institucion_procedencia_id',
-        'expresion_literaria_id',
+        
         'orden_nacimiento_id',
         'discapacidad_id',
         'etnia_indigena_id',
         'lateralidad_id',
         'persona_id',
-        'anio_egreso',
         'talla_camisa',
         'talla_pantalon',
         'talla_zapato',
@@ -75,10 +72,7 @@ class Alumno extends Model
         return $this->belongsTo(EtniaIndigena::class, 'etnia_indigena_id', 'id');
     }
 
-    public function expresionLiteraria()
-    {
-        return $this->belongsTo(ExpresionLiteraria::class, 'expresion_literaria_id', 'id');
-    }
+
 
     public function lateralidad()
     {
@@ -88,11 +82,6 @@ class Alumno extends Model
     public function persona()
     {
         return $this->belongsTo(Persona::class, 'persona_id', 'id');
-    }
-
-    public function institucionProcedencia()
-    {
-        return $this->belongsTo(InstitucionProcedencia::class, 'institucion_procedencia_id', 'id');
     }
 
     public function prefijoTelefono()

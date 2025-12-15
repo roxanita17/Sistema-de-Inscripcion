@@ -200,7 +200,8 @@
                         </label>
                         <input type="text" name="primer_nombre"
                             id="primer_nombre"
-                            class="form-control-modern @error('primer_nombre') is-invalid @enderror"
+                            class="form-control-modern @error('primer_nombre') is-invalid @enderror
+                            text-uppercase"
                             value="{{ old('primer_nombre') }}"
                             placeholder="Ej: Juan"
                             required>
@@ -220,9 +221,11 @@
                         </label>
                         <input type="text" name="segundo_nombre"
                             id="segundo_nombre"
-                            class="form-control-modern @error('segundo_nombre') is-invalid @enderror"
+                            class="form-control-modern @error('segundo_nombre') is-invalid @enderror
+                            text-uppercase"
                             value="{{ old('segundo_nombre') }}"
-                            placeholder="Ej: Carlos">
+                            placeholder="Ej: Carlos"                            
+                            >
                         @error('segundo_nombre')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i>
@@ -239,7 +242,8 @@
                         </label>
                         <input type="text" name="tercer_nombre"
                             id="tercer_nombre"
-                            class="form-control-modern @error('tercer_nombre') is-invalid @enderror"
+                            class="form-control-modern @error('tercer_nombre') is-invalid @enderror
+                            text-uppercase"
                             value="{{ old('tercer_nombre') }}"
                             placeholder="Opcional">
                         @error('tercer_nombre')
@@ -258,7 +262,8 @@
                         </label>
                         <input type="text" name="primer_apellido"
                             id="primer_apellido"
-                            class="form-control-modern @error('primer_apellido') is-invalid @enderror"
+                            class="form-control-modern @error('primer_apellido') is-invalid @enderror
+                            text-uppercase"
                             value="{{ old('primer_apellido') }}"
                             placeholder="Ej: Pérez"
                             required>
@@ -278,7 +283,8 @@
                         </label>
                         <input type="text" name="segundo_apellido"
                             id="segundo_apellido"
-                            class="form-control-modern @error('segundo_apellido') is-invalid @enderror"
+                            class="form-control-modern @error('segundo_apellido') is-invalid @enderror
+                            text-uppercase"
                             value="{{ old('segundo_apellido') }}"
                             placeholder="Ej: Gómez">
                         @error('segundo_apellido')
@@ -423,10 +429,6 @@
                         </small>
                     </div>
 
-                    
-
-                    
-
                     {{-- Dependencia --}}
                     <div class="col-md-6 mb-3">
                         <label class="form-label-modern">
@@ -434,7 +436,8 @@
                             Dependencia
                         </label>
                         <input type="text" name="dependencia" id="dependencia" required
-                            class="form-control-modern @error('dependencia') is-invalid @enderror"
+                            class="form-control-modern @error('dependencia') is-invalid @enderror
+                            text-uppercase"
                             value="{{ old('dependencia') }}"
                             placeholder="Ej: Departamento de Matemáticas">
                         @error('dependencia')
@@ -456,7 +459,8 @@
                             Dirección
                         </label>
                         <textarea 
-                            class="form-control-modern @error('direccion') is-invalid @enderror" 
+                            class="form-control-modern @error('direccion') is-invalid @enderror
+                            text-uppercase" 
                             name="direccion" 
                             id="direccion"
                             rows="3" 

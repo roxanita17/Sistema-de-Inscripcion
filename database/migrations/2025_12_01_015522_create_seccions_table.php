@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->integer('cantidad_actual');
             $table->foreignId('grado_id')->constrained('grados')->cascadeOnDelete();
+            $table->foreignId('ejecucion_percentil_id')->nullable()->constrained('ejecuciones_percentils')->cascadeOnDelete();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

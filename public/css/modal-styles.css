@@ -30,22 +30,9 @@
 .modal-modern {
     border: none;
     border-radius: var(--radius);
-    overflow: hidden; 
-}
-
-.modal-dialog {
-    max-width: 500px; 
-    margin: 1.75rem auto;
-    width: 100%;
-    padding: 0 15px;
 }
 
 
-.modal-content {
-    width: 100%;
-    margin: 0 auto;
-    box-shadow: var(--shadow-lg);
-}
 
 .btn-close-modal {
     position: absolute;

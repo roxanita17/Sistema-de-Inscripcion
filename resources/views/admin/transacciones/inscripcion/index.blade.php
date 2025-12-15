@@ -3,7 +3,6 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
-
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
 
@@ -21,12 +20,18 @@
                     <p class="title-subtitle">Administración de las inscripciones</p>
                 </div>
             </div>
-
+            @foreach ($grados as $grado)
+                @if ($grado->id === 1)
+                    @include('admin.transacciones.percentil.boton-percentil', [
+                        'anioEscolarActivo' => $anioEscolarActivo,
+                        'gradoId' => $grado->id,
+                    ])
+                @endif
+            @endforeach
+            
             {{-- CORREGIDO – dice "Nuevo Banco" → ahora "Nueva Inscripción" --}}
-            <a href="{{ route('admin.transacciones.inscripcion.create') }}"
-
-                class="btn-create"
-                @if(!$anioEscolarActivo) disabled @endif
+            <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
+                @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nueva inscripción</span>
@@ -36,184 +41,214 @@
 @stop
 
 @section('content')
-<div class="main-container">
+    <div class="main-container">
 
-    @if (!$anioEscolarActivo)
-        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
-                <div>
-                    <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
-                    <p class="mb-0">
-                        Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> inscripciones.
-                        <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    @if (session('success') || session('error'))
-        <div class="alerts-container">
-            @if (session('success'))
-                <div class="alert-modern alert-success alert alert-dismissible fade show">
-                    <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="alert-content">
-                        <h4>Éxito</h4>
-                        <p>{{ session('success') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show">
-                    <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
-                    <div class="alert-content">
-                        <h4>Error</h4>
-                        <p>{{ session('error') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
-        </div>
-    @endif 
-
-    <div class="card-modern">
-        <div class="card-header-modern">
-            <div class="header-left">
-                <div class="header-icon"><i class="fas fa-list-ul"></i></div>
-                <div><h3>Listado de inscripciones</h3></div>
-            </div>
-            {{-- Buscador --}}
-            <form action="{{ route('admin.transacciones.inscripcion.index') }}">
-                <div class="form-group-modern mb-2">
-                    <div class="search-modern"> 
-                        <i class="fas fa-search"></i>
-                        <input type="text"
-                        name="buscar"
-                        id="buscar"
-                        class="form-control-modern"
-                        placeholder="Buscar..."
-                        value="{{ request('buscar') }}"
-                        >
+        @if (!$anioEscolarActivo)
+            <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                        <p class="mb-0">
+                            Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong>
+                            inscripciones.
+                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                        </p>
                     </div>
                 </div>
-            </form>
-            <div class="header-right">
-                <div class="date-badge">
-                    <i class="fas fa-hashtag"></i>
-                    
-                    <span>Capacidad Máxima de Cupos: {{ $inscripciones->first()?->grado->capacidad_max ?? 'N/A' }} estudiantes</span>
+            </div>
+        @endif
+
+        @if (session('success') || session('error'))
+            <div class="alerts-container">
+                @if (session('success'))
+                    <div class="alert-modern alert-success alert alert-dismissible fade show">
+                        <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="alert-content">
+                            <h4>Éxito</h4>
+                            <p>{{ session('success') }}</p>
+                        </div>
+                        <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert-modern alert-error alert alert-dismissible fade show">
+                        <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
+                        <div class="alert-content">
+                            <h4>Error</h4>
+                            <p>{{ session('error') }}</p>
+                        </div>
+                        <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                @endif
+            </div>
+        @endif
+
+
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <div class="header-left">
+                    <div class="header-icon"><i class="fas fa-list-ul"></i></div>
+                    <div>
+                        <h3>Listado de inscripciones</h3>
+                    </div>
+                </div>
+                {{-- Buscador --}}
+                <form action="{{ route('admin.transacciones.inscripcion.index') }}">
+                    <div class="form-group-modern mb-2">
+                        <div class="search-modern">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="buscar" id="buscar" class="form-control-modern"
+                                placeholder="Buscar..." value="{{ request('buscar') }}">
+                        </div>
+                    </div>
+                </form>
+                <div class="header-right" style="width: 15rem">
+                    @if ($infoCupos)
+                        <div class="cupos-box">
+                            <div class="cupos-titulo">
+                                {{ $infoCupos['nombre_grado'] }}
+                            </div>
+
+                            <div class="cupos-datos text-center">
+                                <div>
+                                    <span class="label">Cupos totales</span>
+                                    <span class="valor">{{ $infoCupos['total_cupos'] }}</span>
+                                </div>
+
+                                <div>
+                                    <span class="label">En uso</span>
+                                    <span class="valor">{{ $infoCupos['cupos_ocupados'] }}</span>
+                                </div>
+
+                                <div>
+                                    <span class="label">Disponibles</span>
+                                    <span class="valor">{{ $infoCupos['cupos_disponibles'] }}</span>
+                                </div>
+                            </div>
+
+                            <div class="cupos-barra">
+                                <div class="cupos-barra-progreso
+            {{ $infoCupos['porcentaje_ocupacion'] >= 90
+                ? 'rojo'
+                : ($infoCupos['porcentaje_ocupacion'] >= 70
+                    ? 'amarillo'
+                    : 'verde') }}"
+                                    style="width: {{ $infoCupos['porcentaje_ocupacion'] }}%">
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+
+
+                </div>
+                <div class="header-right">
+                    <div class="date-badge">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{{ now()->translatedFormat('d M Y') }}</span>
+                    </div>
                 </div>
             </div>
-            <div class="header-right">
-                <div class="date-badge">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>{{ now()->translatedFormat('d M Y') }}</span>
-                </div>
-            </div>
-        </div>
 
-        <div class="card-body-modern">
-            <div class="table-wrapper">
-                <table class="table-modern overflow-hidden hidden">
-                    <thead>
-                        <tr class="text-center">
-                            <th style="font-weight: bold">Cedula</th>
-                            <th class="text-center">Estudiante</th>
-                            <th class="text-center">Representante Legal</th>
-                            <th class="text-center">Parentesco</th>
-                            <th class="text-center">Grado</th>
-                            <th class="text-center">Estado</th>
-                            <th class="text-center">Acciones</th>
-                        </tr>
-                    </thead>
-
-                    <tbody class="text-center">
-                        @if ($inscripciones->isEmpty())
-                            <tr>
-                                <td colspan="7">
-                                    <div class="empty-state">
-                                        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
-                                        <h4>No hay inscripciones registradas</h4>
-                                        <p>Agrega una nueva inscripción con el botón superior</p>
-                                    </div>
-                                </td>
+            <div class="card-body-modern">
+                <div class="table-wrapper">
+                    <table class="table-modern overflow-hidden hidden">
+                        <thead>
+                            <tr class="text-center">
+                                <th style="font-weight: bold">Cedula</th>
+                                <th class="text-center">Estudiante</th>
+                                <th class="text-center">Representante Legal</th>
+                                <th class="text-center">Parentesco</th>
+                                <th class="text-center">Grado</th>
+                                <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
-                        @else
-                            @foreach ($inscripciones as $datos)
-                                <tr class="table-row-hover row-12">
+                        </thead>
 
-                                    {{-- NUMERO --}}
-                                    <td style="font-weight: bold">
-                                        {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
+                        <tbody class="text-center">
+                            @if ($inscripciones->isEmpty())
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                                            <h4>No hay inscripciones registradas</h4>
+                                            <p>Agrega una nueva inscripción con el botón superior</p>
+                                        </div>
                                     </td>
+                                </tr>
+                            @else
+                                @foreach ($inscripciones as $datos)
+                                    <tr class="table-row-hover row-12">
 
-                                    {{-- ESTUDIANTE --}}
-                                    <td class="tittle-main fw-bold">
-                                        {{ $datos->alumno->persona->primer_nombre }}
-                                        {{ $datos->alumno->persona->primer_apellido }}
-                                        <br>
-                                        <small>
-                                            Edad: {{ $datos->alumno->persona->fecha_nacimiento->age }} |
-                                            Peso: {{ $datos->alumno->peso }} |
-                                            Estatura: {{ $datos->alumno->estatura }}
-                                        </small>
-                                    </td>
+                                        {{-- NUMERO --}}
+                                        <td style="font-weight: bold">
+                                             {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
+                                        </td>
 
-                                    {{-- REPRESENTANTE LEGAL --}}
-                                    <td class="text-center">
-                                        {{ $datos->representanteLegal->representante->persona->primer_nombre }}
-                                        {{ $datos->representanteLegal->representante->persona->primer_apellido }}
-                                    </td>
+                                        {{-- ESTUDIANTE --}}
+                                        <td class="tittle-main fw-bold">
+                                            {{ $datos->alumno->persona->primer_nombre }}
+                                            {{ $datos->alumno->persona->primer_apellido }}
+                                            <br>
+                                            <small>
+                                                Edad: {{ $datos->alumno->persona->fecha_nacimiento->age }} |
+                                                Peso: {{ $datos->alumno->peso }} |
+                                                Estatura: {{ $datos->alumno->estatura }}
+                                            </small>
+                                        </td>
 
-                                    {{-- PARENTESCO --}}
-                                    <td class="text-center">
-                                        
-                                        {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
-                                    </td>
+                                        {{-- REPRESENTANTE LEGAL --}}
+                                        <td class="text-center">
+                                            {{ $datos->representanteLegal->representante->persona->primer_nombre }}
+                                            {{ $datos->representanteLegal->representante->persona->primer_apellido }}
+                                        </td>
 
-                                    {{-- GRADO --}}
-                                    <td class="text-center">{{ $datos->grado->numero_grado }}</td>
+                                        {{-- PARENTESCO --}}
+                                        <td class="text-center">
 
-                                    {{-- STATUS --}}
-                                    <td class="text-center">
-                                        @if ($datos->status === 'Activo')
-                                            <span class="status-badge status-active">
-                                                <span class="status-dot"></span> Activo
-                                            </span>
-                                        @elseif ($datos->status === 'Pendiente')
-                                            <span class="status-badge status-pending">
-                                                <span class="status-dot"></span> Pendiente
-                                            </span>
-                                        @else
-                                            <span class="status-badge status-inactive">
-                                                <span class="status-dot"></span> Inactivo
-                                            </span>
-                                        @endif
-                                    </td>
+                                            {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
+                                        </td>
 
-                                    {{-- ACCIONES --}}
-                                    <td>
-                                        <div class="action-buttons">
+                                        {{-- GRADO --}}
+                                        <td class="text-center">{{ $datos->grado->numero_grado }}</td>
 
-                                            {{-- VER --}}
-                                            <button class="action-btn btn-view" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#viewModal{{ $datos->id }}" 
-                                                title="Ver Detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
+                                        {{-- STATUS --}}
+                                        <td class="text-center">
+                                            @if ($datos->status === 'Activo')
+                                                <span class="status-badge status-active">
+                                                    <span class="status-dot"></span> Activo
+                                                </span>
+                                            @elseif ($datos->status === 'Pendiente')
+                                                <span class="status-badge status-pending">
+                                                    <span class="status-dot"></span> Pendiente
+                                                </span>
+                                            @else
+                                                <span class="status-badge status-inactive">
+                                                    <span class="status-dot"></span> Inactivo
+                                                </span>
+                                            @endif
+                                        </td>
 
-                                            {{-- EDITAR --}}
-                                            {{-- <a href="{{ route('admin.inscripciones.edit', $datos->id) }}"
+                                        {{-- ACCIONES --}}
+                                        <td>
+                                            <div class="action-buttons">
+
+                                                {{-- VER --}}
+                                                <button class="action-btn btn-view" data-bs-toggle="modal"
+                                                    data-bs-target="#viewModal{{ $datos->id }}" title="Ver Detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+
+                                                {{-- EDITAR --}}
+                                                {{-- <a href="{{ route('admin.inscripciones.edit', $datos->id) }}"
                                                class="action-btn btn-edit"
-                                               @if(!$anioEscolarActivo) disabled @endif
+                                               @if (!$anioEscolarActivo) disabled @endif
                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
                                                 <i class="fas fa-pen"></i>
                                             </a> --}}
@@ -253,39 +288,57 @@
                                                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
                                                     <i class="fas fa-times"></i>
                                                 </button>
+
                                             </div>
-                                            <div class="modal-body-delete">
-                                                <p>¿Deseas eliminar esta inscripción?</p>
-                                                <p class="delete-warning">Esta acción no se puede deshacer.</p>
-                                            </div>
-                                            <div class="modal-footer-delete">
-                                                <form action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}" 
-                                                    method="POST" class="w-100">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <div class="footer-buttons">
-                                                        <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
-                                                        <button type="submit" class="btn-modal-delete">Eliminar</button>
-                                                    </div>
-                                                </form>
+                                        </td>
+                                    </tr>
+                                    {{-- Modal de ver --}}
+                                    @include('admin.transacciones.inscripcion.modales.showModal')
+
+                                    {{-- MODAL ELIMINAR --}}
+                                    <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content modal-modern">
+                                                <div class="modal-header-delete">
+                                                    <div class="modal-icon-delete"><i class="fas fa-trash-alt"></i></div>
+                                                    <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                                                    <button type="button" class="btn-close-modal"
+                                                        data-bs-dismiss="modal">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body-delete">
+                                                    <p>¿Deseas eliminar esta inscripción?</p>
+                                                    <p class="delete-warning">Esta acción no se puede deshacer.</p>
+                                                </div>
+                                                <div class="modal-footer-delete">
+                                                    <form
+                                                        action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"
+                                                        method="POST" class="w-100">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <div class="footer-buttons">
+                                                            <button type="button" class="btn-modal-cancel"
+                                                                data-bs-dismiss="modal">Cancelar</button>
+                                                            <button type="submit"
+                                                                class="btn-modal-delete">Eliminar</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                            @endforeach
-                        @endif
-                    </tbody>
-                </table>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
-        <div class="mt-3">
-            <x-pagination :paginator="$inscripciones" />
-        </div>
+            <div class="mt-3">
+                <x-pagination :paginator="$inscripciones" />
+            </div>
 
+        </div>
     </div>
-</div>
 @endsection
-
-
