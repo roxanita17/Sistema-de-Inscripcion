@@ -125,7 +125,12 @@ class AlumnoController extends Controller
 
 public function reporteGeneralPDF(Request $request)
 {
-    $alumnos = Alumno::ReportePDF()
+    // Obtener el filtro de género del request
+    $genero = $request->input('genero');
+    $tipo_documento=$request->input('tipo_documento');
+    
+    // Si se proporcionó un género, usarlo en la consulta
+    $alumnos = Alumno::ReportePDF($genero,$tipo_documento)
         ->map(function($alumno) {
             // Si el alumno tiene relación con persona, usar esos datos
             if (isset($alumno->persona)) {
