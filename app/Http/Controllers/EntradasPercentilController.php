@@ -37,6 +37,7 @@ class EntradasPercentilController extends Controller
                     $q->where('grado_id', $gradoId);
                 }
             })->orderBy('seccion_id', 'asc')
+            ->orderBy('indice_total', 'asc')
             ->paginate(10);
 
         $seccionesResumen = EntradasPercentil::select('seccion_id')

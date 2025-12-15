@@ -165,7 +165,8 @@
                                 <th class="text-center">Estudiante</th>
                                 <th class="text-center">Representante Legal</th>
                                 <th class="text-center">Parentesco</th>
-                                <th class="text-center">Grado</th>
+                                <th class="text-center">Año</th>
+                                <th class="text-center">Sección</th>
                                 <th class="text-center">Estado</th>
                                 <th class="text-center">Acciones</th>
                             </tr>
@@ -217,6 +218,15 @@
 
                                         {{-- GRADO --}}
                                         <td class="text-center">{{ $datos->grado->numero_grado }}</td>
+
+                                        {{-- SECCION --}}
+                                        <td class="text-center">
+                                            @if($datos->seccionAsignada)
+                                                <span class="badge" style="background-color: var(--info-light); color:rgba(0, 0, 0, 0.715)">{{ $datos->seccionAsignada->nombre }}</span>
+                                            @else
+                                                <span class="badge bg-secondary">Sin asignar</span>
+                                            @endif
+                                        </td>
 
                                         {{-- STATUS --}}
                                         <td class="text-center">
@@ -312,5 +322,6 @@
             </div>
 
         </div>
-    </div>
+
+        
 @endsection

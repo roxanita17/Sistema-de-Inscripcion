@@ -147,7 +147,10 @@
                                             <div class="student-name">
 
                                                 {{ $datos->inscripcion->alumno->persona->primer_nombre ?? '' }}
+                                                {{ $datos->inscripcion->alumno->persona->segundo_nombre ?? '' }}
+                                                {{ $datos->inscripcion->alumno->persona->tercer_nombre ?? '' }}
                                                 {{ $datos->inscripcion->alumno->persona->primer_apellido ?? '' }}
+                                                {{ $datos->inscripcion->alumno->persona->segundo_apellido ?? '' }}
                                             </div>
 
                                             <div class="student-details">
@@ -160,7 +163,12 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $datos->seccion->nombre }}</td>
+                                    <td>
+                                        <span class="badge"
+                                            style="background-color: var(--info-light); color:rgba(0, 0, 0, 0.715)">
+                                            {{ $datos->seccion->nombre }}
+                                        </span>
+                                    </td>
                                     <style>
                                         .student-info {
                                             display: flex;

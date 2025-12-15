@@ -19,7 +19,7 @@
                     {{-- Información útil para el usuario --}}
                     <div class="alert alert-info d-flex align-items-center mb-3" style="font-size: 0.9rem; padding: 0.75rem;">
                         <i class="fas fa-info-circle me-2"></i>
-                        <span>Las fechas sugeridas son del <strong>10 de septiembre</strong> al <strong>10 de junio</strong>. Puede modificarlas según se programen.</span>
+                        <span>Las fechas sugeridas son del <strong>10 de septiembre</strong> al <strong>10 de junio</strong>. Puede modificarlas según cronograma.</span>
                     </div>
 
                     <div class="form-group-modern">
