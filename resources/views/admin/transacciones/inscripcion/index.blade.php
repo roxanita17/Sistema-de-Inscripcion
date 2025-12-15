@@ -20,15 +20,8 @@
                     <p class="title-subtitle">Administración de las inscripciones</p>
                 </div>
             </div>
-            @foreach ($grados as $grado)
-                @if ($grado->id === 1)
-                    @include('admin.transacciones.percentil.boton-percentil', [
-                        'anioEscolarActivo' => $anioEscolarActivo,
-                        'gradoId' => $grado->id,
-                    ])
-                @endif
-            @endforeach
-            
+
+
             {{-- CORREGIDO – dice "Nuevo Banco" → ahora "Nueva Inscripción" --}}
             <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
                 @if (!$anioEscolarActivo) disabled @endif
@@ -189,7 +182,7 @@
 
                                         {{-- NUMERO --}}
                                         <td style="font-weight: bold">
-                                             {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
+                                            {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
                                         </td>
 
                                         {{-- ESTUDIANTE --}}
@@ -221,8 +214,9 @@
 
                                         {{-- SECCION --}}
                                         <td class="text-center">
-                                            @if($datos->seccionAsignada)
-                                                <span class="badge" style="background-color: var(--info-light); color:rgba(0, 0, 0, 0.715)">{{ $datos->seccionAsignada->nombre }}</span>
+                                            @if ($datos->seccionAsignada)
+                                                <span class="badge"
+                                                    style="background-color: var(--info-light); color:rgba(0, 0, 0, 0.715)">{{ $datos->seccionAsignada->nombre }}</span>
                                             @else
                                                 <span class="badge bg-secondary">Sin asignar</span>
                                             @endif
@@ -317,11 +311,30 @@
                 </div>
             </div>
 
-            <div class="mt-3">
-                <x-pagination :paginator="$inscripciones" />
+
+            <div class="mt-3" style="display:flex; align-items:center; position:relative;">
+
+                <div style="margin: 0 auto;">
+                    <x-pagination :paginator="$inscripciones" />
+                </div>
+
+                {{-- Boton ejecutar percentil --}}
+
+                @foreach ($grados as $grado)
+                    @if ($grado->id === 1)
+                        <div style="position:absolute; right:0; padding: 0 1rem;">
+                            @include('admin.transacciones.percentil.boton-percentil', [
+                                'anioEscolarActivo' => $anioEscolarActivo,
+                                'gradoId' => $grado->id,
+                            ])
+                        </div>
+                    @endif
+                @endforeach
+
             </div>
+
 
         </div>
 
-        
-@endsection
+
+    @endsection
