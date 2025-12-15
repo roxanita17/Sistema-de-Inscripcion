@@ -28,9 +28,7 @@
                     ])
                 @endif
             @endforeach
-
-
-
+            
             {{-- CORREGIDO – dice "Nuevo Banco" → ahora "Nueva Inscripción" --}}
             <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
                 @if (!$anioEscolarActivo) disabled @endif
@@ -91,6 +89,7 @@
             </div>
         @endif
 
+
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -109,13 +108,45 @@
                         </div>
                     </div>
                 </form>
-                <div class="header-right">
-                    <div class="date-badge">
-                        <i class="fas fa-hashtag"></i>
+                <div class="header-right" style="width: 15rem">
+                    @if ($infoCupos)
+                        <div class="cupos-box">
+                            <div class="cupos-titulo">
+                                {{ $infoCupos['nombre_grado'] }}
+                            </div>
 
-                        <span>Capacidad Máxima de Cupos: {{ $inscripciones->first()?->grado->capacidad_max ?? 'N/A' }}
-                            estudiantes</span>
-                    </div>
+                            <div class="cupos-datos text-center">
+                                <div>
+                                    <span class="label">Cupos totales</span>
+                                    <span class="valor">{{ $infoCupos['total_cupos'] }}</span>
+                                </div>
+
+                                <div>
+                                    <span class="label">En uso</span>
+                                    <span class="valor">{{ $infoCupos['cupos_ocupados'] }}</span>
+                                </div>
+
+                                <div>
+                                    <span class="label">Disponibles</span>
+                                    <span class="valor">{{ $infoCupos['cupos_disponibles'] }}</span>
+                                </div>
+                            </div>
+
+                            <div class="cupos-barra">
+                                <div class="cupos-barra-progreso
+            {{ $infoCupos['porcentaje_ocupacion'] >= 90
+                ? 'rojo'
+                : ($infoCupos['porcentaje_ocupacion'] >= 70
+                    ? 'amarillo'
+                    : 'verde') }}"
+                                    style="width: {{ $infoCupos['porcentaje_ocupacion'] }}%">
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+
+
                 </div>
                 <div class="header-right">
                     <div class="date-badge">

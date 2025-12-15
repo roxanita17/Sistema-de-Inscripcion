@@ -122,8 +122,9 @@
                                 <span class="required-badge">*</span>
                             </label>
                             <input type="text" wire:model.live="primer_nombre"
-                                class="form-control-modern @error('primer_nombre') is-invalid @enderror"
-                                placeholder="Primer nombre">
+                                class="form-control-modern @error('primer_nombre') is-invalid @enderror text-capitalize"
+                                placeholder="Primer nombre"
+                                >
                             @error('primer_nombre')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -138,18 +139,18 @@
                                 <i class="fas fa-user"></i>
                                 Segundo Nombre
                             </label>
-                            <input type="text" wire:model.live="segundo_nombre" class="form-control-modern"
+                            <input type="text" wire:model="segundo_nombre" class="form-control-modern text-capitalize"
                                 placeholder="Segundo nombre">
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="tercer_nombre" class="form-label-modern">
+                            <label for="tercer_nombre" class="form-label-modern ">
                                 <i class="fas fa-user"></i>
                                 Tercer Nombre
                             </label>
-                            <input type="text" wire:model.live="tercer_nombre" class="form-control-modern"
+                            <input type="text" wire:model.live="tercer_nombre" class="form-control-modern text-capitalize"
                                 placeholder="Tercer nombre">
                         </div>
                     </div>
@@ -158,13 +159,13 @@
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="primer_apellido" class="form-label-modern">
+                            <label for="primer_apellido" class="form-label-modern ">
                                 <i class="fas fa-user"></i>
                                 Primer Apellido
                                 <span class="required-badge">*</span>
                             </label>
                             <input type="text" wire:model.live="primer_apellido"
-                                class="form-control-modern @error('primer_apellido') is-invalid @enderror"
+                                class="form-control-modern @error('primer_apellido') is-invalid @enderror text-capitalize"
                                 placeholder="Primer apellido">
                             @error('primer_apellido')
                                 <div class="invalid-feedback-modern">
@@ -176,11 +177,11 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="segundo_apellido" class="form-label-modern">
+                            <label for="segundo_apellido" class="form-label-modern ">
                                 <i class="fas fa-user"></i>
                                 Segundo Apellido
                             </label>
-                            <input type="text" wire:model.live="segundo_apellido" class="form-control-modern"
+                            <input type="text" wire:model.live="segundo_apellido" class="form-control-modern text-capitalize"
                                 placeholder="Segundo apellido">
                         </div>
                     </div>
@@ -363,7 +364,7 @@
                         <div class="form-group">
                             <label for="talla_estudiante" class="form-label-modern">
                                 <i class="fas fa-ruler-vertical"></i>
-                                Talla (cm)
+                                Altura (cm)
                                 <span class="required-badge">*</span>
                             </label>
                             <select wire:model.live="talla_estudiante"
@@ -700,3 +701,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script> --}}
+
+

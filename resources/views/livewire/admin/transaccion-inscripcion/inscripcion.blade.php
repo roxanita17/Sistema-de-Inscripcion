@@ -366,7 +366,7 @@
 
 
     {{-- Documentos Entregados --}}
-    <div class="card-modern mb-4">
+    <div class="card-modern mb-4" id="bloque-documentos">
         <div class="card-header-modern">
             <div class="header-left">
                 <div class="header-icon" style="background: linear-gradient(135deg, var(--warning), #d97706);">
@@ -379,20 +379,45 @@
             </div>
         </div>
 
+
+
         <div class="card-body-modern" style="padding: 2rem;">
+            @if ($errors->has('documentos'))
+                <div class="alert-modern alert-error alert alert-dismissible fade show">
+                    <div class="alert-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>Error</h4>
+                        <p>{{ $errors->first('documentos') }}</p>
+                    </div>
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
             <div class="row">
                 @php
                     $colCounter = 0;
                 @endphp
+                <div class="col-12 mb-4">
+                    <div class="checkbox-item-modern">
+                        <input type="checkbox" id="seleccionar_todos" wire:model.live="seleccionarTodos"
+                            class="checkbox-modern">
+                        <label for="seleccionar_todos" class="checkbox-label-modern">
+                            Seleccionar todos los documentos
+                        </label>
+                    </div>
+                </div>
 
                 @foreach ([
         'partida_nacimiento' => 'Partida de Nacimiento',
         'copia_cedula_representante' => 'Copia de Cédula del Representante',
-        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
         'boletin_6to_grado' => 'Boletín de 6to Grado',
+        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
         'certificado_calificaciones' => 'Certificado de Calificaciones',
-        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
         'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
+        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
         'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
         'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
         'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
@@ -402,14 +427,22 @@
             <div class="row mt-3">
                 @endif
 
+                @php
+                    $esFaltante = in_array($documento, $documentosFaltantes);
+                @endphp
+
                 <div class="col-md-6 mb-3">
-                    <div class="checkbox-item-modern">
+                    <div class="checkbox-item-modern {{ $esFaltante ? 'checkbox-error' : '' }}">
                         <input type="checkbox" id="{{ $documento }}" wire:model.live="documentos"
                             value="{{ $documento }}" class="checkbox-modern">
-                        <label for="{{ $documento }}" class="checkbox-label-modern">
-                            <i
-                                class="fas fa-{{ $documento === 'carnet_vacunacion' ? 'syringe' : ($documento === 'foto_estudiante' || $documento === 'foto_representante' ? 'camera' : ($documento === 'autorizacion_tercero' ? 'file-signature' : 'file-alt')) }}"></i>
+
+                        <label for="{{ $documento }}"
+                            class="checkbox-label-modern {{ $esFaltante ? 'text-danger fw-bold' : '' }}">
                             {{ $etiqueta }}
+
+                            @if ($esFaltante)
+                                <span class="text-danger "></span>
+                            @endif
                         </label>
                     </div>
                 </div>
@@ -481,7 +514,7 @@
                                 <i class="fas fa-comment"></i>
                                 Observaciones
                             </label>
-                            <textarea wire:model="observaciones" id="observaciones" class="form-control-modern" rows="3"
+                            <textarea wire:model.live="observaciones" id="observaciones" class="form-control-modern" rows="3"
                                 placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
                         </div>
                     </div>
@@ -526,7 +559,7 @@
                     </button>
                     <button type="button" wire:click="finalizar" class="btn-primary-modern"
                         wire:loading.attr="disabled" @if (!$acepta_normas_contrato) disabled @endif>
-                        <span wire:loading.remove wire:target="finalizar">
+                        <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))>
                             <i class="fas fa-save"></i>
                             Guardar Inscripción
                         </span>
@@ -608,6 +641,18 @@
                 });
             });
         });
+
+        document.addEventListener('livewire:initialized', () => {
+        Livewire.on('scrollTo', (id) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
     </script>
 
     <style>

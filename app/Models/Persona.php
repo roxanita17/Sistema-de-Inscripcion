@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\ConvierteAMayusculas;
+use App\Traits\Capitalizar;
 
 class Persona extends Model
 {
     use HasFactory;
-
+    use ConvierteAMayusculas;
+    use Capitalizar;
     protected $table = 'personas';
     
     protected $fillable = [
@@ -26,6 +29,15 @@ class Persona extends Model
         'genero_id',
         'localidad_id',
         'prefijo_id',
+    ];
+
+    protected $capitalizar = [
+        'primer_nombre',
+        'segundo_nombre',
+        'tercer_nombre',
+        'primer_apellido',
+        'segundo_apellido',
+        'direccion'
     ];
 
     protected $casts = [
@@ -100,4 +112,5 @@ class Persona extends Model
     {
         return $this->fecha_nacimiento ? $this->fecha_nacimiento->age : null;
     }
+
 }

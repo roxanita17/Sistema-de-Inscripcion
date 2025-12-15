@@ -87,6 +87,9 @@ class AlumnoCreate extends Component
 
             'primer_nombre' => 'required|string|max:50',
             'primer_apellido' => 'required|string|max:50',
+            'segundo_nombre' => 'nullable|string|max:50',
+            'tercer_nombre' => 'nullable|string|max:50',
+            'segundo_apellido' => 'nullable|string|max:50',
             'genero_id' => 'required|exists:generos,id',
 
             // Fecha nacimiento y edad
@@ -294,10 +297,10 @@ class AlumnoCreate extends Component
                 ['id' => $this->persona_id],
                 [
                     'primer_nombre' => $this->primer_nombre,
-                    'segundo_nombre' => $this->segundo_nombre,
-                    'tercer_nombre' => $this->tercer_nombre,
+                    'segundo_nombre' => $this->segundo_nombre ?? null,
+                    'tercer_nombre' => $this->tercer_nombre ?? null,
                     'primer_apellido' => $this->primer_apellido,
-                    'segundo_apellido' => $this->segundo_apellido,
+                    'segundo_apellido' => $this->segundo_apellido ?? null,
                     'tipo_documento_id' => $this->tipo_documento_id,
                     'numero_documento' => $this->numero_documento,
                     'genero_id' => $this->genero_id,
@@ -312,10 +315,6 @@ class AlumnoCreate extends Component
                 ['id' => $this->alumno_id],
                 [
                     'persona_id' => $persona->id,
-                    'numero_zonificacion' => $this->numero_zonificacion,
-                    'institucion_procedencia_id' => $this->institucion_procedencia_id,
-                    'anio_egreso' => $this->anio_egreso,
-                    'expresion_literaria_id' => $this->expresion_literaria_id,
                     'talla_camisa' => $this->talla_camisa,
                     'talla_pantalon' => $this->talla_pantalon,
                     'talla_zapato' => $this->talla_zapato,
