@@ -227,9 +227,19 @@
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
 
+                                            {{-- Reporte --}}
+                                            <a href="{{ route('admin.transacciones.inscripcion.reporte', $datos->id) }}"
+                                            class="action-btn btn-report"
+                                            title="Generar Reporte PDF"
+                                            target="_blank"
+                                            style="background-color: #28a745; border-color: #28a745;">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+
                                         </div>
                                     </td>
                                 </tr>
+
                                 {{-- Modal de ver --}}
                                 @include('admin.transacciones.inscripcion.modales.showModal')
 

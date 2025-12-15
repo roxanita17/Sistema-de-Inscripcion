@@ -137,7 +137,7 @@ class Alumno extends Model
 
     //REPORTES
 
-    public static function ReportePDF(){
+    public static function ReportePDF($genero=null, $discapacidad=null){
         $query = DB::table("alumnos")
         ->select(
             // Datos del alumno
@@ -178,6 +178,19 @@ class Alumno extends Model
         ->leftJoin("generos", "generos.id", "=", "personas.genero_id")
         ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id");
         
+            /*
+            * Filtros
+            */
+            
+            if ($genero){
+                $query->where("generos.genero", $genero);
+            }
+
+            if($discapacidad){
+                $query->where("discapacidads.nombre_discapacidad", $discapacidad);
+            }
+
+            
         return $query->get();
     }
 

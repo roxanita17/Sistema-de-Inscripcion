@@ -162,4 +162,76 @@ class Inscripcion extends Model
                 'updated_at' => now()
             ]);
     }
+
+    /*
+    * Obtener datos para reporte de inscripciones
+    */
+    /*public static function obtenerDatosInscripcion()
+{
+    $query = DB::table('inscripcions')
+        ->select(
+            'inscripcions.*',
+            'alumnos.id as estudiante_id',
+            'alumnos.institucion_id',
+            'alumnos.orden_nacimiento_estudiante',
+            'alumnos.talla_camisa',
+            'alumnos.talla_pantalon',
+            'alumnos.talla_zapato',
+            'alumnos.talla_estudiante',
+            'alumnos.peso_estudiante',
+            'alumnos.numero_zonificacion_plantel',
+            'alumnos.ano_ergreso_estudiante',
+            'alumnos.expresion_literaria',
+            'alumnos.lateralidad_estudiante',
+            'alumnos.documentos_estudiante',
+            'alumnos.status as estudiante_status',
+            'alumnos.created_at as estudiante_created_at',
+            'alumnos.updated_at as estudiante_updated_at',
+            'alumnos.id as estudiante_persona_id',
+            'alumnos_persona.tipo_documento_id as estudiante_tipo_numero_documento',
+            'alumnos_persona.numero_documento as estudiante_numero_documento',
+            'alumnos_persona.fecha_nacimiento as estudiante_fecha_nacimiento',
+            'alumnos_persona.primer_nombre as estudiante_nombre1',
+            'alumnos_persona.segundo_nombre as estudiante_nombre2',
+            'alumnos_persona.tercer_nombre as estudiante_nombre3',
+            'alumnos_persona.primer_apellido as estudiante_apellido1',
+            'alumnos_persona.segundo_apellido as estudiante_apellido2',
+            'alumnos_persona.genero_id as estudiante_sexo',
+            'alumnos_persona.telefono as estudiante_telefono',
+            'alumnos_persona.created_at as estudiante_persona_created_at',
+            'alumnos_persona.updated_at as estudiante_persona_updated_at',
+            'representantes.id as representante_id',
+            'representantes.ocupacion_representante',
+            'representantes.convivenciaestudiante_representante',
+            'representantes.created_at as representante_created_at',
+            'representantes.updated_at as representante_updated_at',
+            'representante_persona.id as representante_persona_id',
+            'representante_persona.tipo_documento_id as representante_tipo_numero_documento',
+            'representante_persona.numero_documento as representante_numero_documento',
+            'representante_persona.fecha_nacimiento as representante_fecha_nacimiento',
+            'representante_persona.primer_nombre as representante_nombre1',
+            'representante_persona.segundo_nombre as representante_nombre2',
+            'representante_persona.tercer_nombre as representante_nombre3',
+            'representante_persona.primer_apellido as representante_apellido1',
+            'representante_persona.segundo_apellido as representante_apellido2',
+            'representante_persona.genero_id as representante_sexo',
+
+            'representante_persona.telefono as representante_telefono',
+            'representante_persona.created_at as representante_persona_created_at',
+            'representante_persona.updated_at as representante_persona_updated_at',
+
+            'anio_escolars.id as ano_escolar_id',
+
+            'anio_escolars.inicio_anio_escolar',
+            'anio_escolars.cierre_anio_escolar',
+            'anio_escolars.status as status'
+        )
+        ->leftJoin('alumnos', 'nuevo_ingresos.estudiante_id', '=', 'alumnos.id')
+        ->leftJoin('personas as estudiante_persona', 'alumnos.persona_id', '=', 'estudiante_persona.id')
+        ->leftJoin('representantes', 'nuevo_ingresos.representante_id', '=', 'representantes.id')
+        ->leftJoin('personas as representante_persona', 'representantes.persona_id', '=', 'representante_persona.id')
+        ->leftJoin('anio_escolars', 'nuevo_ingresos.ano_escolar_id', '=', 'anio_escolars.id');
+
+    return $query->orderBy('nuevo_ingresos.created_at', 'desc')->get();
+}*/
 }
