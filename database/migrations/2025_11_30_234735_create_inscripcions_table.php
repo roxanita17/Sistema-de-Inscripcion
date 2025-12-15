@@ -41,8 +41,6 @@ return new class extends Migration
             $table->string('estado_documentos')->default('Pendiente');
 
             // Fecha de inscripción
-            $table->date('fecha_inscripcion');
-
             $table->string('observaciones')->nullable();
 
             $table->integer('numero_zonificacion');

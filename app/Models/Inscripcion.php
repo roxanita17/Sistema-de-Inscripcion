@@ -20,7 +20,6 @@ class Inscripcion extends Model
         'padre_id',
         'madre_id',
         'representante_legal_id',
-        'fecha_inscripcion',
         'documentos',
         'estado_documentos',
         'observaciones',
@@ -34,7 +33,6 @@ class Inscripcion extends Model
 
     protected $casts = [
         'documentos' => 'array',
-        'fecha_inscripcion' => 'date',
         'status' => 'string',
     ];
 

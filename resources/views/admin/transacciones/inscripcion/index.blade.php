@@ -188,7 +188,7 @@
 
                                         {{-- NUMERO --}}
                                         <td style="font-weight: bold">
-                                            {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
+                                             {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
                                         </td>
 
                                         {{-- ESTUDIANTE --}}

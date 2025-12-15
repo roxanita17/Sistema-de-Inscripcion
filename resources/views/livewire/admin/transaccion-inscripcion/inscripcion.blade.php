@@ -249,6 +249,62 @@
             </div>
         </div>
     </div>
+    
+    <div class="card-modern mb-4">
+        <div class="card-header-modern">
+            <div class="header-left">
+                <div class="header-icon" style="background: linear-gradient(135deg, var(--warning), #d97706);">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div>
+                    <h3>Seleccionar Grado</h3>
+                    <p>Seleccione el grado al que desea inscribir al estudiante</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body-modern" style="padding: 2rem;">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="grado_id" class="form-label-modern">
+                            <i class="fas fa-layer-group"></i>
+                            Grado
+                            <span class="required-badge">*</span>
+                        </label>
+                        <select wire:model.live="gradoId" id="grado_id"
+                            class="form-control-modern @error('gradoId') is-invalid @enderror">
+                            <option value="">Seleccione un grado</option>
+                            @foreach ($grados as $grado)
+                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
+                            @endforeach
+                        </select>
+                        @error('gradoId')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="fecha" class="form-label-modern">
+                            <i class="fas fa-layer-group"></i>
+                            Fecha de inscripcion
+                            <span class="required-badge">*</span>
+                        </label>
+                        <input type="datetime-local" value="{{ now('America/Caracas')->format('Y-m-d\TH:i') }}" id="fecha"
+                            class="form-control-modern @error('fecha') is-invalid @enderror" disabled>
+                        @error('fecha')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Formulario de datos de procedencia --}}
     <div class="card-modern mb-4">
@@ -450,249 +506,199 @@
                 @php $colCounter++; @endphp
                 @endforeach
             </div>
-        </div>
-    </div>
-
-    {{-- Datos de la Inscripción --}}
-    <div class="card-modern mb-4">
-        <div class="card-header-modern">
-            <div class="header-left">
-                <div class="header-icon" style="background: linear-gradient(135deg, var(--warning), #d97706);">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <div>
-                    <h3>Datos de la Inscripción</h3>
-                    <p>Complete la información requerida</p>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="observaciones" class="form-label-modern">
+                            <i class="fas fa-comment"></i>
+                            Observaciones
+                        </label>
+                        <textarea wire:model.live="observaciones" id="observaciones" class="form-control-modern" rows="3"
+                            placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card-body-modern" style="padding: 2rem;">
             <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="grado_id" class="form-label-modern">
-                            <i class="fas fa-layer-group"></i>
-                            Grado
-                            <span class="required-badge">*</span>
-                        </label>
-                        <select wire:model.live="gradoId" id="grado_id"
-                            class="form-control-modern @error('gradoId') is-invalid @enderror">
-                            <option value="">Seleccione un grado</option>
-                            @foreach ($grados as $grado)
-                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
-                            @endforeach
-                        </select>
-                        @error('gradoId')
-                            <div class="invalid-feedback-modern">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                </div>
+                    <div class="col-md-6 ms-auto d-flex flex-column align-items-end gap-2">
 
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="fecha_inscripcion" class="form-label-modern">
-                            <i class="fas fa-calendar"></i>
-                            Fecha de Inscripción
-                            <span class="required-badge">*</span>
-                        </label>
-                        <input type="date" wire:model.live="fecha_inscripcion" id="fecha_inscripcion"
-                            class="form-control-modern @error('fecha_inscripcion') is-invalid @enderror">
-                        @error('fecha_inscripcion')
-                            <div class="invalid-feedback-modern">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                </div>
+                        <div class="checkbox-item-modern">
+                            <input type="checkbox" id="acepta_normas_contrato"
+                                wire:model.live="acepta_normas_contrato" class="checkbox-modern">
 
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label for="observaciones" class="form-label-modern">
-                                <i class="fas fa-comment"></i>
-                                Observaciones
+                            <label for="acepta_normas_contrato" class="checkbox-label-modern"
+                                style="margin-left: 2px; gap: 0">
+                                He leído y acepto
+                                <a class="text-primary " style="margin-left: 5px; padding: 0; text-decoration: none;"
+                                    data-bs-toggle="modal" data-bs-target="#modalContratoConvivencia"
+                                    title="Ver Detalles">
+                                    las normas de convivencia
+                                </a>
                             </label>
-                            <textarea wire:model.live="observaciones" id="observaciones" class="form-control-modern" rows="3"
-                                placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
                         </div>
+                        @error('acepta_normas_contrato')
+                            <div class="invalid-feedback-modern">
+                                {{ $message }}
+
+                            </div>
+                        @enderror
                     </div>
                 </div>
             </div>
+            @include('admin.transacciones.inscripcion.modales.showContratoModal')
 
-            <div class="row">
-                <div class="col-md-6 ms-auto d-flex flex-column align-items-end gap-2">
-
-                    <div class="checkbox-item-modern">
-                        <input type="checkbox" id="acepta_normas_contrato" wire:model.live="acepta_normas_contrato"
-                            class="checkbox-modern">
-
-                        <label for="acepta_normas_contrato" class="checkbox-label-modern"
-                            style="margin-left: 2px; gap: 0">
-                            He leído y acepto
-                            <a class="text-primary " style="margin-left: 5px; padding: 0; text-decoration: none;"
-                                data-bs-toggle="modal" data-bs-target="#modalContratoConvivencia"
-                                title="Ver Detalles">
-                                las normas de convivencia
-                            </a>
-                        </label>
+            {{-- Botones de Acción --}}
+            <div class="card-modern">
+                <div class="card-body-modern" style="padding: 2rem;">
+                    <div class="d-flex justify-content-end gap-3">
+                        <button type="button" wire:click="limpiar" class="btn-cancel-modern">
+                            <i class="fas fa-broom"></i>
+                            Limpiar
+                        </button>
+                        <button type="button" wire:click="finalizar" class="btn-primary-modern"
+                            wire:loading.attr="disabled" @if (!$acepta_normas_contrato) disabled @endif>
+                            <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))>
+                                <i class="fas fa-save"></i>
+                                Guardar Inscripción
+                            </span>
+                            <span wire:loading wire:target="finalizar">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Procesando...
+                            </span>
+                        </button>
                     </div>
-                    @error('acepta_normas_contrato')
-                        <div class="invalid-feedback-modern">
-                            {{ $message }}
-
-                        </div>
-                    @enderror
-                </div>
-            </div>
-        </div>
-        @include('admin.transacciones.inscripcion.modales.showContratoModal')
-
-        {{-- Botones de Acción --}}
-        <div class="card-modern">
-            <div class="card-body-modern" style="padding: 2rem;">
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="button" wire:click="limpiar" class="btn-cancel-modern">
-                        <i class="fas fa-broom"></i>
-                        Limpiar
-                    </button>
-                    <button type="button" wire:click="finalizar" class="btn-primary-modern"
-                        wire:loading.attr="disabled" @if (!$acepta_normas_contrato) disabled @endif>
-                        <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))>
-                            <i class="fas fa-save"></i>
-                            Guardar Inscripción
-                        </span>
-                        <span wire:loading wire:target="finalizar">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            Procesando...
-                        </span>
-                    </button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-@push('js')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar selectpickers
-            $('.selectpicker').selectpicker();
 
-            // Sincronizar alumno con Livewire
-            $('#alumno_select').on('changed.bs.select', function() {
-                @this.set('alumnoId', $(this).val());
-            });
 
-            // Sincronizar padre con Livewire
-            $('#padre_select').on('changed.bs.select', function() {
-                @this.set('padreId', $(this).val());
-            });
 
-            // Sincronizar madre con Livewire
-            $('#madre_select').on('changed.bs.select', function() {
-                @this.set('madreId', $(this).val());
-            });
 
-            // Sincronizar representante legal con Livewire
-            $('#representante_legal_select').on('changed.bs.select', function() {
-                @this.set('representanteLegalId', $(this).val());
-            });
-        });
 
-        // Refrescar selectpickers cuando Livewire actualiza
-        document.addEventListener('livewire:updated', function() {
-            $('.selectpicker').selectpicker('refresh');
-        });
+                
+        </div>
+    </div>
 
-        // Resetear selects cuando se limpia el formulario
-        Livewire.on('resetSelects', () => {
-            $('.selectpicker').val('').selectpicker('refresh');
-        });
+    @push('js')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Inicializar selectpickers
+                $('.selectpicker').selectpicker();
 
-        //Para mostrar los datos seleccionados de padre
-        document.addEventListener('livewire:init', () => {
-            $('#padre_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
-                let value = $(this).val();
-                Livewire.dispatch('padreSeleccionadoEvento', {
-                    value: value
+                // Sincronizar alumno con Livewire
+                $('#alumno_select').on('changed.bs.select', function() {
+                    @this.set('alumnoId', $(this).val());
+                });
+
+                // Sincronizar padre con Livewire
+                $('#padre_select').on('changed.bs.select', function() {
+                    @this.set('padreId', $(this).val());
+                });
+
+                // Sincronizar madre con Livewire
+                $('#madre_select').on('changed.bs.select', function() {
+                    @this.set('madreId', $(this).val());
+                });
+
+                // Sincronizar representante legal con Livewire
+                $('#representante_legal_select').on('changed.bs.select', function() {
+                    @this.set('representanteLegalId', $(this).val());
                 });
             });
-        });
 
-        //Para mostrar los datos seleccionados de madre
-        document.addEventListener('livewire:init', () => {
-            $('#madre_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
-                let value = $(this).val();
-                Livewire.dispatch('madreSeleccionadoEvento', {
-                    value: value
+            // Refrescar selectpickers cuando Livewire actualiza
+            document.addEventListener('livewire:updated', function() {
+                $('.selectpicker').selectpicker('refresh');
+            });
+
+            // Resetear selects cuando se limpia el formulario
+            Livewire.on('resetSelects', () => {
+                $('.selectpicker').val('').selectpicker('refresh');
+            });
+
+            //Para mostrar los datos seleccionados de padre
+            document.addEventListener('livewire:init', () => {
+                $('#padre_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
+                    let value = $(this).val();
+                    Livewire.dispatch('padreSeleccionadoEvento', {
+                        value: value
+                    });
                 });
             });
-        });
 
-        //Para mostrar los datos seleccionados de representante legal
-        document.addEventListener('livewire:init', () => {
-            $('#representante_legal_select').on('changed.bs.select', function(e, clickedIndex, isSelected,
-                previousValue) {
-                let value = $(this).val();
-                Livewire.dispatch('representanteLegalSeleccionadoEvento', {
-                    value: value
+            //Para mostrar los datos seleccionados de madre
+            document.addEventListener('livewire:init', () => {
+                $('#madre_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
+                    let value = $(this).val();
+                    Livewire.dispatch('madreSeleccionadoEvento', {
+                        value: value
+                    });
                 });
             });
-        });
 
-        document.addEventListener('livewire:initialized', () => {
-        Livewire.on('scrollTo', (id) => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+            //Para mostrar los datos seleccionados de representante legal
+            document.addEventListener('livewire:init', () => {
+                $('#representante_legal_select').on('changed.bs.select', function(e, clickedIndex, isSelected,
+                    previousValue) {
+                    let value = $(this).val();
+                    Livewire.dispatch('representanteLegalSeleccionadoEvento', {
+                        value: value
+                    });
                 });
+            });
+
+            document.addEventListener('livewire:initialized', () => {
+                Livewire.on('scrollTo', (id) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        </script>
+
+        <style>
+            .radio-item-modern {
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 1.25rem;
+                background: var(--gray-50);
+                border-radius: var(--radius);
+                transition: all 0.2s ease;
+                border: 2px solid transparent;
+                cursor: pointer;
             }
-        });
-    });
-    </script>
 
-    <style>
-        .radio-item-modern {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1.25rem;
-            background: var(--gray-50);
-            border-radius: var(--radius);
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-            cursor: pointer;
-        }
+            .radio-item-modern:hover {
+                background: var(--primary-light);
+                border-color: var(--primary);
+            }
 
-        .radio-item-modern:hover {
-            background: var(--primary-light);
-            border-color: var(--primary);
-        }
+            .radio-modern {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                accent-color: var(--primary);
+            }
 
-        .radio-modern {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
+            .radio-label-modern {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                cursor: pointer;
+                margin: 0 0 0 0.75rem;
+                font-size: 0.9rem;
+                color: var(--gray-700);
+                font-weight: 500;
+                user-select: none;
+            }
 
-        .radio-label-modern {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            margin: 0 0 0 0.75rem;
-            font-size: 0.9rem;
-            color: var(--gray-700);
-            font-weight: 500;
-            user-select: none;
-        }
-
-        .radio-label-modern i {
-            color: var(--primary);
-        }
-    </style>
-@endpush
+            .radio-label-modern i {
+                color: var(--primary);
+            }
+        </style>
+    @endpush

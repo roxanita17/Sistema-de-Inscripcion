@@ -42,7 +42,6 @@ class Inscripcion extends Component
     public $documentos = [];
     public array $documentosFaltantes = [];
 
-    public $fecha_inscripcion;
     public $observaciones;
     public $numero_zonificacion;
     public $institucion_procedencia_id;
@@ -77,7 +76,6 @@ class Inscripcion extends Component
         $this->documentosEtiquetas = $this->documentoService->obtenerEtiquetas();
 
         $this->cargarDatosIniciales();
-        $this->fecha_inscripcion = now()->format('Y-m-d');
     }
 
     /* ============================================================
@@ -99,7 +97,6 @@ class Inscripcion extends Component
                     }
                 }
             ],
-            'fecha_inscripcion' => 'required|date',
             'documentos' => 'array',
             'documentos.*' => 'string',
             'acepta_normas_contrato' => 'accepted',
@@ -132,8 +129,7 @@ class Inscripcion extends Component
         'gradoId.required' => 'Debe seleccionar un grado.',
         'gradoId.exists' => 'El grado seleccionado no es válido.',
 
-        'fecha_inscripcion.required' => 'La fecha de inscripción es obligatoria.',
-        'fecha_inscripcion.date' => 'La fecha de inscripción no tiene un formato válido.',
+
 
         'documentos.array' => 'El formato de los documentos seleccionados no es válido.',
         'documentos.*.string' => 'Uno o más documentos seleccionados no son válidos.',
@@ -184,9 +180,10 @@ class Inscripcion extends Component
         $this->alumnoSeleccionado = \App\Models\Alumno::with([
             'persona.tipoDocumento',
             'persona.genero',
-            'persona.localidad.municipio.estado',
             'ordenNacimiento',
             'lateralidad',
+            'alumno.persona.localidad.municipio',
+            'alumno.persona.localidad.estado',
         ])->find($value);
 
         // Verificar si ya tiene inscripción activa
@@ -404,7 +401,6 @@ class Inscripcion extends Component
             'madre_id' => $this->madreId,
             'representante_legal_id' => $this->representanteLegalId,
             'documentos' => $this->documentos,
-            'fecha_inscripcion' => $this->fecha_inscripcion,
             'observaciones' => $this->observaciones,
             'acepta_normas_contrato' => $this->acepta_normas_contrato,
         ]);
@@ -436,7 +432,6 @@ class Inscripcion extends Component
             'madreId' => $this->madreId,
             'representanteLegalId' => $this->representanteLegalId,
             'gradoId' => $this->gradoId,
-            'fecha_inscripcion' => $this->fecha_inscripcion,
             'observaciones' => $this->observaciones,
             'documentos' => $this->documentos,
         ]);
@@ -459,7 +454,6 @@ class Inscripcion extends Component
             'representanteLegalSeleccionado'
         ]);
 
-        $this->fecha_inscripcion = now()->format('Y-m-d');
         $this->dispatch('resetSelects');
     }
 

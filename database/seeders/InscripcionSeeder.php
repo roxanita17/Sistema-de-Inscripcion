@@ -25,7 +25,6 @@ class InscripcionSeeder extends Seeder
                 'representante_legal_id' => (($i + 2) % 2) + 1,
 
                 // Datos de inscripción
-                'fecha_inscripcion' => Carbon::now()->subDays(rand(1, 30)),
                 'documentos' => 'Partida de nacimiento, boletín, fotos',
                 'estado_documentos' => rand(0, 1) ? 'Completo' : 'Incompleto',
                 'observaciones' => $i % 2 === 0

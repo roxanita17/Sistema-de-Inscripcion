@@ -201,7 +201,9 @@ class AlumnoCreate extends Component
        ============================================================ */
     public function cargarAlumno($id)
     {
-        $alumno = Alumno::with('persona')->findOrFail($id);
+        $alumno = Alumno::with('persona',
+        
+        )->findOrFail($id);
         $persona = $alumno->persona;
 
         // Datos personales
