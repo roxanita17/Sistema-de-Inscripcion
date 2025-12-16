@@ -1,86 +1,105 @@
-**INSCRIPCION**
+# MODULO: INSCRIPCIÓN
 
+## BACKEND / REGLAS DE NEGOCIO (BK)
 Falta:
 
-**---------------------------------------------------------------------------------------------------**
+### Validaciones críticas
+1. Validar que el percentil solo se ejecute una vez por inscripción
+2. Validar documento del estudiante
+3. Validar casos de doble inscripción (mismo u otro año escolar)
 
-**BK**
+### Lógica de inscripción
+4. Hacer funcionar la función limpiar en inscripción
+5. Al crear representante desde inscripción:
+   - Al volver o cancelar debe regresar a la inscripción
+6. Filtrar institución de procedencia por:
+   - País
+   - Estado
+   - Municipio
+   - Localidad
 
-MIGRACIONES Y MODELOS:
-1. discapacidad
-2. telefono
-3. persona
-4. docente
+---
 
-FUNCIONALIDAD:
-1. Implementar buscadores de livewire dentro de los select (insc)
-2. Implementar buscadores de livewire en los index
-3. Al estar en representante desde inscripcion al volver o cancelar debe volver a la inscripcion
-4. hacer funcionar la funcion limpiar en inscripcion
-5. Funcion recuperar
+## FUNCIONALIDADES
+Falta:
 
-VALIDACIONES:
-1. Validar 1 vez el percentil
-2. Documento (si es V, E, CE)
-3. Caso de inscripcion a 2 u otro año
-4. No se le puede asignar una materia a un docente si no se ha ejecutado el percentil
+1. Implementar buscadores con Livewire en los selects de inscripción
+2. Implementar buscadores con Livewire en los index
+3. Editar inscripción
+4. Inscripción por prosecución (tipo de inscripción)
 
-MODULOS NUEVOS:
-1. Historial
-2. Inscripcion prosecucion (tipo de inscripcion)
+---
 
+## FILTROS
+Falta:
 
-SEEDER:
-1. Acomodar seeder de materias segun el pensum
-2. Seeder de estado (Dependencias federales)
-3. Mejorar seeder de alumno e inscripcion
+1. Filtro por status de inscripción
+2. Filtro por grado
+   - Inscripción
+   - Historial de percentil
+3. Filtro por sección
+   - Inscripción
+   - Historial de percentil
+
+---
+
+## DISEÑO / VISTAS (FRONTEND)
+Falta:
+
+1. Mejorar diseño general del módulo de inscripción
+2. Mejorar vistas de filtros
+3. Mejorar vista del historial de percentil
+
+---
+
+## SEEDERS
+Falta:
+
+1. Acomodar seeder de materias según el pensum
+2. Crear seeder de estados (incluyendo dependencias federales)
+3. Mejorar seeder de alumnos e inscripción
 4. Acomodar seeder de representantes
 
+# MODULO: HISTÓRICO ACADÉMICO
 
-
-**-----------------------------------------------------------------------------------------------------------**
-
-**FT**
-
-**INSCRIPCION**
-
+## FILTRADO
 Falta:
 
-FILTROS:
-1. Por status
-2. Por grado (Inscripcion, Historial de percentil)
-3. Por seccion (Inscripcion, Historial de percentil)
+### Inscripción
+1. Filtrar por tipo de inscripción
+2. Filtrar por grado
+3. Filtrar por sección
+4. Filtrar por institución de procedencia
 
-VISTA:
-1. Agregar select de seccion en docente_area_grado
+### Docente (docente_area_grado)
+5. Filtrar por materias
+6. Filtrar por estudios del docente
+7. Filtrar por grado
+8. Filtrar por sección
 
-MODULOS NUEVOS:
-1. Vista del modulo del historial
+### Percentil
+9. Historial del percentil (entradas_percentil)
 
 
-**-------------------------------------------------------------------------------------------------------------------------**
+# BASE DE DATOS (BD)
 
-**BD**
-
-**INSCRIPCION**
-
+## INSCRIPCIÓN
 Falta:
-1. Las tallas deben ser otra tabla en la bd
 
+1. Separar las tallas del estudiante en una tabla independiente
+2. Modelar correctamente el tipo de inscripción
+3. Crear nuevas migraciones necesarias
+4. Conectar las nuevas migraciones con los módulos ya existentes
 
+# MODULOS EN PROCESO / FALTANTES
 
-
-
-===========================================================================
-
-**MODULOS EN PROCESO/FALTANTES**
-
-
-
-* Historial (año escolar)
-* Inscripcion prosecucion (tipo de inscripcion)
-* Asignacion de materias a estudios (arreglar segun punto de contro 2 - opcional)
-* Modulo para la informacion de la comunidad
-* Materias Pendientes (BD y logica)-> Nuevo modulo para actualizar estados de materias (opcional)
-* Al eliminar una materia que este relacionada a algun professor que aparezca una advertencia
-* Editar de inscripcion
+1. Histórico por año escolar
+2. Inscripción por prosecución
+3. Asignación de materias a estudios
+   - Ajustar según punto de control 2 (opcional)
+4. Módulo para la información de la comunidad
+5. Materias pendientes
+   - BD y lógica
+   - Actualizar estados de materias (opcional)
+6. Advertencia al eliminar una materia relacionada con un docente
+7. Edición avanzada de inscripción
