@@ -17,6 +17,7 @@ class Docente extends Model
     protected $table = 'docentes';
 
     protected $fillable = [
+        'anio_escolar_id',
         'primer_telefono',
         'segundo_telefono',
         'codigo',
@@ -54,6 +55,11 @@ class Docente extends Model
     public function detalleDocenteEstudio()
     {
         return $this->hasMany(DetalleDocenteEstudio::class, 'docente_id', 'id');
+    }
+
+    public function anioEscolar()
+    {
+        return $this->belongsTo(AnioEscolar::class, 'anio_escolar_id');
     }
 
     /**

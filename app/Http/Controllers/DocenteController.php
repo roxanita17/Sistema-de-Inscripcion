@@ -63,6 +63,25 @@ class DocenteController extends Controller
     }
 
     /**
+     * Obtiene el año escolar activo actual
+     * 
+     * @return \App\Models\AnioEscolar
+     * @throws \Exception Si no hay un año escolar activo
+     */
+    public function obtenerAnioEscolarActivo()
+    {
+        $anioEscolar = \App\Models\AnioEscolar::activos()
+            ->where('status', 'Activo')
+            ->first();
+
+        if (!$anioEscolar) {
+            throw new \Exception('No hay un año escolar activo. Por favor, contacte al administrador.');
+        }
+
+        return $anioEscolar;
+    }
+
+    /**
      * Guarda un nuevo docente
      */
     public function store(Request $request)
@@ -104,6 +123,7 @@ class DocenteController extends Controller
         DB::beginTransaction();
 
         try {
+            $anioEscolar = $this->obtenerAnioEscolarActivo();
             // 1. GUARDAR PERSONA
             $persona = Persona::create([
                 'primer_nombre' => $request->primer_nombre,
@@ -124,6 +144,7 @@ class DocenteController extends Controller
 
             // 2. GUARDAR DOCENTE
             $docente = Docente::create([
+                'anio_escolar_id' => $anioEscolar->id,
                 'primer_telefono' => $request->primer_telefono,
                 'codigo' => $request->codigo,
                 'dependencia' => $request->dependencia,
@@ -168,6 +189,7 @@ class DocenteController extends Controller
 
         // VALIDACIÓN (excluyendo la cédula actual)
         $validated = $request->validate([
+            'anio_escolar_id' => 'required|exists:anio_escolars,id',
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => 'required|string|max:20' . $persona->numero_documento,
             'primer_nombre' => 'required|string|max:50',
@@ -188,6 +210,7 @@ class DocenteController extends Controller
             'codigo' => 'nullable|numeric',
             'dependencia' => 'nullable|string|max:100',
         ], [
+            'anio_escolar_id.required' => 'El año escolar es obligatorio',
             'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
             'numero_documento.required' => 'La cédula es obligatoria',
             'numero_documento.unique' => 'Esta cédula ya está registrada',

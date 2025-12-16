@@ -17,6 +17,7 @@ class InscripcionData
     public ?string $fecha_inscripcion;
     public ?string $observaciones;
     public bool $acepta_normas_contrato;
+    public ?int $anio_escolar_id;
 
     public function __construct(array $data)
     {
@@ -33,5 +34,6 @@ class InscripcionData
         $this->fecha_inscripcion = $data['fecha_inscripcion'] ?? null;
         $this->observaciones = $data['observaciones'] ?? null;
         $this->acepta_normas_contrato = $data['acepta_normas_contrato'] ?? false;
+        $this->anio_escolar_id = $data['anio_escolar_id'] ?? null;
     }
 }

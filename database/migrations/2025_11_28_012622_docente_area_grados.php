@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('docente_area_grados', function (Blueprint $table) {
             $table->id();
+            
 
             // FK a detalle_docente_estudios
             $table->foreignId('docente_estudio_realizado_id')

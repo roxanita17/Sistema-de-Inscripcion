@@ -235,9 +235,14 @@ return [
             'icon' => 'fas fa-calendar-alt',
         ],
 
-        ['header' => 'GESTIÓN DE INSCRIPCIONES'],
+        // Historico
+        [
+            'text' => 'Historico',
+            'url'  => 'admin/historico',
+            'icon' => 'fas fa-calendar-alt',
+        ],
 
-        
+        ['header' => 'GESTIÓN DE INSCRIPCIONES'],
 
         //Alumnos
         [

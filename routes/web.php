@@ -27,7 +27,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\EntradasPercentilController;
+use App\Http\Controllers\HistoricoController;
 use App\Http\Controllers\InstitucionProcedenciaController;
+use App\Models\Historico;
 
 Route::get('/', function () {
     return view('welcome');
@@ -321,6 +323,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::post('transacciones/percentil/boton-percentil', [EntradasPercentilController::class, 'ejecutar'])
         ->name('transacciones.percentil.boton-percentil');
+
+    Route::get('historico', [HistoricoController::class, 'index'])->name('historico.index');
 });
 
 

@@ -10,6 +10,9 @@ return new class extends Migration
     {
         Schema::create('docentes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('anio_escolar_id')->nullable()
+                  ->constrained('anio_escolars')
+                  ->nullOnDelete();
             $table->string('primer_telefono')->nullable(); 
             $table->string('codigo')->nullable();
             $table->string('dependencia')->nullable();

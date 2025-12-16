@@ -20,15 +20,29 @@
                     <p class="title-subtitle">Administración de las inscripciones</p>
                 </div>
             </div>
+            <div class="d-flex justify-content-between align-items-center mt-3 ">
+                {{-- Botón percentil (izquierda) --}}
+                <div style="padding: 0 6rem">
+                    @foreach ($grados as $grado)
+                        @if ($grado->id === 1)
+                            @include('admin.transacciones.percentil.boton-percentil', [
+                                'anioEscolarActivo' => $anioEscolarActivo,
+                                'gradoId' => $grado->id,
+                            ])
+                        @endif
+                    @endforeach
+                </div>
 
-
-            {{-- CORREGIDO – dice "Nuevo Banco" → ahora "Nueva Inscripción" --}}
-            <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
-                @if (!$anioEscolarActivo) disabled @endif
-                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
-                <i class="fas fa-plus"></i>
-                <span>Nueva inscripción</span>
-            </a>
+                {{-- Botón crear (derecha) --}}
+                <div>
+                    <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
+                        @if (!$anioEscolarActivo) disabled @endif
+                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
+                        <i class="fas fa-plus"></i>
+                        <span>Nueva inscripción</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 @stop
@@ -318,18 +332,7 @@
                     <x-pagination :paginator="$inscripciones" />
                 </div>
 
-                {{-- Boton ejecutar percentil --}}
 
-                @foreach ($grados as $grado)
-                    @if ($grado->id === 1)
-                        <div style="position:absolute; right:0; padding: 0 1rem;">
-                            @include('admin.transacciones.percentil.boton-percentil', [
-                                'anioEscolarActivo' => $anioEscolarActivo,
-                                'gradoId' => $grado->id,
-                            ])
-                        </div>
-                    @endif
-                @endforeach
 
             </div>
 

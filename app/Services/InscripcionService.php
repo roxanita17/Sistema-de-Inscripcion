@@ -63,6 +63,25 @@ class InscripcionService
 
     
 
+    /**
+     * Obtiene el año escolar activo actual
+     * 
+     * @return \App\Models\AnioEscolar
+     * @throws \Exception Si no hay un año escolar activo
+     */
+    public function obtenerAnioEscolarActivo()
+    {
+        $anioEscolar = \App\Models\AnioEscolar::activos()
+            ->where('status', 'Activo')
+            ->first();
+
+        if (!$anioEscolar) {
+            throw new \Exception('No hay un año escolar activo. Por favor, contacte al administrador.');
+        }
+
+        return $anioEscolar;
+    }
+
     public function registrar(InscripcionData $data): Inscripcion
     {
         DB::beginTransaction();
@@ -81,8 +100,11 @@ class InscripcionService
                 throw new \Exception('Faltan documentos obligatorios.');
             }
 
+            // Obtener el año escolar activo
+            $anioEscolar = $this->obtenerAnioEscolarActivo();
 
             $inscripcion = Inscripcion::create([
+                'anio_escolar_id' => $anioEscolar->id,
                 'alumno_id' => $data->alumno_id,
                 'numero_zonificacion' => $data->numero_zonificacion,
                 'institucion_procedencia_id' => $data->institucion_procedencia_id,

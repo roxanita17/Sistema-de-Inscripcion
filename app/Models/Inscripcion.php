@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use App\Models\EntradasPercentil;
 use App\Models\Seccion;
+use App\Models\AnioEscolar;
 
 class Inscripcion extends Model
 {
@@ -16,6 +17,7 @@ class Inscripcion extends Model
     protected $table = 'inscripcions';
 
     protected $fillable = [
+        'anio_escolar_id',
         'alumno_id',
         'grado_id',
         'padre_id',
@@ -107,6 +109,11 @@ class Inscripcion extends Model
     public function representanteLegal()
     {
         return $this->belongsTo(RepresentanteLegal::class, 'representante_legal_id', 'id');
+    }
+
+    public function anioEscolar()
+    {
+        return $this->belongsTo(AnioEscolar::class, 'anio_escolar_id', 'id');
     }
 
     /**
