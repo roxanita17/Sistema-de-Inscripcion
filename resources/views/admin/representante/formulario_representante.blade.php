@@ -1015,7 +1015,20 @@
                 <h5 class="mb-4 pb-2 border-bottom">
                     <i class="fas fa-id-card me-2"></i>Datos Personales
                 </h5>
-
+                <div class="col-md-2 mb-3">
+                                <div class="input-group">
+                                    <label class="input-group-text" for="tipo-ci-representante"><span
+                                            class="text-danger">(*)</span>Doc.</label>
+                                    <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante"
+                                        required>
+                                        <option value="">Seleccione</option>
+                                        @foreach ($tipoDocumentos as $tipoDoc)
+                                            <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <small id="tipo-ci-representante-error" class="text-danger"></small>
+                            </div>
                 <div class="col-md-4 mb-3">
                     <div class="input-group">
                         <span class="input-group-text" id="inputGroup-sizing-default"><span
@@ -1069,82 +1082,6 @@
                     <div class="col-md-4 mb-3">
                         <div class="row identification-row">
                             {{-- DATOS DE IDENTIFICACIÓN --}}
-                            <div class="col-md-2 mb-3">
-                                <div class="input-group">
-                                    <label class="input-group-text" for="tipo-ci-representante"><span
-                                            class="text-danger">(*)</span>Doc.</label>
-                                    <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante"
-                                        required>
-                                        <option value="">Seleccione</option>
-                                        @foreach ($tipoDocumentos as $tipoDoc)
-                                            <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <small id="tipo-ci-representante-error" class="text-danger"></small>
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                            class="text-danger">(*)</span>Cédula</span>
-                                    <input type="text" class="form-control" id="numero_documento-representante"
-                                        name="numero_documento-representante" aria-label="Sizing example input"
-                                        aria-describedby="inputGroup-sizing-default" maxlength="8" required>
-                                </div>
-                                <input type="hidden" id="persona-id-representante" name="persona-id-representante">
-                                <input type="hidden" id="representante-id" name="representante-id">
-                                <small id="numero_documento-representante-error" class="text-danger"></small>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 mb-3">
-                                    <label class="form-label">Nombre Completo</label>
-                                    <div class="row g-2">
-                                        <div class="col-md-3">
-                                            <input type="text" class="form-control" id="primer-nombre-representante"
-                                                name="primer-nombre-representante" placeholder="Primer nombre *"
-                                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                                title="Solo se permiten letras y espacios,no se aceptan números" required>
-                                            <small class="text-danger" id="primer-nombre-representante-error"></small>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <input type="text" class="form-control" id="segundo-nombre-representante"
-                                                name="segundo-nombre-representante" placeholder="Segundo nombre"
-                                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                                title="Solo se permiten letras y espacios,no se aceptan números">
-                                            <small class="text-danger" id="segundo-nombre-representante-error"></small>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <input type="text" class="form-control" id="primer-apellido-representante"
-                                                name="primer-apellido-representante" placeholder="Primer apellido *"
-                                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                                title="Solo se permiten letras y espacios,no se aceptan números" required>
-                                            <small class="text-danger" id="primer-apellido-representante-error"></small>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <input type="text" class="form-control"
-                                                id="segundo-apellido-representante" name="segundo-apellido-representante"
-                                                placeholder="Segundo apellido" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                                title="Solo se permiten letras y espacios,no se aceptan números" required>
-                                            <small class="text-danger" id="segundo-apellido-representante-error"></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text" id="inputGroup-sizing-default">Tercer Nombre</span>
-                                        <input type="text" class="form-control" id="tercer-nombre-representante"
-                                            name="tercer-nombre-representante" aria-label="Sizing example input"
-                                            aria-describedby="inputGroup-sizing-default" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                            title="Solo se permiten letras y espacios,no se aceptan números">
-                                    </div>
-                                    <small id="tercer-nombre-representante-error" class="text-danger"></small>
-                                </div>
-
                                 <div class="col-md-4 mb-3">
                                     <div class="input-group">
                                         <label class="input-group-text" for="sexo-representante"><span
