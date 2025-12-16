@@ -26,6 +26,16 @@ class AnioEscolar extends Model
         'extencion_anio_escolar' => 'date',
     ];
 
+    public function historicos()
+    {
+        return $this->hasMany(Historico::class);
+    }
+    
+    public function docentes()
+    {
+        return $this->hasMany(Docente::class);
+    }
+
     // ========================================
     // SCOPES
     // ========================================

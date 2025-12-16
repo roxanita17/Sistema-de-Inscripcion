@@ -13,6 +13,7 @@ class TipoDocumentoSeeder extends Seeder
         $tiposDocumento = [
             'V',
             'E',
+            'CE'
         ];
 
         foreach ($tiposDocumento as $tipoDocumento) {

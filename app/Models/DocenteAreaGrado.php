@@ -71,5 +71,7 @@ public function scopeBuscar($query, $buscar)
     {
         return $this->belongsTo(Grado::class, 'grado_id');
     }
+    
+    
 
 }

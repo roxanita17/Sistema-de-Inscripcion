@@ -27,7 +27,7 @@
 function confirmarEnvio() {
     Swal.fire({
         title: '¿Desea ejecutar el percentil para este grado?',
-        text: 'Esta acción no guardará la información actual.',
+        text: '',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',

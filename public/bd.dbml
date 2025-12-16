@@ -1,24 +1,17 @@
-Table rol {
-  id integer [primary key]
-  rol varchar
-  status varchar
-  created_at timestamp
-}
 
-Table usuario {
+
+Table pais {
   id integer [primary key]
-  nombres varchar
-  email varchar
-  password varchar
-  rol_id integer
-  status varchar
+  nombre_pais varchar
+  status boolean
   created_at timestamp
 }
 
 Table estado {
   id integer [primary key]
   nombre_estado varchar
-  status varchar
+  pais_id integer
+  status boolean
   created_at timestamp
 }
 
@@ -26,7 +19,7 @@ Table municipio {
   id integer [primary key]
   nombre_municipio varchar
   estado_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -34,7 +27,7 @@ Table localidad {
   id integer [primary key]
   nombre_localidad varchar
   municipio_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -50,9 +43,16 @@ Table personas {
   genero_id int
   fecha_nacimiento date
   localidad_id integer
-  prefijo_id integer
-  status varchar
+  telefono_persona_id integer
+  status boolean
   created_at timestamp
+}
+
+Table telefono_persona{
+    id integer [primary key]
+    prefijo_id integer
+    telefo_id integer
+    status boolean
 }
 
 Table prefijo_telefono{
@@ -61,27 +61,34 @@ Table prefijo_telefono{
     status boolean
 }
 
+Table telefono{
+    id integer [primary key]
+    telefono integer
+    status boolean
+}
+
+
 Table docentes {
   id integer [primary key]
   persona_id integer
   primer_telefono integer
   codigo integer
   dependencia varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table estudios_realizados {
   id integer [primary key]
   nombre_titulo varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table area_formacions {
   id integer [primary key]
   nombre_area_formacion varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -90,7 +97,7 @@ Table area_estudios_realizados{
   id integer [primary key]
   estudios_realizados_id integer
   area_formacion_id integer
-  status varchar
+  status boolean
   created_at timestamp
 
 }
@@ -102,7 +109,7 @@ Table grados {
   max_por_seccion integer
   min_por_seccion integer
   anio_escolar_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -113,7 +120,7 @@ Table grado_area_formacions {
   codigo_grado_area varchar
   grado_id integer
   area_formacion_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -124,7 +131,7 @@ Table docente_area_grado {
   area_estudios_realizados_id integer
   grado_id integer
   seccion_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -133,7 +140,7 @@ Table docente_estudio_realizado {
   id integer [primary key]
   docentes_id integer
   estudios_realizados_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -141,29 +148,28 @@ Table institucion_procedencia {
   id integer [primary key]
   nombre_institucion varchar
   localidad_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table tipo_documento {
   id integer [primary key]
   nombre varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table genero{
   id integer [primary key]
   nombre varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table estudiantes{
   id integer [primary key]
+  
 
-
-  anio_egreso date
   talla_camisa integer
   talla_pantalon integer
   talla_zapato integer
@@ -171,52 +177,60 @@ Table estudiantes{
   estatura integer
   persona_id integer
   orden_nacimiento_id integer
-  discapacidad_id integer
+  discapacidad_estudiante_id integer
   etnia_indigena_id integer
   lateralidad_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table orden_nacimiento{
   id integer [primary key]
   numero integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table discapacidad{
   id integer [primary key]
   nombre_discapacidad varchar
-  status varchar
+  status boolean
+  created_at timestamp
+}
+
+Table discapacidad_estudiante{
+  id integer [primary key]
+  discapacidad_id integer
+  persona_id interger
+  status boolean
   created_at timestamp
 }
 
 Table etnia_indigena{
   id integer [primary key]
   nombre_etnia varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table expresion_literaria{
   id integer [primary key]
   letra_expresion varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table lateralidad{
   id integer [primary key]
   nombre_lateralidad varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 Table ocupacion{
   id integer [primary key]
   nombre_ocupacion varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -224,7 +238,7 @@ Table banco{
   id integer [primary key]
   codigo_banco integer
   nombre_banco varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -233,7 +247,7 @@ Table representante{
   persona_id integer
   convivencia_estudiante varchar
   ocupacion_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -245,7 +259,7 @@ Table representante_legal{
   localidad_id int
   representante_id integer
   banco_id int
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -254,7 +268,7 @@ Table representante_estudiante{
   tipo_representante varchar
   representante_id integer
   estudiante_id int
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -262,7 +276,17 @@ Table anio_escolar{
   id integer [primary key]
   anio_inicio date
   anio_fin date
-  status varchar
+  status boolean
+  created_at timestamp
+}
+
+Table historico{
+  id integer [primary key]
+  anio_escolar_id integer
+  inscripcion_id integer
+  entradas_percentil_id integer
+  docente_area_grado_id integer
+  status boolean
   created_at timestamp
 }
 
@@ -270,7 +294,7 @@ Table ejecuciones_percentil{
   id integer [primary key]
   fecha_ejecucion date
   total_evaluados integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -280,16 +304,17 @@ Table secciones{
   cantidad_actual integer
   grado_id integer
   ejecucion_percentil_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
 table inscripcion{
   id integer [primary key]
+  tipo_inscripcion_id integer
   numero_zonificacion integer
   institucion_procedencia_id integer
+  anio_egreso date
   expresion_literaria_id int
-  tipo_inscripcion_id varchar
   fecha_creacion date
   contrato_convivencia text
   repitiente_estudiante integer
@@ -300,11 +325,18 @@ table inscripcion{
   created_at timestamp
 }
 
+Table tipo_inscripcion{
+  id integer [primary key]
+  nombre varchar
+  status boolean
+  created_at timestamp
+}
+
 Table representante_inscripcion{
   id integer [primary key]
   inscripcion_id integer
   representante_id integer
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -314,7 +346,7 @@ Table indice_edad {
   indice integer           // Índice 1..30
   min_meses integer            // Rango mínimo (edad en meses)
   max_meses integer            // Rango máximo (edad en meses)
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -323,7 +355,7 @@ Table indice_peso {
   indice integer           // Índice 1..30
   min_kg numeric                // Ej: 10.1
   max_kg numeric                // Ej: 12.6
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -332,7 +364,7 @@ Table indice_estatura {
   indice integer           // Índice 1..30
   min_cm numeric                // Ej: 80.1
   max_cm numeric                // Ej: 83.6
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -353,14 +385,7 @@ Table entradas_percentil {
   ejecucion_percentil_id integer
   inscripcion_id integer
 
-  status varchar
-  created_at timestamp
-}
-
-Table tipo_inscripcion {
-  id integer [primary key]
-  nombre_tipo_inscripcion varchar
-  status varchar
+  status boolean
   created_at timestamp
 }
 
@@ -368,18 +393,12 @@ Ref: entradas_percentil.seccion_id > secciones.id
 Ref: entradas_percentil.ejecucion_percentil_id > ejecuciones_percentil.id
 Ref: entradas_percentil.inscripcion_id > inscripcion.id
 
-Ref: "tipo_inscripcion"."id" < "inscripcion"."tipo_inscripcion_id"
-
-
 Ref: "estudios_realizados"."id" < "area_estudios_realizados"."estudios_realizados_id"
 
 Ref: "area_formacions"."id" < "area_estudios_realizados"."area_formacion_id"
 
-Ref: "prefijo_telefono"."id" < "personas"."prefijo_id"
 
 Ref: "localidad"."id" < "representante_legal"."localidad_id"
-
-Ref: "secciones"."id" < "docente_area_grado"."seccion_id"
 
 
 Ref: "area_formacions"."id" < "grado_area_formacions"."area_formacion_id"
@@ -406,8 +425,6 @@ Ref: "localidad"."id" < "institucion_procedencia"."localidad_id"
 
 Ref: "localidad"."id" < "personas"."localidad_id"
 
-Ref: "rol"."id" < "usuario"."rol_id"
-
 Ref: "tipo_documento"."id" < "personas"."tipo_documento_id"
 
 Ref: "genero"."id" < "personas"."genero_id"
@@ -416,13 +433,11 @@ Ref: "personas"."id" < "estudiantes"."persona_id"
 
 Ref: "orden_nacimiento"."id" < "estudiantes"."orden_nacimiento_id"
 
-Ref: "expresion_literaria"."id" < "inscripcion"."expresion_literaria_id"
 
 Ref: "lateralidad"."id" < "estudiantes"."lateralidad_id"
 
 Ref: "etnia_indigena"."id" < "estudiantes"."etnia_indigena_id"
 
-Ref: "discapacidad"."id" < "estudiantes"."discapacidad_id"
 
 Ref: "ocupacion"."id" < "representante"."ocupacion_id"
 
@@ -463,4 +478,32 @@ Ref: "indice_estatura"."id" < "entradas_percentil"."indice_estatura"
 
 Ref: "personas"."id" < "docentes"."persona_id"
 
+
+
+Ref: "estado"."pais_id" < "pais"."id"
+
+Ref: "discapacidad"."id" < "discapacidad_estudiante"."discapacidad_id"
+
+Ref: "estudiantes"."id" < "discapacidad_estudiante"."persona_id"
+
+Ref: "expresion_literaria"."id" < "inscripcion"."expresion_literaria_id"
+
 Ref: "institucion_procedencia"."id" < "inscripcion"."institucion_procedencia_id"
+
+Ref: "secciones"."id" < "docente_area_grado"."seccion_id"
+
+Ref: "tipo_inscripcion"."id" < "inscripcion"."tipo_inscripcion_id"
+
+Ref: "anio_escolar"."id" < "historico"."anio_escolar_id"
+
+Ref: "inscripcion"."id" < "historico"."inscripcion_id"
+
+Ref: "entradas_percentil"."id" < "historico"."entradas_percentil_id"
+
+Ref: "docente_area_grado"."id" < "historico"."docente_area_grado_id"
+
+Ref: "prefijo_telefono"."id" < "telefono_persona"."prefijo_id"
+
+Ref: "telefono"."id" < "telefono_persona"."telefo_id"
+
+Ref: "telefono_persona"."id" < "personas"."telefono_persona_id"

@@ -82,9 +82,15 @@
                                 <span class="required-badge">*</span>
                             </label>
                             <input type="text" wire:model.live="numero_documento"
-                                class="form-control-modern @error('numero_documento') is-invalid @enderror"
-                                maxlength="8" pattern="[0-9]+" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                                inputmode="numeric" placeholder="12345678">
+                                class="form-control-modern @error('numero_documento') is-invalid @enderror
+                                text-uppercase"
+                                maxlength="{{ $documento_maxlength }}" pattern="{{ $documento_pattern }}"
+                                inputmode="{{ $documento_inputmode }}" placeholder="{{ $documento_placeholder }}"
+                                oninput="
+                                @if ($tipo_documento_id == 1 || $tipo_documento_id == 3) this.value = this.value.replace(/[^0-9]/g,'')
+                                @elseif($tipo_documento_id == 2)
+                                this.value = this.value.replace(/[^a-zA-Z0-9]/g,'') @endif
+                                ">
                             @error('numero_documento')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -123,8 +129,7 @@
                             </label>
                             <input type="text" wire:model.live="primer_nombre"
                                 class="form-control-modern @error('primer_nombre') is-invalid @enderror text-capitalize"
-                                placeholder="Primer nombre"
-                                >
+                                placeholder="Primer nombre">
                             @error('primer_nombre')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -139,8 +144,8 @@
                                 <i class="fas fa-user"></i>
                                 Segundo Nombre
                             </label>
-                            <input type="text" wire:model="segundo_nombre" class="form-control-modern text-capitalize"
-                                placeholder="Segundo nombre">
+                            <input type="text" wire:model="segundo_nombre"
+                                class="form-control-modern text-capitalize" placeholder="Segundo nombre">
                         </div>
                     </div>
 
@@ -150,8 +155,8 @@
                                 <i class="fas fa-user"></i>
                                 Tercer Nombre
                             </label>
-                            <input type="text" wire:model.live="tercer_nombre" class="form-control-modern text-capitalize"
-                                placeholder="Tercer nombre">
+                            <input type="text" wire:model.live="tercer_nombre"
+                                class="form-control-modern text-capitalize" placeholder="Tercer nombre">
                         </div>
                     </div>
                 </div>
@@ -181,8 +186,8 @@
                                 <i class="fas fa-user"></i>
                                 Segundo Apellido
                             </label>
-                            <input type="text" wire:model.live="segundo_apellido" class="form-control-modern text-capitalize"
-                                placeholder="Segundo apellido">
+                            <input type="text" wire:model.live="segundo_apellido"
+                                class="form-control-modern text-capitalize" placeholder="Segundo apellido">
                         </div>
                     </div>
                 </div>
@@ -701,5 +706,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script> --}}
-
-

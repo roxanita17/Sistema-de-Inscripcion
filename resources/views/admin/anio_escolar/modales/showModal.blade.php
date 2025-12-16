@@ -94,7 +94,7 @@
                             Fecha de Creación
                         </span>
                         <span class="detail-value">
-                            {{ $datos->created_at->format('d/m/Y H:i:s') }}
+                            {{ \Carbon\Carbon::parse($datos->created_at)->format('d/m/Y H:i:s') }}
                         </span>
                     </div>
 
@@ -105,9 +105,9 @@
                             Última Actualización
                         </span>
                         <span class="detail-value">
-                            {{ $datos->updated_at->format('d/m/Y H:i:s') }}
+                            {{ \Carbon\Carbon::parse($datos->updated_at)->format('d/m/Y H:i:s') }}
                             <small style="display: block; color: var(--gray-700); font-size: 0.8rem; margin-top: 0.25rem;">
-                                ({{ $datos->updated_at->diffForHumans() }})
+                                ({{ \Carbon\Carbon::parse($datos->updated_at)->diffForHumans() }})
                             </small>
                         </span>
                     </div>

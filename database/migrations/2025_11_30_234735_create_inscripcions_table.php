@@ -11,6 +11,10 @@ return new class extends Migration
         Schema::create('inscripcions', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignId('anio_escolar_id')->nullable()
+                  ->constrained('anio_escolars')
+                  ->nullOnDelete();
+
             // Relaciones
             $table->foreignId('alumno_id')
                   ->constrained('alumnos')

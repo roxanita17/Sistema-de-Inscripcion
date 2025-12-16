@@ -13,7 +13,7 @@ class InscripcionSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i <=100; $i++) {
+        for ($i = 1; $i <=10; $i++) {
             Inscripcion::create([
                 // Relaciones principales
                 'alumno_id' => ($i % 10) + 1,
@@ -44,11 +44,13 @@ class InscripcionSeeder extends Seeder
                 // Contrato
                 'acepta_normas_contrato' => true,
 
+                'anio_escolar_id' => rand(1, 3),
+
                 // Estado de la inscripción
                 'status' => 'Activo' ,
             ]);
         }
 
-        $this->command->info('Seeder de Inscripcion (10 registros) ejecutado correctamente.');
+        $this->command->info('Seeder de Inscripcion (90 registros) ejecutado correctamente.');
     }
 }

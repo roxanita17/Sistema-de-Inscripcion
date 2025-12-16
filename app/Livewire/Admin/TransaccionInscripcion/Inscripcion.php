@@ -47,6 +47,7 @@ class Inscripcion extends Component
     public $institucion_procedencia_id;
     public $expresion_literaria_id;
     public $anio_egreso;
+    public $anio_escolar_id;
     public $acepta_normas_contrato = false;
     public $seleccionarTodos = false;
 
@@ -335,7 +336,6 @@ class Inscripcion extends Component
             $this->inscripcionService->registrar($dto);
 
             session()->flash('success', 'Inscripción registrada exitosamente.');
-            $this->limpiar();
             session()->forget('inscripcion_temp');
 
             return redirect()->route('admin.transacciones.inscripcion.index');
@@ -348,7 +348,6 @@ class Inscripcion extends Component
     {
         if (!$this->acepta_normas_contrato) {
             $this->addError('acepta_normas_contrato', 'Debe aceptar las normas para continuar.');
-            $this->dispatch('scrollTo', 'bloque-documentos');
             return;
         }
 
@@ -391,6 +390,7 @@ class Inscripcion extends Component
     private function crearInscripcionDTO(): InscripcionData
     {
         return new InscripcionData([
+            'anio_escolar_id' => $this->anio_escolar_id,
             'alumno_id' => $this->alumnoId,
             'numero_zonificacion' => $this->numero_zonificacion,
             'institucion_procedencia_id' => $this->institucion_procedencia_id,
@@ -439,23 +439,7 @@ class Inscripcion extends Component
         return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
     }
 
-    public function limpiar()
-    {
-        $this->reset([
-            'alumnoId',
-            'padreId',
-            'madreId',
-            'representanteLegalId',
-            'gradoId',
-            'observaciones',
-            'alumnoSeleccionado',
-            'padreSeleccionado',
-            'madreSeleccionado',
-            'representanteLegalSeleccionado'
-        ]);
 
-        $this->dispatch('resetSelects');
-    }
 
     public function render()
     {

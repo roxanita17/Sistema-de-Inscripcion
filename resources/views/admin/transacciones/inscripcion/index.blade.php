@@ -56,8 +56,11 @@
                     <p class="title-subtitle">Administración de las inscripciones</p>
                 </div>
             </div>
+            <div class="d-flex justify-content-between align-items-center mt-3 ">
+                {{-- Botón percentil (izquierda) --}}
 
 
+<<<<<<< HEAD
             <div class="header-actions">
                 {{-- Botón de percentil --}}
                 @foreach ($grados as $grado)
@@ -78,6 +81,17 @@
                     <i class="fas fa-plus"></i>
                     <span>Nueva inscripción</span>
                 </a>
+=======
+                {{-- Botón crear (derecha) --}}
+                <div>
+                    <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
+                        @if (!$anioEscolarActivo) disabled @endif
+                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
+                        <i class="fas fa-plus"></i>
+                        <span>Nueva inscripción</span>
+                    </a>
+                </div>
+>>>>>>> f3f532f321797acf2b7bc01e8a817c9a2c128aae
             </div>
         </div>
     </div>
@@ -141,6 +155,7 @@
                         <h3>Listado de inscripciones</h3>
                     </div>
                 </div>
+
                 {{-- Buscador --}}
                 <form action="{{ route('admin.transacciones.inscripcion.index') }}">
                     <div class="form-group-modern mb-2">
@@ -151,46 +166,25 @@
                         </div>
                     </div>
                 </form>
-                <div class="header-right" style="width: 15rem">
-                    @if ($infoCupos)
-                        <div class="cupos-box">
-                            <div class="cupos-titulo">
-                                {{ $infoCupos['nombre_grado'] }}
-                            </div>
-
-                            <div class="cupos-datos text-center">
-                                <div>
-                                    <span class="label">Cupos totales</span>
-                                    <span class="valor">{{ $infoCupos['total_cupos'] }}</span>
-                                </div>
-
-                                <div>
-                                    <span class="label">En uso</span>
-                                    <span class="valor">{{ $infoCupos['cupos_ocupados'] }}</span>
-                                </div>
-
-                                <div>
-                                    <span class="label">Disponibles</span>
-                                    <span class="valor">{{ $infoCupos['cupos_disponibles'] }}</span>
-                                </div>
-                            </div>
-
-                            <div class="cupos-barra">
-                                <div class="cupos-barra-progreso
-            {{ $infoCupos['porcentaje_ocupacion'] >= 90
-                ? 'rojo'
-                : ($infoCupos['porcentaje_ocupacion'] >= 70
-                    ? 'amarillo'
-                    : 'verde') }}"
-                                    style="width: {{ $infoCupos['porcentaje_ocupacion'] }}%">
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-
-
+                <div style="padding:">
+                    @foreach ($grados as $grado)
+                        @if ($grado->id === 1)
+                            @include('admin.transacciones.percentil.boton-percentil', [
+                                'anioEscolarActivo' => $anioEscolarActivo,
+                                'gradoId' => $grado->id,
+                            ])
+                        @endif
+                    @endforeach
                 </div>
+                <div>
+                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                        <i class="fas fa-filter"></i>
+                        Filtros
+                    </button>
+                </div>
+
+
+
                 <div class="header-right">
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
@@ -228,7 +222,7 @@
                                 </tr>
                             @else
                                 @foreach ($inscripciones as $datos)
-                                    <tr class="table-row-hover row-12">
+                                    <tr class="row-12">
 
                                         {{-- NUMERO --}}
                                         <td style="font-weight: bold">
@@ -265,10 +259,9 @@
                                         {{-- SECCION --}}
                                         <td class="text-center">
                                             @if ($datos->seccionAsignada)
-                                                <span class="badge"
-                                                    style="background-color: var(--info-light); color:rgba(0, 0, 0, 0.715)">{{ $datos->seccionAsignada->nombre }}</span>
+                                                {{ $datos->seccionAsignada->nombre }}
                                             @else
-                                                <span class="badge bg-secondary">Sin asignar</span>
+                                                Sin asignar
                                             @endif
                                         </td>
 
@@ -291,13 +284,62 @@
 
                                         {{-- ACCIONES --}}
                                         <td>
-                                            <div class="action-buttons">
 
-                                                {{-- VER --}}
-                                                <button class="action-btn btn-view" data-bs-toggle="modal"
-                                                    data-bs-target="#viewModal{{ $datos->id }}" title="Ver Detalles">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
+                                            <div class="action-buttons">
+                                                <div class="dropdown dropstart text-center">
+                                                    <button
+                                                        class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                        <li>
+                                                            <button class="dropdown-item d-flex align-items-center text-primary"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#viewModal{{ $datos->id }}">
+                                                                <i class="fas fa-eye me-2"></i>
+                                                                Ver detalles
+                                                            </button>
+                                                        </li>
+
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                                @disabled(!$anioEscolarActivo)>
+                                                                <i class="fas fa-ban me-2"></i>
+                                                                Inactivar
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                <style>
+                                                    .action-btn {
+                                                        width: 34px;
+                                                        height: 34px;
+                                                        display: inline-flex;
+                                                        align-items: center;
+                                                        justify-content: center;
+                                                        transition: all 0.2s ease;
+                                                    }
+
+                                                    .action-btn:hover {
+                                                        background-color: #f1f1f1;
+                                                    }
+
+                                                    .dropdown-menu {
+                                                        border-radius: 10px;
+                                                        font-size: 0.9rem;
+                                                    }
+
+                                                    .dropdown-item i {
+                                                        width: 18px;
+                                                    }
+                                                </style>
+
 
                                                 {{-- EDITAR --}}
                                                 {{-- <a href="{{ route('admin.inscripciones.edit', $datos->id) }}"
@@ -349,6 +391,8 @@
                                     {{-- Modal de ver --}}
                                     @include('admin.transacciones.inscripcion.modales.showModal')
 
+
+
                                     {{-- MODAL ELIMINAR --}}
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -387,6 +431,9 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Modal de filtros --}}
+                @include('admin.transacciones.inscripcion.modales.filtroModal')
             </div>
 
 
@@ -396,7 +443,11 @@
                     <x-pagination :paginator="$inscripciones" />
                 </div>
 
+<<<<<<< HEAD
                 <!-- Botón de percentil movido arriba -->
+=======
+
+>>>>>>> f3f532f321797acf2b7bc01e8a817c9a2c128aae
 
             </div>
 
