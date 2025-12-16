@@ -37,7 +37,11 @@ class Persona extends Model
         'tercer_nombre',
         'primer_apellido',
         'segundo_apellido',
-        'direccion'
+        'direccion',
+    ];
+
+    protected $mayusculas = [
+        'numero_documento'
     ];
 
     protected $casts = [

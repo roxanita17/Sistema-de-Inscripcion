@@ -1,5 +1,9 @@
 @import 'tailwindcss';
-
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+@theme {
+    --font-sans: Inter, sans-serif;
+}
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';

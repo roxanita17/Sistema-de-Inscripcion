@@ -4,12 +4,9 @@
 Falta:
 
 ### Validaciones críticas
-1. Validar que el percentil solo se ejecute una vez por inscripción
-2. Validar documento del estudiante
-3. Validar casos de doble inscripción (mismo u otro año escolar)
+1. Validar que el percentil solo se ejecute una vez por inscripción o reescriba los datos
 
 ### Lógica de inscripción
-4. Hacer funcionar la función limpiar en inscripción
 5. Al crear representante desde inscripción:
    - Al volver o cancelar debe regresar a la inscripción
 6. Filtrar institución de procedencia por:
@@ -46,8 +43,6 @@ Falta:
 ## DISEÑO / VISTAS (FRONTEND)
 Falta:
 
-1. Mejorar diseño general del módulo de inscripción
-2. Mejorar vistas de filtros
 3. Mejorar vista del historial de percentil
 
 ---

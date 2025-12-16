@@ -42,6 +42,13 @@ class AlumnoCreate extends Component
     public $edad = 0;
     public $meses = 0;
 
+    // UI dinámico para documento
+    public $documento_maxlength = 8;
+    public $documento_pattern = '[0-9]+';
+    public $documento_placeholder = '12345678';
+    public $documento_inputmode = 'numeric';
+
+
     // Datos físicos
     public $talla_estudiante;
     public $peso_estudiante;
@@ -66,6 +73,7 @@ class AlumnoCreate extends Component
     public $municipios = [];
     public $localidades = [];
 
+
     // Año escolar
     public $anioEscolarActivo = false;
 
@@ -81,9 +89,44 @@ class AlumnoCreate extends Component
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => [
                 'required',
-                'digits_between:6,8',
                 'unique:personas,numero_documento,' . $this->persona_id,
+                function ($attribute, $value, $fail) {
+
+                    switch ((int) $this->tipo_documento_id) {
+
+                        // V - Venezolano (ID 1)
+                        case 1:
+                            if (!ctype_digit($value)) {
+                                $fail('La cédula debe contener solo números.');
+                            }
+                            if (strlen($value) > 8) {
+                                $fail('La cédula venezolana debe tener máximo 8 dígitos.');
+                            }
+                            break;
+
+                        // E - Extranjero (ID 2)
+                        case 2:
+                            if (!ctype_alnum($value)) {
+                                $fail('La cédula de extranjero debe ser alfanumérica.');
+                            }
+                            if (strlen($value) > 12 || strlen($value) < 8) {
+                                $fail('La cédula de extranjero debe tener entre 8 y 12 caracteres.');
+                            }
+                            break;
+
+                        // CE - Cédula Especial (ID 3)
+                        case 3:
+                            if (!ctype_digit($value)) {
+                                $fail('La cédula especial debe contener solo números.');
+                            }
+                            if (strlen($value) > 12 || strlen($value) < 10) {
+                                $fail('La cédula especial debe tener entre 10 y 12 dígitos.');
+                            }
+                            break;
+                    }
+                }
             ],
+
 
             'primer_nombre' => 'required|string|max:50',
             'primer_apellido' => 'required|string|max:50',
@@ -158,6 +201,46 @@ class AlumnoCreate extends Component
         $this->validateOnly($propertyName);
     }
 
+    public function updatedTipoDocumentoId($value)
+    {
+        // Limpiar la cédula al cambiar tipo
+        $this->numero_documento = null;
+
+        switch ((int) $value) {
+
+            // V
+            case 1:
+                $this->documento_maxlength = 8;
+                $this->documento_pattern = '[0-9]+';
+                $this->documento_placeholder = '12345678';
+                $this->documento_inputmode = 'numeric';
+                break;
+
+            // E
+            case 2:
+                $this->documento_maxlength = 12;
+                $this->documento_pattern = '[A-Za-z0-9]+';
+                $this->documento_placeholder = 'AB1234567890';
+                $this->documento_inputmode = 'text';
+                break;
+
+            // CE
+            case 3:
+                $this->documento_maxlength = 12;
+                $this->documento_pattern = '[0-9]+';
+                $this->documento_placeholder = '123456789012';
+                $this->documento_inputmode = 'numeric';
+                break;
+
+            default:
+                $this->documento_maxlength = 8;
+                $this->documento_pattern = '[0-9]+';
+                $this->documento_placeholder = '';
+                $this->documento_inputmode = 'numeric';
+        }
+    }
+
+
 
     /* ============================================================
        ========================   MOUNT   ==========================
@@ -201,8 +284,9 @@ class AlumnoCreate extends Component
        ============================================================ */
     public function cargarAlumno($id)
     {
-        $alumno = Alumno::with('persona',
-        
+        $alumno = Alumno::with(
+            'persona',
+
         )->findOrFail($id);
         $persona = $alumno->persona;
 

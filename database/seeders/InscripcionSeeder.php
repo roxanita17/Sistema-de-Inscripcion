@@ -13,7 +13,7 @@ class InscripcionSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i <=90; $i++) {
+        for ($i = 1; $i <=10; $i++) {
             Inscripcion::create([
                 // Relaciones principales
                 'alumno_id' => ($i % 10) + 1,

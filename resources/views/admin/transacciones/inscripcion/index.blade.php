@@ -255,6 +255,7 @@
 
                                         {{-- ACCIONES --}}
                                         <td>
+                                           
                                             <div class="action-buttons">
 
                                                 {{-- VER --}}

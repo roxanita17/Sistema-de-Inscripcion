@@ -336,7 +336,6 @@ class Inscripcion extends Component
             $this->inscripcionService->registrar($dto);
 
             session()->flash('success', 'Inscripción registrada exitosamente.');
-            $this->limpiar();
             session()->forget('inscripcion_temp');
 
             return redirect()->route('admin.transacciones.inscripcion.index');
@@ -440,23 +439,7 @@ class Inscripcion extends Component
         return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
     }
 
-    public function limpiar()
-    {
-        $this->reset([
-            'alumnoId',
-            'padreId',
-            'madreId',
-            'representanteLegalId',
-            'gradoId',
-            'observaciones',
-            'alumnoSeleccionado',
-            'padreSeleccionado',
-            'madreSeleccionado',
-            'representanteLegalSeleccionado'
-        ]);
 
-        $this->dispatch('resetSelects');
-    }
 
     public function render()
     {
