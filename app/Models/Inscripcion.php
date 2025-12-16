@@ -199,73 +199,53 @@ class Inscripcion extends Model
             ]);
     }
 
+    /**
+     * Obtiene todos los datos relacionados con la inscripción incluyendo alumno, representantes, etc.
+     * 
+     * @return array
+     */
+    public function obtenerDatosCompletos()
+    {
+        // Cargar todas las relaciones necesarias
+        $this->load([
+            'alumno.persona',
+            'alumno.ordenNacimiento',
+            'alumno.discapacidad',
+            'alumno.etniaIndigena',
+            'alumno.lateralidad',
+            'grado',
+            'padre.persona',
+            'madre.persona',
+            'representanteLegal.representante.persona',
+            'representanteLegal.banco',
+            'institucionProcedencia',
+            'expresionLiteraria',
+            'seccionAsignada'
+        ]);
 
-    /*public static function obtenerDatosInscripcion()
-{
-    $query = DB::table('inscripcions')
-        ->select(
-            'inscripcions.*',
-            'alumnos.id as estudiante_id',
-            'alumnos.institucion_id',
-            'alumnos.orden_nacimiento_estudiante',
-            'alumnos.talla_camisa',
-            'alumnos.talla_pantalon',
-            'alumnos.talla_zapato',
-            'alumnos.talla_estudiante',
-            'alumnos.peso_estudiante',
-            'alumnos.numero_zonificacion_plantel',
-            'alumnos.ano_ergreso_estudiante',
-            'alumnos.expresion_literaria',
-            'alumnos.lateralidad_estudiante',
-            'alumnos.documentos_estudiante',
-            'alumnos.status as estudiante_status',
-            'alumnos.created_at as estudiante_created_at',
-            'alumnos.updated_at as estudiante_updated_at',
-            'alumnos.id as estudiante_persona_id',
-            'alumnos_persona.tipo_documento_id as estudiante_tipo_numero_documento',
-            'alumnos_persona.numero_documento as estudiante_numero_documento',
-            'alumnos_persona.fecha_nacimiento as estudiante_fecha_nacimiento',
-            'alumnos_persona.primer_nombre as estudiante_nombre1',
-            'alumnos_persona.segundo_nombre as estudiante_nombre2',
-            'alumnos_persona.tercer_nombre as estudiante_nombre3',
-            'alumnos_persona.primer_apellido as estudiante_apellido1',
-            'alumnos_persona.segundo_apellido as estudiante_apellido2',
-            'alumnos_persona.genero_id as estudiante_sexo',
-            'alumnos_persona.telefono as estudiante_telefono',
-            'alumnos_persona.created_at as estudiante_persona_created_at',
-            'alumnos_persona.updated_at as estudiante_persona_updated_at',
-            'representantes.id as representante_id',
-            'representantes.ocupacion_representante',
-            'representantes.convivenciaestudiante_representante',
-            'representantes.created_at as representante_created_at',
-            'representantes.updated_at as representante_updated_at',
-            'representante_persona.id as representante_persona_id',
-            'representante_persona.tipo_documento_id as representante_tipo_numero_documento',
-            'representante_persona.numero_documento as representante_numero_documento',
-            'representante_persona.fecha_nacimiento as representante_fecha_nacimiento',
-            'representante_persona.primer_nombre as representante_nombre1',
-            'representante_persona.segundo_nombre as representante_nombre2',
-            'representante_persona.tercer_nombre as representante_nombre3',
-            'representante_persona.primer_apellido as representante_apellido1',
-            'representante_persona.segundo_apellido as representante_apellido2',
-            'representante_persona.genero_id as representante_sexo',
+        // Construir el array con todos los datos
+        $datos = [
+            'inscripcion' => $this->toArray(),
+            'alumno' => $this->alumno ? $this->alumno->toArray() : null,
+            'persona_alumno' => $this->alumno && $this->alumno->persona ? $this->alumno->persona->toArray() : null,
+            'grado' => $this->grado ? $this->grado->toArray() : null,
+            'padre' => $this->padre ? $this->padre->toArray() : null,
+            'persona_padre' => $this->padre && $this->padre->persona ? $this->padre->persona->toArray() : null,
+            'madre' => $this->madre ? $this->madre->toArray() : null,
+            'persona_madre' => $this->madre && $this->madre->persona ? $this->madre->persona->toArray() : null,
+            'representante_legal' => $this->representanteLegal ? $this->representanteLegal->toArray() : null,
+            'persona_representante_legal' => $this->representanteLegal && $this->representanteLegal->persona ? $this->representanteLegal->persona->toArray() : null,
+            'institucion_procedencia' => $this->institucionProcedencia ? $this->institucionProcedencia->toArray() : null,
+            'expresion_literaria' => $this->expresionLiteraria ? $this->expresionLiteraria->toArray() : null,
+            'seccion_asignada' => $this->seccionAsignada ? $this->seccionAsignada->toArray() : null,
+            'datos_adicionales' => [
+                'orden_nacimiento' => $this->alumno && $this->alumno->ordenNacimiento ? $this->alumno->ordenNacimiento->toArray() : null,
+                'discapacidad' => $this->alumno && $this->alumno->discapacidad ? $this->alumno->discapacidad->toArray() : null,
+                'etnia_indigena' => $this->alumno && $this->alumno->etniaIndigena ? $this->alumno->etniaIndigena->toArray() : null,
+                'lateralidad' => $this->alumno && $this->alumno->lateralidad ? $this->alumno->lateralidad->toArray() : null,
+            ]
+        ];
 
-            'representante_persona.telefono as representante_telefono',
-            'representante_persona.created_at as representante_persona_created_at',
-            'representante_persona.updated_at as representante_persona_updated_at',
-
-            'anio_escolars.id as ano_escolar_id',
-
-            'anio_escolars.inicio_anio_escolar',
-            'anio_escolars.cierre_anio_escolar',
-            'anio_escolars.status as status'
-        )
-        ->leftJoin('alumnos', 'nuevo_ingresos.estudiante_id', '=', 'alumnos.id')
-        ->leftJoin('personas as estudiante_persona', 'alumnos.persona_id', '=', 'estudiante_persona.id')
-        ->leftJoin('representantes', 'nuevo_ingresos.representante_id', '=', 'representantes.id')
-        ->leftJoin('personas as representante_persona', 'representantes.persona_id', '=', 'representante_persona.id')
-        ->leftJoin('anio_escolars', 'nuevo_ingresos.ano_escolar_id', '=', 'anio_escolars.id');
-
-    return $query->orderBy('nuevo_ingresos.created_at', 'desc')->get();
-}*/
+        return $datos;
+    }
 }

@@ -4,6 +4,42 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+    <style>
+        .header-actions {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .header-actions .btn-create {
+            margin-left: 10px;
+        }
+        
+        .header-actions .btn-percentil {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #17a2b8;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .header-actions .btn-percentil:hover {
+            background-color: #138496;
+            color: white;
+        }
+        
+        .header-actions .btn-percentil i {
+            margin-right: 5px;
+        }
+        
+        .header-actions .btn-percentil:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
 @stop
 
 @section('title', 'Gestión de inscripciones')
@@ -22,13 +58,27 @@
             </div>
 
 
-            {{-- CORREGIDO – dice "Nuevo Banco" → ahora "Nueva Inscripción" --}}
-            <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
-                @if (!$anioEscolarActivo) disabled @endif
-                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
-                <i class="fas fa-plus"></i>
-                <span>Nueva inscripción</span>
-            </a>
+            <div class="header-actions">
+                {{-- Botón de percentil --}}
+                @foreach ($grados as $grado)
+                    @if ($grado->id === 1)
+                        <div class="me-2 d-inline-block">
+                            @include('admin.transacciones.percentil.boton-percentil', [
+                                'anioEscolarActivo' => $anioEscolarActivo,
+                                'gradoId' => $grado->id,
+                            ])
+                        </div>
+                    @endif
+                @endforeach
+
+                {{-- Botón de nueva inscripción --}}
+                <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
+                    @if (!$anioEscolarActivo) disabled @endif
+                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
+                    <i class="fas fa-plus"></i>
+                    <span>Nueva inscripción</span>
+                </a>
+            </div>
         </div>
     </div>
 @stop
@@ -346,18 +396,7 @@
                     <x-pagination :paginator="$inscripciones" />
                 </div>
 
-                {{-- Boton ejecutar percentil --}}
-
-                @foreach ($grados as $grado)
-                    @if ($grado->id === 1)
-                        <div style="position:absolute; right:0; padding: 0 1rem;">
-                            @include('admin.transacciones.percentil.boton-percentil', [
-                                'anioEscolarActivo' => $anioEscolarActivo,
-                                'gradoId' => $grado->id,
-                            ])
-                        </div>
-                    @endif
-                @endforeach
+                <!-- Botón de percentil movido arriba -->
 
             </div>
 

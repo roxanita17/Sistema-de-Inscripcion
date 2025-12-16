@@ -132,18 +132,38 @@ class InscripcionController extends Controller
 
     //reportes PDF
 
-    public function reporte(Request $request)
-    {
-        $inscripciones = Inscripcion::obtenerDatosInscripcion();
-        
-        if ($inscripciones->isEmpty()) {
-            return response('No hay datos de inscripción disponibles', 404);
-        }
-        // Obtener el primer registro 
-        $inscripcion = $inscripciones->first();
-        
-        $pdf = PDF::loadView('admin.inscripcion.reporte.ficha_inscripcion', ['data' => $inscripcion]);
 
-        return $pdf->stream('ficha_inscripcion' . ($inscripcion->estudiante_cedula ?? '') . '.pdf');
+    /**
+     * Muestra los detalles completos de una inscripción
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function reporte($id)
+    {
+        $inscripcion = Inscripcion::with([
+            'alumno.persona',
+            'alumno.ordenNacimiento',
+            'alumno.discapacidad',
+            'alumno.etniaIndigena',
+            'alumno.lateralidad',
+            'grado',
+            'padre.persona',
+            'madre.persona',
+            'representanteLegal.representante.persona',
+            'institucionProcedencia',
+            'expresionLiteraria',
+            'seccionAsignada'
+        ])->findOrFail($id);
+
+        $datosCompletos = $inscripcion->obtenerDatosCompletos();
+        
+        // Obtener el año escolar activo
+        $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->first();
+
+        $pdf = PDF::loadview('admin.transacciones.inscripcion.reporte.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
+        return $pdf->stream('ficha_inscripcion.pdf');
     }
 }
