@@ -19,13 +19,59 @@
             display: block;
         }
 
-        .form-control,
-        .form-select {
+        /* Estilos base para todos los inputs */
+        .form-control {
             border-radius: var(--radius);
             border: 1px solid var(--gray-300);
             padding: 0.5rem 1rem;
             transition: all 0.2s ease;
             width: 100%;
+            background-color: #fff;
+        }
+        
+        /* Estilos específicos para selects */
+        .form-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 2.5rem;
+        }
+        
+        /* Quitar flecha de inputs específicos */
+        input[type="text"][id*="codigo"],
+        input[type="text"][id*="serial"],
+        input[type="text"][id*="numero_documento"] {
+            background-image: none !important;
+            padding-right: 1rem;
+        }
+        
+        /* Estilos para los select dentro de input-group */
+        .input-group .form-select {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+        }
+        
+        .input-group-text + .form-select {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        /* Mejorar el foco */
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1);
+            outline: 0;
+        }
+        
+        /* Estilos para los select deshabilitados */
+        .form-select:disabled {
+            background-color: #e9ecef;
+            opacity: 1;
         }
 
         .form-control:focus,
@@ -1599,24 +1645,39 @@
 @stop
 
 @section('js')
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <script>
-        // Inicializar Select2
-        $(document).ready(function() {
-            $('.select2').select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                placeholder: 'Seleccione una opción',
-                allowClear: true
-            });
-
-            // Inicializar tooltips
+        // Inicialización de tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar tooltips de Bootstrap
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
+
+            // Asegurar que todos los selects tengan la clase form-select y estén limpios
+            const selectElements = document.querySelectorAll('select');
+            selectElements.forEach(select => {
+                // Limpiar cualquier rastro de Select2
+                select.classList.add('form-select');
+                select.style.width = '100%';
+                
+                // Eliminar atributos de Select2 si existen
+                select.removeAttribute('data-select2-id');
+                select.removeAttribute('data-toggle');
+                select.removeAttribute('data-allow-clear');
+                select.removeAttribute('data-placeholder');
+                
+                // Eliminar cualquier elemento creado por Select2
+                const select2Container = select.nextElementSibling;
+                if (select2Container && select2Container.classList.contains('select2-container')) {
+                    select2Container.remove();
+                }
+            });
+            
+            // Prevenir la inicialización de Select2 en caso de que esté presente
+            if (typeof $.fn.select2 !== 'undefined') {
+                $.fn.select2 = undefined;
+            }
         });
 
         // Validación del formulario
