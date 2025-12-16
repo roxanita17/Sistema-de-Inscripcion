@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\ConvierteAMayusculas;
+use App\Traits\Capitalizar;
 
 class Persona extends Model
 {
     use HasFactory;
-
+    use ConvierteAMayusculas;
+    use Capitalizar;
     protected $table = 'personas';
     
     protected $fillable = [
@@ -20,17 +23,31 @@ class Persona extends Model
         'numero_documento',
         'fecha_nacimiento',
         'direccion',
-        'telefono',
-        'email',
+        'email', 
         'status',
         'tipo_documento_id',
         'genero_id',
         'localidad_id',
+        'prefijo_id',
+    ];
+
+    protected $capitalizar = [
+        'primer_nombre',
+        'segundo_nombre',
+        'tercer_nombre',
+        'primer_apellido',
+        'segundo_apellido',
+        'direccion',
+    ];
+
+    protected $mayusculas = [
+        'numero_documento'
+    ];
+
+    protected $casts = [
         'fecha_nacimiento' => 'date',
         'status' => 'boolean',
     ];
-
-
 
     /**
      * Relación con TipoDocumento
@@ -49,6 +66,15 @@ class Persona extends Model
     }
 
     /**
+     * Relación con PrefijoTelefono
+     */
+    public function prefijoTelefono()
+    {
+        return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
+    }
+
+
+    /**
      * Relación con Localidad
      */
     public function localidad()
@@ -64,6 +90,11 @@ class Persona extends Model
         return $this->hasOne(Docente::class, 'persona_id', 'id');
     }
 
+//relacion con el representante
+    public function representante()
+    {
+        return $this->hasOne(Representante::class, 'persona_id');
+    }
     /**
      * Accessor para obtener el nombre completo
      */
@@ -71,10 +102,10 @@ class Persona extends Model
     {
         return trim(
             $this->primer_nombre . ' ' .
-            $this->segundo_nombre . ' ' .
-            $this->tercer_nombre . ' ' .
+            ($this->segundo_nombre ?? '') . ' ' .
+            ($this->tercer_nombre ?? '') . ' ' .
             $this->primer_apellido . ' ' .
-            $this->segundo_apellido
+            ($this->segundo_apellido ?? '')
         );
     }
 
@@ -83,6 +114,7 @@ class Persona extends Model
      */
     public function getEdadAttribute()
     {
-        return $this->fecha_nacimiento->age ?? null;
+        return $this->fecha_nacimiento ? $this->fecha_nacimiento->age : null;
     }
+
 }

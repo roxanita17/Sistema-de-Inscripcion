@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RepresentanteLegal extends Model
 {
     use SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         "representante_id",
@@ -30,6 +32,11 @@ class RepresentanteLegal extends Model
     public function representante(){
         return $this->belongsTo(Representante::class,"representante_id","id");
     }
+    
+    public function prefijo()
+{
+    return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id');
+}
 
     public function banco()
     {

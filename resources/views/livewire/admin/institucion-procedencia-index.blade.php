@@ -53,7 +53,7 @@
                     </button>
                 </div>
             @endif
-        </div>
+        </div> 
     @endif
 
     {{-- Tarjeta moderna --}}

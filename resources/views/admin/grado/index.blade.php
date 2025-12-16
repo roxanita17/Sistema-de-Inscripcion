@@ -8,7 +8,7 @@
 
 @stop
 
-@section('title', 'Gestión de Grados')
+@section('title', 'Gestión de Años')
 
 @section('content_header')
     {{-- Encabezado principal de la página --}}
@@ -19,8 +19,8 @@
                     <i class="fas fa-layer-group"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Gestión de Grados</h1>
-                    <p class="title-subtitle">Administración de los grados académicos</p>
+                    <h1 class="title-main">Gestión de Años</h1>
+                    <p class="title-subtitle">Administración de los Años académicos</p>
                 </div>
             </div>
 
@@ -30,9 +30,9 @@
              data-bs-toggle="modal"
              data-bs-target="#modalCrearGrado"
              @if(!$anioEscolarActivo) disabled @endif
-             title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nuevo Grado' }}">
+             title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nuevo Año' }}">
                 <i class="fas fa-plus"></i>
-                <span>Nuevo Grado</span>
+                <span>Nuevo Año</span>
             </button>
         </div>
     </div>
@@ -103,7 +103,7 @@
                     <i class="fas fa-list-ul"></i>
                 </div>
                 <div>
-                    <h3>Listado de Grados</h3>
+                    <h3>Listado de Años</h3>
                     <p>{{ $grados->total() }} registros encontrados</p>
                 </div>
             </div>
@@ -121,7 +121,7 @@
                 <table class="table-modern overflow-hidden hidden">
                     <thead>
                         <tr style="text-align: center">
-                            <th style="text-align: center">Grado</th>
+                            <th style="text-align: center">Año</th>
                             <th style="text-align: center">Estado</th>
                             <th style="text-align: center">Acciones</th>
                         </tr>
@@ -135,8 +135,8 @@
                                         <div class="empty-icon">
                                             <i class="fas fa-inbox"></i>
                                         </div>
-                                        <h4>No hay grados registrados</h4>
-                                        <p>Agrega un nuevo grado con el botón superior</p>
+                                        <h4>No hay años registrados</h4>
+                                        <p>Agrega un nuevo año con el botón superior</p>
                                     </div>
                                 </td>
                             </tr>
@@ -211,7 +211,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body-delete">
-                                                    <p>¿Deseas eliminar este grado?</p>
+                                                    <p>¿Deseas eliminar este año?</p>
                                                     <p class="delete-warning">
                                                         Esta acción no se puede deshacer.
                                                     </p>
@@ -243,5 +243,9 @@
 
 {{-- Paginación moderna --}}
 <x-pagination :paginator="$grados" />
+
+@push('js')
+    <script src="{{ asset('js/validations/grado.js') }}"></script>
+@endpush
 
 @endsection

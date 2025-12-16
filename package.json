@@ -8,18 +8,24 @@
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
-        "@tailwindcss/vite": "^4.0.0",
+        "@tailwindcss/vite": "^4.1.18",
         "axios": "^1.11.0",
         "bootstrap": "^5.3.8",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",
         "sass": "^1.56.1",
-        "tailwindcss": "^4.0.0",
+        "tailwindcss": "^4.1.18",
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^7.1.0",
+        "@fortawesome/fontawesome-svg-core": "^7.1.0",
+        "@fortawesome/free-brands-svg-icons": "^7.1.0",
+        "@fortawesome/free-regular-svg-icons": "^7.1.0",
+        "@fortawesome/free-solid-svg-icons": "^7.1.0",
         "@ttskch/select2-bootstrap4-theme": "^1.5.2",
         "bootstrap-select": "^1.13.18",
-        "select2": "^4.1.0-rc.0"
+        "select2": "^4.1.0-rc.0",
+        "swiper": "^12.0.3"
     }
 }

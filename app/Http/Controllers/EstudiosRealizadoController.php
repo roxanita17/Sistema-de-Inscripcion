@@ -17,6 +17,39 @@ class EstudiosRealizadoController extends Controller
             ->orWhere('status', 'Extendido')
             ->exists();
     }
+    
+    /**
+     * Verifica si ya existe un estudio realizado con el nombre proporcionado
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'estudios' => 'required|string|max:255',
+            ]);
+            
+            // Verificar si ya existe un estudio realizado activo con este nombre
+            $existe = EstudiosRealizado::where('estudios', $request->estudios)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el estudio realizado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 
     /**

@@ -10,7 +10,7 @@
                     <i class="fas fa-eye"></i>
                 </div>
                 <h5 class="modal-title-view" id="viewModalLabel{{ $datos->id }}">
-                    Detalles del Grado
+                    Detalles del Año
                 </h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                     <i class="fas fa-times"></i>
@@ -25,7 +25,7 @@
                     <div class="detail-item">
                         <span class="detail-label">
                             <i class="fas fa-sort-numeric-up"></i>
-                            Grado
+                            Año
                         </span>
                         <span class="detail-value">{{ $datos->numero_grado }}</span>
                     </div>

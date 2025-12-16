@@ -104,3 +104,10 @@ Breadcrumbs::for('admin.transacciones.area_estudio_realizado.index', function (T
     $trail->push('Area Estudio Realizado', route('admin.transacciones.area_estudio_realizado.index'));
 });
 
+// Docente
+Breadcrumbs::for('admin.docente.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Docente', route('admin.docente.index'));
+});
+
+

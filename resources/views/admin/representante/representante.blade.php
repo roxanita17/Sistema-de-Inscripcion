@@ -46,26 +46,40 @@
                 <div class="card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="card-title mb-0">Listado de Representantes</h3>
-                        <form class="d-flex" role="search">
-                            <input class="form-control" type="search"
-                                   placeholder="Buscar por cédula, nombre o apellido" aria-label="Search"
-                                   id="buscador">
-                        </form>
+                        <div class="d-flex gap-2">
+                            
+                            <form class="d-flex" role="search">
+                                <input class="form-control" type="search"
+                                       placeholder="Buscar por cédula, nombre o apellido" aria-label="Search"
+                                       id="buscador">
+                            </form>
+                            <div class="header-right" style="display: flex; gap: 5px;">
+                            <button type="button" class="btn-pdf" target="_blank" data-bs-toggle="modal" data-bs-target="#modalGenerarReporte">
+                                <i class="fas fa-file-pdf"></i> Generar Reporte
+                            </button>
+                                <div class="date-badge">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>{{ now()->translatedFormat('d M Y') }}</span>
+                                </div>
+                            </div>
+
+
+                        </div>
                     </div>
 
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">Cédula</th>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Apellido</th>
-                                        <th scope="col">Tipo</th>
-                                        <th scope="col" class="text-end">Acción</th>
+                    <div class="card-body-modern">
+                        <div class="table-wrapper">
+                            <table class="table-modern overflow-hidden hidden">
+                                <thead>
+                                    <tr style="text-align: center">
+                                        <th style="text-align: center">Cédula</th>
+                                        <th style="text-align: center">Nombre</th>
+                                        <th style="text-align: center">Apellido</th>
+                                        <th style="text-align: center">Tipo</th>
+                                        <th style="text-align: center">Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-representantes">
+                                <tbody id="tbody-representantes" style="text-align: center">
                                     @forelse($representantes as $rep)
                                         <tr>
                                             <td>{{ $rep->persona->numero_documento ?? 'N/A' }}</td>
@@ -81,22 +95,71 @@
                                                     <span class="badge bg-secondary">Progenitor</span>
                                                 @endif
                                             </td>
-                                            <td class="text-end">
-                                                <button type="button" class="btn btn-info btn-sm"
-                                                        data-bs-toggle="modal" data-bs-target="#modalVerDetalleRegistro"
-                                                        onclick="llenarModalRepresentante('{{ addslashes($rep->persona->toJson()) }}', '{{ addslashes($rep->toJson()) }}', '{{ $rep->legal ? addslashes($rep->legal->toJson()) : 'null' }}', '{{ $rep->legal && $rep->legal->banco ? addslashes($rep->legal->banco->toJson()) : 'null' }}')">
-                                                    <i class="bi bi-eye-fill"></i>
-                                                </button>
-                                                <a href="{{ route('representante.editar', $rep->id) }}" class="btn btn-secondary btn-sm">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-danger btn-sm"
-                                                        data-bs-toggle="modal" data-bs-target="#modalConfirmacionEliminarLabel"
-                                                        data-id="{{ $rep->id }}" onclick="setIdEliminar(this)">
-                                                    <i class="bi bi-trash3-fill"></i>
-                                                </button>
-                                            </td>
+                                           <td>
+                                        <div class="action-buttons">
+                                            {{-- Ver detalles del representante --}}
+                                            <button class="action-btn btn-view"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalVerDetalleRegistro"
+                                                    
+                                                    onclick='llenarModalRepresentante(@json($rep->persona), @json($rep), @json($rep->legal), @json($rep->legal ? $rep->legal->banco : null))'>
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+
+                                            {{-- Editar grado --}}
+                                            <a class="action-btn btn-edit"
+                                                    href="{{ route('representante.editar', $rep->id) }}"
+                                                    title="Editar"
+                                                    @if(!$anioEscolarActivo) disabled @endif
+                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+
+                                            {{-- Eliminar representante --}}
+                                            <button class="action-btn btn-delete"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#confirmarEliminarRepresentante{{ $rep->id }}"
+                                                    @if(!$anioEscolarActivo) disabled @endif
+                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar' }}">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
                                         </tr>
+                                    {{-- Modal de confirmación para eliminar representante --}}
+                                    <div class="modal fade" id="confirmarEliminarRepresentante{{ $rep->id }}" tabindex="-1" aria-labelledby="modalLabelEliminarRep{{ $rep->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content modal-modern">
+                                                <div class="modal-header-delete">
+                                                    <div class="modal-icon-delete">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </div>
+                                                    <h5 class="modal-title-delete" id="modalLabelEliminarRep{{ $rep->id }}">Confirmar Eliminación</h5>
+                                                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body-delete">
+                                                    <p>¿Deseas eliminar este representante?</p>
+                                                    <p class="delete-warning">
+                                                        Esta acción es un borrado suave: el registro no se eliminará físicamente,
+                                                        pero dejará de aparecer en los listados.
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer-delete">
+                                                    <form action="{{ route('representante.destroy', $rep->id) }}" method="POST" class="w-100">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <div class="footer-buttons">
+                                                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
+                                                            <button type="submit" class="btn-modal-delete">Eliminar</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     @empty
                                         <tr>
                                             <td colspan="5" class="text-center py-3">No hay representantes registrados.</td>
@@ -114,56 +177,202 @@
                     </div>
                 </div>
 
-                {{-- Modal de detalles (estructura base, reutiliza los IDs que ya usabas) --}}
-                <div class="modal fade" id="modalVerDetalleRegistro" data-bs-backdrop="static" data-bs-keyboard="false"
-                     tabindex="-1" aria-labelledby="modalVerDetalleRegistroLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalVerDetalleRegistroLabel">Detalles del representante</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <h6 class="text-primary">Datos Personales</h6>
-                                        <p class="mb-1"><strong>Primer Nombre:</strong> <span id="modal-primer-nombre"></span></p>
-                                        <p class="mb-1"><strong>Segundo Nombre:</strong> <span id="modal-segundo-nombre"></span></p>
-                                        <p class="mb-1"><strong>Primer Apellido:</strong> <span id="modal-primer-apellido"></span></p>
-                                        <p class="mb-1"><strong>Segundo Apellido:</strong> <span id="modal-segundo-apellido"></span></p>
-                                        <p class="mb-1"><strong>C.I:</strong> <span id="modal-cedula"></span></p>
-                                        <p class="mb-1"><strong>Fecha de Nacimiento:</strong> <span id="modal-lugar-nacimiento"></span></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="text-success">Contacto</h6>
-                                        <p class="mb-1"><strong>Teléfono:</strong> <span id="modal-telefono"></span></p>
-                                        <p class="mb-1"><strong>Correo:</strong> <span id="modal-correo"></span></p>
-                                        <h6 class="text-info mt-3">Relación Familiar</h6>
-                                        <p class="mb-1"><strong>Ocupación:</strong> <span id="modal-ocupacion"></span></p>
-                                        <p class="mb-1"><strong>Convive con el estudiante:</strong> <span id="modal-convive"></span></p>
-                                    </div>
-                                </div>
-
-                                <div id="legal-info-section" style="display: none;">
-                                    <hr>
-                                    <h6 class="text-warning">Datos de Representante Legal</h6>
-                                    <p class="mb-1"><strong>Parentesco:</strong> <span id="modal-parentesco"></span></p>
-                                    <p class="mb-1"><strong>Carnet de la Patria:</strong> <span id="modal-carnet-afiliado" class="badge"></span></p>
-                                    <p class="mb-1" id="campo-codigo"><strong>Código:</strong> <span id="modal-codigo"></span></p>
-                                    <p class="mb-1" id="campo-serial"><strong>Serial:</strong> <span id="modal-serial"></span></p>
-                                    <p class="mb-1"><strong>Pertenece a organización:</strong> <span id="modal-pertenece-org" class="badge"></span></p>
-                                    <p class="mb-1" id="campo-organizacion"><strong>Organización:</strong> <span id="modal-org-pertenece"></span></p>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {{-- Modal de detalles del representante --}}
+                @include('admin.representante.modales.showModal')
 
             </div>
         </div>
     </div>
 @endsection
+
+<!-- Modal Generar Reporte -->
+<div class="modal fade" id="modalGenerarReporte" tabindex="-1" aria-labelledby="modalGenerarReporteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalGenerarReporteLabel">
+                    <i class="fas fa-file-pdf me-2"></i>Generar Reporte
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formReporte" action="{{ route('representante.reporte_pdf') }}" method="GET" target="_blank">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tipo_representante" class="form-label">Tipo de Representante</label>
+                        <select class="form-select" id="tipo_representante" name="es_legal">
+                            <option value="">Todos los representantes</option>
+                            <option value="1">Solo representantes legales</option>
+                            <option value="0">Solo representantes no legales</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-pdf">
+                        <i class="fas fa-download me-1"></i> Generar PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section('js')
+    <script>
+        // Configuración de fechas por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer rango de fechas por defecto (mes actual)
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            
+            // Formatear fechas para el input date (YYYY-MM-DD)
+            const formatDate = (date) => {
+                const d = new Date(date);
+                let month = '' + (d.getMonth() + 1);
+                let day = '' + d.getDate();
+                const year = d.getFullYear();
+
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
+
+                return [year, month, day].join('-');
+            };
+
+            // Establecer valores por defecto
+            document.getElementById('fecha_inicio').value = formatDate(firstDay);
+            document.getElementById('fecha_fin').value = formatDate(today);
+
+            // Validación de fechas
+            document.getElementById('formReporte').addEventListener('submit', function(e) {
+                const fechaInicio = document.getElementById('fecha_inicio').value;
+                const fechaFin = document.getElementById('fecha_fin').value;
+                
+                if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'La fecha de inicio no puede ser mayor a la fecha de fin',
+                        confirmButtonColor: '#3085d6',
+                    });
+                }
+            });
+        });
+        function llenarModalRepresentante(persona, representante, legal, banco) {
+            try {
+                console.log('=== llenarModalRepresentante llamado ===');
+                console.log('persona:', persona);
+                console.log('representante:', representante);
+                console.log('legal:', legal);
+                console.log('banco:', banco);
+
+                // Actualizar el título con el tipo de representante
+                const tipoBadge = document.getElementById('tipo-representante-badge');
+                if (legal && legal.id) {
+                    // Es representante legal
+                    tipoBadge.textContent = 'Representante Legal';
+                    tipoBadge.className = 'text-white fw-medium';
+                } else {
+                    // Es progenitor
+                    tipoBadge.textContent = 'Progenitor';
+                    tipoBadge.className = 'text-white fw-medium';
+                }
+
+                // Datos personales
+                document.getElementById('modal-primer-nombre').textContent = persona.primer_nombre || '';
+                document.getElementById('modal-segundo-nombre').textContent = persona.segundo_nombre || '';
+                document.getElementById('modal-primer-apellido').textContent = persona.primer_apellido || '';
+                document.getElementById('modal-segundo-apellido').textContent = persona.segundo_apellido || '';
+                document.getElementById('modal-numero_documento').textContent = persona.numero_documento || '';
+                document.getElementById('modal-lugar-nacimiento').textContent = persona.fecha_nacimiento || persona.lugar_nacimiento || '';
+
+                // Contacto básico
+                if (document.getElementById('modal-telefono')) {
+                    // Teléfono se guarda en Persona.telefono según el controlador
+                    document.getElementById('modal-telefono').textContent = persona.telefono || '';
+                }
+                if (document.getElementById('modal-correo')) {
+                    const correoItem = document.getElementById('correo-detail-item');
+                    if (legal && legal.correo_representante) {
+                        // Solo mostrar correo cuando hay representante legal
+                        document.getElementById('modal-correo').textContent = legal.correo_representante;
+                        if (correoItem) correoItem.style.display = '';
+                    } else {
+                        // Para progenitor, ocultar completamente el bloque de correo
+                        document.getElementById('modal-correo').textContent = '';
+                        if (correoItem) correoItem.style.display = 'none';
+                    }
+                }
+
+                // Ocupación (usando relación ocupacion si viene cargada)
+                let ocupacionNombre = '';
+                if (representante.ocupacion && representante.ocupacion.nombre_ocupacion) {
+                    ocupacionNombre = representante.ocupacion.nombre_ocupacion;
+                } else if (representante.ocupacion_representante) {
+                    ocupacionNombre = representante.ocupacion_representante;
+                }
+                document.getElementById('modal-ocupacion').textContent = ocupacionNombre;
+
+                // Convive con el estudiante
+                let convive = representante.convivenciaestudiante_representante;
+                if (typeof convive !== 'undefined' && convive !== null) {
+                    document.getElementById('modal-convive').textContent = (convive === true || convive === 1 || convive === 'si' || convive === 'Sí') ? 'Sí' : 'No';
+                } else {
+                    document.getElementById('modal-convive').textContent = '';
+                }
+
+                // Sección de representante legal
+                const legalSection = document.getElementById('legal-info-section');
+                if (legal && legalSection) {
+                    legalSection.style.display = 'block';
+
+                    document.getElementById('modal-parentesco').textContent = legal.parentesco || '';
+
+                    // Carnet de la patria (afiliado o no)
+                    const carnetEl = document.getElementById('modal-carnet-afiliado');
+                    if (carnetEl) {
+                        const tieneCarnet = legal.carnet_patria_afiliado; // 1 / 0
+                        carnetEl.textContent = tieneCarnet ? 'Afiliado' : 'No afiliado';
+                    }
+
+                    // Código y serial de carnet (según controlador)
+                    if (document.getElementById('modal-codigo')) {
+                        document.getElementById('modal-codigo').textContent = legal.codigo_carnet_patria_representante || '';
+                    }
+                    if (document.getElementById('modal-serial')) {
+                        document.getElementById('modal-serial').textContent = legal.serial_carnet_patria_representante || '';
+                    }
+
+                    // Pertenece a organización
+                    const perteneceOrgEl = document.getElementById('modal-pertenece-org');
+                    const campoOrg = document.getElementById('campo-organizacion');
+                    if (perteneceOrgEl) {
+                        const pertenece = legal.pertenece_a_organizacion_representante;
+                        if (pertenece) {
+                            perteneceOrgEl.textContent = 'Sí';
+                            if (campoOrg) campoOrg.style.display = '';
+                            document.getElementById('modal-org-pertenece').textContent = legal.cual_organizacion_representante || '';
+                        } else {
+                            perteneceOrgEl.textContent = 'No';
+                            if (campoOrg) campoOrg.style.display = 'none';
+                            document.getElementById('modal-org-pertenece').textContent = '';
+                        }
+                    }
+
+                } else if (legalSection) {
+                    // Si no es representante legal, ocultar sección
+                    legalSection.style.display = 'none';
+
+                    // Y asegurarse de que el bloque de correo no se muestre para progenitor
+                    const correoItem = document.getElementById('correo-detail-item');
+                    if (correoItem) correoItem.style.display = 'none';
+                }
+
+            } catch (e) {
+                console.error('Error al llenar el modal de representante:', e);
+            }
+        }
+    </script>
+@endsection
+
 

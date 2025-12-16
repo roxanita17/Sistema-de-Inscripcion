@@ -9,7 +9,7 @@
                     <i class="fas fa-pen"></i>
                 </div>
                 <h5 class="modal-title-edit" id="viewModalEditarLabel{{ $datos->id }}">
-                    Editar Grado
+                    Editar Año
                 </h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                     <i class="fas fa-times"></i>
@@ -25,7 +25,7 @@
                     {{-- Numero de grado --}}
                     <div class="form-group-modern">
                         <label for="numero_grado_{{ $datos->id }}" class="form-label-modern">
-                            Número de Grado
+                            Número de año
                         </label>
                         <input type="text" 
                                class="form-control-modern" 

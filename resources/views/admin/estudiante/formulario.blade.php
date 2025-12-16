@@ -130,11 +130,11 @@
 
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="cedula"><span class="text-danger">(*)</span> Cédula</label>
-                                            <input type="text" class="form-control" id="cedula" pattern="[0-9]+" name="cedula"
+                                            <label for="numero_documento"><span class="text-danger">(*)</span> Cédula</label>
+                                            <input type="text" class="form-control" id="numero_documento" pattern="[0-9]+" name="numero_documento"
                                                    maxlength="8" title="Ingresa solamente numeros,no se permiten letras"
-                                                   value="{{ isset($estudiante) ? $estudiante->persona->numero_cedula_persona : '' }}" required>
-                                            <small id="cedula-error" class="text-danger" style="display: none;"></small>
+                                                   value="{{ isset($estudiante) ? $estudiante->persona->numero_numero_documento_persona : '' }}" required>
+                                            <small id="numero_documento-error" class="text-danger" style="display: none;"></small>
                                         </div>
                                     </div>
 
@@ -693,7 +693,7 @@
 <script>
     // import axios from "axios";
     // ========== CONFIGURACIÓN INICIAL ==========
-    window.verificarCedulaUrl = "{{ route('admin.estudiante.verificar-cedula') }}";
+    window.verificarnumero_documentoUrl = "{{ route('admin.estudiante.verificar-numero_documento') }}";
     const url_pantalla_principal_modulo_estudiante = "{{ route('admin.estudiante.inicio') }}";
 
     window.instituciones = @json($instituciones);
@@ -703,7 +703,7 @@
     window.estudianteData = @json($estudiante ?? null);
 
     console.log('Configuración cargada:', {
-        verificarCedulaUrl: window.verificarCedulaUrl,
+        verificarnumero_documentoUrl: window.verificarnumero_documentoUrl,
         estudianteData: window.estudianteData ? 'Presente' : 'Ausente'
     });
 
@@ -896,8 +896,8 @@
             { id: 'talla_pantalon', valor: estudiante.talla_pantalon },
 
             // Campos de la persona
-            { id: 'tipo-ci', valor: persona.tipo_cedula_persona },
-            { id: 'cedula', valor: persona.numero_cedula_persona },
+            { id: 'tipo-ci', valor: persona.tipo_numero_documento_persona },
+            { id: 'numero_documento', valor: persona.numero_numero_documento_persona },
             { id: 'fechaNacimiento', valor: persona.fecha_nacimiento_personas },
             { id: 'primer-nombre', valor: persona.primer_nombre },
             { id: 'segundo-nombre', valor: persona.segundo_nombre },
@@ -1010,7 +1010,7 @@
         aplicarEstadoInicialRadios();
 
         // Validación de cédula
-        $('input[name="cedula"]').on('input', function() {
+        $('input[name="numero_documento"]').on('input', function() {
             $(this).val($(this).val().replace(/[^0-9]/g, '').substring(0, 8));
         });
 
@@ -1252,16 +1252,16 @@ function limpiarErroresModalLocalidad() {
     }
 // ----------------------------------------------
 
-//   let cedulaValida = true;
+//   let numero_documentoValida = true;
 // window.enviar = () => {
-//     if (!cedulaValida) {
+//     if (!numero_documentoValida) {
 //         console.error('No se puede enviar el formulario - cédula duplicada');
 //         mostrarAlertaError("No se puede guardar el estudiante. La cédula ya está registrada en el sistema.", "danger", "contendorAlertaFormulario");
         
-//         const cedulaInput = document.getElementById('cedula');
-//         if (cedulaInput) {
-//             cedulaInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-//             cedulaInput.focus();
+//         const numero_documentoInput = document.getElementById('numero_documento');
+//         if (numero_documentoInput) {
+//             numero_documentoInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+//             numero_documentoInput.focus();
 //         }
 //         return;
 //     }
@@ -1313,16 +1313,16 @@ function limpiarErroresModalLocalidad() {
 //     });
 // };
 
-let cedulaValida = true;
+let numero_documentoValida = true;
 window.enviar = () => {
-    if (!cedulaValida) {
+    if (!numero_documentoValida) {
         console.error('No se puede enviar el formulario - cédula duplicada');
         mostrarAlertaError("No se puede guardar el estudiante. La cédula ya está registrada en el sistema.", "danger", "contendorAlertaFormulario");
         
-        const cedulaInput = document.getElementById('cedula');
-        if (cedulaInput) {
-            cedulaInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            cedulaInput.focus();
+        const numero_documentoInput = document.getElementById('numero_documento');
+        if (numero_documentoInput) {
+            numero_documentoInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            numero_documentoInput.focus();
         }
         return;
     }

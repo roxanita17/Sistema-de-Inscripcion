@@ -23,11 +23,11 @@
                     <div class="form-group-modern">
                         <label for="grado_id_{{ $datos->id }}" class="form-label-modern">
                             <i class="fas fa-graduation-cap me-2"></i>
-                            Grado
+                            Año
                         </label>
                         <select name="grado_id" id="grado_id_{{ $datos->id }}" 
                                 class="form-control-modern selectpicker" 
-                                data-live-search="true" title="Seleccione un grado" required>
+                                data-live-search="true" title="Seleccione un Año" required>
                             @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}" {{ old('grado_id', $datos->grado_id) == $grado->id ? 'selected' : '' }}>
                                     {{ $grado->numero_grado }}

@@ -20,13 +20,13 @@
                     <div class="form-group-modern">
                         <label for="grado_id" class="form-label-modern">
                             <i class="fas fa-graduation-cap me-2"></i>
-                            Grado Académico
+                            Año Académico
                         </label>
                         <select name="grado_id" id="grado_id" 
                                 class="form-control-modern selectpicker" 
                                 data-live-search="true" 
                                 title="Seleccione un grado académico" required>
-                            <option value="">Seleccione un grado</option>
+                            <option value="">Seleccione un año</option>
                             @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}">{{ $grado->numero_grado }}</option>
                             @endforeach

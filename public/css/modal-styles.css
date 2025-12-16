@@ -30,8 +30,9 @@
 .modal-modern {
     border: none;
     border-radius: var(--radius);
-    overflow: hidden;
 }
+
+
 
 .btn-close-modal {
     position: absolute;
@@ -88,12 +89,16 @@
 .modal-body-create {
     padding: 2rem;
     max-height: 70vh;
-    overflow-y: auto;
+    overflow-y: auto; /* Add scroll if content is too long */
 }
 
 .modal-footer-create {
     padding: 1.5rem 2rem;
     border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
 }
 
 .btn-modal-create {
@@ -151,7 +156,6 @@
 .modal-body-edit {
     padding: 2rem;
     max-height: 70vh;
-    overflow-y: auto;
 }
 
 .modal-footer-edit {
@@ -817,8 +821,41 @@ box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 .footer-buttons {
     display: flex;
     gap: 0.75rem;
-    justify-content: center;
+    justify-content: flex-end;
     width: 100%;
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+}
+
+/* Ensure buttons don't grow too large */
+.btn-modal-create,
+.btn-modal-cancel {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    min-width: 100px;
+    text-align: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem auto;
+    }
+    
+    .modal-body-create,
+    .modal-footer-create {
+        padding: 1.25rem;
+    }
+    
+    .footer-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-modal-create,
+    .btn-modal-cancel {
+        width: 100%;
+    }
 }
 
 .btn-modal-cancel {
@@ -916,4 +953,15 @@ box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     .detail-value {
         text-align: left;
     }
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--info-dark);
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }

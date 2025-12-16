@@ -41,13 +41,16 @@
 @endsection
 
 @section('js')
-<script>
-    document.addEventListener('livewire:initialized', () => {
-        Livewire.on('cerrarModal', () => {
-            const modales = document.querySelectorAll('.modal.show');
-            modales.forEach(modal => {
-                const modalInstance = bootstrap.Modal.getInstance(modal);
-                if (modalInstance) {
+    <!-- Incluir el archivo de validaciones -->
+    <script src="{{ asset('js/validations/municipio.js') }}"></script>
+    
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('cerrarModal', () => {
+                const modales = document.querySelectorAll('.modal.show');
+                modales.forEach(modal => {
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    if (modalInstance) {
                     modalInstance.hide();
                 }
             });

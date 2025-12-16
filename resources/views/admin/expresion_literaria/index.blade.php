@@ -231,4 +231,8 @@
 {{-- Paginación moderna --}}
 <x-pagination :paginator="$expresionLiteraria" />
 
+@push('js')
+    <script src="{{ asset('js/validations/expresion_literaria.js') }}"></script>
+@endpush
+
 @endsection

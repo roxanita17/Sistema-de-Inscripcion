@@ -21,7 +21,15 @@ use App\Http\Controllers\EstudiosRealizadoController;
 use App\Http\Controllers\AreaEstudioRealizadoController;
 use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\NuevoIngresoController;
-use App\Models\Docente;
+use App\Http\Controllers\DocenteController;
+use App\Http\Controllers\DocenteAreaGradoController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AlumnoController;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\EntradasPercentilController;
+use App\Http\Controllers\HistoricoController;
+use App\Http\Controllers\InstitucionProcedenciaController;
+use App\Models\Historico;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,11 +39,30 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+//HomePage!!
+
+Route::get("/", function () {
+    return view('HomePage.Home');
+})->name("home.principal");
+
+Route::get("/vidaEstudiantil", function () {
+    return view('HomePage.vidaEstudiantil');
+})->name("home.vidaEstudiantil");
+
+
+
 // ============================================
 // RUTAS PROTEGIDAS POR AUTENTICACIÓN
 // ============================================
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Rutas para Institución de Procedencia
+    Route::get('institucion-procedencia', [InstitucionProcedenciaController::class, 'index'])->name('institucion-procedencia.index');
+    Route::post('institucion-procedencia', [InstitucionProcedenciaController::class, 'store'])->name('institucion-procedencia.store');
+    Route::get('institucion-procedencia/verificar', [InstitucionProcedenciaController::class, 'verificarExistencia'])->name('institucion-procedencia.verificar');
+    Route::put('institucion-procedencia/{institucionProcedencia}', [InstitucionProcedenciaController::class, 'update'])->name('institucion-procedencia.update');
+    Route::delete('institucion-procedencia/{institucionProcedencia}', [InstitucionProcedenciaController::class, 'destroy'])->name('institucion-procedencia.destroy');
+
 
     // ===== AÑO ESCOLAR (SIEMPRE ACCESIBLE - SIN VERIFICACIÓN) =====
     Route::get('anio_escolar', [AnioEscolarController::class, 'index'])->name('anio_escolar.index');
@@ -45,6 +72,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== BANCOS =====
     Route::get('banco', [BancoController::class, 'index'])->name('banco.index');
+    Route::get('banco/verificar', [BancoController::class, 'verificarExistencia'])->name('banco.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('banco/modales/store', [BancoController::class, 'store'])->name('banco.modales.store');
@@ -54,6 +82,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ETNIA INDÍGENA =====
     Route::get('etnia_indigena', [EtniaIndigenaController::class, 'index'])->name('etnia_indigena.index');
+    Route::get('etnia_indigena/verificar', [EtniaIndigenaController::class, 'verificarExistencia'])->name('etnia_indigena.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('etnia_indigena/modales/store', [EtniaIndigenaController::class, 'store'])->name('etnia_indigena.modales.store');
@@ -63,6 +92,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== OCUPACIÓN =====
     Route::get('ocupacion', [OcupacionController::class, 'index'])->name('ocupacion.index');
+    Route::get('ocupacion/verificar', [OcupacionController::class, 'verificarExistencia'])->name('ocupacion.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('ocupacion/modales/store', [OcupacionController::class, 'store'])->name('ocupacion.modales.store');
@@ -78,6 +108,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('estado.index');
+    
+    // Ruta para verificar la existencia de un estado
+    Route::get('estado/verificar', [EstadoController::class, 'verificarExistencia'])->name('estado.verificar');
 
     // ===== MUNICIPIO (LIVEWIRE) =====
     Route::get('municipio', function () {
@@ -87,6 +120,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('municipio.index');
+    
+    // Ruta para verificar la existencia de un municipio
+    Route::get('municipio/verificar', [MunicipioController::class, 'verificarExistencia'])->name('municipio.verificar');
 
     // ===== LOCALIDAD (LIVEWIRE) =====
     Route::get('localidad', function () {
@@ -96,6 +132,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('localidad.index');
+    
+    // Ruta para verificar la existencia de una localidad
+    Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
 
     // ===== INSTITUCIÓN DE PROCEDENCIA (LIVEWIRE)=====
     Route::get('institucion_procedencia', function () {
@@ -109,6 +148,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== GRADO =====
     Route::get('grado', [GradoController::class, 'index'])->name('grado.index');
+    Route::get('grado/verificar', [GradoController::class, 'verificarExistencia'])->name('grado.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('grado/modales/store', [GradoController::class, 'store'])->name('grado.modales.store');
@@ -118,6 +158,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ÁREA DE FORMACIÓN =====
     Route::get('area_formacion', [AreaFormacionController::class, 'index'])->name('area_formacion.index');
+    Route::get('area_formacion/verificar', [AreaFormacionController::class, 'verificarExistencia'])->name('area_formacion.verificar');
+    Route::get('area_formacion/verificar-grupo-estable', [AreaFormacionController::class, 'verificarExistenciaGrupoEstable'])->name('area_formacion.verificar_grupo_estable');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('area_formacion/modales/store', [AreaFormacionController::class, 'store'])->name('area_formacion.modales.store');
@@ -134,6 +176,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== EXPRESIÓN LITERARIA =====
     Route::get('expresion_literaria', [ExpresionLiterariaController::class, 'index'])->name('expresion_literaria.index');
+    Route::get('expresion_literaria/verificar', [ExpresionLiterariaController::class, 'verificarExistencia'])->name('expresion_literaria.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('expresion_literaria/modales/store', [ExpresionLiterariaController::class, 'store'])->name('expresion_literaria.modales.store');
@@ -143,6 +186,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== DISCAPACIDAD =====
     Route::get('discapacidad', [DiscapacidadController::class, 'index'])->name('discapacidad.index');
+    Route::get('discapacidad/verificar', [DiscapacidadController::class, 'verificarExistencia'])->name('discapacidad.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('discapacidad/modales/store', [DiscapacidadController::class, 'store'])->name('discapacidad.modales.store');
@@ -161,6 +205,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== PREFIJO DE TELÉFONO =====
     Route::get('prefijo_telefono', [PrefijoTelefonoController::class, 'index'])->name('prefijo_telefono.index');
+    Route::get('prefijo_telefono/verificar', [PrefijoTelefonoController::class, 'verificarExistencia'])->name('prefijo_telefono.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('prefijo_telefono/modales/store', [PrefijoTelefonoController::class, 'store'])->name('prefijo_telefono.modales.store');
@@ -180,6 +225,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // ===== ESTUDIOS REALIZADOS =====
     Route::get('estudios_realizados', [EstudiosRealizadoController::class, 'index'])->name('estudios_realizados.index');
+    Route::get('estudios_realizados/verificar', [EstudiosRealizadoController::class, 'verificarExistencia'])->name('estudios_realizados.verificar');
 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::post('estudios_realizados/modales/store', [EstudiosRealizadoController::class, 'store'])->name('estudios_realizados.modales.store');
@@ -196,116 +242,95 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('transacciones/area_estudio_realizado/{id}', [AreaEstudioRealizadoController::class, 'destroy'])->name('transacciones.area_estudio_realizado.destroy');
     });
 
-    // ===== DOCENTE (LIVEWIRE)=====
-    Route::get('transacciones/docentes', function () {
-        return view('admin.transacciones.docentes.index', [
-            'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
-                ->where('cierre_anio_escolar', '>=', now())
-                ->exists()
-        ]);
-    })->name('transacciones.docentes.index');
+    // ===== DOCENTE ======
+    Route::get('docente', [DocenteController::class, 'index'])->name('docente.index');
 
-    // RUTAS PARA EL PROCESO DE INSCRIPCION DE NUEVO INGRESO----------------------------------------------------------
-            Route::prefix('inscripcion')->group(function () {
-        //  Formulario del estudiante
-        Route::get('/estudiante', [NuevoIngresoController::class, 'showEstudianteForm'])
-            ->name('inscripcion.estudiante')
-            ->middleware(["auth"]);
-
-          Route::post('/estudiante/store', [NuevoIngresoController::class, 'storeEstudiante'])
-        ->name('inscripcion.store.estudiante')
-        ->middleware(["auth"]);
-
-    //  Formulario del representante
-    Route::get('/representante', [NuevoIngresoController::class, 'showRepresentanteForm'])
-        ->name('inscripcion.representante')
-        ->middleware(["auth"]);
-
-    // Guardar datos del representante en sesión (Paso 2) - RUTA CORREGIDA
-    Route::post('/representante/store', [NuevoIngresoController::class, 'storeRepresentante'])
-        ->name('inscripcion.store.representante')
-        ->middleware(["auth"]);
-
-    // Formulario final de inscripción
-    Route::get('/final', [NuevoIngresoController::class, 'showFinalForm'])
-        ->name('inscripcion.final')
-        ->middleware(["auth"]);
-
-    // Completar inscripción (transacción final)
-    Route::post('/completar', [NuevoIngresoController::class, 'completarInscripcion'])
-        ->name('inscripcion.completar')
-        ->middleware(["auth"]);
-
-        // Página de inscripción completada
-        Route::get('/completada', [NuevoIngresoController::class, 'completada'])
-            ->name('inscripcion.completada')
-            ->middleware(["auth"]);
-
-        // EMpezar de nuevo Inscripcion
-        Route::post('/reset', [NuevoIngresoController::class, 'resetInscripcion'])
-            ->name('inscripcion.reset')
-            ->middleware(["auth"]);
-
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::get('docente/create', [DocenteController::class, 'create'])->name('docente.create');
+        Route::post('docente/store', [DocenteController::class, 'store'])->name('docente.store');
+        Route::get('docente/{id}/edit', [DocenteController::class, 'edit'])->name('docente.edit');
+        Route::post('docente/{id}/update', [DocenteController::class, 'update'])->name('docente.update');
+        Route::delete('docente/{id}', [DocenteController::class, 'destroy'])->name('docente.destroy');
+        Route::get('docente/{id}/estudios', [DocenteController::class, 'estudios'])->name('docente.estudios');
+        Route::post('docente/{id}/estudiosEdit', [DocenteController::class, 'estudiosEdit'])->name('docente.estudiosEdit');
     });
 
-    // NUEVO INGRESO 
-    Route::prefix('nuevo_ingreso')->group(function () {
-    // Página principal (listado)
-    Route::get('/', [NuevoIngresoController::class, 'index'])
-        ->name('nuevo_ingreso.index')
-        ->middleware(['auth']);
-    // Listar y buscar inscripciones
-    Route::get('/listar', [NuevoIngresoController::class, 'listarInscripciones'])
-        ->name('inscripciones.listar')
-        ->middleware(["auth"]);
+    // ===== TRANSACCION DOCENTE ======
+    Route::get('transacciones/docente_area_grado', [DocenteAreaGradoController::class, 'index'])->name('transacciones.docente_area_grado.index');
 
-    Route::get('/buscar', [NuevoIngresoController::class, 'buscar'])
-        ->name('nuevo_ingreso.buscar')
-        ->middleware(["auth"]);
-
-    // Ver detalles de una inscripción
-    Route::get('/detalle/{id}', [NuevoIngresoController::class, 'verDetalle'])
-        ->name('inscripciones.detalle')
-        ->middleware(["auth"]);
-
-    // Cambiar estado de inscripción (ya no la uso por que pa que xd )
-    Route::post('/cambiar-estado/{id}', [NuevoIngresoController::class, 'cambiarEstado'])
-        ->name('inscripciones.cambiarEstado')
-        ->middleware(["auth"]);
-
-    // Editar y eliminar inscripciones
-       Route::get('/editar/{id}', [NuevoIngresoController::class, 'editar'])->name('nuevo_ingreso.editar');
-    Route::put('/actualizar/{id}', [NuevoIngresoController::class, 'actualizar'])->name('nuevo_ingreso.actualizar');
-    Route::delete('/eliminar/{id}', [NuevoIngresoController::class, 'eliminar'])->name('nuevo_ingreso.eliminar');
-
-});
-
-    // --------
-
-    Route::get("/Estudiante",[EstudianteController::class, 'estudianteView'])->name("estudiante.inicio");
-    Route::get("/formularioEstudiante",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario")->middleware(["auth"]);
-
-    // ===== ESTUDIANTE =====
-    Route::prefix("estudiante")->group(function(){
-        Route::get("/formularioEstudiante/{id}",[EstudianteController::class, 'formularioEstudianteView'])->name("estudiante.formulario.editar")->middleware(["auth"]);
-        Route::post("/verificar-cedula", [EstudianteController::class,"verificarCedula"])->name("estudiante.verificar-cedula")->middleware(["auth"]);
-        Route::post("/save",[EstudianteController::class, 'save'])->middleware(["auth"]);
-        // Si alguien accede por GET accidentalmente, redirigir al formulario
-        Route::get('/save', function () {
-            return redirect()->route('admin.estudiante.formulario');
-        })->middleware(['auth']);
-        Route::delete("/eliminar/{id}",[EstudianteController::class, 'eliminar'])->middleware(["auth"]);
-        // para consultar un estudiante
-        Route::get('/consultar/{id}',[EstudianteController::class,"consultar"])->middleware(["auth"]);
-        Route::get('/listar',[EstudianteController::class,"listar"])->middleware(["auth"]); // Para listar TODOS los estudiantes
-        // filtros y búsquedas
-        Route::get('/filtrar',[EstudianteController::class,'filtrar'])->name('estudiante.filtrar')->middleware(['auth']);
-        Route::get('/buscar',[EstudianteController::class,'buscar'])->name('estudiante.buscar')->middleware(['auth']);
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::get('transacciones/docente_area_grado/create', [DocenteAreaGradoController::class, 'create'])->name('transacciones.docente_area_grado.create');
+        Route::post('transacciones/docente_area_grado/store', [DocenteAreaGradoController::class, 'store'])->name('transacciones.docente_area_grado.store');
+        Route::get('transacciones/docente_area_grado/{id}/edit', [DocenteAreaGradoController::class, 'edit'])->name('transacciones.docente_area_grado.edit');
+        Route::post('transacciones/docente_area_grado/{id}/update', [DocenteAreaGradoController::class, 'update'])->name('transacciones.docente_area_grado.update');
+        Route::delete('transacciones/docente_area_grado/{id}', [DocenteAreaGradoController::class, 'destroy'])->name('transacciones.docente_area_grado.destroy');
+        Route::delete('transacciones/docente_area_grado/{id}/destroy-asignacion', [DocenteAreaGradoController::class, 'destroyAsignacion'])->name('transacciones.docente_area_grado.destroyAsignacion');
     });
+
+    //===== RUTA REPORTES DOCENTE ======
+    Route::get('docente/reporte/{id}', [DocenteController::class, 'reportePDF'])->name('docente.reportePDF');
+    Route::get('docente/reporte-general', [DocenteController::class, 'reporteGeneralPDF'])->name('docente.reporteGeneralPDF');
+
+    // ===== DASHBOARD ======
+
+    // ===== ALUMNOS ======
+    Route::get('alumnos',  [AlumnoController::class, 'index'])->name('alumnos.index');
+    Route::middleware(['verificar.anio.escolar'])->group(function () {
+        Route::get('alumnos/create', [AlumnoController::class, 'create'])->name('alumnos.create');
+        Route::post('alumnos/store', [AlumnoController::class, 'store'])->name('alumnos.store');
+        Route::get('alumnos/{id}/edit', [AlumnoController::class, 'edit'])->name('alumnos.edit');
+
+        Route::post('alumnos/{id}/update', [AlumnoController::class, 'update'])->name('alumnos.update');
+
+        Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
+    });
+
+
+
+
+
+    //Reportes
+    //Route::get('alumnos/reportes', [AlumnoController::class, 'reportePDF'])->name('alumnos.reportePDF');
+    Route::get('alumnos/reporte/{id}', [AlumnoController::class, 'reportePDF'])->name('alumnos.reporte.individual');
+    Route::get('alumnos/reportes/general', [AlumnoController::class, 'reporteGeneralPDF'])->name('alumnos.reporteGeneralPDF');
+    // ===== INSCRIPCIONES ======
+    Route::prefix('transacciones')->name('transacciones.')->group(function () {
+
+        Route::get('inscripcion', [InscripcionController::class, 'index'])
+            ->name('inscripcion.index');
+
+        Route::get('inscripcion/create', function () {
+            return view('admin.transacciones.inscripcion.create');
+        })->name('inscripcion.create');
+
+        Route::get('inscripcion/create-alumno', function () {
+            return view('admin.transacciones.inscripcion.create-alumno');
+        })->name('inscripcion.create-alumno');
+
+        Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
+            ->name('inscripcion.destroy');
+    });
+
+
+
+
+
+
+
+
+    //===== PERCENTIL ======
+    Route::get('transacciones/percentil', [EntradasPercentilController::class, 'index'])->name('transacciones.percentil.index');
+
+    Route::post('transacciones/percentil/boton-percentil', [EntradasPercentilController::class, 'ejecutar'])
+        ->name('transacciones.percentil.boton-percentil');
+
+    Route::get('historico', [HistoricoController::class, 'index'])->name('historico.index');
 });
+
+
 
 // ======  REPRESENTANTE  ======
-Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function() {
+Route::middleware(['auth'])->prefix('representante')->name('representante.')->group(function () {
     // Vista principal (listado)
     Route::get('/', [RepresentanteController::class, 'index'])->name('index');
 
@@ -322,7 +347,7 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
     Route::delete('/{id}', [RepresentanteController::class, 'delete'])->name('destroy');
 
     // Búsqueda por cédula (AJAX)
-    Route::get('/buscar-cedula', [RepresentanteController::class, 'buscarPorCedula'])->name('buscar_cedula');
+    Route::get('/buscar-numero_documento', [RepresentanteController::class, 'buscarPornumero_documento'])->name('buscar_numero_documento');
 
     // Consultar un representante específico (AJAX)
     Route::get('/consultar', [RepresentanteController::class, 'consultar'])->name('consultar');
@@ -331,8 +356,8 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
     Route::get('/filtrar', [RepresentanteController::class, 'filtar'])->name('filtrar');
 
     // Verificar cédula duplicada (AJAX)
-    Route::get('/verificar-cedula', [RepresentanteController::class, 'verificarCedula'])->name('verificar_cedula');
+    Route::get('/verificar-numero_documento', [RepresentanteController::class, 'verificarnumero_documento'])->name('verificar_numero_documento');
 
-
-
+    // Generar reporte PDF
+    Route::get('/reporte-pdf', [RepresentanteController::class, 'reportePDF'])->name('reporte_pdf');
 });

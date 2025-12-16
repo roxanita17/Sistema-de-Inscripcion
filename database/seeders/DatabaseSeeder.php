@@ -3,21 +3,17 @@
 namespace Database\Seeders;
 
 use App\Models\AnioEscolar;
-use App\Models\EtniaIndigena;
-use App\Models\Estado;
-use App\Models\Municipio;
-use App\Models\Localidad;
-use App\Models\EstudiosRealizado;
-use App\Models\AreaEstudioRealizado;
-use App\Models\GradoAreaFormacion;
-use App\Models\Discapacidad;
-use App\Models\Ocupacion;
-use App\Models\ExpresionLiteraria;
-use App\Models\Banco;
-use App\Models\PrefijoTelefono;
+use App\Models\Docente;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\Persona;
+use App\Models\DetalleDocenteEstudio;
+use App\Models\Alumno;
+use App\Models\Representante;
+use App\Models\RepresentanteLegal;
+use App\Models\Inscripcion;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,16 +22,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
+       
+
+
         $this->command->info('Iniciando seeders...');
-
-
-       /*  AnioEscolar::factory(1)->create([
-            'inicio_anio_escolar' => '2025-01-01',
-            'cierre_anio_escolar' => '2025-12-31',
-            'extencion_anio_escolar' => '2026-01-01',
-            'status' => 'Activo',
-        ]); */
-
 
         User::factory()->create([
             'name' => 'Admin',
@@ -44,6 +34,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            AnioEscolarSeeder::class,
             GradoSeeder::class,
             AreaFormacionSeeder::class,
             EstadoSeeder::class,
@@ -63,7 +54,26 @@ class DatabaseSeeder extends Seeder
             GeneroSeeder::class,
             LateralidadSeeder::class,
             OrdenNacimientoSeeder::class,
+            TipoDocumentoSeeder::class,
+            IndiceEdadSeeder::class,
+            IndicePesoSeeder::class,
+            IndiceEstaturaSeeder::class,
+            PersonaSeeder::class,
+            AlumnoSeeder::class,
+            DocenteSeeder::class,
+            DetalleDocenteEstudioSeeder::class,
+            RepresentanteSeeder::class,
+            RepresentanteLegalSeeder::class,
+            InscripcionSeeder::class,
+            DocenteAreaGrado::class,
         ]);
+
+        
+        
+        
+        
+
+
         $this->command->info('¡Base de datos poblada con éxito!');
 
     }

@@ -120,6 +120,38 @@ class EtniaIndigenaController extends Controller
     }
 
     /**
+     * Verifica si ya existe una etnia indígena con el nombre proporcionado.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+            ]);
+
+            $existe = EtniaIndigena::where('nombre', $request->nombre)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar la etnia indígena',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Desactiva una etnia indígena (eliminación lógica).
      */
     public function destroy($id)

@@ -13,7 +13,7 @@ class LateralidadSeeder extends Seeder
         $lateralidads = [
             'Derecho',
             'Izquierdo',
-            'Ambidextro',
+            'Ambidestro',
         ];
 
         foreach ($lateralidads as $lateralidad) {

@@ -32,9 +32,9 @@
                             <i class="bi bi-plus-lg"></i> Registrar
                         </button> --}}
 
-                        <button class="btn btn-primary me-2" onclick="irHa('{{route('admin.estudiante.formulario')}}')">
-    <i class="bi bi-plus-lg"></i> Registrar
-</button>
+                        <a href="{{route('admin.estudiante.formulario')}}" class="btn btn-primary me-2">
+                            <i class="bi bi-plus-lg"></i> Registrar
+                        </a>
 
                         {{-- <a href="{{ route('dashboard.admin') }}" class="btn btn-secondary">
                             <i class="bi bi-box-arrow-left"></i> Volver
@@ -50,7 +50,7 @@
                         <form role="search">
                             <div class="input-group">
                                 <input class="form-control" type="search"
-                                       placeholder="Buscar Por Nombre, Apellido o Cedula al Estudiante..."
+                                       placeholder="Buscar Por Nombre, Apellido o numero_documento al Estudiante..."
                                        aria-label="Search" id="buscador"/>
                             </div>
                         </form>
@@ -140,7 +140,7 @@
 @stop
 
 @section('js')
-    <script>
+    {{-- <script>
         const tablaBody = document.getElementById('tabla');
         const buscador = document.getElementById('buscador');
         let debounceTimer = null;
@@ -149,14 +149,14 @@
             if (!Array.isArray(items)) { tablaBody.innerHTML = ''; return; }
             tablaBody.innerHTML = items.map(item => {
                 const p = item.persona || {};
-                const cedula = p.numero_documento || '';
+                const numero_documento = p.numero_documento || '';
                 const nombre = [p.primer_nombre, p.segundo_nombre].filter(Boolean).join(' ');
                 const apellido = [p.primer_apellido, p.segundo_apellido].filter(Boolean).join(' ');
                 const estado = item.status || '';
                 const editUrl = `{{ route('admin.estudiante.formulario.editar', ['id' => '__ID__']) }}`.replace('__ID__', item.id);
                 return `
                     <tr>
-                        <td>${cedula}</td>
+                        <td>${numero_documento}</td>
                         <td>${nombre}</td>
                         <td>${apellido}</td>
                         <td>${estado}</td>
@@ -263,5 +263,5 @@
         function irHa(url) {
             window.location.href = url;
         }
-    </script>
+    </script> --}}
 @stop

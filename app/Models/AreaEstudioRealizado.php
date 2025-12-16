@@ -4,13 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\EstudiosRealizado;
+use Illuminate\Support\Facades\DB;
 
 class AreaEstudioRealizado extends Model
 {
-    use HasFactory;
-
-    protected $table = "area_estudio_realizados";
+    protected $table = 'area_estudio_realizados';
 
     protected $fillable = [
         'area_formacion_id',
@@ -18,16 +16,37 @@ class AreaEstudioRealizado extends Model
         'status',
     ];
 
-    // Relación: pertenece a un área de formación
-    public function area_formacion()
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+
+    public function scopeBuscar($query, $buscar)
+    {
+        if (!empty($buscar)) {
+            $query->whereHas('areaFormacion', function ($q) use ($buscar) {
+                $q->where('nombre_area_formacion', 'LIKE', "%{$buscar}%");
+
+            });
+
+            $query->orWhereHas('estudiosRealizado', function ($q) use ($buscar) {
+                $q->where('estudios', 'LIKE', "%{$buscar}%");
+            });
+        }
+
+        return $query;
+    }
+
+    /**  Área de formación  */
+    public function areaFormacion()
     {
         return $this->belongsTo(AreaFormacion::class, 'area_formacion_id', 'id');
     }
 
-    // Relación: pertenece a un título universitario (estudio realizado)
-    public function estudio_realizado()
+    /**  Estudio realizado  */
+    public function estudiosRealizado()
     {
         return $this->belongsTo(EstudiosRealizado::class, 'estudios_id', 'id');
     }
 }
+
 

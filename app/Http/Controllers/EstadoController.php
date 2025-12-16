@@ -119,6 +119,35 @@ class EstadoController extends Controller
     }
 
     /**
+     * Verifica si ya existe un estado con el nombre proporcionado.
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+            ]);
+
+            $existe = Estado::where('nombre_estado', $request->nombre)
+                ->where('status', true)
+                ->exists();
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el estado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Marca un estado como inactivo (eliminación lógica).
      */
     public function destroy($id)

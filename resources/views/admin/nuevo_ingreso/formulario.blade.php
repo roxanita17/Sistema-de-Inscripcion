@@ -207,14 +207,14 @@
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="documentos[]" value="copia_cedula_representante" id="copia_cedula_representante">
-                                            <label class="form-check-label" for="copia_cedula_representante">
+                                            <input class="form-check-input" type="checkbox" name="documentos[]" value="copia_numero_documento_representante" id="copia_numero_documento_representante">
+                                            <label class="form-check-label" for="copia_numero_documento_representante">
                                                 Copia de Cédula del Representante
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="documentos[]" value="copia_cedula_estudiante" id="copia_cedula_estudiante">
-                                            <label class="form-check-label" for="copia_cedula_estudiante">
+                                            <input class="form-check-input" type="checkbox" name="documentos[]" value="copia_numero_documento_estudiante" id="copia_numero_documento_estudiante">
+                                            <label class="form-check-label" for="copia_numero_documento_estudiante">
                                                 Copia de Cédula del Estudiante
                                             </label>
                                         </div>

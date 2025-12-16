@@ -9,6 +9,13 @@ class TipoDocumento extends Model
     protected $table = "tipo_documentos";
 
     protected $fillable = [
-        'tipo_documento',
+        'nombre',
     ];
+
+    public function persona()
+    {
+        return $this->hasMany(Persona::class, 'tipo_documento_id', 'id');
+    }
+
+    
 }

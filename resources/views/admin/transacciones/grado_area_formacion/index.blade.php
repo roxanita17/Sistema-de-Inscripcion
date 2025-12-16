@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
 
-@section('title', 'Gestión de Asignación de Grados a Áreas de Formación')
+@section('title', 'Gestión de Asignación de Años a Áreas de Formación')
 
 @section('content_header')
     <div class="content-header-modern">
@@ -16,8 +16,8 @@
                     <i class="fas fa-university"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Asignación de Grados a Áreas de Formación</h1>
-                    <p class="title-subtitle">Gestión de vínculos entre grados académicos y áreas formativas</p>
+                    <h1 class="title-main">Asignación de Años a Áreas de Formación</h1>
+                    <p class="title-subtitle">Gestión de vínculos entre años académicos y áreas formativas</p>
                 </div>
             </div>
             <button type="button" 
@@ -116,7 +116,7 @@
                         <thead>
                            <tr>
                                 <th style="text-align: center">Código</th>
-                                <th >Grado</th>
+                                <th >Año</th>
                                 <th >Área de Formación</th>
                                 <th style="text-align: center">Estado</th>
                                 <th style="text-align: center">Acciones</th>

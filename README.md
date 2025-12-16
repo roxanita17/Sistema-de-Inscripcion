@@ -119,7 +119,18 @@ Clickear en el server https://127.0.0.1:8000
 Email: admin@admin.com
 Password: password
 
+### 14. DOMPDF
+Comando para instalar DOMPDF:
 
+```bash
+composer require barryvdh/laravel-dompdf
+```
+
+### 15. Swiper
+
+```bash
+npm install swiper
+```
 ## Credenciales por Defecto
 
 Si se ejecutaron los seeders correctamente, las credenciales predeterminadas son:

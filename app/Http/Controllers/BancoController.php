@@ -133,4 +133,57 @@ class BancoController extends Controller
                 ->with('error', 'Error al eliminar el banco: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Verifica si un banco ya existe por código o nombre
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verificarExistencia(Request $request)
+    {
+        try {
+            $request->validate([
+                'codigo' => 'nullable|digits_between:1,4',
+                'nombre' => 'nullable|string|max:255',
+            ]);
+
+            $query = Banco::where('status', true);
+
+            if ($request->has('codigo') && $request->codigo) {
+                $query->where('codigo_banco', $request->codigo);
+            }
+
+            if ($request->has('nombre') && $request->nombre) {
+                $query->where('nombre_banco', $request->nombre);
+            }
+
+            $existe = $query->exists();
+            $mensaje = '';
+
+            if ($existe) {
+                if ($request->has('codigo') && $request->has('nombre') && $request->codigo && $request->nombre) {
+                    $mensaje = 'Ya existe un banco activo con este código y nombre.';
+                } elseif ($request->has('codigo') && $request->codigo) {
+                    $mensaje = 'Ya existe un banco activo con este código.';
+                } elseif ($request->has('nombre') && $request->nombre) {
+                    $mensaje = 'Ya existe un banco activo con este nombre.';
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'existe' => $existe,
+                'mensaje' => $mensaje
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el banco',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

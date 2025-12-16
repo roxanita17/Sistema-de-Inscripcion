@@ -238,3 +238,8 @@
 <x-pagination :paginator="$discapacidad" />
 
 @endsection
+
+{{-- Incluir el archivo de validaciones --}}
+@push('js')
+    <script src="{{ asset('js/validations/discapacidad.js') }}"></script>
+@endpush

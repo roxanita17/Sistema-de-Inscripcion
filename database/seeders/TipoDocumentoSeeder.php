@@ -13,10 +13,11 @@ class TipoDocumentoSeeder extends Seeder
         $tiposDocumento = [
             'V',
             'E',
+            'CE'
         ];
 
         foreach ($tiposDocumento as $tipoDocumento) {
-            TipoDocumento::firstOrCreate(['tipo_documento' => $tipoDocumento,
+            TipoDocumento::firstOrCreate(['nombre' => $tipoDocumento,
         'status' => true]);
         }
 
