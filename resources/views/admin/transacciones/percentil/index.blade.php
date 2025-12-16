@@ -132,8 +132,8 @@
                                         <div class="empty-icon">
                                             <i class="fas fa-inbox"></i>
                                         </div>
-                                        <h4>No hay estudiantes asignados registrados</h4>
-                                        <p>Agrega un nuevo estudiante con el botón superior</p>
+                                        <h4>No hay estudiantes asignados a secciones en el año escolar activo</h4>
+                                        <p>Asigna estudiantes a secciones y calcula los índices para ver los resultados aquí</p>
                                     </div>
                                 </td>
                             </tr>

@@ -14,8 +14,8 @@ class AnioEscolarSeeder extends Seeder
     public function run(): void
     {
         DB::table('anio_escolars')->insert([
-            ['inicio_anio_escolar' => '2023-01-01', 'status' => 'Activo', 'cierre_anio_escolar' => '2024-12-31'],
-            ['inicio_anio_escolar' => '2024-01-01', 'status' => 'Activo', 'cierre_anio_escolar' => '2025-12-31'],
+            ['inicio_anio_escolar' => '2023-01-01', 'status' => 'Inactivo', 'cierre_anio_escolar' => '2024-12-31'],
+            ['inicio_anio_escolar' => '2024-01-01', 'status' => 'Inactivo', 'cierre_anio_escolar' => '2025-12-31'],
             ['inicio_anio_escolar' => '2025-01-01', 'status' => 'Activo', 'cierre_anio_escolar' => '2026-12-31'],
             
         ]);

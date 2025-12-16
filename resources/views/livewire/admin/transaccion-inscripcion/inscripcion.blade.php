@@ -54,6 +54,7 @@
                     <p>Debe seleccionar al menos un representante</p>
                 </div>
             </div>
+            
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
 

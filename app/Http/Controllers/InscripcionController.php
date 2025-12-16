@@ -110,6 +110,7 @@ class InscripcionController extends Controller
         $grados = Grado::all();
         $expresion_literaria = ExpresionLiteraria::all();
         $institucion_procedencia = InstitucionProcedencia::all();
+        
 
         return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
     }

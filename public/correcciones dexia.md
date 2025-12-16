@@ -7,8 +7,6 @@ Falta:
 1. Validar que el percentil solo se ejecute una vez por inscripción o reescriba los datos
 
 ### Lógica de inscripción
-5. Al crear representante desde inscripción:
-   - Al volver o cancelar debe regresar a la inscripción
 6. Filtrar institución de procedencia por:
    - País
    - Estado
