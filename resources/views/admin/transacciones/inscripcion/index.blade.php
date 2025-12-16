@@ -4,6 +4,42 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+    <style>
+        .header-actions {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .header-actions .btn-create {
+            margin-left: 10px;
+        }
+        
+        .header-actions .btn-percentil {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #17a2b8;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .header-actions .btn-percentil:hover {
+            background-color: #138496;
+            color: white;
+        }
+        
+        .header-actions .btn-percentil i {
+            margin-right: 5px;
+        }
+        
+        .header-actions .btn-percentil:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
 @stop
 
 @section('title', 'Gestión de inscripciones')
@@ -24,6 +60,28 @@
                 {{-- Botón percentil (izquierda) --}}
 
 
+<<<<<<< HEAD
+            <div class="header-actions">
+                {{-- Botón de percentil --}}
+                @foreach ($grados as $grado)
+                    @if ($grado->id === 1)
+                        <div class="me-2 d-inline-block">
+                            @include('admin.transacciones.percentil.boton-percentil', [
+                                'anioEscolarActivo' => $anioEscolarActivo,
+                                'gradoId' => $grado->id,
+                            ])
+                        </div>
+                    @endif
+                @endforeach
+
+                {{-- Botón de nueva inscripción --}}
+                <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
+                    @if (!$anioEscolarActivo) disabled @endif
+                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
+                    <i class="fas fa-plus"></i>
+                    <span>Nueva inscripción</span>
+                </a>
+=======
                 {{-- Botón crear (derecha) --}}
                 <div>
                     <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
@@ -33,6 +91,7 @@
                         <span>Nueva inscripción</span>
                     </a>
                 </div>
+>>>>>>> f3f532f321797acf2b7bc01e8a817c9a2c128aae
             </div>
         </div>
     </div>
@@ -289,6 +348,43 @@
                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
                                                 <i class="fas fa-pen"></i>
                                             </a> --}}
+
+                                            {{-- ELIMINAR --}}
+                                            <button class="action-btn btn-delete"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                @if(!$anioEscolarActivo) disabled @endif
+                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Eliminar' }}">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+
+                                            {{-- Reporte --}}
+                                            <a href="{{ route('admin.transacciones.inscripcion.reporte', $datos->id) }}"
+                                            class="action-btn btn-report"
+                                            title="Generar Reporte PDF"
+                                            target="_blank"
+                                            style="background-color: #28a745; border-color: #28a745;">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                {{-- Modal de ver --}}
+                                @include('admin.transacciones.inscripcion.modales.showModal')
+
+                                {{-- MODAL ELIMINAR --}}
+                                <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content modal-modern">
+                                            <div class="modal-header-delete">
+                                                <div class="modal-icon-delete"><i class="fas fa-trash-alt"></i></div>
+                                                <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                                                <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+
                                             </div>
                                         </td>
                                     </tr>
@@ -347,7 +443,11 @@
                     <x-pagination :paginator="$inscripciones" />
                 </div>
 
+<<<<<<< HEAD
+                <!-- Botón de percentil movido arriba -->
+=======
 
+>>>>>>> f3f532f321797acf2b7bc01e8a817c9a2c128aae
 
             </div>
 

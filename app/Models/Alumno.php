@@ -126,7 +126,7 @@ class Alumno extends Model
 
     //REPORTES
 
-    public static function ReportePDF(){
+    public static function ReportePDF($genero=null, $tipo_documento=null){
         $query = DB::table("alumnos")
         ->select(
             // Datos del alumno
@@ -136,7 +136,6 @@ class Alumno extends Model
             'alumnos.talla_zapato',
             'alumnos.peso',
             'alumnos.estatura',
-            'alumnos.anio_egreso',
 
             // Datos de persona
             'personas.primer_nombre',
@@ -152,21 +151,29 @@ class Alumno extends Model
             
             'etnia_indigenas.nombre as etnia',
             'lateralidads.lateralidad',
-            'expresion_literarias.letra_expresion_literaria',
             'orden_nacimientos.orden_nacimiento',
             'discapacidads.nombre_discapacidad',
-            'institucion_procedencias.nombre_institucion'
         )
         ->join("personas", "personas.id", "=", "alumnos.persona_id")
         ->leftJoin("discapacidads", "discapacidads.id", "=", "alumnos.discapacidad_id")
-        ->leftJoin("institucion_procedencias", "institucion_procedencias.id", "=", "alumnos.institucion_procedencia_id")
         ->leftJoin("orden_nacimientos", "orden_nacimientos.id", "=", "alumnos.orden_nacimiento_id")
         ->leftJoin("etnia_indigenas", "etnia_indigenas.id", "=", "alumnos.etnia_indigena_id")
         ->leftJoin("lateralidads", "lateralidads.id", "=", "alumnos.lateralidad_id")
-        ->leftJoin("expresion_literarias", "expresion_literarias.id", "=", "alumnos.expresion_literaria_id")
         ->leftJoin("generos", "generos.id", "=", "personas.genero_id")
         ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id");
         
+            /*
+            * Filtros
+            */
+            
+            if ($genero){
+                $query->where("generos.genero", $genero);
+            }
+
+            if($tipo_documento){
+                $query->where("tipo_documentos.nombre", $tipo_documento);
+            }
+         
         return $query->get();
     }
 

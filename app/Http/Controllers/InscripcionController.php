@@ -9,6 +9,8 @@ use App\Models\Genero;
 use App\Models\TipoDocumento;
 use App\Models\Alumno;
 use App\Models\Grado;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use App\Models\ExpresionLiteraria;
 use App\Models\InstitucionProcedencia;
 use App\Models\EntradasPercentil;
@@ -127,5 +129,42 @@ class InscripcionController extends Controller
         Inscripcion::eliminar($id);
 
         return redirect()->route('admin.transacciones.inscripcion.index')->with('success', 'Inscripción eliminada correctamente');
+    }
+
+    //reportes PDF
+
+
+    /**
+     * Muestra los detalles completos de una inscripción
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function reporte($id)
+    {
+        $inscripcion = Inscripcion::with([
+            'alumno.persona',
+            'alumno.ordenNacimiento',
+            'alumno.discapacidad',
+            'alumno.etniaIndigena',
+            'alumno.lateralidad',
+            'grado',
+            'padre.persona',
+            'madre.persona',
+            'representanteLegal.representante.persona',
+            'institucionProcedencia',
+            'expresionLiteraria',
+            'seccionAsignada'
+        ])->findOrFail($id);
+
+        $datosCompletos = $inscripcion->obtenerDatosCompletos();
+        
+        // Obtener el año escolar activo
+        $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->first();
+
+        $pdf = PDF::loadview('admin.transacciones.inscripcion.reporte.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
+        return $pdf->stream('ficha_inscripcion.pdf');
     }
 }

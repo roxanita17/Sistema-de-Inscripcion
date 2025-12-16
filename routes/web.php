@@ -309,6 +309,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
         Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
             ->name('inscripcion.destroy');
+
+        //reportes PDF
+        Route::get('inscripcion/reporte/{id}', [InscripcionController::class, 'reporte'])
+            ->name('inscripcion.reporte');
+        
+
     });
 
 

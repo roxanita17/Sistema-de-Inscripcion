@@ -4,177 +4,211 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Reporte General de Docentes</title>
     <style>
-        body { 
-            font-family: DejaVu Sans, Arial, sans-serif;
+        :root {
+            --color-primario: #4361ee;
+            --color-primario-suave: #6b8aff;
+            --color-primario-pastel: #eef2ff;
+            --color-secundario: #3743a8ff;
+            --color-secundario-pastel: #f3e8ff;
+            --color-acento: #4cc9f0;
+            --color-acento-pastel: #e6f7ff;
+            --color-fondo: #ffffff;
+            --color-borde: #d1daff;
+            --color-texto: #2d3748;
+            --color-texto-suave: #718096;
+        }
+        
+        @page {
+            margin: 1.5cm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
             font-size: 10pt;
             line-height: 1.5;
-            color: #212529;
-            background-color: #fff;
+            color: var(--color-texto);
             margin: 0;
             padding: 0;
+            background: var(--color-fondo);
         }
+        
         .container {
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-            margin-right: auto;
-            margin-left: auto;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 15px;
         }
-        .header {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 20px;
-            text-align: center;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .header h2 {
-            color: #007bff;
-            margin: 0 0 5px 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.3;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .header p {
-            margin: 0;
-            color: #6c757d;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            font-family: DejaVu Sans, Arial, sans-serif;
-        }
-        .section {
-            margin-bottom: 25px;
-            border: 1px solid rgba(0,0,0,.125);
-            border-radius: 0.25rem;
-            overflow: hidden;
-            font-family: DejaVu Sans, Arial, sans-serif;
-        }
-        .section-title {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin: 0;
-            line-height: 1.3;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .info-grid {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: DejaVu Sans, Arial, sans-serif;
-        }
-        .info-item {
-            border-bottom: 1px solid #dee2e6;
-        }
-        .info-item:last-child {
-            border-bottom: none;
-        }
-        .info-label {
-            width: 35%;
-            padding: 10px 15px;
-            font-weight: 700;
-            background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-            line-height: 1.5;
-            vertical-align: top;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            color: #495057;
-        }
-        .info-value {
-            padding: 10px 15px;
-            line-height: 1.5;
-            vertical-align: top;
-            word-wrap: break-word;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            color: #212529;
-        }
-        .footer {
-            margin-top: 30px;
-            padding: 15px;
-            border-top: 1px solid #dee2e6;
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            font-family: DejaVu Sans, Arial, sans-serif;
-        }
+        
         .institution-header {
-            background-color: #007bff;
+            background-color: var(--color-primario);
             color: white;
-            padding: 15px 20px;
-            margin: 0 auto 20px auto;
+            padding: 10px 15px;
+            margin: 0 auto 15px auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(67, 97, 238, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            position: relative;
+            border-bottom: 2px solid var(--color-acento);
         }
+        
         .institution-header img {
             max-height: 70px;
             max-width: 70px;
+            margin-right: 20px;
+            border-radius: 4px;
+            border: none;
+            padding: 0;
+            background: transparent;
+            object-fit: contain;
         }
+        
         .institution-text {
             text-align: center;
         }
-        .institution-header h1 {
+        
+        .institution-text h1 {
+            color: white;
             margin: 0 0 5px 0;
             font-size: 1.5rem;
             font-weight: 700;
             line-height: 1.2;
-            font-family: DejaVu Sans, Arial, sans-serif;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
+        
         .institution-subtitle {
+            color: rgba(255, 255, 255, 0.95);
             font-size: 0.9rem;
             font-weight: 500;
             margin: 0;
-            opacity: 0.9;
-            font-family: DejaVu Sans, Arial, sans-serif;
+            font-style: italic;
         }
-        .text-muted { color: #6c757d !important; }
-        p, td, span {
-            line-height: 1.5;
-            font-family: DejaVu Sans, Arial, sans-serif;
+        
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-bottom: 2px solid var(--color-primario);
+            background: var(--color-primario-pastel);
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(67, 97, 238, 0.08);
         }
+        
+        .header h1 {
+            color: var(--color-primario);
+            margin: 0 0 5px 0;
+            font-size: 14pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        .header h2 {
+            color: var(--color-primario);
+            margin: 0 0 5px 0;
+            font-size: 14pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        .header p {
+            color: var(--color-texto-suave);
+            margin: 10px 0 0 0;
+            font-size: 9pt;
+            font-style: italic;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            table-layout: fixed;
+            font-size: 9pt;
+        }
+        
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border: 1px solid var(--color-borde);
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.3;
+            border-top: none;
+            border-bottom: 1px solid var(--color-borde);
+            border-right: 1px solid var(--color-borde);
+            border-left: 1px solid var(--color-borde);
+            vertical-align: middle;
+        }
+        
+        td {
+            padding: 8px 10px;
+        }
+        
+        th {
+            color:var(--color-texto);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 9pt;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to bottom, #2c3e50 0%, #34495e 100%);
+            text-align: center;
+        }
+        
+        /* Ajuste de columnas específicas */
+        th:nth-child(1), td:nth-child(1) { width: 15%; }  /* Cédula */
+        th:nth-child(2), td:nth-child(2) { width: 30%; } /* Nombres */
+        th:nth-child(3), td:nth-child(3) { width: 15%; }  /* Género */
+        th:nth-child(4), td:nth-child(4) { width: 40%; } /* Estudios */
+        
+        /* Alineación de celdas */
+        td { 
+            font-size: 9pt;
+            padding: 8px 10px;
+        }
+        
+        .text-center { 
+            text-align: center; 
+        }
+        
+        .text-right { 
+            text-align: right; 
+        }
+        
         .long-text {
             word-break: break-word;
             overflow-wrap: break-word;
         }
-        .table-grid {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        
+        tr {
+            border-bottom: 1px solid rgba(67, 97, 238, 0.1);
         }
-        .table-grid th {
-            background-color: #f8f9fa;
-            padding: 8px 10px;
-            text-align: left;
-            border: 1px solid #dee2e6;
-            font-weight: 700;
+        
+        tr:last-child {
+            border-bottom: none;
         }
-        .table-grid td {
-            padding: 8px 10px;
-            border: 1px solid #dee2e6;
+        
+        tr:nth-child(even) {
+            background-color: var(--color-primario-pastel);
         }
-        .text-center {
-            text-align: center;
+        
+        tr:hover {
+            background-color: var(--color-acento-pastel) !important;
+            transition: background-color 0.2s ease;
         }
-        .signature {
-            margin-top: 50px;
+        
+        .footer {
+            margin-top: 20px;
             text-align: right;
-        }
-        .signature-line {
-            border-top: 1px solid #000;
-            width: 200px;
-            margin-left: auto;
-            padding-top: 5px;
-            text-align: center;
+            font-size: 10pt;
+            color:var(--color-texto-suave);
+            padding: 10px 0;
         }
     </style>
 </head>
@@ -182,9 +216,7 @@
     <div class="container">
         <!-- Encabezado de la institución -->
         <div class="institution-header">
-            <div class="logo-wrapper">
-                <img src="{{ public_path('img/Liceo_logo.png') }}" alt="Logo" class="institution-logo">
-            </div>
+            <img src="{{ public_path('img/Liceo_logo.png') }}" alt="Logo" class="institution-logo">
             <div class="institution-text">
                 <h1>Liceo Nacional "Gral. Juan Guillermo Iribarren"</h1>
                 <div class="institution-subtitle">Formando líderes para el futuro</div>
@@ -193,55 +225,54 @@
 
         <!-- Encabezado del documento -->
         <div class="header">
-            <h2>LISTA GENERAL DE DOCENTES</h2>
+            <h2>REPORTE GENERAL DE DOCENTES</h2>
             <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
         <!-- Tabla de docentes -->
-        <div class="section">
-            <table class="table-grid" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th width="15%">Cédula</th>
-                        <th width="30%">Nombres y Apellidos</th>
-                        <th width="15%">Género</th>
-                        <th width="40%">Estudios Realizados</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($docentes as $docente)
-                    <tr>
-                        <td>{{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</td>
-                        <td>
-                            {{ $docente->primer_nombre ?? '' }}
-                            {{ $docente->segundo_nombre ?? '' }}
-                            {{ $docente->primer_apellido ?? '' }}
-                            {{ $docente->segundo_apellido ?? '' }}
-                        </td>
-                        <td>{{ $docente->genero ?? 'N/A' }}</td>
-                        <td>
-                            @if(isset($docente->detalleDocenteEstudio) && $docente->detalleDocenteEstudio->count() > 0)
-                                @foreach($docente->detalleDocenteEstudio as $key => $detalle)
-                                    • {{ $detalle->estudiosRealizado->estudios ?? 'N/A' }}<br>
-                                @endforeach
-                            @else
-                                Sin estudios registrados
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center">No hay docentes registrados</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cédula</th>
+                    <th>Nombres y Apellidos</th>
+                    <th>Género</th>
+                    <th>Estudios Realizados</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($docentes as $docente)
+                <tr>
+                    <td class="text-center">{{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</td>
+                    <td class="long-text">
+                        {{ $docente->primer_nombre ?? '' }}
+                        {{ $docente->segundo_nombre ?? '' }}
+                        {{ $docente->primer_apellido ?? '' }}
+                        {{ $docente->segundo_apellido ?? '' }}
+                    </td>
+                    <td class="text-center">{{ $docente->genero ?? 'N/A' }}</td>
+                    <td class="long-text">
+                        @if(isset($docente->detalleDocenteEstudio) && $docente->detalleDocenteEstudio->count() > 0)
+                            @foreach($docente->detalleDocenteEstudio as $key => $detalle)
+                                • {{ $detalle->estudiosRealizado->estudios ?? 'N/A' }}
+                                @if(!$loop->last)<br>@endif
+                            @endforeach
+                        @else
+                            Sin estudios registrados
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="4" class="text-center">No hay docentes registrados</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
 
         <!-- Pie de página -->
         <div class="footer">
-            <p>Total de docentes: {{ $docentes->count() }}</p>
-            <p>Generado el {{ now()->format('d/m/Y H:i:s') }}</p>
+            <p>Total de docentes: <strong>{{ $docentes->count() }}</strong></p>
+            <p>Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}</p>
         </div>
     </div>
 </body>
