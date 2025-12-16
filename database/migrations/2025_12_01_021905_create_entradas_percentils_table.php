@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('indice_estatura');
             $table->integer('indice_total');
             $table->foreignId('seccion_id')->nullable()->constrained('seccions')->cascadeOnDelete();
+            $table->unique(['inscripcion_id', 'ejecucion_percentil_id']);
             $table->foreignId('ejecucion_percentil_id')->nullable()->constrained('ejecuciones_percentils')->cascadeOnDelete();
             $table->foreignId('inscripcion_id')->constrained('inscripcions')->cascadeOnDelete();
             $table->boolean('status')->default(true);
