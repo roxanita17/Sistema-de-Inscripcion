@@ -145,7 +145,7 @@
                         @else
                             {{-- Se recorren las etnias indígenas existentes --}}
                             @foreach ($etniaIndigena as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">
+                                <tr class="  row-12" style="text-align: center">
                                     <td>{{ $index + 1 }}</td>
                                     <td class="title-main">{{ $datos->nombre }}</td>
                                     <td>

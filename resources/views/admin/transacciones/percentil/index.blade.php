@@ -140,7 +140,7 @@
                         @else
                             {{-- Se recorren los entradasPercentil existentes --}}
                             @foreach ($entradasPercentil as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">
+                                <tr class="  row-12" style="text-align: center">
 
                                     <td>
                                         <div class="student-info">

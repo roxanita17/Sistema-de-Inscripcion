@@ -362,12 +362,6 @@
     transition: all 0.2s ease;
 }
 
-.table-row-hover:hover {
-    background: var(--primary-light);
-    transform: scale(1.01);
-    box-shadow: var(--shadow);
-}
-
 .table-modern td {
     padding: 0.3rem 0.3rem;
     font-size: 0.9rem;

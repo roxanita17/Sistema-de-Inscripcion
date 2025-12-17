@@ -78,7 +78,7 @@
                                     ({{ $docente->codigo }})
                                 @endif
                             </option>
-                            @endif
+                            @endif 
                         @endforeach
                     </select>
 

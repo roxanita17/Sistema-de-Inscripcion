@@ -4,7 +4,6 @@
 Falta:
 
 ### Validaciones
-1. Al eliminar un estudiante debe eliminarse de la inscripción también
 
 ### Lógica de inscripción
 6. Filtrar institución de procedencia por:

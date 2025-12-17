@@ -143,7 +143,7 @@
                         @else
                             {{-- Se recorren los bancos existentes --}}
                             @foreach ($bancos as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">
+                                <tr class="  row-12" style="text-align: center">
                                    
                                     <td class="tittle-main" style="font-weight: 700">
                                         <div class="number-badge" style="padding: 0.5rem 1rem; min-width: 200px;">

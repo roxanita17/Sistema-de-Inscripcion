@@ -132,7 +132,7 @@
                         @else
                             @foreach($areaFormacion as $index => $datos)
                                 @if($datos->status)
-                                    <tr class="table-row-hover row-12">
+                                    <tr class="  row-12">
                                         <td>{{ $index + 1 }}</td>
                                         <td class="title-main">{{ $datos->nombre_area_formacion }}</td>
                                         <td>
@@ -268,7 +268,7 @@
                         @else
                             @foreach($grupoEstable as $index => $grupo)
                                 @if($grupo->status)
-                                    <tr class="table-row-hover row-12">
+                                    <tr class="  row-12">
                                         <td>{{ $index + 1 }}</td>
                                         <td class="title-main">{{ $grupo->nombre_grupo_estable }}</td>
                                         <td>

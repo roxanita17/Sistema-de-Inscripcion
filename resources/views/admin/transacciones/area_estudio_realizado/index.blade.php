@@ -128,7 +128,7 @@
                     </thead>
                     <tbody>
                         @forelse ($areaEstudioRealizado as $index => $datos)
-                            <tr class="table-row-hover">
+                            <tr class=" ">
                                 <td style="font-weight: bold">
                                     {{ $datos->areaFormacion->nombre_area_formacion ?? '—' }}
                                 </td>

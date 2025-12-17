@@ -143,7 +143,7 @@
                         @else
                             {{-- Se recorren los grados existentes --}}
                             @foreach ($grados as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">                                    
+                                <tr class="  row-12" style="text-align: center">                                    
                                     <td class="title-main">{{ $datos->numero_grado }}</td>
                                     <td>
                                         @if ($datos->status)

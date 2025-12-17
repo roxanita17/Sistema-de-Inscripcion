@@ -143,7 +143,7 @@
                         @else
                             {{-- Se recorren los roles existentes --}}
                             @foreach ($roles as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">
+                                <tr class="  row-12" style="text-align: center">
                                     <td>{{ $index + 1 }}</td>
                                     <td class="title-main">{{ $datos->name }}</td>
                                     

@@ -124,7 +124,7 @@
                         </thead>
                         <tbody style="text-align: center">
                             @forelse ($gradoAreaFormacion as $index => $datos)
-                                <tr class="table-row-hover ">
+                                <tr class="  ">
                                     <td style="text-align: center">
                                         <div class="number-badge" style="padding: 0.5rem 1rem; min-width: 200px;">
                                             {{ $datos->codigo }}

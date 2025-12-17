@@ -25,7 +25,7 @@
                 </thead>
                 <tbody>
                     @forelse ($areaEstudioRealizado as $index => $datos)
-                        <tr class="table-row-hover">
+                        <tr class=" ">
                             <td>{{ $index + $areaEstudioRealizado->firstItem() }}</td>
                             <td>{{ $datos->area_formacion->nombre_area_formacion ?? '—' }}</td>
                             <td>{{ $datos->estudio_realizado->estudios ?? '—' }}</td>
