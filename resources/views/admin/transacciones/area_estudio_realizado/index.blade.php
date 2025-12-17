@@ -144,22 +144,42 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn btn-edit"
-                                         data-bs-toggle="modal"
-                                         data-bs-target="#viewModalEditar{{ $datos->id }}"
-                                         @if(!$anioEscolarActivo) disabled @endif
-                                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar área de formación' }}">
-                                            <i class="fas fa-pen"></i>
-                                        </button>
-                                        <button class="action-btn btn-delete"
-                                         data-bs-toggle="modal"
-                                         data-bs-target="#deleteModal{{ $datos->id }}"
-                                         @if(!$anioEscolarActivo) disabled @endif
-                                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar área de formación' }}">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
+                                    {{-- BOTONES DE ACCIONES --}}
+                                            <div class="action-buttons">
+                                                <div class="dropdown dropstart text-center">
+                                                    <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                        {{-- Editar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-warning"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#viewModalEditar{{ $datos->id }}"
+                                                                title="Editar"
+                                                                @if (!$anioEscolarActivo) disabled @endif
+                                                                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
+                                                                <i class="fas fa-pen me-2"></i>
+                                                                Editar
+                                                            </button>
+                                                        </li>
+
+                                                        {{-- Inactivar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                                @disabled(!$anioEscolarActivo) title="Inactivar año escolar">
+                                                                <i class="fas fa-ban me-2"></i>
+                                                                Inactivar
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                 </td>
                             </tr>
 
@@ -171,23 +191,22 @@
                             ])
 
                             {{-- Modal Eliminar --}}
-                            <div class="modal fade" id="deleteModal{{ $datos->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $datos->id }}" aria-hidden="true">
+                            <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1" aria-labelledby="confirmarEliminarLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content modal-modern">
                                         <div class="modal-header-delete">
                                             <div class="modal-icon-delete">
                                                 <i class="fas fa-trash-alt"></i>
                                             </div>
-                                            <h5 class="modal-title-delete" id="deleteModalLabel{{ $datos->id }}">Confirmar Eliminación</h5>
+                                            <h5 class="modal-title-delete" id="confirmarEliminarLabel{{ $datos->id }}">Confirmar Inactivacion</h5>
                                             <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
                                         <div class="modal-body-delete">
-                                            <p class="delete-message">¿Estás seguro de que deseas eliminar esta asignación?</p>
+                                            <p class="delete-message">¿Estás seguro de que deseas inactivar esta asignación?</p>
                                             <p class="delete-warning">
-                                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                                Esta acción no se puede deshacer
+                                                
                                             </p>
                                         </div>
                                         <div class="modal-footer-delete">
@@ -200,7 +219,7 @@
                                                     </button>
                                                     <button type="submit" class="btn-modal-delete">
                                                         <i class="fas fa-trash me-1"></i>
-                                                        Eliminar
+                                                        Inactivar
                                                     </button>
                                                 </div>
                                             </form>
