@@ -91,7 +91,7 @@ Falta:
 # TODOS LOS MODULOS
 
 Falta:
-1. Agregar nuevo diseño de botones en todas las tablas
+1. Agregar nuevo diseño de botones en todas las tablas-
 
 
 # MODULOS EN PROCESO / FALTANTES

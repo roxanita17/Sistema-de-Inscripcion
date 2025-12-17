@@ -40,7 +40,6 @@
     text-transform: capitalize;
 }
 
-
 /* Contenedor principal */
 .main-container {
     padding: 1.5rem;
@@ -163,6 +162,27 @@
     font-size: 1rem;
 }
 
+.action-btn {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-menu {
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.dropdown-item i {
+    width: 18px;
+}
 /* Alertas modernas */
 .alerts-container {
     margin-bottom: 1.5rem;
