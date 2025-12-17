@@ -522,23 +522,44 @@ public function mostrarFormularioEditar($id)
 
     // Datos de persona
     // Adaptar los datos de Persona al esquema actual del modelo Persona
-$datosPersona = [
-    "id" => $request->id ?? $request->input('persona-id-representante'),
-    "primer_nombre" => $request->input('primer-nombre'),
-    "segundo_nombre" => $request->input('segundo-nombre'),
-    "prefijo_id" => $request->input('prefijo'),
-    "tercer_nombre" => $request->input('tercer-nombre'),
-    "primer_apellido" => $request->input('primer-apellido'),
-    "segundo_apellido" => $request->input('segundo-apellido'),
-    "numero_documento" => $request->input('numero_documento'),
-    "fecha_nacimiento" => $this->parseDate($request->input('fechaNacimiento')),
-    "genero_id" => $request->input('sexo'),
-    "localidad_id" => $request->input('idparroquia'),
-    "telefono" => $request->input('telefono'),
-    "tipo_documento_id" => $request->input('tipo-ci'),
-    "direccion" => $request->input('direccion-habitacion'),
-    "email" => $request->input('correo-representante'),
-];
+    $datosPersona = [
+        "id" => $request->id ?? $request->input('persona-id-representante'),
+        "primer_nombre" => $request->input('primer-nombre'),
+        "segundo_nombre" => $request->input('segundo-nombre'),
+        "prefijo_id" => $request->input('prefijo'),
+        "tercer_nombre" => $request->input('tercer-nombre'),
+        "primer_apellido" => $request->input('primer-apellido'),
+        "segundo_apellido" => $request->input('segundo-apellido'),
+        "numero_documento" => $request->input('numero_documento'),
+        "fecha_nacimiento" => $this->parseDate($request->input('fechaNacimiento')),
+        "genero_id" => $request->input('sexo'),
+        "localidad_id" => $request->input('idparroquia'),
+        "telefono" => $request->input('telefono'),
+        "tipo_documento_id" => $request->input('tipo-ci'),
+        "direccion" => $request->input('direccion-habitacion'),
+        "email" => $request->input('correo-representante'),
+    ];
+
+    // Si la madre está ausente y el padre es el representante, usar los datos del padre
+    if ($request->input('estado_madre') === 'Ausente' && $request->input('tipo_representante') === 'progenitor_padre_representante') {
+        $datosPersona = [
+            "id" => $request->id ?? $request->input('persona-id-representante'),
+            "primer_nombre" => $request->input('primer-nombre-padre'),
+            "segundo_nombre" => $request->input('segundo-nombre-padre'),
+            "prefijo_id" => $request->input('prefijo-padre'),
+            "tercer_nombre" => $request->input('tercer-nombre-padre'),
+            "primer_apellido" => $request->input('primer-apellido-padre'),
+            "segundo_apellido" => $request->input('segundo-apellido-padre'),
+            "numero_documento" => $request->input('numero_documento-padre'),
+            "fecha_nacimiento" => $this->parseDate($request->input('fecha-nacimiento-padre')),
+            "genero_id" => $request->input('sexo-padre'),
+            "localidad_id" => $request->input('idparroquia-padre'),
+            "telefono" => $request->input('telefono-padre'),
+            "tipo_documento_id" => $request->input('tipo-ci-padre'),
+            "direccion" => $request->input('direccion-padre'),
+            "email" => $request->input('correo-representante'),
+        ];
+    }
 
     // Campos adicionales del request que no existen en el modelo Persona se ignoran
 
