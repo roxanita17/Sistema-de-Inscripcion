@@ -31,9 +31,9 @@ class DocenteAreaGradoController extends Controller
         $buscar = request('buscar');
 
         $docentes = Docente::with([
-                'persona',
-                'asignacionesAreas.areaEstudios.areaFormacion',
-            ])
+            'persona',
+            'asignacionesAreas.areaEstudios.areaFormacion',
+        ])
             ->whereHas('asignacionesAreasActivas')
             ->whereHas('persona', fn($q) => $q->where('status', true))
             ->where('status', true)
@@ -42,7 +42,10 @@ class DocenteAreaGradoController extends Controller
 
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
-        return view('admin.transacciones.docente_area_grado.index', compact('docentes', 'anioEscolarActivo', 'buscar'
+        return view('admin.transacciones.docente_area_grado.index', compact(
+            'docentes',
+            'anioEscolarActivo',
+            'buscar'
         ));
     }
 
@@ -60,73 +63,31 @@ class DocenteAreaGradoController extends Controller
     }
 
     /**
-     * Eliminación lógica del docente y su persona
+     * Eliminación lógica de la asignación
      */
-    public function destroy($id)
+   
+    public function destroyAsignacion($id)
     {
-        DB::beginTransaction();
-
         try {
-            // Buscar docente con persona (si no existe fallará)
-            $docente = Docente::with('persona')->findOrFail($id);
-            $persona = $docente->persona;
+            // Buscar TODAS las asignaciones del docente (no por id directo)
+            $asignaciones = DocenteAreaGrado::whereHas('detalleDocenteEstudio', function ($q) use ($id) {
+                $q->where('docente_id', $id);
+            })->get();
 
-            // 1) DetalleDocenteEstudio
-            DetalleDocenteEstudio::where('docente_id', $docente->id)
-                ->update(['status' => false]);
-
-            // 2) Asignaciones DocenteAreaGrado que referencien a los detalles del docente
-            DocenteAreaGrado::whereHas('detalleDocenteEstudio', function($q) use ($docente) {
-                $q->where('docente_id', $docente->id);
-            })->update(['status' => false]);
-
-            // Inactivar docente y persona 
-            $docente->update(['status' => false]);
-
-            if ($persona) {
-                $persona->update(['status' => false]);
+            if ($asignaciones->isEmpty()) {
+                return back()->with('error', 'No existen asignaciones activas para este docente.');
             }
 
-            DB::commit();
+            // Inactivar todas las asignaciones
+            foreach ($asignaciones as $asg) {
+                $asg->update(['status' => false]);
+            }
 
-            return redirect()->route('admin.transacciones.docente_area_grado.index')
-                ->with('success', 'Docente eliminado (inactivado) correctamente.');
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Error de base de datos: ' . $e->getMessage());
+            return redirect()
+                ->route('admin.transacciones.docente_area_grado.index')
+                ->with('success', 'Asignación(es) del docente eliminadas correctamente.');
         } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Error al eliminar: ' . $e->getMessage());
+            return back()->with('error', 'No se pudo eliminar la asignación: ' . $e->getMessage());
         }
     }
-
-public function destroyAsignacion($id)
-{
-    try {
-        // Buscar TODAS las asignaciones del docente (no por id directo)
-        $asignaciones = DocenteAreaGrado::whereHas('detalleDocenteEstudio', function ($q) use ($id) {
-            $q->where('docente_id', $id);
-        })->get();
-
-        if ($asignaciones->isEmpty()) {
-            return back()->with('error', 'No existen asignaciones activas para este docente.');
-        }
-
-        // Inactivar todas las asignaciones
-        foreach ($asignaciones as $asg) {
-            $asg->update(['status' => false]);
-        }
-
-        return redirect()
-            ->route('admin.transacciones.docente_area_grado.index')
-            ->with('success', 'Asignación(es) del docente eliminadas correctamente.');
-
-    } catch (\Exception $e) {
-        return back()->with('error', 'No se pudo eliminar la asignación: ' . $e->getMessage());
-    }
-}
-
-
-
 }

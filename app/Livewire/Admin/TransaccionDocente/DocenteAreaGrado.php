@@ -9,6 +9,7 @@ use App\Models\Grado;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Models\DocenteAreaGrado as ModeloDocenteAreaGrado;
+use App\Models\Seccion;
 
 class DocenteAreaGrado extends Component
 {
@@ -22,9 +23,12 @@ class DocenteAreaGrado extends Component
     public $materiaId;
     public $materias = [];
     public $estudios = [];
-    
+
     public $gradoId;
     public $grados = [];
+
+    public $seccionId;
+    public $secciones = [];
 
     public $asignaciones = [];
 
@@ -48,7 +52,6 @@ class DocenteAreaGrado extends Component
             $this->cargarMateriasPorEstudios();
             $this->cargarGrados();
             $this->cargarAsignaciones();
-
         } else {
             // Modo registro normal → cargar listado de docentes
             $this->cargarDocentes();
@@ -89,10 +92,10 @@ class DocenteAreaGrado extends Component
             'persona.prefijoTelefono',
             'detalleDocenteEstudio.estudiosRealizado'
         ])
-        ->whereHas('persona', fn($q) => $q->where('status', true))
-        ->where('status', true)
-        ->orderBy('codigo', 'asc')
-        ->get();
+            ->whereHas('persona', fn($q) => $q->where('status', true))
+            ->where('status', true)
+            ->orderBy('codigo', 'asc')
+            ->get();
     }
 
 
@@ -110,11 +113,11 @@ class DocenteAreaGrado extends Component
             'areaEstudios.areaFormacion',
             'grado'
         ])
-        ->whereHas('detalleDocenteEstudio', function($q) {
-            $q->where('docente_id', $this->docenteSeleccionado->id);
-        })
-        ->where('status', true)
-        ->get();
+            ->whereHas('detalleDocenteEstudio', function ($q) {
+                $q->where('docente_id', $this->docenteSeleccionado->id);
+            })
+            ->where('status', true)
+            ->get();
     }
 
 
@@ -134,9 +137,10 @@ class DocenteAreaGrado extends Component
             'persona.prefijoTelefono',
             'detalleDocenteEstudio.estudiosRealizado'
         ])->find($this->docenteId);
- 
+
         $this->cargarMateriasPorEstudios();
-        $this->cargarGrados(); 
+        $this->cargarGrados();
+        $this->cargarSecciones();
         $this->cargarAsignaciones();
 
         session()->flash('success', 'Docente seleccionado correctamente.');
@@ -173,7 +177,7 @@ class DocenteAreaGrado extends Component
             ->get()
             ->sortBy('areaFormacion.nombre_area_formacion')
             ->values();
-}
+    }
 
     /**
      * CARGA LISTA DE GRADOS
@@ -185,6 +189,15 @@ class DocenteAreaGrado extends Component
             ->get();
     }
 
+    /**
+     * CARGA LISTA DE SECCIONES
+     */
+    public function cargarSecciones()
+    {
+        $this->secciones = Seccion::where('status', true)
+            ->orderBy('nombre', 'asc')
+            ->get();
+    }
 
     /**
      * REGISTRA UNA NUEVA ASIGNACIÓN
@@ -194,6 +207,7 @@ class DocenteAreaGrado extends Component
         $this->validate([
             'materiaId' => 'required|exists:area_estudio_realizados,id',
             'gradoId' => 'required|exists:grados,id',
+            'seccionId' => 'required|exists:seccions,id',
         ]);
 
         DB::beginTransaction();
@@ -217,6 +231,7 @@ class DocenteAreaGrado extends Component
                 'docente_estudio_realizado_id' => $detalleEstudio->id,
                 'area_estudio_realizado_id' => $this->materiaId,
                 'grado_id' => $this->gradoId,
+                'seccion_id' => $this->seccionId,
                 'status' => true,
             ])->exists();
 
@@ -231,16 +246,16 @@ class DocenteAreaGrado extends Component
                 'docente_estudio_realizado_id' => $detalleEstudio->id,
                 'area_estudio_realizado_id' => $this->materiaId,
                 'grado_id' => $this->gradoId,
+                'seccion_id' => $this->seccionId,
                 'status' => true,
             ]);
 
             DB::commit();
             $this->cargarAsignaciones();
-            $this->reset(['materiaId', 'gradoId']);
+            $this->reset(['materiaId', 'gradoId', 'seccionId']);
             $this->dispatch('resetSelects');
 
             session()->flash('success', 'Asignación registrada correctamente.');
-
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error al registrar la asignación: ' . $e->getMessage());
@@ -262,7 +277,6 @@ class DocenteAreaGrado extends Component
             $this->cargarAsignaciones();
 
             session()->flash('success', 'Asignación eliminada correctamente.');
-            
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error al eliminar la asignación: ' . $e->getMessage());
@@ -280,8 +294,10 @@ class DocenteAreaGrado extends Component
             'docenteSeleccionado',
             'materiaId',
             'gradoId',
+            'seccionId',
             'materias',
             'grados',
+            'secciones',
             'asignaciones'
         ]);
 

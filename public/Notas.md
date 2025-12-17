@@ -86,7 +86,7 @@ Falta:
 3. Deshabilitar la opcion de asignar materias si no esta ejecutado el percentil
 
 ### Agregar
-1. Campo de seccion en docente_area_grado
+1. Campo de seccion en docente_area_grado-
 2. Registro de grupos estables
 
 --------------------------------------------------------------------------
