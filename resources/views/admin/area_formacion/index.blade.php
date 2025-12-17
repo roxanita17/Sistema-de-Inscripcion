@@ -142,26 +142,41 @@
                                             </span>
                                         </td>
                                         <td>
+                                            {{-- BOTONES DE ACCIONES --}}
                                             <div class="action-buttons">
-                                                {{-- Editar área --}}
-                                                <button class="action-btn btn-edit"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#viewModalEditar{{ $datos->id }}"
-                                                        title="Editar"
-                                                        @if(!$anioEscolarActivo) disabled @endif
-                                                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar área de formación' }}">
-                                                    <i class="fas fa-pen"></i>
-                                                </button>
+                                                <div class="dropdown dropstart text-center">
+                                                    <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                        {{-- Editar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-warning"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#viewModalEditar{{ $datos->id }}"
+                                                                title="Editar"
+                                                                @if (!$anioEscolarActivo) disabled @endif
+                                                                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
+                                                                <i class="fas fa-pen me-2"></i>
+                                                                Editar
+                                                            </button>
+                                                        </li>
 
-                                                {{-- Eliminar área --}}
-                                                <button class="action-btn btn-delete"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#confirmarEliminar{{ $datos->id }}"
-                                                        title="Inactivar"
-                                                        @if(!$anioEscolarActivo) disabled @endif
-                                                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar área de formación' }}">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
+                                                        {{-- Inactivar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                                @disabled(!$anioEscolarActivo) title="Inactivar año escolar">
+                                                                <i class="fas fa-ban me-2"></i>
+                                                                Inactivar
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -175,14 +190,14 @@
                                             <div class="modal-content modal-modern">
                                                 <div class="modal-header-delete">
                                                     <div class="modal-icon-delete"><i class="fas fa-trash-alt"></i></div>
-                                                    <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                                                    <h5 class="modal-title-delete">Confirmar Inactivacion</h5>
                                                     <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                                                         <i class="fas fa-times"></i>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body-delete">
-                                                    <p>¿Deseas eliminar esta área de formación?</p>
-                                                    <p class="delete-warning">Esta acción no se puede deshacer.</p>
+                                                    <p>¿Deseas inactivar esta área de formación?</p>
+                                                    <p class="delete-warning"> </p>
                                                 </div>
                                                 <div class="modal-footer-delete">
                                                     <form action="{{ route('admin.area_formacion.destroy', $datos->id) }}" method="POST" class="w-100">
@@ -190,7 +205,7 @@
                                                         @method('DELETE')
                                                         <div class="footer-buttons">
                                                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
-                                                            <button type="submit" class="btn-modal-delete">Eliminar</button>
+                                                            <button type="submit" class="btn-modal-delete">Inactivar</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -285,23 +300,42 @@
                                             @endif
                                         </td>
                                         <td class="action-buttons">
-                                            {{-- Editar grupo estable --}}
-                                            <button class="action-btn btn-edit"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#viewModalEditarGrupoEstable{{ $grupo->id }}"
-                                                    @if(!$anioEscolarActivo) disabled @endif
-                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar grupo estable' }}">
-                                                <i class="fas fa-pen"></i>
-                                            </button>
+                                            {{-- BOTONES DE ACCIONES --}}
+                                            <div class="action-buttons">
+                                                <div class="dropdown dropstart text-center">
+                                                    <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                        {{-- Editar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-warning"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#viewModalEditarGrupoEstable{{ $grupo->id }}"
+                                                                title="Editar"
+                                                                @if (!$anioEscolarActivo) disabled @endif
+                                                                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
+                                                                <i class="fas fa-pen me-2"></i>
+                                                                Editar
+                                                            </button>
+                                                        </li>
 
-                                            {{-- Eliminar grupo estable --}}
-                                            <button class="action-btn btn-delete"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#confirmarEliminarGrupo{{ $grupo->id }}"
-                                                    @if(!$anioEscolarActivo) disabled @endif
-                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar grupo estable' }}">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                                        {{-- Inactivar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#confirmarEliminarGrupo{{ $grupo->id }}"
+                                                                @disabled(!$anioEscolarActivo) title="Inactivar año escolar">
+                                                                <i class="fas fa-ban me-2"></i>
+                                                                Inactivar
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
 
@@ -314,14 +348,14 @@
                                             <div class="modal-content modal-modern">
                                                 <div class="modal-header-delete">
                                                     <div class="modal-icon-delete"><i class="fas fa-trash-alt"></i></div>
-                                                    <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                                                    <h5 class="modal-title-delete">Confirmar Inactivacion</h5>
                                                     <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                                                         <i class="fas fa-times"></i>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body-delete">
-                                                    <p>¿Deseas eliminar este grupo estable?</p>
-                                                    <p class="delete-warning">Esta acción no se puede deshacer.</p>
+                                                    <p>¿Deseas inactivar este grupo estable?</p>
+                                                    <p class="delete-warning"> </p>
                                                 </div>
                                                 <div class="modal-footer-delete">
                                                     <form action="{{ route('admin.area_formacion.modalesGrupoEstable.destroyGrupoEstable', $grupo->id) }}" method="POST" class="w-100">
@@ -329,7 +363,7 @@
                                                         @method('DELETE')
                                                         <div class="footer-buttons">
                                                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
-                                                            <button type="submit" class="btn-modal-delete">Eliminar</button>
+                                                            <button type="submit" class="btn-modal-delete">Inactivar</button>
                                                         </div>
                                                     </form>
                                                 </div>

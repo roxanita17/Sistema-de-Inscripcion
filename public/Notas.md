@@ -66,7 +66,8 @@ Falta:
 2. Modelar correctamente el tipo de inscripción
 3. Crear nuevas migraciones necesarias
 4. Conectar las nuevas migraciones con los módulos ya existentes
-5. Verificar el modelado con la bd real del sistema
+5. Agregar la tabla de Grupos estables
+6. Verificar el modelado con la bd real del sistema
 
 --------------------------------------------------------------------------
 
@@ -74,6 +75,8 @@ Falta:
 
 ### Logica del codigo
 1. Rehacer la logica del codigo según el pensum
+
+--------------------------------------------------------------------------
 
 # MODULO: DOCENTE AREA GRADO
 
@@ -84,6 +87,7 @@ Falta:
 
 ### Agregar
 1. Campo de seccion en docente_area_grado
+2. Registro de grupos estables
 
 --------------------------------------------------------------------------
 
