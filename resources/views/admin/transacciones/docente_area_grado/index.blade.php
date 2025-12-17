@@ -283,7 +283,7 @@
 
 
 
-                                       
+
                                     </td>
                                 </tr>
                                 {{-- Ruta de ver detalle --}}
@@ -298,7 +298,7 @@
                                                 <div class="modal-icon-delete">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </div>
-                                                <h5 class="modal-title-delete">Confirmar Inactivacion</h5>
+                                                <h5 class="modal-title-delete">Confirmar Inactivación</h5>
                                                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal"
                                                     aria-label="Cerrar">
                                                     <i class="fas fa-times"></i>
@@ -307,6 +307,8 @@
                                             <div class="modal-body-delete">
                                                 <p>¿Deseas inactivar esta asignación?</p>
                                                 <p class="delete-warning">
+                                                    {{-- La asignación se marcará como inactiva pero los datos permanecerán en el
+                                                    sistema. --}}
                                                 </p>
                                             </div>
                                             <div class="modal-footer-delete">
