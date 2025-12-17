@@ -189,7 +189,7 @@
                         <tbody class="text-center">
                             @if ($inscripciones->isEmpty())
                                 <tr>
-                                    <td colspan="7">
+                                    <td colspan="8">
                                         <div class="empty-state">
                                             <div class="empty-icon"><i class="fas fa-inbox"></i></div>
                                             <h4>No hay inscripciones registradas</h4>

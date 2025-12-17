@@ -29,11 +29,6 @@ class PercentilService
 
         $indiceTotal = $indiceEdad + $indicePeso + $indiceEstatura;
 
-        $ejecucion->update([
-            'total_evaluados' => $entradas->count()
-        ]);
-
-
         return EntradasPercentil::updateOrCreate(
             [
                 'inscripcion_id' => $inscripcion->id,
@@ -51,6 +46,9 @@ class PercentilService
             ]
         );
     }
+
+
+
 
 
     /**
