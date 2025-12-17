@@ -131,7 +131,7 @@
                                 <th>Docente</th>
                                 <th style="text-align: center;">Estudios Realizados</th>
                                 <th style="text-align: center;">Áreas de Formación</th>
-                                <th style="text-align: center;">Grado</th>
+                                <th style="text-align: center;">Años</th>
                                 <th style="text-align: center; width: 120px;">Estado</th>
                                 <th style="text-align: center; width: 150px;">Acciones</th>
                             </tr>
@@ -206,7 +206,7 @@
                                             @endif
                                         @empty
                                             <span class="text-muted" style="font-size: 0.85rem;">
-                                                <i class="fas fa-minus-circle"></i> Sin materias asignadas
+                                                <i class="fas fa-minus-circle"></i> Sin años asignados
                                             </span>
                                         @endforelse
                                     </td>
@@ -334,9 +334,9 @@
                                             <div class="empty-icon">
                                                 <i class="fas fa-user-slash"></i>
                                             </div>
-                                            <h4>No hay docentes con materias y grados asignados</h4>
+                                            <h4>No hay docentes con materias y años asignados</h4>
                                             <p>Debe registrar docentes primero en el módulo de Docentes y asignarles
-                                                materias y grados</p>
+                                                materias y años</p>
                                         </div>
                                     </td>
                                 </tr>
