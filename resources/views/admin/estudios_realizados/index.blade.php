@@ -220,7 +220,7 @@
                                                 <div class="modal-body-delete">
                                                     <p>¿Deseas inactivar este estudio realizado?</p>
                                                     <p class="delete-warning">
-                                                        
+
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer-delete">
