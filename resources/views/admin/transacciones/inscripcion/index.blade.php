@@ -4,42 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-    <style>
-        .header-actions {
-            display: flex;
-            align-items: center;
-            margin-left: auto;
-        }
 
-        .header-actions .btn-create {
-            margin-left: 10px;
-        }
-
-        .header-actions .btn-percentil {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background-color: #17a2b8;
-            color: white;
-            border-radius: 4px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-
-        .header-actions .btn-percentil:hover {
-            background-color: #138496;
-            color: white;
-        }
-
-        .header-actions .btn-percentil i {
-            margin-right: 5px;
-        }
-
-        .header-actions .btn-percentil:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-        }
-    </style>
 @stop
 
 @section('title', 'Gestión de inscripciones')
@@ -57,10 +22,6 @@
                 </div>
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3 ">
-                {{-- Botón percentil (izquierda) --}}
-
-
-                {{-- Botón crear (derecha) --}}
                 <div>
                     <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
                         @if (!$anioEscolarActivo) disabled @endif
@@ -76,7 +37,6 @@
 
 @section('content')
     <div class="main-container">
-
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -93,6 +53,7 @@
             </div>
         @endif
 
+        {{-- ALERTAS --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -107,7 +68,6 @@
                         </button>
                     </div>
                 @endif
-
                 @if (session('error'))
                     <div class="alert-modern alert-error alert alert-dismissible fade show">
                         <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
@@ -122,8 +82,6 @@
                 @endif
             </div>
         @endif
-
-
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -143,6 +101,7 @@
                         </div>
                     </div>
                 </form>
+                {{-- Boton de percentil --}}
                 <div style="padding:">
                     @foreach ($grados as $grado)
                         @if ($grado->id === 1)
@@ -153,15 +112,13 @@
                         @endif
                     @endforeach
                 </div>
+                {{-- Boton de filtros --}}
                 <div>
                     <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
                         <i class="fas fa-filter"></i>
                         Filtros
                     </button>
                 </div>
-
-
-
                 <div class="header-right">
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
@@ -172,7 +129,7 @@
 
             <div class="card-body-modern">
                 <div class="table-wrapper">
-                    <table class="table-modern overflow-hidden hidden">
+                    <table class="table-modern ">
                         <thead>
                             <tr class="text-center">
                                 <th style="font-weight: bold">Cedula</th>
@@ -317,66 +274,56 @@
 
                                     {{-- Modal de ver --}}
                                     @include('admin.transacciones.inscripcion.modales.showModal')
-
-                                    {{-- MODAL ELIMINAR --}}
-                                    <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content modal-modern">
-                                                <div class="modal-header-delete">
-                                                    <div class="modal-icon-delete"><i class="fas fa-trash-alt"></i></div>
-                                                    <h5 class="modal-title-delete">Confirmar Eliminación</h5>
-                                                    <button type="button" class="btn-close-modal"
-                                                        data-bs-dismiss="modal">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-
-                                                </div>
-                                                </td>
-                                                </tr>
-                                                {{-- Modal de ver --}}
-                                                @include('admin.transacciones.inscripcion.modales.showModal')
-
-                                                {{-- MODAL ELIMINAR --}}
-                                                <div class="modal fade" id="confirmarEliminar{{ $datos->id }}"
-                                                    tabindex="-1">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content modal-modern">
-                                                            <div class="modal-header-delete">
-                                                                <div class="modal-icon-delete"><i
-                                                                        class="fas fa-trash-alt"></i></div>
-                                                                <h5 class="modal-title-delete">Confirmar Eliminación</h5>
-                                                                <button type="button" class="btn-close-modal"
-                                                                    data-bs-dismiss="modal">
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body-delete">
-                                                                <p>¿Deseas eliminar esta inscripción?</p>
-                                                                <p class="delete-warning">Esta acción no se puede deshacer.
-                                                                </p>
-                                                            </div>
-                                                            <div class="modal-footer-delete">
-                                                                <form
-                                                                    action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"
-                                                                    method="POST" class="w-100">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <div class="footer-buttons">
-                                                                        <button type="button" class="btn-modal-cancel"
-                                                                            data-bs-dismiss="modal">Cancelar</button>
-                                                                        <button type="submit"
-                                                                            class="btn-modal-delete">Eliminar</button>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                 @endforeach
                             @endif
                         </tbody>
                     </table>
                 </div>
+                {{-- MODAL DE INACTIVACIÓN --}}
+                @foreach ($inscripciones as $datos)
+                    <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content modal-modern">
+
+                                <div class="modal-header-delete">
+                                    <div class="modal-icon-delete">
+                                        <i class="fas fa-ban"></i>
+                                    </div>
+                                    <h5 class="modal-title-delete">Confirmar inactivación</h5>
+                                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body-delete">
+                                    <p>¿Deseas inactivar esta inscripción?</p>
+                                    <p class="delete-warning">
+                                        El estudiante también será inactivado.
+                                    </p>
+                                </div>
+
+                                <div class="modal-footer-delete">
+                                    <form action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"
+                                        method="POST" class="w-100">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <div class="footer-buttons">
+                                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                                Cancelar
+                                            </button>
+
+                                            <button type="submit" class="btn-modal-delete">
+                                                Inactivar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
 
                 {{-- Modal de filtros --}}
                 @include('admin.transacciones.inscripcion.modales.filtroModal')

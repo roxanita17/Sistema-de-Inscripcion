@@ -48,7 +48,7 @@ class Inscripcion extends Model
     {
         return $this->belongsTo(InstitucionProcedencia::class, 'institucion_procedencia_id', 'id');
     }
-    
+
     /**
      * Relación con EntradasPercentil
      */
@@ -56,7 +56,7 @@ class Inscripcion extends Model
     {
         return $this->hasOne(EntradasPercentil::class, 'inscripcion_id');
     }
-    
+
     /**
      * Relación con Sección a través de EntradasPercentil
      */
@@ -254,5 +254,27 @@ class Inscripcion extends Model
         ];
 
         return $datos;
+    }
+
+    public static function inactivar($id)
+    {
+        return DB::transaction(function () use ($id) {
+
+            $inscripcion = Inscripcion::with('alumno')->findOrFail($id);
+
+            // Inactivar la inscripción
+            $inscripcion->update([
+                'status' => 'Inactivo',
+            ]);
+
+            // Inactivar el alumno relacionado
+            if ($inscripcion->alumno) {
+                $inscripcion->alumno->update([
+                    'status' => false,
+                ]);
+            }
+
+            return true;
+        });
     }
 }

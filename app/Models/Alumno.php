@@ -20,7 +20,7 @@ class Alumno extends Model
     protected $table = 'alumnos';
 
     protected $fillable = [
-        
+
         'orden_nacimiento_id',
         'discapacidad_id',
         'etnia_indigena_id',
@@ -103,8 +103,8 @@ class Alumno extends Model
     public function inscripcionActiva()
     {
         return $this->hasOne(Inscripcion::class, 'alumno_id', 'id')
-                    ->where('status', true)
-                    ->latest('fecha_inscripcion');
+            ->where('status', true)
+            ->latest('fecha_inscripcion');
     }
 
 
@@ -116,8 +116,8 @@ class Alumno extends Model
         if (!empty($buscar)) {
             $query->whereHas('persona', function ($q) use ($buscar) {
                 $q->where('primer_nombre', 'LIKE', "%{$buscar}%")
-                  ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
-                  ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
+                    ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                    ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
             });
         }
 
@@ -126,68 +126,78 @@ class Alumno extends Model
 
     //REPORTES
 
-    public static function ReportePDF($genero=null, $tipo_documento=null){
+    public static function ReportePDF($genero = null, $tipo_documento = null)
+    {
         $query = DB::table("alumnos")
-        ->select(
-            // Datos del alumno
-            'alumnos.id',
-            'alumnos.talla_camisa',
-            'alumnos.talla_pantalon',
-            'alumnos.talla_zapato',
-            'alumnos.peso',
-            'alumnos.estatura',
+            ->select(
+                // Datos del alumno
+                'alumnos.id',
+                'alumnos.talla_camisa',
+                'alumnos.talla_pantalon',
+                'alumnos.talla_zapato',
+                'alumnos.peso',
+                'alumnos.estatura',
 
-            // Datos de persona
-            'personas.primer_nombre',
-            'personas.segundo_nombre',
-            'personas.tercer_nombre',
-            'personas.primer_apellido',
-            'personas.segundo_apellido',
-            'personas.numero_documento',
-            'personas.fecha_nacimiento',
-            'generos.genero as nombre_genero',
-            'tipo_documentos.nombre as tipo_documento',
+                // Datos de persona
+                'personas.primer_nombre',
+                'personas.segundo_nombre',
+                'personas.tercer_nombre',
+                'personas.primer_apellido',
+                'personas.segundo_apellido',
+                'personas.numero_documento',
+                'personas.fecha_nacimiento',
+                'generos.genero as nombre_genero',
+                'tipo_documentos.nombre as tipo_documento',
 
-            
-            'etnia_indigenas.nombre as etnia',
-            'lateralidads.lateralidad',
-            'orden_nacimientos.orden_nacimiento',
-            'discapacidads.nombre_discapacidad',
-        )
-        ->join("personas", "personas.id", "=", "alumnos.persona_id")
-        ->leftJoin("discapacidads", "discapacidads.id", "=", "alumnos.discapacidad_id")
-        ->leftJoin("orden_nacimientos", "orden_nacimientos.id", "=", "alumnos.orden_nacimiento_id")
-        ->leftJoin("etnia_indigenas", "etnia_indigenas.id", "=", "alumnos.etnia_indigena_id")
-        ->leftJoin("lateralidads", "lateralidads.id", "=", "alumnos.lateralidad_id")
-        ->leftJoin("generos", "generos.id", "=", "personas.genero_id")
-        ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id");
-        
-            /*
+
+                'etnia_indigenas.nombre as etnia',
+                'lateralidads.lateralidad',
+                'orden_nacimientos.orden_nacimiento',
+                'discapacidads.nombre_discapacidad',
+            )
+            ->join("personas", "personas.id", "=", "alumnos.persona_id")
+            ->leftJoin("discapacidads", "discapacidads.id", "=", "alumnos.discapacidad_id")
+            ->leftJoin("orden_nacimientos", "orden_nacimientos.id", "=", "alumnos.orden_nacimiento_id")
+            ->leftJoin("etnia_indigenas", "etnia_indigenas.id", "=", "alumnos.etnia_indigena_id")
+            ->leftJoin("lateralidads", "lateralidads.id", "=", "alumnos.lateralidad_id")
+            ->leftJoin("generos", "generos.id", "=", "personas.genero_id")
+            ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id");
+
+        /*
             * Filtros
             */
-            
-            if ($genero){
-                $query->where("generos.genero", $genero);
-            }
 
-            if($tipo_documento){
-                $query->where("tipo_documentos.nombre", $tipo_documento);
-            }
-         
+        if ($genero) {
+            $query->where("generos.genero", $genero);
+        }
+
+        if ($tipo_documento) {
+            $query->where("tipo_documentos.nombre", $tipo_documento);
+        }
+
         return $query->get();
     }
 
     public static function eliminar($id)
     {
-        return DB::table('alumnos')
-            ->where('id', $id)
-            ->update([
+        return DB::transaction(function () use ($id) {
+
+            $alumno = Alumno::with('inscripciones')->findOrFail($id);
+
+            // 1. Inactivar alumno
+            $alumno->update([
                 'status' => false,
-                'updated_at' => now()
             ]);
+
+            // 2. Inactivar inscripciones relacionadas (Activo o Pendiente)
+            $alumno->inscripciones()
+                ->whereIn('status', ['Activo', 'Pendiente'])
+                ->update([
+                    'status' => 'Inactivo',
+                    'updated_at' => now(),
+                ]);
+
+            return true;
+        });
     }
-
-
 }
-
-
