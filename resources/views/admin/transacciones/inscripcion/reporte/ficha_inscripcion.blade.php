@@ -142,20 +142,8 @@
             position: relative;
         }
         
-        h2::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -2px;
-            width: 60px;
-            height: 2px;
-            background: var(--color-primario);
-            border-radius: 2px;
-        }
-        
         .section {
             margin-bottom: 20px;
-            page-break-inside: avoid;
             background: white;
             padding: 15px 18px;
             border-radius: 8px;
@@ -167,7 +155,6 @@
             width: 100%;
             border-collapse: collapse;
             margin: 12px 0 0 0;
-            page-break-inside: avoid;
             background: white;
             border-radius: 4px;
             overflow: hidden;
@@ -267,15 +254,9 @@
                 page-break-inside: avoid;
                 margin-bottom: 15px;
             }
+
             
-            table {
-                page-break-inside: auto;
-            }
-            
-            tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
-            }
+
             
             .institution-header {
                 box-shadow: none;
@@ -334,7 +315,7 @@
                 @endif
             </h1>
             <h2>ESTUDIANTE {{ $datosCompletos['persona_alumno']['primer_nombre'] ?? 'N/A' }} {{ $datosCompletos['persona_alumno']['primer_apellido'] ?? 'N/A' }}</h2>
-            <h3>CÉDULA: {{ $datosCompletos['persona_alumno']['tipo_documento'] ?? 'N/A' }}-{{ $datosCompletos['persona_alumno']['numero_documento'] ?? 'N/A' }}</h3>
+            <h3>CÉDULA: {{ $datosCompletos['persona_alumno']['tipo_documento_id'] == 1 ? 'V-' : 'E-' }}{{ $datosCompletos['persona_alumno']['numero_documento'] ?? 'N/A' }}</h3>
             <p>FECHA DE GENERACIÓN: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
@@ -359,6 +340,7 @@
                 </tr>
             </table>
         </div>
+
         <div class="section">
             <h2>DATOS DEL ESTUDIANTE</h2>
             <table class="student-info">
@@ -584,13 +566,186 @@
         </div>
 
         <div class="section">
-            <h2>ACUERDOS DE CONVIVENCIA ESCOLAR ASUMIDO POR EL REPRESENTANTE Y SU REPRESENTANDO DURANTE LA PERMANENCIA DEL ESTUDIANTE EN LA INSTITUCION</h2>
-                <p>
-
-                </p>
+            <h2 class="text-center" style="background-color: var(--color-primario); color: white; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                ACUERDOS DE CONVIVENCIA ESCOLAR
+            </h2>
+            <h3 class="text-center" style="color: var(--color-secundario); margin-bottom: 20px;">
+                ASUMIDO POR EL REPRESENTANTE Y SU REPRESENTANDO DURANTE LA PERMANENCIA DEL ESTUDIANTE EN LA INSTITUCIÓN
+            </h3>
             
+            <div style="padding: 15px; margin-bottom: 20px;">
+                <ol style="padding-left: 20px; margin: 0;">
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Responsabilidad personal:</strong> El estudiante y representante deben asumir la responsabilidad de su comportamiento, actuación y aprendizaje en el cumplimiento de las actividades que le sean asignadas.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Puntualidad:</strong> Asistir puntualmente a las actividades académicas y de evaluación de acuerdo al horario de clase (7:00 am a 12:45 pm).
+                        <div style="padding: 8px; margin-top: 8px; border-radius: 4px; font-size: 0.9em; background-color: #f8f9fa;">
+                            <strong>Nota:</strong> Los días lunes, el Acto Cívico es obligatorio a las 7:00 am. La inasistencia se considerará falta en el primer bloque.
+                        </div>
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Justificación de inasistencias:</strong> Las ausencias deben ser justificadas por el representante legal. En caso de reposos médicos, deben presentarse en original y dos copias dentro de las 75 horas (3 días) hábiles siguientes.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Uniforme y presentación personal:</strong>
+                        <ul style="margin-top: 8px; padding-left: 20px;">
+                            <li>1° a 3° año: Camisa/chemise azul claro</li>
+                            <li>4° y 5° año: Camisa/chemise beige (no franela)</li>
+                            <li>Pantalón azul marino de gabardina clásico (no ajustado, no a la cadera)</li>
+                            <li>Zapatos negros, azul oscuro, marrón oscuro o blanco (colegiales o deportivos, no tipo botín)</li>
+                            <li>Cinturón azul oscuro, negro o marrón</li>
+                            <li>Uniforme de deporte: Mono azul marino con camisa blanca (solo los días de educación física)</li>
+                            <li>Cabello natural, sin accesorios inadecuados (aretes, piercings, etc.)</li>
+                            <li>Sin maquillaje excesivo ni tintes de colores no naturales</li>
+                        </ul>
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Respeto institucional:</strong> Mantener una actitud de respeto hacia todos los miembros de la comunidad educativa (directivos, docentes, administrativos, obreros, personal PAE y estudiantes), acatando las decisiones y orientaciones del personal directivo y docente.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Cuidado de instalaciones:</strong> Los estudiantes deben mantener en buen estado las instalaciones, mobiliario y materiales. Los daños causados serán responsabilidad económica del estudiante y su representante.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Prohibido recibir visitas:</strong> No se permiten visitas ajenas a la institución en horario de clases.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Permanencia en aulas:</strong> No se permite la permanencia de estudiantes en las aulas durante horas libres o sin supervisión docente.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Uso de celulares:</strong> Prohibido el uso de teléfonos celulares dentro y fuera de las aulas, solo bajo autorización del personal docente o directivo.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Orden y disciplina:</strong> No interrumpir ni obstaculizar el desarrollo normal de las actividades escolares. Prohibido participar en actos contrarios a la disciplina y al orden público.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Objetos prohibidos:</strong> No se permite traer a la institución: radio reproductores, juegos de azar, metras o trompos.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Procedimiento de quejas:</strong> Cualquier queja o reclamo debe presentarse por escrito ante la Coordinación correspondiente.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Prohibición de sustancias:</strong> Se prohíbe fumar, ingerir bebidas alcohólicas, sustancias estupefacientes o cualquier derivado del tabaco dentro o fuera de la institución.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Armas y objetos peligrosos:</strong> Está estrictamente prohibido portar armas blancas, de fuego, municiones, detonantes, explosivos o fuegos artificiales.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Permanencia en puertas de aulas:</strong> No se permite la permanencia de representantes o estudiantes en las puertas de las aulas durante horas de clase.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Estudiantes repitentes:</strong> Al estudiante que repita año escolar se le brindará una segunda oportunidad con el compromiso y seguimiento del plantel y su representante legal.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Representación legal:</strong> El estudiante que no conviva con su representante biológico deberá informarlo al momento de la inscripción y presentar la autorización correspondiente.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Seguimiento académico:</strong> El representante legal debe vigilar el rendimiento académico y la conducta de su representado, acudiendo al plantel al menos cada dos semanas.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Asistencia a asambleas:</strong> Es obligación de los padres y representantes asistir a las Asambleas Generales, reuniones, citaciones y entrega de boletines.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Madres adolescentes:</strong> Se prohíbe a las madres adolescentes (estudiantes) traer a sus hijos durante las actividades escolares.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Mascotas:</strong> Prohibido traer todo tipo de mascotas a la institución (perros, gatos, loros, entre otros).
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>Aportes económicos:</strong> No está permitido que los docentes soliciten dinero a los estudiantes sin autorización escrita del Director y conocimiento de los Padres y Representantes.
+                    </li>
+                    
+                    <li style="margin-bottom: 15px; padding: 10px;">
+                        <strong>Vestimenta de representantes:</strong> LOS PADRES Y REPRESENTANTES DEBEN ASISTIR A LA INSTITUCIÓN CON EL ATUENDO ADECUADO (prohibido escotes, franelillas, short, bermudas, chancletas, pijamas, batas, vestidos cortos y claros, entre otros).
+                    </li>
+                </ol>
+                
+                <div style="padding: 15px; margin-top: 20px; border-top: 2px solid #eee;">
+                    <p style="margin: 0; font-style: italic;">
+                        <strong>Nota:</strong> El incumplimiento de estos acuerdos podrá acarrear sanciones disciplinarias según lo establecido en el Reglamento Interno de la Institución.
+                    </p>
+                </div>
+            </div>
         </div>
 
+        <div class="section">
+            <h2 class="text-center" style="background-color: var(--color-primario-pastel); padding: 10px; border-radius: 5px; color: var(--color-primario);">
+                ACUERDOS DE CONVIVENCIA ESCOLAR
+            </h2>
+            
+            <div style="margin: 15px 0; padding: 15px; border: 1px solid var(--color-borde); border-radius: 5px; background-color: #f9f9f9;">
+                <p style="text-align: justify; margin-bottom: 15px; line-height: 1.6;">
+                    <strong>Ley Orgánica para la Protección del Niño, Niña y Adolescentes Art. 54 (LOPNA):</strong><br>
+                    <em>Obligaciones de los padres, madre y representantes responsables en materia de educación.</em>
+                </p>
+                
+                <p style="text-align: justify; margin-bottom: 15px; line-height: 1.6;">
+                    Los padres, representantes o responsables, tienen la obligación inmediata de garantizar la educación de los niños, niñas y adolescentes. 
+                    En consecuencia deben inscribirlos oportunamente en una escuela, plantel o instituto de educación, de conformidad con la ley, 
+                    así como exigirles su asistencia regular a clases y participar activamente en el proceso educativo.
+                </p>
+                
+                <div style="background-color: white; padding: 15px; border: 1px solid #e0e0e0; border-radius: 5px; margin: 15px 0;">
+                    <p style="text-align: justify; line-height: 1.6; margin: 0;">
+                        Yo <strong>
+                            @if(isset($datosCompletos['representante_legal']['representante']['persona']))
+                                {{ $datosCompletos['representante_legal']['representante']['persona']['primer_nombre'] ?? 'N/A' }} 
+                                {{ $datosCompletos['representante_legal']['representante']['persona']['segundo_nombre'] ?? '' }} 
+                                {{ $datosCompletos['representante_legal']['representante']['persona']['primer_apellido'] ?? '' }} 
+                                {{ $datosCompletos['representante_legal']['representante']['persona']['segundo_apellido'] ?? '' }}
+                            @else
+                                N/A
+                            @endif
+                        </strong>, 
+                        con cédula de identidad 
+                        <strong>
+                            @if(isset($datosCompletos['representante_legal']['representante']['persona']['tipo_documento_id']))
+                                {{ $datosCompletos['representante_legal']['representante']['persona']['tipo_documento_id'] == 1 ? 'V-' : 'E-' }}
+                            @endif
+                            {{ $datosCompletos['representante_legal']['representante']['persona']['numero_documento'] ?? 'N/A' }}            
+                        </strong>,
+                        en mi carácter de representante legal, hago constar que me comprometo a cumplir y hacer cumplir por mi representado(a) 
+                        <strong> 
+                            {{ $datosCompletos['persona_alumno']['primer_nombre'] }} 
+                            {{ $datosCompletos['persona_alumno']['segundo_nombre'] }} 
+                            {{ $datosCompletos['persona_alumno']['tercer_nombre'] ?? '' }}
+                            {{ $datosCompletos['persona_alumno']['primer_apellido'] }} 
+                            {{ $datosCompletos['persona_alumno']['segundo_apellido'] }}
+                        </strong>, 
+                        portador de la cédula de identidad 
+                        <strong> 
+                            {{ $datosCompletos['persona_alumno']['tipo_documento_id'] == 1 ? 'V-' : 'E-' }}{{ $datosCompletos['persona_alumno']['numero_documento'] }}
+                        </strong>,
+                        los deberes y obligaciones que nos imponen las leyes y reglamentos vigentes, así como las establecidas por la institución educativa.
+                    </p>
+                </div>
+                
+                <p style="text-align: justify; margin-top: 15px; font-style: italic; color: #555;">
+                    <strong>Nota:</strong> Me comprometo a notificar cualquier cambio de domicilio durante el transcurso del año escolar. La Dirección del plantel no se hace responsable por los perjuicios ocasionados a mi representado(a) por el incumplimiento de esta disposición.
+                </p>
+            </div>
+        </div>
 
        
     </div>  
