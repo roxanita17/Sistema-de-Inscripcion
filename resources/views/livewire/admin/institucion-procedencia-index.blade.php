@@ -128,7 +128,7 @@
 
                         {{-- Listado --}}
                         @foreach ($instituciones as $index => $item)
-                            <tr class="table-row-hover row-12">
+                            <tr class="  row-12">
 
                                 <td>{{ $instituciones->firstItem() + $index }}</td>
 

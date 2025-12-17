@@ -112,7 +112,7 @@ class InscripcionController extends Controller
         $grados = Grado::all();
         $expresion_literaria = ExpresionLiteraria::all();
         $institucion_procedencia = InstitucionProcedencia::all();
-        
+
 
         return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
     }
@@ -126,9 +126,9 @@ class InscripcionController extends Controller
 
     public function destroy($id)
     {
-        Inscripcion::eliminar($id);
+       Inscripcion::inactivar($id);
 
-        return redirect()->route('admin.transacciones.inscripcion.index')->with('success', 'Inscripción eliminada correctamente');
+        return redirect()->route('admin.transacciones.inscripcion.index')->with('success', 'Inscripción inactivada correctamente');
     }
 
     //reportes PDF
@@ -158,7 +158,7 @@ class InscripcionController extends Controller
         ])->findOrFail($id);
 
         $datosCompletos = $inscripcion->obtenerDatosCompletos();
-        
+
         // Obtener el año escolar activo
         $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')

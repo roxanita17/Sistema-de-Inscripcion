@@ -31,9 +31,12 @@ class Seccion extends Model
     /**
      * Relación con EjecucionesPercentil
      */
-    public function ejecucionPercentil()
+    public function ejecucion()
     {
-        return $this->belongsTo(EjecucionesPercentil::class, 'ejecucion_percentil_id');
+        return $this->belongsTo(
+            EjecucionesPercentil::class,
+            'ejecucion_percentil_id'
+        );
     }
 
     /**

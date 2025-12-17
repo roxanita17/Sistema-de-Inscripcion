@@ -78,7 +78,7 @@
                                     ({{ $docente->codigo }})
                                 @endif
                             </option>
-                            @endif
+                            @endif 
                         @endforeach
                     </select>
 
@@ -356,7 +356,7 @@
                 <div class="col-md-4">
                     <label for="grados_id" class="form-label-modern">
                         <i class="fas fa-graduation-cap"></i>
-                        Grados
+                        Años
                         <span class="required-badge">*</span>
                     </label>
 
@@ -367,7 +367,7 @@
                             data-style="btn-default"
                             data-width="100%"
                             wire:model="gradoId">
-                        <option value="">Seleccione un grado</option>
+                        <option value="">Seleccione un año</option>
 
                         @foreach($grados as $item)
                             <option value="{{ $item->id }}">
@@ -386,7 +386,7 @@
 
                     <small class="form-text-modern">
                         <i class="fas fa-info-circle"></i>
-                        Seleccione el grado 
+                        Seleccione el año 
                     </small>
                 </div>
 
@@ -434,7 +434,7 @@
                         <tr>
                             <th >#</th>
                             <th>Materia</th>
-                            <th>Grado</th>
+                            <th>Año</th>
                             <th style="text-align: center;">Fecha de Registro</th>
                             <th>Acciones</th>
                         </tr>

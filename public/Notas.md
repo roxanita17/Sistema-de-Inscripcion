@@ -3,8 +3,7 @@
 ## BACKEND / REGLAS DE NEGOCIO (BK)
 Falta:
 
-### Validaciones críticas
-1. Validar que el percentil solo se ejecute una vez por inscripción o reescriba los datos
+### Validaciones
 
 ### Lógica de inscripción
 6. Filtrar institución de procedencia por:
@@ -13,9 +12,7 @@ Falta:
    - Municipio
    - Localidad
 
----
-
-## FUNCIONALIDADES
+## Funcionalidades
 Falta:
 
 1. Implementar buscadores con Livewire en los selects de inscripción
@@ -23,11 +20,8 @@ Falta:
 3. Editar inscripción
 4. Inscripción por prosecución (tipo de inscripción)
 
----
-
-## FILTROS
+## Filtros
 Falta:
-
 1. Filtro por status de inscripción
 2. Filtro por grado
    - Inscripción
@@ -36,14 +30,7 @@ Falta:
    - Inscripción
    - Historial de percentil
 
----
-
-## DISEÑO / VISTAS (FRONTEND)
-Falta:
-
-3. Mejorar vista del historial de percentil
-
----
+--------------------------------------------------------------------------
 
 ## SEEDERS
 Falta:
@@ -53,36 +40,62 @@ Falta:
 3. Mejorar seeder de alumnos e inscripción
 4. Acomodar seeder de representantes
 
+--------------------------------------------------------------------------
+
 # MODULO: HISTÓRICO ACADÉMICO
 
 ## FILTRADO
 Falta:
 
 ### Inscripción
-1. Filtrar por tipo de inscripción
 2. Filtrar por grado
 3. Filtrar por sección
-4. Filtrar por institución de procedencia
 
 ### Docente (docente_area_grado)
-5. Filtrar por materias
-6. Filtrar por estudios del docente
-7. Filtrar por grado
-8. Filtrar por sección
+4. Filtrar por materias
+5. Filtrar por grado
 
-### Percentil
-9. Historial del percentil (entradas_percentil)
 
+--------------------------------------------------------------------------
 
 # BASE DE DATOS (BD)
 
-## INSCRIPCIÓN
 Falta:
 
 1. Separar las tallas del estudiante en una tabla independiente
 2. Modelar correctamente el tipo de inscripción
 3. Crear nuevas migraciones necesarias
 4. Conectar las nuevas migraciones con los módulos ya existentes
+5. Agregar la tabla de Grupos estables
+6. Verificar el modelado con la bd real del sistema
+
+--------------------------------------------------------------------------
+
+# MODULO: AREA DE FORMACION
+
+### Logica del codigo
+1. Rehacer la logica del codigo según el pensum
+
+--------------------------------------------------------------------------
+
+# MODULO: DOCENTE AREA GRADO
+
+### Validaciones
+1. Validar que no se asignen materias duplicadas a un docente en el mismo grado
+2. Validar que las materias y grados que esten disponibles sean las mismas registradas en GRADO AREA FORMACION
+3. Deshabilitar la opcion de asignar materias si no esta ejecutado el percentil
+
+### Agregar
+1. Campo de seccion en docente_area_grado
+2. Registro de grupos estables
+
+--------------------------------------------------------------------------
+
+# TODOS LOS MODULOS
+
+Falta:
+1. Agregar nuevo diseño de botones en todas las tablas-
+
 
 # MODULOS EN PROCESO / FALTANTES
 

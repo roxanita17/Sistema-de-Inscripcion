@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('ejecuciones_percentils', function (Blueprint $table) {
             $table->id();
-            $table->integer('total_evaluados');
-            $table->integer('status');
+            $table->foreignId('anio_escolar_id')->nullable()
+                  ->constrained('anio_escolars')
+                  ->nullOnDelete();
+            $table->integer('total_evaluados')->default(0);
+            $table->integer('status')->nullable();
             $table->timestamps();
         });
     }

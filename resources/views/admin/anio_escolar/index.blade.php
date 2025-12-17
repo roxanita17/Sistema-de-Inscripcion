@@ -56,7 +56,8 @@
                 <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
                 <div>
                     <h5 class="alert-heading mb-1">No hay año escolar activo</h5>
-                    <p class="mb-0">Debe registrar un año escolar activo para poder utilizar los demás módulos del sistema.</p>
+                    <p class="mb-0">Debe registrar un año escolar activo para poder utilizar los demás módulos del
+                        sistema.</p>
                 </div>
             </div>
         </div>
@@ -150,17 +151,19 @@
                     {{-- Tabla Body --}}
                     <tbody style="text-align: center">
                         @forelse ($escolar as $index => $datos)
-                            <tr class="table-row-hover row-12" style="text-align: center">
+                            <tr class=" row-12" style="text-align: center">
                                 <td>{{ $escolar->firstItem() + $index }}</td>
                                 <td>
                                     <i class="fas fa-calendar text-primary me-2"></i>
                                     {{-- Formato de fecha --}}
-                                    <span class="fw-semibold">{{ \Carbon\Carbon::parse($datos->inicio_anio_escolar)->format('d/m/Y') }}</span>
+                                    <span
+                                        class="fw-semibold">{{ \Carbon\Carbon::parse($datos->inicio_anio_escolar)->format('d/m/Y') }}</span>
                                 </td>
                                 <td>
                                     <i class="fas fa-calendar text-primary me-2"></i>
                                     {{-- Formato de fecha --}}
-                                    <span class="fw-semibold">{{ \Carbon\Carbon::parse($datos->cierre_anio_escolar)->format('d/m/Y') }}</span>
+                                    <span
+                                        class="fw-semibold">{{ \Carbon\Carbon::parse($datos->cierre_anio_escolar)->format('d/m/Y') }}</span>
                                 </td>
                                 <td>
                                     <span class="badge badgebg-info text-dark">
@@ -188,33 +191,52 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        {{-- Ver --}}
-                                        <button class="action-btn btn-view" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#viewModal{{ $datos->id }}" 
-                                            title="Ver Detalles">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <div class="dropdown dropstart text-center">
+                                            <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
 
-                                        {{-- Extender (solo si está activo) --}}
-                                        @if(in_array($datos->status, ['Activo', 'Extendido']))
-                                        <button type="button" 
-                                            class="action-btn btn-edit" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#viewModalExtender{{ $datos->id }}" 
-                                            title="Extender Año Escolar">
-                                            <i class="fas fa-calendar-plus"></i>
-                                        </button>
-                                        @endif
+                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                {{-- Ver mas --}}
+                                                <li>
+                                                    <button class="dropdown-item d-flex align-items-center text-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewModal{{ $datos->id }}"
+                                                        title="Ver detalles del año escolar">
+                                                        <i class="fas fa-eye me-2"></i>
+                                                        Ver más
+                                                    </button>
+                                                </li>
 
-                                        {{-- Eliminar --}}
-                                        <button type="button" 
-                                            class="action-btn btn-delete" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#deleteModal{{ $datos->id }}" 
-                                            title="Inactivar">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
+                                                {{-- Extender --}}
+                                                <li>
+                                                    @if (in_array($datos->status, ['Activo', 'Extendido']))
+                                                        <button class="dropdown-item d-flex align-items-center text-warning"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#viewModalExtender{{ $datos->id }}"
+                                                            title="Extender Año Escolar">
+                                                            <i class="fas fa-calendar-plus me-2"></i>
+                                                            Extender
+                                                        </button>
+                                                    @endif
+                                                </li>
+
+                                                {{-- Inactivar --}}
+                                                <li>
+                                                    <button class="dropdown-item d-flex align-items-center text-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal{{ $datos->id }}"
+                                                        @disabled(!$anioEscolarActivo)
+                                                        title="Inactivar año escolar">
+                                                        <i class="fas fa-ban me-2"></i>
+                                                        Inactivar
+                                                    </button>
+                                                </li>
+
+
+                                            </ul>
+                                        </div>                                        
                                     </div>
                                 </td>
                             </tr>
@@ -224,31 +246,37 @@
                             @include('admin.anio_escolar.modales.showModal')
 
                             {{-- Modal Eliminar --}}
-                            <div class="modal fade" id="deleteModal{{ $datos->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $datos->id }}" aria-hidden="true">
+                            <div class="modal fade" id="deleteModal{{ $datos->id }}" tabindex="-1"
+                                aria-labelledby="deleteModalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content modal-modern">
                                         <div class="modal-header-delete">
                                             <div class="modal-icon-delete">
                                                 <i class="fas fa-trash-alt"></i>
                                             </div>
-                                            <h5 class="modal-title-delete" id="deleteModalLabel{{ $datos->id }}">Confirmar Inactivación</h5>
-                                            <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
+                                            <h5 class="modal-title-delete" id="deleteModalLabel{{ $datos->id }}">
+                                                Confirmar Inactivación</h5>
+                                            <button type="button" class="btn-close-modal" data-bs-dismiss="modal"
+                                                aria-label="Close">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
                                         <div class="modal-body-delete">
-                                            <p class="delete-message">¿Estás seguro de que deseas inactivar este año escolar?</p>
+                                            <p class="delete-message">¿Estás seguro de que deseas inactivar este año
+                                                escolar?</p>
                                             <p class="delete-warning">
                                                 <i class="fas fa-exclamation-triangle me-1"></i>
                                                 Esta acción marcará el año como inactivo
                                             </p>
                                         </div>
                                         <div class="modal-footer-delete">
-                                            <form action="{{ route('admin.anio_escolar.destroy', $datos->id) }}" method="POST" class="w-100">
+                                            <form action="{{ route('admin.anio_escolar.destroy', $datos->id) }}"
+                                                method="POST" class="w-100">
                                                 @csrf
                                                 @method('DELETE')
                                                 <div class="footer-buttons">
-                                                    <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                                    <button type="button" class="btn-modal-cancel"
+                                                        data-bs-dismiss="modal">
                                                         Cancelar
                                                     </button>
                                                     <button type="submit" class="btn-modal-delete">

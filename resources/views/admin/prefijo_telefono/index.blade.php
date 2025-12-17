@@ -143,7 +143,7 @@
                         @else
                             {{-- Se recorren los grados existentes --}}
                             @foreach ($prefijos as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">                                    
+                                <tr class="  row-12" style="text-align: center">                                    
                                     <td class="title-main">{{ $datos->prefijo}}</td>
                                     <td>
                                         @if ($datos->status)

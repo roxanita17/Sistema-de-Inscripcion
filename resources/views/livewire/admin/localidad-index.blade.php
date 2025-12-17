@@ -128,7 +128,7 @@
 
                         {{-- LISTADO --}}
                         @foreach ($localidades as $index => $datos)
-                            <tr class="table-row-hover row-12">
+                            <tr class="  row-12">
 
                                 {{-- Número --}}
                                 <td>{{ $localidades->firstItem() + $index }}</td>

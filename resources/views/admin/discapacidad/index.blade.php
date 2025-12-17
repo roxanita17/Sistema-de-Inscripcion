@@ -144,7 +144,7 @@
                         @else
                             {{-- Se recorren las discapacidades existentes --}}
                             @foreach ($discapacidad as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">
+                                <tr class="  row-12" style="text-align: center">
                                     <td>{{ $index + 1 }}</td>
                                     <td class="title-main">{{ $datos->nombre_discapacidad }}</td>
                                     <td>

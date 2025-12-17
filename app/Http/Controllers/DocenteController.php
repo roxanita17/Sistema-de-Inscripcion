@@ -36,7 +36,7 @@ class DocenteController extends Controller
         $prefijos = PrefijoTelefono::all();
 
         $docentes = Docente::with(['persona'])
-            ->whereHas('persona', function($query) {
+            ->whereHas('persona', function ($query) {
                 $query->where('status', true);
             })
             ->where('status', true)
@@ -72,6 +72,7 @@ class DocenteController extends Controller
     {
         $anioEscolar = \App\Models\AnioEscolar::activos()
             ->where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
             ->first();
 
         if (!$anioEscolar) {
@@ -131,7 +132,7 @@ class DocenteController extends Controller
                 'tercer_nombre' => $request->tercer_nombre,
                 'primer_apellido' => $request->primer_apellido,
                 'segundo_apellido' => $request->segundo_apellido,
-                'numero_documento' => $request->numero_documento ,
+                'numero_documento' => $request->numero_documento,
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,
@@ -154,9 +155,8 @@ class DocenteController extends Controller
 
             DB::commit();
 
-        return redirect()->route('admin.docente.estudios', $docente->id)
-            ->with('success', '<span style="font-size: 1.5rem;">Docente registrado correctamente, ahora puede agregar sus estudios.</span>');
-
+            return redirect()->route('admin.docente.estudios', $docente->id)
+                ->with('success', '<span style="font-size: 1.5rem;">Docente registrado correctamente, ahora puede agregar sus estudios.</span>');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -189,7 +189,6 @@ class DocenteController extends Controller
 
         // VALIDACIÓN (excluyendo la cédula actual)
         $validated = $request->validate([
-            'anio_escolar_id' => 'required|exists:anio_escolars,id',
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => 'required|string|max:20' . $persona->numero_documento,
             'primer_nombre' => 'required|string|max:50',
@@ -210,7 +209,6 @@ class DocenteController extends Controller
             'codigo' => 'nullable|numeric',
             'dependencia' => 'nullable|string|max:100',
         ], [
-            'anio_escolar_id.required' => 'El año escolar es obligatorio',
             'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
             'numero_documento.required' => 'La cédula es obligatoria',
             'numero_documento.unique' => 'Esta cédula ya está registrada',
@@ -225,6 +223,7 @@ class DocenteController extends Controller
         DB::beginTransaction();
 
         try {
+            $anioEscolar = $this->obtenerAnioEscolarActivo();
             // 1. ACTUALIZAR PERSONA
             $persona->update([
                 'primer_nombre' => $request->primer_nombre,
@@ -243,6 +242,7 @@ class DocenteController extends Controller
 
             // 2. ACTUALIZAR DOCENTE
             $docente->update([
+                'anio_escolar_id' => $anioEscolar->id,
                 'primer_telefono' => $request->primer_telefono,
                 'codigo' => $request->codigo,
                 'dependencia' => $request->dependencia,
@@ -252,7 +252,6 @@ class DocenteController extends Controller
 
             return redirect()->route('admin.docente.estudios', $docente->id)
                 ->with('success', 'Docente actualizado correctamente, ahora puede editar sus estudios.');
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -262,24 +261,24 @@ class DocenteController extends Controller
         }
     }
 
-        /**
+    /**
      * Muestra los detalles de un docente
      */
     public function show($id)
     {
         $docente = Docente::with([
-                'persona.tipoDocumento',
-                'persona.genero',
-                'persona.prefijoTelefono',
-                'detalleEstudios' => function ($q) {
-                    $q->where('status', true);
-                },
-                'detalleEstudios.estudiosRealizado'
-            ])
+            'persona.tipoDocumento',
+            'persona.genero',
+            'persona.prefijoTelefono',
+            'detalleEstudios' => function ($q) {
+                $q->where('status', true);
+            },
+            'detalleEstudios.estudiosRealizado'
+        ])
             ->findOrFail($id);
 
-            return view('admin.docente.modales.showModal', compact('docente'));
-        }
+        return view('admin.docente.modales.showModal', compact('docente'));
+    }
 
     /**
      * Registro de estudios del docente, componente livewire
@@ -313,7 +312,6 @@ class DocenteController extends Controller
 
             return redirect()->route(route: 'admin.docente.index')
                 ->with('success', 'Docente eliminado correctamente.');
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -322,65 +320,27 @@ class DocenteController extends Controller
     }
 
 
-public function reportePDF($id)
-{
-    try {
-        // Cargar el docente con las relaciones necesarias
-        $docente = Docente::with([
-            'persona.tipoDocumento',
-            'persona.genero',
-            'detalleDocenteEstudio.estudiosRealizado'
-        ])->findOrFail($id);
+    public function reportePDF($id)
+    {
+        try {
+            // Cargar el docente con las relaciones necesarias
+            $docente = Docente::with([
+                'persona.tipoDocumento',
+                'persona.genero',
+                'detalleDocenteEstudio.estudiosRealizado'
+            ])->findOrFail($id);
 
-        // Verificar si se cargaron los datos de la persona
-        if ($docente->persona) {
-            // Cargar explícitamente las relaciones si no están cargadas
-            if (!$docente->persona->relationLoaded('genero')) {
-                $docente->persona->load('genero');
-            }
-            if (!$docente->persona->relationLoaded('tipoDocumento')) {
-                $docente->persona->load('tipoDocumento');
-            }
-
-            // Mapear los datos de la persona al objeto docente
-            $docente->tipo_documento = $docente->persona->tipoDocumento->nombre ?? 'N/A';
-            $docente->numero_documento = $docente->persona->numero_documento ?? 'N/A';
-            $docente->primer_nombre = $docente->persona->primer_nombre ?? 'N/A';
-            $docente->segundo_nombre = $docente->persona->segundo_nombre ?? '';
-            $docente->tercer_nombre = $docente->persona->tercer_nombre ?? '';
-            $docente->primer_apellido = $docente->persona->primer_apellido ?? 'N/A';
-            $docente->segundo_apellido = $docente->persona->segundo_apellido ?? '';
-            $docente->fecha_nacimiento = $docente->persona->fecha_nacimiento ?? 'N/A';
-            $docente->genero = $docente->persona->genero ? $docente->persona->genero->genero : 'N/A';
-            $docente->email = $docente->persona->email ?? 'N/A';
-            $docente->direccion = $docente->persona->direccion ?? 'N/A';
-            $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
-        }
-
-        // Para depuración
-        // return response()->json($docente);
-
-        $pdf = PDF::loadView('admin.docente.reportes.individual_PDF', [
-            'docente' => $docente
-        ]);
-
-        return $pdf->stream('docente_' . ($docente->numero_documento ?? $docente->id) . '.pdf');
-
-    } catch (\Exception $e) {
-        return response('Error al generar el PDF: ' . $e->getMessage(), 500);
-    }
-}
-
-public function reporteGeneralPDF()
-{
-    try {
-        $docentes = Docente::with([
-            'persona.tipoDocumento',
-            'persona.genero',
-            'detalleDocenteEstudio.estudiosRealizado'
-        ])->get()
-        ->map(function($docente) {
+            // Verificar si se cargaron los datos de la persona
             if ($docente->persona) {
+                // Cargar explícitamente las relaciones si no están cargadas
+                if (!$docente->persona->relationLoaded('genero')) {
+                    $docente->persona->load('genero');
+                }
+                if (!$docente->persona->relationLoaded('tipoDocumento')) {
+                    $docente->persona->load('tipoDocumento');
+                }
+
+                // Mapear los datos de la persona al objeto docente
                 $docente->tipo_documento = $docente->persona->tipoDocumento->nombre ?? 'N/A';
                 $docente->numero_documento = $docente->persona->numero_documento ?? 'N/A';
                 $docente->primer_nombre = $docente->persona->primer_nombre ?? 'N/A';
@@ -392,28 +352,62 @@ public function reporteGeneralPDF()
                 $docente->genero = $docente->persona->genero ? $docente->persona->genero->genero : 'N/A';
                 $docente->email = $docente->persona->email ?? 'N/A';
                 $docente->direccion = $docente->persona->direccion ?? 'N/A';
-                $docente->telefono = $docente->primer_telefono ?? $docente->persona->telefono ?? 'N/A';
+                $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
             }
-            return $docente;
-        })
-        ->sortBy(function($docente) {
-            // Ordenar por la primera letra del primer apellido
-            $primerApellido = $docente->primer_apellido ?? 
-                            ($docente->persona->primer_apellido ?? '');
-            return strtoupper(substr($primerApellido, 0, 1));
-        })
-        ->values(); // Reindexar el array después de ordenar
 
-        $pdf = PDF::loadView('admin.docente.reportes.general_pdf', [
-            'docentes' => $docentes
-        ]);
+            // Para depuración
+            // return response()->json($docente);
 
-        return $pdf->stream('docentes_general.pdf');
-    } catch (\Exception $e) {
-        return response('Error al generar el PDF: ' . $e->getMessage(), 500);
+            $pdf = PDF::loadView('admin.docente.reportes.individual_PDF', [
+                'docente' => $docente
+            ]);
+
+            return $pdf->stream('docente_' . ($docente->numero_documento ?? $docente->id) . '.pdf');
+        } catch (\Exception $e) {
+            return response('Error al generar el PDF: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function reporteGeneralPDF()
+    {
+        try {
+            $docentes = Docente::with([
+                'persona.tipoDocumento',
+                'persona.genero',
+                'detalleDocenteEstudio.estudiosRealizado'
+            ])->get()
+                ->map(function ($docente) {
+                    if ($docente->persona) {
+                        $docente->tipo_documento = $docente->persona->tipoDocumento->nombre ?? 'N/A';
+                        $docente->numero_documento = $docente->persona->numero_documento ?? 'N/A';
+                        $docente->primer_nombre = $docente->persona->primer_nombre ?? 'N/A';
+                        $docente->segundo_nombre = $docente->persona->segundo_nombre ?? '';
+                        $docente->tercer_nombre = $docente->persona->tercer_nombre ?? '';
+                        $docente->primer_apellido = $docente->persona->primer_apellido ?? 'N/A';
+                        $docente->segundo_apellido = $docente->persona->segundo_apellido ?? '';
+                        $docente->fecha_nacimiento = $docente->persona->fecha_nacimiento ?? 'N/A';
+                        $docente->genero = $docente->persona->genero ? $docente->persona->genero->genero : 'N/A';
+                        $docente->email = $docente->persona->email ?? 'N/A';
+                        $docente->direccion = $docente->persona->direccion ?? 'N/A';
+                        $docente->telefono = $docente->primer_telefono ?? $docente->persona->telefono ?? 'N/A';
+                    }
+                    return $docente;
+                })
+                ->sortBy(function ($docente) {
+                    // Ordenar por la primera letra del primer apellido
+                    $primerApellido = $docente->primer_apellido ??
+                        ($docente->persona->primer_apellido ?? '');
+                    return strtoupper(substr($primerApellido, 0, 1));
+                })
+                ->values(); // Reindexar el array después de ordenar
+
+            $pdf = PDF::loadView('admin.docente.reportes.general_pdf', [
+                'docentes' => $docentes
+            ]);
+
+            return $pdf->stream('docentes_general.pdf');
+        } catch (\Exception $e) {
+            return response('Error al generar el PDF: ' . $e->getMessage(), 500);
+        }
     }
 }
-
-    }
-
-
