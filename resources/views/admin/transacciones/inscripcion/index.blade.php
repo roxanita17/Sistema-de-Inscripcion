@@ -324,16 +324,7 @@
                                                @if (!$anioEscolarActivo) disabled @endif
                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
                                                 <i class="fas fa-pen"></i>
-                                            </a> --}}
-
-                                            {{-- ELIMINAR --}}
-                                            <button class="action-btn btn-delete"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
-                                                @if(!$anioEscolarActivo) disabled @endif
-                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Eliminar' }}">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                            </a> --}}                                            
 
                                             {{-- Reporte --}}
                                             <a href="{{ route('admin.transacciones.inscripcion.reporte', $datos->id) }}"
