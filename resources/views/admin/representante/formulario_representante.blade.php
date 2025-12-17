@@ -4454,62 +4454,7 @@
             document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
             document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
 
-            // 1. Validar cédulas duplicadas
-            const cedulas = [
-                { id: 'numero_documento', label: 'Madre' },
-                { id: 'numero_documento-padre', label: 'Padre' },
-                { id: 'numero_documento-representante', label: 'Representante' }
-            ].map(item => {
-                const input = document.getElementById(item.id);
-                return {
-                    input,
-                    label: item.label,
-                    value: input ? input.value.trim() : ''
-                };
-            }).filter(item => item.value && item.input); // Solo cédulas con valor
-
-            // Verificar duplicados
-            const valores = {};
-            let hayDuplicados = false;
-
-            for (const item of cedulas) {
-                if (valores[item.value]) {
-                    // Marcar ambos campos como inválidos
-                    item.input.classList.add('is-invalid');
-                    const errorElement = document.createElement('div');
-                    errorElement.className = 'invalid-feedback';
-                    errorElement.textContent = `Esta cédula está duplicada con ${valores[item.value]}`;
-                    item.input.parentNode.appendChild(errorElement);
-                    hayDuplicados = true;
-                    
-                    // Marcar también el otro campo duplicado
-                    const otroCampo = document.querySelector(`#${valores[item.value].id}`);
-                    if (otroCampo) {
-                        otroCampo.classList.add('is-invalid');
-                        const otroError = document.createElement('div');
-                        otroError.className = 'invalid-feedback';
-                        otroError.textContent = `Esta cédula está duplicada con ${item.label}`;
-                        otroCampo.parentNode.appendChild(otroError);
-                    }
-                } else {
-                    valores[item.value] = { id: item.input.id, label: item.label };
-                }
-            }
-
-            if (hayDuplicados) {
-                // Desplazarse al primer error
-                const primerError = document.querySelector('.is-invalid');
-                if (primerError) {
-                    primerError.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                    primerError.focus();
-                }
-                return false;
-            }
-
-            // 2. Validar cada sección
+            // Validar cada sección
             const validoMadre = validarSeccionMadre();
             const validoPadre = validarSeccionPadre();
             const validoRepresentante = validarSeccionRepresentante();
