@@ -1037,7 +1037,7 @@
                         <input class="form-check-input" type="radio" name="tipo_representante"
                             id="progenitor_padre_representante" value="progenitor_padre_representante">
                         <label class="form-check-label d-flex align-items-center" for="progenitor_padre_representante">
-                            <i class="fas fa-users me-2"></i>
+                            <i class="fas fa-male me-2"></i>
                             <span>Padre como Representante legal</span>
                         </label>
                     </div>
@@ -1045,7 +1045,7 @@
                         <input class="form-check-input" type="radio" name="tipo_representante"
                             id="progenitor_madre_representante" value="progenitor_madre_representante">
                         <label class="form-check-label d-flex align-items-center" for="progenitor_madre_representante">
-                            <i class="fas fa-users me-2"></i>
+                            <i class="fas fa-female me-2"></i>
                             <span>Madre como Representante legal</span>
                         </label>
                     </div>
@@ -1056,140 +1056,165 @@
             </div>
 
             {{-- Datos personales --}}
-            <!-- Sección de Datos Personales -->
             <div class="border rounded p-4 mb-4 bg-light">
-                <h5 class="mb-4 pb-2 border-bottom">
-                    <i class="fas fa-id-card me-2"></i>Datos Personales
-                </h5>
-                <div class="col-md-2 mb-3">
-                                <div class="input-group">
-                                    <label class="input-group-text" for="tipo-ci-representante"><span
-                                            class="text-danger">(*)</span>Doc.</label>
-                                    <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante"
-                                        required>
-                                        <option value="">Seleccione</option>
-                                        @foreach ($tipoDocumentos as $tipoDoc)
-                                            <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <small id="tipo-ci-representante-error" class="text-danger"></small>
-                            </div>
-                <div class="col-md-4 mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                class="text-danger">(*)</span>Cédula</span>
-                        <input type="text" class="form-control" id="numero_documento-representante"
-                            name="numero_documento-representante" aria-label="Sizing example input"
-                            aria-describedby="inputGroup-sizing-default" maxlength="8" required>
-                    </div>
-                    <input type="hidden" id="persona-id-representante" name="persona-id-representante">
-                    <input type="hidden" id="representante-id" name="representante-id">
-                    <small id="numero_documento-representante-error" class="text-danger"></small>
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-id-card me-2 text-purple-600"></i>Datos Personales
+                    </h5>
+                    <small class="text-muted">Todos los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
                 </div>
-
-                <div class="row">
-                    <div class="col-12 mb-3">
-                        <label class="form-label">Nombre Completo</label>
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="primer-nombre-representante"
-                                    name="primer-nombre-representante" placeholder="Primer nombre *"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                    title="Solo se permiten letras y espacios,no se aceptan números" required>
-                                <small class="text-danger" id="primer-nombre-representante-error"></small>
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="tipo-ci-representante" class="form-label required">Tipo Doc.</label>
+                            <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante" required>
+                                <option value="">Seleccione</option>
+                                @foreach ($tipoDocumentos as $tipoDoc)
+                                    <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione el tipo de documento.
                             </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="segundo-nombre-representante"
-                                    name="segundo-nombre-representante" placeholder="Segundo nombre"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                    title="Solo se permiten letras y espacios,no se aceptan números">
-                                <small class="text-danger" id="segundo-nombre-representante-error"></small>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="primer-apellido-representante"
-                                    name="primer-apellido-representante" placeholder="Primer apellido *"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                    title="Solo se permiten letras y espacios,no se aceptan números" required>
-                                <small class="text-danger" id="primer-apellido-representante-error"></small>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="segundo-apellido-representante"
-                                    name="segundo-apellido-representante" placeholder="Segundo apellido"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                    title="Solo se permiten letras y espacios,no se aceptan números">
-                                <small class="text-danger" id="segundo-apellido-representante-error"></small>
-                            </div>
+                            <small id="tipo-ci-representante-error" class="text-danger"></small>
                         </div>
                     </div>
-                </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="numero_documento-representante" class="form-label required">Número de Cédula</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="numero_documento-representante"
+                                    name="numero_documento-representante" maxlength="8" required
+                                    placeholder="Ej: 12345678"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                            <input type="hidden" id="persona-id-representante" name="persona-id-representante">
+                            <input type="hidden" id="representante-id" name="representante-id">
+                            <div class="invalid-feedback">
+                                Por favor ingrese un número de cédula válido.
+                            </div>
+                            <small id="numero_documento-representante-error" class="text-danger"></small>
+                        </div>
+                    </div>
 
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="row identification-row">
-                            {{-- DATOS DE IDENTIFICACIÓN --}}
-                                <div class="col-md-4 mb-3">
-                                    <div class="input-group">
-                                        <label class="input-group-text" for="sexo-representante"><span
-                                                class="text-danger">(*)</span>Género</label>
-                                        <select class="form-select" id="sexo-representante" name="sexo-representante"
-                                            required>
-                                            <option value="">Seleccione</option>
-                                            @foreach ($generos as $genero)
-                                                <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
-                                            @endforeach
-                                        </select>
+                    <div class="col-12">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="primer-nombre-representante" class="form-label required">Primer Nombre</label>
+                                    <input type="text" class="form-control" id="primer-nombre-representante"
+                                        name="primer-nombre-representante" placeholder="Ej: María"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+                                        title="Solo se permiten letras y espacios, no se aceptan números" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese el primer nombre.
                                     </div>
-                                    <small id="sexo-representante-error" class="text-danger"></small>
+                                    <small class="text-danger" id="primer-nombre-representante-error"></small>
                                 </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text"><span class="text-danger">(*)</span>Fecha
-                                            Nac.</span>
-                                        <input type="date" class="form-control" id="fecha-nacimiento-representante"
-                                            name="fecha-nacimiento-representante" aria-label="Fecha de Nacimiento"
-                                            required>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="segundo-nombre-representante" class="form-label">Segundo Nombre</label>
+                                    <input type="text" class="form-control" id="segundo-nombre-representante"
+                                        name="segundo-nombre-representante" placeholder="Opcional"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+                                        title="Solo se permiten letras y espacios, no se aceptan números">
+                                    <small class="text-danger" id="segundo-nombre-representante-error"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="primer-apellido-representante" class="form-label required">Primer Apellido</label>
+                                    <input type="text" class="form-control" id="primer-apellido-representante"
+                                        name="primer-apellido-representante" placeholder="Ej: González"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese el primer apellido.
                                     </div>
-                                    <small id="fecha-nacimiento-representante-error" class="text-danger"></small>
+                                    <small class="text-danger" id="primer-apellido-representante-error"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="segundo-apellido-representante" class="form-label">Segundo Apellido</label>
+                                    <input type="text" class="form-control" id="segundo-apellido-representante"
+                                        name="segundo-apellido-representante" placeholder="Opcional"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
+                                    <small class="text-danger" id="segundo-apellido-representante-error"></small>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Sección de Dirección y Contactos -->
-                    <div class="border rounded p-4 mb-4 bg-light">
-                        <h5 class="mb-4 pb-2 border-bottom">
-                            <i class="fas fa-address-book me-2"></i>Dirección y Contactos
-                        </h5>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                            class="text-danger">(*)</span>Lugar de Nacimiento</span>
-                                    <input type="textarea" class="form-control" aria-label="Sizing example input"
-                                        id="lugar-nacimiento-representante" name="lugar-nacimiento-representante"
-                                        title="Solo se permiten letras y espacios,no se aceptan números" required
-                                        aria-describedby="inputGroup-sizing-default" maxlength="30">
-                                </div>
-                                <small id="lugar-nacimiento-representante-error" class="text-danger"></small>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="sexo-representante" class="form-label required">Género</label>
+                            <select class="form-select" id="sexo-representante" name="sexo-representante" required>
+                                <option value="">Seleccione...</option>
+                                @foreach ($generos as $genero)
+                                    <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione el género.
                             </div>
+                            <small id="sexo-representante-error" class="text-danger"></small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="fecha-nacimiento-representante" class="form-label required">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fecha-nacimiento-representante"
+                                name="fecha-nacimiento-representante" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese la fecha de nacimiento.
+                            </div>
+                            <small id="fecha-nacimiento-representante-error" class="text-danger"></small>
+                        </div>
+                    </div>
+                </div>
+                </div> <!-- Cierre del row de datos personales -->
+            </div> <!-- Cierre de la sección de datos personales -->
 
-                            <div class="col-md-6 mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                            class="text-danger">(*)</span>Estado</span>
-                                    <select class="form-select" id="idEstado-representante" name="idEstado-representante"
-                                        aria-label="Default select example"
-                                        onchange="window.cargarMunicipiosRepresentante(this.value)">
-                                        <option value="">Seleccione</option>
-                                        @foreach ($estados as $estado)
-                                            <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <small id="idEstado-representante-error" class="text-danger"></small>
+            <!-- Sección de Dirección y Contactos -->
+            <div class="border rounded p-4 mb-4 bg-light">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-address-book me-2 text-purple-600"></i>Dirección y Contactos
+                    </h5>
+                    <small class="text-muted">Información de contacto del representante</small>
+                </div>
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lugar-nacimiento-representante" class="form-label required">Lugar de Nacimiento</label>
+                            <input type="text" class="form-control" id="lugar-nacimiento-representante" 
+                                name="lugar-nacimiento-representante" placeholder="Ej: Caracas, Venezuela"
+                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s,]+" maxlength="100" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese el lugar de nacimiento.
                             </div>
+                            <small id="lugar-nacimiento-representante-error" class="text-danger"></small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="idEstado-representante" class="form-label required">Estado</label>
+                            <select class="form-select" id="idEstado-representante" name="idEstado-representante"
+                                onchange="window.cargarMunicipiosRepresentante(this.value)" required>
+                                <option value="">Seleccione un estado...</option>
+                                @foreach ($estados as $estado)
+                                    <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione un estado.
+                            </div>
+                            <small id="idEstado-representante-error" class="text-danger"></small>
+                        </div>
+                    </div>
                         </div>
 
                         <div class="row">

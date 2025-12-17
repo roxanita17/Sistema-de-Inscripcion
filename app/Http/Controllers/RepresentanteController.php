@@ -522,29 +522,23 @@ public function mostrarFormularioEditar($id)
 
     // Datos de persona
     // Adaptar los datos de Persona al esquema actual del modelo Persona
-    $datosPersona = [
-        "id" => $request->id ?? $request->persona_id,
-        "primer_nombre" => $request->input('nombre_uno'),
-        "segundo_nombre" => $request->input('nombre_dos'),
-        "prefijo_id" => $request->input('prefijo-representante'), // Añadir prefijo_id
-        "tercer_nombre" => $request->input('nombre_tres'),
-        "primer_apellido" => $request->input('apellido_uno'),
-        "segundo_apellido" => $request->input('apellido_dos'),
-        "numero_documento" => $request->input('numero_numero_documento_persona'),
-        "fecha_nacimiento" => $request->input('fecha_nacimiento_personas'),
-        // Se asume que sexo_representante corresponde al id en la tabla generos
-        "genero_id" => $request->input('sexo_representante'),
-        // Localidad/parroquia seleccionada
-        "localidad_id" => $request->input('parroquia_id'),
-        // Teléfono completo
-        "telefono" => $request->input('telefono_personas'),
-        // Tipo de documento (foráneo a tipo_documentos)
-        "tipo_documento_id" => $request->input('tipo_numero_documento_persona'),
-        // Dirección de residencia (si se envía desde el formulario)
-        "direccion" => $request->input('direccion_representante'),
-        // Correo de contacto principal si viene en la petición
-        "email" => $request->input('correo_representante'),
-    ];
+$datosPersona = [
+    "id" => $request->id ?? $request->input('persona-id-representante'),
+    "primer_nombre" => $request->input('primer-nombre'),
+    "segundo_nombre" => $request->input('segundo-nombre'),
+    "prefijo_id" => $request->input('prefijo'),
+    "tercer_nombre" => $request->input('tercer-nombre'),
+    "primer_apellido" => $request->input('primer-apellido'),
+    "segundo_apellido" => $request->input('segundo-apellido'),
+    "numero_documento" => $request->input('numero_documento'),
+    "fecha_nacimiento" => $this->parseDate($request->input('fechaNacimiento')),
+    "genero_id" => $request->input('sexo'),
+    "localidad_id" => $request->input('idparroquia'),
+    "telefono" => $request->input('telefono'),
+    "tipo_documento_id" => $request->input('tipo-ci'),
+    "direccion" => $request->input('direccion-habitacion'),
+    "email" => $request->input('correo-representante'),
+];
 
     // Campos adicionales del request que no existen en el modelo Persona se ignoran
 
@@ -553,7 +547,10 @@ public function mostrarFormularioEditar($id)
         "estado_id" => $request->estado_id ?: 1,
         "municipio_id" => $request->municipio_id,
         "parroquia_id" => $request->parroquia_id,
-        "ocupacion_representante" => $request->ocupacion_representante ?: 'No especificado',
+        "ocupacion_representante" => $request->input('ocupacion-madre') 
+    ?: $request->input('ocupacion-padre') 
+    ?: $request->input('ocupacion-representante') 
+    ?: null,
         "convivenciaestudiante_representante" => $request->convivenciaestudiante_representante ?: 'no',
     ];
 
