@@ -584,13 +584,10 @@
         </div>
 
         <div class="section">
-                @if(isset($datosCompletos['representante_legal']['representante']['persona']))
-                    {{ $datosCompletos['representante_legal']['representante']['persona']['primer_nombre'] ?? '' }} 
-                    {{ $datosCompletos['representante_legal']['representante']['persona']['primer_apellido'] ?? '' }}
-                @else
-                    [NOMBRE DEL REPRESENTANTE]
-                @endif
-                , representante legal del estudiante, me comprometo a cumplir con las normas de convivencia del plantel y a mantener una comunicación constante con las autoridades educativas.</p>
+            <h2>ACUERDOS DE CONVIVENCIA ESCOLAR ASUMIDO POR EL REPRESENTANTE Y SU REPRESENTANDO DURANTE LA PERMANENCIA DEL ESTUDIANTE EN LA INSTITUCION</h2>
+                <p>
+
+                </p>
             
         </div>
 
