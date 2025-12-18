@@ -24,6 +24,10 @@ return new class extends Migration
                   ->constrained('grados')
                   ->onDelete('cascade');
 
+            $table->foreignId('seccion_id')->nullable()
+                  ->constrained('seccions')
+                  ->nullOnDelete();
+
             $table->foreignId('padre_id')
                   ->nullable()
                   ->constrained('representantes')

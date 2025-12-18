@@ -20,6 +20,7 @@ class Inscripcion extends Model
         'anio_escolar_id',
         'alumno_id',
         'grado_id',
+        'seccion_id',
         'padre_id',
         'madre_id',
         'representante_legal_id',
@@ -55,6 +56,11 @@ class Inscripcion extends Model
     public function entradaPercentil()
     {
         return $this->hasOne(EntradasPercentil::class, 'inscripcion_id');
+    }
+
+    public function seccion()
+    {
+        return $this->hasOne(Seccion::class, 'id', 'seccion_id');
     }
 
     /**
@@ -187,6 +193,17 @@ class Inscripcion extends Model
         return $query->whereYear('fecha_inscripcion', now()->year);
     }
 
+    /**
+     * Scope: Inscripciones del año escolar activo o extendido
+     */
+    public function scopeAnioEscolarVigente($query)
+    {
+        return $query->whereHas('anioEscolar', function ($q) {
+            $q->whereIn('status', ['Activo', 'Extendido']);
+        });
+    }
+
+
 
     /**
      * Obtener representante principal (primero disponible)
@@ -221,6 +238,7 @@ class Inscripcion extends Model
             'alumno.etniaIndigena',
             'alumno.lateralidad',
             'grado',
+            'seccion',
             'padre.persona',
             'madre.persona',
             'representanteLegal.representante.persona',
@@ -236,6 +254,7 @@ class Inscripcion extends Model
             'alumno' => $this->alumno ? $this->alumno->toArray() : null,
             'persona_alumno' => $this->alumno && $this->alumno->persona ? $this->alumno->persona->toArray() : null,
             'grado' => $this->grado ? $this->grado->toArray() : null,
+            'seccion' => $this->seccion ? $this->seccion->toArray() : null,
             'padre' => $this->padre ? $this->padre->toArray() : null,
             'persona_padre' => $this->padre && $this->padre->persona ? $this->padre->persona->toArray() : null,
             'madre' => $this->madre ? $this->madre->toArray() : null,

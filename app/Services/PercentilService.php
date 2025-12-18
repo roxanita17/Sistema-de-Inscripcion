@@ -47,10 +47,6 @@ class PercentilService
         );
     }
 
-
-
-
-
     /**
      * Busca el índice de edad según los meses
      */

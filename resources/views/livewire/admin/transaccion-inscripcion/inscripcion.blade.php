@@ -287,6 +287,29 @@
                     </div>
                 </div>
 
+                @if (!$esPrimerGrado)
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="seccion_id" class="form-label-modern"><i class="fas fa-th-large"></i>
+                                Sección
+                                <span class="required-badge">*</span>
+                            </label>
+                            <select wire:model.live="seccion_id" id="seccion_id" class="form-control-modern @error('seccion_id') is-invalid @enderror">
+                                <option value="">Seleccione una sección</option>
+                                @foreach ($secciones as $seccion)
+                                    <option value="{{ $seccion->id }}">
+                                        {{ $seccion->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('seccion_id')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                @endif
+
+
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="fecha" class="form-label-modern">
@@ -330,7 +353,7 @@
                         <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
                             style="font-weight: 700;">(*)</span> son obligatorios
                     </div>
-                    
+
                     <div class="row">
                         {{-- Numero de zonificacion --}}
                         @if ($esPrimerGrado)

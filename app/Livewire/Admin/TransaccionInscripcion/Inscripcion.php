@@ -25,6 +25,7 @@ class Inscripcion extends Component
     public $madreId;
     public $representanteLegalId;
     public $gradoId;
+    public $seccion_id = null;
 
     public $infoCupos = null;
     public $alumnoSeleccionado = null;
@@ -37,6 +38,7 @@ class Inscripcion extends Component
     public $representantes = [];
     public $instituciones = [];
     public $grados = [];
+    public $secciones = [];
     public $expresiones_literarias = [];
 
     public $documentos = [];
@@ -103,6 +105,10 @@ class Inscripcion extends Component
                     }
                 }
             ],
+            'seccion_id' => $this->esPrimerGrado
+                ? 'nullable'
+                : 'required|exists:seccions,id',
+
             'documentos' => 'array',
             'documentos.*' => 'string',
             'acepta_normas_contrato' => 'accepted',
@@ -135,7 +141,8 @@ class Inscripcion extends Component
         'gradoId.required' => 'Debe seleccionar un grado.',
         'gradoId.exists' => 'El grado seleccionado no es válido.',
 
-
+        'seccion_id.required' => 'Debe seleccionar una sección.',
+        'seccion_id.exists' => 'La sección seleccionada no es válida.',
 
         'documentos.array' => 'El formato de los documentos seleccionados no es válido.',
         'documentos.*.string' => 'Uno o más documentos seleccionados no son válidos.',
@@ -151,8 +158,11 @@ class Inscripcion extends Component
 
     public function updated($propertyName)
     {
-        $this->validateOnly($propertyName);
+        if ($propertyName !== 'gradoId') {
+            $this->validateOnly($propertyName);
+        }
     }
+
 
     /* ============================================================
        CARGAS DE DATOS
@@ -320,24 +330,31 @@ class Inscripcion extends Component
     {
         if (!$value) {
             $this->infoCupos = null;
+            $this->secciones = [];
+            $this->seccion_id = null;
             return;
         }
 
         $this->infoCupos = $this->inscripcionService->obtenerInfoCupos($value);
 
-        // ⚠️ Asumimos que grado 1 es primer grado
         $grado = \App\Models\Grado::find($value);
-
         $this->esPrimerGrado = ((int) $grado->numero_grado === 1);
 
-        // Limpiar campos que no aplican
+        // Si NO es primer grado → cargar secciones
         if (!$this->esPrimerGrado) {
-            $this->numero_zonificacion = null;
+            $this->secciones = \App\Models\Seccion::where('grado_id', $value)
+                ->where('status', true)
+                ->orderBy('nombre')
+                ->get();
+        } else {
+            // Limpiar si es primer grado
+            $this->secciones = [];
+            $this->seccion_id = null;
         }
 
-        // Revalidar documentos cuando cambia el grado
         $this->validarDocumentosEnTiempoReal();
     }
+
 
 
     /* ============================================================
@@ -363,6 +380,7 @@ class Inscripcion extends Component
             session()->flash('error', 'Error: ' . $e->getMessage());
         }
     }
+
 
     public function finalizar()
     {
@@ -417,6 +435,7 @@ class Inscripcion extends Component
             'anio_egreso' => $this->anio_egreso,
             'expresion_literaria_id' => $this->expresion_literaria_id,
             'grado_id' => $this->gradoId,
+            'seccion_id' => $this->seccion_id, // ✅ FALTABA
             'padre_id' => $this->padreId,
             'madre_id' => $this->madreId,
             'representante_legal_id' => $this->representanteLegalId,
@@ -425,6 +444,7 @@ class Inscripcion extends Component
             'acepta_normas_contrato' => $this->acepta_normas_contrato,
         ]);
     }
+
 
     /* ============================================================
        LISTENERS

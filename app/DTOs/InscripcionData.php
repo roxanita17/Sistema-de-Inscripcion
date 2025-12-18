@@ -10,6 +10,7 @@ class InscripcionData
     public ?string $anio_egreso;
     public ?int $expresion_literaria_id;
     public ?int $grado_id;
+    public ?int $seccion_id;
     public ?int $padre_id;
     public ?int $madre_id;
     public ?int $representante_legal_id;
@@ -27,6 +28,7 @@ class InscripcionData
         $this->anio_egreso = $data['anio_egreso'] ?? null;
         $this->expresion_literaria_id = $data['expresion_literaria_id'] ?? null;
         $this->grado_id = $data['grado_id'] ?? null;
+        $this->seccion_id = $data['seccion_id'] ?? null;
         $this->padre_id = $data['padre_id'] ?? null;
         $this->madre_id = $data['madre_id'] ?? null;
         $this->representante_legal_id = $data['representante_legal_id'] ?? null;
