@@ -132,14 +132,15 @@
                                 <th style="text-align: center;">Estudios Realizados</th>
                                 <th style="text-align: center;">Áreas de Formación</th>
                                 <th style="text-align: center;">Años</th>
+                                <th style="text-align: center;">Secciones</th>
                                 <th style="text-align: center; width: 120px;">Estado</th>
                                 <th style="text-align: center; width: 150px;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($docentes as $datos)
-                                <tr class=" ">
-
+                                <tr>
+                                    {{-- Datos del docente --}}
                                     <td
                                         style="padding-left: 1rem; font-weight: 600; color: var(--gray-900); font-size: 0.95rem; text-align: center;">
                                         <span>
@@ -174,6 +175,7 @@
                                         @endforelse
                                     </td>
 
+                                    {{-- Areas de formacion --}}
                                     <td style="text-align: center;">
                                         @php $asigs = $datos->asignacionesAreas->where('status', true); @endphp
 
@@ -192,6 +194,8 @@
                                             </span>
                                         @endforelse
                                     </td>
+
+                                    {{-- Grados --}}
                                     <td style="text-align: center;">
                                         @php $asigs = $datos->asignacionesAreas->where('status', true); @endphp
 
@@ -211,6 +215,27 @@
                                         @endforelse
                                     </td>
 
+                                    {{-- Secciones --}}
+                                    <td style="text-align: center;">
+                                        @php $asigs = $datos->asignacionesAreas->where('status', true); @endphp
+
+                                        @forelse($asigs as $asign)
+                                            <span style="font-weight: bold; margin-bottom: 2rem;"
+                                                title="{{ optional($asign->seccion)->nombre }}">
+                                                <i class="fas "></i>
+                                                {{ $asign->seccion->nombre }}
+                                            </span>
+                                            @if (!$loop->last)
+                                                <br>
+                                            @endif
+                                        @empty
+                                            <span class="text-muted" style="font-size: 0.85rem;">
+                                                <i class="fas fa-minus-circle"></i> Sin secciones asignadas
+                                            </span>
+                                        @endforelse
+                                    </td>
+
+                                    {{-- Status --}}
                                     <td style="text-align: center;">
                                         @if ($datos->status)
                                             <span class="status-badge status-active">

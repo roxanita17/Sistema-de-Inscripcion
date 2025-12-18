@@ -35,7 +35,6 @@
             @endif
         </div>
     @endif
-
     {{-- Card: Búsqueda de Docente --}}
     @if (!$modoEditar)
         <div class="card-modern mb-4">
@@ -50,8 +49,6 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
                     <div class="col-md-10" wire:ignore>
@@ -60,7 +57,6 @@
                             Docente
                             <span class="required-badge">*</span>
                         </label>
-
                         <select id="docente_select"
                             class="form-control-modern selectpicker @error('docenteId') is-invalid @enderror"
                             data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
@@ -69,7 +65,7 @@
                             @foreach ($docentes as $docente)
                                 @if ($docente->detalleEstudios->count() > 0)
                                     <option value="{{ $docente->id }}"
-                                        data-subtext="{{ $docente->persona->tipo_documento->nombre ?? 'N/A' }}-{{ $docente->persona->numero_documento }}">
+                                        data-subtext="{{ $docente->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docente->persona->numero_documento }}">
                                         {{ $docente->nombre_completo }}
                                         @if ($docente->codigo)
                                             ({{ $docente->codigo }})
@@ -78,20 +74,17 @@
                                 @endif
                             @endforeach
                         </select>
-
                         @error('docenteId')
                             <div class="invalid-feedback-modern" style="display: block;">
                                 <i class="fas fa-exclamation-circle"></i>
                                 {{ $message }}
                             </div>
                         @enderror
-
                         <small class="form-text-modern">
                             <i class="fas fa-info-circle"></i>
                             Busque por nombre, apellido o cédula del docente
                         </small>
                     </div>
-
                     <div class="col-md-2 d-flex align-items-end">
                         <button class="btn-primary-modern w-100" wire:click="seleccionarDocente"
                             wire:loading.attr="disabled" style="margin-bottom: 1.5rem;">
@@ -108,7 +101,6 @@
         </div>
     @endif
 
-
     {{-- Card: Información del Docente Seleccionado --}}
     @if ($docenteSeleccionado)
         <div class="card-modern" wire:transition>
@@ -123,13 +115,10 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-body-modern" style="padding: 0;">
                 <div class="details-grid">
-
                     {{-- COLUMNA IZQUIERDA --}}
                     <div class="details-section">
-
                         {{-- Sección: Identificación --}}
                         <div class="info-section">
                             <div class="section-header">
@@ -146,7 +135,6 @@
                                         {{ $docenteSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docenteSeleccionado->persona->numero_documento }}
                                     </span>
                                 </div>
-
                                 @if ($docenteSeleccionado->codigo)
                                     <div class="info-item">
                                         <span class="info-label">
@@ -204,7 +192,6 @@
                         </div>
 
                     </div>
-
                     {{-- COLUMNA DERECHA --}}
                     <div class="details-section">
 
@@ -233,7 +220,6 @@
                                     </div>
                                 @endif
                             </div>
-
 
                             <div class="info-group" style="margin-top:1rem">
                                 @if ($docenteSeleccionado->dependencia)
@@ -281,15 +267,10 @@
                                 @endforelse
                             </div>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
             <br>
-
-
             <br>
 
         </div>
@@ -317,18 +298,17 @@
                         </label>
 
                         {{-- Materias --}}
-                        <select id="area_estudio_realizados_id"
-                            class="form-control-modern  @error('materiaId') is-invalid @enderror"
-                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
-                            wire:model="materiaId">
-                            <option value="">Seleccione una materia</option>
 
-                            @foreach ($materias as $item)
-                                <option value="{{ $item->id }}">
-                                    {{ $item->areaFormacion->nombre_area_formacion ?? 'SIN NOMBRE' }}
+
+                        <select wire:model.live="materiaId"
+                            class="form-control-modern  @error('materiaId') is-invalid @enderror"
+                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%">
+                            <option value="">Seleccione una materia</option>
+                            @foreach ($materias as $materia)
+                                <option value="{{ $materia->id }}">
+                                    {{ $materia->areaFormacion->nombre_area_formacion }}
                                 </option>
                             @endforeach
-
                         </select>
 
                         @error('materiaId')
@@ -345,24 +325,30 @@
                     </div>
 
                     {{-- Grados --}}
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="grados_id" class="form-label-modern">
                             <i class="fas fa-graduation-cap"></i>
                             Años
                             <span class="required-badge">*</span>
                         </label>
-
-                        <select id="grados_id" class="form-control-modern  @error('gradoId') is-invalid @enderror"
+                        <select wire:model.live="gradoId"
+                            class="form-control-modern  @error('gradoId') is-invalid @enderror"
                             data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
-                            wire:model="gradoId">
-                            <option value="">Seleccione un año</option>
-
-                            @foreach ($grados as $item)
-                                <option value="{{ $item->id }}">
-                                    {{ $item->numero_grado }}
+                            {{ !$materiaId ? 'disabled' : '' }}>
+                            <option value="">
+                                @if (!$materiaId)
+                                    Primero seleccione una materia
+                                @elseif($grados->isEmpty())
+                                    No hay grados disponibles para esta materia
+                                @else
+                                    Seleccione un grado
+                                @endif
+                            </option>
+                            @foreach ($grados as $grado)
+                                <option value="{{ $grado->id }}">
+                                    {{ $grado->numero_grado }}° Grado
                                 </option>
                             @endforeach
-
                         </select>
 
                         @error('gradoId')
@@ -379,25 +365,21 @@
                     </div>
 
                     {{-- Secciones --}}
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="grados_id" class="form-label-modern">
                             <i class="fas fa-graduation-cap"></i>
                             Secciones
                             <span class="required-badge">*</span>
                         </label>
 
-                        <select id="secciones_id"
-                            class="form-control-modern  @error('seccionId') is-invalid @enderror"
-                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
-                            wire:model="seccionId">
-                            <option value="">Seleccione una seccion</option>
-
-                            @foreach ($secciones as $item)
-                                <option value="{{ $item->id }}">
-                                    {{ $item->nombre }}
+                        <select wire:model.live="seccionId" class="form-control-modern  @error('seccionId') is-invalid @enderror"
+                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%" {{ !$gradoId ? 'disabled' : '' }}>
+                            <option value="">Seleccione una sección</option>
+                            @foreach ($secciones as $seccion)
+                                <option value="{{ $seccion->id }}">
+                                    Sección {{ $seccion->nombre }}
                                 </option>
                             @endforeach
-
                         </select>
 
                         @error('seccionId')

@@ -15,18 +15,26 @@ class Grado extends Model
         'numero_grado',
         'capacidad_max',
         'min_seccion',
-        'max_seccion', 
+        'max_seccion',
         'status',
     ];
 
     public function areas_formacion()
     {
         return $this->belongsToMany(AreaFormacion::class, 'grado_area_formacions')
-                    ->withPivot('status')
-                    ->withTimestamps();
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+    
+    /**
+     * Relación uno a muchos con la tabla intermedia (para usar whereHas)
+     */
+    public function gradoAreaFormacion()
+    {
+        return $this->hasMany(GradoAreaFormacion::class, 'grado_id', 'id');
     }
 
-    public function total(){
-        return Grado::where('status', true)->count();
-    }
+
+
+
 }
