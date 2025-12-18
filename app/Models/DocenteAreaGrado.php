@@ -13,6 +13,7 @@ class DocenteAreaGrado extends Model
         'docente_estudio_realizado_id',
         'area_estudio_realizado_id',
         'grado_id',
+        'seccion_id',
         'status',
     ];
 
@@ -66,5 +67,10 @@ class DocenteAreaGrado extends Model
     public function grado()
     {
         return $this->belongsTo(Grado::class, 'grado_id');
+    }
+
+    public function seccion()
+    {
+        return $this->belongsTo(Seccion::class, 'seccion_id');
     }
 }

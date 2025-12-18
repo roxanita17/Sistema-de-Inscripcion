@@ -21,6 +21,9 @@ class GradoAreaFormacionSeeder extends Seeder
             ['codigo' => '001-GHY', 'grado_id' => 1, 'area_formacion_id' => 8, 'status' => true, 'created_at' => now(), 'updated_at' => now()],
             ['codigo' => '001-SNB', 'grado_id' => 1, 'area_formacion_id' => 12, 'status' => true, 'created_at' => now(), 'updated_at' => now()],
 
+            /* ===================== 2do GRADO ===================== */
+            ['codigo' => '002-MAT', 'grado_id' => 2, 'area_formacion_id' => 5, 'status' => true, 'created_at' => now(), 'updated_at' => now()],
+
         ]);
 
         $this->command->info('Grado–Área de Formación insertados correctamente.');

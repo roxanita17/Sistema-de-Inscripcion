@@ -39,7 +39,7 @@ class SectionDistributorService
                 ->get();
 
             if ($inscripciones->isEmpty()) {
-                throw new \Exception('No hay inscripciones activas para este grado');
+                throw new \Exception('No hay inscripciones activas para 1er Año');
             }
 
             // 2. Crear ejecución

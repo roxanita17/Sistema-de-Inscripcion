@@ -12,7 +12,7 @@ use Carbon\Carbon;
 
 class InscripcionService
 {
-        public function __construct(
+    public function __construct(
         private DocumentoService $documentoService
     ) {}
 
@@ -61,7 +61,7 @@ class InscripcionService
         return $anio <= $actual && $anio >= $actual - 7;
     }
 
-    
+
 
     /**
      * Obtiene el año escolar activo actual
@@ -91,10 +91,16 @@ class InscripcionService
                 throw new \Exception('El grado ha alcanzado el límite de cupos.');
             }
 
+            $grado = Grado::findOrFail($data->grado_id);
+            $esPrimerGrado = ((int) $grado->numero_grado === 1);
+
+
             $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
                 $data->documentos,
-                !$data->padre_id && !$data->madre_id
+                !$data->padre_id && !$data->madre_id,
+                $esPrimerGrado
             );
+
 
             if (!$evaluacion['puede_guardar']) {
                 throw new \Exception('Faltan documentos obligatorios.');
