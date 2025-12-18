@@ -51,7 +51,7 @@ return new class extends Migration
             // Fecha de inscripción
             $table->string('observaciones')->nullable();
 
-            $table->integer('numero_zonificacion')->nullable();
+            $table->string('numero_zonificacion')->nullable();
             $table->date('anio_egreso');
             $table->foreignId('institucion_procedencia_id')->constrained('institucion_procedencias')->cascadeOnDelete();
             $table->foreignId('expresion_literaria_id')->constrained('expresion_literarias')->cascadeOnDelete();

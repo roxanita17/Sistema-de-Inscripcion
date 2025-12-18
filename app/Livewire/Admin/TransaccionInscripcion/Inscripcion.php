@@ -90,9 +90,10 @@ class Inscripcion extends Component
     {
         return [
             'inscripcion_id' => 'required|exists:inscripcions,id',
-            'numero_zonificacion' => $this->esPrimerGrado
-                ? 'required|numeric'
-                : 'nullable',
+            'numero_zonificacion' => [
+                'nullable',
+                'regex:/^\d+$/'
+            ],
 
             'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
@@ -129,8 +130,7 @@ class Inscripcion extends Component
         'inscripcion_id.required' => 'Debe seleccionar una inscripción.',
         'inscripcion_id.exists' => 'La inscripción seleccionada no es válida.',
 
-        'numero_zonificacion.required' => 'El número de zonificación es obligatorio.',
-        'numero_zonificacion.numeric' => 'El número de zonificación debe ser un valor numérico.',
+        'numero_zonificacion.regex' => 'El número de zonificación solo puede contener números.',
 
         'institucion_procedencia_id.required' => 'Debe seleccionar una institución de procedencia.',
         'institucion_procedencia_id.exists' => 'La institución de procedencia seleccionada no es válida.',

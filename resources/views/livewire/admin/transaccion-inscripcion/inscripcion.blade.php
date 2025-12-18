@@ -364,7 +364,9 @@
                                         Número de Zonificación
                                     </label>
                                     <input type="text" wire:model.live="numero_zonificacion"
-                                        class="form-control-modern" maxlength="3" inputmode="numeric">
+                                        class="form-control-modern" maxlength="3" inputmode="numeric"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g,'')"
+                                        placeholder="Ingrese número de zonificación">
                                 </div>
                             </div>
                         @endif
