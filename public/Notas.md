@@ -35,10 +35,9 @@ Falta:
 ## SEEDERS
 Falta:
 
-1. Acomodar seeder de materias según el pensum
-2. Crear seeder de estados (incluyendo dependencias federales)
-3. Mejorar seeder de alumnos e inscripción
-4. Acomodar seeder de representantes
+1. Crear seeder de estados (incluyendo dependencias federales)
+2. Mejorar seeder de alumnos e inscripción
+3. Acomodar seeder de representantes
 
 --------------------------------------------------------------------------
 
