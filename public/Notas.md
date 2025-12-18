@@ -80,10 +80,6 @@ Falta:
 
 # MODULO: DOCENTE AREA GRADO
 
-### Validaciones
-
-3. Deshabilitar la opcion de asignar materias si no esta ejecutado el percentil
-
 ### Agregar
 2. Registro de grupos estables
 

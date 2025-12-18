@@ -1,4 +1,8 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@php
+    $esPrimerGrado = ((int) ($datos->grado->numero_grado ?? 0)) === 1;
+@endphp
+
 
 <!-- Modal Ver Información de la Inscripción -->
 <div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
@@ -348,14 +352,16 @@
                         </div>
 
                         <div class="row g-3 mt-2">
-                            <div class="col-md-4">
-                                <div class="detail-item">
-                                    <span class="detail-label">
-                                        <i class="fas fa-hashtag"></i> N° Zonificación
-                                    </span>
-                                    <span class="detail-value">{{ $datos->numero_zonificacion ?? 'N/A' }}</span>
+                            @if ($esPrimerGrado)
+                                <div class="col-md-4">
+                                    <div class="detail-item">
+                                        <span class="detail-label">
+                                            <i class="fas fa-hashtag"></i> N° Zonificación
+                                        </span>
+                                        <span class="detail-value">{{ $datos->numero_zonificacion ?? 'N/A' }}</span>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <div class="col-md-4">
                                 <div class="detail-item">
@@ -446,38 +452,58 @@
                                     'icon' => 'fa-file-alt',
                                     'obligatorio' => true,
                                 ],
-                                'copia_cedula_representante' => [
-                                    'label' => 'Copia Cédula Representante',
-                                    'icon' => 'fa-id-card',
-                                    'obligatorio' => false,
-                                ],
-                                'boletin_6to_grado' => [
-                                    'label' => 'Boletín 6to Grado',
-                                    'icon' => 'fa-file-invoice',
+
+                                'constancia_aprobacion_primaria' => [
+                                    'label' => 'Constancia Aprobación Primaria',
+                                    'icon' => 'fa-stamp',
                                     'obligatorio' => true,
                                 ],
 
-                                'copia_cedula_estudiante' => [
-                                    'label' => 'Copia Cédula Estudiante',
-                                    'icon' => 'fa-id-card',
-                                    'obligatorio' => false,
-                                ],
                                 'certificado_calificaciones' => [
                                     'label' => 'Certificado de Calificaciones',
                                     'icon' => 'fa-certificate',
                                     'obligatorio' => true,
                                 ],
 
+                                'boletin_6to_grado' => [
+                                    'label' => 'Boletín 6to Grado',
+                                    'icon' => 'fa-file-invoice',
+                                    'obligatorio' => true,
+                                ],
+
+                                'notas_certificadas' => [
+                                    'label' => 'Notas Certificadas',
+                                    'icon' => 'fa-file-alt',
+                                    'obligatorio' => !$esPrimerGrado,
+                                ],
+                                'liberacion_cupo' => [
+                                    'label' => 'Liberación de Cupo',
+                                    'icon' => 'fa-file-signature',
+                                    'obligatorio' => !$esPrimerGrado,
+                                ],
+
+                                'copia_cedula_representante' => [
+                                    'label' => 'Copia Cédula Representante',
+                                    'icon' => 'fa-id-card',
+                                    'obligatorio' => false,
+                                ],
+
+
+                                'copia_cedula_estudiante' => [
+                                    'label' => 'Copia Cédula Estudiante',
+                                    'icon' => 'fa-id-card',
+                                    'obligatorio' => false,
+                                ],
+
+                                
+
                                 'foto_estudiante' => [
                                     'label' => 'Fotografía Estudiante',
                                     'icon' => 'fa-camera',
                                     'obligatorio' => false,
                                 ],
-                                'constancia_aprobacion_primaria' => [
-                                    'label' => 'Constancia Aprobación Primaria',
-                                    'icon' => 'fa-stamp',
-                                    'obligatorio' => true,
-                                ],
+                                
+
                                 'foto_representante' => [
                                     'label' => 'Fotografía Representante',
                                     'icon' => 'fa-camera',
@@ -499,6 +525,13 @@
                                 : (json_decode($datos->documentos, true) ?:
                                 []);
                         @endphp
+
+                        @php
+                            if ($esPrimerGrado) {
+                                unset($todosDocumentos['notas_certificadas'], $todosDocumentos['liberacion_cupo']);
+                            }
+                        @endphp
+
 
                         <div class="row g-2 mt-2">
                             @foreach ($todosDocumentos as $key => $info)

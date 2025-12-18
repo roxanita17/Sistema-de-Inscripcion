@@ -54,7 +54,7 @@
                     <p>Debe seleccionar al menos un representante</p>
                 </div>
             </div>
-            
+
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
 
@@ -304,7 +304,7 @@
                     </div>
                 </div>
 
-                
+
             </div>
         </div>
     </div>
@@ -330,24 +330,22 @@
                         <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
                             style="font-weight: 700;">(*)</span> son obligatorios
                     </div>
+                    
                     <div class="row">
                         {{-- Numero de zonificacion --}}
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="numero_zonificacion" class="form-label-modern">
-                                    <i class="fas fa-hashtag"></i>
-                                    Número de Zonificación
-                                </label>
-                                <input type="text" wire:model.live="numero_zonificacion"
-                                    class="form-control-modern" maxlength="3" inputmode="numeric"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Ej: 001">
-                                @error('numero_zonificacion')
-                                    <div class="invalid-feedback-modern">
-                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                    </div>
-                                @enderror
+                        @if ($esPrimerGrado)
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label-modern">
+                                        <i class="fas fa-hashtag"></i>
+                                        Número de Zonificación
+                                    </label>
+                                    <input type="text" wire:model.live="numero_zonificacion"
+                                        class="form-control-modern" maxlength="3" inputmode="numeric">
+                                </div>
                             </div>
-                        </div>
+                        @endif
+
 
                         {{-- Institucion de procedencia --}}
                         <div class="col-md-4">
@@ -471,17 +469,25 @@
 
                 @foreach ([
         'partida_nacimiento' => 'Partida de Nacimiento',
-        'copia_cedula_representante' => 'Copia de Cédula del Representante',
         'boletin_6to_grado' => 'Boletín de 6to Grado',
-        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
+        'notas_certificadas' => 'Notas Certificadas',
+        'liberacion_cupo' => 'Liberación de Cupo',
         'certificado_calificaciones' => 'Certificado de Calificaciones',
-        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
         'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
+        'copia_cedula_representante' => 'Copia de Cédula del Representante',
+        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
+        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
         'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
         'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
         'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
     ] as $documento => $etiqueta)
-                    @if ($colCounter % 10 === 0 && $colCounter !== 0)
+                    @php
+                        if ($esPrimerGrado && in_array($documento, ['notas_certificadas', 'liberacion_cupo'])) {
+                            continue;
+                        }
+                    @endphp
+
+                    @if ($colCounter % 12 === 0 && $colCounter !== 0)
             </div>
             <div class="row mt-3">
                 @endif

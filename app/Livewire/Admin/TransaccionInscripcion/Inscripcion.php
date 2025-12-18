@@ -54,6 +54,8 @@ class Inscripcion extends Component
     public $documentosDisponibles = [];
     public $documentosEtiquetas = [];
 
+    public bool $esPrimerGrado = true;
+
     /* ============================================================
        BOOT & MOUNT
        ============================================================ */
@@ -86,11 +88,14 @@ class Inscripcion extends Component
     {
         return [
             'inscripcion_id' => 'required|exists:inscripcions,id',
-            'numero_zonificacion' => 'required|numeric',
+            'numero_zonificacion' => $this->esPrimerGrado
+                ? 'required|numeric'
+                : 'nullable',
+
             'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'gradoId' => [
-                'required', 
+                'required',
                 'exists:grados,id',
                 function ($attribute, $value, $fail) {
                     if (!$this->inscripcionService->verificarCuposDisponibles($value)) {
@@ -280,7 +285,8 @@ class Inscripcion extends Component
 
         $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
             $this->documentos,
-            $this->requiereAutorizacion()
+            $this->requiereAutorizacion(),
+            $this->esPrimerGrado
         );
 
         $this->documentosFaltantes = $evaluacion['faltantes'];
@@ -297,7 +303,8 @@ class Inscripcion extends Component
     {
         $this->observaciones = $this->documentoService->generarObservaciones(
             $this->documentos,
-            $this->requiereAutorizacion()
+            $this->requiereAutorizacion(),
+            $this->esPrimerGrado
         );
     }
 
@@ -311,14 +318,27 @@ class Inscripcion extends Component
        ============================================================ */
     public function updatedGradoId($value)
     {
-        if ($value) {
-            // Obtener información de cupos
-            $this->infoCupos = $this->inscripcionService->obtenerInfoCupos($value);
-        } else {
-            // Si no hay grado seleccionado, limpiar la info
+        if (!$value) {
             $this->infoCupos = null;
+            return;
         }
+
+        $this->infoCupos = $this->inscripcionService->obtenerInfoCupos($value);
+
+        // ⚠️ Asumimos que grado 1 es primer grado
+        $grado = \App\Models\Grado::find($value);
+
+        $this->esPrimerGrado = ((int) $grado->numero_grado === 1);
+
+        // Limpiar campos que no aplican
+        if (!$this->esPrimerGrado) {
+            $this->numero_zonificacion = null;
+        }
+
+        // Revalidar documentos cuando cambia el grado
+        $this->validarDocumentosEnTiempoReal();
     }
+
 
     /* ============================================================
        REGISTRO DE INSCRIPCIÓN
