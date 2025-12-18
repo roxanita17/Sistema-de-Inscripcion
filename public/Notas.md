@@ -81,8 +81,7 @@ Falta:
 # MODULO: DOCENTE AREA GRADO
 
 ### Validaciones
-1. Validar que no se asignen materias duplicadas a un docente en el mismo grado
-2. Validar que las materias y grados que esten disponibles sean las mismas registradas en GRADO AREA FORMACION
+
 3. Deshabilitar la opcion de asignar materias si no esta ejecutado el percentil
 
 ### Agregar

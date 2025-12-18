@@ -60,7 +60,7 @@
                         <select id="docente_select"
                             class="form-control-modern selectpicker @error('docenteId') is-invalid @enderror"
                             data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
-                            wire:model="docenteId">
+                            wire:model.defer="docenteId">
                             <option value="" selected disabled>Seleccione un docente</option>
                             @foreach ($docentes as $docente)
                                 @if ($docente->detalleEstudios->count() > 0)
@@ -102,8 +102,9 @@
     @endif
 
     {{-- Card: Información del Docente Seleccionado --}}
-    @if ($docenteSeleccionado)
-        <div class="card-modern" wire:transition>
+    @if ($docenteId)
+        <div class="card-modern" wire:transition 
+            wire:key="docente-info-{{ $docenteId }}">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, var(--success), #059669);">
@@ -275,7 +276,7 @@
 
         </div>
         {{-- Formulario para agregar  --}}
-        <div class="card-modern mb-4">
+        <div class="card-modern mb-4" wire:key="form-asignacion">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon">
@@ -339,14 +340,14 @@
                                 @if (!$materiaId)
                                     Primero seleccione una materia
                                 @elseif($grados->isEmpty())
-                                    No hay grados disponibles para esta materia
+                                    No hay años disponibles para esta materia
                                 @else
-                                    Seleccione un grado
+                                    Seleccione un año
                                 @endif
                             </option>
                             @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}">
-                                    {{ $grado->numero_grado }}° Grado
+                                    {{ $grado->numero_grado }}
                                 </option>
                             @endforeach
                         </select>
@@ -372,8 +373,10 @@
                             <span class="required-badge">*</span>
                         </label>
 
-                        <select wire:model.live="seccionId" class="form-control-modern  @error('seccionId') is-invalid @enderror"
-                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%" {{ !$gradoId ? 'disabled' : '' }}>
+                        <select wire:model.live="seccionId"
+                            class="form-control-modern  @error('seccionId') is-invalid @enderror"
+                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
+                            {{ !$gradoId ? 'disabled' : '' }}>
                             <option value="">Seleccione una sección</option>
                             @foreach ($secciones as $seccion)
                                 <option value="{{ $seccion->id }}">
@@ -395,11 +398,11 @@
                         </small>
                     </div>
 
-                    <div class="col-md-4 d-flex align-items-end">
+                    <div class="col-md-2 d-flex align-items-end">
                         <button class="btn-primary-modern w-100" wire:click="agregarAsignacion"
                             wire:loading.attr="disabled" style="margin-bottom: 1.5rem;">
                             <span wire:loading.remove wire:target="agregarAsignacion">
-                                <i class="fas fa-plus"></i> Agregar Asignación
+                                <i class="fas fa-plus"></i> Agregar
                             </span>
                             <span wire:loading wire:target="agregarAsignacion">
                                 <i class="fas fa-spinner fa-spin"></i> Agregando...
@@ -411,7 +414,7 @@
         </div>
 
         {{-- Tabla de materias y grados asignados --}}
-        <div class="card-modern">
+        <div class="card-modern" wire:key="tabla-asignaciones">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon">

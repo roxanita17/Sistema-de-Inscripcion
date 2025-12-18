@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 
 
+
 class DocenteAreaGradoController extends Controller
 {
     /**
@@ -22,6 +23,11 @@ class DocenteAreaGradoController extends Controller
         return \App\Models\AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->exists();
+    }
+
+    private function verificarPercentilEjecutado()
+    {
+        return \App\Models\EjecucionesPercentil::where('status', true)->exists();
     }
 
     /**
@@ -42,11 +48,23 @@ class DocenteAreaGradoController extends Controller
             ->paginate(10);
 
         $anioEscolarActivo = $this->verificarAnioEscolar();
+        $percentilEjecutado = $this->verificarPercentilEjecutado();
+
+
+        if (!$percentilEjecutado) {
+            return view('admin.transacciones.docente_area_grado.index', compact(
+                'docentes',
+                'anioEscolarActivo',
+                'buscar',
+                'percentilEjecutado'
+            ));
+        }
 
         return view('admin.transacciones.docente_area_grado.index', compact(
             'docentes',
             'anioEscolarActivo',
-            'buscar'
+            'buscar',
+            'percentilEjecutado'
         ));
     }
 
@@ -66,7 +84,7 @@ class DocenteAreaGradoController extends Controller
     /**
      * Eliminación lógica de la asignación
      */
-   
+
     public function destroyAsignacion($id)
     {
         try {

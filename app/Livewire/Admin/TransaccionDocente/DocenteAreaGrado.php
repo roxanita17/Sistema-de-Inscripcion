@@ -9,6 +9,7 @@ use App\Models\Grado;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Models\DocenteAreaGrado as ModeloDocenteAreaGrado;
+use App\Models\EjecucionesPercentil;
 use App\Models\Seccion;
 
 class DocenteAreaGrado extends Component
@@ -36,6 +37,9 @@ class DocenteAreaGrado extends Component
 
     public $asignacionAEliminar = null;
 
+    public $percentilEjecutado = false;
+
+
     /**
      * LISTENERS PARA EVENTOS
      */
@@ -48,7 +52,14 @@ class DocenteAreaGrado extends Component
      */
     public function mount($docenteId = null)
     {
+        $this->percentilEjecutado = EjecucionesPercentil::where('status', true)->exists();
+
+        if (!$this->percentilEjecutado) {
+            return; // Bloquea todo
+        }
+        
         if ($docenteId) {
+
             $this->modoEditar = true;
             $this->docenteId = $docenteId;
 
@@ -191,37 +202,30 @@ class DocenteAreaGrado extends Component
      */
     public function cargarGrados()
     {
-        // Si no hay materia seleccionada, NO cargar grados
+        // Si no hay materia seleccionada, no cargar grados
         if (!$this->materiaId) {
             $this->grados = collect(); // Colección vacía
-            \Log::info('No hay materia seleccionada - grados vacíos');
             return;
         }
 
         // Obtener el área de formación de la materia seleccionada
         $areaEstudio = AreaEstudioRealizado::with('areaFormacion')->find($this->materiaId);
-        
+
         if (!$areaEstudio || !$areaEstudio->area_formacion_id) {
-            \Log::warning('No se encontró área de formación para materia ID: ' . $this->materiaId);
             $this->grados = collect();
             return;
         }
 
         $areaFormacionId = $areaEstudio->area_formacion_id;
-        \Log::info('Filtrando grados para área de formación ID: ' . $areaFormacionId . ' (' . $areaEstudio->areaFormacion->nombre_area_formacion . ')');
 
         // Cargar solo los grados que tienen asignada esta área de formación
         $this->grados = Grado::where('status', true)
-            ->whereHas('gradoAreaFormacion', function($q) use ($areaFormacionId) {
+            ->whereHas('gradoAreaFormacion', function ($q) use ($areaFormacionId) {
                 $q->where('area_formacion_id', $areaFormacionId)
-                  ->where('status', true);
+                    ->where('status', true);
             })
             ->orderBy('numero_grado', 'asc')
             ->get();
-
-        \Log::info('Grados encontrados: ' . $this->grados->count(), [
-            'grados' => $this->grados->pluck('numero_grado')->toArray()
-        ]);
     }
 
     /**
@@ -232,19 +236,37 @@ class DocenteAreaGrado extends Component
     {
         // Resetear grado y sección al cambiar la materia
         $this->reset(['gradoId', 'seccionId']);
-        
+
         // Recargar la lista de grados filtrada
         $this->cargarGrados();
-        
+
         // Dispatch para resetear los selects de grado y sección en el frontend
         $this->dispatch('resetGradoSeccion');
     }
 
+    public function updated($property)
+    {
+        // No hacer nada aquí para evitar recargas innecesarias
+    }
+
+    public function hydrate()
+    {
+        // Asegurar que el docente esté siempre cargado
+        if ($this->docenteId && !$this->docenteSeleccionado) {
+            $this->cargarDatosDocente();
+        }
+    }
+
     /**
-     * EVENTO: Al cambiar la materia desde el wire:model
+     * EVENTO: Al cambiar la materia desde el select (llamado manualmente)
      */
     public function updatedMateriaId()
     {
+        // Asegurar que el docente esté cargado antes de actualizar grados
+        if ($this->docenteId && !$this->docenteSeleccionado) {
+            $this->cargarDatosDocente();
+        }
+
         $this->actualizarGrados();
     }
 
@@ -328,7 +350,7 @@ class DocenteAreaGrado extends Component
             $asignacionExistente = ModeloDocenteAreaGrado::where('grado_id', $this->gradoId)
                 ->where('seccion_id', $this->seccionId)
                 ->where('status', true)
-                ->whereHas('areaEstudios', function($q) use ($areaFormacionId) {
+                ->whereHas('areaEstudios', function ($q) use ($areaFormacionId) {
                     $q->where('area_formacion_id', $areaFormacionId);
                 })
                 ->with(['detalleDocenteEstudio.docente.persona'])
@@ -336,14 +358,14 @@ class DocenteAreaGrado extends Component
 
             if ($asignacionExistente) {
                 $docenteExistente = $asignacionExistente->detalleDocenteEstudio->docente;
-                
+
                 // Si es el mismo docente, mensaje específico
                 if ($docenteExistente->id == $this->docenteSeleccionado->id) {
                     throw ValidationException::withMessages([
                         'materiaId' => 'Ya tienes esta materia asignada a este grado y sección.'
                     ]);
                 }
-                
+
                 // Si es otro docente, indicar quién la tiene
                 $nombreDocente = $docenteExistente->persona->primer_nombre . ' ' . $docenteExistente->persona->primer_apellido;
                 throw ValidationException::withMessages([
@@ -420,10 +442,9 @@ class DocenteAreaGrado extends Component
      */
     public function render()
     {
-        // Calcular totales directamente aquí si los necesitas en la vista
         $totalGrados = Grado::where('status', true)->count();
         $totalSecciones = Seccion::where('status', true)->count();
-        
+
         return view('livewire.admin.transaccion-docente.docente-area-grado', [
             'totalGrados' => $totalGrados,
             'totalSecciones' => $totalSecciones,

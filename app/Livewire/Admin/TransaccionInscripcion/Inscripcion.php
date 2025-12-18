@@ -90,7 +90,7 @@ class Inscripcion extends Component
             'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'gradoId' => [
-                'required',
+                'required', 
                 'exists:grados,id',
                 function ($attribute, $value, $fail) {
                     if (!$this->inscripcionService->verificarCuposDisponibles($value)) {
