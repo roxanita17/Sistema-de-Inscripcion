@@ -111,10 +111,11 @@ class AlumnoController extends Controller
         ->with([
             'persona.tipoDocumento',
             'persona.genero',
+            'institucionProcedencia',
+            'expresionLiteraria',
             'ordenNacimiento',
             'lateralidad',
-            'etniaIndigena',
-            
+            'etniaIndigena'
         ])
         ->firstOrFail();
 

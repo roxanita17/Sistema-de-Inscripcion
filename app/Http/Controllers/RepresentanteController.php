@@ -361,54 +361,23 @@ public function mostrarFormularioEditar($id)
     // Verificar si es un progenitor que también es representante
     $tipoRepresentante = $request->input('tipo_representante');
     $esProgenitorRepresentante = ($tipoRepresentante === 'progenitor_representante');
-    
-    // Obtener el tipo de progenitor (madre o padre)
-    $esMadre = $request->input('es_madre') == '1';
-    $esPadre = $request->input('es_padre') == '1';
-    
-    // Inicializar variables para evitar errores de variables no definidas
-    $numero_documentoProgenitor = null;
-    $tipoProgenitor = null;
-    $usandoDatosMadre = false;
-    $usandoDatosPadre = false;
-    
-    Log::info('Datos de progenitor recibidos:', [
-        'tipo_representante' => $tipoRepresentante,
-        'esProgenitorRepresentante' => $esProgenitorRepresentante,
-        'es_madre' => $esMadre,
-        'es_padre' => $esPadre
-    ]);
-    
+        
     // Determinar si estamos usando datos de la madre o del padre
     $numero_documentoRepresentante = $request->input('numero_documento-representante');
     $numero_documentoMadre = $request->input('numero_documento');
     $numero_documentoPadre = $request->input('numero_documento-padre');
-    
-    // Si es un progenitor representante, verificar la cédula
-    if ($esProgenitorRepresentante) {
-        if ($esMadre) {
-            $numero_documentoProgenitor = $numero_documentoMadre;
-            $tipoProgenitor = 'madre';
-            $usandoDatosMadre = true;
-            $usandoDatosPadre = false;
-        } elseif ($esPadre) {
-            $numero_documentoProgenitor = $numero_documentoPadre;
-            $tipoProgenitor = 'padre';
-            $usandoDatosMadre = false;
-            $usandoDatosPadre = true;
-        }
-    } else {
-        // Comportamiento original si no es un progenitor representante
-        $usandoDatosMadre = !empty($numero_documentoMadre) && $numero_documentoMadre === $numero_documentoRepresentante;
-        $usandoDatosPadre = !empty($numero_documentoPadre) && $numero_documentoPadre === $numero_documentoRepresentante;
         
-        if ($usandoDatosMadre) {
-            $numero_documentoProgenitor = $numero_documentoMadre;
-            $tipoProgenitor = 'madre';
-        } elseif ($usandoDatosPadre) {
-            $numero_documentoProgenitor = $numero_documentoPadre;
-            $tipoProgenitor = 'padre';
-        }
+    $usandoDatosMadre = !empty($numero_documentoMadre) && $numero_documentoMadre === $numero_documentoRepresentante;
+    $usandoDatosPadre = !empty($numero_documentoPadre) && $numero_documentoPadre === $numero_documentoRepresentante;
+    $numero_documentoProgenitor = null;
+    $tipoProgenitor = null;
+        
+    if ($usandoDatosMadre) {
+        $numero_documentoProgenitor = $numero_documentoMadre;
+        $tipoProgenitor = 'madre';
+    } elseif ($usandoDatosPadre) {
+        $numero_documentoProgenitor = $numero_documentoPadre;
+        $tipoProgenitor = 'padre';
     }
         
     // Si es progenitor representante pero no se pudo determinar la cédula, intentar con la cédula del representante
@@ -528,7 +497,16 @@ public function mostrarFormularioEditar($id)
                     }
                 }
             ],
+            'fecha_nacimiento' => 'required|date',
             'telefono-representante' => 'required|string|max:20',
+            'sexo-representante' => 'required|in:M,F,O',
+            'tipo-ci-representante' => 'required|exists:tipos_documentos,id',
+            'estado_id' => 'required|exists:estados,id',
+            'municipio_id' => 'required|exists:municipios,id',
+            'parroquia_id' => 'required|exists:parroquias,id',
+            'direccion-habitacion' => 'required|string|max:255',
+            'convive-representante' => 'required|in:si,no',
+            'ocupacion-representante' => 'required|exists:ocupacions,id',
             'correo-representante' => 'required|email|max:100',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
@@ -539,6 +517,23 @@ public function mostrarFormularioEditar($id)
 
         // Mensajes de error personalizados
         $messages = [
+            'primer-nombre-representante.required' => 'El primer nombre es obligatorio',
+            'primer-apellido-representante.required' => 'El primer apellido es obligatorio',
+            'fecha-nacimiento-representante.required' => 'La fecha de nacimiento es obligatoria',
+            'fecha-nacimiento-representante.date_format' => 'El formato de fecha debe ser DD/MM/YYYY',
+            'telefono-representante.required' => 'El teléfono es obligatorio',
+            'sexo-representante.required' => 'El género es obligatorio',
+            'tipo-ci-representante.required' => 'El tipo de documento es obligatorio',
+            'estado_id.required' => 'El estado es obligatorio',
+            'municipio_id.required' => 'El municipio es obligatorio',
+            'parroquia_id.required' => 'La parroquia es obligatoria',
+            'direccion-habitacion.required' => 'La dirección es obligatoria',
+            'convive-representante.required' => 'Debe indicar si convive con el estudiante',
+            'ocupacion-representante.required' => 'La ocupación es obligatoria',
+            'correo-representante.required' => 'El correo electrónico es obligatorio',
+            'correo-representante.email' => 'El correo electrónico no es válido',
+            'numero_numero_documento_persona.required' => 'El número de cédula es obligatorio',
+            'numero_numero_documento_persona.unique' => 'Este número de cédula ya está registrado',
             'numero_numero_documento_persona.required' => 'El número de documento es obligatorio',
             'primer-nombre-representante.required' => 'El primer nombre es obligatorio',
             'primer-apellido-representante.required' => 'El primer apellido es obligatorio',
@@ -716,30 +711,16 @@ public function mostrarFormularioEditar($id)
 
     // Campos adicionales del request que no existen en el modelo Persona se ignoran
 
-    // Determinar el status basado en el tipo de representante
-    $status = 1; // Por defecto: representante normal
-    
-    if ($tipoRepresentante === 'progenitor_madre_representante') {
-        $status = 2; // Madre representante
-        Log::info('Asignando status 2 (Madre) al representante');
-    } elseif ($tipoRepresentante === 'progenitor_padre_representante') {
-        $status = 3; // Padre representante
-        Log::info('Asignando status 3 (Padre) al representante');
-    }
-    
-    Log::info('Status final del representante:', ['status' => $status]);
-
     // Datos de representante
     $datosRepresentante = [
         "estado_id" => $request->estado_id ?: 1,
         "municipio_id" => $request->municipio_id,
         "parroquia_id" => $request->parroquia_id,
         "ocupacion_representante" => $request->input('ocupacion-madre') 
-            ?: $request->input('ocupacion-padre') 
-            ?: $request->input('ocupacion-representante') 
-            ?: null,
+    ?: $request->input('ocupacion-padre') 
+    ?: $request->input('ocupacion-representante') 
+    ?: null,
         "convivenciaestudiante_representante" => $request->convivenciaestudiante_representante ?: 'no',
-        "status" => $status
     ];
 
     if($request->representante_id){
@@ -1256,31 +1237,41 @@ public function mostrarFormularioEditar($id)
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
+    /**
+     * Filtra los representantes según los criterios de búsqueda
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function filtar(Request $request)
     {
-        $buscador=$request->buscador;
-        // $parroquia_id=$request->parroquia_id;
-        $consulta=Representante::query()->with(["persona","legal"]);
+        $buscador = $request->buscador ?? '';
+        
+        // Iniciar consulta con relaciones necesarias
+        $consulta = Representante::query()->with('persona');
 
-        if($buscador!=""){
-            $consulta=$consulta->whereHas("persona",function($query) use ($buscador){
-                $query->whereRaw("CONCAT(nombre_uno,' ',nombre_dos,' ',apellido_uno,' ',apellido_dos) LIKE ?", ["%{$buscador}%"])
-                ->orWhere("numero_numero_documento_persona","like","%".$buscador."%")
-                ->orWhere("nombre_uno","like","%".$buscador."%")
-                ->orWhere("nombre_dos","like","%".$buscador."%")
-                ->orWhere("apellido_uno","like","%".$buscador."%")
-                ->orWhere("apellido_dos","like","%".$buscador."%");
+        if (!empty($buscador)) {
+            $consulta = $consulta->whereHas('persona', function($query) use ($buscador) {
+                $query->where(function($q) use ($buscador) {
+                    $q->where('numero_documento', 'LIKE', "%{$buscador}%")
+                      ->orWhere('primer_nombre', 'LIKE', "%{$buscador}%")
+                      ->orWhere('segundo_nombre', 'LIKE', "%{$buscador}%")
+                      ->orWhere('primer_apellido', 'LIKE', "%{$buscador}%")
+                      ->orWhere('segundo_apellido', 'LIKE', "%{$buscador}%")
+                      ->orWhereRaw("CONCAT(primer_nombre, ' ', COALESCE(segundo_nombre, ''), ' ', primer_apellido, ' ', COALESCE(segundo_apellido, '')) LIKE ?", ["%{$buscador}%"]);
+                });
             });
         }
 
-        // if($parroquia_id!="null"){
-        //     $consulta=$consulta->where("parroquia_id","=",$parroquia_id);
-        // }
+        // Ordenar por fecha de creación descendente (los más recientes primero)
+        $consulta->orderBy('created_at', 'desc');
 
-        $respuesta=$consulta->paginate(10);
+        // Paginar los resultados
+        $respuesta = $consulta->paginate(10);
+        
         return response()->json([
             'status' => 'success',
-            'message' => 'Estudiante consultado',
+            'message' => 'Representantes consultados correctamente',
             'data' => $respuesta,
         ], 200);
     }

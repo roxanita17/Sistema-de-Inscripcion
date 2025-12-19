@@ -327,9 +327,6 @@
                     class="needs-validation" novalidate>
                     <input type="hidden" name="from" value="{{ $from ?? '' }}">
                     @csrf
-                    <!-- Campos ocultos para manejar el tipo de progenitor -->
-                    <input type="hidden" name="es_madre" id="es_madre" value="0">
-                    <input type="hidden" name="es_padre" id="es_padre" value="0">
 
                     <!-- Sección de la Madre -->
                     <div class="card card-modern mb-4">
@@ -956,7 +953,7 @@
                                 @foreach ($ocupaciones as $ocupacion)
                                     <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
                                 @endforeach
-                                <option value="otro">Otra ocupación</option>
+                               
                             </select>
                             <div class="invalid-feedback">
                                 Por favor seleccione una ocupación.
@@ -1123,6 +1120,16 @@
                                         pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
                                         title="Solo se permiten letras y espacios, no se aceptan números">
                                     <small class="text-danger" id="segundo-nombre-representante-error"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="tercer-nombre-representante" class="form-label">Tercer Nombre</label>
+                                    <input type="text" class="form-control" id="tercer-nombre-representante"
+                                        name="tercer-nombre-representante" placeholder="Opcional"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+                                        title="Solo se permiten letras y espacios, no se aceptan números">
+                                    <small class="text-danger" id="tercer-nombre-representante-error"></small>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -1459,7 +1466,8 @@
                                         <input type="text" class="form-control" id="codigo" name="codigo"
                                             maxlength="10" pattern="[0-9]+"
                                             title="Ingrese solo números (máximo 10 dígitos)" required
-                                            inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                            inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                                            data-validate="codigoCarnet">
                                         <div class="invalid-feedback">
                                             Por favor ingrese un código válido (solo números).
                                         </div>
@@ -2142,9 +2150,49 @@
                 }
             }
 
+            // Función para validar el código del carnet de la patria
+            function validarCodigoCarnet(input) {
+                const value = input.value.trim();
+                const errorElement = document.getElementById('codigo-error') || 
+                                   document.createElement('div');
+                
+                // Si no existe el elemento de error, lo creamos
+                if (!errorElement.id) {
+                    errorElement.id = 'codigo-error';
+                    errorElement.className = 'invalid-feedback';
+                    input.parentNode.appendChild(errorElement);
+                }
+                
+                // Validar que solo contenga números y tenga máximo 10 dígitos
+                if (value && !/^\d{1,10}$/.test(value)) {
+                    input.classList.add('is-invalid');
+                    errorElement.textContent = 'El código debe contener solo números (máx. 10 dígitos)';
+                    return false;
+                }
+                
+                // Si el campo está vacío, mostramos un mensaje de error si es requerido
+                const carnetAfiliado = document.getElementById('carnet-patria');
+                if (carnetAfiliado && carnetAfiliado.value && carnetAfiliado.value !== '0' && !value) {
+                    input.classList.add('is-invalid');
+                    errorElement.textContent = 'Este campo es obligatorio cuando el carnet está afiliado';
+                    return false;
+                }
+                
+                // Si pasa todas las validaciones
+                input.classList.remove('is-invalid');
+                errorElement.textContent = '';
+                return true;
+            }
+
             // Función para actualizar las opciones del Carnet de la Patria según el estado de los padres
             function actualizarOpcionesCarnetPatria() {
                 const carnetPatriaSelect = document.getElementById('carnet-patria');
+                const codigoInput = document.getElementById('codigo');
+                
+                // Si se selecciona una opción distinta a vacío, validar el código
+                if (carnetPatriaSelect && carnetPatriaSelect.value && codigoInput) {
+                    validarCodigoCarnet(codigoInput);
+                }
                 if (!carnetPatriaSelect) return;
 
                 const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
@@ -2197,21 +2245,6 @@
                 const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
                 const estadoPadre = document.querySelector('input[name="estado_padre"]:checked')?.value;
                 const tipoRepresentante = document.querySelector('input[name="tipo_representante"]:checked')?.value;
-                
-                // Actualizar campos ocultos para tipo de progenitor
-                const esMadre = (estadoMadre === 'Presente' && tipoRepresentante === 'progenitor_representante');
-                const esPadre = (estadoPadre === 'Presente' && tipoRepresentante === 'progenitor_representante');
-                
-                document.getElementById('es_madre').value = esMadre ? '1' : '0';
-                document.getElementById('es_padre').value = esPadre ? '1' : '0';
-                
-                console.log('Tipo de representante actualizado:', {
-                    tipoRepresentante,
-                    estadoMadre,
-                    estadoPadre,
-                    esMadre,
-                    esPadre
-                });
 
                 const radioMadreRepresentante = document.getElementById('progenitor_madre_representante');
                 const radioPadreRepresentante = document.getElementById('progenitor_padre_representante');
@@ -2259,6 +2292,32 @@
                     actualizarRadiosRepresentante();
                     actualizarOpcionesCarnetPatria(); // Actualizar opciones del Carnet de la Patria
                 });
+            });
+
+            // Configurar validación en tiempo real para el código del carnet
+            document.addEventListener('DOMContentLoaded', function() {
+                const codigoInput = document.getElementById('codigo');
+                const carnetSelect = document.getElementById('carnet-patria');
+                
+                // Validar al cambiar el valor
+                if (codigoInput) {
+                    codigoInput.addEventListener('input', function() {
+                        validarCodigoCarnet(this);
+                    });
+                    
+                    codigoInput.addEventListener('blur', function() {
+                        validarCodigoCarnet(this);
+                    });
+                }
+                
+                // Validar cuando cambia la selección del carnet
+                if (carnetSelect) {
+                    carnetSelect.addEventListener('change', function() {
+                        if (codigoInput) {
+                            validarCodigoCarnet(codigoInput);
+                        }
+                    });
+                }
             });
 
             // Actualizar cuando cambie el tipo de representante (solo actualizar parentesco, no carnet de la patria)
