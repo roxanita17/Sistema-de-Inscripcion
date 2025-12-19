@@ -361,23 +361,54 @@ public function mostrarFormularioEditar($id)
     // Verificar si es un progenitor que también es representante
     $tipoRepresentante = $request->input('tipo_representante');
     $esProgenitorRepresentante = ($tipoRepresentante === 'progenitor_representante');
-        
+    
+    // Obtener el tipo de progenitor (madre o padre)
+    $esMadre = $request->input('es_madre') == '1';
+    $esPadre = $request->input('es_padre') == '1';
+    
+    // Inicializar variables para evitar errores de variables no definidas
+    $numero_documentoProgenitor = null;
+    $tipoProgenitor = null;
+    $usandoDatosMadre = false;
+    $usandoDatosPadre = false;
+    
+    Log::info('Datos de progenitor recibidos:', [
+        'tipo_representante' => $tipoRepresentante,
+        'esProgenitorRepresentante' => $esProgenitorRepresentante,
+        'es_madre' => $esMadre,
+        'es_padre' => $esPadre
+    ]);
+    
     // Determinar si estamos usando datos de la madre o del padre
     $numero_documentoRepresentante = $request->input('numero_documento-representante');
     $numero_documentoMadre = $request->input('numero_documento');
     $numero_documentoPadre = $request->input('numero_documento-padre');
+    
+    // Si es un progenitor representante, verificar la cédula
+    if ($esProgenitorRepresentante) {
+        if ($esMadre) {
+            $numero_documentoProgenitor = $numero_documentoMadre;
+            $tipoProgenitor = 'madre';
+            $usandoDatosMadre = true;
+            $usandoDatosPadre = false;
+        } elseif ($esPadre) {
+            $numero_documentoProgenitor = $numero_documentoPadre;
+            $tipoProgenitor = 'padre';
+            $usandoDatosMadre = false;
+            $usandoDatosPadre = true;
+        }
+    } else {
+        // Comportamiento original si no es un progenitor representante
+        $usandoDatosMadre = !empty($numero_documentoMadre) && $numero_documentoMadre === $numero_documentoRepresentante;
+        $usandoDatosPadre = !empty($numero_documentoPadre) && $numero_documentoPadre === $numero_documentoRepresentante;
         
-    $usandoDatosMadre = !empty($numero_documentoMadre) && $numero_documentoMadre === $numero_documentoRepresentante;
-    $usandoDatosPadre = !empty($numero_documentoPadre) && $numero_documentoPadre === $numero_documentoRepresentante;
-    $numero_documentoProgenitor = null;
-    $tipoProgenitor = null;
-        
-    if ($usandoDatosMadre) {
-        $numero_documentoProgenitor = $numero_documentoMadre;
-        $tipoProgenitor = 'madre';
-    } elseif ($usandoDatosPadre) {
-        $numero_documentoProgenitor = $numero_documentoPadre;
-        $tipoProgenitor = 'padre';
+        if ($usandoDatosMadre) {
+            $numero_documentoProgenitor = $numero_documentoMadre;
+            $tipoProgenitor = 'madre';
+        } elseif ($usandoDatosPadre) {
+            $numero_documentoProgenitor = $numero_documentoPadre;
+            $tipoProgenitor = 'padre';
+        }
     }
         
     // Si es progenitor representante pero no se pudo determinar la cédula, intentar con la cédula del representante
@@ -685,16 +716,30 @@ public function mostrarFormularioEditar($id)
 
     // Campos adicionales del request que no existen en el modelo Persona se ignoran
 
+    // Determinar el status basado en el tipo de representante
+    $status = 1; // Por defecto: representante normal
+    
+    if ($tipoRepresentante === 'progenitor_madre_representante') {
+        $status = 2; // Madre representante
+        Log::info('Asignando status 2 (Madre) al representante');
+    } elseif ($tipoRepresentante === 'progenitor_padre_representante') {
+        $status = 3; // Padre representante
+        Log::info('Asignando status 3 (Padre) al representante');
+    }
+    
+    Log::info('Status final del representante:', ['status' => $status]);
+
     // Datos de representante
     $datosRepresentante = [
         "estado_id" => $request->estado_id ?: 1,
         "municipio_id" => $request->municipio_id,
         "parroquia_id" => $request->parroquia_id,
         "ocupacion_representante" => $request->input('ocupacion-madre') 
-    ?: $request->input('ocupacion-padre') 
-    ?: $request->input('ocupacion-representante') 
-    ?: null,
+            ?: $request->input('ocupacion-padre') 
+            ?: $request->input('ocupacion-representante') 
+            ?: null,
         "convivenciaestudiante_representante" => $request->convivenciaestudiante_representante ?: 'no',
+        "status" => $status
     ];
 
     if($request->representante_id){
