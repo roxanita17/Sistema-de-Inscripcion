@@ -4149,17 +4149,16 @@
                         mensaje = 'Debe seleccionar una opción';
                     } else if (valor !== '0') { // Si no es 'No aplica'
                         // Validar campos de código y serial si está afiliado
-                        const codigoCarnet = document.getElementById('codigo-carnet');
-                        const serialCarnet = document.getElementById('serial-carnet');
+                        const codigoCarnet = document.getElementById('codigo');
+                        const serialCarnet = document.getElementById('serial');
 
                         if (codigoCarnet && codigoCarnet.value.trim() === '') {
+                            mostrarError(codigoCarnet, 'El código es obligatorio cuando el carnet está afiliado');
                             esValido = false;
-                            mostrarError(codigoCarnet, 'El código del carnet es obligatorio');
                         }
-
                         if (serialCarnet && serialCarnet.value.trim() === '') {
+                            mostrarError(serialCarnet, 'El serial es obligatorio cuando el carnet está afiliado');
                             esValido = false;
-                            mostrarError(serialCarnet, 'El serial del carnet es obligatorio');
                         }
                     }
                 }
