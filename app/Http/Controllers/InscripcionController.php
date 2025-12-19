@@ -29,7 +29,6 @@ class InscripcionController extends Controller
     }
     public function index()
     {
-        $buscar = request('buscar');
         // Obtener todos los grados
         $grados = Grado::where('status', true)->get();
 
@@ -75,24 +74,42 @@ class InscripcionController extends Controller
                 ->get();
         }
 
+        /* Filtros */
+        $buscar = request('buscar');
+        $gradoId = request('grado_id');
+
+        if ($gradoId) {
+            $secciones = Seccion::where('grado_id', $gradoId)
+                ->where('status', true)
+                ->orderBy('nombre')
+                ->get();
+        }
+
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
+
         $inscripciones = Inscripcion::with([
             'alumno.persona.tipoDocumento',
             'grado',
-            'seccionAsignada',
+            'seccion',
             'anioEscolar'
         ])
-            ->anioEscolarVigente()
             ->select('inscripcions.*')
             ->join('alumnos', 'inscripcions.alumno_id', '=', 'alumnos.id')
-            ->join('personas', 'alumnos.persona_id', '=', 'personas.id')
-            ->buscar($buscar)
-            ->orderBy('personas.primer_apellido', 'asc')
-            ->orderBy('personas.numero_documento', 'asc')
-            ->orderBy('personas.primer_nombre', 'asc')
-            ->paginate(10);
+            ->join('personas', 'alumnos.persona_id', '=', 'personas.id');
 
+        /* FILTRO POR GRADO */
+        if ($gradoId) {
+            $inscripciones->where('inscripcions.grado_id', $gradoId);
+        }
+        /* BUSCADOR */
+        $inscripciones = $inscripciones
+            ->buscar($buscar)
+            ->orderBy('personas.primer_apellido')
+            ->orderBy('personas.numero_documento')
+            ->orderBy('personas.primer_nombre')
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.transacciones.inscripcion.index', [
             'anioEscolarActivo' => $anioEscolarActivo,

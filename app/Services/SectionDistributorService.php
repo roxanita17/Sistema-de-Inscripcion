@@ -124,6 +124,11 @@ class SectionDistributorService
             EntradasPercentil::where('ejecucion_percentil_id', $ejecucion->id)
                 ->update(['seccion_id' => null]);
 
+            Inscripcion::where('grado_id', $grado->id)
+                ->where('anio_escolar_id', $anioEscolarActivo->id)
+                ->update(['seccion_id' => null]);
+
+
 
             // 7. Distribuir estudiantes
             $tamañoBase = (int) floor($total / $numSecciones);
@@ -139,7 +144,17 @@ class SectionDistributorService
                 for ($i = 0; $i < $tamañoSeccion; $i++) {
                     $entrada = $ordenados[$estudiantesAsignados];
 
-                    $entrada->update(['seccion_id' => $seccion->id]);
+                    // Guardar sección en la entrada percentil
+                    $entrada->update([
+                        'seccion_id' => $seccion->id
+                    ]);
+
+                    // Guardar sección TAMBIÉN en inscripción
+                    $entrada->inscripcion->update([
+                        'seccion_id' => $seccion->id
+                    ]);
+
+                    // Aumentar contador
                     $seccion->increment('cantidad_actual');
 
                     $estudiantesAsignados++;

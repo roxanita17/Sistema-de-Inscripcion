@@ -19,12 +19,14 @@ Falta:
 2. Implementar buscadores con Livewire en los index
 3. Editar inscripción
 4. Inscripción por prosecución (tipo de inscripción)
+--------------------------
+5. Promocion de secciones
+--------------------------
 
 ## Filtros
 Falta:
 1. Filtro por status de inscripción
 2. Filtro por grado
-   - Inscripción
    - Historial de percentil
 3. Filtro por sección
    - Inscripción
@@ -34,9 +36,7 @@ Falta:
 
 ## SEEDERS
 Falta:
-
 1. Crear seeder de estados (incluyendo dependencias federales)
-2. Mejorar seeder de alumnos e inscripción
 3. Acomodar seeder de representantes
 
 --------------------------------------------------------------------------
@@ -47,7 +47,6 @@ Falta:
 Falta:
 
 ### Inscripción
-2. Filtrar por grado
 3. Filtrar por sección
 
 ### Docente (docente_area_grado)

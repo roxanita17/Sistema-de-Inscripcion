@@ -10,46 +10,62 @@
                 </h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <hr>
 
             <!-- Body -->
-            <div class="modal-body pt-2">
+            <div class="modal-body pt-0">
 
-                <!-- Estado -->
-                <div class="form-group-modern">
+                {{-- FILTRO --}}
+                <form method="GET" action="{{ route('admin.transacciones.inscripcion.index') }}">
+
                     <label class="form-label-modern">
-                        <i class="fas fa-toggle-on" style="color: var(--primary);"></i>
-                        Estado
+                        <i class="fas fa-layer-group" style="color: var(--primary);"></i>
+                        Grado
                     </label>
-                    <select class="form-control-modern">
-                        <option value="">Todos</option>
-                        <option value="activo">Activo</option>
-                        <option value="inactivo">Inactivo</option>
+
+                    <select name="grado_id" class="form-select form-control-modern">
+                        <option value="">Todos los grados</option>
+                        @foreach ($grados as $grado)
+                            <option value="{{ $grado->id }}"
+                                {{ request('grado_id') == $grado->id ? 'selected' : '' }}>
+                                {{ $grado->numero_grado }}
+                            </option>
+                        @endforeach
                     </select>
-                </div>
+                    <br>
 
-                <!-- Fecha -->
-                <div class="form-group-modern">
-                    <label class="form-label-modern">
-                        <i class="fas fa-calendar-alt" style="color: var(--primary);"></i>
-                        Fecha
+                    {{-- SECCIÓN --}}
+                    {{-- <label class="form-label-modern">
+                        <i class="fas fa-th-large" style="color: var(--primary);"></i>
+                        Sección
                     </label>
-                    <input type="date" class="form-control-modern">
-                </div>
+
+                    <select name="seccion_id" class="form-select form-control-modern">
+                        <option value="">Todas las secciones</option>
+
+                        @foreach ($secciones as $seccion)
+                            <option value="{{ $seccion->id }}"
+                                {{ request('seccion_id') == $seccion->id ? 'selected' : '' }}>
+                                {{ $seccion->nombre }}
+                            </option>
+                        @endforeach
+                    </select> --}}
+
+
+
+                    <button type="submit" class="btn-modal-create mt-4 w-100">
+                        <i class="fas fa-check"></i>
+                        Aplicar
+                    </button>
+                </form>
+
+
+
 
             </div>
 
-            <!-- Footer -->
-            <div class="modal-footer border-0 pt-0">
-                <button class="btn-modal-cancel" data-bs-dismiss="modal">
-                    <i class="fas fa-times"></i>
-                    Limpiar
-                </button>
 
-                <button class="btn-modal-create">
-                    <i class="fas fa-check"></i>
-                    Aplicar
-                </button>
-            </div>
+
 
         </div>
     </div>
@@ -57,20 +73,19 @@
 
 <style>
     #modalFiltros .modal-content {
-    border: 1px solid var(--primary);
-    box-shadow: var(--shadow-sm);
-}
+        border: 1px solid var(--primary);
+        box-shadow: var(--shadow-sm);
+    }
 
-#modalFiltros .modal-footer {
-    justify-content: space-between;
-}
+    #modalFiltros .modal-footer {
+        justify-content: space-between;
+    }
 
-#modalFiltros .form-control-modern {
-    border-width: 1px;
-}
+    #modalFiltros .form-control-modern {
+        border-width: 1px;
+    }
 
-#modalFiltros .form-control-modern:focus {
-    border-color: var(--primary);
-}
-
+    #modalFiltros .form-control-modern:focus {
+        border-color: var(--primary);
+    }
 </style>

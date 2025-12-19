@@ -117,6 +117,7 @@ class InscripcionService
                 'anio_egreso' => $data->anio_egreso,
                 'expresion_literaria_id' => $data->expresion_literaria_id,
                 'grado_id' => $data->grado_id,
+                'seccion_id' => $data->seccion_id ,
                 'padre_id' => $data->padre_id,
                 'madre_id' => $data->madre_id,
                 'representante_legal_id' => $data->representante_legal_id,

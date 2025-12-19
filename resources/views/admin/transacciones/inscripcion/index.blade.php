@@ -192,8 +192,8 @@
 
                                         {{-- SECCION --}}
                                         <td class="text-center">
-                                            @if ($datos->seccionAsignada)
-                                                {{ $datos->seccionAsignada->nombre }}
+                                            @if ($datos->seccion)
+                                                {{ $datos->seccion->nombre }}
                                             @else
                                                 Sin asignar
                                             @endif
