@@ -497,7 +497,16 @@ public function mostrarFormularioEditar($id)
                     }
                 }
             ],
+            'fecha_nacimiento' => 'required|date',
             'telefono-representante' => 'required|string|max:20',
+            'sexo-representante' => 'required|in:M,F,O',
+            'tipo-ci-representante' => 'required|exists:tipos_documentos,id',
+            'estado_id' => 'required|exists:estados,id',
+            'municipio_id' => 'required|exists:municipios,id',
+            'parroquia_id' => 'required|exists:parroquias,id',
+            'direccion-habitacion' => 'required|string|max:255',
+            'convive-representante' => 'required|in:si,no',
+            'ocupacion-representante' => 'required|exists:ocupacions,id',
             'correo-representante' => 'required|email|max:100',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
@@ -508,6 +517,23 @@ public function mostrarFormularioEditar($id)
 
         // Mensajes de error personalizados
         $messages = [
+            'primer-nombre-representante.required' => 'El primer nombre es obligatorio',
+            'primer-apellido-representante.required' => 'El primer apellido es obligatorio',
+            'fecha-nacimiento-representante.required' => 'La fecha de nacimiento es obligatoria',
+            'fecha-nacimiento-representante.date_format' => 'El formato de fecha debe ser DD/MM/YYYY',
+            'telefono-representante.required' => 'El teléfono es obligatorio',
+            'sexo-representante.required' => 'El género es obligatorio',
+            'tipo-ci-representante.required' => 'El tipo de documento es obligatorio',
+            'estado_id.required' => 'El estado es obligatorio',
+            'municipio_id.required' => 'El municipio es obligatorio',
+            'parroquia_id.required' => 'La parroquia es obligatoria',
+            'direccion-habitacion.required' => 'La dirección es obligatoria',
+            'convive-representante.required' => 'Debe indicar si convive con el estudiante',
+            'ocupacion-representante.required' => 'La ocupación es obligatoria',
+            'correo-representante.required' => 'El correo electrónico es obligatorio',
+            'correo-representante.email' => 'El correo electrónico no es válido',
+            'numero_numero_documento_persona.required' => 'El número de cédula es obligatorio',
+            'numero_numero_documento_persona.unique' => 'Este número de cédula ya está registrado',
             'numero_numero_documento_persona.required' => 'El número de documento es obligatorio',
             'primer-nombre-representante.required' => 'El primer nombre es obligatorio',
             'primer-apellido-representante.required' => 'El primer apellido es obligatorio',
@@ -1211,31 +1237,41 @@ public function mostrarFormularioEditar($id)
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
+    /**
+     * Filtra los representantes según los criterios de búsqueda
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function filtar(Request $request)
     {
-        $buscador=$request->buscador;
-        // $parroquia_id=$request->parroquia_id;
-        $consulta=Representante::query()->with(["persona","legal"]);
+        $buscador = $request->buscador ?? '';
+        
+        // Iniciar consulta con relaciones necesarias
+        $consulta = Representante::query()->with('persona');
 
-        if($buscador!=""){
-            $consulta=$consulta->whereHas("persona",function($query) use ($buscador){
-                $query->whereRaw("CONCAT(nombre_uno,' ',nombre_dos,' ',apellido_uno,' ',apellido_dos) LIKE ?", ["%{$buscador}%"])
-                ->orWhere("numero_numero_documento_persona","like","%".$buscador."%")
-                ->orWhere("nombre_uno","like","%".$buscador."%")
-                ->orWhere("nombre_dos","like","%".$buscador."%")
-                ->orWhere("apellido_uno","like","%".$buscador."%")
-                ->orWhere("apellido_dos","like","%".$buscador."%");
+        if (!empty($buscador)) {
+            $consulta = $consulta->whereHas('persona', function($query) use ($buscador) {
+                $query->where(function($q) use ($buscador) {
+                    $q->where('numero_documento', 'LIKE', "%{$buscador}%")
+                      ->orWhere('primer_nombre', 'LIKE', "%{$buscador}%")
+                      ->orWhere('segundo_nombre', 'LIKE', "%{$buscador}%")
+                      ->orWhere('primer_apellido', 'LIKE', "%{$buscador}%")
+                      ->orWhere('segundo_apellido', 'LIKE', "%{$buscador}%")
+                      ->orWhereRaw("CONCAT(primer_nombre, ' ', COALESCE(segundo_nombre, ''), ' ', primer_apellido, ' ', COALESCE(segundo_apellido, '')) LIKE ?", ["%{$buscador}%"]);
+                });
             });
         }
 
-        // if($parroquia_id!="null"){
-        //     $consulta=$consulta->where("parroquia_id","=",$parroquia_id);
-        // }
+        // Ordenar por fecha de creación descendente (los más recientes primero)
+        $consulta->orderBy('created_at', 'desc');
 
-        $respuesta=$consulta->paginate(10);
+        // Paginar los resultados
+        $respuesta = $consulta->paginate(10);
+        
         return response()->json([
             'status' => 'success',
-            'message' => 'Estudiante consultado',
+            'message' => 'Representantes consultados correctamente',
             'data' => $respuesta,
         ], 200);
     }

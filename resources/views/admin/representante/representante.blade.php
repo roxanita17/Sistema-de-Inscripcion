@@ -254,7 +254,148 @@
 
 @section('js')
     <script>
+        // Obtener la lista de ocupaciones desde el controlador
+        const ocupaciones = @json(\App\Models\Ocupacion::all());
+        
         // Configuración de fechas por defecto
+        
+        // Manejar la búsqueda de representantes
+        document.addEventListener('DOMContentLoaded', function() {
+            const buscador = document.getElementById('buscador');
+            const tbody = document.getElementById('tbody-representantes');
+            const pagination = document.querySelector('.pagination');
+            const tabla = document.querySelector('.table-modern');
+
+            if (buscador && tbody) {
+                let timeoutId;
+                
+                // Función para realizar la búsqueda
+                const buscarRepresentantes = async (termino) => {
+                    try {
+                        const response = await fetch(`/representante/filtrar?buscador=${encodeURIComponent(termino)}`, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error('Error en la respuesta del servidor:', response.status, errorText);
+                            throw new Error(`Error en la búsqueda: ${response.status} ${response.statusText}`);
+                        }
+                        
+                        let data;
+                        try {
+                            data = await response.json();
+                        } catch (e) {
+                            console.error('Error al analizar la respuesta JSON:', e);
+                            const errorText = await response.text();
+                            console.error('Respuesta del servidor:', errorText);
+                            throw new Error('La respuesta del servidor no es un JSON válido');
+                        }
+                        
+                        if (data.status === 'success') {
+                            // Actualizar la tabla con los resultados
+                            tbody.innerHTML = '';
+                            
+                            if (data.data.data && data.data.data.length > 0) {
+                                data.data.data.forEach(rep => {
+                                    const fila = document.createElement('tr');
+                                    
+                                    // Crear celdas con los datos del representante
+                                    const celdas = [
+                                        rep.persona?.numero_documento || 'N/A',
+                                        rep.persona?.primer_nombre || 'N/A',
+                                        rep.persona?.primer_apellido || 'N/A',
+                                        // Agregar más celdas según sea necesario
+                                        `
+                                        <div class="action-buttons">
+                                            <div class="dropdown dropstart text-center">
+                                                <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item" href="#" onclick="verDetalles(${rep.id})">
+                                                            <i class="fas fa-eye me-2"></i> Ver Detalles
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="/representante/" + rep.id + "/editar">
+                                                            <i class="fas fa-edit me-2"></i> Editar
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#confirmarEliminarRepresentante${rep.id}">
+                                                            <i class="fas fa-trash-alt me-2"></i> Eliminar
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        `
+                                    ];
+                                    
+                                    celdas.forEach(texto => {
+                                        const celda = document.createElement('td');
+                                        celda.innerHTML = texto;
+                                        fila.appendChild(celda);
+                                    });
+                                    
+                                    tbody.appendChild(fila);
+                                });
+                            } else {
+                                const fila = document.createElement('tr');
+                                const celda = document.createElement('td');
+                                celda.colSpan = 5;
+                                celda.className = 'text-center py-3';
+                                celda.textContent = 'No se encontraron resultados';
+                                fila.appendChild(celda);
+                                tbody.appendChild(fila);
+                            }
+                            
+                            // Actualizar la paginación si existe
+                            if (pagination && data.data.links) {
+                                pagination.innerHTML = '';
+                                data.data.links.forEach(link => {
+                                    const li = document.createElement('li');
+                                    li.className = `page-item ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`;
+                                    
+                                    const a = document.createElement('a');
+                                    a.className = 'page-link';
+                                    a.href = link.url || '#';
+                                    a.innerHTML = link.label.replace('&laquo;', '«').replace('&raquo;', '»');
+                                    
+                                    li.appendChild(a);
+                                    pagination.appendChild(li);
+                                });
+                            }
+                            
+                            // Mostrar la tabla si estaba oculta
+                            if (tabla) {
+                                tabla.classList.remove('hidden');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error al buscar representantes:', error);
+                    }
+                };
+                
+                // Evento para el campo de búsqueda
+                buscador.addEventListener('input', function(e) {
+                    clearTimeout(timeoutId);
+                    const termino = e.target.value.trim();
+                    
+                    // Esperar 500ms después de que el usuario deje de escribir
+                    timeoutId = setTimeout(() => {
+                        if (termino.length >= 2 || termino.length === 0) {
+                            buscarRepresentantes(termino);
+                        }
+                    }, 500);
+                });
+            }
+        });
         document.addEventListener('DOMContentLoaded', function() {
             // Establecer rango de fechas por defecto (mes actual)
             const today = new Date();
@@ -320,8 +461,18 @@
                 document.getElementById('modal-primer-apellido').textContent = persona.primer_apellido || '';
                 document.getElementById('modal-segundo-apellido').textContent = persona.segundo_apellido || '';
                 document.getElementById('modal-numero_documento').textContent = persona.numero_documento || '';
-                document.getElementById('modal-lugar-nacimiento').textContent = persona.fecha_nacimiento || persona
-                    .lugar_nacimiento || '';
+                
+                // Formatear fecha de nacimiento
+                let fechaNacimiento = persona.fecha_nacimiento ? new Date(persona.fecha_nacimiento) : null;
+                if (fechaNacimiento && !isNaN(fechaNacimiento)) {
+                    const dia = String(fechaNacimiento.getDate()).padStart(2, '0');
+                    const mes = String(fechaNacimiento.getMonth() + 1).padStart(2, '0');
+                    const anio = fechaNacimiento.getFullYear();
+                    document.getElementById('modal-lugar-nacimiento').textContent = `${dia}/${mes}/${anio}`;
+                } else {
+                    // Si no hay fecha de nacimiento, mostrar lugar de nacimiento o mensaje por defecto
+                    document.getElementById('modal-lugar-nacimiento').textContent = persona.lugar_nacimiento || 'No especificado';
+                }
 
                 // Contacto básico
                 if (document.getElementById('modal-telefono')) {
@@ -344,11 +495,17 @@
                 // Ocupación (usando relación ocupacion si viene cargada)
                 let ocupacionNombre = '';
                 if (representante.ocupacion && representante.ocupacion.nombre_ocupacion) {
+                    // Si la relación ocupación está cargada con el modelo
                     ocupacionNombre = representante.ocupacion.nombre_ocupacion;
+                } else if (typeof ocupaciones !== 'undefined' && ocupaciones.length > 0 && representante.ocupacion_representante) {
+                    // Buscar la ocupación por ID en el array global de ocupaciones
+                    const ocupacion = ocupaciones.find(oc => oc.id == representante.ocupacion_representante);
+                    ocupacionNombre = ocupacion ? ocupacion.nombre_ocupacion : `ID: ${representante.ocupacion_representante}`;
                 } else if (representante.ocupacion_representante) {
-                    ocupacionNombre = representante.ocupacion_representante;
+                    // Si no hay array de ocupaciones, mostrar el ID como último recurso
+                    ocupacionNombre = `ID: ${representante.ocupacion_representante}`;
                 }
-                document.getElementById('modal-ocupacion').textContent = ocupacionNombre;
+                document.getElementById('modal-ocupacion').textContent = ocupacionNombre || 'No especificada';
 
                 // Convive con el estudiante
                 let convive = representante.convivenciaestudiante_representante;

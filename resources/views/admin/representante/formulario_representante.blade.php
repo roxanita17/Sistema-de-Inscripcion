@@ -953,7 +953,7 @@
                                 @foreach ($ocupaciones as $ocupacion)
                                     <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
                                 @endforeach
-                                <option value="otro">Otra ocupación</option>
+                               
                             </select>
                             <div class="invalid-feedback">
                                 Por favor seleccione una ocupación.
@@ -1120,6 +1120,16 @@
                                         pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
                                         title="Solo se permiten letras y espacios, no se aceptan números">
                                     <small class="text-danger" id="segundo-nombre-representante-error"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="tercer-nombre-representante" class="form-label">Tercer Nombre</label>
+                                    <input type="text" class="form-control" id="tercer-nombre-representante"
+                                        name="tercer-nombre-representante" placeholder="Opcional"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+                                        title="Solo se permiten letras y espacios, no se aceptan números">
+                                    <small class="text-danger" id="tercer-nombre-representante-error"></small>
                                 </div>
                             </div>
                             <div class="col-md-3">

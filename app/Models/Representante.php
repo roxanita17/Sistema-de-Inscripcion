@@ -64,10 +64,13 @@ class Representante extends Model
 
     public static function reportePDF($filtro=null){
     $query=DB::table("representantes")
+    ->where('representantes.status', 1) // Solo registros activos
+    ->where('personas.status', 1)       // Solo personas activas
     ->select(
         // Datos del representante
             'representantes.id as representante_id',
             'representantes.ocupacion_representante',
+            'representantes.status as representante_status',
             
             // Datos de persona
             'personas.primer_nombre',
