@@ -147,13 +147,13 @@
         </div>
 
         <div class="card-body-modern" style="padding: 2rem;">
-            <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="form-modern needs-validation" novalidate>
+            <form id="representante-form" action="{{ route('representante.update', $representante->id) }}" method="POST" class="form-modern needs-validation" novalidate>
                 @csrf
-                @method('POST')
+                @method('PUT')
                 
-                @csrf
                 <input type="hidden" name="id" value="{{ $representante->id }}">
                 <input type="hidden" name="es_legal" id="es_legal" value="1">
+                <input type="hidden" name="persona_id" value="{{ $representante->persona_id }}">
 
                 <!-- Sección de Datos Personales -->
                 <div class="border rounded p-4 mb-4 bg-light">
@@ -168,8 +168,8 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-id-card me-2"></i> Tipo de Documento <span class="required-badge">*</span>
                             </label>
-                            <select class="form-select" id="tipo_numero_documento_persona" name="tipo_numero_documento_persona" required>
-                                <option value="" disabled selected>Seleccione</option>
+                            <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante" required>
+                                <option value="" disabled {{ !isset($representante->persona->tipo_documento_id) ? 'selected' : '' }}>Seleccione</option>
                                 @foreach($tipoDocumentos as $tipoDoc)
                                     <option value="{{ $tipoDoc->id }}" 
                                         {{ old('tipo_documento_id', $representante->persona->tipo_documento_id ?? '') == $tipoDoc->id ? 'selected' : '' }}>
@@ -186,8 +186,8 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-id-card me-2"></i> Número de Cédula <span class="required-badge">*</span>
                             </label>
-                            <input type="text" class="form-control" id="numero_numero_documento_persona" name="numero_numero_documento_persona" 
-                                   value="{{ old('numero_numero_documento_persona', $representante->persona->numero_documento ?? '') }}"
+                            <input type="text" class="form-control" id="numero_documento-representante" name="numero_documento-representante" 
+                                   value="{{ old('numero_documento-representante', $representante->persona->numero_documento ?? '') }}"
                                    maxlength="8" pattern="\d{6,8}" 
                                    title="Ingrese solo números (entre 6 y 8 dígitos)" required
                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
@@ -200,9 +200,9 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-calendar-alt me-2"></i> Fecha de Nacimiento <span class="required-badge">*</span>
                             </label>
-                            <input type="date" class="form-control" id="fecha_nacimiento" 
-                                   name="fecha_nacimiento" 
-                                   value="{{ old('fecha_nacimiento', $representante->persona->fecha_nacimiento ? \Carbon\Carbon::parse($representante->persona->fecha_nacimiento)->format('Y-m-d') : '') }}"
+                            <input type="date" class="form-control" id="fecha-nacimiento-representante" 
+                                   name="fecha-nacimiento-representante" 
+                                   value="{{ old('fecha-nacimiento-representante', $representante->persona->fecha_nacimiento ? \Carbon\Carbon::parse($representante->persona->fecha_nacimiento)->format('Y-m-d') : '') }}"
                                    required>
                             <div class="invalid-feedback">
                                 Por favor ingrese una fecha de nacimiento válida.
@@ -213,8 +213,8 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-user me-2"></i> Primer Nombre <span class="required-badge">*</span>
                             </label>
-                            <input type="text" class="form-control" id="nombre_uno" name="nombre_uno"
-                                   value="{{ old('nombre_uno', $representante->persona->primer_nombre ?? '') }}"
+                            <input type="text" class="form-control" id="primer-nombre-representante" name="primer-nombre-representante"
+                                   value="{{ old('primer-nombre-representante', $representante->persona->primer_nombre ?? '') }}"
                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
                                    title="Solo se permiten letras y espacios, no se aceptan números" required>
                             <div class="invalid-feedback">
@@ -226,8 +226,8 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-user me-2"></i> Segundo Nombre
                             </label>
-                            <input type="text" class="form-control" id="nombre_dos" name="nombre_dos"
-                                   value="{{ old('nombre_dos', $representante->persona->segundo_nombre ?? '') }}"
+                            <input type="text" class="form-control" id="segundo-nombre-representante" name="segundo-nombre-representante"
+                                   value="{{ old('segundo-nombre-representante', $representante->persona->segundo_nombre ?? '') }}"
                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
                                    title="Solo se permiten letras y espacios, no se aceptan números">
                         </div>
@@ -236,8 +236,8 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-user me-2"></i> Tercer Nombre
                             </label>
-                            <input type="text" class="form-control" id="nombre_tres" name="nombre_tres"
-                                   value="{{ old('nombre_tres', $representante->persona->tercer_nombre ?? '') }}"
+                            <input type="text" class="form-control" id="tercer-nombre-representante" name="tercer-nombre-representante"
+                                   value="{{ old('tercer-nombre-representante', $representante->persona->tercer_nombre ?? '') }}"
                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
                                    title="Solo se permiten letras y espacios, no se aceptan números">
                         </div>
@@ -246,8 +246,8 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-user me-2"></i> Primer Apellido <span class="required-badge">*</span>
                             </label>
-                            <input type="text" class="form-control" id="apellido_uno" name="apellido_uno"
-                                   value="{{ old('apellido_uno', $representante->persona->primer_apellido ?? '') }}"
+                            <input type="text" class="form-control" id="primer-apellido-representante" name="primer-apellido-representante"
+                                   value="{{ old('primer-apellido-representante', $representante->persona->primer_apellido ?? '') }}"
                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
                                    title="Solo se permiten letras y espacios, no se aceptan números" required>
                             <div class="invalid-feedback">
@@ -259,8 +259,8 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-user me-2"></i> Segundo Apellido
                             </label>
-                            <input type="text" class="form-control" id="apellido_dos" name="apellido_dos"
-                                   value="{{ old('apellido_dos', $representante->persona->segundo_apellido ?? '') }}"
+                            <input type="text" class="form-control" id="segundo-apellido-representante" name="segundo-apellido-representante"
+                                   value="{{ old('segundo-apellido-representante', $representante->persona->segundo_apellido ?? '') }}"
                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
                                    title="Solo se permiten letras y espacios, no se aceptan números">
                         </div>
@@ -269,7 +269,7 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-venus-mars me-2"></i> Género <span class="required-badge">*</span>
                             </label>
-                            <select class="form-select" id="sexo_representante" name="sexo_representante" required>
+                            <select class="form-select" id="sexo-representante" name="sexo-representante" required>
                                 <option value="" disabled selected>Seleccione</option>
                                 @foreach($generos as $genero)
                                     <option value="{{ $genero->id }}" 

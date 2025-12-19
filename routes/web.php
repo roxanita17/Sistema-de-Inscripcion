@@ -343,8 +343,11 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
     // Formulario de creación
     Route::get('/formulario', [RepresentanteController::class, 'mostrarFormulario'])->name('formulario');
 
-    // Guardar / actualizar representante (manejado por el método save del controlador)
+    // Guardar nuevo representante
     Route::post('/save', [RepresentanteController::class, 'save'])->name('save');
+
+    // Actualizar representante existente
+    Route::put('/{id}', [RepresentanteController::class, 'update'])->name('update');
 
     // Formulario de edición de un representante específico
     Route::get('/{id}/editar', [RepresentanteController::class, 'mostrarFormularioEditar'])->name('editar');

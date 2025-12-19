@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use Illuminate\Validation\Rule;
 use App\Models\Persona;
 use App\Models\Representante;
 use App\Models\RepresentanteLegal;
@@ -336,6 +338,155 @@ public function mostrarFormularioEditar($id)
         return false;
     }
 
+    /**
+     * Handle the update of an existing representante.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        // Find the representante to update
+        $representante = Representante::with('persona')->findOrFail($id);
+        $persona = $representante->persona;
+
+        // Log the update attempt
+        Log::info('=== ACTUALIZANDO REPRESENTANTE ===', [
+            'representante_id' => $id,
+            'persona_id' => $persona->id,
+            'request_data' => $request->except(['_token', '_method', 'password']),
+            'current_document' => $persona->numero_documento,
+            'new_document' => $request->input('numero_documento-representante')
+        ]);
+
+        // Validate the request
+        $rules = [
+            'numero_documento-representante' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('personas', 'numero_documento')->ignore($persona->id),
+                function ($attribute, $value, $fail) {
+                    if (!preg_match('/^\d{6,8}$/', $value)) {
+                        $fail('El número de cédula debe contener entre 6 y 8 dígitos.');
+                    }
+                },
+            ],
+            'primer-nombre-representante' => 'required|string|max:50',
+            'primer-apellido-representante' => 'required|string|max:50',
+            'fecha-nacimiento-representante' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (!$this->isValidDate($value)) {
+                        $fail('El formato de la fecha debe ser DD/MM/YYYY');
+                    }
+                }
+            ],
+            'sexo-representante' => 'required|exists:generos,id',
+            'tipo-ci-representante' => 'required|exists:tipo_documentos,id',
+            'estado_id' => 'required|exists:estados,id',
+            'municipio_id' => 'required|exists:municipios,id',
+            'parroquia_id' => 'required|exists:localidads,id',
+            'pertenece_organizacion' => 'sometimes|boolean',
+            'cual_organizacion_representante' => 'required_if:pertenece_organizacion,1|nullable|string|max:255',
+        ];
+
+        $messages = [
+            'required' => 'El campo :attribute es obligatorio.',
+            'numero_documento-representante.unique' => 'Este número de cédula ya está registrado',
+            'numero_documento-representante.regex' => 'El número de cédula debe contener entre 6 y 8 dígitos',
+            'fecha-nacimiento-representante' => 'Formato de fecha inválido',
+        ];
+
+        $validator = \Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Start transaction
+        DB::beginTransaction();
+
+        try {
+            // Update persona data
+            $persona->update([
+                'primer_nombre' => $request->input('primer-nombre-representante'),
+                'segundo_nombre' => $request->input('segundo-nombre-representante'),
+                'tercer_nombre' => $request->input('tercer-nombre-representante'),
+                'primer_apellido' => $request->input('primer-apellido-representante'),
+                'segundo_apellido' => $request->input('segundo-apellido-representante'),
+                'numero_documento' => $request->input('numero_documento-representante'),
+                'fecha_nacimiento' => $this->parseDate($request->input('fecha-nacimiento-representante')),
+                'genero_id' => $request->input('sexo-representante'),
+                'tipo_documento_id' => $request->input('tipo-ci-representante'),
+                'prefijo_id' => $request->input('prefijo_telefono'),
+                'telefono' => $request->input('telefono_movil'),
+                'email' => $request->input('correo-representante'),
+                'localidad_id' => $request->input('parroquia_id'),
+            ]);
+
+            // Update representante data
+            $representante->update([
+                'estado_id' => $request->input('estado_id'),
+                'municipio_id' => $request->input('municipio_id'),
+                'parroquia_id' => $request->input('parroquia_id'),
+                'ocupacion_representante' => $request->input('ocupacion_id'),
+                'convivenciaestudiante_representante' => $request->input('convive-representante', 'no'),
+            ]);
+
+            // Handle representante legal data
+            $perteneceOrganizacion = $request->input('pertenece_organizacion') == '1';
+            
+            if ($perteneceOrganizacion) {
+                // Only include organization data if the checkbox is checked
+                $organizacionData = [
+                    'pertenece_a_organizacion_representante' => true,
+                    'cual_organizacion_representante' => $request->input('cual_organizacion_representante', '')
+                ];
+                
+                if ($representante->legal) {
+                    $representante->legal()->update($organizacionData);
+                } else {
+                    $representante->legal()->create($organizacionData);
+                }
+            } else if ($representante->legal) {
+                // If checkbox is not checked but legal record exists, delete it
+                $representante->legal()->delete();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Representante actualizado exitosamente',
+                'redirect' => route('representante.index')
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar representante: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al actualizar el representante: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Handle the creation or update of a representante.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function save(Request $request)
     {
 
@@ -485,8 +636,25 @@ public function mostrarFormularioEditar($id)
         ]);
 
         // Reglas de validación base para representantes
+        $personaId = $request->input('persona_id');
+        $currentDocument = $personaId ? Persona::find($personaId)->numero_documento : null;
+        $newDocument = $request->input('numero_documento-representante');
+        
         $rules = [
-            'numero_numero_documento_persona' => 'required|string|max:20',
+            'numero_documento-representante' => [
+                'required',
+                'string',
+                'max:20',
+                function ($attribute, $value, $fail) use ($currentDocument, $newDocument, $personaId) {
+                    // Solo validar si el documento ha cambiado
+                    ($currentDocument !== $newDocument) && 
+                    Rule::unique('personas', 'numero_documento')->ignore($personaId);
+                    
+                    if (!preg_match('/^\d{6,8}$/', $value)) {
+                        $fail('El número de cédula debe contener entre 6 y 8 dígitos.');
+                    }
+                },
+            ],
             'primer-nombre-representante' => 'required|string|max:50',
             'primer-apellido-representante' => 'required|string|max:50',
             'fecha-nacimiento-representante' => [
