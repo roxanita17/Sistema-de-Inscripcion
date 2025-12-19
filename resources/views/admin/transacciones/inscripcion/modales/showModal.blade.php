@@ -13,10 +13,14 @@
             <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
-                    <div class="modal-icon-view mb-3">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
+                    @if ($datos->tipo_inscripcion === 'nuevo_ingreso')
+                        <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
+                        <p><b>Nuevo Ingreso</b></p>
+                    @else
+                        <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
+                        <p><b>Prosecucion</b></p>
+                    @endif
+                    
                     <div class="d-flex justify-content-center gap-2">
                         <span class="badge badge-status badge-{{ strtolower($datos->status) }}">
                             {{ $datos->status }}
@@ -358,7 +362,8 @@
                                         <span class="detail-label">
                                             <i class="fas fa-hashtag"></i> N° Zonificación
                                         </span>
-                                        <span class="detail-value">{{ $datos->numero_zonificacion ?? 'N/A' }}</span>
+                                        <span
+                                            class="detail-value">{{ $datos->nuevoIngreso->numero_zonificacion ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                             @endif
@@ -380,7 +385,7 @@
                                         <i class="fas fa-calendar-check"></i> Año Egreso
                                     </span>
                                     <span class="detail-value">
-                                        {{ \Carbon\Carbon::parse($datos->anio_egreso)->format('Y') ?? 'N/A' }}
+                                        {{ \Carbon\Carbon::parse($datos->nuevoIngreso->anio_egreso)->format('Y') ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -391,7 +396,7 @@
                                         <i class="fas fa-school"></i> Institución Procedencia
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->institucionProcedencia->nombre_institucion ?? 'N/A' }}
+                                        {{ $datos->nuevoIngreso->institucionProcedencia->nombre_institucion ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -402,7 +407,7 @@
                                         <i class="fas fa-book"></i> Expresión Literaria
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->expresionLiteraria->letra_expresion_literaria ?? 'N/A' }}
+                                        {{ $datos->nuevoIngreso->expresionLiteraria->letra_expresion_literaria ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -488,21 +493,17 @@
                                     'obligatorio' => false,
                                 ],
 
-
                                 'copia_cedula_estudiante' => [
                                     'label' => 'Copia Cédula Estudiante',
                                     'icon' => 'fa-id-card',
                                     'obligatorio' => false,
                                 ],
 
-                                
-
                                 'foto_estudiante' => [
                                     'label' => 'Fotografía Estudiante',
                                     'icon' => 'fa-camera',
                                     'obligatorio' => false,
                                 ],
-                                
 
                                 'foto_representante' => [
                                     'label' => 'Fotografía Representante',

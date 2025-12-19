@@ -95,20 +95,31 @@ class InscripcionController extends Controller
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Query de inscripciones
-        $inscripciones = Inscripcion::query()
-            ->select(
-                'inscripcions.*',
-                'seccions.nombre as nombre_seccion'
-            )
-            ->join('alumnos', 'inscripcions.alumno_id', '=', 'alumnos.id')
-            ->join('personas', 'alumnos.persona_id', '=', 'personas.id')
-            ->leftJoin('seccions', 'inscripcions.seccion_id', '=', 'seccions.id');
+        $inscripciones = Inscripcion::with([
+            'alumno.persona',
+            'grado',
+            'seccionAsignada',
+            'nuevoIngreso',
+            'prosecucion'
+        ])
+            ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
+            ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
+            ->when($buscar, function ($q) use ($buscar) {
+                $q->whereHas('alumno.persona', function ($qq) use ($buscar) {
+                    $qq->where('primer_nombre', 'like', "%$buscar%")
+                        ->orWhere('primer_apellido', 'like', "%$buscar%")
+                        ->orWhere('numero_documento', 'like', "%$buscar%");
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
 
         /* FILTRO POR GRADO */
         if (!empty($gradoId)) {
             $inscripciones->where('inscripcions.grado_id', $gradoId);
         }
-
         /* FILTRO POR SECCIÓN */
         if (!empty($seccionId)) {
             $inscripciones->where('inscripcions.seccion_id', $seccionId);
@@ -122,12 +133,6 @@ class InscripcionController extends Controller
                     ->orWhere('personas.numero_documento', 'like', "%$buscar%");
             });
         }
-
-        $inscripciones = $inscripciones
-            ->orderBy('personas.primer_apellido')
-            ->orderBy('personas.primer_nombre')
-            ->paginate(10)
-            ->withQueryString();
 
         return view('admin.transacciones.inscripcion.index', [
             'anioEscolarActivo' => $anioEscolarActivo,

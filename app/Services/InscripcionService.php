@@ -7,6 +7,8 @@ use App\Models\Grado;
 use App\Models\Alumno;
 use App\Models\Persona;
 use App\DTOs\InscripcionData;
+use App\Models\InscripcionNuevoIngreso;
+use App\Models\InscripcionProsecucion;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -110,14 +112,11 @@ class InscripcionService
             $anioEscolar = $this->obtenerAnioEscolarActivo();
 
             $inscripcion = Inscripcion::create([
+                'tipo_inscripcion' => $data->tipo_inscripcion,
                 'anio_escolar_id' => $anioEscolar->id,
                 'alumno_id' => $data->alumno_id,
-                'numero_zonificacion' => $data->numero_zonificacion,
-                'institucion_procedencia_id' => $data->institucion_procedencia_id,
-                'anio_egreso' => $data->anio_egreso,
-                'expresion_literaria_id' => $data->expresion_literaria_id,
                 'grado_id' => $data->grado_id,
-                'seccion_id' => $data->seccion_id ,
+                'seccion_id' => $data->seccion_id,
                 'padre_id' => $data->padre_id,
                 'madre_id' => $data->madre_id,
                 'representante_legal_id' => $data->representante_legal_id,
@@ -128,6 +127,27 @@ class InscripcionService
                 'acepta_normas_contrato' => $data->acepta_normas_contrato,
                 'status' => $evaluacion['status_inscripcion'],
             ]);
+
+            $tipo = $data->tipo_inscripcion; // 'nuevo_ingreso' | 'prosecucion'
+
+            if ($tipo === 'nuevo_ingreso') {
+                InscripcionNuevoIngreso::create([
+                    'inscripcion_id' => $inscripcion->id,
+                    'institucion_procedencia_id' => $data->institucion_procedencia_id,
+                    'anio_egreso' => $data->anio_egreso,
+                    'expresion_literaria_id' => $data->expresion_literaria_id,
+                    'numero_zonificacion' => $data->numero_zonificacion,
+                ]);
+            }
+
+            if ($tipo === 'prosecucion') {
+                InscripcionProsecucion::create([
+                    'inscripcion_id' => $inscripcion->id,
+                    'promovido' => $data->promovido,
+                    'repite_grado' => $data->repite_grado,
+                ]);
+            }
+
 
             DB::commit();
 
@@ -166,11 +186,13 @@ class InscripcionService
                 'estatura' => $datosAlumno['talla_estudiante'],
                 'lateralidad_id' => $datosAlumno['lateralidad_id'],
                 'orden_nacimiento_id' => $datosAlumno['orden_nacimiento_id'],
+                'etnia_indigena_id' => $datosAlumno['etnia_indigena_id'],
                 'status' => 'Activo',
             ]);
 
             $datosInscripcion->alumno_id = $alumno->id;
             $inscripcion = $this->registrar($datosInscripcion);
+
 
             DB::commit();
 

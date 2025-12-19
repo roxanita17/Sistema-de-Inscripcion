@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Admin\Alumnos;
 
+use Illuminate\Support\Collection;
+
+
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -16,6 +19,7 @@ use App\Models\Localidad;
 use App\Models\OrdenNacimiento;
 use App\Models\Lateralidad;
 use App\Models\AnioEscolar;
+use App\Models\EtniaIndigena;
 
 class AlumnoCreate extends Component
 {
@@ -72,7 +76,8 @@ class AlumnoCreate extends Component
     public $estados = [];
     public $municipios = [];
     public $localidades = [];
-
+    public $etnia_indigenas = [];
+    public $etnia_indigena_id;
 
     // Año escolar
     public $anioEscolarActivo = false;
@@ -163,6 +168,7 @@ class AlumnoCreate extends Component
             // Otros
             'lateralidad_id' => 'required|exists:lateralidads,id',
             'orden_nacimiento_id' => 'required|exists:orden_nacimientos,id',
+            'etnia_indigena_id' => 'nullable|exists:etnia_indigenas,id',
         ];
     }
 
@@ -191,9 +197,6 @@ class AlumnoCreate extends Component
         'localidad_id.required' => 'Este campo es requerido',
         'lateralidad_id.required' => 'Este campo es requerido',
         'orden_nacimiento_id.required' => 'Este campo es requerido',
-
-
-
     ];
 
     public function updated($propertyName)
@@ -276,6 +279,7 @@ class AlumnoCreate extends Component
         $this->generos = \App\Models\Genero::where('status', true)->get();
         $this->lateralidades = Lateralidad::where('status', true)->get();
         $this->orden_nacimientos = OrdenNacimiento::where('status', true)->get();
+        $this->etnia_indigenas = EtniaIndigena::where('status', true)->get();
     }
 
 
@@ -303,8 +307,6 @@ class AlumnoCreate extends Component
         $this->genero_id = $persona->genero_id;
 
         // Procedencia y datos físicos
-
-
         $this->talla_camisa = $alumno->talla_camisa;
         $this->talla_pantalon = $alumno->talla_pantalon;
         $this->talla_zapato = $alumno->talla_zapato;
@@ -312,6 +314,7 @@ class AlumnoCreate extends Component
         $this->talla_estudiante = $alumno->estatura;
         $this->lateralidad_id = $alumno->lateralidad_id;
         $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
+        $this->etnia_indigena_id = $alumno->etnia_indigena_id;
 
         // Actualiza selects dependientes
         $this->updatedEstadoId($persona->localidad->municipio->estado_id);
@@ -373,10 +376,16 @@ class AlumnoCreate extends Component
        ============================================================ */
     public function save()
     {
+
+        if (!$this->etnia_indigena_id) {
+            $this->addError('etnia_indigena_id', 'Debe seleccionar una etnia indígena.');
+            return;
+        }
         $this->validate();
 
         try {
             DB::beginTransaction();
+
 
             // Guardar persona
             $persona = Persona::updateOrCreate(
@@ -397,9 +406,10 @@ class AlumnoCreate extends Component
             );
 
             // Guardar alumno
-            Alumno::updateOrCreate(
-                ['id' => $this->alumno_id],
-                [
+            if ($this->alumno_id) {
+
+                $alumno = Alumno::findOrFail($this->alumno_id);
+                $alumno->update([
                     'persona_id' => $persona->id,
                     'talla_camisa' => $this->talla_camisa,
                     'talla_pantalon' => $this->talla_pantalon,
@@ -408,9 +418,24 @@ class AlumnoCreate extends Component
                     'estatura' => $this->talla_estudiante,
                     'lateralidad_id' => $this->lateralidad_id,
                     'orden_nacimiento_id' => $this->orden_nacimiento_id,
+                    'etnia_indigena_id' => $this->etnia_indigena_id,
                     'status' => 'Activo',
-                ]
-            );
+                ]);
+            } else {
+
+                Alumno::create([
+                    'persona_id' => $persona->id,
+                    'talla_camisa' => $this->talla_camisa,
+                    'talla_pantalon' => $this->talla_pantalon,
+                    'talla_zapato' => $this->talla_zapato,
+                    'peso' => $this->peso_estudiante,
+                    'estatura' => $this->talla_estudiante,
+                    'lateralidad_id' => $this->lateralidad_id,
+                    'orden_nacimiento_id' => $this->orden_nacimiento_id,
+                    'etnia_indigena_id' => $this->etnia_indigena_id,
+                    'status' => 'Activo',
+                ]);
+            }
 
             DB::commit();
 

@@ -11,8 +11,6 @@ class AlumnoSeeder extends Seeder
     {
         $alumnos = [
             [
-                
-                
                 'talla_camisa' => 40,
                 'talla_pantalon' => 38,
                 'talla_zapato' => 41,
@@ -21,11 +19,12 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 1,
                 'lateralidad_id' => 1,
                 'persona_id' => 1,
+                'etnia_indigena_id' => 1,
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 42,
                 'talla_pantalon' => 40,
                 'talla_zapato' => 43,
@@ -34,11 +33,13 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 2,
                 'lateralidad_id' => 2,
                 'persona_id' => 2,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 38,
                 'talla_pantalon' => 36,
                 'talla_zapato' => 40,
@@ -47,11 +48,13 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 3,
                 'lateralidad_id' => 1,
                 'persona_id' => 3,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 44,
                 'talla_pantalon' => 42,
                 'talla_zapato' => 44,
@@ -60,11 +63,13 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 1,
                 'lateralidad_id' => 2,
                 'persona_id' => 4,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 39,
                 'talla_pantalon' => 38,
                 'talla_zapato' => 41,
@@ -73,11 +78,13 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 2,
                 'lateralidad_id' => 1,
                 'persona_id' => 5,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 41,
                 'talla_pantalon' => 39,
                 'talla_zapato' => 42,
@@ -86,11 +93,13 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 1,
                 'lateralidad_id' => 2,
                 'persona_id' => 6,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 43,
                 'talla_pantalon' => 42,
                 'talla_zapato' => 44,
@@ -99,11 +108,13 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 3,
                 'lateralidad_id' => 1,
                 'persona_id' => 7,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 37,
                 'talla_pantalon' => 36,
                 'talla_zapato' => 38,
@@ -112,11 +123,13 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 2,
                 'lateralidad_id' => 2,
                 'persona_id' => 8,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 40,
                 'talla_pantalon' => 38,
                 'talla_zapato' => 41,
@@ -125,11 +138,13 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 1,
                 'lateralidad_id' => 1,
                 'persona_id' => 9,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
             [
-                
-                
+
+
                 'talla_camisa' => 42,
                 'talla_pantalon' => 40,
                 'talla_zapato' => 43,
@@ -138,6 +153,8 @@ class AlumnoSeeder extends Seeder
                 'orden_nacimiento_id' => 3,
                 'lateralidad_id' => 2,
                 'persona_id' => 10,
+                'etnia_indigena_id' => 1,
+
                 'status' => 'Activo',
             ],
         ];

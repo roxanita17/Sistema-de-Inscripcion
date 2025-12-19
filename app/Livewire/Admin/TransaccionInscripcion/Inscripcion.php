@@ -19,7 +19,6 @@ class Inscripcion extends Component
     /* ============================================================
        PROPIEDADES
        ============================================================ */
-    public $inscripcion_id;
     public $alumnoId;
     public $padreId;
     public $madreId;
@@ -43,7 +42,6 @@ class Inscripcion extends Component
 
     public $documentos = [];
     public array $documentosFaltantes = [];
-
     public $observaciones;
     public $numero_zonificacion;
     public $institucion_procedencia_id;
@@ -57,6 +55,9 @@ class Inscripcion extends Component
     public $documentosEtiquetas = [];
 
     public bool $esPrimerGrado = true;
+
+    public string $tipo_inscripcion = 'nuevo_ingreso';
+
 
     /* ============================================================
        BOOT & MOUNT
@@ -79,7 +80,7 @@ class Inscripcion extends Component
     {
         $this->documentosDisponibles = $this->documentoService->obtenerDocumentosDisponibles();
         $this->documentosEtiquetas = $this->documentoService->obtenerEtiquetas();
-
+        $this->tipo_inscripcion = 'nuevo_ingreso';
         $this->cargarDatosIniciales();
     }
 
@@ -89,7 +90,8 @@ class Inscripcion extends Component
     public function rules()
     {
         return [
-            'inscripcion_id' => 'required|exists:inscripcions,id',
+            'tipo_inscripcion' => 'required|in:nuevo_ingreso,prosecucion',
+
             'numero_zonificacion' => [
                 'nullable',
                 'regex:/^\d+$/'
@@ -126,9 +128,8 @@ class Inscripcion extends Component
     }
 
     protected $messages = [
-
-        'inscripcion_id.required' => 'Debe seleccionar una inscripción.',
-        'inscripcion_id.exists' => 'La inscripción seleccionada no es válida.',
+        'tipo_inscripcion.required' => 'Debe seleccionar el tipo de inscripción.',
+        'tipo_inscripcion.in' => 'El tipo de inscripción no es válido.',
 
         'numero_zonificacion.regex' => 'El número de zonificación solo puede contener números.',
 
@@ -323,6 +324,7 @@ class Inscripcion extends Component
         return !$this->padreId && !$this->madreId;
     }
 
+
     /* ============================================================
        INFORMACIÓN DE CUPOS
        ============================================================ */
@@ -428,6 +430,7 @@ class Inscripcion extends Component
     private function crearInscripcionDTO(): InscripcionData
     {
         return new InscripcionData([
+            'tipo_inscripcion' => $this->tipo_inscripcion,
             'anio_escolar_id' => $this->anio_escolar_id,
             'alumno_id' => $this->alumnoId,
             'numero_zonificacion' => $this->numero_zonificacion,
@@ -435,7 +438,7 @@ class Inscripcion extends Component
             'anio_egreso' => $this->anio_egreso,
             'expresion_literaria_id' => $this->expresion_literaria_id,
             'grado_id' => $this->gradoId,
-            'seccion_id' => $this->seccion_id, 
+            'seccion_id' => $this->seccion_id,
             'padre_id' => $this->padreId,
             'madre_id' => $this->madreId,
             'representante_legal_id' => $this->representanteLegalId,
@@ -445,7 +448,8 @@ class Inscripcion extends Component
         ]);
     }
 
- 
+
+
     /* ============================================================
        LISTENERS
        ============================================================ */

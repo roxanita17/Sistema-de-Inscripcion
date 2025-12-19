@@ -20,10 +20,8 @@ return new class extends Migration
             $table->integer('peso');
             $table->integer('estatura');
             $table->foreignId('orden_nacimiento_id')->nullable()->constrained('orden_nacimientos')->cascadeOnDelete();
-            $table->foreignId('discapacidad_id')->nullable()->constrained('discapacidads')->cascadeOnDelete();
-            $table->foreignId('etnia_indigena_id')->nullable()->constrained('etnia_indigenas')->cascadeOnDelete();
-            $table->foreignId('expresion_literaria_id')->nullable()->constrained('expresion_literarias')->cascadeOnDelete();
             $table->foreignId('lateralidad_id')->nullable()->constrained('lateralidads')->cascadeOnDelete();
+            $table->foreignId('etnia_indigena_id')->nullable()->constrained('etnia_indigenas')->cascadeOnDelete();
             $table->foreignId('persona_id')->constrained('personas')->cascadeOnDelete();
 
             $table->string('status')->default('Activo');
