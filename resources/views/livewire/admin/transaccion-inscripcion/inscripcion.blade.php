@@ -1,5 +1,4 @@
-<div x-data="{ tipo: @entangle('tipo_inscripcion') }" x-cloak>
-
+<div>
     {{-- Alertas --}}
     @if (session()->has('success') || session()->has('error') || session()->has('warning'))
         <div class="alerts-container mb-3">
@@ -58,12 +57,7 @@
                     </div>
                 </div>
                 <div class="card-body-modern" style="padding: 2rem;">
-
-
                     <div class="row">
-
-
-
                         {{-- Institucion de procedencia --}}
                         <div class="col-md-4">
                             <div class="form-group">
@@ -72,8 +66,9 @@
                                     Tipo de inscripcion
                                     <span class="required-badge">*</span>
                                 </label>
-                                <select x-model="tipo_inscripcion"
-                                    class="form-control-modern @error('tipo_inscripcion') is-invalid @enderror">
+                                <select wire:model.live="tipo_inscripcion"
+                                    class="form-control-modern @error('tipo_inscripcion') is-invalid @enderror"
+                                    id="tipo_inscripcion">
                                     <option value="">Seleccione el tipo de inscripción</option>
                                     <option value="nuevo_ingreso">Nuevo Ingreso</option>
                                     <option value="prosecucion">Prosecución</option>
@@ -85,229 +80,219 @@
                                 @enderror
                             </div>
                         </div>
-
-
-
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div x-show="tipo_inscripcion === 'nuevo_ingreso'">
-        {{-- Seleccionar Representantes --}}
-        <div class="card-modern mb-4">
-            <div class="card-header-modern">
-                <div class="header-left">
-                    <div class="header-icon" style="background: linear-gradient(135deg, var(--success), #059669);">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <h3>Seleccionar Representantes</h3>
-                        <p>Debe seleccionar al menos un representante</p>
-                    </div>
+    {{-- Seleccionar Representantes --}}
+    <div class="card-modern mb-4">
+        <div class="card-header-modern">
+            <div class="header-left">
+                <div class="header-icon" style="background: linear-gradient(135deg, var(--success), #059669);">
+                    <i class="fas fa-users"></i>
                 </div>
-            </div>
-            <div class="card-body-modern" style="padding: 2rem;">
-
-                {{-- Padre --}}
-                <div class="row mb-3">
-                    <div class="col-md-12" wire:ignore>
-                        <label for="padre_select" class="form-label-modern">
-                            <i class="fas fa-male"></i>
-                            Padre
-                        </label>
-                        <select id="padre_select" class="form-control-modern selectpicker" data-live-search="true"
-                            data-size="8" data-width="100%">
-                            <option value="">Seleccione al padre (opcional)</option>
-                            @foreach ($padres as $padre)
-                                <option value="{{ $padre['id'] }}"
-                                    data-subtext="{{ $padre['tipo_documento'] }}-{{ $padre['numero_documento'] }}">
-                                    {{ $padre['nombre_completo'] }}
-                                </option>
-                            @endforeach
-
-                        </select>
-                    </div>
-                </div>
-                @if ($padreSeleccionado)
-                    <div class="card shadow-sm mt-3">
-                        <div class="card-body">
-
-                            <h5 class="mb-3">
-                                <i class="fas fa-user text-primary"></i> Datos del Padre
-                            </h5>
-
-                            <p><strong>Nombre:</strong> {{ $padreSeleccionado->persona->primer_nombre }}
-                                {{ $padreSeleccionado->persona->segundo_nombre }}
-                                {{ $padreSeleccionado->persona->primer_apellido }}
-                                {{ $padreSeleccionado->persona->segundo_apellido }}
-                            </p>
-
-                            <p><strong>Documento:</strong>
-                                {{ $padreSeleccionado->persona->tipoDocumento->nombre }}
-                                - {{ $padreSeleccionado->persona->numero_documento }}
-                            </p>
-
-                            @if ($padreSeleccionado->ocupacion)
-                                <p><strong>Ocupación:</strong> {{ $padreSeleccionado->ocupacion->nombre_ocupacion }}
-                                </p>
-                            @endif
-
-                            <p><strong>Género:</strong> {{ $padreSeleccionado->persona->genero->genero }}</p>
-
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Madre --}}
-                <div class="row mb-3">
-                    <div class="col-md-12" wire:ignore>
-                        <label for="madre_select" class="form-label-modern">
-                            <i class="fas fa-female"></i>
-                            Madre
-                        </label>
-
-                        <select id="madre_select" class="form-control-modern selectpicker" data-live-search="true"
-                            data-size="8" data-width="100%">
-                            <option value="">Seleccione a la madre (opcional)</option>
-                            @foreach ($madres as $madre)
-                                <option value="{{ $madre['id'] }}"
-                                    data-subtext="{{ $madre['tipo_documento'] }}-{{ $madre['numero_documento'] }}">
-                                    {{ $madre['nombre_completo'] }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                    </div>
-                </div>
-                @if ($madreSeleccionado)
-                    <div class="card shadow-sm mt-3">
-                        <div class="card-body">
-
-                            <h5 class="mb-3">
-                                <i class="fas fa-user text-primary"></i> Datos de la Madre
-                            </h5>
-
-                            <p><strong>Nombre:</strong> {{ $madreSeleccionado->persona->primer_nombre }}
-                                {{ $madreSeleccionado->persona->segundo_nombre }}
-                                {{ $madreSeleccionado->persona->primer_apellido }}
-                                {{ $madreSeleccionado->persona->segundo_apellido }}
-                            </p>
-
-                            <p><strong>Documento:</strong>
-                                {{ $madreSeleccionado->persona->tipoDocumento->nombre }}
-                                - {{ $madreSeleccionado->persona->numero_documento }}
-                            </p>
-
-                            @if ($madreSeleccionado->ocupacion)
-                                <p><strong>Ocupación:</strong> {{ $madreSeleccionado->ocupacion->nombre_ocupacion }}
-                                </p>
-                            @endif
-
-                            <p><strong>Género:</strong> {{ $madreSeleccionado->persona->genero->genero }}</p>
-
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Representante Legal --}}
-                <div class="row">
-                    <div class="col-md-12" wire:ignore>
-                        <label for="representante_legal_select" class="form-label-modern">
-                            <i class="fas fa-gavel"></i>
-                            Representante Legal
-                        </label>
-
-                        <select id="representante_legal_select" class="form-control-modern selectpicker"
-                            data-live-search="true" data-size="8" data-width="100%">
-                            <option value="">Seleccione un representante legal</option>
-                            @foreach ($representantes as $rep)
-                                <option value="{{ $rep['id'] }}"
-                                    data-subtext="{{ $rep['tipo_documento'] }}-{{ $rep['numero_documento'] }}">
-                                    {{ $rep['nombre_completo'] }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                @if ($representanteLegalSeleccionado)
-                    <div class="card shadow-sm mt-3">
-                        <div class="card-body">
-
-                            <h5 class="mb-3">
-                                <i class="fas fa-user text-primary"></i> Datos del representanteLegal
-                            </h5>
-
-                            <p><strong>Nombre:</strong>
-                                {{ $representanteLegalSeleccionado->representante->persona->primer_nombre }}
-                                {{ $representanteLegalSeleccionado->representante->persona->segundo_nombre }}
-                                {{ $representanteLegalSeleccionado->representante->persona->primer_apellido }}
-                                {{ $representanteLegalSeleccionado->representante->persona->segundo_apellido }}
-                            </p>
-
-                            <p><strong>Documento:</strong>
-                                {{ $representanteLegalSeleccionado->representante->persona->tipoDocumento->nombre }}
-                                - {{ $representanteLegalSeleccionado->representante->persona->numero_documento }}
-                            </p>
-
-                            @if ($representanteLegalSeleccionado->representante->ocupacion)
-                                <p><strong>Ocupación:</strong>
-                                    {{ $representanteLegalSeleccionado->representante->ocupacion->nombre_ocupacion }}
-                                </p>
-                            @endif
-
-                            <p><strong>Género:</strong>
-                                {{ $representanteLegalSeleccionado->representante->persona->genero->genero }}</p>
-
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Boton de crear representante --}}
-                <div class="row align-items-center mb-4 mt-4">
-                    <div class="col-md-9">
-                        <div class="alert alert-info d-flex align-items-start p-3 mb-0 shadow-sm" role="alert"
-                            style="border-left: 5px solid var(--primary); background: var(--primary-light);">
-                            <i class="fas fa-info-circle fa-lg me-3 mt-1"></i>
-                            <div class="grow">
-                                <span class="d-block"><b>Atención: </b> Si el representante no existe, puede crearlo
-                                    ahora.</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Alerta de sweetalert --}}
-                    <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                        <button type="button" onclick="confirmarEnvio()" class="btn-create">
-                            <i class="fas fa-plus"></i> Crear Representante
-                        </button>
-                    </div>
-                    <script>
-                        function confirmarEnvio() {
-                            Swal.fire({
-                                title: '¿Desea crear un nuevo representante?',
-                                text: 'Esta acción no guardará la información actual.',
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Sí, crear representante',
-                                cancelButtonText: 'Cancelar'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = "{{ route('representante.formulario', ['from' => 'inscripcion']) }}";
-                                }
-                            });
-                        }
-                    </script>
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <div>
+                    <h3>Seleccionar Representantes</h3>
+                    <p>Debe seleccionar al menos un representante</p>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="card-body-modern" style="padding: 2rem;">
 
+            {{-- Padre --}}
+            <div class="row mb-3">
+                <div class="col-md-12" wire:ignore>
+                    <label for="padre_select" class="form-label-modern">
+                        <i class="fas fa-male"></i>
+                        Padre
+                    </label>
+                    <select id="padre_select" class="form-control-modern selectpicker" data-live-search="true"
+                        data-size="8" data-width="100%">
+                        <option value="">Seleccione al padre (opcional)</option>
+                        @foreach ($padres as $padre)
+                            <option value="{{ $padre['id'] }}"
+                                data-subtext="{{ $padre['tipo_documento'] }}-{{ $padre['numero_documento'] }}">
+                                {{ $padre['nombre_completo'] }}
+                            </option>
+                        @endforeach
+
+                    </select>
+                </div>
+            </div>
+            @if ($padreSeleccionado)
+                <div class="card shadow-sm mt-3">
+                    <div class="card-body">
+
+                        <h5 class="mb-3">
+                            <i class="fas fa-user text-primary"></i> Datos del Padre
+                        </h5>
+
+                        <p><strong>Nombre:</strong> {{ $padreSeleccionado->persona->primer_nombre }}
+                            {{ $padreSeleccionado->persona->segundo_nombre }}
+                            {{ $padreSeleccionado->persona->primer_apellido }}
+                            {{ $padreSeleccionado->persona->segundo_apellido }}
+                        </p>
+
+                        <p><strong>Documento:</strong>
+                            {{ $padreSeleccionado->persona->tipoDocumento->nombre }}
+                            - {{ $padreSeleccionado->persona->numero_documento }}
+                        </p>
+
+                        @if ($padreSeleccionado->ocupacion)
+                            <p><strong>Ocupación:</strong> {{ $padreSeleccionado->ocupacion->nombre_ocupacion }}</p>
+                        @endif
+
+                        <p><strong>Género:</strong> {{ $padreSeleccionado->persona->genero->genero }}</p>
+
+                    </div>
+                </div>
+            @endif
+
+            {{-- Madre --}}
+            <div class="row mb-3">
+                <div class="col-md-12" wire:ignore>
+                    <label for="madre_select" class="form-label-modern">
+                        <i class="fas fa-female"></i>
+                        Madre
+                    </label>
+
+                    <select id="madre_select" class="form-control-modern selectpicker" data-live-search="true"
+                        data-size="8" data-width="100%">
+                        <option value="">Seleccione a la madre (opcional)</option>
+                        @foreach ($madres as $madre)
+                            <option value="{{ $madre['id'] }}"
+                                data-subtext="{{ $madre['tipo_documento'] }}-{{ $madre['numero_documento'] }}">
+                                {{ $madre['nombre_completo'] }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                </div>
+            </div>
+            @if ($madreSeleccionado)
+                <div class="card shadow-sm mt-3">
+                    <div class="card-body">
+
+                        <h5 class="mb-3">
+                            <i class="fas fa-user text-primary"></i> Datos de la Madre
+                        </h5>
+
+                        <p><strong>Nombre:</strong> {{ $madreSeleccionado->persona->primer_nombre }}
+                            {{ $madreSeleccionado->persona->segundo_nombre }}
+                            {{ $madreSeleccionado->persona->primer_apellido }}
+                            {{ $madreSeleccionado->persona->segundo_apellido }}
+                        </p>
+
+                        <p><strong>Documento:</strong>
+                            {{ $madreSeleccionado->persona->tipoDocumento->nombre }}
+                            - {{ $madreSeleccionado->persona->numero_documento }}
+                        </p>
+
+                        @if ($madreSeleccionado->ocupacion)
+                            <p><strong>Ocupación:</strong> {{ $madreSeleccionado->ocupacion->nombre_ocupacion }}</p>
+                        @endif
+
+                        <p><strong>Género:</strong> {{ $madreSeleccionado->persona->genero->genero }}</p>
+
+                    </div>
+                </div>
+            @endif
+
+            {{-- Representante Legal --}}
+            <div class="row">
+                <div class="col-md-12" wire:ignore>
+                    <label for="representante_legal_select" class="form-label-modern">
+                        <i class="fas fa-gavel"></i>
+                        Representante Legal
+                    </label>
+
+                    <select id="representante_legal_select" class="form-control-modern selectpicker"
+                        data-live-search="true" data-size="8" data-width="100%">
+                        <option value="">Seleccione un representante legal</option>
+                        @foreach ($representantes as $rep)
+                            <option value="{{ $rep['id'] }}"
+                                data-subtext="{{ $rep['tipo_documento'] }}-{{ $rep['numero_documento'] }}">
+                                {{ $rep['nombre_completo'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            @if ($representanteLegalSeleccionado)
+                <div class="card shadow-sm mt-3">
+                    <div class="card-body">
+
+                        <h5 class="mb-3">
+                            <i class="fas fa-user text-primary"></i> Datos del representanteLegal
+                        </h5>
+
+                        <p><strong>Nombre:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->primer_nombre }}
+                            {{ $representanteLegalSeleccionado->representante->persona->segundo_nombre }}
+                            {{ $representanteLegalSeleccionado->representante->persona->primer_apellido }}
+                            {{ $representanteLegalSeleccionado->representante->persona->segundo_apellido }}
+                        </p>
+
+                        <p><strong>Documento:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->tipoDocumento->nombre }}
+                            - {{ $representanteLegalSeleccionado->representante->persona->numero_documento }}
+                        </p>
+
+                        @if ($representanteLegalSeleccionado->representante->ocupacion)
+                            <p><strong>Ocupación:</strong>
+                                {{ $representanteLegalSeleccionado->representante->ocupacion->nombre_ocupacion }}</p>
+                        @endif
+
+                        <p><strong>Género:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->genero->genero }}</p>
+
+                    </div>
+                </div>
+            @endif
+
+            {{-- Boton de crear representante --}}
+            <div class="row align-items-center mb-4 mt-4">
+                <div class="col-md-9">
+                    <div class="alert alert-info d-flex align-items-start p-3 mb-0 shadow-sm" role="alert"
+                        style="border-left: 5px solid var(--primary); background: var(--primary-light);">
+                        <i class="fas fa-info-circle fa-lg me-3 mt-1"></i>
+                        <div class="grow">
+                            <span class="d-block"><b>Atención: </b> Si el representante no existe, puede crearlo
+                                ahora.</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Alerta de sweetalert --}}
+                <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                    <button type="button" onclick="confirmarEnvio()" class="btn-create">
+                        <i class="fas fa-plus"></i> Crear Representante
+                    </button>
+                </div>
+                <script>
+                    function confirmarEnvio() {
+                        Swal.fire({
+                            title: '¿Desea crear un nuevo representante?',
+                            text: 'Esta acción no guardará la información actual.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, crear representante',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "{{ route('representante.formulario', ['from' => 'inscripcion']) }}";
+                            }
+                        });
+                    }
+                </script>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            </div>
+        </div>
+    </div>
 
     <div class="card-modern mb-4">
         <div class="card-header-modern">
@@ -663,15 +648,16 @@
             </div>
         </div>
     </div>
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-    </style>
 </div>
 
 
 
+
+
+
+
+</div>
+</div>
 
 @push('js')
     <script>
