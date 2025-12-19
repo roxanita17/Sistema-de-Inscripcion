@@ -201,7 +201,7 @@ class RepresentanteController extends Controller
 public function mostrarFormularioEditar($id)
 {
     $representante = Representante::with([
-        'persona',
+        'persona.prefijo',  // Cargar la relación prefijo de la persona
         'estado',
         'municipios',  // Relación en Representante (plural)
         'localidads',  // Relación en Representante (plural)
@@ -348,19 +348,21 @@ public function mostrarFormularioEditar($id)
     public function update(Request $request, $id)
     {
         // Find the representante to update
-        $representante = Representante::with('persona')->findOrFail($id);
+        $representante = Representante::with(['persona', 'legal'])->findOrFail($id);
         $persona = $representante->persona;
-
+        
+        // Determine if this is a legal representative or progenitor
+        $isLegalRepresentative = $request->input('es_legal') == '1';
+        
         // Log the update attempt
         Log::info('=== ACTUALIZANDO REPRESENTANTE ===', [
             'representante_id' => $id,
             'persona_id' => $persona->id,
+            'tipo' => $isLegalRepresentative ? 'Legal' : 'Progenitor',
             'request_data' => $request->except(['_token', '_method', 'password']),
-            'current_document' => $persona->numero_documento,
-            'new_document' => $request->input('numero_documento-representante')
         ]);
 
-        // Validate the request
+        // Base validation rules
         $rules = [
             'numero_documento-representante' => [
                 'required',
@@ -388,9 +390,17 @@ public function mostrarFormularioEditar($id)
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
             'parroquia_id' => 'required|exists:localidads,id',
-            'pertenece_organizacion' => 'sometimes|boolean',
-            'cual_organizacion_representante' => 'required_if:pertenece_organizacion,1|nullable|string|max:255',
         ];
+        
+        // Add validation rules for legal representative fields
+        if ($isLegalRepresentative) {
+            $rules = array_merge($rules, [
+                'correo-representante' => 'required|email|max:100',
+                'banco_id' => 'required|exists:bancos,id',
+                'pertenece_organizacion' => 'sometimes|boolean',
+                'cual_organizacion_representante' => 'required_if:pertenece_organizacion,1|nullable|string|max:255',
+            ]);
+        }
 
         $messages = [
             'required' => 'El campo :attribute es obligatorio.',
@@ -439,24 +449,39 @@ public function mostrarFormularioEditar($id)
                 'convivenciaestudiante_representante' => $request->input('convive-representante', 'no'),
             ]);
 
-            // Handle representante legal data
-            $perteneceOrganizacion = $request->input('pertenece_organizacion') == '1';
-            
-            if ($perteneceOrganizacion) {
-                // Only include organization data if the checkbox is checked
-                $organizacionData = [
-                    'pertenece_a_organizacion_representante' => true,
-                    'cual_organizacion_representante' => $request->input('cual_organizacion_representante', '')
+            // Handle legal representative specific data
+            if ($isLegalRepresentative) {
+                $perteneceOrganizacion = $request->input('pertenece_organizacion') == '1';
+                
+                // Update or create legal representative data
+                $legalData = [
+                    'banco_id' => $request->input('banco_id'),
+                    'pertenece_a_organizacion_representante' => $perteneceOrganizacion,
+                    'cual_organizacion_representante' => $perteneceOrganizacion ? $request->input('cual_organizacion_representante') : '',
+                    'telefono' => $request->input('telefono_movil'),
+                    'prefijo_id' => $request->input('prefijo_telefono')
                 ];
                 
-                if ($representante->legal) {
-                    $representante->legal()->update($organizacionData);
-                } else {
-                    $representante->legal()->create($organizacionData);
+                // Remove cual_organizacion_representante from the data if not in organization
+                if (!$perteneceOrganizacion) {
+                    unset($legalData['cual_organizacion_representante']);
                 }
-            } else if ($representante->legal) {
-                // If checkbox is not checked but legal record exists, delete it
-                $representante->legal()->delete();
+                
+                if ($representante->legal) {
+                    $representante->legal()->update($legalData);
+                } else {
+                    $representante->legal()->create($legalData);
+                }
+                
+                // Update status to indicate this is a legal representative
+                $representante->update(['status' => 1]);
+            } else {
+                // If changing from legal to progenitor, remove legal data
+                if ($representante->legal) {
+                    $representante->legal()->delete();
+                }
+                // Update status to indicate this is a progenitor
+                $representante->update(['status' => 0]);
             }
 
             DB::commit();
@@ -862,7 +887,7 @@ public function mostrarFormularioEditar($id)
         $datosPersona = array_merge($datosPersona, [
             "primer_nombre" => $request->input('primer-nombre-representante'),
             "segundo_nombre" => $request->input('segundo-nombre-representante'),
-            "prefijo_id" => $request->input('prefijo-representante'),
+            "prefijo_id" => $request->input('prefijo-representante') ?: $request->input('prefijo_telefono'),
             "tercer_nombre" => $request->input('tercer-nombre-representante'),
             "primer_apellido" => $request->input('primer-apellido-representante'),
             "segundo_apellido" => $request->input('segundo-apellido-representante'),
@@ -870,7 +895,7 @@ public function mostrarFormularioEditar($id)
             "fecha_nacimiento" => $this->parseDate($request->input('fecha-nacimiento-representante')),
             "genero_id" => $request->input('sexo-representante'),
             "localidad_id" => $request->input('idparroquia-representante'),
-            "telefono" => $request->input('telefono-representante'),
+            "telefono" => $request->input('telefono-representante') ?: $request->input('telefono_movil'),
             "tipo_documento_id" => $request->input('tipo-ci-representante'),
             "direccion" => $request->input('direccion-habitacion'),
             "email" => $request->input('correo-representante'),
@@ -1211,6 +1236,20 @@ public function mostrarFormularioEditar($id)
             // === MODO CREACIÓN ===
             Log::info('=== MODO CREACIÓN ===');
             
+            // Depuración: Mostrar todos los inputs del request
+            Log::info('=== DATOS DEL REQUEST ===', $request->all());
+            
+            // Obtener el teléfono del campo del formulario
+            $telefono = $request->input('telefono-representante');
+            
+            Log::info('Valor de teléfono encontrado en el request:', ['telefono-representante' => $telefono]);
+            
+            // Si no se encontró en el request, usar el valor existente si existe
+            if (is_null($telefono) && isset($datosPersona['telefono'])) {
+                $telefono = $datosPersona['telefono'];
+                Log::info('Usando teléfono existente de datosPersona:', ['telefono' => $telefono]);
+            }
+
             // Asegurar que los campos requeridos tengan valores por defecto
             $datosPersona = array_merge([
                 'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
@@ -1220,15 +1259,20 @@ public function mostrarFormularioEditar($id)
                 'genero_id' => $datosPersona['genero_id'] ?? 1,
                 'localidad_id' => $datosPersona['localidad_id'] ?? 1,
                 'prefijo_id' => $datosPersona['prefijo_id'] ?? 1,
+                'telefono' => $telefono, // Usamos el teléfono obtenido
                 'status' => true
             ], $datosPersona);
 
-            // 1. Crear persona
+            // 1. Crear persona con asignación directa
             Log::info('Creando nueva persona con datos:', [
                 'datos_persona' => $datosPersona
             ]);
             
-            $persona = Persona::create($datosPersona);
+            $persona = new Persona();
+            $persona->fill($datosPersona); // Llena solo los campos fillable
+            $persona->telefono = $telefono; // Asignación directa del teléfono
+            $persona->save();
+            
             Log::info('Persona creada: ID ' . $persona->id);
 
             // 2. Crear representante

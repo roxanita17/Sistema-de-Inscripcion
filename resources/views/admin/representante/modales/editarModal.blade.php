@@ -147,14 +147,25 @@
         </div>
 
         <div class="card-body-modern" style="padding: 2rem;">
-            <form id="representante-form" action="{{ route('representante.update', $representante->id) }}" method="POST" class="form-modern needs-validation" novalidate>
+            <form id="representante-form" action="{{ route('representante.update', $representante->id) }}" method="POST" class="form-modern needs-validation" novalidate onsubmit="return validateForm()">
                 @csrf
                 @method('PUT')
                 
                 <input type="hidden" name="id" value="{{ $representante->id }}">
-                <input type="hidden" name="es_legal" id="es_legal" value="1">
+                <input type="hidden" name="es_legal" id="es_legal" value="{{ $representante->status === 1 ? '1' : '0' }}">
                 <input type="hidden" name="persona_id" value="{{ $representante->persona_id }}">
+                
+                <!-- Hidden field to track representative type -->
+                <input type="radio" name="tipo_representante" value="progenitor" id="tipo_progenitor" style="display: none;" {{ $representante->status !== 1 ? 'checked' : '' }}>
+                <input type="radio" name="tipo_representante" value="legal" id="tipo_legal" style="display: none;" {{ $representante->status === 1 ? 'checked' : '' }}>
 
+                <!-- Sección de Datos Personales -->
+                
+                <!-- Sección de Datos del Representante Legal (solo visible si es representante legal) -->
+                @if($representante->status === 1)
+               
+                @endif
+                
                 <!-- Sección de Datos Personales -->
                 <div class="border rounded p-4 mb-4 bg-light">
                     <h5 class="mb-4 pb-2 border-bottom">
@@ -283,8 +294,8 @@
                             </div>
                         </div>
 
-                       <div class="col-md-6">
-                            <label for="prefijo_telefono" class="form-label">Prefijo</label>
+                        <div class="col-md-6 mb-3">
+                            <label for="prefijo_telefono" class="form-label">Prefijo Teléfono <span class="required-badge">*</span></label>
                             <select class="form-select" id="prefijo_telefono" name="prefijo_telefono" required>
                                 <option value="">Seleccione</option>
                                 @foreach($prefijos_telefono as $prefijo)
@@ -295,32 +306,27 @@
                                 @endforeach
                             </select>
                             <div class="invalid-feedback">
-                                Por favor seleccione un prefijo de teléfono.
+                                Por favor seleccione un prefijo telefónico.
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="telefono_movil" class="form-label">Teléfono Móvil</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                <input type="text" class="form-control" id="telefono_movil" name="telefono_movil" 
-                                    value="{{ old('telefono_movil', $representante->persona->telefono ?? '') }}" 
-                                    pattern="[0-9]+" 
-                                    title="Ingrese solo números"
-                                    required>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono_movil" class="form-label">Teléfono Móvil <span class="required-badge">*</span></label>
+                            <input type="text" class="form-control" id="telefono_movil" name="telefono_movil" 
+                                value="{{ old('telefono_movil', $representante->legal->telefono ?? ($representante->persona->telefono ?? '')) }}" 
+                                pattern="[0-9]+" 
+                                title="Ingrese solo números"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                required>
                             <div class="invalid-feedback">
                                 Por favor ingrese un número de teléfono válido (solo números).
                             </div>
                         </div>
-                        </div>
 
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label-modern">
-                                <i class="fas fa-briefcase me-2"></i> Ocupación
-                            </label>
+                        <div class="col-md-6 mb-3">
+                            <label for="ocupacion_id" class="form-label">Ocupación</label>
                             <select class="form-select" id="ocupacion_id" name="ocupacion_id">
-                                <option value="" selected>Seleccione</option>
+                                <option value="">Seleccione</option>
                                 @foreach($ocupaciones as $ocupacion)
                                     <option value="{{ $ocupacion->id }}" 
                                         {{ old('ocupacion_id', $representante->ocupacion_representante ?? '') == $ocupacion->id ? 'selected' : '' }}>
@@ -393,7 +399,7 @@
                 </div>
 
                 <!-- Sección de Conectividad y Participación Ciudadana -->
-                <div id="seccion-conectividad" class="border rounded p-4 mb-4 bg-light">
+                <div id="seccion-conectividad" class="border rounded p-4 mb-4 bg-light" style="display: {{ $representante->status === 1 ? 'block' : 'none' }};">
                     <h5 class="mb-4 pb-2 border-bottom">
                         <i class="fas fa-wifi me-2"></i> Conectividad y Participación Ciudadana
                     </h5>
@@ -404,10 +410,10 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                     <input type="email" class="form-control" id="correo-representante" 
-                                           name="correo_representante" maxlength="254" 
+                                           name="correo-representante" maxlength="254" 
                                            title="No olvide incluir el símbolo @ en la dirección de correo"
                                            placeholder="ejemplo@correo.com"
-                                           value="{{ old('correo_representante', $representante->persona->email ?? '') }}">
+                                           value="{{ old('correo-representante', $representante->persona->email ?? '') }}" required>
                                 </div>
                                 <small id="correo-representante-error" class="text-danger"></small>
                             </div>
@@ -469,7 +475,7 @@
                 </div>
 
                 <!-- Sección de Identificación Familiar y Datos de Cuenta -->
-                <div id="seccion-identificacion-familiar" class="border rounded p-4 mb-4 bg-light">
+                <div id="seccion-identificacion-familiar" class="border rounded p-4 mb-4 bg-light" style="display: {{ $representante->status === 1 ? 'block' : 'none' }};">
                     <h5 class="mb-4 pb-2 border-bottom">
                         <i class="fas fa-id-card me-2"></i> Identificación Familiar y Datos de Cuenta
                     </h5>
@@ -496,20 +502,26 @@
                                 </div>
                                 <small id="parentesco-error" class="text-danger"></small>
                             </div>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <label for="carnet_patria_afiliado" class="form-label">Carnet de la Patria Afiliado a</label>
+                                @php
+                                    $valorCarnet = old('carnet_patria_afiliado');
+                                    if (!isset($valorCarnet) && isset($representante->legal)) {
+                                        $valorCarnet = $representante->legal->carnet_patria_afiliado;
+                                    }
+                                    // Asegurarse de que el valor sea numérico
+                                    $valorCarnet = $valorCarnet !== null ? (int)$valorCarnet : null;
+                                @endphp
                                 <select class="form-select" id="carnet_patria_afiliado" name="carnet_patria_afiliado">
-                                    <option value="" {{ !isset($representante->legal) || $representante->legal->carnet_patria_afiliado === null || $representante->legal->carnet_patria_afiliado === '' ? 'selected' : '' }}>Seleccione</option>
-                                    <option value="1" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '1' ? 'selected' : '' }}>Padre</option>
-                                    <option value="2" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '2' ? 'selected' : '' }}>Madre</option>
-                                    <option value="3" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '3' ? 'selected' : '' }}>Hijo</option>
-                                    <option value="4" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '4' ? 'selected' : '' }}>Hija</option>
-                                    <option value="5" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '5' ? 'selected' : '' }}>Abuelo</option>
-                                    <option value="6" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '6' ? 'selected' : '' }}>Abuela</option>
-                                    <option value="7" {{ old('carnet_patria_afiliado', $representante->legal->carnet_patria_afiliado ?? '') == '7' ? 'selected' : '' }}>Tutor</option>
+                                    <option value="" {{ $valorCarnet === null || $valorCarnet === '' ? 'selected' : '' }}>Seleccione</option>
+                                    <option value="0" {{ $valorCarnet === 0 ? 'selected' : '' }}>Ninguno</option>
+                                    <option value="1" {{ $valorCarnet === 1 ? 'selected' : '' }}>Padre</option>
+                                    <option value="2" {{ $valorCarnet === 2 ? 'selected' : '' }}>Madre</option>
+                                    <option value="3" {{ $valorCarnet === 3 ? 'selected' : '' }}>Hijo</option>
+                                    <option value="4" {{ $valorCarnet === 4 ? 'selected' : '' }}>Hija</option>
+                                    <option value="5" {{ $valorCarnet === 5 ? 'selected' : '' }}>Abuelo</option>
+                                    <option value="6" {{ $valorCarnet === 6 ? 'selected' : '' }}>Abuela</option>
+                                    <option value="7" {{ $valorCarnet === 7 ? 'selected' : '' }}>Tutor</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione una opción.
@@ -616,6 +628,35 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
+    // Función para validar el formulario antes de enviar
+    function validateForm(event) {
+        const form = document.getElementById('representante-form');
+        
+        // Validar todos los campos requeridos
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            form.classList.add('was-validated');
+            
+            // Desplazarse al primer campo con error
+            const firstInvalid = form.querySelector(':invalid');
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstInvalid.focus();
+            }
+            
+            return false;
+        }
+        
+        // Mostrar loading en el botón de guardar
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Guardando...';
+        
+        // Forzar el envío del formulario
+        return true;
+    }
+
     // Función para inicializar los selects dependientes
     function inicializarSelectsDependientes() {
         const $estadoSelect = $('#estado_id');
@@ -699,7 +740,6 @@
     }
 
     // Función para mostrar/ocultar campo de organización
-    // Función para mostrar/ocultar campo de organización
     function toggleCampoOrganizacion() {
         const valorSeleccionado = $('input[name="pertenece_organizacion"]:checked').val();
         console.log('toggleCampoOrganizacion - Valor seleccionado:', valorSeleccionado);
@@ -715,17 +755,75 @@
         }
     }
 
+    // Función para mostrar/ocultar campos según el tipo de representante
+    function toggleRepresentativeFields() {
+        const isLegal = $('input[name="tipo_representante"]:checked').val() === 'legal';
+        
+        // Mostrar/ocultar secciones completas
+        $('#seccion-conectividad').toggle(isLegal);
+        $('#seccion-identificacion-familiar').toggle(isLegal);
+        
+        // Si no es legal, limpiar los campos requeridos que se están ocultando
+        if (!isLegal) {
+            // Limpiar campos de conectividad
+            $('#correo-representante').val('').removeAttr('required');
+            $('input[name="pertenece_organizacion"]').prop('checked', false);
+            $('#cual_organizacion_representante').val('').removeAttr('required');
+            
+            // Limpiar campos de identificación familiar
+            $('#parentesco').val('').removeAttr('required');
+            $('#carnet_patria_afiliado').val('');
+            $('#codigo_carnet').val('');
+            $('#serial_carnet').val('');
+            $('#tipo_cuenta').val('');
+            $('#banco_id').val('');
+        } else {
+            // Si es legal, hacer los campos requeridos
+            $('#correo-representante').attr('required', 'required');
+            $('#parentesco').attr('required', 'required');
+            
+            // Si hay valor en el campo de organización, hacerlo requerido
+            if ($('#cual_organizacion_representante').val()) {
+                $('#cual_organizacion_representante').attr('required', 'required');
+            }
+        }
+        
+        // Actualizar la validación del formulario
+        $('form')[0].checkValidity();
+    }
+
     $(document).ready(function() {
         console.log('Documento listo - Inicializando campo de organización');
-        
-        // Depuración
-        console.log('Valor de pertenece_a_organizacion_representante:', '{{ $representante->legal->pertenece_a_organizacion_representante ?? "no definido" }}');
-        console.log('Valor de old("pertenece_organizacion"):', '{{ old("pertenece_organizacion", "no definido") }}');
         
         // Inicializar Select2
         $('.select2').select2({
             theme: 'bootstrap-5',
-            width: '100%'
+            width: '100%',
+            dropdownParent: $('.modal')
+        });
+
+        // Asegurar que el formulario se envíe correctamente
+        $('#representante-form').on('submit', function(e) {
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).addClass('was-validated');
+                
+                // Desplazarse al primer campo con error
+                const firstInvalid = this.querySelector(':invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    $(firstInvalid).focus();
+                }
+                return false;
+            }
+            
+            // Mostrar loading en el botón de guardar
+            const submitBtn = $(this).find('button[type="submit"]');
+            submitBtn.prop('disabled', true);
+            submitBtn.html('<i class="fas fa-spinner fa-spin me-1"></i> Guardando...');
+            
+            return true;
         });
 
         // Inicializar selects dependientes
@@ -734,14 +832,17 @@
         // Inicializar el estado del campo de organización
         toggleCampoOrganizacion();
         
-        // Mostrar el estado actual del campo después de la inicialización
-        console.log('Estado del campo después de toggleCampoOrganizacion:', 
-                   $('#campo_organizacion').is(':visible') ? 'visible' : 'oculto');
+        // Inicializar visibilidad de campos según el tipo de representante
+        toggleRepresentativeFields();
         
-        // Manejar cambios en los radio buttons
+        // Manejar cambios en los radio buttons de organización
         $('input[name="pertenece_organizacion"]').on('change', function() {
-            console.log('Cambio detectado en el radio button:', $(this).val());
             toggleCampoOrganizacion();
+        });
+        
+        // Manejar cambios en el tipo de representante
+        $('input[name="tipo_representante"]').on('change', function() {
+            toggleRepresentativeFields();
         });
         
         // Forzar la validación inicial
