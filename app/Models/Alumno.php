@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Persona;
 use App\Models\OrdenNacimiento;
 use App\Models\Discapacidad;
-use App\Models\EtniaIndigena;
 use App\Models\ExpresionLiteraria;
 use App\Models\Lateralidad;
+use App\Models\EtniaIndigena;
 
 class Alumno extends Model
 
@@ -20,10 +20,8 @@ class Alumno extends Model
     protected $table = 'alumnos';
 
     protected $fillable = [
-
-        'orden_nacimiento_id',
-        'discapacidad_id',
         'etnia_indigena_id',
+        'orden_nacimiento_id',
         'lateralidad_id',
         'persona_id',
         'talla_camisa',
@@ -35,25 +33,6 @@ class Alumno extends Model
     ];
 
 
-/*     protected $casts = [
-        'status' => 'boolean',
-    ];
-
-    public function scopeBuscar($query, $buscar)
-    {
-        if (!empty($buscar)) {
-            $query->whereHas('areaFormacion', function ($q) use ($buscar) {
-                $q->where('nombre_area_formacion', 'LIKE', "%{$buscar}%");
-
-            });
-
-            $query->orWhereHas('estudiosRealizado', function ($q) use ($buscar) {
-                $q->where('estudios', 'LIKE', "%{$buscar}%");
-            });
-        }
-
-        return $query;
-    } */
 
     /**  Área de formación  */
     public function ordenNacimiento()
@@ -67,12 +46,6 @@ class Alumno extends Model
         return $this->belongsTo(Discapacidad::class, 'discapacidad_id', 'id');
     }
 
-    public function etniaIndigena()
-    {
-        return $this->belongsTo(EtniaIndigena::class, 'etnia_indigena_id', 'id');
-    }
-
-
 
     public function lateralidad()
     {
@@ -82,6 +55,11 @@ class Alumno extends Model
     public function persona()
     {
         return $this->belongsTo(Persona::class, 'persona_id', 'id');
+    }
+
+    public function etniaIndigena()
+    {
+        return $this->belongsTo(EtniaIndigena::class, 'etnia_indigena_id', 'id');
     }
 
     public function prefijoTelefono()

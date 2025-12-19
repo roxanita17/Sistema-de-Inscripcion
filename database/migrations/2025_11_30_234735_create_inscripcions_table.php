@@ -43,6 +43,8 @@ return new class extends Migration
                   ->references('id')
                   ->on('representante_legal')
                   ->nullOnDelete();
+                  
+            $table->enum('tipo_inscripcion', ['nuevo_ingreso', 'prosecucion']);
 
             // Campos de documentos
             $table->json('documentos')->nullable();
@@ -50,16 +52,7 @@ return new class extends Migration
 
             // Fecha de inscripción
             $table->string('observaciones')->nullable();
-
-            $table->string('numero_zonificacion')->nullable();
-            $table->date('anio_egreso');
-            $table->foreignId('institucion_procedencia_id')->constrained('institucion_procedencias')->cascadeOnDelete();
-            $table->foreignId('expresion_literaria_id')->constrained('expresion_literarias')->cascadeOnDelete();
             $table->boolean('acepta_normas_contrato')->default(false);
-
-
-
-
             $table->string('status')->default('Activo');
 
             $table->timestamps();

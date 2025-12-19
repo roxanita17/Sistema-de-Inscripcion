@@ -59,7 +59,7 @@
                                 Doc.
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live.live="tipo_documento_id"
+                            <select wire:model.livee="tipo_documento_id"
                                 class="form-control-modern @error('tipo_documento_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($tipos_documentos as $item)
@@ -479,8 +479,7 @@
         </div>
 
         {{-- Card: Pertenencia Étnica --}}
-        {{-- Card: Pertenencia Étnica --}}
-        {{--  <div class="card-modern mb-4">
+          <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #14b8a6, #0f766e);">
@@ -495,74 +494,30 @@
 
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
-                    <div class="col-md-6">
-
+                    <div class="col-md-2">
                         <div class="form-group">
-                            <label class="form-label-modern">
-                                <i class="fas fa-question-circle"></i>
-                                ¿Pertenece a Pueblo Indígena?
+                            <label for="etnia_indigena_id" class="form-label-modern">
+                                <i class="fas fa-id-card"></i>
+                                Etnia Indigena
                                 <span class="required-badge">*</span>
-                            </label>
-
-                            <div class="d-flex gap-3 mt-2" id="pueblo-wrapper">
-
-                                <div class="radio-item-modern">
-                                    <input type="radio"
-                                        name="pueblo_radio"
-                                        value="si"
-                                        id="pueblo_si_js"
-                                        class="radio-modern">
-                                    <label for="pueblo_si_js" class="radio-label-modern">
-                                        <i class="fas fa-check-circle"></i> Sí
-                                    </label>
+                            </label>    
+                            <select wire:model.live="etnia_indigena_id"
+                                class="form-control-modern @error('etnia_indigena_id') is-invalid @enderror">
+                                <option value="">Seleccione</option>
+                                @foreach ($etnia_indigenas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('etnia_indigena_id')
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
-
-                                <div class="radio-item-modern">
-                                    <input type="radio"
-                                        name="pueblo_radio"
-                                        value="no"
-                                        id="pueblo_no_js"
-                                        class="radio-modern"
-                                        checked>
-                                    <label for="pueblo_no_js" class="radio-label-modern">
-                                        <i class="fas fa-times-circle"></i> No
-                                    </label>
-                                </div> --}}
-
-        <!-- input oculto que recibe el valor real de Livewire -->
-        {{-- <input type="hidden"
-                                    id="pertenece_pueblo_indigena"
-                                    wire:model.live="pertenece_pueblo_indigena"
-                                    value="no">
-
-                            </div>
-
-                            <div id="etnia-select" style="display:none; margin-top: .75rem;">
-                                <label class="form-label-modern">
-                                    <i class="fas fa-landmark"></i>
-                                    ¿A cuál pertenece?
-                                </label>
-
-                                <select id="cual_pueblo_indigena_js"
-                                        wire:model.live="cual_pueblo_indigena"
-                                        class="form-control-modern">
-                                    <option value="">Seleccione</option>
-                                    @foreach ($etniasIndigenas as $etnia)
-                                        <option value="{{ $etnia->id }}">
-                                            {{ $etnia->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
+                            @enderror
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-
- --}}
 
         {{-- Card: Salud del Estudiante --}}
         {{--  <div class="card-modern mb-4">

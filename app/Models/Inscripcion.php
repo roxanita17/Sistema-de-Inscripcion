@@ -27,10 +27,6 @@ class Inscripcion extends Model
         'documentos',
         'estado_documentos',
         'observaciones',
-        'numero_zonificacion',
-        'institucion_procedencia_id',
-        'expresion_literaria_id',
-        'anio_egreso',
         'acepta_normas_contrato',
         'status',
     ];
@@ -40,15 +36,22 @@ class Inscripcion extends Model
         'status' => 'string',
     ];
 
-    public function expresionLiteraria()
+        public function nuevoIngreso()
     {
-        return $this->belongsTo(ExpresionLiteraria::class, 'expresion_literaria_id', 'id');
+        return $this->hasOne(
+            InscripcionNuevoIngreso::class,
+            'inscripcion_id'
+        );
     }
 
-    public function institucionProcedencia()
+    public function prosecucion()
     {
-        return $this->belongsTo(InstitucionProcedencia::class, 'institucion_procedencia_id', 'id');
+        return $this->hasOne(
+            InscripcionProsecucion::class,
+            'inscripcion_id'
+        );
     }
+    
 
     /**
      * Relación con EntradasPercentil
