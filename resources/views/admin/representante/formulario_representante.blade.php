@@ -327,6 +327,9 @@
                     class="needs-validation" novalidate>
                     <input type="hidden" name="from" value="{{ $from ?? '' }}">
                     @csrf
+                    <!-- Campos ocultos para manejar el tipo de progenitor -->
+                    <input type="hidden" name="es_madre" id="es_madre" value="0">
+                    <input type="hidden" name="es_padre" id="es_padre" value="0">
 
                     <!-- Sección de la Madre -->
                     <div class="card card-modern mb-4">
@@ -2194,6 +2197,21 @@
                 const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
                 const estadoPadre = document.querySelector('input[name="estado_padre"]:checked')?.value;
                 const tipoRepresentante = document.querySelector('input[name="tipo_representante"]:checked')?.value;
+                
+                // Actualizar campos ocultos para tipo de progenitor
+                const esMadre = (estadoMadre === 'Presente' && tipoRepresentante === 'progenitor_representante');
+                const esPadre = (estadoPadre === 'Presente' && tipoRepresentante === 'progenitor_representante');
+                
+                document.getElementById('es_madre').value = esMadre ? '1' : '0';
+                document.getElementById('es_padre').value = esPadre ? '1' : '0';
+                
+                console.log('Tipo de representante actualizado:', {
+                    tipoRepresentante,
+                    estadoMadre,
+                    estadoPadre,
+                    esMadre,
+                    esPadre
+                });
 
                 const radioMadreRepresentante = document.getElementById('progenitor_madre_representante');
                 const radioPadreRepresentante = document.getElementById('progenitor_padre_representante');
