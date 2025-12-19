@@ -22,10 +22,15 @@ class Representante extends Model
         "convivenciaestudiante_representante",
         "municipio_id",
         "parroquia_id",
+        "status"
     ];
+    protected $attributes = [
+        'status' => 1  // Valor por defecto: 1 = Activo
+    ];
+    
+    protected $dates = ['deleted_at']; 
 
-
-        public function estado()
+    public function estado()
     {
         return $this->belongsTo(Estado::class, "estado_id", "id");
     }

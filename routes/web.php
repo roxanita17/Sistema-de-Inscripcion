@@ -351,6 +351,10 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
 
     // Eliminar representante
     Route::delete('/{id}', [RepresentanteController::class, 'delete'])->name('destroy');
+    
+    // Rutas para manejo de eliminados
+    Route::get('/eliminados', [RepresentanteController::class, 'eliminados'])->name('eliminados');
+    Route::post('/{id}/restaurar', [RepresentanteController::class, 'restaurar'])->name('restaurar');
 
     // Búsqueda por cédula (AJAX)
     Route::get('/buscar-numero_documento', [RepresentanteController::class, 'buscarPornumero_documento'])->name('buscar_numero_documento');
