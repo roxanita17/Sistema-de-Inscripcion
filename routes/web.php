@@ -108,7 +108,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('estado.index');
-    
+
     // Ruta para verificar la existencia de un estado
     Route::get('estado/verificar', [EstadoController::class, 'verificarExistencia'])->name('estado.verificar');
 
@@ -120,7 +120,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('municipio.index');
-    
+
     // Ruta para verificar la existencia de un municipio
     Route::get('municipio/verificar', [MunicipioController::class, 'verificarExistencia'])->name('municipio.verificar');
 
@@ -132,7 +132,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('localidad.index');
-    
+
     // Ruta para verificar la existencia de una localidad
     Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
 
@@ -313,8 +313,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         //reportes PDF
         Route::get('inscripcion/reporte/{id}', [InscripcionController::class, 'reporte'])
             ->name('inscripcion.reporte');
-        
 
+        Route::get(
+            'secciones-por-grado/{grado}',
+            [InscripcionController::class, 'seccionesPorGrado']
+        )->name('secciones.por-grado');
     });
 
 

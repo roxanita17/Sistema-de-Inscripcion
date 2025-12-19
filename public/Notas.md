@@ -46,9 +46,6 @@ Falta:
 ## FILTRADO
 Falta:
 
-### Inscripción
-3. Filtrar por sección
-
 ### Docente (docente_area_grado)
 4. Filtrar por materias
 5. Filtrar por grado
