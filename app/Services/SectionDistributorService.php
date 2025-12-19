@@ -34,9 +34,11 @@ class SectionDistributorService
 
             // 1. Inscripciones activas
             $inscripciones = Inscripcion::where('grado_id', $grado->id)
+                ->where('anio_escolar_id', $anioEscolarActivo->id)
                 ->where('status', 'Activo')
                 ->with(['alumno.persona'])
                 ->get();
+
 
             if ($inscripciones->isEmpty()) {
                 throw new \Exception('No hay inscripciones activas para 1er Año');

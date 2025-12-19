@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnioEscolar;
 use App\Models\EntradasPercentil;
 use Illuminate\Http\Request;
 use App\Models\Inscripcion;
@@ -27,29 +28,42 @@ class EntradasPercentilController extends Controller
      */
     public function index(Request $request)
     {
-        $anioEscolarActivo = $this->verificarAnioEscolar();
+        $hayAnioActivo = $this->verificarAnioEscolar();
 
         $gradoId = $request->grado_id; // llega desde un botón o selector
 
+        $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
+
         $entradasPercentil = EntradasPercentil::with(['inscripcion.alumno', 'seccion'])
+            ->whereHas('ejecucion', function ($q) use ($anioEscolarActivo) {
+                $q->where('anio_escolar_id', $anioEscolarActivo->id);
+            })
             ->whereHas('inscripcion', function ($q) use ($gradoId) {
                 if ($gradoId) {
                     $q->where('grado_id', $gradoId);
                 }
-            })->orderBy('seccion_id', 'asc')
-            ->orderBy('indice_total', 'asc')
+            })
+            ->orderBy('seccion_id')
+            ->orderBy('indice_total')
             ->paginate(10);
 
-        $seccionesResumen = EntradasPercentil::select('seccion_id')
+
+        $seccionesResumen = EntradasPercentil::selectRaw('seccion_id, COUNT(*) as total_estudiantes')
             ->with('seccion')
-            ->whereHas('inscripcion', function ($q) use ($gradoId) {
-                if ($gradoId) $q->where('grado_id', $gradoId);
+            ->whereHas('ejecucion', function ($q) use ($anioEscolarActivo) {
+                $q->where('anio_escolar_id', $anioEscolarActivo->id);
+            })
+            ->when($gradoId, function ($q) use ($gradoId) {
+                $q->whereHas('inscripcion', fn($qq) => $qq->where('grado_id', $gradoId));
             })
             ->groupBy('seccion_id')
-            ->selectRaw('count(*) as total_estudiantes, seccion_id')
             ->get();
 
-        return view('admin.transacciones.percentil.index', compact('entradasPercentil', 'anioEscolarActivo', 'gradoId', 'seccionesResumen'));
+
+        return view(
+            'admin.transacciones.percentil.index',
+            compact('entradasPercentil', 'hayAnioActivo', 'gradoId', 'seccionesResumen', 'anioEscolarActivo')
+        );
     }
 
 

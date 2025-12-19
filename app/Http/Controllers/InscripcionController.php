@@ -80,8 +80,10 @@ class InscripcionController extends Controller
         $inscripciones = Inscripcion::with([
             'alumno.persona.tipoDocumento',
             'grado',
-            'seccionAsignada'
+            'seccionAsignada',
+            'anioEscolar'
         ])
+            ->anioEscolarVigente()
             ->select('inscripcions.*')
             ->join('alumnos', 'inscripcions.alumno_id', '=', 'alumnos.id')
             ->join('personas', 'alumnos.persona_id', '=', 'personas.id')
@@ -90,6 +92,7 @@ class InscripcionController extends Controller
             ->orderBy('personas.numero_documento', 'asc')
             ->orderBy('personas.primer_nombre', 'asc')
             ->paginate(10);
+
 
         return view('admin.transacciones.inscripcion.index', [
             'anioEscolarActivo' => $anioEscolarActivo,
@@ -126,7 +129,7 @@ class InscripcionController extends Controller
 
     public function destroy($id)
     {
-       Inscripcion::inactivar($id);
+        Inscripcion::inactivar($id);
 
         return redirect()->route('admin.transacciones.inscripcion.index')->with('success', 'Inscripción inactivada correctamente');
     }
