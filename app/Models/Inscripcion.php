@@ -60,7 +60,7 @@ class Inscripcion extends Model
 
     public function seccion()
     {
-        return $this->hasOne(Seccion::class, 'id', 'seccion_id');
+        return $this->belongsTo(Seccion::class,  'seccion_id', 'id');
     }
 
     /**

@@ -44,7 +44,7 @@ class InscripcionSeeder extends Seeder
                 // Contrato
                 'acepta_normas_contrato' => true,
 
-                'anio_escolar_id' => rand(1, 3),
+                'anio_escolar_id' => 3,
 
                 // Estado de la inscripción
                 'status' => 'Activo' ,

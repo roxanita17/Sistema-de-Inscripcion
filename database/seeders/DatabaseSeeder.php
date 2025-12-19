@@ -58,6 +58,7 @@ class DatabaseSeeder extends Seeder
             IndiceEdadSeeder::class,
             IndicePesoSeeder::class,
             IndiceEstaturaSeeder::class,
+            SeccionSeeder::class,
             PersonaSeeder::class,
             AlumnoSeeder::class,
             DocenteSeeder::class,

@@ -16,6 +16,7 @@ class InscripcionRepository
                 ->orderBy('letra_expresion_literaria')
                 ->get(),
             'grados' => Grado::where('status', true)->get(),
+            
         ];
     }
 }

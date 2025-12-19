@@ -38,7 +38,7 @@ class HistoricoController extends Controller
             ));
         }
 
-        // 🔹 INSCRIPCIONES (default)
+        // INSCRIPCIONES (default)
         $inscripciones = Inscripcion::with([
             'anioEscolar',
             'alumno.persona',

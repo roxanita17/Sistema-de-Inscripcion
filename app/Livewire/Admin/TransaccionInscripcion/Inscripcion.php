@@ -435,7 +435,7 @@ class Inscripcion extends Component
             'anio_egreso' => $this->anio_egreso,
             'expresion_literaria_id' => $this->expresion_literaria_id,
             'grado_id' => $this->gradoId,
-            'seccion_id' => $this->seccion_id, // ✅ FALTABA
+            'seccion_id' => $this->seccion_id, 
             'padre_id' => $this->padreId,
             'madre_id' => $this->madreId,
             'representante_legal_id' => $this->representanteLegalId,
@@ -445,7 +445,7 @@ class Inscripcion extends Component
         ]);
     }
 
-
+ 
     /* ============================================================
        LISTENERS
        ============================================================ */

@@ -177,13 +177,16 @@
 
                                         {{-- REPRESENTANTE LEGAL --}}
                                         <td class="text-center">
-                                            {{ $datos->representanteLegal->representante->persona->primer_nombre }}
-                                            {{ $datos->representanteLegal->representante->persona->primer_apellido }}
+                                            @if($datos->representanteLegal && $datos->representanteLegal->representante)
+                                                {{ $datos->representanteLegal->representante->persona->primer_nombre }}
+                                                {{ $datos->representanteLegal->representante->persona->primer_apellido }}
+                                            @else
+                                                No especificado
+                                            @endif
                                         </td>
 
                                         {{-- PARENTESCO --}}
                                         <td class="text-center">
-
                                             {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
                                         </td>
 
@@ -192,8 +195,8 @@
 
                                         {{-- SECCION --}}
                                         <td class="text-center">
-                                            @if ($datos->seccionAsignada)
-                                                {{ $datos->seccionAsignada->nombre }}
+                                            @if ($datos->seccion)
+                                                {{ $datos->seccion->nombre }}
                                             @else
                                                 Sin asignar
                                             @endif
