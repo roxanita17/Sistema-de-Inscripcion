@@ -108,64 +108,17 @@
                     </div>
                 </form>
                 <div class="header-right" style="display: flex; gap: 5px;">
-
-                    <!-- Botón que abre el modal de filtro PDF -->
-                    <button type="button" class="btn-pdf" data-bs-toggle="modal" data-bs-target="#pdfFilterModal">
-                        <i class="fas fa-file-pdf"></i> PDF General
-                    </button>
-
-                    <!-- Modal de Filtro PDF -->
-                    <div class="modal fade" id="pdfFilterModal" tabindex="-1" aria-labelledby="pdfFilterModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content modal-modern">
-                                <div class="modal-header"
-                                    style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; padding: 1.5rem; border-radius: 8px 8px 0 0;">
-                                    <h5 class="modal-title mb-0" id="pdfFilterModalLabel">
-                                        <i class="fas fa-file-pdf me-2"></i>Generar Reporte PDF
-                                    </h5>
-                                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal"
-                                        aria-label="Cerrar">
-                                        <i class="fas fa-times"></i>
+                                <div>
+                                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                                        <i class="fas fa-filter"></i>
+                                        Filtros
                                     </button>
                                 </div>
-                                <form id="pdfFilterForm" action="{{ route('admin.alumnos.reporteGeneralPDF') }}"
-                                    method="GET" target="_blank">
-                                    <div class="modal-body">
-                                        <div class="form-group-modern mb-3">
-                                            <label for="genero" class="form-label">Filtrar por género</label>
-                                            <select class="form-control-modern" id="genero" name="genero">
-                                                <option value="">Todos los géneros</option>
-                                                <option value="Femenino">Femenino</option>
-                                                <option value="Masculino">Masculino</option>
-                                                <option value="Otro">Otro</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group-modern mb-3">
-                                            <label for="tipo_documento" class="form-label">Filtrar por tipo de documento
-                                                (Extranjero o Venezolano)</label>
-                                            <select class="form-control-modern" id="tipo_documento"
-                                                name="tipo_documento">
-                                                <option value="">Todos los tipos de documento</option>
-                                                <option value="V">V - Venezolano</option>
-                                                <option value="E">E - Extranjero</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer"
-                                        style="border-top: 1px solid var(--gray-200); padding: 1.25rem 1.5rem;">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
-                                            style="padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 500;">
-                                            <i class="fas fa-times me-2"></i>Cancelar
-                                        </button>
-                                        <button type="submit" class="btn-pdf">
-                                            <i class="fas fa-file-pdf me-2"></i>Generar PDF
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Botón que abre el modal de filtro PDF -->
+                    <a href="{{ route('admin.alumnos.reporteGeneralPDF') }}" target="_blank">
+                        <i class="fas fa-file-pdf"></i> PDF General
+                    </a>
+
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ now()->translatedFormat('d M Y') }}</span>
@@ -352,3 +305,4 @@
     </div>
 
 @endsection
+@include('admin.alumnos.modales.filtroModal')

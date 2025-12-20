@@ -57,8 +57,8 @@
                                         Filtros
                                     </button>
                                 </div>
-                                <a href="{{ route('representante.reporte_pdf', request()->query()) }}" class="btn-pdf" target="_blank" id="pdfReportLink">
-                                    <i class="fas fa-download"></i> Generar PDF
+                                <a href="{{ route('representante.reporte_pdf') }}" class="btn-pdf" id="generarPdfBtn" target="_blank">
+                                    <i class="fas fa-file-pdf me-2"></i>Generar PDF
                                 </a>
 
                                 <div class="date-badge">
@@ -543,166 +543,94 @@
             } catch (e) {
                 console.error('Error al llenar el modal de representante:', e);
             }
-        });
+        }
 
-        // Script para manejar los filtros
+        // Actualizar el enlace de generación de PDF con los filtros actuales
+        function actualizarEnlacePDF() {
+            const generarPdfBtn = document.getElementById('generarPdfBtn');
+            if (generarPdfBtn) {
+                // Obtener todos los parámetros de la URL actual
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Construir la URL base del reporte
+                let reportUrl = generarPdfBtn.getAttribute('href').split('?')[0];
+                const params = new URLSearchParams();
+                
+                // Agregar todos los parámetros de filtro actuales
+                for (const [key, value] of urlParams.entries()) {
+                    if (key === 'page') continue; // No incluir la paginación en el reporte
+                    params.append(key, value);
+                }
+                
+                // Si hay parámetros, agregarlos a la URL
+                if (params.toString()) {
+                    reportUrl += '?' + params.toString();
+                }
+                
+                // Actualizar el atributo href del botón
+                generarPdfBtn.setAttribute('href', reportUrl);
+                
+                console.log('Enlace de PDF actualizado:', reportUrl);
+            }
+        }
+        
+        // Manejar el envío del formulario de filtros
+        const filtroForm = document.getElementById('filtroForm');
+        if (filtroForm) {
+            filtroForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Obtener el valor seleccionado
+                const tipoRepresentante = document.getElementById('tipo_representante').value;
+                
+                // Construir la URL con los parámetros de filtro
+                const url = new URL(window.location.href.split('?')[0]);
+                
+                // Solo agregar el parámetro si hay un valor seleccionado
+                if (tipoRepresentante !== '') {
+                    url.searchParams.set('es_legal', tipoRepresentante);
+                } else {
+                    url.searchParams.delete('es_legal');
+                }
+                
+                // Cerrar el modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalFiltros'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Actualizar el enlace del PDF antes de redirigir
+                actualizarEnlacePDF();
+                
+                // Redirigir a la URL con los filtros aplicados
+                window.location.href = url.toString();
+            });
+        }
+        
+        // Inicializar el enlace de PDF cuando el documento esté listo
         document.addEventListener('DOMContentLoaded', function() {
-            // Manejar el envío del formulario de filtros
-            const formFiltros = document.getElementById('formFiltros');
-            if (formFiltros) {
-                formFiltros.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(this);
-                    const params = new URLSearchParams(formData).toString();
-                    
-                    // Cerrar el modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalFiltros'));
-                    if (modal) modal.hide();
-                    
-                    // Mostrar estado de carga
-                    const tbody = document.getElementById('tbody-representantes');
-                    if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>';
-                    
-                    // Obtener datos filtrados
-                    fetch(`/representante/filtrar?${params}`, {
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        actualizarTablaConDatos(data);
-                        actualizarEnlaceReporte();
-                    })
-                    .catch(error => {
-                        console.error('Error al aplicar filtros:', error);
-                        if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3 text-danger">Error al cargar los datos. Intente nuevamente.</td></tr>';
-                    });
+            // Actualizar el enlace de PDF al cargar la página
+            actualizarEnlacePDF();
+            
+            // Actualizar el enlace de PDF cuando cambie la URL (navegación con filtros)
+            window.addEventListener('popstate', actualizarEnlacePDF);
+            
+            // Actualizar el enlace cuando se muestre el modal de filtros
+            const filtroModal = document.getElementById('modalFiltros');
+            if (filtroModal) {
+                filtroModal.addEventListener('shown.bs.modal', function() {
+                    // Asegurarse de que el select muestre el valor actual del filtro
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const tipoRepresentante = urlParams.get('es_legal');
+                    const selectTipo = document.getElementById('tipo_representante');
+                    if (selectTipo) {
+                        selectTipo.value = tipoRepresentante !== null ? tipoRepresentante : '';
+                    }
                 });
             }
-
-            // Función para actualizar la tabla con los datos filtrados
-            function actualizarTablaConDatos(data) {
-                const tbody = document.getElementById('tbody-representantes');
-                const tabla = document.querySelector('.table-modern');
-                const paginacion = document.querySelector('.pagination');
-                
-                if (!tbody) return;
-
-                tbody.innerHTML = '';
-                
-                if (data.status === 'success' && data.data.data && data.data.data.length > 0) {
-                    if (tabla) tabla.classList.remove('hidden');
-                    
-                    // Llenar las filas de la tabla
-                    data.data.data.forEach(rep => {
-                        const tipoRepresentante = rep.legal ? 
-                            '<span class="badge bg-primary">Representante Legal</span>' : 
-                            '<span class="badge bg-secondary">Progenitor</span>';
-                        
-                        const fila = `
-                            <tr>
-                                <td>${rep.persona?.numero_documento || 'N/A'}</td>
-                                <td>${rep.persona?.primer_nombre || 'N/A'}</td>
-                                <td>${rep.persona?.primer_apellido || 'N/A'}</td>
-                                <td>${tipoRepresentante}</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <div class="dropdown dropstart text-center">
-                                            <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn" data-bs-toggle="dropdown">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li>
-                                                    <a class="dropdown-item" href="/representante/editar/${rep.id}">
-                                                        <i class="fas fa-edit me-2"></i>Editar
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" 
-                                                       data-bs-target="#verRepresentanteModal" 
-                                                       onclick="mostrarDetallesRepresentante(${rep.id})">
-                                                        <i class="fas fa-eye me-2"></i>Ver Detalles
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item text-danger" href="#" 
-                                                       data-bs-toggle="modal" 
-                                                       data-bs-target="#confirmarEliminarRepresentante${rep.id}">
-                                                        <i class="fas fa-trash-alt me-2"></i>Eliminar
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.insertAdjacentHTML('beforeend', fila);
-                    });
-
-                    // Actualizar la paginación
-                    if (paginacion && data.data.links) {
-                        paginacion.innerHTML = '';
-                        data.data.links.forEach(link => {
-                            const li = document.createElement('li');
-                            li.className = `page-item ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`;
-                            
-                            const a = document.createElement('a');
-                            a.className = 'page-link';
-                            a.href = link.url ? `#${link.url.split('#')[1] || ''}` : '#';
-                            a.innerHTML = link.label
-                                .replace('&laquo;', '<i class="fas fa-angle-double-left"></i>')
-                                .replace('&lsaquo;', '<i class="fas fa-angle-left"></i>')
-                                .replace('&rsaquo;', '<i class="fas fa-angle-right"></i>')
-                                .replace('&raquo;', '<i class="fas fa-angle-double-right"></i>');
-                            
-                            if (link.url) {
-                                a.addEventListener('click', function(e) {
-                                    e.preventDefault();
-                                    const url = new URL(link.url, window.location.origin);
-                                    fetch(`${url.pathname}?${url.searchParams.toString()}`, {
-                                        headers: {
-                                            'Accept': 'application/json',
-                                            'X-Requested-With': 'XMLHttpRequest'
-                                        }
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => actualizarTablaConDatos(data))
-                                    .catch(console.error);
-                                });
-                            }
-                            
-                            li.appendChild(a);
-                            paginacion.appendChild(li);
-                        });
-                    }
-                } else {
-                    if (tabla) tabla.classList.remove('hidden');
-                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3">No se encontraron representantes con los filtros seleccionados.</td></tr>';
-                    if (paginacion) paginacion.innerHTML = '';
-                }
-            }
-
-            // Actualizar el enlace del informe PDF cuando cambien los filtros
-            function actualizarEnlaceReporte() {
-                const formData = new FormData(document.getElementById('formFiltros'));
-                const params = new URLSearchParams(formData).toString();
-                const enlacePdf = document.querySelector('a[href*="representante/reporte_pdf"]');
-                if (enlacePdf) {
-                    enlacePdf.href = `/representante/reporte_pdf?${params}`;
-                }
-            }
-
-            // Actualizar el enlace del informe cuando cambien los valores de los filtros
-            const inputsFiltro = document.querySelectorAll('#formFiltros select, #formFiltros input');
-            inputsFiltro.forEach(input => {
-                input.addEventListener('change', actualizarEnlaceReporte);
+            window.addEventListener('popstate', function() {
+                actualizarEnlacePDF();
             });
-
-            // Inicializar el enlace del informe con los filtros actuales
-            actualizarEnlaceReporte();
         });
     </script>
 @endsection

@@ -113,8 +113,8 @@ class Representante extends Model
         ->leftJoin("bancos", "bancos.id", "=", "representante_legal.banco_id");
         
         // Filtro por tipo (representante legal o no)
-    if (isset($filtro['es_legal']) && $filtro['es_legal'] !== '') {
-        if ($filtro['es_legal'] == '1') {
+    if (isset($filtro['es_legal'])) {
+        if ($filtro['es_legal']) {
             $query->whereNotNull('representante_legal.id');
         } else {
             $query->whereNull('representante_legal.id');

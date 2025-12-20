@@ -68,43 +68,11 @@ class RepresentanteController extends Controller
      * @return \Illuminate\View\View
      */
 
-    public function index(Request $request)
+    public function index()
     {
         $anioEscolarActivo = $this->verificarAnioEscolar();
         
         // Construir la consulta
-        $query = $this->construirConsultaFiltros($request);
-        
-        // Para peticiones normales, devolver la vista
-        $representantes = $query->paginate(10);
-        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
-    }
-    
-    /**
-     * Método para filtrar representantes (AJAX)
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function filtrar(Request $request)
-    {
-        $query = $this->construirConsultaFiltros($request);
-        
-        $representantes = $query->paginate(10);
-        return response()->json([
-            'status' => 'success',
-            'data' => $representantes
-        ]);
-    }
-    
-    /**
-     * Construye la consulta con los filtros aplicados
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    private function construirConsultaFiltros($request)
-    {
         $query = \App\Models\Representante::with([
             'persona', 
             'legal' => function($query) {
@@ -118,17 +86,31 @@ class RepresentanteController extends Controller
         ]);
         
         // Aplicar filtros
-        if ($request->has('es_legal') && $request->es_legal !== '') {
-            if ($request->es_legal == '1') {
-                $query->has('legal');
+        if (request()->has('es_legal') && request('es_legal') !== '') {
+            $esLegal = request('es_legal') == '1';
+            if ($esLegal) {
+                $query->whereHas('legal');
             } else {
-                $query->doesntHave('legal');
+                $query->whereDoesntHave('legal');
             }
         }
         
-        // Solo mostrar representantes activos (status != 0) y no eliminados
-        return $query->where('status', '!=', 0)
-                    ->whereNull('deleted_at');
+        // Solo mostrar representantes activos (status != 0) y no eliminados con soft delete
+        $query->where('status', '!=', 0)
+              ->whereNull('deleted_at');
+        
+        // Ordenar por ID descendente (más recientes primero)
+        $query->orderBy('id', 'desc');
+        
+        // Ejecutar la consulta con paginación
+        $representantes = $query->paginate(10);
+        
+        // Mantener los parámetros de filtro en la paginación
+        if (request()->has('es_legal')) {
+            $representantes->appends(['es_legal' => request('es_legal')]);
+        }
+        
+        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
     }
     
     /**
@@ -1638,9 +1620,22 @@ public function mostrarFormularioEditar($id)
     public function filtar(Request $request)
     {
         $buscador = $request->buscador ?? '';
+        $esLegal = $request->es_legal;
         
         // Iniciar consulta con relaciones necesarias
-        $consulta = Representante::query()->with('persona');
+        $consulta = Representante::with('persona')
+            ->where('status', '!=', 0)
+            ->whereNull('deleted_at');
+        
+        // Aplicar filtro de tipo de representante
+        if ($esLegal !== null && $esLegal !== '') {
+            $esLegal = $esLegal == '1';
+            if ($esLegal) {
+                $consulta->whereHas('legal');
+            } else {
+                $consulta->whereDoesntHave('legal');
+            }
+        }
 
         if (!empty($buscador)) {
             $consulta = $consulta->whereHas('persona', function($query) use ($buscador) {

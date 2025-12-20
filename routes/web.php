@@ -369,7 +369,7 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
     Route::get('/consultar', [RepresentanteController::class, 'consultar'])->name('consultar');
 
     // Filtrar representantes (AJAX)
-    Route::get('/filtrar', [RepresentanteController::class, 'filtrar'])->name('filtrar');
+    Route::get('/filtrar', [RepresentanteController::class, 'filtar'])->name('filtrar');
 
     // Verificar cédula duplicada (AJAX)
     Route::get('/verificar-numero_documento', [RepresentanteController::class, 'verificarnumero_documento'])->name('verificar_numero_documento');

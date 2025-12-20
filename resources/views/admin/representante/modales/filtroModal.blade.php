@@ -5,33 +5,32 @@
             <div class="modal-header border-0 pb-0">
                 <h6 class="modal-title d-flex align-items-center gap-2" style="color: var(--primary);">
                     <i class="fas fa-filter"></i>
-                    Filtros
+                    Filtros de Búsqueda
                 </h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <hr>
 
             <!-- Body -->
             <div class="modal-body pt-0">
-                <form id="formFiltros">
-                    @csrf
+                <form id="filtroForm" action="{{ route('representante.index') }}" method="GET">
                     <div class="mb-3">
                         <label class="form-label-modern">
                             <i class="fas fa-user-tag" style="color: var(--primary);"></i>
                             Tipo de Representante
                         </label>
                         <select class="form-select" id="tipo_representante" name="es_legal">
-                            <option value="">Todos los representantes</option>
-                            <option value="1" {{ request('es_legal') == '1' ? 'selected' : '' }}>Solo representantes legales</option>
-                            <option value="0" {{ request('es_legal') == '0' ? 'selected' : '' }}>Solo progenitores</option>
+                            <option value="" {{ !request()->has('es_legal') ? 'selected' : '' }}>Todos los representantes</option>
+                            <option value="1" {{ request('es_legal') === '1' ? 'selected' : '' }}>Solo representantes legales</option>
+                            <option value="0" {{ request('es_legal') === '0' ? 'selected' : '' }}>Solo representantes no legales</option>
                         </select>
                     </div>
                     
-                    <div class="modal-footer p-0 pt-3">
-                        <button type="submit" class="btn-modal-create w-100 mt-4">
-                            <i class="fas fa-check"></i>
-                            Aplicar
-                        </button>
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn-modal-create mt-4 w-100">
+                        <i class="fas fa-check"></i>
+                        Aplicar
+                    </button>
                     </div>
                 </form>
             </div>
@@ -47,16 +46,13 @@
 
     #modalFiltros .modal-footer {
         justify-content: space-between;
-        border-top: none;
     }
 
-    #modalFiltros .form-select {
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
+    #modalFiltros .form-control-modern {
+        border-width: 1px;
     }
 
-    #modalFiltros .form-select:focus {
+    #modalFiltros .form-control-modern:focus {
         border-color: var(--primary);
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
 </style>
