@@ -51,10 +51,16 @@
                                     placeholder="Buscar por cédula, nombre o apellido" aria-label="Search" id="buscador">
                             </form>
                             <div class="header-right" style="display: flex; gap: 5px;">
-                                <button type="button" class="btn-pdf" target="_blank" data-bs-toggle="modal"
-                                    data-bs-target="#modalGenerarReporte">
-                                    <i class="fas fa-file-pdf"></i> Generar Reporte
-                                </button>
+                                <div>
+                                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                                        <i class="fas fa-filter"></i>
+                                        Filtros
+                                    </button>
+                                </div>
+                                <a href="{{ route('representante.reporte_pdf') }}" class="btn-pdf" target="_blank">
+                                    <i class="fas fa-download"></i> Generar PDF
+                                </a>
+
                                 <div class="date-badge">
                                     <i class="fas fa-calendar-alt"></i>
                                     <span>{{ now()->translatedFormat('d M Y') }}</span>
@@ -218,39 +224,7 @@
     </div>
 @endsection
 
-<!-- Modal Generar Reporte -->
-<div class="modal fade" id="modalGenerarReporte" tabindex="-1" aria-labelledby="modalGenerarReporteLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalGenerarReporteLabel">
-                    <i class="fas fa-file-pdf me-2"></i>Generar Reporte
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="formReporte" action="{{ route('representante.reporte_pdf') }}" method="GET"
-                target="_blank">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="tipo_representante" class="form-label">Tipo de Representante</label>
-                        <select class="form-select" id="tipo_representante" name="es_legal">
-                            <option value="">Todos los representantes</option>
-                            <option value="1">Solo representantes legales</option>
-                            <option value="0">Solo representantes no legales</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn-pdf">
-                        <i class="fas fa-download me-1"></i> Generar PDF
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+@include('admin.representante.modales.filtroModal')
 
 @section('js')
     <script>
@@ -569,6 +543,166 @@
             } catch (e) {
                 console.error('Error al llenar el modal de representante:', e);
             }
-        }
+        });
+
+        // Script para manejar los filtros
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manejar el envío del formulario de filtros
+            const formFiltros = document.getElementById('formFiltros');
+            if (formFiltros) {
+                formFiltros.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const params = new URLSearchParams(formData).toString();
+                    
+                    // Cerrar el modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalFiltros'));
+                    if (modal) modal.hide();
+                    
+                    // Mostrar estado de carga
+                    const tbody = document.getElementById('tbody-representantes');
+                    if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>';
+                    
+                    // Obtener datos filtrados
+                    fetch(`/representante/filtrar?${params}`, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        actualizarTablaConDatos(data);
+                        actualizarEnlaceReporte();
+                    })
+                    .catch(error => {
+                        console.error('Error al aplicar filtros:', error);
+                        if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3 text-danger">Error al cargar los datos. Intente nuevamente.</td></tr>';
+                    });
+                });
+            }
+
+            // Función para actualizar la tabla con los datos filtrados
+            function actualizarTablaConDatos(data) {
+                const tbody = document.getElementById('tbody-representantes');
+                const tabla = document.querySelector('.table-modern');
+                const paginacion = document.querySelector('.pagination');
+                
+                if (!tbody) return;
+
+                tbody.innerHTML = '';
+                
+                if (data.status === 'success' && data.data.data && data.data.data.length > 0) {
+                    if (tabla) tabla.classList.remove('hidden');
+                    
+                    // Llenar las filas de la tabla
+                    data.data.data.forEach(rep => {
+                        const tipoRepresentante = rep.legal ? 
+                            '<span class="badge bg-primary">Representante Legal</span>' : 
+                            '<span class="badge bg-secondary">Progenitor</span>';
+                        
+                        const fila = `
+                            <tr>
+                                <td>${rep.persona?.numero_documento || 'N/A'}</td>
+                                <td>${rep.persona?.primer_nombre || 'N/A'}</td>
+                                <td>${rep.persona?.primer_apellido || 'N/A'}</td>
+                                <td>${tipoRepresentante}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <div class="dropdown dropstart text-center">
+                                            <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a class="dropdown-item" href="/representante/editar/${rep.id}">
+                                                        <i class="fas fa-edit me-2"></i>Editar
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" 
+                                                       data-bs-target="#verRepresentanteModal" 
+                                                       onclick="mostrarDetallesRepresentante(${rep.id})">
+                                                        <i class="fas fa-eye me-2"></i>Ver Detalles
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item text-danger" href="#" 
+                                                       data-bs-toggle="modal" 
+                                                       data-bs-target="#confirmarEliminarRepresentante${rep.id}">
+                                                        <i class="fas fa-trash-alt me-2"></i>Eliminar
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML('beforeend', fila);
+                    });
+
+                    // Actualizar la paginación
+                    if (paginacion && data.data.links) {
+                        paginacion.innerHTML = '';
+                        data.data.links.forEach(link => {
+                            const li = document.createElement('li');
+                            li.className = `page-item ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`;
+                            
+                            const a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = link.url ? `#${link.url.split('#')[1] || ''}` : '#';
+                            a.innerHTML = link.label
+                                .replace('&laquo;', '<i class="fas fa-angle-double-left"></i>')
+                                .replace('&lsaquo;', '<i class="fas fa-angle-left"></i>')
+                                .replace('&rsaquo;', '<i class="fas fa-angle-right"></i>')
+                                .replace('&raquo;', '<i class="fas fa-angle-double-right"></i>');
+                            
+                            if (link.url) {
+                                a.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    const url = new URL(link.url, window.location.origin);
+                                    fetch(`${url.pathname}?${url.searchParams.toString()}`, {
+                                        headers: {
+                                            'Accept': 'application/json',
+                                            'X-Requested-With': 'XMLHttpRequest'
+                                        }
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => actualizarTablaConDatos(data))
+                                    .catch(console.error);
+                                });
+                            }
+                            
+                            li.appendChild(a);
+                            paginacion.appendChild(li);
+                        });
+                    }
+                } else {
+                    if (tabla) tabla.classList.remove('hidden');
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3">No se encontraron representantes con los filtros seleccionados.</td></tr>';
+                    if (paginacion) paginacion.innerHTML = '';
+                }
+            }
+
+            // Actualizar el enlace del informe PDF cuando cambien los filtros
+            function actualizarEnlaceReporte() {
+                const formData = new FormData(document.getElementById('formFiltros'));
+                const params = new URLSearchParams(formData).toString();
+                const enlacePdf = document.querySelector('a[href*="representante/reporte_pdf"]');
+                if (enlacePdf) {
+                    enlacePdf.href = `/representante/reporte_pdf?${params}`;
+                }
+            }
+
+            // Actualizar el enlace del informe cuando cambien los valores de los filtros
+            const inputsFiltro = document.querySelectorAll('#formFiltros select, #formFiltros input');
+            inputsFiltro.forEach(input => {
+                input.addEventListener('change', actualizarEnlaceReporte);
+            });
+
+            // Inicializar el enlace del informe con los filtros actuales
+            actualizarEnlaceReporte();
+        });
     </script>
 @endsection

@@ -68,11 +68,43 @@ class RepresentanteController extends Controller
      * @return \Illuminate\View\View
      */
 
-    public function index()
+    public function index(Request $request)
     {
         $anioEscolarActivo = $this->verificarAnioEscolar();
         
         // Construir la consulta
+        $query = $this->construirConsultaFiltros($request);
+        
+        // Para peticiones normales, devolver la vista
+        $representantes = $query->paginate(10);
+        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
+    }
+    
+    /**
+     * Método para filtrar representantes (AJAX)
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function filtrar(Request $request)
+    {
+        $query = $this->construirConsultaFiltros($request);
+        
+        $representantes = $query->paginate(10);
+        return response()->json([
+            'status' => 'success',
+            'data' => $representantes
+        ]);
+    }
+    
+    /**
+     * Construye la consulta con los filtros aplicados
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function construirConsultaFiltros($request)
+    {
         $query = \App\Models\Representante::with([
             'persona', 
             'legal' => function($query) {
@@ -85,14 +117,16 @@ class RepresentanteController extends Controller
             'localidads'
         ]);
         
-        // Solo mostrar representantes activos (status != 0) y no eliminados con soft delete
-        $query->where('status', '!=', 0)
-              ->whereNull('deleted_at');
+        // Aplicar filtros
+        if ($request->has('es_legal') && $request->es_legal !== '') {
+            $query->whereHas('legal', function($q) use ($request) {
+                $q->where('es_legal', $request->es_legal);
+            });
+        }
         
-        // Ejecutar la consulta con paginación
-        $representantes = $query->paginate(10);
-        
-        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
+        // Solo mostrar representantes activos (status != 0) y no eliminados
+        return $query->where('status', '!=', 0)
+                    ->whereNull('deleted_at');
     }
     
     /**
