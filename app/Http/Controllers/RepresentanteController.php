@@ -119,9 +119,11 @@ class RepresentanteController extends Controller
         
         // Aplicar filtros
         if ($request->has('es_legal') && $request->es_legal !== '') {
-            $query->whereHas('legal', function($q) use ($request) {
-                $q->where('es_legal', $request->es_legal);
-            });
+            if ($request->es_legal == '1') {
+                $query->has('legal');
+            } else {
+                $query->doesntHave('legal');
+            }
         }
         
         // Solo mostrar representantes activos (status != 0) y no eliminados

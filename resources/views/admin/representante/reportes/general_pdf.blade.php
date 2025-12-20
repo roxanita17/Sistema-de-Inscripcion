@@ -221,13 +221,6 @@
         <div class="header">
             <h2>REPORTE DE REPRESENTANTES</h2>
             <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
-            <p>
-                @if(isset($filtros['es_legal']) && $filtros['es_legal'])
-                    Tipo: Representantes Legales
-                @else
-                    Tipo: Todos los Representantes
-                @endif
-            </p>
         </div>
 
         <table>

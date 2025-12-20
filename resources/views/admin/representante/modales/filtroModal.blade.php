@@ -23,7 +23,7 @@
                         <select class="form-select" id="tipo_representante" name="es_legal">
                             <option value="">Todos los representantes</option>
                             <option value="1" {{ request('es_legal') == '1' ? 'selected' : '' }}>Solo representantes legales</option>
-                            <option value="0" {{ request('es_legal') == '0' ? 'selected' : '' }}>Solo representantes no legales</option>
+                            <option value="0" {{ request('es_legal') == '0' ? 'selected' : '' }}>Solo progenitores</option>
                         </select>
                     </div>
                     
