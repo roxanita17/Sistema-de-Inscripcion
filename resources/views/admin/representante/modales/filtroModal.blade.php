@@ -28,10 +28,9 @@
                     </div>
                     
                     <div class="modal-footer p-0 pt-3">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn-modal-create">
+                        <button type="submit" class="btn-modal-create w-100 mt-4">
                             <i class="fas fa-check"></i>
-                            Aplicar Filtros
+                            Aplicar
                         </button>
                     </div>
                 </form>
