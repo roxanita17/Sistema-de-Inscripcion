@@ -7,14 +7,14 @@
                     <i class="fas fa-filter"></i>
                     Filtros
                 </h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <hr>
 
             <!-- Body -->
             <div class="modal-body pt-0">
-                <form id="formFiltros">
-                    @csrf
+                <form id="filtroForm" action="{{ route('admin.alumnos.index') }}" method="GET">
+                    <!-- Filtro de Género -->
                     <div class="mb-3">
                         <label class="form-label-modern">
                             <i class="fas fa-venus-mars" style="color: var(--primary);"></i>
@@ -22,12 +22,15 @@
                         </label>
                         <select class="form-select" id="genero" name="genero">
                             <option value="">Todos los géneros</option>
-                            <option value="Femenino" {{ request('genero') == 'Femenino' ? 'selected' : '' }}>Femenino</option>
-                            <option value="Masculino" {{ request('genero') == 'Masculino' ? 'selected' : '' }}>Masculino</option>
-                            <option value="Otro" {{ request('genero') == 'Otro' ? 'selected' : '' }}>Otro</option>
+                            @foreach($generos as $genero)
+                                <option value="{{ $genero->id }}" {{ request('genero') == $genero->id ? 'selected' : '' }}>
+                                    {{ $genero->genero }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
+                    <!-- Filtro de Tipo de Documento -->
                     <div class="mb-3">
                         <label class="form-label-modern">
                             <i class="fas fa-id-card" style="color: var(--primary);"></i>
@@ -35,8 +38,11 @@
                         </label>
                         <select class="form-select" id="tipo_documento" name="tipo_documento">
                             <option value="">Todos los tipos de documento</option>
-                            <option value="V" {{ request('tipo_documento') == 'V' ? 'selected' : '' }}>V - Venezolano</option>
-                            <option value="E" {{ request('tipo_documento') == 'E' ? 'selected' : '' }}>E - Extranjero</option>
+                            @foreach($tiposDocumento as $tipo)
+                                <option value="{{ $tipo->id }}" {{ request('tipo_documento') == $tipo->id ? 'selected' : '' }}>
+                                    {{ $tipo->nombre }} ({{ $tipo->abreviatura }})
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     
@@ -66,10 +72,54 @@
     #modalFiltros .form-select {
         border: 1px solid #ced4da;
         border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        width: 100%;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
 
     #modalFiltros .form-select:focus {
         border-color: var(--primary);
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    #modalFiltros .btn-modal-create {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    #modalFiltros .btn-modal-create:hover {
+        background-color: #0b5ed7;
+        transform: translateY(-1px);
+    }
+
+    #modalFiltros .btn-modal-cancel {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    #modalFiltros .btn-modal-cancel:hover {
+        background-color: #5c636a;
+        color: white;
+        transform: translateY(-1px);
     }
 </style>

@@ -114,10 +114,16 @@
                                         Filtros
                                     </button>
                                 </div>
-                    <!-- Botón que abre el modal de filtro PDF -->
-                    <a href="{{ route('admin.alumnos.reporteGeneralPDF') }}" target="_blank">
-                        <i class="fas fa-file-pdf"></i> PDF General
-                    </a>
+                    <!-- Botón que genera el PDF con los filtros actuales -->
+                    <div>
+                        <a href="{{ route('admin.alumnos.reporteGeneralPDF', [
+                            'genero' => request('genero'),
+                            'tipo_documento' => request('tipo_documento'),
+                            'estatus' => request('estatus', 'Activo')
+                        ]) }}" target="_blank" class="btn-modal-create" style="background-color: #dc3545; border-color: #dc3545;">
+                            <i class="fas fa-file-pdf"></i> PDF General
+                        </a>
+                    </div>
 
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
