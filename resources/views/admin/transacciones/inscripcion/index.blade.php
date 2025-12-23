@@ -21,13 +21,21 @@
                     <p class="title-subtitle">Administración de las inscripciones</p>
                 </div>
             </div>
-            <div class="d-flex justify-content-between align-items-center mt-3 ">
+            <div class="d-flex justify-content-between align-items-center mt-3" >
+                <div style="padding: 0rem 1rem">
+                    <a href="{{ route('admin.transacciones.inscripcion-prosecucion.createProsecucion') }}" class="btn-prosecucion"
+                        @if (!$anioEscolarActivo) disabled @endif
+                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
+                        <i class="fas fa-plus"></i>
+                        <span>Inscripcion Prosecucion</span>
+                    </a>
+                </div>
                 <div>
                     <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
                         @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
-                        <span>Nueva inscripción</span>
+                        <span>Inscripcion Nuevo Ingreso</span>
                     </a>
                 </div>
             </div>

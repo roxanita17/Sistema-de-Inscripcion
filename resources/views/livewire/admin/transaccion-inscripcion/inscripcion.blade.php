@@ -42,50 +42,6 @@
         </div>
     @endif
 
-    <div class="card-modern mb-4">
-        <div class="card-body-modern">
-            <div class="card-modern mb-4">
-                <div class="card-header-modern">
-                    <div class="header-left">
-                        <div class="header-icon">
-                            <i class="fas fa-school"></i>
-                        </div>
-                        <div>
-                            <h3>Tipo de Inscripcion</h3>
-                            <p>Seleccione el tipo de inscripcion</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body-modern" style="padding: 2rem;">
-                    <div class="row">
-                        {{-- Institucion de procedencia --}}
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="tipo_inscripcion" class="form-label-modern">
-                                    <i class="fas fa-building"></i>
-                                    Tipo de inscripcion
-                                    <span class="required-badge">*</span>
-                                </label>
-                                <select wire:model.live="tipo_inscripcion"
-                                    class="form-control-modern @error('tipo_inscripcion') is-invalid @enderror"
-                                    id="tipo_inscripcion">
-                                    <option value="">Seleccione el tipo de inscripción</option>
-                                    <option value="nuevo_ingreso">Nuevo Ingreso</option>
-                                    <option value="prosecucion">Prosecución</option>
-                                </select>
-                                @error('tipo_inscripcion')
-                                    <div class="invalid-feedback-modern">
-                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{-- Seleccionar Representantes --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">

@@ -185,35 +185,6 @@ class Inscripcion extends Component
        ============================================================ */
 
     /**
-     * Se ejecuta cuando cambia el alumnoId en el select
-     */
-    public function updatedAlumnoId($value)
-    {
-        if (!$value) {
-            $this->alumnoSeleccionado = null;
-            return;
-        }
-
-        $this->alumnoSeleccionado = \App\Models\Alumno::with([
-            'persona.tipoDocumento',
-            'persona.genero',
-            'ordenNacimiento',
-            'lateralidad',
-            'alumno.persona.localidad.municipio',
-            'alumno.persona.localidad.estado',
-        ])->find($value);
-
-        // Verificar si ya tiene inscripción activa
-        $inscripcionExistente = \App\Models\Inscripcion::where('alumno_id', $value)
-            ->where('status', 'Activo')
-            ->first();
-
-        if ($inscripcionExistente) {
-            session()->flash('warning', 'Este alumno ya tiene una inscripción activa.');
-        }
-    }
-
-    /**
      * Se ejecuta cuando cambia el padreId en el select
      */
     public function updatedPadreId($value)

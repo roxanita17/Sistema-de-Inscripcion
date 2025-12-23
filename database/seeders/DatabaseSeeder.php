@@ -12,6 +12,7 @@ use App\Models\Alumno;
 use App\Models\Representante;
 use App\Models\RepresentanteLegal;
 use App\Models\Inscripcion;
+use App\Models\InscripcionNuevoIngreso;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Carbon\Carbon;
 
@@ -65,11 +66,12 @@ class DatabaseSeeder extends Seeder
             DetalleDocenteEstudioSeeder::class,
             RepresentanteSeeder::class,
             RepresentanteLegalSeeder::class,
-/*             InscripcionSeeder::class,
- */           /*  DocenteAreaGrado::class, */
+            InscripcionSeeder::class,
+            ProsecucionAreaSeeder::class,
+           /*  DocenteAreaGrado::class, */
         ]);
 
-        
+
         
         
         

@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
 @stop
 
-@section('title', 'Registrar Nuevo Ingreso')
+@section('title', 'Registrar Prosecucion')
 
 @section('content_header')
     <div class="content-header-modern">
@@ -15,7 +15,7 @@
                     <i class="fas fa-user-plus"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Registrar Nuevo Ingreso</h1>
+                    <h1 class="title-main">Registrar Prosecucion</h1>
                     <p class="title-subtitle">Formulario de inscripción de estudiantes</p>
                 </div>
             </div>
@@ -80,7 +80,7 @@
         @endif
 
         {{-- COMPOSICIÓN PRINCIPAL LIVEWIRE --}}
-        <livewire:admin.transaccion-inscripcion.inscripcion />
+        <livewire:admin.transaccion-inscripcion.inscripcion-prosecucion />
     </div>
 @stop
 

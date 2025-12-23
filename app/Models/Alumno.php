@@ -75,6 +75,18 @@ class Alumno extends Model
         return $this->hasMany(Inscripcion::class, 'alumno_id', 'id');
     }
 
+    public function inscripcionProsecucions()
+    {
+        return $this->hasManyThrough(
+            InscripcionProsecucion::class,
+            Inscripcion::class,
+            'alumno_id',        // FK en inscripcions
+            'inscripcion_id',   // FK en inscripcion_prosecucions
+            'id',               // PK en alumnos
+            'id'                // PK en inscripcions
+        );
+    }
+
     /**
      * Obtener la inscripción activa del alumno
      */
@@ -84,6 +96,77 @@ class Alumno extends Model
             ->where('status', true)
             ->latest('fecha_inscripcion');
     }
+
+    public function inscripcionAnterior(int $anioActualId)
+    {
+        // Última inscripción base (nuevo ingreso)
+        $inscripcionBase = $this->inscripciones()
+            ->where('anio_escolar_id', '<', $anioActualId)
+            ->orderByDesc('anio_escolar_id')
+            ->first();
+
+        // Última prosecución
+        $inscripcionProsecucion = InscripcionProsecucion::whereHas(
+            'inscripcion',
+            fn($q) => $q->where('alumno_id', $this->id)
+        )
+            ->where('anio_escolar_id', '<', $anioActualId)
+            ->orderByDesc('anio_escolar_id')
+            ->with('grado')
+            ->first();
+
+        // Comparar cuál es la más reciente
+        if ($inscripcionBase && $inscripcionProsecucion) {
+            return $inscripcionBase->anio_escolar_id > $inscripcionProsecucion->anio_escolar_id
+                ? $inscripcionBase
+                : $inscripcionProsecucion;
+        }
+
+        return $inscripcionBase ?? $inscripcionProsecucion;
+    }
+
+
+    public function ultimaInscripcionAntesDe(int $anioActualId)
+    {
+        // Última inscripción base
+        $base = $this->inscripciones()
+            ->where('anio_escolar_id', '<', $anioActualId)
+            ->with('grado')
+            ->orderByDesc('anio_escolar_id')
+            ->first();
+
+        // Última prosecución
+        $prosecucion = InscripcionProsecucion::whereHas(
+            'inscripcion',
+            fn($q) => $q->where('alumno_id', $this->id)
+        )
+            ->where('anio_escolar_id', '<', $anioActualId)
+            ->with('grado')
+            ->orderByDesc('anio_escolar_id')
+            ->first();
+
+        if ($base && $prosecucion) {
+            return $base->anio_escolar_id > $prosecucion->anio_escolar_id
+                ? $base
+                : $prosecucion;
+        }
+
+        return $base ?? $prosecucion;
+    }
+
+    public function materiasPendientesHistoricas()
+    {
+        return ProsecucionArea::whereHas('inscripcionProsecucion.inscripcion', function ($q) {
+            $q->where('alumno_id', $this->id);
+        })
+            ->where('status', 'pendiente')
+            ->with([
+                'gradoAreaFormacion.area_formacion',
+                'gradoAreaFormacion.grado'
+            ])
+            ->get();
+    }
+
 
 
     /**

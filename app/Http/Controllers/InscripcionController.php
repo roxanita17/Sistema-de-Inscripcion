@@ -162,6 +162,20 @@ class InscripcionController extends Controller
         return view('admin.transacciones.inscripcion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
     }
 
+    public function createProsecucion()
+    {
+        $this->verificarAnioEscolar();
+        $personas = Persona::all();
+        $generos = Genero::all();
+        $tipoDocumentos = TipoDocumento::all();
+        $alumnos = Alumno::all();
+        $grados = Grado::all();
+        $expresion_literaria = ExpresionLiteraria::all();
+        $institucion_procedencia = InstitucionProcedencia::all();
+
+        return view('admin.transacciones.inscripcion.createProsecucion', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
+    }
+
     public function seccionesPorGrado($gradoId)
     {
         $secciones = Seccion::where('grado_id', $gradoId)
@@ -171,7 +185,6 @@ class InscripcionController extends Controller
 
         return response()->json($secciones);
     }
-
 
     public function createAlumno()
     {

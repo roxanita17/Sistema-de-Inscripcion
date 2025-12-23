@@ -271,8 +271,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('docente/reporte/{id}', [DocenteController::class, 'reportePDF'])->name('docente.reportePDF');
     Route::get('docente/reporte-general', [DocenteController::class, 'reporteGeneralPDF'])->name('docente.reporteGeneralPDF');
 
-    // ===== DASHBOARD ======
-
     // ===== ALUMNOS ======
     Route::get('alumnos',  [AlumnoController::class, 'index'])->name('alumnos.index');
     Route::middleware(['verificar.anio.escolar'])->group(function () {
@@ -285,20 +283,18 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
     });
 
-
-
-
-
     //Reportes
     //Route::get('alumnos/reportes', [AlumnoController::class, 'reportePDF'])->name('alumnos.reportePDF');
     Route::get('alumnos/reporte/{id}', [AlumnoController::class, 'reportePDF'])->name('alumnos.reporte.individual');
     Route::get('alumnos/reportes/general', [AlumnoController::class, 'reporteGeneralPDF'])->name('alumnos.reporteGeneralPDF');
+
     // ===== INSCRIPCIONES ======
     Route::prefix('transacciones')->name('transacciones.')->group(function () {
 
         Route::get('inscripcion', [InscripcionController::class, 'index'])
             ->name('inscripcion.index');
 
+        //Inscripcion Nuevo Ingreso
         Route::get('inscripcion/create', function () {
             return view('admin.transacciones.inscripcion.create');
         })->name('inscripcion.create');
@@ -314,18 +310,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('inscripcion/reporte/{id}', [InscripcionController::class, 'reporte'])
             ->name('inscripcion.reporte');
 
+        /* Ruta AJAX */
         Route::get(
             'secciones-por-grado/{grado}',
             [InscripcionController::class, 'seccionesPorGrado']
         )->name('secciones.por-grado');
+
+        //Inscripcion Prosecucion
+        Route::get('inscripcion-prosecucion/create', function () {
+            return view('admin.transacciones.inscripcion.createProsecucion');
+        })->name('inscripcion-prosecucion.createProsecucion');
+
+
     });
-
-
-
-
-
-
-
 
     //===== PERCENTIL ======
     Route::get('transacciones/percentil', [EntradasPercentilController::class, 'index'])->name('transacciones.percentil.index');

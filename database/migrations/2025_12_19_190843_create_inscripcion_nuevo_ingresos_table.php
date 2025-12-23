@@ -20,7 +20,8 @@ return new class extends Migration
             $table->foreignId('institucion_procedencia_id')->constrained('institucion_procedencias')->cascadeOnDelete();
             $table->foreignId('expresion_literaria_id')->constrained('expresion_literarias')->cascadeOnDelete();
             $table->date('anio_egreso');
-            $table->timestamps();
+            
+            $table->timestamps(); 
         });
     }
 

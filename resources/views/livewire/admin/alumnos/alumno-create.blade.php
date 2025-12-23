@@ -369,16 +369,13 @@
                         <div class="form-group">
                             <label for="talla_estudiante" class="form-label-modern">
                                 <i class="fas fa-ruler-vertical"></i>
-                                Altura (cm)
+                                Altura (m)
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live="talla_estudiante"
+                            <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
+                            wire:keyup='formatearEstatura'
+                                placeholder="Ej: 1.66"
                                 class="form-control-modern @error('talla_estudiante') is-invalid @enderror">
-                                <option value="">Seleccione estatura</option>
-                                @foreach (range(120, 180, 5) as $talla)
-                                    <option value="{{ $talla }}">{{ $talla }} cm</option>
-                                @endforeach
-                            </select>
                             @error('talla_estudiante')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -479,7 +476,7 @@
         </div>
 
         {{-- Card: Pertenencia Étnica --}}
-          <div class="card-modern mb-4">
+        <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #14b8a6, #0f766e);">
@@ -500,7 +497,7 @@
                                 <i class="fas fa-id-card"></i>
                                 Etnia Indigena
                                 <span class="required-badge">*</span>
-                            </label>    
+                            </label>
                             <select wire:model.live="etnia_indigena_id"
                                 class="form-control-modern @error('etnia_indigena_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>

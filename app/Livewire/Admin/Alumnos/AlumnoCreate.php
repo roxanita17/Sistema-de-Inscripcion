@@ -54,7 +54,7 @@ class AlumnoCreate extends Component
 
 
     // Datos físicos
-    public $talla_estudiante;
+    public $talla_estudiante = '';
     public $peso_estudiante;
     public $talla_camisa;
     public $talla_zapato;
@@ -154,7 +154,7 @@ class AlumnoCreate extends Component
             ],
 
             // Datos físicos
-            'talla_estudiante' => 'required|numeric|between:50,250',
+            'talla_estudiante' => 'required|numeric|between:0.50,3.00',
             'peso_estudiante' => 'required|numeric|between:2,300',
             'talla_camisa' => 'required',
             'talla_zapato' => 'required|integer',
@@ -184,7 +184,7 @@ class AlumnoCreate extends Component
         'fecha_nacimiento.before:today' => 'La edad debe estar entre los 10 y 18 años',
         'talla_estudiante.required' => 'Este campo es requerido',
         'talla_estudiante.numeric' => 'Este campo debe ser un número',
-        'talla_estudiante.between' => 'Este campo debe estar entre 50 y 250',
+        'talla_estudiante.between' => 'Este campo debe estar entre 0.50 y 3.00',
         'peso_estudiante.required' => 'Este campo es requerido',
         'peso_estudiante.numeric' => 'Este campo debe ser un número',
         'peso_estudiante.between' => 'Este campo debe estar entre 2 y 300',
@@ -243,6 +243,20 @@ class AlumnoCreate extends Component
         }
     }
 
+    public function formatearEstatura()
+    {
+        // Quita todo menos números
+        $valor = preg_replace('/\D/', '', $this->talla_estudiante);
+
+        if (strlen($valor) >= 2) {
+            $this->talla_estudiante = substr($valor, 0, -2) . '.' . substr($valor, -2);
+        }
+    }
+
+    public function validarEstatura()
+    {
+        $this->validateOnly('talla_estudiante');
+    }
 
 
     /* ============================================================
@@ -370,6 +384,19 @@ class AlumnoCreate extends Component
         }
     }
 
+    public function inscripcionAnterior($anioActualId)
+    {
+        return $this->inscripcionProsecucions()
+            ->where('anio_escolar_id', '!=', $anioActualId)
+            ->latest('anio_escolar_id')
+            ->first()
+            ?? $this->inscripciones()
+            ->where('anio_escolar_id', '!=', $anioActualId)
+            ->latest('anio_escolar_id')
+            ->first();
+    }
+
+
 
     /* ============================================================
        ========================   GUARDAR   ========================
@@ -415,7 +442,7 @@ class AlumnoCreate extends Component
                     'talla_pantalon' => $this->talla_pantalon,
                     'talla_zapato' => $this->talla_zapato,
                     'peso' => $this->peso_estudiante,
-                    'estatura' => $this->talla_estudiante,
+                    'estatura' => (float)$this->talla_estudiante,
                     'lateralidad_id' => $this->lateralidad_id,
                     'orden_nacimiento_id' => $this->orden_nacimiento_id,
                     'etnia_indigena_id' => $this->etnia_indigena_id,
@@ -429,7 +456,7 @@ class AlumnoCreate extends Component
                     'talla_pantalon' => $this->talla_pantalon,
                     'talla_zapato' => $this->talla_zapato,
                     'peso' => $this->peso_estudiante,
-                    'estatura' => $this->talla_estudiante,
+                    'estatura' => (float)$this->talla_estudiante,
                     'lateralidad_id' => $this->lateralidad_id,
                     'orden_nacimiento_id' => $this->orden_nacimiento_id,
                     'etnia_indigena_id' => $this->etnia_indigena_id,

@@ -49,7 +49,7 @@ class DocenteSeeder extends Seeder
                 'codigo' => '2005',
                 'dependencia' => 'Escuela Basica Tricentenaria',
                 'persona_id' => 15,
-                'anio_escolar_id' => 2,
+                'anio_escolar_id' => 1,
                 'status' => true,
             ],
 
@@ -57,7 +57,7 @@ class DocenteSeeder extends Seeder
                 'codigo' => '2006',
                 'dependencia' => 'Liceo General Juan Guilermo Iribarren',
                 'persona_id' => 16,
-                'anio_escolar_id' => 2,
+                'anio_escolar_id' => 1,
                 'status' => true,
             ],
 
@@ -65,7 +65,7 @@ class DocenteSeeder extends Seeder
                 'codigo' => '2007',
                 'dependencia' => 'Escuela Basica Tricentenaria',
                 'persona_id' => 17,
-                'anio_escolar_id' => 2,
+                'anio_escolar_id' => 1,
                 'status' => true,
             ],
 
@@ -73,7 +73,7 @@ class DocenteSeeder extends Seeder
                 'codigo' => '2008',
                 'dependencia' => 'Escuela Basica 24 de Julio',
                 'persona_id' => 18,
-                'anio_escolar_id' => 3,
+                'anio_escolar_id' => 1,
                 'status' => true,
             ],
 
@@ -81,7 +81,7 @@ class DocenteSeeder extends Seeder
                 'codigo' => '2009',
                 'dependencia' => 'Liceo General Juan Guilermo Iribarren',
                 'persona_id' => 19,
-                'anio_escolar_id' => 3,
+                'anio_escolar_id' => 1,
                 'status' => true,
             ],
             
@@ -89,7 +89,7 @@ class DocenteSeeder extends Seeder
                 'codigo' => '2010',
                 'dependencia' => 'Liceo General Juan Guilermo Iribarren',
                 'persona_id' => 20,
-                'anio_escolar_id' => 3,
+                'anio_escolar_id' => 1,
                 'status' => true,
             ],
         ];
