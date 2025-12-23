@@ -95,7 +95,7 @@
 
                 {{-- Lado derecho --}}
                 <div class="header-right d-flex align-items-center gap-2">
-                    <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#viewModal"
+                    <button @if (!$anioEscolarActivo) disabled @endif type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#viewModal"
                         title="Ver Detalles">
                         <i class="fas fa-eye"></i> Resumen de secciones
                     </button>

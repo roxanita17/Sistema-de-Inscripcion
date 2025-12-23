@@ -116,6 +116,16 @@
     {{-- PASO 2: MATERIAS PENDIENTES --}}
     @if ($alumnoSeleccionado)
         <div class="card-modern mb-4">
+            @php
+                $materiasArrastradas = collect($materias)->where('origen', 'pendiente_anterior')->sortBy('nombre');
+
+                $materiasActuales = collect($materias)->where('origen', 'grado_actual')->sortBy('nombre');
+
+                $idsArrastradas = $materiasArrastradas->pluck('id')->toArray();
+
+                $pendientesActuales = collect($materiasSeleccionadas)->diff($idsArrastradas)->count();
+            @endphp
+
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
@@ -127,8 +137,10 @@
                     </div>
                 </div>
                 <div class="header-right">
+
+
                     <span class="badge bg-primary">
-                        {{ count($materiasSeleccionadas) }} pendiente(s)
+                        {{ $pendientesActuales }} pendiente(s)
                     </span>
                 </div>
             </div>
@@ -136,22 +148,13 @@
             <div class="card-body-modern" style="padding: 2rem;">
                 @if (count($materias) > 0)
                     {{-- Advertencia de materias pendientes --}}
-                    @if (count($materiasSeleccionadas) >= 4)
+                    @if ($pendientesActuales >= 4)
                         <div class="alert alert-danger mb-3">
                             <i class="fas fa-exclamation-triangle"></i>
                             <strong>Atención:</strong> Con 4 o más materias pendientes el estudiante debe repetir el
                             mismo grado.
                         </div>
                     @endif
-
-                    @php
-                        // Separar materias por origen
-                        $materiasArrastradas = collect($materias)
-                            ->where('origen', 'pendiente_anterior')
-                            ->sortBy('nombre');
-                        $materiasActuales = collect($materias)->where('origen', 'grado_actual')->sortBy('nombre');
-                    @endphp
-
                     {{-- SECCIÓN: Materias reprobadas --}}
                     @if ($materiasArrastradas->isNotEmpty())
                         <div class="materias-section mb-4">
@@ -162,8 +165,8 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    Estas materias son de años anteriores y deben aprobarse obligatoriamente para
-                                    promover de grado.
+                                    El estudiante tiene materias reprobadas de grados anteriores.
+                                    Debe aprobarlas todas; de lo contrario, deberá repetir el grado completo.
                                 </small>
                             </div>
 
@@ -449,113 +452,113 @@
         </script>
     @endpush
 
-<style>
-    /* Secciones de materias */
-    .materias-section {
-        position: relative;
-    }
+    <style>
+        /* Secciones de materias */
+        .materias-section {
+            position: relative;
+        }
 
-    /* Headers de secciones */
-    .section-header-warning {
-        padding: 1rem;
-        background: linear-gradient(135deg, #fef3c7, #fde68a);
-        border-left: 4px solid #f59e0b;
-        border-radius: var(--radius);
-    }
+        /* Headers de secciones */
+        .section-header-warning {
+            padding: 1rem;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid #f59e0b;
+            border-radius: var(--radius);
+        }
 
-    .section-header-warning h5 {
-        color: #92400e;
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
+        .section-header-warning h5 {
+            color: #92400e;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
 
-    .section-header-primary {
-        padding: 1rem;
-        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-        border-left: 4px solid #3b82f6;
-        border-radius: var(--radius);
-    }
+        .section-header-primary {
+            padding: 1rem;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border-left: 4px solid #3b82f6;
+            border-radius: var(--radius);
+        }
 
-    .section-header-primary h5 {
-        color: #1e40af;
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
+        .section-header-primary h5 {
+            color: #1e40af;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
 
-    /* Divisor */
-    .divider-section {
-        position: relative;
-        text-align: center;
-    }
+        /* Divisor */
+        .divider-section {
+            position: relative;
+            text-align: center;
+        }
 
-    .divider-line {
-        border: 0;
-        height: 2px;
-        background: linear-gradient(to right, transparent, #e5e7eb, transparent);
-        margin: 2rem 0;
-    }
+        .divider-line {
+            border: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+            margin: 2rem 0;
+        }
 
-    /* Checkbox items */
-    .checkbox-item-modern {
-        display: flex;
-        align-items: flex-start;
-        padding: 1rem 1.25rem;
-        background: var(--gray-50);
-        border-radius: var(--radius);
-        transition: all 0.2s ease;
-        border: 2px solid transparent;
-        cursor: pointer;
-    }
+        /* Checkbox items */
+        .checkbox-item-modern {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem 1.25rem;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
 
-    .checkbox-item-modern:hover {
-        background: var(--primary-light);
-        border-color: var(--primary);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+        .checkbox-item-modern:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-    /* Materias reprobadas - estilo especial */
-    .checkbox-item-modern.border-warning {
-        border-color: #f59e0b;
-        background: #fffbeb;
-    }
+        /* Materias reprobadas - estilo especial */
+        .checkbox-item-modern.border-warning {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
 
-    .checkbox-item-modern.border-warning:hover {
-        background: #fef3c7;
-        border-color: #d97706;
-    }
+        .checkbox-item-modern.border-warning:hover {
+            background: #fef3c7;
+            border-color: #d97706;
+        }
 
-    .bg-warning-light {
-        background: #fffbeb !important;
-    }
+        .bg-warning-light {
+            background: #fffbeb !important;
+        }
 
-    .checkbox-modern {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-        accent-color: var(--primary);
-        flex-shrink: 0;
-        margin-top: 2px;
-    }
+        .checkbox-modern {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
 
-    .checkbox-modern.checkbox-warning {
-        accent-color: #f59e0b;
-    }
+        .checkbox-modern.checkbox-warning {
+            accent-color: #f59e0b;
+        }
 
-    .checkbox-label-modern {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
-        margin: 0 0 0 0.75rem;
-        font-size: 0.9rem;
-        color: var(--gray-700);
-        font-weight: 500;
-        user-select: none;
-        width: 100%;
-    }
+        .checkbox-label-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            margin: 0 0 0 0.75rem;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            user-select: none;
+            width: 100%;
+        }
 
-    .checkbox-label-modern i {
-        color: var(--primary);
-    }
-</style>
+        .checkbox-label-modern i {
+            color: var(--primary);
+        }
+    </style>

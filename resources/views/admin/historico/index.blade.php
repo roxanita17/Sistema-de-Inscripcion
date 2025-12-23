@@ -67,9 +67,10 @@
                         <thead>
                             @if ($tipo === 'inscripciones')
                                 <th>Año Escolar</th>
-                                <th>Alumno</th>
+                                <th class="text-center">Alumno</th>
                                 <th>Grado</th>
                                 <th>Sección</th>
+                                <th>Tipo de Inscripcion</th>
                             @elseif($tipo === 'docentes')
                                 <th>Año Escolar</th>
                                 <th>Docente</th>
@@ -93,25 +94,32 @@
                                                 ? \Carbon\Carbon::parse($inscripcion->anioEscolar->cierre_anio_escolar)->format('d/m/Y')
                                                 : '—' }}
                                         </td>
+
                                         <td>
                                             {{ $inscripcion->alumno->persona->primer_apellido }}
                                             {{ $inscripcion->alumno->persona->primer_nombre }}
                                         </td>
+
                                         <td>{{ $inscripcion->grado->numero_grado }}</td>
+
                                         <td>{{ $inscripcion->seccionAsignada->nombre ?? '—' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4">
-                                            <div class="empty-state">
-                                                <i class="fas fa-inbox fa-2x"></i>
-                                                <h4>No hay registros</h4>
-                                                <p>Seleccione otro año escolar</p>
-                                            </div>
+
+                                        {{-- MODALIDAD --}}
+                                        <td>
+                                            @if ($inscripcion->prosecucion)
+                                                <span class="badge bg-primary">Prosecución</span>
+                                            @elseif ($inscripcion->nuevoIngreso)
+                                                <span class="badge bg-success">Nuevo Ingreso</span>
+                                            @else
+                                                <span class="badge bg-secondary">—</span>
+                                            @endif
                                         </td>
                                     </tr>
+                                @empty
+                                    {{-- vacío --}}
                                 @endforelse
                             @endif
+
 
                             {{-- DOCENTES --}}
                             @if ($tipo === 'docentes')
@@ -187,6 +195,8 @@
                                     </tr>
                                 @endforelse
                             @endif
+
+
 
 
 

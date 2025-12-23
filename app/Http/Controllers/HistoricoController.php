@@ -10,13 +10,16 @@ use App\Models\Inscripcion;
 
 class HistoricoController extends Controller
 {
+
     public function index(Request $request)
     {
         $anioEscolarId = $request->anio_escolar_id;
         $tipo = $request->get('tipo', 'inscripciones');
+        $modalidad = $request->get('modalidad'); // 👈 NUEVO
 
         $anios = AnioEscolar::orderBy('inicio_anio_escolar', 'desc')->get();
 
+        // ================= DOCENTES =================
         if ($tipo === 'docentes') {
             $docentes = Docente::with([
                 'persona',
@@ -24,9 +27,11 @@ class HistoricoController extends Controller
                 'asignacionesAreas.grado',
                 'asignacionesAreas.areaEstudios.areaFormacion'
             ])
-                ->when($anioEscolarId, function ($q) use ($anioEscolarId) {
-                    $q->where('anio_escolar_id', $anioEscolarId);
-                })
+                ->when(
+                    $anioEscolarId,
+                    fn($q) =>
+                    $q->where('anio_escolar_id', $anioEscolarId)
+                )
                 ->paginate(10)
                 ->withQueryString();
 
@@ -34,20 +39,39 @@ class HistoricoController extends Controller
                 'docentes',
                 'anios',
                 'anioEscolarId',
-                'tipo'
+                'tipo',
+                'modalidad'
             ));
         }
 
-        // INSCRIPCIONES (default)
+        // ================= INSCRIPCIONES =================
         $inscripciones = Inscripcion::with([
             'anioEscolar',
             'alumno.persona',
             'grado',
-            'seccionAsignada'
+            'seccionAsignada',
+            'nuevoIngreso',
+            'prosecucion'
         ])
-            ->when($anioEscolarId, function ($q) use ($anioEscolarId) {
-                $q->where('anio_escolar_id', $anioEscolarId);
-            })
+            ->when(
+                $anioEscolarId,
+                fn($q) =>
+                $q->where('anio_escolar_id', $anioEscolarId)
+            )
+
+            // 👉 FILTRO POR MODALIDAD
+            ->when(
+                $modalidad === 'nuevo_ingreso',
+                fn($q) =>
+                $q->whereHas('nuevoIngreso')
+                    ->whereDoesntHave('prosecucion')
+            )
+            ->when(
+                $modalidad === 'prosecucion',
+                fn($q) =>
+                $q->whereHas('prosecucion')
+            )
+
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
@@ -56,7 +80,8 @@ class HistoricoController extends Controller
             'inscripciones',
             'anios',
             'anioEscolarId',
-            'tipo'
+            'tipo',
+            'modalidad'
         ));
     }
 }

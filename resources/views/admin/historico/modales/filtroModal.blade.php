@@ -17,22 +17,7 @@
 
                 {{-- FILTRO --}}
                 <form method="GET" class="filter-inline">
-                    <label class="form-label-modern">
-                        <i class="fas fa-calendar-alt" style="color: var(--primary);"></i>
-                        Año Escolar
-                    </label>
-                    <select name="anio_escolar_id" class="form-select form-control-modern">
-                        <option value="">Todos los años</option>
-                        @foreach ($anios as $anio)
-                            <option value="{{ $anio->id }}"
-                                {{ $anio->id == request('anio_escolar_id') ? 'selected' : '' }}>
-                                {{ \Carbon\Carbon::parse($anio->inicio_anio_escolar)->format('Y') }}
-                                -
-                                {{ \Carbon\Carbon::parse($anio->cierre_anio_escolar)->format('Y') }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <br>
+                    {{-- MODALIDAD (solo Inscripciones) --}}
 
                     <label class="form-label-modern">
                         <i class="fas fa-fw fa-layer-group" style="color: var(--primary);"></i>
@@ -47,7 +32,28 @@
                             Docentes
                         </option>
                     </select>
-                    
+
+                    <br>
+
+                    <div id="filtroModalidad"
+                        style="{{ request('tipo', 'inscripciones') === 'inscripciones' ? '' : 'display:none' }}">
+
+                        <label class="form-label-modern mt-3">
+                            <i class="fas fa-user-graduate" style="color: var(--primary);"></i>
+                            Modalidad de Inscripción
+                        </label>
+
+                        <select name="modalidad" class="form-select form-control-modern mt-2">
+                            <option value="">Todas</option>
+                            <option value="nuevo_ingreso"
+                                {{ request('modalidad') === 'nuevo_ingreso' ? 'selected' : '' }}>
+                                Nuevo Ingreso
+                            </option>
+                            <option value="prosecucion" {{ request('modalidad') === 'prosecucion' ? 'selected' : '' }}>
+                                Prosecución
+                            </option>
+                        </select>
+                    </div>
 
                     <button class="btn-modal-create mt-4 w-100">
                         <i class="fas fa-check"></i>
@@ -85,3 +91,17 @@
         border-color: var(--primary);
     }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tipoSelect = document.querySelector('select[name="tipo"]');
+        const modalidadDiv = document.getElementById('filtroModalidad');
+
+        tipoSelect.addEventListener('change', function () {
+            if (this.value === 'inscripciones') {
+                modalidadDiv.style.display = 'block';
+            } else {
+                modalidadDiv.style.display = 'none';
+            }
+        });
+    });
+</script>
