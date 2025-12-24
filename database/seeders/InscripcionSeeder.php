@@ -57,17 +57,48 @@ class InscripcionSeeder extends Seeder
             ]);
         }
         // Crear datos específicos de nuevo ingreso
-        InscripcionProsecucion::create([
-            'inscripcion_id' => 1,
-            'promovido' => true,
-            'grado_id' => 2,
-            'seccion_id' => 2,
-            'repite_grado' => false,
-            'acepta_normas_contrato' => true,
-            'anio_escolar_id' => 2,
-            'observaciones' => 'Inscripción por nuevo ingreso',
-            'status' => 'Activo',
-        ]);
+        InscripcionProsecucion::create(
+            [
+                'inscripcion_id' => 1,
+                'promovido' => true,
+                'grado_id' => 2,
+                'seccion_id' => 2,
+                'repite_grado' => false,
+                'acepta_normas_contrato' => true,
+                'anio_escolar_id' => 2,
+                'observaciones' => 'Inscripción por nuevo ingreso',
+                'status' => 'Activo',
+            ]
+
+        );
+        InscripcionProsecucion::create(
+            [
+                'inscripcion_id' => 2,
+                'promovido' => true,
+                'grado_id' => 2,
+                'seccion_id' => 2,
+                'repite_grado' => false,
+                'acepta_normas_contrato' => true,
+                'anio_escolar_id' => 1,
+                'observaciones' => 'Inscripción por nuevo ingreso',
+                'status' => 'Activo',
+            ]
+
+        );
+        InscripcionProsecucion::create(
+            [
+                'inscripcion_id' => 2,
+                'promovido' => true,
+                'grado_id' => 3,
+                'seccion_id' => 2,
+                'repite_grado' => false,
+                'acepta_normas_contrato' => true,
+                'anio_escolar_id' => 2,
+                'observaciones' => 'Inscripción por nuevo ingreso',
+                'status' => 'Activo',
+            ]
+
+        );
 
         $this->command->info('Seeder de Inscripción Nuevo Ingreso ejecutado correctamente.');
     }

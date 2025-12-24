@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-       
+
 
 
         $this->command->info('Iniciando seeders...');
@@ -62,23 +62,23 @@ class DatabaseSeeder extends Seeder
             SeccionSeeder::class,
             PersonaSeeder::class,
             TallaSeeder::class,
-            /* AlumnoSeeder::class, */
+            AlumnoSeeder::class,
+            DiscapacidadEstudianteSeeder::class,
             DocenteSeeder::class,
             DetalleDocenteEstudioSeeder::class,
             RepresentanteSeeder::class,
             RepresentanteLegalSeeder::class,
-            /* InscripcionSeeder::class, 
-            ProsecucionAreaSeeder::class,*/
-           /*  DocenteAreaGrado::class, */
+            InscripcionSeeder::class, 
+            ProsecucionAreaSeeder::class,
+            /*  DocenteAreaGrado::class, */
         ]);
 
 
-        
-        
-        
+
+
+
 
 
         $this->command->info('¡Base de datos poblada con éxito!');
-
     }
 }
