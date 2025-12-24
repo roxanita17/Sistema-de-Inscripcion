@@ -57,7 +57,7 @@ class DocenteAreaGrado extends Component
         if (!$this->percentilEjecutado) {
             return; // Bloquea todo
         }
-        
+
         if ($docenteId) {
 
             $this->modoEditar = true;
@@ -237,10 +237,12 @@ class DocenteAreaGrado extends Component
         // Resetear grado y sección al cambiar la materia
         $this->reset(['gradoId', 'seccionId']);
 
-        // Recargar la lista de grados filtrada
+        // Limpiar secciones
+        $this->secciones = collect();
+
+        // Recargar grados
         $this->cargarGrados();
 
-        // Dispatch para resetear los selects de grado y sección en el frontend
         $this->dispatch('resetGradoSeccion');
     }
 
@@ -270,12 +272,28 @@ class DocenteAreaGrado extends Component
         $this->actualizarGrados();
     }
 
+    public function updatedGradoId()
+    {
+        // Resetear sección al cambiar grado
+        $this->reset('seccionId');
+
+        // Cargar secciones filtradas
+        $this->cargarSecciones();
+    }
+
+
     /**
      * CARGA LISTA DE SECCIONES
      */
     public function cargarSecciones()
     {
+        if (!$this->gradoId) {
+            $this->secciones = collect();
+            return;
+        }
+
         $this->secciones = Seccion::where('status', true)
+            ->where('grado_id', $this->gradoId)
             ->orderBy('nombre', 'asc')
             ->get();
     }
