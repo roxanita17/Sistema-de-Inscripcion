@@ -186,28 +186,41 @@ class InscripcionProsecucion extends Component
             return;
         }
 
-        $gradoAnterior = Grado::find($this->gradoAnteriorId);
+        $gradoAnterior = Grado::where('id', $this->gradoAnteriorId)
+            ->where('status', true)
+            ->first();
 
         if (!$gradoAnterior) {
             $this->gradosPermitidos = collect();
             return;
         }
 
-        // Si repite → solo el mismo grado
+        // Si repite: solo el mismo grado
         if ($this->repite_grado) {
             $this->gradosPermitidos = Grado::where('id', $gradoAnterior->id)
                 ->where('status', true)
                 ->get();
 
-            // Auto-seleccionar el mismo grado
             $this->gradoPromocionId = $gradoAnterior->id;
             return;
         }
 
-        // Si promueve → solo el siguiente grado
-        $this->gradosPermitidos = Grado::where('numero_grado', $gradoAnterior->numero_grado + 1)
-            ->where('status', true)
+        // Si promueve: grado actual + siguiente
+        $this->gradosPermitidos = Grado::where('status', true)
+            ->whereIn('numero_grado', [
+                $gradoAnterior->numero_grado,
+                $gradoAnterior->numero_grado + 1,
+            ])
+            ->orderBy('numero_grado')
             ->get();
+
+        // Auto seleccionar el grado siguiente si existe
+        $gradoSiguiente = $this->gradosPermitidos
+            ->firstWhere('numero_grado', $gradoAnterior->numero_grado + 1);
+
+        if ($gradoSiguiente) {
+            $this->gradoPromocionId = $gradoSiguiente->id;
+        }
     }
 
     /* ============================================================
@@ -488,7 +501,7 @@ class InscripcionProsecucion extends Component
      */
     private function validarAntesDeGuardar(): bool
     {
-        // 1️⃣ Arrastre BLOQUEA todo
+        // Arrastre BLOQUEA todo
         if ($this->tieneMateriasArrastradasNoAprobadas()) {
             $this->repite_grado = true;
 
@@ -501,7 +514,7 @@ class InscripcionProsecucion extends Component
             }
         }
 
-        // 2️⃣ Luego pendientes del grado actual
+        // Luego pendientes del grado actual
         $cantidadPendientes = count($this->materiasPendientesActuales());
 
         if ($cantidadPendientes >= 4) {

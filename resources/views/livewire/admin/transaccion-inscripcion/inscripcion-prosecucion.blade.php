@@ -165,8 +165,8 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    El estudiante tiene materias reprobadas de grados anteriores.
-                                    Debe aprobarlas todas; de lo contrario, deberá repetir el grado completo.
+                                    El estudiante tiene materias reprobadas de grados anteriores. Debe aprobarlas todas; de lo contrario, deberá repetir el grado completo.
+                                    <b>Marque las materias que el estudiante aprobo</b>
                                 </small>
                             </div>
 
@@ -248,11 +248,7 @@
                         </div>
                     @endif
 
-                    @error('materiasSeleccionadas')
-                        <div class="invalid-feedback-modern mt-3" style="display: block;">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                        </div>
-                    @enderror
+                    
                 @else
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i>
