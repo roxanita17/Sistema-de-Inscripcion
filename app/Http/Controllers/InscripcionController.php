@@ -97,6 +97,7 @@ class InscripcionController extends Controller
         // Query de inscripciones
         $inscripciones = Inscripcion::with([
             'alumno.persona',
+            'alumno.discapacidades',
             'grado',
             'seccionAsignada',
             'nuevoIngreso',
@@ -202,7 +203,7 @@ class InscripcionController extends Controller
         $inscripcion = Inscripcion::with([
             'alumno.persona',
             'alumno.ordenNacimiento',
-            'alumno.discapacidad',
+            'alumno.discapacidades',
             'alumno.etniaIndigena',
             'alumno.lateralidad',
             'grado',

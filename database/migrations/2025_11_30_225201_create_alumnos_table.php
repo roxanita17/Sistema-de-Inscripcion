@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('alumnos', function (Blueprint $table) {
             $table->id();
-            
-            $table->string('talla_camisa');
-            $table->string('talla_pantalon');
+
+            $table->foreignId('talla_camisa_id')->nullable()->constrained('tallas')->nullOnDelete();
+            $table->foreignId('talla_pantalon_id')->nullable()->constrained('tallas')->nullOnDelete();
             $table->string('talla_zapato');
             $table->integer('peso');
             $table->decimal('estatura', 4, 2);

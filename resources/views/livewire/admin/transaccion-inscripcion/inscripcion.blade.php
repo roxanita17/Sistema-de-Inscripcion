@@ -250,6 +250,8 @@
         </div>
     </div>
 
+
+
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -441,6 +443,116 @@
                 </div>
             </div>
             <livewire:admin.alumnos.alumno-create>
+        </div>
+    </div>
+    {{-- SECCIÓN: DISCAPACIDADES --}}
+    <div class="card-modern mb-4">
+        <div class="card-header-modern">
+            <div class="header-left">
+                <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <i class="fas fa-wheelchair"></i>
+                </div>
+                <div>
+                    <h3>Discapacidades</h3>
+                    <p>Agregue las discapacidades que presente el estudiante (opcional)</p>
+                </div>
+            </div>
+            @if (!empty($discapacidadesAgregadas))
+                <div class="header-right">
+                    <span class="badge bg-info">
+                        {{ count($discapacidadesAgregadas) }} agregada(s)
+                    </span>
+                </div>
+            @endif
+        </div>
+
+        <div class="card-body-modern" style="padding: 2rem;">
+
+            {{-- Alerta temporal de éxito --}}
+            @if (session()->has('success_temp'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> {{ session('success_temp') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            {{-- Formulario para agregar discapacidad --}}
+            <div class="row align-items-end mb-4">
+                <div class="col-md-10">
+                    <label for="discapacidad_select" class="form-label-modern">
+                        <i class="fas fa-list"></i>
+                        Seleccionar Discapacidad
+                    </label>
+                    <select wire:model.defer="discapacidadSeleccionada" id="discapacidad_select"
+                        class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
+                        <option value="">Seleccione una discapacidad</option>
+                        @foreach ($discapacidades as $discapacidad)
+                            <option value="{{ $discapacidad->id }}">
+                                {{ $discapacidad->nombre_discapacidad }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('discapacidadSeleccionada')
+                        <div class="invalid-feedback-modern" style="display: block;">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="col-md-2">
+                    <button type="button" wire:click="agregarDiscapacidad" class="btn-primary-modern w-100"
+                        wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="agregarDiscapacidad">
+                            <i class="fas fa-plus"></i> Agregar
+                        </span>
+                        <span wire:loading wire:target="agregarDiscapacidad">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Tabla de discapacidades agregadas --}}
+            @if (!empty($discapacidadesAgregadas))
+                <div class="table-responsive">
+                    <table class="table table-modern">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px; text-align: center;">#</th>
+                                <th>Discapacidad</th>
+                                <th style="width: 120px; text-align: center;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($discapacidadesAgregadas as $index => $discapacidad)
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <span class="badge bg-primary">{{ $index + 1 }}</span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-wheelchair text-primary"></i>
+                                            <strong>{{ $discapacidad['nombre'] }}</strong>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <button type="button" wire:click="eliminarDiscapacidad({{ $index }})"
+                                            class="btn btn-sm btn-danger" wire:loading.attr="disabled"
+                                            title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    No se han agregado discapacidades. Si el estudiante no presenta ninguna discapacidad, puede
+                    continuar sin agregar.
+                </div>
+            @endif
         </div>
     </div>
 

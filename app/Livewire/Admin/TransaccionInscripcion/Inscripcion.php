@@ -51,6 +51,11 @@ class Inscripcion extends Component
     public $acepta_normas_contrato = false;
     public $seleccionarTodos = false;
 
+    // Discapacidades
+    public $discapacidades = [];
+    public $discapacidadSeleccionada = null;
+    public $discapacidadesAgregadas = [];
+
     public $documentosDisponibles = [];
     public $documentosEtiquetas = [];
 
@@ -78,6 +83,8 @@ class Inscripcion extends Component
 
     public function mount()
     {
+        $this->discapacidadesAgregadas = [];
+        $this->discapacidadSeleccionada = null;
         $this->documentosDisponibles = $this->documentoService->obtenerDocumentosDisponibles();
         $this->documentosEtiquetas = $this->documentoService->obtenerEtiquetas();
         $this->tipo_inscripcion = 'nuevo_ingreso';
@@ -178,6 +185,10 @@ class Inscripcion extends Component
         $this->padres = $this->representanteRepository->obtenerPorGenero('Masculino');
         $this->madres = $this->representanteRepository->obtenerPorGenero('Femenino');
         $this->representantes = $this->representanteRepository->obtenerRepresentantesLegales();
+
+        $this->discapacidades = \App\Models\Discapacidad::where('status', true)
+            ->orderBy('nombre_discapacidad', 'asc')
+            ->get();
     }
 
     /* ============================================================
@@ -328,6 +339,74 @@ class Inscripcion extends Component
         $this->validarDocumentosEnTiempoReal();
     }
 
+    /* ============================================================
+       REGISTRO DE DISCAPACIDADES
+       ============================================================ */
+
+    /**
+     * Agrega una discapacidad a la lista temporal
+     */
+    public function agregarDiscapacidad()
+    {
+        $this->validate([
+            'discapacidadSeleccionada' => 'required|exists:discapacidads,id'
+        ], [
+            'discapacidadSeleccionada.required' => 'Debe seleccionar una discapacidad.',
+            'discapacidadSeleccionada.exists' => 'La discapacidad seleccionada no es válida.'
+        ]);
+
+        // Verificar si ya está agregada
+        if (collect($this->discapacidadesAgregadas)->contains('id', $this->discapacidadSeleccionada)) {
+            $this->addError('discapacidadSeleccionada', 'Esta discapacidad ya ha sido agregada.');
+            return;
+        }
+
+        // Buscar la discapacidad y agregarla
+        $discapacidad = \App\Models\Discapacidad::find($this->discapacidadSeleccionada);
+
+        if ($discapacidad) {
+            $this->discapacidadesAgregadas[] = [
+                'id' => $discapacidad->id,
+                'nombre' => $discapacidad->nombre_discapacidad
+            ];
+
+            // Limpiar selección
+            $this->discapacidadSeleccionada = null;
+            $this->resetErrorBag('discapacidadSeleccionada');
+
+            session()->flash('success_temp', 'Discapacidad agregada correctamente.');
+        }
+    }
+
+    /**
+     * Elimina una discapacidad de la lista temporal
+     */
+    public function eliminarDiscapacidad($index)
+    {
+        if (isset($this->discapacidadesAgregadas[$index])) {
+            $discapacidad = $this->discapacidadesAgregadas[$index];
+            unset($this->discapacidadesAgregadas[$index]);
+
+            // Reindexar el array
+            $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
+
+            session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
+        }
+    }
+
+    /**
+     * Guarda las discapacidades del alumno en la tabla intermedia
+     */
+    private function guardarDiscapacidadesAlumno($alumnoId)
+    {
+        foreach ($this->discapacidadesAgregadas as $discapacidad) {
+            \App\Models\DiscapacidadEstudiante::create([
+                'alumno_id' => $alumnoId,
+                'discapacidad_id' => $discapacidad['id'],
+                'status' => true
+            ]);
+        }
+    }
 
 
     /* ============================================================
@@ -343,7 +422,12 @@ class Inscripcion extends Component
 
         try {
             $dto = $this->crearInscripcionDTO();
-            $this->inscripcionService->registrar($dto);
+            $inscripcion = $this->inscripcionService->registrar($dto);
+
+            // Guardar discapacidades si hay alumno seleccionado
+            if ($this->alumnoId && !empty($this->discapacidadesAgregadas)) {
+                $this->guardarDiscapacidadesAlumno($this->alumnoId);
+            }
 
             session()->flash('success', 'Inscripción registrada exitosamente.');
             session()->forget('inscripcion_temp');
@@ -377,7 +461,13 @@ class Inscripcion extends Component
 
         try {
             $dto = $this->crearInscripcionDTO();
-            $this->inscripcionService->registrarConAlumno($datos, $dto);
+
+            // Agregar discapacidades al DTO o pasarlas por separado
+            $inscripcion = $this->inscripcionService->registrarConAlumno(
+                $datos,
+                $dto,
+                $this->discapacidadesAgregadas
+            );
 
             session()->flash('success', 'Inscripción guardada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');

@@ -20,7 +20,7 @@
                         <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
                         <p><b>Prosecucion</b></p>
                     @endif
-                    
+
                     <div class="d-flex justify-content-center gap-2">
                         <span class="badge badge-status badge-{{ strtolower($datos->status) }}">
                             {{ $datos->status }}
@@ -175,7 +175,7 @@
                                         <i class="fa-solid fa-text-height"></i> Talla Camisa
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->alumno->talla_camisa ?? 'N/A' }}
+                                        {{ $datos->alumno->tallaCamisa->nombre ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -186,10 +186,51 @@
                                         <i class="fa-solid fa-text-height"></i>Talla Pantalones
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->alumno->talla_pantalon ?? 'N/A' }}
+                                        {{ $datos->alumno->tallaPantalon->nombre ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
+                            @if ($datos->alumno->etniaIndigena)
+                                <div class="col-md-6 mt-3">
+                                    <div class="detail-item">
+                                        <span class="detail-label">
+                                            <i class="fas fa-feather text-primary"></i> Etnia Indígena
+                                        </span>
+
+                                        @if ($datos->alumno->etniaIndigena->count() > 0)
+                                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                                {{ $datos->alumno->etniaIndigena->nombre }}
+                                            </div>
+                                        @else
+                                            <span class="detail-value text-muted">
+                                                Ninguna registrada
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($datos->alumno->discapacidades)
+                                <div class="col-md-6 mt-3">
+                                    <div class="detail-item">
+                                        <span class="detail-label">
+                                            <i class="fas fa-wheelchair text-primary"></i> Discapacidades
+                                        </span>
+
+                                        @if ($datos->alumno->discapacidades->count() > 0)
+                                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                                @foreach ($datos->alumno->discapacidades as $discapacidad)
+                                                        • {{ $discapacidad->nombre_discapacidad }} <br>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="detail-value text-muted">
+                                                Ninguna registrada
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 

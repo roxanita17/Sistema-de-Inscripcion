@@ -61,13 +61,14 @@ class DatabaseSeeder extends Seeder
             IndiceEstaturaSeeder::class,
             SeccionSeeder::class,
             PersonaSeeder::class,
-            AlumnoSeeder::class,
+            TallaSeeder::class,
+            /* AlumnoSeeder::class, */
             DocenteSeeder::class,
             DetalleDocenteEstudioSeeder::class,
             RepresentanteSeeder::class,
             RepresentanteLegalSeeder::class,
-            InscripcionSeeder::class,
-            ProsecucionAreaSeeder::class,
+            /* InscripcionSeeder::class, 
+            ProsecucionAreaSeeder::class,*/
            /*  DocenteAreaGrado::class, */
         ]);
 

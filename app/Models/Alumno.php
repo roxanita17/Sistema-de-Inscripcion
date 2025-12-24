@@ -24,8 +24,8 @@ class Alumno extends Model
         'orden_nacimiento_id',
         'lateralidad_id',
         'persona_id',
-        'talla_camisa',
-        'talla_pantalon',
+        'talla_camisa_id',
+        'talla_pantalon_id',
         'talla_zapato',
         'peso',
         'estatura',
@@ -34,18 +34,10 @@ class Alumno extends Model
 
 
 
-    /**  Área de formación  */
     public function ordenNacimiento()
     {
         return $this->belongsTo(OrdenNacimiento::class, 'orden_nacimiento_id', 'id');
     }
-
-    /**  Estudio realizado  */
-    public function discapacidad()
-    {
-        return $this->belongsTo(Discapacidad::class, 'discapacidad_id', 'id');
-    }
-
 
     public function lateralidad()
     {
@@ -65,6 +57,40 @@ class Alumno extends Model
     public function prefijoTelefono()
     {
         return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
+    }
+
+    public function tallaCamisa()
+    {
+        return $this->belongsTo(Talla::class, 'talla_camisa_id');
+    }
+
+    public function tallaPantalon()
+    {
+        return $this->belongsTo(Talla::class, 'talla_pantalon_id');
+    }
+
+    /**
+     * Relación muchos a muchos con discapacidades
+     */
+    public function discapacidades()
+    {
+        return $this->belongsToMany(
+            Discapacidad::class,
+            'discapacidad_estudiantes',
+            'alumno_id',
+            'discapacidad_id'
+        )
+            ->withPivot('status')
+            ->wherePivot('status', true)
+            ->withTimestamps();
+    }
+
+    /**
+     * Relación directa con la tabla intermedia
+     */
+    public function discapacidadEstudiante()
+    {
+        return $this->hasMany(DiscapacidadEstudiante::class, 'alumno_id', 'id');
     }
 
     /**

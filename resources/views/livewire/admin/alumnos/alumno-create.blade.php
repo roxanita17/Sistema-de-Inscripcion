@@ -373,8 +373,7 @@
                                 <span class="required-badge">*</span>
                             </label>
                             <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
-                            wire:keyup='formatearEstatura'
-                                placeholder="Ej: 1.66"
+                                wire:keyup='formatearEstatura' placeholder="Ej: 1.66"
                                 class="form-control-modern @error('talla_estudiante') is-invalid @enderror">
                             @error('talla_estudiante')
                                 <div class="invalid-feedback-modern">
@@ -401,31 +400,6 @@
                             @enderror
                         </div>
                     </div>
-
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="talla_camisa" class="form-label-modern">
-                                <i class="fas fa-tshirt"></i>
-                                Talla Camisa
-                                <span class="required-badge">*</span>
-                            </label>
-                            <select wire:model.live="talla_camisa"
-                                class="form-control-modern @error('talla_camisa') is-invalid @enderror">
-                                <option value="">Seleccione</option>
-                                <option value="XS">XS</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                            </select>
-                            @error('talla_camisa')
-                                <div class="invalid-feedback-modern">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="talla_zapato" class="form-label-modern">
@@ -447,24 +421,43 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="talla_camisa_id" class="form-label-modern">
+                                <i class="fas fa-tshirt"></i>
+                                Talla Camisa
+                                <span class="required-badge">*</span>
+                            </label>
+                            <select wire:model.live="talla_camisa_id"
+                                class="form-control-modern @error('talla_camisa_id') is-invalid @enderror">
+                                <option value="">Seleccione</option>
+                                @foreach ($tallas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('talla_camisa_id')
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
 
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="talla_pantalon" class="form-label-modern">
+                            <label for="talla_pantalon_id" class="form-label-modern">
                                 <i class="fas fa-socks"></i>
                                 Talla Pantalón
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live="talla_pantalon"
-                                class="form-control-modern @error('talla_pantalon') is-invalid @enderror">
+                            <select wire:model.live="talla_pantalon_id"
+                                class="form-control-modern @error('talla_pantalon_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
-                                <option value="XS">XS</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
+                                @foreach ($tallas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                @endforeach
                             </select>
-                            @error('talla_pantalon')
+                            @error('talla_pantalon_id')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
@@ -515,6 +508,9 @@
                 </div>
             </div>
         </div>
+
+
+
 
         {{-- Card: Salud del Estudiante --}}
         {{--  <div class="card-modern mb-4">

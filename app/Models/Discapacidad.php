@@ -14,5 +14,16 @@ class Discapacidad extends Model
         'nombre_discapacidad',
         'status',
     ];
-    
+
+    public function alumnos()
+    {
+        return $this->belongsToMany(
+            Alumno::class,
+            'discapacidad_estudiantes',
+            'discapacidad_id',
+            'alumno_id'
+        )
+            ->withPivot('status')
+            ->withTimestamps();
+    }
 }

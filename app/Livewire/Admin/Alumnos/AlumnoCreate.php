@@ -20,6 +20,7 @@ use App\Models\OrdenNacimiento;
 use App\Models\Lateralidad;
 use App\Models\AnioEscolar;
 use App\Models\EtniaIndigena;
+use App\Models\Talla;
 
 class AlumnoCreate extends Component
 {
@@ -56,9 +57,10 @@ class AlumnoCreate extends Component
     // Datos físicos
     public $talla_estudiante = '';
     public $peso_estudiante;
-    public $talla_camisa;
+    public $talla_camisa_id;
+    public $tallas = [];
     public $talla_zapato;
-    public $talla_pantalon;
+    public $talla_pantalon_id;
 
     // Lugar de nacimiento
     public $estado_id;
@@ -156,9 +158,9 @@ class AlumnoCreate extends Component
             // Datos físicos
             'talla_estudiante' => 'required|numeric|between:0.50,3.00',
             'peso_estudiante' => 'required|numeric|between:2,300',
-            'talla_camisa' => 'required',
+            'talla_camisa_id' => 'required|exists:tallas,id',
+            'talla_pantalon_id' => 'required|exists:tallas,id',
             'talla_zapato' => 'required|integer',
-            'talla_pantalon' => 'required',
 
             // Residencia
             'estado_id' => 'required|exists:estados,id',
@@ -188,10 +190,10 @@ class AlumnoCreate extends Component
         'peso_estudiante.required' => 'Este campo es requerido',
         'peso_estudiante.numeric' => 'Este campo debe ser un número',
         'peso_estudiante.between' => 'Este campo debe estar entre 2 y 300',
-        'talla_camisa.required' => 'Este campo es requerido',
+        'talla_camisa_id.required' => 'Este campo es requerido',
         'talla_zapato.required' => 'Este campo es requerido',
         'talla_zapato.integer' => 'Este campo debe ser un número',
-        'talla_pantalon.required' => 'Este campo es requerido',
+        'talla_pantalon_id.required' => 'Este campo es requerido',
         'estado_id.required' => 'Este campo es requerido',
         'municipio_id.required' => 'Este campo es requerido',
         'localidad_id.required' => 'Este campo es requerido',
@@ -294,6 +296,7 @@ class AlumnoCreate extends Component
         $this->lateralidades = Lateralidad::where('status', true)->get();
         $this->orden_nacimientos = OrdenNacimiento::where('status', true)->get();
         $this->etnia_indigenas = EtniaIndigena::where('status', true)->get();
+        $this->tallas = Talla::all();
     }
 
 
@@ -321,8 +324,9 @@ class AlumnoCreate extends Component
         $this->genero_id = $persona->genero_id;
 
         // Procedencia y datos físicos
-        $this->talla_camisa = $alumno->talla_camisa;
-        $this->talla_pantalon = $alumno->talla_pantalon;
+        $this->talla_camisa_id = $alumno->talla_camisa_id;
+        $this->talla_pantalon_id = $alumno->talla_pantalon_id;
+
         $this->talla_zapato = $alumno->talla_zapato;
         $this->peso_estudiante = $alumno->peso;
         $this->talla_estudiante = $alumno->estatura;
@@ -438,8 +442,8 @@ class AlumnoCreate extends Component
                 $alumno = Alumno::findOrFail($this->alumno_id);
                 $alumno->update([
                     'persona_id' => $persona->id,
-                    'talla_camisa' => $this->talla_camisa,
-                    'talla_pantalon' => $this->talla_pantalon,
+                    'talla_camisa_id' => $this->talla_camisa_id,
+                    'talla_pantalon_id' => $this->talla_pantalon_id,
                     'talla_zapato' => $this->talla_zapato,
                     'peso' => $this->peso_estudiante,
                     'estatura' => (float)$this->talla_estudiante,
@@ -452,8 +456,8 @@ class AlumnoCreate extends Component
 
                 Alumno::create([
                     'persona_id' => $persona->id,
-                    'talla_camisa' => $this->talla_camisa,
-                    'talla_pantalon' => $this->talla_pantalon,
+                    'talla_camisa_id' => $this->talla_camisa_id,
+                    'talla_pantalon_id' => $this->talla_pantalon_id,
                     'talla_zapato' => $this->talla_zapato,
                     'peso' => $this->peso_estudiante,
                     'estatura' => (float)$this->talla_estudiante,
