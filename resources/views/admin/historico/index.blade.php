@@ -3,6 +3,7 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
 @stop
 
 @section('title', 'Histórico Académico')
@@ -40,24 +41,21 @@
                         </div>
                         <div>
                             <h3>Registros académicos</h3>
-                            <p>{{ $inscripciones->total() }} registros encontrados</p>
+                            <p>
+                                {{ $tipo === 'docentes' ? $docentes->total() : $inscripciones->total() }}
+                                registros encontrados
+                            </p>
+
                         </div>
                     </div>
+                    <div>
+                        <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                            <i class="fas fa-filter"></i>
+                            Filtros
+                        </button>
+                    </div>
 
-                    {{-- FILTRO --}}
-                    <form method="GET" class="filter-inline">
-                        <select name="anio_escolar_id" class="form-select form-control-modern"
-                            onchange="this.form.submit()">
-                            <option value="">Todos los años</option>
-                            @foreach ($anios as $anio)
-                                <option value="{{ $anio->id }}" {{ $anio->id == $anioEscolarId ? 'selected' : '' }}>
-                                    {{ \Carbon\Carbon::parse($anio->inicio_anio_escolar)->format('Y') }}
-                                    -
-                                    {{ \Carbon\Carbon::parse($anio->cierre_anio_escolar)->format('Y') }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
+
 
                 </div>
             </div>
@@ -67,49 +65,151 @@
                 <div class="table-wrapper">
                     <table class="table-modern">
                         <thead>
-                            <tr class="text-center">
-                                <th style="text-align: center">Año Escolar</th>
-                                <th style="text-align: center">Alumno</th>
-                                <th style="text-align: center">Grado</th>
-                                <th style="text-align: center">Sección</th>
-                            </tr>
+                            @if ($tipo === 'inscripciones')
+                                <th>Año Escolar</th>
+                                <th class="text-center">Alumno</th>
+                                <th>Grado</th>
+                                <th>Sección</th>
+                                <th>Tipo de Inscripcion</th>
+                            @elseif($tipo === 'docentes')
+                                <th>Año Escolar</th>
+                                <th>Docente</th>
+                                <th>Grado</th>
+                                <th>Área</th>
+                                <th>Sección</th>
+                            @endif
                         </thead>
                         <tbody class="text-center">
 
-                            @forelse ($inscripciones as $inscripcion)
-                                <tr>
-                                    <td>{{ $inscripcion->anioEscolar ? \Carbon\Carbon::parse($inscripcion->anioEscolar->inicio_anio_escolar)->format('d/m/Y') : '—' }}
-                                        -
-                                        {{ $inscripcion->anioEscolar ? \Carbon\Carbon::parse($inscripcion->anioEscolar->cierre_anio_escolar)->format('d/m/Y') : '—' }}
-                                    </td>
-                                    <td>
-                                        {{ $inscripcion->alumno->persona->primer_apellido }}
-                                        {{ $inscripcion->alumno->persona->primer_nombre }}
-                                    </td>
-                                    <td>{{ $inscripcion->grado->numero_grado }}</td>
-                                    <td>{{ $inscripcion->seccionAsignada->nombre ?? '—' }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4">
-                                        <div class="empty-state">
-                                            <i class="fas fa-inbox fa-2x"></i>
-                                            <h4>No hay registros</h4>
-                                            <p>Seleccione otro año escolar</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
+                            {{-- INSCRIPCIONES --}}
+                            @if ($tipo === 'inscripciones')
+                                @forelse ($inscripciones as $inscripcion)
+                                    <tr>
+                                        <td>
+                                            {{ optional($inscripcion->anioEscolar)->inicio_anio_escolar
+                                                ? \Carbon\Carbon::parse($inscripcion->anioEscolar->inicio_anio_escolar)->format('d/m/Y')
+                                                : '—' }}
+                                            -
+                                            {{ optional($inscripcion->anioEscolar)->cierre_anio_escolar
+                                                ? \Carbon\Carbon::parse($inscripcion->anioEscolar->cierre_anio_escolar)->format('d/m/Y')
+                                                : '—' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $inscripcion->alumno->persona->primer_apellido }}
+                                            {{ $inscripcion->alumno->persona->primer_nombre }}
+                                        </td>
+
+                                        <td>{{ $inscripcion->grado->numero_grado }}</td>
+
+                                        <td>{{ $inscripcion->seccionAsignada->nombre ?? '—' }}</td>
+
+                                        {{-- MODALIDAD --}}
+                                        <td>
+                                            @if ($inscripcion->prosecucion)
+                                                <span class="badge bg-primary">Prosecución</span>
+                                            @elseif ($inscripcion->nuevoIngreso)
+                                                <span class="badge bg-success">Nuevo Ingreso</span>
+                                            @else
+                                                <span class="badge bg-secondary">—</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    {{-- vacío --}}
+                                @endforelse
+                            @endif
+
+
+                            {{-- DOCENTES --}}
+                            @if ($tipo === 'docentes')
+                                @forelse ($docentes as $docente)
+                                    @php
+                                        $grados = $docente->asignacionesAreas
+                                            ->pluck('grado.numero_grado')
+                                            ->filter()
+                                            ->unique()
+                                            ->implode(', ');
+
+                                        $areas = $docente->asignacionesAreas
+                                            ->pluck('areaEstudios.areaFormacion.nombre_area_formacion')
+                                            ->filter()
+                                            ->unique()
+                                            ->implode(', ');
+
+                                        // Si luego agregas sección:
+                                        // ->pluck('seccion.nombre_seccion')
+
+                                    @endphp
+
+                                    <tr>
+                                        {{-- Año escolar --}}
+                                        <td>
+                                            {{ optional($docente->anioEscolar)->inicio_anio_escolar
+                                                ? \Carbon\Carbon::parse($docente->anioEscolar->inicio_anio_escolar)->format('d/m/Y')
+                                                : '—' }}
+                                            -
+                                            {{ optional($docente->anioEscolar)->cierre_anio_escolar
+                                                ? \Carbon\Carbon::parse($docente->anioEscolar->cierre_anio_escolar)->format('d/m/Y')
+                                                : '—' }}
+                                        </td>
+
+                                        {{-- Docente --}}
+                                        <td>
+                                            {{ $docente->persona->primer_apellido }}
+                                            {{ $docente->persona->primer_nombre }}
+                                        </td>
+
+                                        {{-- Grados --}}
+                                        <td>
+                                            <ul class="list-unstyled mb-0">
+                                                @foreach ($docente->asignacionesAreas->pluck('grado.numero_grado')->unique() as $grado)
+                                                    <li>• {{ $grado }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </td>
+
+                                        {{-- Áreas --}}
+                                        <td>
+                                            <ul class="list-unstyled mb-0">
+                                                @foreach ($docente->asignacionesAreas->pluck('areaEstudios.areaFormacion.nombre_area_formacion')->unique() as $area)
+                                                    <li>• {{ $area }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </td>
+
+                                        {{-- Secciones --}}
+                                        <td>
+                                            —
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="empty-state">
+                                                <i class="fas fa-inbox fa-2x"></i>
+                                                <h4>No hay docentes</h4>
+                                                <p>Seleccione otro año escolar</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            @endif
+
+
+
+
 
                         </tbody>
+
                     </table>
                 </div>
             </div>
         </div>
-
+        @include('admin.historico.modales.filtroModal')
         {{-- PAGINACIÓN --}}
         <div class="mt-4">
-            <x-pagination :paginator="$inscripciones" />
+            <x-pagination :paginator="$tipo === 'docentes' ? $docentes : $inscripciones" />
         </div>
 
     </div>

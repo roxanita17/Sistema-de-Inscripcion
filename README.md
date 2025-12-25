@@ -131,12 +131,25 @@ composer require barryvdh/laravel-dompdf
 ```bash
 npm install swiper
 ```
+
+### 16. Alpine.js
+
+```bash
+npm install alpinejs
+```
+
+### 17. Compilar assets
+
+```bash
+npm run build
+```
+
 ## Credenciales por Defecto
 
 Si se ejecutaron los seeders correctamente, las credenciales predeterminadas son:
 
-- **Email**: admin@admin.com
-- **Password**: password
+- **Email**: admin@example.com
+- **Password**: 12345678
 
 *(Verifica en tu seeder las credenciales exactas)*
 

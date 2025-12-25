@@ -41,43 +41,59 @@
             }
 
             function verificarnumero_documentoCampo(selector, personaIdSelector) {
-                const input = document.querySelector(selector);
-                if (!input) return;
+    const input = document.querySelector(selector);
+    if (!input) return;
 
-                input.addEventListener('blur', function() {
-                    const valor = this.value;
-                    limpiarnumero_documentoError(this);
-                    if (!valor) return;
+    input.addEventListener('blur', async function() {
+        const valor = this.value.trim();
+        limpiarnumero_documentoError(this);
+        if (!valor) return;
 
-                    // Verificar repetición dentro del mismo formulario
-                    if (numero_documentoSeRepiteEnFormulario(valor, this.id)) {
-                        marcarnumero_documentoError(this, 'Esta cédula ya se está usando en otro bloque del formulario');
-                        return;
-                    }
+        // Verificar si es el campo de cédula del representante y está seleccionado "Progenitor como Representante"
+        const esProgenitorRepresentante = document.querySelector(
+            'input[name="tipo_representante"][value="progenitor_representante"]:checked'
+        ) !== null;
 
-                    // Verificar contra la base de datos
-                    const personaId = personaIdSelector ? document.querySelector(personaIdSelector)?.value : '';
+        if (this.id === 'numero_documento-representante' && esProgenitorRepresentante) {
+            // No validar cédula duplicada si es progenitor representante
+            limpiarnumero_documentoError(this);
+            return;
+        }
 
-                    fetch(`${verificarnumero_documentoUrl}?numero_documento=${valor}&persona_id=${personaId}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => { throw err; });
-                            }
-                            return response.json();
-                        })
-                        .then(resp => {
-                            console.log('numero_documento OK', selector, resp);
-                            limpiarnumero_documentoError(input);
-                        })
-                        .catch(error => {
-                            if (error.message) {
-                                marcarnumero_documentoError(input, error.message);
-                            } else {
-                                console.error('Error al verificar cédula', error);
-                            }
-                        });
-                });
+        // Verificar repetición dentro del mismo formulario
+        if (numero_documentoSeRepiteEnFormulario(valor, this.id)) {
+            marcarnumero_documentoError(this,
+                'Esta cédula ya se está usando en otro bloque del formulario');
+            return;
+        }
+
+        // Verificar contra la base de datos
+        const personaId = personaIdSelector ? document.querySelector(personaIdSelector)?.value : '';
+
+        try {
+            const response = await fetch(
+                `${verificarnumero_documentoUrl}?numero_documento=${valor}&persona_id=${personaId}`
+            );
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error al verificar la cédula');
             }
+
+            const data = await response.json();
+            console.log('Cédula válida:', data);
+            limpiarnumero_documentoError(input);
+            
+            // Si hay datos de persona, rellenar automáticamente
+            if (data.persona) {
+                rellenarRepresentanteDesdeRespuesta(data);
+            }
+        } catch (error) {
+            console.error('Error al verificar cédula:', error);
+            marcarnumero_documentoError(input, error.message || 'Error al verificar la cédula');
+        }
+    });
+}
 
             // Aplicar validación en tiempo real a las tres cédulas principales
             verificarnumero_documentoCampo('#numero_documento', null); // Madre

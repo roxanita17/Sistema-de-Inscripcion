@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Inscripcion;
 use App\Models\Seccion;
 use App\Models\EjecucionesPercentil;
+use App\Models\EntradasPercentil;
 use App\Services\PercentilService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -22,21 +23,43 @@ class SectionDistributorService
     {
         return DB::transaction(function () use ($grado) {
 
+            // Verificar año escolar activo
+            $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+                ->orWhere('status', 'Extendido')
+                ->first();
+
+            if (!$anioEscolarActivo) {
+                throw new \Exception('No hay un año escolar activo');
+            }
+
             // 1. Inscripciones activas
             $inscripciones = Inscripcion::where('grado_id', $grado->id)
-                ->where('status', 'Activo')
+                ->where('anio_escolar_id', $anioEscolarActivo->id)
+                ->whereIn('status', ['Activo', 'Pendiente'])
                 ->with(['alumno.persona'])
                 ->get();
 
+
             if ($inscripciones->isEmpty()) {
-                throw new \Exception('No hay inscripciones activas para este grado');
+                throw new \Exception('No hay inscripciones activas para 1er Año');
             }
 
             // 2. Crear ejecución
+            EntradasPercentil::whereHas('ejecucion', function ($q) use ($anioEscolarActivo) {
+                $q->where('anio_escolar_id', $anioEscolarActivo->id);
+            })->delete();
+
+            Seccion::whereHas('ejecucion', function ($q) use ($anioEscolarActivo) {
+                $q->where('anio_escolar_id', $anioEscolarActivo->id);
+            })->delete();
+
+
             $ejecucion = EjecucionesPercentil::create([
-                'total_evaluados' => $inscripciones->count(),
+                'anio_escolar_id' => $anioEscolarActivo->id,
                 'status' => true
             ]);
+
+
 
             // 3. Crear entradas percentil
             $entradas = collect();
@@ -44,7 +67,8 @@ class SectionDistributorService
             foreach ($inscripciones as $inscripcion) {
                 try {
                     $entrada = $this->percentilService
-                        ->crearEntradaDesdeInscripcion($inscripcion);
+                        ->crearEntradaDesdeInscripcion($inscripcion, $ejecucion->id);
+
 
                     $entrada->ejecucion_percentil_id = $ejecucion->id;
                     $entrada->save();
@@ -62,7 +86,10 @@ class SectionDistributorService
             }
 
             // 4. Ordenar
-            $ordenados = $entradas->sortBy('indice_total')->values();
+            $ordenados = EntradasPercentil::where('ejecucion_percentil_id', $ejecucion->id)
+                ->orderBy('indice_total')
+                ->get();
+
 
             // 5. Calcular secciones
             $min = $grado->min_por_seccion ?? 20;
@@ -76,13 +103,16 @@ class SectionDistributorService
             }
 
             // 6. Crear secciones
+            Seccion::where('grado_id', $grado->id)
+                ->where('ejecucion_percentil_id', $ejecucion->id)
+                ->delete();
             $secciones = collect();
             $letras = range('A', 'Z');
 
             for ($i = 0; $i < $numSecciones; $i++) {
                 $secciones->push(
                     Seccion::create([
-                        'nombre' => 'Sección ' . $letras[$i],
+                        'nombre' => $letras[$i],
                         'cantidad_actual' => 0,
                         'grado_id' => $grado->id,
                         'ejecucion_percentil_id' => $ejecucion->id,
@@ -91,26 +121,46 @@ class SectionDistributorService
                 );
             }
 
+            EntradasPercentil::where('ejecucion_percentil_id', $ejecucion->id)
+                ->update(['seccion_id' => null]);
+
+            Inscripcion::where('grado_id', $grado->id)
+                ->where('anio_escolar_id', $anioEscolarActivo->id)
+                ->update(['seccion_id' => null]);
+
+
+
             // 7. Distribuir estudiantes
-$tamañoBase = (int) floor($total / $numSecciones);
-$seccionesExtras = $total % $numSecciones;
+            $tamañoBase = (int) floor($total / $numSecciones);
+            $seccionesExtras = $total % $numSecciones;
 
-$estudiantesAsignados = 0;
+            $estudiantesAsignados = 0;
 
-foreach ($secciones as $indexSeccion => $seccion) {
-    // Las primeras secciones con extras llevan un estudiante más
-    $tamañoSeccion = $tamañoBase + ($indexSeccion < $seccionesExtras ? 1 : 0);
-    
-    // Asignar estudiantes consecutivos de la lista ordenada
-    for ($i = 0; $i < $tamañoSeccion; $i++) {
-        $entrada = $ordenados[$estudiantesAsignados];
-        
-        $entrada->update(['seccion_id' => $seccion->id]);
-        $seccion->increment('cantidad_actual');
-        
-        $estudiantesAsignados++;
-    }
-}
+            foreach ($secciones as $indexSeccion => $seccion) {
+                // Las primeras secciones con extras llevan un estudiante más
+                $tamañoSeccion = $tamañoBase + ($indexSeccion < $seccionesExtras ? 1 : 0);
+
+                // Asignar estudiantes consecutivos de la lista ordenada
+                for ($i = 0; $i < $tamañoSeccion; $i++) {
+                    $entrada = $ordenados[$estudiantesAsignados];
+
+                    // Guardar sección en la entrada percentil
+                    $entrada->update([
+                        'seccion_id' => $seccion->id
+                    ]);
+
+                    // Guardar sección TAMBIÉN en inscripción
+                    $entrada->inscripcion->update([
+                        'seccion_id' => $seccion->id
+                    ]);
+
+                    // Aumentar contador
+                    $seccion->increment('cantidad_actual');
+
+                    $estudiantesAsignados++;
+                }
+            }
+
 
             return [
                 'total_secciones' => $numSecciones,

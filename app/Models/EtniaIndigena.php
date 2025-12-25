@@ -16,4 +16,9 @@ class EtniaIndigena extends Model
         'nombre',
         'status',
     ];
+
+    public function alumnos()
+    {
+        return $this->hasMany(Alumno::class, 'etnia_indigena_id', 'id');
+    }
 }

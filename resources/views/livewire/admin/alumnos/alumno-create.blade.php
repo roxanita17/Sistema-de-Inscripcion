@@ -59,7 +59,7 @@
                                 Doc.
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live.live="tipo_documento_id"
+                            <select wire:model.livee="tipo_documento_id"
                                 class="form-control-modern @error('tipo_documento_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($tipos_documentos as $item)
@@ -82,9 +82,15 @@
                                 <span class="required-badge">*</span>
                             </label>
                             <input type="text" wire:model.live="numero_documento"
-                                class="form-control-modern @error('numero_documento') is-invalid @enderror"
-                                maxlength="8" pattern="[0-9]+" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                                inputmode="numeric" placeholder="12345678">
+                                class="form-control-modern @error('numero_documento') is-invalid @enderror
+                                text-uppercase"
+                                maxlength="{{ $documento_maxlength }}" pattern="{{ $documento_pattern }}"
+                                inputmode="{{ $documento_inputmode }}" placeholder="{{ $documento_placeholder }}"
+                                oninput="
+                                @if ($tipo_documento_id == 1 || $tipo_documento_id == 3) this.value = this.value.replace(/[^0-9]/g,'')
+                                @elseif($tipo_documento_id == 2)
+                                this.value = this.value.replace(/[^a-zA-Z0-9]/g,'') @endif
+                                ">
                             @error('numero_documento')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -123,8 +129,7 @@
                             </label>
                             <input type="text" wire:model.live="primer_nombre"
                                 class="form-control-modern @error('primer_nombre') is-invalid @enderror text-capitalize"
-                                placeholder="Primer nombre"
-                                >
+                                placeholder="Primer nombre">
                             @error('primer_nombre')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -139,8 +144,8 @@
                                 <i class="fas fa-user"></i>
                                 Segundo Nombre
                             </label>
-                            <input type="text" wire:model="segundo_nombre" class="form-control-modern text-capitalize"
-                                placeholder="Segundo nombre">
+                            <input type="text" wire:model="segundo_nombre"
+                                class="form-control-modern text-capitalize" placeholder="Segundo nombre">
                         </div>
                     </div>
 
@@ -150,8 +155,8 @@
                                 <i class="fas fa-user"></i>
                                 Tercer Nombre
                             </label>
-                            <input type="text" wire:model.live="tercer_nombre" class="form-control-modern text-capitalize"
-                                placeholder="Tercer nombre">
+                            <input type="text" wire:model.live="tercer_nombre"
+                                class="form-control-modern text-capitalize" placeholder="Tercer nombre">
                         </div>
                     </div>
                 </div>
@@ -181,8 +186,8 @@
                                 <i class="fas fa-user"></i>
                                 Segundo Apellido
                             </label>
-                            <input type="text" wire:model.live="segundo_apellido" class="form-control-modern text-capitalize"
-                                placeholder="Segundo apellido">
+                            <input type="text" wire:model.live="segundo_apellido"
+                                class="form-control-modern text-capitalize" placeholder="Segundo apellido">
                         </div>
                     </div>
                 </div>
@@ -364,16 +369,12 @@
                         <div class="form-group">
                             <label for="talla_estudiante" class="form-label-modern">
                                 <i class="fas fa-ruler-vertical"></i>
-                                Altura (cm)
+                                Altura (m)
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live="talla_estudiante"
+                            <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
+                                wire:keyup='formatearEstatura' placeholder="Ej: 1.66"
                                 class="form-control-modern @error('talla_estudiante') is-invalid @enderror">
-                                <option value="">Seleccione estatura</option>
-                                @foreach (range(120, 180, 5) as $talla)
-                                    <option value="{{ $talla }}">{{ $talla }} cm</option>
-                                @endforeach
-                            </select>
                             @error('talla_estudiante')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -399,31 +400,6 @@
                             @enderror
                         </div>
                     </div>
-
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="talla_camisa" class="form-label-modern">
-                                <i class="fas fa-tshirt"></i>
-                                Talla Camisa
-                                <span class="required-badge">*</span>
-                            </label>
-                            <select wire:model.live="talla_camisa"
-                                class="form-control-modern @error('talla_camisa') is-invalid @enderror">
-                                <option value="">Seleccione</option>
-                                <option value="XS">XS</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                            </select>
-                            @error('talla_camisa')
-                                <div class="invalid-feedback-modern">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="talla_zapato" class="form-label-modern">
@@ -445,24 +421,43 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="talla_camisa_id" class="form-label-modern">
+                                <i class="fas fa-tshirt"></i>
+                                Talla Camisa
+                                <span class="required-badge">*</span>
+                            </label>
+                            <select wire:model.live="talla_camisa_id"
+                                class="form-control-modern @error('talla_camisa_id') is-invalid @enderror">
+                                <option value="">Seleccione</option>
+                                @foreach ($tallas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('talla_camisa_id')
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
 
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="talla_pantalon" class="form-label-modern">
+                            <label for="talla_pantalon_id" class="form-label-modern">
                                 <i class="fas fa-socks"></i>
                                 Talla Pantalón
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live="talla_pantalon"
-                                class="form-control-modern @error('talla_pantalon') is-invalid @enderror">
+                            <select wire:model.live="talla_pantalon_id"
+                                class="form-control-modern @error('talla_pantalon_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
-                                <option value="XS">XS</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
+                                @foreach ($tallas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                @endforeach
                             </select>
-                            @error('talla_pantalon')
+                            @error('talla_pantalon_id')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
@@ -474,8 +469,7 @@
         </div>
 
         {{-- Card: Pertenencia Étnica --}}
-        {{-- Card: Pertenencia Étnica --}}
-        {{--  <div class="card-modern mb-4">
+        <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #14b8a6, #0f766e);">
@@ -490,74 +484,33 @@
 
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
-                    <div class="col-md-6">
-
+                    <div class="col-md-2">
                         <div class="form-group">
-                            <label class="form-label-modern">
-                                <i class="fas fa-question-circle"></i>
-                                ¿Pertenece a Pueblo Indígena?
+                            <label for="etnia_indigena_id" class="form-label-modern">
+                                <i class="fas fa-id-card"></i>
+                                Etnia Indigena
                                 <span class="required-badge">*</span>
                             </label>
-
-                            <div class="d-flex gap-3 mt-2" id="pueblo-wrapper">
-
-                                <div class="radio-item-modern">
-                                    <input type="radio"
-                                        name="pueblo_radio"
-                                        value="si"
-                                        id="pueblo_si_js"
-                                        class="radio-modern">
-                                    <label for="pueblo_si_js" class="radio-label-modern">
-                                        <i class="fas fa-check-circle"></i> Sí
-                                    </label>
+                            <select wire:model.live="etnia_indigena_id"
+                                class="form-control-modern @error('etnia_indigena_id') is-invalid @enderror">
+                                <option value="">Seleccione</option>
+                                @foreach ($etnia_indigenas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('etnia_indigena_id')
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
-
-                                <div class="radio-item-modern">
-                                    <input type="radio"
-                                        name="pueblo_radio"
-                                        value="no"
-                                        id="pueblo_no_js"
-                                        class="radio-modern"
-                                        checked>
-                                    <label for="pueblo_no_js" class="radio-label-modern">
-                                        <i class="fas fa-times-circle"></i> No
-                                    </label>
-                                </div> --}}
-
-        <!-- input oculto que recibe el valor real de Livewire -->
-        {{-- <input type="hidden"
-                                    id="pertenece_pueblo_indigena"
-                                    wire:model.live="pertenece_pueblo_indigena"
-                                    value="no">
-
-                            </div>
-
-                            <div id="etnia-select" style="display:none; margin-top: .75rem;">
-                                <label class="form-label-modern">
-                                    <i class="fas fa-landmark"></i>
-                                    ¿A cuál pertenece?
-                                </label>
-
-                                <select id="cual_pueblo_indigena_js"
-                                        wire:model.live="cual_pueblo_indigena"
-                                        class="form-control-modern">
-                                    <option value="">Seleccione</option>
-                                    @foreach ($etniasIndigenas as $etnia)
-                                        <option value="{{ $etnia->id }}">
-                                            {{ $etnia->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
+                            @enderror
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
 
- --}}
+
+
 
         {{-- Card: Salud del Estudiante --}}
         {{--  <div class="card-modern mb-4">
@@ -701,5 +654,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script> --}}
-
-

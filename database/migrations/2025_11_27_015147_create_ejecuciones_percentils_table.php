@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blogs', function (Blueprint $table) {
+        Schema::create('ejecuciones_percentils', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('anio_escolar_id')->nullable()
+                  ->constrained('anio_escolars')
+                  ->nullOnDelete();
+            $table->integer('total_evaluados')->default(0);
+            $table->integer('status')->nullable();
             $table->timestamps();
         });
     }
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blogs');
+        Schema::dropIfExists('ejecuciones_percentils');
     }
 };

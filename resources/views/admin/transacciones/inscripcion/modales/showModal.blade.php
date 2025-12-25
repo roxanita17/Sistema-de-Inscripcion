@@ -1,4 +1,8 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@php
+    $esPrimerGrado = ((int) ($datos->grado->numero_grado ?? 0)) === 1;
+@endphp
+
 
 <!-- Modal Ver Información de la Inscripción -->
 <div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
@@ -9,10 +13,14 @@
             <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
-                    <div class="modal-icon-view mb-3">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
+                    @if ($datos->tipo_inscripcion === 'nuevo_ingreso')
+                        <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
+                        <p><b>Nuevo Ingreso</b></p>
+                    @else
+                        <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
+                        <p><b>Prosecucion</b></p>
+                    @endif
+
                     <div class="d-flex justify-content-center gap-2">
                         <span class="badge badge-status badge-{{ strtolower($datos->status) }}">
                             {{ $datos->status }}
@@ -167,7 +175,7 @@
                                         <i class="fa-solid fa-text-height"></i> Talla Camisa
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->alumno->talla_camisa ?? 'N/A' }}
+                                        {{ $datos->alumno->tallaCamisa->nombre ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -178,10 +186,51 @@
                                         <i class="fa-solid fa-text-height"></i>Talla Pantalones
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->alumno->talla_pantalon ?? 'N/A' }}
+                                        {{ $datos->alumno->tallaPantalon->nombre ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
+                            @if ($datos->alumno->etniaIndigena)
+                                <div class="col-md-6 mt-3">
+                                    <div class="detail-item">
+                                        <span class="detail-label">
+                                            <i class="fas fa-feather text-primary"></i> Etnia Indígena
+                                        </span>
+
+                                        @if ($datos->alumno->etniaIndigena->count() > 0)
+                                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                                {{ $datos->alumno->etniaIndigena->nombre }}
+                                            </div>
+                                        @else
+                                            <span class="detail-value text-muted">
+                                                Ninguna registrada
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($datos->alumno->discapacidades)
+                                <div class="col-md-6 mt-3">
+                                    <div class="detail-item">
+                                        <span class="detail-label">
+                                            <i class="fas fa-wheelchair text-primary"></i> Discapacidades
+                                        </span>
+
+                                        @if ($datos->alumno->discapacidades->count() > 0)
+                                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                                @foreach ($datos->alumno->discapacidades as $discapacidad)
+                                                        • {{ $discapacidad->nombre_discapacidad }} <br>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="detail-value text-muted">
+                                                Ninguna registrada
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -348,14 +397,17 @@
                         </div>
 
                         <div class="row g-3 mt-2">
-                            <div class="col-md-4">
-                                <div class="detail-item">
-                                    <span class="detail-label">
-                                        <i class="fas fa-hashtag"></i> N° Zonificación
-                                    </span>
-                                    <span class="detail-value">{{ $datos->numero_zonificacion ?? 'N/A' }}</span>
+                            @if ($esPrimerGrado)
+                                <div class="col-md-4">
+                                    <div class="detail-item">
+                                        <span class="detail-label">
+                                            <i class="fas fa-hashtag"></i> N° Zonificación
+                                        </span>
+                                        <span
+                                            class="detail-value">{{ $datos->nuevoIngreso->numero_zonificacion ?? 'N/A' }}</span>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <div class="col-md-4">
                                 <div class="detail-item">
@@ -374,7 +426,7 @@
                                         <i class="fas fa-calendar-check"></i> Año Egreso
                                     </span>
                                     <span class="detail-value">
-                                        {{ \Carbon\Carbon::parse($datos->anio_egreso)->format('Y') ?? 'N/A' }}
+                                        {{ \Carbon\Carbon::parse($datos->nuevoIngreso->anio_egreso)->format('Y') ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -385,7 +437,7 @@
                                         <i class="fas fa-school"></i> Institución Procedencia
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->institucionProcedencia->nombre_institucion ?? 'N/A' }}
+                                        {{ $datos->nuevoIngreso->institucionProcedencia->nombre_institucion ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -396,7 +448,7 @@
                                         <i class="fas fa-book"></i> Expresión Literaria
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->expresionLiteraria->letra_expresion_literaria ?? 'N/A' }}
+                                        {{ $datos->nuevoIngreso->expresionLiteraria->letra_expresion_literaria ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -446,15 +498,40 @@
                                     'icon' => 'fa-file-alt',
                                     'obligatorio' => true,
                                 ],
-                                'copia_cedula_representante' => [
-                                    'label' => 'Copia Cédula Representante',
-                                    'icon' => 'fa-id-card',
-                                    'obligatorio' => false,
+
+                                'constancia_aprobacion_primaria' => [
+                                    'label' => 'Constancia Aprobación Primaria',
+                                    'icon' => 'fa-stamp',
+                                    'obligatorio' => true,
                                 ],
+
+                                'certificado_calificaciones' => [
+                                    'label' => 'Certificado de Calificaciones',
+                                    'icon' => 'fa-certificate',
+                                    'obligatorio' => true,
+                                ],
+
                                 'boletin_6to_grado' => [
                                     'label' => 'Boletín 6to Grado',
                                     'icon' => 'fa-file-invoice',
                                     'obligatorio' => true,
+                                ],
+
+                                'notas_certificadas' => [
+                                    'label' => 'Notas Certificadas',
+                                    'icon' => 'fa-file-alt',
+                                    'obligatorio' => !$esPrimerGrado,
+                                ],
+                                'liberacion_cupo' => [
+                                    'label' => 'Liberación de Cupo',
+                                    'icon' => 'fa-file-signature',
+                                    'obligatorio' => !$esPrimerGrado,
+                                ],
+
+                                'copia_cedula_representante' => [
+                                    'label' => 'Copia Cédula Representante',
+                                    'icon' => 'fa-id-card',
+                                    'obligatorio' => false,
                                 ],
 
                                 'copia_cedula_estudiante' => [
@@ -462,22 +539,13 @@
                                     'icon' => 'fa-id-card',
                                     'obligatorio' => false,
                                 ],
-                                'certificado_calificaciones' => [
-                                    'label' => 'Certificado de Calificaciones',
-                                    'icon' => 'fa-certificate',
-                                    'obligatorio' => true,
-                                ],
 
                                 'foto_estudiante' => [
                                     'label' => 'Fotografía Estudiante',
                                     'icon' => 'fa-camera',
                                     'obligatorio' => false,
                                 ],
-                                'constancia_aprobacion_primaria' => [
-                                    'label' => 'Constancia Aprobación Primaria',
-                                    'icon' => 'fa-stamp',
-                                    'obligatorio' => true,
-                                ],
+
                                 'foto_representante' => [
                                     'label' => 'Fotografía Representante',
                                     'icon' => 'fa-camera',
@@ -499,6 +567,13 @@
                                 : (json_decode($datos->documentos, true) ?:
                                 []);
                         @endphp
+
+                        @php
+                            if ($esPrimerGrado) {
+                                unset($todosDocumentos['notas_certificadas'], $todosDocumentos['liberacion_cupo']);
+                            }
+                        @endphp
+
 
                         <div class="row g-2 mt-2">
                             @foreach ($todosDocumentos as $key => $info)

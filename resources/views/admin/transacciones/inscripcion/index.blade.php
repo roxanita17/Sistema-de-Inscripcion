@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+
 @stop
 
 @section('title', 'Gestión de inscripciones')
@@ -20,26 +21,21 @@
                     <p class="title-subtitle">Administración de las inscripciones</p>
                 </div>
             </div>
-            <div class="d-flex justify-content-between align-items-center mt-3 ">
-                {{-- Botón percentil (izquierda) --}}
-                <div style="padding: 0 6rem">
-                    @foreach ($grados as $grado)
-                        @if ($grado->id === 1)
-                            @include('admin.transacciones.percentil.boton-percentil', [
-                                'anioEscolarActivo' => $anioEscolarActivo,
-                                'gradoId' => $grado->id,
-                            ])
-                        @endif
-                    @endforeach
+            <div class="d-flex justify-content-between align-items-center mt-3" >
+                <div style="padding: 0rem 1rem">
+                    <a href="{{ route('admin.transacciones.inscripcion-prosecucion.createProsecucion') }}" class="btn-prosecucion"
+                        @if (!$anioEscolarActivo) disabled @endif
+                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
+                        <i class="fas fa-plus"></i>
+                        <span>Inscripcion Prosecucion</span>
+                    </a>
                 </div>
-
-                {{-- Botón crear (derecha) --}}
                 <div>
                     <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
                         @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
-                        <span>Nueva inscripción</span>
+                        <span>Inscripcion Nuevo Ingreso</span>
                     </a>
                 </div>
             </div>
@@ -49,7 +45,6 @@
 
 @section('content')
     <div class="main-container">
-
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -66,6 +61,7 @@
             </div>
         @endif
 
+        {{-- ALERTAS --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -80,7 +76,6 @@
                         </button>
                     </div>
                 @endif
-
                 @if (session('error'))
                     <div class="alert-modern alert-error alert alert-dismissible fade show">
                         <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
@@ -95,8 +90,6 @@
                 @endif
             </div>
         @endif
-
-
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -105,6 +98,7 @@
                         <h3>Listado de inscripciones</h3>
                     </div>
                 </div>
+
                 {{-- Buscador --}}
                 <form action="{{ route('admin.transacciones.inscripcion.index') }}">
                     <div class="form-group-modern mb-2">
@@ -115,45 +109,23 @@
                         </div>
                     </div>
                 </form>
-                <div class="header-right" style="width: 15rem">
-                    @if ($infoCupos)
-                        <div class="cupos-box">
-                            <div class="cupos-titulo">
-                                {{ $infoCupos['nombre_grado'] }}
-                            </div>
-
-                            <div class="cupos-datos text-center">
-                                <div>
-                                    <span class="label">Cupos totales</span>
-                                    <span class="valor">{{ $infoCupos['total_cupos'] }}</span>
-                                </div>
-
-                                <div>
-                                    <span class="label">En uso</span>
-                                    <span class="valor">{{ $infoCupos['cupos_ocupados'] }}</span>
-                                </div>
-
-                                <div>
-                                    <span class="label">Disponibles</span>
-                                    <span class="valor">{{ $infoCupos['cupos_disponibles'] }}</span>
-                                </div>
-                            </div>
-
-                            <div class="cupos-barra">
-                                <div class="cupos-barra-progreso
-            {{ $infoCupos['porcentaje_ocupacion'] >= 90
-                ? 'rojo'
-                : ($infoCupos['porcentaje_ocupacion'] >= 70
-                    ? 'amarillo'
-                    : 'verde') }}"
-                                    style="width: {{ $infoCupos['porcentaje_ocupacion'] }}%">
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-
-
+                {{-- Boton de percentil --}}
+                <div style="padding:">
+                    @foreach ($grados as $grado)
+                        @if ($grado->id === 1)
+                            @include('admin.transacciones.percentil.boton-percentil', [
+                                'anioEscolarActivo' => $anioEscolarActivo,
+                                'gradoId' => $grado->id,
+                            ])
+                        @endif
+                    @endforeach
+                </div>
+                {{-- Boton de filtros --}}
+                <div>
+                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                        <i class="fas fa-filter"></i>
+                        Filtros
+                    </button>
                 </div>
                 <div class="header-right">
                     <div class="date-badge">
@@ -165,7 +137,7 @@
 
             <div class="card-body-modern">
                 <div class="table-wrapper">
-                    <table class="table-modern overflow-hidden hidden">
+                    <table class="table-modern ">
                         <thead>
                             <tr class="text-center">
                                 <th style="font-weight: bold">Cedula</th>
@@ -182,7 +154,7 @@
                         <tbody class="text-center">
                             @if ($inscripciones->isEmpty())
                                 <tr>
-                                    <td colspan="7">
+                                    <td colspan="8">
                                         <div class="empty-state">
                                             <div class="empty-icon"><i class="fas fa-inbox"></i></div>
                                             <h4>No hay inscripciones registradas</h4>
@@ -192,7 +164,7 @@
                                 </tr>
                             @else
                                 @foreach ($inscripciones as $datos)
-                                    <tr class="table-row-hover row-12">
+                                    <tr class="row-12">
 
                                         {{-- NUMERO --}}
                                         <td style="font-weight: bold">
@@ -228,11 +200,10 @@
 
                                         {{-- SECCION --}}
                                         <td class="text-center">
-                                            @if ($datos->seccionAsignada)
-                                                <span class="badge"
-                                                    style="background-color: var(--info-light); color:rgba(0, 0, 0, 0.715)">{{ $datos->seccionAsignada->nombre }}</span>
+                                            @if ($datos->seccion)
+                                                {{ $datos->seccion->nombre }}
                                             @else
-                                                <span class="badge bg-secondary">Sin asignar</span>
+                                                Sin asignar
                                             @endif
                                         </td>
 
@@ -256,13 +227,48 @@
                                         {{-- ACCIONES --}}
                                         <td>
                                             <div class="action-buttons">
+                                                <div class="dropdown dropstart text-center">
+                                                    <button
+                                                        class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
 
-                                                {{-- VER --}}
-                                                <button class="action-btn btn-view" data-bs-toggle="modal"
-                                                    data-bs-target="#viewModal{{ $datos->id }}" title="Ver Detalles">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                        {{-- Ver mas --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-primary"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#viewModal{{ $datos->id }}">
+                                                                <i class="fas fa-eye me-2"></i>
+                                                                Ver mas
+                                                            </button>
+                                                        </li>
 
+                                                        {{-- Inactivar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                                @disabled(!$anioEscolarActivo)>
+                                                                <i class="fas fa-ban me-2"></i>
+                                                                Inactivar
+                                                            </button>
+                                                        </li>
+
+                                                        {{-- Generar PDF --}}
+                                                        <li>
+                                                            <a href="{{ route('admin.transacciones.inscripcion.reporte', $datos->id) }}"
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                title="Generar Reporte PDF" target="_blank">
+                                                                <i class="fas fa-file-pdf me-2"></i>
+                                                                PDF
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                                 {{-- EDITAR --}}
                                                 {{-- <a href="{{ route('admin.inscripciones.edit', $datos->id) }}"
                                                class="action-btn btn-edit"
@@ -270,74 +276,70 @@
                                                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
                                                 <i class="fas fa-pen"></i>
                                             </a> --}}
-
-                                                {{-- ELIMINAR --}}
-                                                <button class="action-btn btn-delete" data-bs-toggle="modal"
-                                                    data-bs-target="#confirmarEliminar{{ $datos->id }}"
-                                                    @if (!$anioEscolarActivo) disabled @endif
-                                                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Eliminar' }}">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-
                                             </div>
                                         </td>
                                     </tr>
+
                                     {{-- Modal de ver --}}
                                     @include('admin.transacciones.inscripcion.modales.showModal')
-
-                                    {{-- MODAL ELIMINAR --}}
-                                    <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content modal-modern">
-                                                <div class="modal-header-delete">
-                                                    <div class="modal-icon-delete"><i class="fas fa-trash-alt"></i></div>
-                                                    <h5 class="modal-title-delete">Confirmar Eliminación</h5>
-                                                    <button type="button" class="btn-close-modal"
-                                                        data-bs-dismiss="modal">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body-delete">
-                                                    <p>¿Deseas eliminar esta inscripción?</p>
-                                                    <p class="delete-warning">Esta acción no se puede deshacer.</p>
-                                                </div>
-                                                <div class="modal-footer-delete">
-                                                    <form
-                                                        action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"
-                                                        method="POST" class="w-100">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <div class="footer-buttons">
-                                                            <button type="button" class="btn-modal-cancel"
-                                                                data-bs-dismiss="modal">Cancelar</button>
-                                                            <button type="submit"
-                                                                class="btn-modal-delete">Eliminar</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 @endforeach
                             @endif
                         </tbody>
                     </table>
                 </div>
+                {{-- MODAL DE INACTIVACIÓN --}}
+                @foreach ($inscripciones as $datos)
+                    <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content modal-modern">
+
+                                <div class="modal-header-delete">
+                                    <div class="modal-icon-delete">
+                                        <i class="fas fa-ban"></i>
+                                    </div>
+                                    <h5 class="modal-title-delete">Confirmar inactivación</h5>
+                                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body-delete">
+                                    <p>¿Deseas inactivar esta inscripción?</p>
+                                    <p class="delete-warning">
+                                        El estudiante también será inactivado.
+                                    </p>
+                                </div>
+
+                                <div class="modal-footer-delete">
+                                    <form action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"
+                                        method="POST" class="w-100">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <div class="footer-buttons">
+                                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                                Cancelar
+                                            </button>
+
+                                            <button type="submit" class="btn-modal-delete">
+                                                Inactivar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- Modal de filtros --}}
+                @include('admin.transacciones.inscripcion.modales.filtroModal')
             </div>
-
-
             <div class="mt-3" style="display:flex; align-items:center; position:relative;">
-
                 <div style="margin: 0 auto;">
                     <x-pagination :paginator="$inscripciones" />
                 </div>
-
-
-
             </div>
-
-
         </div>
-
-
     @endsection

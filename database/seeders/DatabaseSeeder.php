@@ -12,6 +12,7 @@ use App\Models\Alumno;
 use App\Models\Representante;
 use App\Models\RepresentanteLegal;
 use App\Models\Inscripcion;
+use App\Models\InscripcionNuevoIngreso;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Carbon\Carbon;
 
@@ -22,7 +23,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-       
+
 
 
         $this->command->info('Iniciando seeders...');
@@ -58,22 +59,26 @@ class DatabaseSeeder extends Seeder
             IndiceEdadSeeder::class,
             IndicePesoSeeder::class,
             IndiceEstaturaSeeder::class,
+            SeccionSeeder::class,
             PersonaSeeder::class,
+            TallaSeeder::class,
             AlumnoSeeder::class,
+            DiscapacidadEstudianteSeeder::class,
             DocenteSeeder::class,
             DetalleDocenteEstudioSeeder::class,
             RepresentanteSeeder::class,
             RepresentanteLegalSeeder::class,
-            InscripcionSeeder::class,
+            InscripcionSeeder::class, 
+            ProsecucionAreaSeeder::class,
+            /*  DocenteAreaGrado::class, */
         ]);
 
-        
-        
-        
-        
+
+
+
+
 
 
         $this->command->info('¡Base de datos poblada con éxito!');
-
     }
 }

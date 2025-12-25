@@ -11,12 +11,21 @@ class EjecucionesPercentil extends Model
     use HasFactory;
 
     protected $table = 'ejecuciones_percentils';
-    protected $fillable = [
+    protected $fillable = [        
+        'anio_escolar_id',
         'total_evaluados',
         'status',
     ];
 
-        /**
+    /**
+     * Relación con AnioEscolar
+     */
+    public function anioEscolar()
+    {
+        return $this->belongsTo(AnioEscolar::class, 'anio_escolar_id');
+    }
+    
+    /**
      * Relación con Secciones
      */
     public function secciones()

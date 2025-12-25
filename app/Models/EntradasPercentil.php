@@ -30,13 +30,16 @@ class EntradasPercentil extends Model
         return $this->belongsTo(Seccion::class, 'seccion_id');
     }
 
-    public function ejecucion_percentil()
-    {
-        return $this->belongsTo(EjecucionesPercentil::class);
-    }
-
     public function inscripcion()
     {
         return $this->belongsTo(Inscripcion::class);
+    }
+    
+    public function ejecucion()
+    {
+        return $this->belongsTo(
+            \App\Models\EjecucionesPercentil::class,
+            'ejecucion_percentil_id'
+        );
     }
 }

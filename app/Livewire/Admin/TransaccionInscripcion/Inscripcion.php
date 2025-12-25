@@ -19,12 +19,12 @@ class Inscripcion extends Component
     /* ============================================================
        PROPIEDADES
        ============================================================ */
-    public $inscripcion_id;
     public $alumnoId;
     public $padreId;
     public $madreId;
     public $representanteLegalId;
     public $gradoId;
+    public $seccion_id = null;
 
     public $infoCupos = null;
     public $alumnoSeleccionado = null;
@@ -37,11 +37,11 @@ class Inscripcion extends Component
     public $representantes = [];
     public $instituciones = [];
     public $grados = [];
+    public $secciones = [];
     public $expresiones_literarias = [];
 
     public $documentos = [];
     public array $documentosFaltantes = [];
-
     public $observaciones;
     public $numero_zonificacion;
     public $institucion_procedencia_id;
@@ -51,8 +51,18 @@ class Inscripcion extends Component
     public $acepta_normas_contrato = false;
     public $seleccionarTodos = false;
 
+    // Discapacidades
+    public $discapacidades = [];
+    public $discapacidadSeleccionada = null;
+    public $discapacidadesAgregadas = [];
+
     public $documentosDisponibles = [];
     public $documentosEtiquetas = [];
+
+    public bool $esPrimerGrado = true;
+
+    public string $tipo_inscripcion = 'nuevo_ingreso';
+
 
     /* ============================================================
        BOOT & MOUNT
@@ -73,9 +83,11 @@ class Inscripcion extends Component
 
     public function mount()
     {
+        $this->discapacidadesAgregadas = [];
+        $this->discapacidadSeleccionada = null;
         $this->documentosDisponibles = $this->documentoService->obtenerDocumentosDisponibles();
         $this->documentosEtiquetas = $this->documentoService->obtenerEtiquetas();
-
+        $this->tipo_inscripcion = 'nuevo_ingreso';
         $this->cargarDatosIniciales();
     }
 
@@ -85,8 +97,13 @@ class Inscripcion extends Component
     public function rules()
     {
         return [
-            'inscripcion_id' => 'required|exists:inscripcions,id',
-            'numero_zonificacion' => 'required|numeric',
+            'tipo_inscripcion' => 'required|in:nuevo_ingreso,prosecucion',
+
+            'numero_zonificacion' => [
+                'nullable',
+                'regex:/^\d+$/'
+            ],
+
             'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'gradoId' => [
@@ -98,6 +115,10 @@ class Inscripcion extends Component
                     }
                 }
             ],
+            'seccion_id' => $this->esPrimerGrado
+                ? 'nullable'
+                : 'required|exists:seccions,id',
+
             'documentos' => 'array',
             'documentos.*' => 'string',
             'acepta_normas_contrato' => 'accepted',
@@ -114,12 +135,10 @@ class Inscripcion extends Component
     }
 
     protected $messages = [
+        'tipo_inscripcion.required' => 'Debe seleccionar el tipo de inscripción.',
+        'tipo_inscripcion.in' => 'El tipo de inscripción no es válido.',
 
-        'inscripcion_id.required' => 'Debe seleccionar una inscripción.',
-        'inscripcion_id.exists' => 'La inscripción seleccionada no es válida.',
-
-        'numero_zonificacion.required' => 'El número de zonificación es obligatorio.',
-        'numero_zonificacion.numeric' => 'El número de zonificación debe ser un valor numérico.',
+        'numero_zonificacion.regex' => 'El número de zonificación solo puede contener números.',
 
         'institucion_procedencia_id.required' => 'Debe seleccionar una institución de procedencia.',
         'institucion_procedencia_id.exists' => 'La institución de procedencia seleccionada no es válida.',
@@ -130,7 +149,8 @@ class Inscripcion extends Component
         'gradoId.required' => 'Debe seleccionar un grado.',
         'gradoId.exists' => 'El grado seleccionado no es válido.',
 
-
+        'seccion_id.required' => 'Debe seleccionar una sección.',
+        'seccion_id.exists' => 'La sección seleccionada no es válida.',
 
         'documentos.array' => 'El formato de los documentos seleccionados no es válido.',
         'documentos.*.string' => 'Uno o más documentos seleccionados no son válidos.',
@@ -146,8 +166,11 @@ class Inscripcion extends Component
 
     public function updated($propertyName)
     {
-        $this->validateOnly($propertyName);
+        if ($propertyName !== 'gradoId') {
+            $this->validateOnly($propertyName);
+        }
     }
+
 
     /* ============================================================
        CARGAS DE DATOS
@@ -162,40 +185,15 @@ class Inscripcion extends Component
         $this->padres = $this->representanteRepository->obtenerPorGenero('Masculino');
         $this->madres = $this->representanteRepository->obtenerPorGenero('Femenino');
         $this->representantes = $this->representanteRepository->obtenerRepresentantesLegales();
+
+        $this->discapacidades = \App\Models\Discapacidad::where('status', true)
+            ->orderBy('nombre_discapacidad', 'asc')
+            ->get();
     }
 
     /* ============================================================
        MÉTODOS UPDATED PARA CARGAR DETALLES 
        ============================================================ */
-
-    /**
-     * Se ejecuta cuando cambia el alumnoId en el select
-     */
-    public function updatedAlumnoId($value)
-    {
-        if (!$value) {
-            $this->alumnoSeleccionado = null;
-            return;
-        }
-
-        $this->alumnoSeleccionado = \App\Models\Alumno::with([
-            'persona.tipoDocumento',
-            'persona.genero',
-            'ordenNacimiento',
-            'lateralidad',
-            'alumno.persona.localidad.municipio',
-            'alumno.persona.localidad.estado',
-        ])->find($value);
-
-        // Verificar si ya tiene inscripción activa
-        $inscripcionExistente = \App\Models\Inscripcion::where('alumno_id', $value)
-            ->where('status', 'Activo')
-            ->first();
-
-        if ($inscripcionExistente) {
-            session()->flash('warning', 'Este alumno ya tiene una inscripción activa.');
-        }
-    }
 
     /**
      * Se ejecuta cuando cambia el padreId en el select
@@ -280,7 +278,8 @@ class Inscripcion extends Component
 
         $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
             $this->documentos,
-            $this->requiereAutorizacion()
+            $this->requiereAutorizacion(),
+            $this->esPrimerGrado
         );
 
         $this->documentosFaltantes = $evaluacion['faltantes'];
@@ -297,7 +296,8 @@ class Inscripcion extends Component
     {
         $this->observaciones = $this->documentoService->generarObservaciones(
             $this->documentos,
-            $this->requiereAutorizacion()
+            $this->requiereAutorizacion(),
+            $this->esPrimerGrado
         );
     }
 
@@ -306,19 +306,108 @@ class Inscripcion extends Component
         return !$this->padreId && !$this->madreId;
     }
 
+
     /* ============================================================
        INFORMACIÓN DE CUPOS
        ============================================================ */
     public function updatedGradoId($value)
     {
-        if ($value) {
-            // Obtener información de cupos
-            $this->infoCupos = $this->inscripcionService->obtenerInfoCupos($value);
-        } else {
-            // Si no hay grado seleccionado, limpiar la info
+        if (!$value) {
             $this->infoCupos = null;
+            $this->secciones = [];
+            $this->seccion_id = null;
+            return;
+        }
+
+        $this->infoCupos = $this->inscripcionService->obtenerInfoCupos($value);
+
+        $grado = \App\Models\Grado::find($value);
+        $this->esPrimerGrado = ((int) $grado->numero_grado === 1);
+
+        // Si NO es primer grado → cargar secciones
+        if (!$this->esPrimerGrado) {
+            $this->secciones = \App\Models\Seccion::where('grado_id', $value)
+                ->where('status', true)
+                ->orderBy('nombre')
+                ->get();
+        } else {
+            // Limpiar si es primer grado
+            $this->secciones = [];
+            $this->seccion_id = null;
+        }
+
+        $this->validarDocumentosEnTiempoReal();
+    }
+
+    /* ============================================================
+       REGISTRO DE DISCAPACIDADES
+       ============================================================ */
+
+    /**
+     * Agrega una discapacidad a la lista temporal
+     */
+    public function agregarDiscapacidad()
+    {
+        $this->validate([
+            'discapacidadSeleccionada' => 'required|exists:discapacidads,id'
+        ], [
+            'discapacidadSeleccionada.required' => 'Debe seleccionar una discapacidad.',
+            'discapacidadSeleccionada.exists' => 'La discapacidad seleccionada no es válida.'
+        ]);
+
+        // Verificar si ya está agregada
+        if (collect($this->discapacidadesAgregadas)->contains('id', $this->discapacidadSeleccionada)) {
+            $this->addError('discapacidadSeleccionada', 'Esta discapacidad ya ha sido agregada.');
+            return;
+        }
+
+        // Buscar la discapacidad y agregarla
+        $discapacidad = \App\Models\Discapacidad::find($this->discapacidadSeleccionada);
+
+        if ($discapacidad) {
+            $this->discapacidadesAgregadas[] = [
+                'id' => $discapacidad->id,
+                'nombre' => $discapacidad->nombre_discapacidad
+            ];
+
+            // Limpiar selección
+            $this->discapacidadSeleccionada = null;
+            $this->resetErrorBag('discapacidadSeleccionada');
+
+            session()->flash('success_temp', 'Discapacidad agregada correctamente.');
         }
     }
+
+    /**
+     * Elimina una discapacidad de la lista temporal
+     */
+    public function eliminarDiscapacidad($index)
+    {
+        if (isset($this->discapacidadesAgregadas[$index])) {
+            $discapacidad = $this->discapacidadesAgregadas[$index];
+            unset($this->discapacidadesAgregadas[$index]);
+
+            // Reindexar el array
+            $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
+
+            session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
+        }
+    }
+
+    /**
+     * Guarda las discapacidades del alumno en la tabla intermedia
+     */
+    private function guardarDiscapacidadesAlumno($alumnoId)
+    {
+        foreach ($this->discapacidadesAgregadas as $discapacidad) {
+            \App\Models\DiscapacidadEstudiante::create([
+                'alumno_id' => $alumnoId,
+                'discapacidad_id' => $discapacidad['id'],
+                'status' => true
+            ]);
+        }
+    }
+
 
     /* ============================================================
        REGISTRO DE INSCRIPCIÓN
@@ -333,10 +422,14 @@ class Inscripcion extends Component
 
         try {
             $dto = $this->crearInscripcionDTO();
-            $this->inscripcionService->registrar($dto);
+            $inscripcion = $this->inscripcionService->registrar($dto);
+
+            // Guardar discapacidades si hay alumno seleccionado
+            if ($this->alumnoId && !empty($this->discapacidadesAgregadas)) {
+                $this->guardarDiscapacidadesAlumno($this->alumnoId);
+            }
 
             session()->flash('success', 'Inscripción registrada exitosamente.');
-            $this->limpiar();
             session()->forget('inscripcion_temp');
 
             return redirect()->route('admin.transacciones.inscripcion.index');
@@ -344,6 +437,7 @@ class Inscripcion extends Component
             session()->flash('error', 'Error: ' . $e->getMessage());
         }
     }
+
 
     public function finalizar()
     {
@@ -367,7 +461,13 @@ class Inscripcion extends Component
 
         try {
             $dto = $this->crearInscripcionDTO();
-            $this->inscripcionService->registrarConAlumno($datos, $dto);
+
+            // Agregar discapacidades al DTO o pasarlas por separado
+            $inscripcion = $this->inscripcionService->registrarConAlumno(
+                $datos,
+                $dto,
+                $this->discapacidadesAgregadas
+            );
 
             session()->flash('success', 'Inscripción guardada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
@@ -391,6 +491,7 @@ class Inscripcion extends Component
     private function crearInscripcionDTO(): InscripcionData
     {
         return new InscripcionData([
+            'tipo_inscripcion' => $this->tipo_inscripcion,
             'anio_escolar_id' => $this->anio_escolar_id,
             'alumno_id' => $this->alumnoId,
             'numero_zonificacion' => $this->numero_zonificacion,
@@ -398,6 +499,7 @@ class Inscripcion extends Component
             'anio_egreso' => $this->anio_egreso,
             'expresion_literaria_id' => $this->expresion_literaria_id,
             'grado_id' => $this->gradoId,
+            'seccion_id' => $this->seccion_id,
             'padre_id' => $this->padreId,
             'madre_id' => $this->madreId,
             'representante_legal_id' => $this->representanteLegalId,
@@ -406,6 +508,8 @@ class Inscripcion extends Component
             'acepta_normas_contrato' => $this->acepta_normas_contrato,
         ]);
     }
+
+
 
     /* ============================================================
        LISTENERS
@@ -440,23 +544,7 @@ class Inscripcion extends Component
         return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
     }
 
-    public function limpiar()
-    {
-        $this->reset([
-            'alumnoId',
-            'padreId',
-            'madreId',
-            'representanteLegalId',
-            'gradoId',
-            'observaciones',
-            'alumnoSeleccionado',
-            'padreSeleccionado',
-            'madreSeleccionado',
-            'representanteLegalSeleccionado'
-        ]);
 
-        $this->dispatch('resetSelects');
-    }
 
     public function render()
     {

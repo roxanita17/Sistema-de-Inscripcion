@@ -11,39 +11,87 @@
         .form-group {
             margin-bottom: 1.25rem;
         }
-        
+
         .form-label {
             font-weight: 500;
             color: var(--gray-700);
             margin-bottom: 0.5rem;
             display: block;
         }
-        
-        .form-control, .form-select {
+
+        /* Estilos base para todos los inputs */
+        .form-control {
             border-radius: var(--radius);
             border: 1px solid var(--gray-300);
             padding: 0.5rem 1rem;
             transition: all 0.2s ease;
             width: 100%;
+            background-color: #fff;
         }
         
-        .form-control:focus, .form-select:focus {
+        /* Estilos específicos para selects */
+        .form-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 2.5rem;
+        }
+        
+        /* Quitar flecha de inputs específicos */
+        input[type="text"][id*="codigo"],
+        input[type="text"][id*="serial"],
+        input[type="text"][id*="numero_documento"] {
+            background-image: none !important;
+            padding-right: 1rem;
+        }
+        
+        /* Estilos para los select dentro de input-group */
+        .input-group .form-select {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+        }
+        
+        .input-group-text + .form-select {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        /* Mejorar el foco */
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1);
+            outline: 0;
+        }
+        
+        /* Estilos para los select deshabilitados */
+        .form-select:disabled {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
-        
+
         .input-group-text {
             background-color: var(--gray-100);
             border: 1px solid var(--gray-300);
             color: var(--gray-700);
         }
-        
+
         .form-text {
             font-size: 0.75rem;
             color: var(--gray-500);
             margin-top: 0.25rem;
         }
-        
+
         .card-section {
             background: white;
             border-radius: var(--radius);
@@ -51,7 +99,7 @@
             margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
         }
-        
+
         .section-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -63,21 +111,21 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .section-title i {
             color: var(--primary);
         }
-        
+
         .required::after {
             content: ' *';
             color: var(--danger);
         }
-        
+
         .form-check-input:checked {
             background-color: var(--primary);
             border-color: var(--primary);
         }
-        
+
         .btn-modern {
             padding: 0.6rem 1.5rem;
             border-radius: var(--radius);
@@ -87,28 +135,28 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .btn-primary {
             background: var(--primary);
             border: none;
         }
-        
+
         .btn-primary:hover {
             background: var(--primary-dark);
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
         }
-        
+
         .btn-outline-secondary {
             border: 1px solid var(--gray-300);
             color: var(--gray-700);
         }
-        
+
         .btn-outline-secondary:hover {
             background: var(--gray-100);
             border-color: var(--gray-400);
         }
-        
+
         /* Estilos para las pestañas */
         .nav-tabs .nav-link {
             border: none;
@@ -118,40 +166,40 @@
             border-radius: 0;
             border-bottom: 2px solid transparent;
         }
-        
+
         .nav-tabs .nav-link.active {
             color: var(--primary);
             background: none;
             border-color: var(--primary);
         }
-        
+
         .nav-tabs .nav-link:hover:not(.active) {
             border-color: transparent;
             color: var(--primary);
         }
-        
+
         /* Estilos para los mensajes de error */
         .invalid-feedback {
             color: var(--danger);
             font-size: 0.75rem;
             margin-top: 0.25rem;
         }
-        
+
         .is-invalid {
             border-color: var(--danger) !important;
         }
-        
+
         /* Mejoras para los select2 */
         .select2-container--default .select2-selection--single {
             height: 38px;
             border: 1px solid var(--gray-300);
             border-radius: var(--radius);
         }
-        
+
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 36px;
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
@@ -159,17 +207,17 @@
                 align-items: flex-start;
                 gap: 1.5rem;
             }
-            
+
             .btn-create {
                 width: 100%;
                 justify-content: center;
             }
-            
+
             .card-section {
                 padding: 1rem;
             }
         }
-        
+
         .icon-box {
             width: 40px;
             height: 40px;
@@ -178,17 +226,40 @@
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
-        .bg-pink-100 { background-color: #fce7f3; }
-        .text-pink-600 { color: #db2777; }
-        .bg-blue-100 { background-color: #dbeafe; }
-        .text-blue-600 { color: #2563eb; }
-        .bg-purple-100 { background-color: #f3e8ff; }
-        .text-purple-600 { color: #7c3aed; }
-        .bg-indigo-100 { background-color: #e0e7ff; }
-        .text-indigo-600 { color: #4f46e5; }
+
+        .bg-pink-100 {
+            background-color: #fce7f3;
+        }
+
+        .text-pink-600 {
+            color: #db2777;
+        }
+
+        .bg-blue-100 {
+            background-color: #dbeafe;
+        }
+
+        .text-blue-600 {
+            color: #2563eb;
+        }
+
+        .bg-purple-100 {
+            background-color: #f3e8ff;
+        }
+
+        .text-purple-600 {
+            color: #7c3aed;
+        }
+
+        .bg-indigo-100 {
+            background-color: #e0e7ff;
+        }
+
+        .text-indigo-600 {
+            color: #4f46e5;
+        }
     </style>
     @livewireStyles
 @stop
@@ -208,10 +279,18 @@
                 </div>
             </div>
 
+            @if ($from === 'inscripcion')
+            <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver</span>
+            </a>
+        @else
             <a href="{{ route('representante.index') }}" class="btn-create">
                 <i class="fas fa-arrow-left"></i>
                 <span>Volver</span>
             </a>
+        @endif
+            
         </div>
     </div>
 @stop
@@ -219,72 +298,76 @@
 @section('content')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<div class="main-container">
-    <!-- Mensajes de validación -->
-    @if ($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>¡Error!</strong> Por favor, corrija los siguientes errores:
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    <div class="card card-modern">
-        <div class="card-body p-4">
-            <div class="alert alert-info d-flex align-items-center mb-4">
-                <i class="fas fa-info-circle me-2"></i>
-                <div>
-                    <strong>Información importante</strong>
-                    <p class="mb-0">Los campos marcados con <span class="text-danger">(*)</span> son obligatorios. Asegúrese de completar toda la información solicitada.</p>
-                </div>
+    <div class="main-container">
+        <!-- Mensajes de validación -->
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>¡Error!</strong> Por favor, corrija los siguientes errores:
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        @endif
 
-            <form id="representante-form" action="{{ route('representante.save') }}" method="POST" class="needs-validation" novalidate>
-                <input type="hidden" name="from" value="{{ $from ?? '' }}">
-                @csrf
-
-                <!-- Sección de la Madre -->
-                <div class="card card-modern mb-4">
-                    <div class="card-header-modern d-flex align-items-center">
-                        <div class="icon-box bg-pink-100 text-pink-600 me-3">
-                            <i class="fas fa-female"></i>
-                        </div>
-                        <h3 class="card-title-modern mb-0">
-                            Datos de la Madre
-                        </h3>
+        <div class="card card-modern">
+            <div class="card-body p-4">
+                <div class="alert alert-info d-flex align-items-center mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <div>
+                        <strong>Información importante</strong>
+                        <p class="mb-0">Los campos marcados con <span class="text-danger">(*)</span> son obligatorios.
+                            Asegúrese de completar toda la información solicitada.</p>
                     </div>
-                    <div class="card-body">
-                        <div class="form-group mb-4">
-                            <div class="d-flex align-items-center mb-2">
-                                <div class="icon-box bg-indigo-100 text-indigo-600 me-2">
-                                    <i class="fas fa-user-check"></i>
-                                </div>
-                                <label class="form-label fw-bold mb-0 required">
-                                    Estado de la madre:
-                                </label>
+                </div>
+
+                <form id="representante-form" action="{{ route('representante.save') }}" method="POST"
+                    class="needs-validation" novalidate>
+                    <input type="hidden" name="from" value="{{ $from ?? '' }}">
+                    @csrf
+
+                    <!-- Sección de la Madre -->
+                    <div class="card card-modern mb-4">
+                        <div class="card-header-modern d-flex align-items-center">
+                            <div class="icon-box bg-pink-100 text-pink-600 me-3">
+                                <i class="fas fa-female"></i>
                             </div>
-                            <div class="form-text mb-2">Seleccione el estado de la madre del estudiante</div>
-                            <div class="d-flex flex-wrap gap-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" value="Presente" name="estado_madre" id="Presente_madre" required>
-                                    <label class="form-check-label d-flex align-items-center" for="Presente_madre">
-                                        <i class="fas fa-user-check me-2"></i>
-                                        <span>Presente</span>
+                            <h3 class="card-title-modern mb-0">
+                                Datos de la Madre
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="icon-box bg-indigo-100 text-indigo-600 me-2">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                    <label class="form-label fw-bold mb-0 required">
+                                        Estado de la madre:
                                     </label>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" value="Ausente" name="estado_madre" id="Ausente_madre" required>
-                                    <label class="form-check-label d-flex align-items-center" for="Ausente_madre">
-                                        <i class="fas fa-user-times me-2"></i>
-                                        <span>Ausente</span>
-                                    </label>
-                                </div>
-                                {{-- OPCIÓN DIFUNTO COMENTADA --}}
-                                {{-- <div class="form-check">
+                                <div class="form-text mb-2">Seleccione el estado de la madre del estudiante</div>
+                                <div class="d-flex flex-wrap gap-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" value="Presente" name="estado_madre"
+                                            id="Presente_madre" required>
+                                        <label class="form-check-label d-flex align-items-center" for="Presente_madre">
+                                            <i class="fas fa-user-check me-2"></i>
+                                            <span>Presente</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" value="Ausente" name="estado_madre"
+                                            id="Ausente_madre" required>
+                                        <label class="form-check-label d-flex align-items-center" for="Ausente_madre">
+                                            <i class="fas fa-user-times me-2"></i>
+                                            <span>Ausente</span>
+                                        </label>
+                                    </div>
+                                    {{-- OPCIÓN DIFUNTO COMENTADA --}}
+                                    {{-- <div class="form-check">
                                     <input class="form-check-input" type="radio" value="difunto" name="estado_madre" id="difunto_madre">
                                     <label class="form-check-label d-flex align-items-center" for="difunto_madre">
                                         <i class="fas fa-cross me-2"></i>
@@ -358,7 +441,8 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
                                             <div class="form-group">
-                                                <label for="primer-nombre" class="form-label required">Primer Nombre</label>
+                                                <label for="primer-nombre" class="form-label required">Primer
+                                                    Nombre</label>
                                                 <input type="text" class="form-control" id="primer-nombre"
                                                     name="primer-nombre" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
                                                     title="Solo se permiten letras y espacios, no se aceptan números"
@@ -597,41 +681,43 @@
     </div>
     {{-- Formulario del Padre --}}
 
-<!-- Sección del Padre -->
-<div class="card card-modern mb-4">
-    <div class="card-header-modern d-flex align-items-center">
-        <div class="icon-box bg-blue-100 text-blue-600 me-3">
-            <i class="fas fa-male"></i>
+    <!-- Sección del Padre -->
+    <div class="card card-modern mb-4">
+        <div class="card-header-modern d-flex align-items-center">
+            <div class="icon-box bg-blue-100 text-blue-600 me-3">
+                <i class="fas fa-male"></i>
+            </div>
+            <h3 class="card-title-modern mb-0">
+                Datos del Padre
+            </h3>
         </div>
-        <h3 class="card-title-modern mb-0">
-            Datos del Padre
-        </h3>
-    </div>
-    <div class="card-body">
-        <div class="form-group mb-4">
-            <label class="form-label fw-bold d-block mb-3">
-                <span class="text-danger">(*)</span> Estado del padre:
-            </label>
-            <div class="d-flex flex-wrap gap-4">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" value="Presente" name="estado_padre" id="Presente_padre" required>
-                    <label class="form-check-label d-flex align-items-center" for="Presente_padre">
-                        <i class="fas fa-user-check me-2"></i>
-                        <span>Presente</span>
-                    </label>
+        <div class="card-body">
+            <div class="form-group mb-4">
+                <label class="form-label fw-bold d-block mb-3">
+                    <span class="text-danger">(*)</span> Estado del padre:
+                </label>
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" value="Presente" name="estado_padre"
+                            id="Presente_padre" required>
+                        <label class="form-check-label d-flex align-items-center" for="Presente_padre">
+                            <i class="fas fa-user-check me-2"></i>
+                            <span>Presente</span>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" value="Ausente" name="estado_padre"
+                            id="Ausente_padre">
+                        <label class="form-check-label d-flex align-items-center" for="Ausente_padre">
+                            <i class="fas fa-user-times me-2"></i>
+                            <span>Ausente</span>
+                        </label>
+                    </div>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" value="Ausente" name="estado_padre" id="Ausente_padre">
-                    <label class="form-check-label d-flex align-items-center" for="Ausente_padre">
-                        <i class="fas fa-user-times me-2"></i>
-                        <span>Ausente</span>
-                    </label>
+                <div class="invalid-feedback">
+                    Por favor seleccione el estado del padre.
                 </div>
             </div>
-            <div class="invalid-feedback">
-                Por favor seleccione el estado del padre.
-            </div>
-        </div>
 
             <!-- Sección de Datos Personales -->
             <div class="border rounded p-4 mb-4 bg-light">
@@ -825,7 +911,8 @@
                                 <option value="" disabled selected>Seleccione</option>
                                 @foreach ($prefijos_telefono as $prefijo)
                                     <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
-                                        ({{ $prefijo->tipo_linea }})</option>
+                                        ({{ $prefijo->tipo_linea }})
+                                    </option>
                                 @endforeach
                             </select>
                             <div class="invalid-feedback">
@@ -866,7 +953,7 @@
                                 @foreach ($ocupaciones as $ocupacion)
                                     <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
                                 @endforeach
-                                <option value="otro">Otra ocupación</option>
+                               
                             </select>
                             <div class="invalid-feedback">
                                 Por favor seleccione una ocupación.
@@ -922,559 +1009,560 @@
         </div>
     </div>
 
-{{-- Sección del Representante Legal --}}
-<div class="card card-modern mb-4">
-    <div class="card-header-modern d-flex align-items-center">
-        <div class="icon-box bg-purple-100 text-purple-600 me-3">
-            <i class="fas fa-user-tie"></i>
+    {{-- Sección del Representante Legal --}}
+    <div class="card card-modern mb-4">
+        <div class="card-header-modern d-flex align-items-center">
+            <div class="icon-box bg-purple-100 text-purple-600 me-3">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h3 class="card-title-modern mb-0">
+                Datos del Representante Legal
+            </h3>
         </div>
-        <h3 class="card-title-modern mb-0">
-            Datos del Representante Legal
-        </h3>
-    </div>
-    <div class="card-body">
-        <div class="form-group mb-4">
-            <label class="form-label fw-bold d-block mb-3">
-                <span class="text-danger">(*)</span> Tipo de Representante:
-            </label>
-            <div class="d-flex flex-wrap gap-4">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="tipo_representante" id="solo_representante" value="solo_representante" required>
-                    <label class="form-check-label d-flex align-items-center" for="solo_representante">
-                        <i class="fas fa-user-tag me-2"></i>
-                        <span>Solo Representante Legal</span>
-                    </label>
+        <div class="card-body">
+            <div class="form-group mb-4">
+                <label class="form-label fw-bold d-block mb-3">
+                    <span class="text-danger">(*)</span> Tipo de Representante:
+                </label>
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipo_representante" id="solo_representante"
+                            value="solo_representante" required>
+                        <label class="form-check-label d-flex align-items-center" for="solo_representante">
+                            <i class="fas fa-user-tag me-2"></i>
+                            <span>Solo Representante Legal</span>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipo_representante"
+                            id="progenitor_padre_representante" value="progenitor_padre_representante">
+                        <label class="form-check-label d-flex align-items-center" for="progenitor_padre_representante">
+                            <i class="fas fa-male me-2"></i>
+                            <span>Padre como Representante legal</span>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipo_representante"
+                            id="progenitor_madre_representante" value="progenitor_madre_representante">
+                        <label class="form-check-label d-flex align-items-center" for="progenitor_madre_representante">
+                            <i class="fas fa-female me-2"></i>
+                            <span>Madre como Representante legal</span>
+                        </label>
+                    </div>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="tipo_representante" id="progenitor_padre_representante" value="progenitor_padre_representante">
-                    <label class="form-check-label d-flex align-items-center" for="progenitor_padre_representante">
-                        <i class="fas fa-users me-2"></i>
-                        <span>Padre como Representante legal</span>
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="tipo_representante" id="progenitor_madre_representante" value="progenitor_madre_representante">
-                    <label class="form-check-label d-flex align-items-center" for="progenitor_madre_representante">
-                        <i class="fas fa-users me-2"></i>
-                        <span>Madre como Representante legal</span>
-                    </label>
+                <div class="invalid-feedback">
+                    Por favor seleccione el tipo de representante.
                 </div>
             </div>
-            <div class="invalid-feedback">
-                Por favor seleccione el tipo de representante.
-            </div>
-        </div>
 
             {{-- Datos personales --}}
-            <!-- Sección de Datos Personales -->
             <div class="border rounded p-4 mb-4 bg-light">
-                <h5 class="mb-4 pb-2 border-bottom">
-                    <i class="fas fa-id-card me-2"></i>Datos Personales
-                </h5>
-
-                <div class="col-md-4 mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text" id="inputGroup-sizing-default"><span class="text-danger">(*)</span>Cédula</span>
-                        <input type="text" class="form-control" id="numero_documento-representante" name="numero_documento-representante" 
-                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" 
-                            maxlength="8" required>
-                    </div>
-                    <input type="hidden" id="persona-id-representante" name="persona-id-representante">
-                    <input type="hidden" id="representante-id" name="representante-id">
-                    <small id="numero_documento-representante-error" class="text-danger"></small>
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-id-card me-2 text-purple-600"></i>Datos Personales
+                    </h5>
+                    <small class="text-muted">Todos los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
                 </div>
-
-                <div class="row">
-                    <div class="col-12 mb-3">
-                        <label class="form-label">Nombre Completo</label>
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="primer-nombre-representante" name="primer-nombre-representante" placeholder="Primer nombre *"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios,no se aceptan números" required>
-                                <small class="text-danger" id="primer-nombre-representante-error"></small>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="segundo-nombre-representante" name="segundo-nombre-representante" placeholder="Segundo nombre"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios,no se aceptan números">
-                                <small class="text-danger" id="segundo-nombre-representante-error"></small>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="primer-apellido-representante" name="primer-apellido-representante" placeholder="Primer apellido *"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios,no se aceptan números" required>
-                                <small class="text-danger" id="primer-apellido-representante-error"></small>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="segundo-apellido-representante" name="segundo-apellido-representante" placeholder="Segundo apellido"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios,no se aceptan números">
-                                <small class="text-danger" id="segundo-apellido-representante-error"></small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                <div class="row identification-row">
-                    {{-- DATOS DE IDENTIFICACIÓN --}}
-                    <div class="col-md-2 mb-3">
-                        <div class="input-group">
-                            <label class="input-group-text" for="tipo-ci-representante"><span
-                                    class="text-danger">(*)</span>Doc.</label>
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="tipo-ci-representante" class="form-label required">Tipo Doc.</label>
                             <select class="form-select" id="tipo-ci-representante" name="tipo-ci-representante" required>
                                 <option value="">Seleccione</option>
                                 @foreach ($tipoDocumentos as $tipoDoc)
                                     <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
                                 @endforeach
                             </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione el tipo de documento.
+                            </div>
+                            <small id="tipo-ci-representante-error" class="text-danger"></small>
                         </div>
-                        <small id="tipo-ci-representante-error" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="numero_documento-representante" class="form-label required">Número de Cédula</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="numero_documento-representante"
+                                    name="numero_documento-representante" maxlength="8" required
+                                    placeholder="Ej: 12345678"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                            <input type="hidden" id="persona-id-representante" name="persona-id-representante">
+                            <input type="hidden" id="representante-id" name="representante-id">
+                            <div class="invalid-feedback">
+                                Por favor ingrese un número de cédula válido.
+                            </div>
+                            <small id="numero_documento-representante-error" class="text-danger"></small>
+                        </div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                    class="text-danger">(*)</span>Cédula</span>
-                            <input type="text" class="form-control" id="numero_documento-representante"
-                                name="numero_documento-representante" aria-label="Sizing example input"
-                                aria-describedby="inputGroup-sizing-default" maxlength="8" required>
-                        </div>
-                        <input type="hidden" id="persona-id-representante" name="persona-id-representante">
-                        <input type="hidden" id="representante-id" name="representante-id">
-                        <small id="numero_documento-representante-error" class="text-danger"></small>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label class="form-label">Nombre Completo</label>
-                            <div class="row g-2">
-                                <div class="col-md-3">
+                    <div class="col-12">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="primer-nombre-representante" class="form-label required">Primer Nombre</label>
                                     <input type="text" class="form-control" id="primer-nombre-representante"
-                                        name="primer-nombre-representante" placeholder="Primer nombre *"
+                                        name="primer-nombre-representante" placeholder="Ej: María"
                                         pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                        title="Solo se permiten letras y espacios,no se aceptan números" required>
+                                        title="Solo se permiten letras y espacios, no se aceptan números" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese el primer nombre.
+                                    </div>
                                     <small class="text-danger" id="primer-nombre-representante-error"></small>
                                 </div>
-                                <div class="col-md-3">
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="segundo-nombre-representante" class="form-label">Segundo Nombre</label>
                                     <input type="text" class="form-control" id="segundo-nombre-representante"
-                                        name="segundo-nombre-representante" placeholder="Segundo nombre"
+                                        name="segundo-nombre-representante" placeholder="Opcional"
                                         pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                        title="Solo se permiten letras y espacios,no se aceptan números">
+                                        title="Solo se permiten letras y espacios, no se aceptan números">
                                     <small class="text-danger" id="segundo-nombre-representante-error"></small>
                                 </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" id="primer-apellido-representante"
-                                        name="primer-apellido-representante" placeholder="Primer apellido *"
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="tercer-nombre-representante" class="form-label">Tercer Nombre</label>
+                                    <input type="text" class="form-control" id="tercer-nombre-representante"
+                                        name="tercer-nombre-representante" placeholder="Opcional"
                                         pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                        title="Solo se permiten letras y espacios,no se aceptan números" required>
+                                        title="Solo se permiten letras y espacios, no se aceptan números">
+                                    <small class="text-danger" id="tercer-nombre-representante-error"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="primer-apellido-representante" class="form-label required">Primer Apellido</label>
+                                    <input type="text" class="form-control" id="primer-apellido-representante"
+                                        name="primer-apellido-representante" placeholder="Ej: González"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese el primer apellido.
+                                    </div>
                                     <small class="text-danger" id="primer-apellido-representante-error"></small>
                                 </div>
-                                <div class="col-md-3">
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="segundo-apellido-representante" class="form-label">Segundo Apellido</label>
                                     <input type="text" class="form-control" id="segundo-apellido-representante"
-                                        name="segundo-apellido-representante" placeholder="Segundo apellido"
-                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                        title="Solo se permiten letras y espacios,no se aceptan números" required>
+                                        name="segundo-apellido-representante" placeholder="Opcional"
+                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
                                     <small class="text-danger" id="segundo-apellido-representante-error"></small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text" id="inputGroup-sizing-default">Tercer Nombre</span>
-                                <input type="text" class="form-control" id="tercer-nombre-representante"
-                                    name="tercer-nombre-representante" aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-default" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                    title="Solo se permiten letras y espacios,no se aceptan números">
-                            </div>
-                            <small id="tercer-nombre-representante-error" class="text-danger"></small>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group">
-                                <label class="input-group-text" for="sexo-representante"><span
-                                        class="text-danger">(*)</span>Género</label>
-                                <select class="form-select" id="sexo-representante" name="sexo-representante" required>
-                                    <option value="">Seleccione</option>
-                                    @foreach ($generos as $genero)
-                                        <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
-                                    @endforeach
-                                </select>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="sexo-representante" class="form-label required">Género</label>
+                            <select class="form-select" id="sexo-representante" name="sexo-representante" required>
+                                <option value="">Seleccione...</option>
+                                @foreach ($generos as $genero)
+                                    <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione el género.
                             </div>
                             <small id="sexo-representante-error" class="text-danger"></small>
                         </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text"><span class="text-danger">(*)</span>Fecha Nac.</span>
-                                <input type="date" class="form-control" id="fecha-nacimiento-representante"
-                                    name="fecha-nacimiento-representante" aria-label="Fecha de Nacimiento" required>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="fecha-nacimiento-representante" class="form-label required">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fecha-nacimiento-representante"
+                                name="fecha-nacimiento-representante" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese la fecha de nacimiento.
                             </div>
                             <small id="fecha-nacimiento-representante-error" class="text-danger"></small>
                         </div>
                     </div>
                 </div>
-            </div>
+                </div> <!-- Cierre del row de datos personales -->
+            </div> <!-- Cierre de la sección de datos personales -->
+
             <!-- Sección de Dirección y Contactos -->
             <div class="border rounded p-4 mb-4 bg-light">
-                <h5 class="mb-4 pb-2 border-bottom">
-                    <i class="fas fa-address-book me-2"></i>Dirección y Contactos
-                </h5>
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-address-book me-2 text-purple-600"></i>Dirección y Contactos
+                    </h5>
+                    <small class="text-muted">Información de contacto del representante</small>
+                </div>
+                <div class="row g-3">
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                    class="text-danger">(*)</span>Lugar de Nacimiento</span>
-                            <input type="textarea" class="form-control" aria-label="Sizing example input"
-                                id="lugar-nacimiento-representante" name="lugar-nacimiento-representante"
-                                title="Solo se permiten letras y espacios,no se aceptan números" required
-                                aria-describedby="inputGroup-sizing-default" maxlength="30">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lugar-nacimiento-representante" class="form-label required">Lugar de Nacimiento</label>
+                            <input type="text" class="form-control" id="lugar-nacimiento-representante" 
+                                name="lugar-nacimiento-representante" placeholder="Ej: Caracas, Venezuela"
+                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s,]+" maxlength="100" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese el lugar de nacimiento.
+                            </div>
+                            <small id="lugar-nacimiento-representante-error" class="text-danger"></small>
                         </div>
-                        <small id="lugar-nacimiento-representante-error" class="text-danger"></small>
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                    class="text-danger">(*)</span>Estado</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="idEstado-representante" class="form-label required">Estado</label>
                             <select class="form-select" id="idEstado-representante" name="idEstado-representante"
-                                aria-label="Default select example"
-                                onchange="window.cargarMunicipiosRepresentante(this.value)">
-                                <option value="">Seleccione</option>
+                                onchange="window.cargarMunicipiosRepresentante(this.value)" required>
+                                <option value="">Seleccione un estado...</option>
                                 @foreach ($estados as $estado)
                                     <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <small id="idEstado-representante-error" class="text-danger"></small>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                    class="text-danger">(*)</span>Municipio</span>
-                            <select class="form-select" id="idMunicipio-representante" name="idMunicipio-representante"
-                                aria-label="Default select example"
-                                onchange="window.cargarParroquiasRepresentante(this.value)">
-                                <option value="">Seleccione</option>
-                            </select>
-                        </div>
-                        <small id="idMunicipio-representante-error" class="text-danger"></small>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                    class="text-danger">(*)</span>Localidad</span>
-                            <select class="form-select" id="idparroquia-representante" name="idparroquia-representante"
-                                aria-label="Default select example">
-                                <option value="">Seleccione</option>
-                            </select>
-                        </div>
-                        <small id="idparroquia-representante-error" class="text-danger"></small>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <div class="input-group">
-                            <label class="input-group-text" for="prefijo-representante"><span
-                                    class="text-danger">(*)</span>Prefijo</label>
-                            <select class="form-select" id="prefijo-representante" name="prefijo-representante"
-                                title="Seleccione el tipo de linea Teléfonica" required>
-                                <option value="">Seleccione</option>
-                                @foreach ($prefijos_telefono as $prefijo)
-                                    <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <small id="prefijo-representante-error" class="text-danger"></small>
-                    </div>
-
-                    <div class="col-md-5 mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                    class="text-danger">(*)</span>Número de Teléfono:</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input"
-                                id="telefono-representante" name="telefono-representante"
-                                aria-describedby="inputGroup-sizing-default" pattern="[0-9]+" maxlength="11"
-                                title="Ingresa solamente numeros,no se permiten letras" required>
-                        </div>
-                        <small id="telefono-representante-error" class="text-danger"></small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sección de Relación Familiar con el Estudiante -->
-            <div class="card-section">
-                <h5 class="section-title">
-                    <i class="fas fa-users me-2"></i>Relación Familiar con el Estudiante
-                </h5>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label for="ocupacion-representante" class="form-label required">Ocupación</label>
-                            <select name="ocupacion-representante" id="ocupacion-representante" class="form-select"
-                                required>
-                                <option value="" disabled selected>Seleccione una opción</option>
-                                @foreach ($ocupaciones as $ocupacion)
-                                    <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
-                                @endforeach
-                            </select>
                             <div class="invalid-feedback">
-                                Por favor seleccione una ocupación.
+                                Por favor seleccione un estado.
                             </div>
-                            <small id="ocupacion-representante-error" class="text-danger"></small>
+                            <small id="idEstado-representante-error" class="text-danger"></small>
                         </div>
                     </div>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group" id="otra-ocupacion-container" style="display:none">
-                            <label for="otra-ocupacion-representante" class="form-label required">Especifique la
-                                ocupación</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
-                                <input type="text" class="form-control" id="otra-ocupacion-representante"
-                                    name="otra-ocupacion-representante" maxlength="50"
-                                    title="Solo se permiten letras y espacios, no se aceptan números"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
-                            </div>
-                            <div class="invalid-feedback">
-                                Por favor ingrese una ocupación válida (solo letras y espacios).
-                            </div>
-                            <small id="otra-ocupacion-error-representante" class="text-danger"></small>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label class="form-label d-block required">¿Convive con el Estudiante?</label>
-                            <div class="d-flex mt-1">
-                                <div class="form-check me-3">
-                                    <input class="form-check-input" type="radio" id="convive-si-representante"
-                                        name="convive-representante" value="si" required>
-                                    <label class="form-check-label" for="convive-si-representante">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="convive-no-representante"
-                                        name="convive-representante" value="no" required>
-                                    <label class="form-check-label" for="convive-no-representante">No</label>
-                                </div>
-                            </div>
-                            <div class="invalid-feedback">
-                                Por favor indique si convive con el estudiante.
-                            </div>
-                            <small id="convive-representante-error" class="text-danger"></small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sección de Conectividad y Participación Ciudadana -->
-                <div class="border rounded p-4 mb-4 bg-light">
-                    <h5 class="mb-4 pb-2 border-bottom">
-                        <i class="fas fa-wifi me-2"></i>Conectividad y Participación Ciudadana
-                    </h5>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label for="correo-representante" class="form-label">Correo Electrónico</label>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="correo-representante"
-                                        name="correo-representante" maxlength="254"
-                                        title="No olvide incluir el símbolo @ en la dirección de correo"
-                                        placeholder="ejemplo@correo.com">
+                                    <span class="input-group-text" id="inputGroup-sizing-default"><span
+                                            class="text-danger">(*)</span>Municipio</span>
+                                    <select class="form-select" id="idMunicipio-representante"
+                                        name="idMunicipio-representante" aria-label="Default select example"
+                                        onchange="window.cargarParroquiasRepresentante(this.value)">
+                                        <option value="">Seleccione</option>
+                                    </select>
                                 </div>
-                                <small id="correo-representante-error" class="text-danger"></small>
+                                <small id="idMunicipio-representante-error" class="text-danger"></small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="inputGroup-sizing-default"><span
+                                            class="text-danger">(*)</span>Localidad</span>
+                                    <select class="form-select" id="idparroquia-representante"
+                                        name="idparroquia-representante" aria-label="Default select example">
+                                        <option value="">Seleccione</option>
+                                    </select>
+                                </div>
+                                <small id="idparroquia-representante-error" class="text-danger"></small>
                             </div>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label class="form-label d-block">
-                                    <span class="text-danger">(*)</span> ¿Pertenece a alguna Organización Política o
-                                    Comunitaria?
-                                </label>
-                                <div class="d-flex mt-1">
-                                    <div class="form-check me-3">
-                                        <input class="form-check-input" type="radio" id="opcion_si"
-                                            name="pertenece-organizacion" value="si">
-                                        <label class="form-check-label" for="opcion_si">
-                                            Sí
-                                        </label>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div class="input-group">
+                                    <label class="input-group-text" for="prefijo-representante"><span
+                                            class="text-danger">(*)</span>Prefijo</label>
+                                    <select class="form-select" id="prefijo-representante" name="prefijo-representante"
+                                        title="Seleccione el tipo de linea Teléfonica" required>
+                                        <option value="">Seleccione</option>
+                                        @foreach ($prefijos_telefono as $prefijo)
+                                            <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <small id="prefijo-representante-error" class="text-danger"></small>
+                            </div>
+
+                            <div class="col-md-5 mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="inputGroup-sizing-default"><span
+                                            class="text-danger">(*)</span>Número de Teléfono:</span>
+                                    <input type="text" class="form-control" aria-label="Sizing example input"
+                                        id="telefono-representante" name="telefono-representante"
+                                        aria-describedby="inputGroup-sizing-default" pattern="[0-9]+" maxlength="11"
+                                        title="Ingresa solamente numeros,no se permiten letras" required>
+                                </div>
+                                <small id="telefono-representante-error" class="text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Relación Familiar con el Estudiante -->
+                    <div class="card-section">
+                        <h5 class="section-title">
+                            <i class="fas fa-users me-2"></i>Relación Familiar con el Estudiante
+                        </h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="ocupacion-representante" class="form-label required">Ocupación</label>
+                                    <select name="ocupacion-representante" id="ocupacion-representante"
+                                        class="form-select" required>
+                                        <option value="" disabled selected>Seleccione una opción</option>
+                                        @foreach ($ocupaciones as $ocupacion)
+                                            <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor seleccione una ocupación.
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="opcion_no"
-                                            name="pertenece-organizacion" value="no" checked>
-                                        <label class="form-check-label" for="opcion_no">
-                                            No
-                                        </label>
+                                    <small id="ocupacion-representante-error" class="text-danger"></small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group" id="otra-ocupacion-container" style="display:none">
+                                    <label for="otra-ocupacion-representante" class="form-label required">Especifique la
+                                        ocupación</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                                        <input type="text" class="form-control" id="otra-ocupacion-representante"
+                                            name="otra-ocupacion-representante" maxlength="50"
+                                            title="Solo se permiten letras y espacios, no se aceptan números"
+                                            pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese una ocupación válida (solo letras y espacios).
+                                    </div>
+                                    <small id="otra-ocupacion-error-representante" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label d-block required">¿Convive con el Estudiante?</label>
+                                    <div class="d-flex mt-1">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="radio" id="convive-si-representante"
+                                                name="convive-representante" value="si" required>
+                                            <label class="form-check-label" for="convive-si-representante">Sí</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="convive-no-representante"
+                                                name="convive-representante" value="no" required>
+                                            <label class="form-check-label" for="convive-no-representante">No</label>
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Por favor indique si convive con el estudiante.
+                                    </div>
+                                    <small id="convive-representante-error" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Conectividad y Participación Ciudadana -->
+                        <div class="border rounded p-4 mb-4 bg-light">
+                            <h5 class="mb-4 pb-2 border-bottom">
+                                <i class="fas fa-wifi me-2"></i>Conectividad y Participación Ciudadana
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <label for="correo-representante" class="form-label">Correo Electrónico</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                            <input type="email" class="form-control" id="correo-representante"
+                                                name="correo-representante" maxlength="254"
+                                                title="No olvide incluir el símbolo @ en la dirección de correo"
+                                                placeholder="ejemplo@correo.com">
+                                        </div>
+                                        <small id="correo-representante-error" class="text-danger"></small>
                                     </div>
                                 </div>
-                                <small id="pertenece-organizacion-error" class="text-danger"></small>
-                            </div>
-                        </div>
 
-                        <div class="col-md-12 mb-3">
-                            <div id="campo_organizacion" class="form-group" style="display: none">
-                                <label for="cual-organizacion" class="form-label">
-                                    <span class="text-danger">(*)</span> Especifique la organización
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-sitemap"></i></span>
-                                    <input type="text" class="form-control" id="cual-organizacion"
-                                        name="cual-organizacion" maxlength="50"
-                                        title="Ingrese el nombre de la organización (solo letras y espacios)"
-                                        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <label class="form-label d-block">
+                                            <span class="text-danger">(*)</span> ¿Pertenece a alguna Organización Política
+                                            o
+                                            Comunitaria?
+                                        </label>
+                                        <div class="d-flex mt-1">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" id="opcion_si"
+                                                    name="pertenece-organizacion" value="si">
+                                                <label class="form-check-label" for="opcion_si">
+                                                    Sí
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="opcion_no"
+                                                    name="pertenece-organizacion" value="no" checked>
+                                                <label class="form-check-label" for="opcion_no">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small id="pertenece-organizacion-error" class="text-danger"></small>
+                                    </div>
                                 </div>
-                                <small id="cual-organizacion-error" class="text-danger"></small>
+
+                                <div class="col-md-12 mb-3">
+                                    <div id="campo_organizacion" class="form-group" style="display: none">
+                                        <label for="cual-organizacion" class="form-label">
+                                            <span class="text-danger">(*)</span> Especifique la organización
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-sitemap"></i></span>
+                                            <input type="text" class="form-control" id="cual-organizacion"
+                                                name="cual-organizacion" maxlength="50"
+                                                title="Ingrese el nombre de la organización (solo letras y espacios)"
+                                                pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+">
+                                        </div>
+                                        <small id="cual-organizacion-error" class="text-danger"></small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Sección de Identificación Familiar y Datos de Cuenta -->
-                <div class="border rounded p-4 mb-4 bg-light">
-                    <h5 class="mb-4 pb-2 border-bottom">
-                        <i class="fas fa-id-card me-2"></i>Identificación Familiar y Datos de Cuenta
-                    </h5>
+                        <!-- Sección de Identificación Familiar y Datos de Cuenta -->
+                        <div class="border rounded p-4 mb-4 bg-light">
+                            <h5 class="mb-4 pb-2 border-bottom">
+                                <i class="fas fa-id-card me-2"></i>Identificación Familiar y Datos de Cuenta
+                            </h5>
 
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="parentesco" class="form-label required">Parentesco</label>
+                                        <select class="form-select" id="parentesco" name="parentesco" required>
+                                            <option value="" disabled selected>Seleccione</option>
+                                            <option value="Papá">Papá</option>
+                                            <option value="Mamá">Mamá</option>
+                                            <option value="Hermano">Hermano</option>
+                                            <option value="Hermana">Hermana</option>
+                                            <option value="Abuelo">Abuelo</option>
+                                            <option value="Abuela">Abuela</option>
+                                            <option value="Tío">Tío</option>
+                                            <option value="Tía">Tía</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Por favor seleccione un parentesco.
+                                        </div>
+                                        <small id="parentesco-error" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="carnet-patria" class="form-label">Carnet de la Patria Afiliado
+                                            a</label>
+                                        <select class="form-select" id="carnet-patria" name="carnet-patria">
+                                            <option value="" selected>Seleccione</option>
+                                            <option value="1">Padre</option>
+                                            <option value="2">Madre</option>
+                                            <option value="3">Otro familiar</option>
+                                        </select>
+                                        <small id="carnet-patria-error" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="codigo" class="form-label required">Código</label>
+                                        <input type="text" class="form-control" id="codigo" name="codigo"
+                                            maxlength="10" pattern="[0-9]+"
+                                            title="Ingrese solo números (máximo 10 dígitos)" required
+                                            inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                                            data-validate="codigoCarnet">
+                                        <div class="invalid-feedback">
+                                            Por favor ingrese un código válido (solo números).
+                                        </div>
+                                        <small id="codigo-error" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="serial" class="form-label required">Serial</label>
+                                        <input type="text" class="form-control" id="serial" name="serial"
+                                            maxlength="9" pattern="[0-9]+"
+                                            title="Ingrese solo números (máximo 9 dígitos)" required inputmode="numeric"
+                                            oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                        <div class="invalid-feedback">
+                                            Por favor ingrese un serial válido (solo números).
+                                        </div>
+                                        <small id="serial-error" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="tipo-cuenta" class="form-label required">Tipo de Cuenta</label>
+                                        <select class="form-select" id="tipo-cuenta" name="tipo-cuenta" required>
+                                            <option value="" disabled selected>Seleccione</option>
+                                            <option value="1">Corriente</option>
+                                            <option value="2">Ahorro</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Por favor seleccione un tipo de cuenta.
+                                        </div>
+                                        <small id="tipo-cuenta-error" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="banco-representante" class="form-label required">Banco</label>
+                                        <select class="form-select" id="banco-representante"
+                                            name="banco-representante" required>
+                                            <option value="" disabled selected>Seleccione</option>
+                                            @foreach ($bancos as $banco)
+                                                <option value="{{ $banco->id }}">{{ $banco->nombre_banco }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Por favor seleccione un banco.
+                                        </div>
+                                        <small id="banco-representante-error" class="text-danger"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Dirección de Habitación -->
+                        <div class="border rounded p-4 mb-4 bg-light">
+                            <h5 class="mb-4 pb-2 border-bottom">
+                                <i class="fas fa-home me-2"></i>Dirección de Habitación
+                            </h5>
                             <div class="form-group">
-                                <label for="parentesco" class="form-label required">Parentesco</label>
-                                <select class="form-select" id="parentesco" name="parentesco" required>
-                                    <option value="" disabled selected>Seleccione</option>
-                                    <option value="Papá">Papá</option>
-                                    <option value="Mamá">Mamá</option>
-                                    <option value="Hermano">Hermano</option>
-                                    <option value="Hermana">Hermana</option>
-                                    <option value="Abuelo">Abuelo</option>
-                                    <option value="Abuela">Abuela</option>
-                                    <option value="Tío">Tío</option>
-                                    <option value="Tía">Tía</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
+                                <label for="direccion-habitacion" class="form-label required">Dirección Completa</label>
+                                <textarea class="form-control" id="direccion-habitacion" name="direccion-habitacion" rows="3"
+                                    maxlength="200" placeholder="Ej: Barrio Araguaney, Avenida 5 entre calles 8 y 9, Casa #12-34"
+                                    title="Ingrese su dirección completa incluyendo puntos de referencia" required></textarea>
                                 <div class="invalid-feedback">
-                                    Por favor seleccione un parentesco.
+                                    Por favor ingrese una dirección válida.
                                 </div>
-                                <small id="parentesco-error" class="text-danger"></small>
+                                <small id="direccion-habitacion-error" class="text-danger"></small>
                             </div>
                         </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="carnet-patria" class="form-label">Carnet de la Patria Afiliado a</label>
-                                <select class="form-select" id="carnet-patria" name="carnet-patria">
-                                    <option value="" selected>Seleccione</option>
-                                    <option value="1">Padre</option>
-                                    <option value="2">Madre</option>
-                                    <option value="3">Otro familiar</option>
-                                </select>
-                                <small id="carnet-patria-error" class="text-danger"></small>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="codigo" class="form-label required">Código</label>
-                                <input type="text" class="form-control" id="codigo" name="codigo" maxlength="10"
-                                    pattern="[0-9]+" title="Ingrese solo números (máximo 10 dígitos)" required
-                                    inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                <div class="invalid-feedback">
-                                    Por favor ingrese un código válido (solo números).
-                                </div>
-                                <small id="codigo-error" class="text-danger"></small>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="serial" class="form-label required">Serial</label>
-                                <input type="text" class="form-control" id="serial" name="serial" maxlength="9"
-                                    pattern="[0-9]+" title="Ingrese solo números (máximo 9 dígitos)" required
-                                    inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                <div class="invalid-feedback">
-                                    Por favor ingrese un serial válido (solo números).
-                                </div>
-                                <small id="serial-error" class="text-danger"></small>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="tipo-cuenta" class="form-label required">Tipo de Cuenta</label>
-                                <select class="form-select" id="tipo-cuenta" name="tipo-cuenta" required>
-                                    <option value="" disabled selected>Seleccione</option>
-                                    <option value="1">Corriente</option>
-                                    <option value="2">Ahorro</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Por favor seleccione un tipo de cuenta.
-                                </div>
-                                <small id="tipo-cuenta-error" class="text-danger"></small>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="banco-representante" class="form-label required">Banco</label>
-                                <select class="form-select" id="banco-representante" name="banco-representante"
-                                    required>
-                                    <option value="" disabled selected>Seleccione</option>
-                                    @foreach ($bancos as $banco)
-                                        <option value="{{ $banco->id }}">{{ $banco->nombre_banco }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="invalid-feedback">
-                                    Por favor seleccione un banco.
-                                </div>
-                                <small id="banco-representante-error" class="text-danger"></small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sección de Dirección de Habitación -->
-                <div class="border rounded p-4 mb-4 bg-light">
-                    <h5 class="mb-4 pb-2 border-bottom">
-                        <i class="fas fa-home me-2"></i>Dirección de Habitación
-                    </h5>
-                    <div class="form-group">
-                        <label for="direccion-habitacion" class="form-label required">Dirección Completa</label>
-                        <textarea class="form-control" id="direccion-habitacion" name="direccion-habitacion" rows="3"
-                            maxlength="200" placeholder="Ej: Barrio Araguaney, Avenida 5 entre calles 8 y 9, Casa #12-34"
-                            title="Ingrese su dirección completa incluyendo puntos de referencia" required></textarea>
-                        <div class="invalid-feedback">
-                            Por favor ingrese una dirección válida.
-                        </div>
-                        <small id="direccion-habitacion-error" class="text-danger"></small>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    </div>
 
-                        </div><!-- Fin Sección Relación Familiar -->
-                    </div><!-- Fin card-body -->
-                    <div class="d-flex justify-content-between pt-4 border-top mt-4">
-                        <a href="{{ route('representante.index', ['from' => 'inscripcion']) }}" class="btn btn-outline-secondary btn-modern">
-                            <i class="fas fa-times me-1"></i> Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-primary btn-modern">
-                            <i class="fas fa-save me-1"></i> {{ isset($representante) ? 'Actualizar' : 'Guardar' }} Representante
-                        </button>
-                    </div>  
-                </div>
-            </form>
+    </div><!-- Fin Sección Relación Familiar -->
+    </div><!-- Fin card-body -->
+    <div class="d-flex justify-content-between pt-4 border-top mt-4">
+        @if ($from === 'inscripcion')
+            <a href="{{ route('admin.transacciones.inscripcion.create') }}"
+                class="btn btn-outline-secondary btn-modern">
+                <i class="fas fa-times me-1"></i> Cancelar
+            </a>
+        @else
+            <a href="{{ route('representante.index') }}" class="btn btn-outline-secondary btn-modern">
+                <i class="fas fa-times me-1"></i> Cancelar
+            </a>
+        @endif
+        <button type="submit" class="btn btn-primary btn-modern">
+            <i class="fas fa-save me-1"></i> {{ isset($representante) ? 'Actualizar' : 'Guardar' }} Representante
+        </button>
+    </div>
+    </div>
+    </form>
     </div>
     </div>
 @stop
@@ -1593,41 +1681,56 @@
 @stop
 
 @section('js')
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    
     <script>
-        // Inicializar Select2
-        $(document).ready(function() {
-            $('.select2').select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                placeholder: 'Seleccione una opción',
-                allowClear: true
-            });
-            
-            // Inicializar tooltips
+        // Inicialización de tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar tooltips de Bootstrap
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-        });
-        
-        // Validación del formulario
-        (function () {
-            'use strict'
+
+            // Asegurar que todos los selects tengan la clase form-select y estén limpios
+            const selectElements = document.querySelectorAll('select');
+            selectElements.forEach(select => {
+                // Limpiar cualquier rastro de Select2
+                select.classList.add('form-select');
+                select.style.width = '100%';
+                
+                // Eliminar atributos de Select2 si existen
+                select.removeAttribute('data-select2-id');
+                select.removeAttribute('data-toggle');
+                select.removeAttribute('data-allow-clear');
+                select.removeAttribute('data-placeholder');
+                
+                // Eliminar cualquier elemento creado por Select2
+                const select2Container = select.nextElementSibling;
+                if (select2Container && select2Container.classList.contains('select2-container')) {
+                    select2Container.remove();
+                }
+            });
             
+            // Prevenir la inicialización de Select2 en caso de que esté presente
+            if (typeof $.fn.select2 !== 'undefined') {
+                $.fn.select2 = undefined;
+            }
+        });
+
+        // Validación del formulario
+        (function() {
+            'use strict'
+
             // Obtener todos los formularios que necesitan validación
             var forms = document.querySelectorAll('.needs-validation')
-            
+
             // Bucle sobre los formularios y evitar el envío
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
                     if (!form.checkValidity()) {
                         event.preventDefault()
                         event.stopPropagation()
                     }
-                    
+
                     form.classList.add('was-validated')
                 }, false)
             })
@@ -1747,7 +1850,7 @@
             if (municipioEncontrado && municipioEncontrado.localidades) {
                 console.log(
                     `Encontradas ${municipioEncontrado.localidades.length} parroquias para el municipio ${municipioId}`
-                    );
+                );
 
                 // Agregar opciones de parroquias
                 municipioEncontrado.localidades.forEach(parroquia => {
@@ -2016,7 +2119,7 @@
                     if (opcion.value === 'Mamá') {
                         // Deshabilitar opción "Mamá" si la madre está ausente o si se seleccionó "Solo Representante Legal"
                         opcion.disabled = (estadoMadre !== 'Presente' || tipoRepresentante ===
-                        'solo_representante');
+                            'solo_representante');
 
                         // Si la opción está seleccionada y se deshabilita, limpiar la selección
                         if (opcion.selected && opcion.disabled) {
@@ -2028,7 +2131,7 @@
                     } else if (opcion.value === 'Papá') {
                         // Deshabilitar opción "Papá" si el padre está ausente o si se seleccionó "Solo Representante Legal"
                         opcion.disabled = (estadoPadre !== 'Presente' || tipoRepresentante ===
-                        'solo_representante');
+                            'solo_representante');
 
                         // Si la opción está seleccionada y se deshabilita, limpiar la selección
                         if (opcion.selected && opcion.disabled) {
@@ -2042,14 +2145,54 @@
 
                 // Actualizar Select2 si está en uso
                 if (typeof $.fn.select2 === 'function' && $(parentescoSelect).hasClass(
-                    'select2-hidden-accessible')) {
+                        'select2-hidden-accessible')) {
                     $(parentescoSelect).trigger('change.select2');
                 }
+            }
+
+            // Función para validar el código del carnet de la patria
+            function validarCodigoCarnet(input) {
+                const value = input.value.trim();
+                const errorElement = document.getElementById('codigo-error') || 
+                                   document.createElement('div');
+                
+                // Si no existe el elemento de error, lo creamos
+                if (!errorElement.id) {
+                    errorElement.id = 'codigo-error';
+                    errorElement.className = 'invalid-feedback';
+                    input.parentNode.appendChild(errorElement);
+                }
+                
+                // Validar que solo contenga números y tenga máximo 10 dígitos
+                if (value && !/^\d{1,10}$/.test(value)) {
+                    input.classList.add('is-invalid');
+                    errorElement.textContent = 'El código debe contener solo números (máx. 10 dígitos)';
+                    return false;
+                }
+                
+                // Si el campo está vacío, mostramos un mensaje de error si es requerido
+                const carnetAfiliado = document.getElementById('carnet-patria');
+                if (carnetAfiliado && carnetAfiliado.value && carnetAfiliado.value !== '0' && !value) {
+                    input.classList.add('is-invalid');
+                    errorElement.textContent = 'Este campo es obligatorio cuando el carnet está afiliado';
+                    return false;
+                }
+                
+                // Si pasa todas las validaciones
+                input.classList.remove('is-invalid');
+                errorElement.textContent = '';
+                return true;
             }
 
             // Función para actualizar las opciones del Carnet de la Patria según el estado de los padres
             function actualizarOpcionesCarnetPatria() {
                 const carnetPatriaSelect = document.getElementById('carnet-patria');
+                const codigoInput = document.getElementById('codigo');
+                
+                // Si se selecciona una opción distinta a vacío, validar el código
+                if (carnetPatriaSelect && carnetPatriaSelect.value && codigoInput) {
+                    validarCodigoCarnet(codigoInput);
+                }
                 if (!carnetPatriaSelect) return;
 
                 const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
@@ -2151,6 +2294,32 @@
                 });
             });
 
+            // Configurar validación en tiempo real para el código del carnet
+            document.addEventListener('DOMContentLoaded', function() {
+                const codigoInput = document.getElementById('codigo');
+                const carnetSelect = document.getElementById('carnet-patria');
+                
+                // Validar al cambiar el valor
+                if (codigoInput) {
+                    codigoInput.addEventListener('input', function() {
+                        validarCodigoCarnet(this);
+                    });
+                    
+                    codigoInput.addEventListener('blur', function() {
+                        validarCodigoCarnet(this);
+                    });
+                }
+                
+                // Validar cuando cambia la selección del carnet
+                if (carnetSelect) {
+                    carnetSelect.addEventListener('change', function() {
+                        if (codigoInput) {
+                            validarCodigoCarnet(codigoInput);
+                        }
+                    });
+                }
+            });
+
             // Actualizar cuando cambie el tipo de representante (solo actualizar parentesco, no carnet de la patria)
             document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
                 radio.addEventListener('change', function() {
@@ -2163,7 +2332,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 actualizarRadiosRepresentante();
                 actualizarOpcionesCarnetPatria
-            (); // Asegurarse de que las opciones del Carnet de la Patria estén actualizadas
+                    (); // Asegurarse de que las opciones del Carnet de la Patria estén actualizadas
             });
 
             // ================================
@@ -2220,7 +2389,7 @@
                         if (id === 'numero_documento-representante') {
                             const progenitorRep = document.querySelector(
                                 'input[name="tipo_representante"][value="progenitor_representante"]:checked'
-                                );
+                            );
                             if (progenitorRep) {
                                 return; // No contar este campo si es progenitor representante
                             }
@@ -2230,7 +2399,7 @@
                 });
 
                 return contador >
-                0; // Cambiado a > 0 para marcar como duplicado si se encuentra en cualquier otro campo
+                    0; // Cambiado a > 0 para marcar como duplicado si se encuentra en cualquier otro campo
             }
 
             function verificarnumero_documentoCampo(selector, personaIdSelector) {
@@ -2244,8 +2413,8 @@
 
                     // Verificar si es el campo de cédula del representante y está seleccionado "Progenitor como Representante"
                     const esProgenitorRepresentante = document.querySelector(
-                            'input[name="tipo_representante"][value="progenitor_representante"]:checked'
-                            ) !== null;
+                        'input[name="tipo_representante"][value="progenitor_representante"]:checked'
+                    ) !== null;
 
                     if (this.id === 'numero_documento-representante' && esProgenitorRepresentante) {
                         // No validar cédula duplicada si es progenitor representante
@@ -2265,7 +2434,8 @@
                         '';
 
                     fetch(
-                            `${verificarnumero_documentoUrl}?numero_documento=${valor}&persona_id=${personaId}`)
+                            `${verificarnumero_documentoUrl}?numero_documento=${valor}&persona_id=${personaId}`
+                            )
                         .then(response => {
                             if (!response.ok) {
                                 return response.json().then(err => {
@@ -2292,7 +2462,7 @@
             verificarnumero_documentoCampo('#numero_documento', null); // Madre
             verificarnumero_documentoCampo('#numero_documento-padre', null); // Padre
             verificarnumero_documentoCampo('#numero_documento-representante',
-            '#persona-id-representante'); // Representante legal
+                '#persona-id-representante'); // Representante legal
 
             // ================================
             // BLOQUEO / DESBLOQUEO DE SECCIONES
@@ -2357,7 +2527,7 @@
                         if (valorNuevo === 'Ausente') {
                             const confirmado = confirm(
                                 'Marcar como AUSENTE bloqueará permanentemente la edición de esta sección en este formulario. ¿Desea continuar?'
-                                );
+                            );
                             if (!confirmado) {
                                 // Volver al valor previo
                                 if (valorPrevio) {
@@ -2549,7 +2719,7 @@
                         const prefijoEl = getElement(`${prefijoOrigen}prefijo`);
 
                         if (telefonoEl && telefonoEl.value) setValue('telefono-representante', telefonoEl
-                        .value);
+                            .value);
                         if (prefijoEl && prefijoEl.value) setValue('prefijo-representante', prefijoEl.value);
                     } catch (error) {
                         console.error('Error al copiar teléfono y prefijo:', error);
@@ -2692,7 +2862,7 @@
                                                             setSelectValue(
                                                                 'idparroquia-representante',
                                                                 parroquia
-                                                                );
+                                                            );
                                                         }, 500);
                                                     }
                                                 });
@@ -2777,7 +2947,7 @@
                     // Limpiar campos de representante excepto la cédula
                     const campos = document.querySelectorAll(
                         '#datos-representante input[type="text"], #datos-representante input[type="email"], #datos-representante input[type="tel"], #datos-representante select'
-                        );
+                    );
                     campos.forEach(campo => {
                         if (campo.id !== 'numero_documento-representante') {
                             campo.value = '';
@@ -2875,7 +3045,7 @@
 
                 // Verificar si hay un radio button seleccionado por defecto
                 const radioSeleccionado = document.querySelector(
-                'input[name="tipo_representante"]:checked');
+                    'input[name="tipo_representante"]:checked');
                 if (radioSeleccionado) {
                     toggleSeccionRepresentante(true);
                 }
@@ -3101,7 +3271,7 @@
                             const ocupacionSelect = document.getElementById(origenOcupacionId);
                             const otraOcupacion = document.getElementById(origenOtraOcupacionId);
                             const otraOcupacionRep = document.getElementById(
-                            'otra-ocupacion-representante');
+                                'otra-ocupacion-representante');
                             const otraOcupacionContainer = document.getElementById(
                                 'otra-ocupacion-container');
 
@@ -3129,7 +3299,7 @@
                         callback: function() {
                             // Forzar la actualización del campo de texto
                             const otraOcupacionRep = document.getElementById(
-                            'otra-ocupacion-representante');
+                                'otra-ocupacion-representante');
                             if (otraOcupacionRep) {
                                 const event = new Event('input');
                                 otraOcupacionRep.dispatchEvent(event);
@@ -3318,7 +3488,8 @@
                             // Si el padre no está presente, seleccionar "Solo Representante Legal"
                             document.getElementById('solo_representante').checked = true;
                             alert(
-                                'No se puede seleccionar al padre como representante porque está marcado como ausente.');
+                                'No se puede seleccionar al padre como representante porque está marcado como ausente.'
+                                );
                             return;
                         }
                     }
@@ -3335,7 +3506,8 @@
                             // Si la madre no está presente, seleccionar "Solo Representante Legal"
                             document.getElementById('solo_representante').checked = true;
                             alert(
-                                'No se puede seleccionar a la madre como representante porque está marcada como ausente.');
+                                'No se puede seleccionar a la madre como representante porque está marcada como ausente.'
+                                );
                             return;
                         }
                     }
@@ -3977,17 +4149,16 @@
                         mensaje = 'Debe seleccionar una opción';
                     } else if (valor !== '0') { // Si no es 'No aplica'
                         // Validar campos de código y serial si está afiliado
-                        const codigoCarnet = document.getElementById('codigo-carnet');
-                        const serialCarnet = document.getElementById('serial-carnet');
+                        const codigoCarnet = document.getElementById('codigo');
+                        const serialCarnet = document.getElementById('serial');
 
                         if (codigoCarnet && codigoCarnet.value.trim() === '') {
+                            mostrarError(codigoCarnet, 'El código es obligatorio cuando el carnet está afiliado');
                             esValido = false;
-                            mostrarError(codigoCarnet, 'El código del carnet es obligatorio');
                         }
-
                         if (serialCarnet && serialCarnet.value.trim() === '') {
+                            mostrarError(serialCarnet, 'El serial es obligatorio cuando el carnet está afiliado');
                             esValido = false;
-                            mostrarError(serialCarnet, 'El serial del carnet es obligatorio');
                         }
                     }
                 }
@@ -4602,19 +4773,19 @@
             });
         }
 
-// Inicializar la validación cuando el DOM esté completamente cargado
-if (document.readyState === 'loading') {
-    // Si el DOM aún no está listo, esperar a que cargue
-    document.addEventListener('DOMContentLoaded', configurarValidacionFechas);
-} else {
-    // Si el DOM ya está listo, ejecutar directamente
-    configurarValidacionFechas();
-}
+        // Inicializar la validación cuando el DOM esté completamente cargado
+        if (document.readyState === 'loading') {
+            // Si el DOM aún no está listo, esperar a que cargue
+            document.addEventListener('DOMContentLoaded', configurarValidacionFechas);
+        } else {
+            // Si el DOM ya está listo, ejecutar directamente
+            configurarValidacionFechas();
+        }
         // Función para mostrar/ocultar campos según el estado
         function toggleCamposPorEstado(estado, prefijo) {
             const campos = document.querySelectorAll(`[data-depende="${prefijo}"]`);
             const esPresente = estado === 'Presente';
-            
+
             campos.forEach(campo => {
                 campo.disabled = !esPresente;
                 if (campo.required) {
@@ -4622,7 +4793,7 @@ if (document.readyState === 'loading') {
                 }
             });
         }
-        
+
         // Inicializar campos según el estado al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             // Para la madre
@@ -4630,34 +4801,34 @@ if (document.readyState === 'loading') {
             if (estadoMadre) {
                 toggleCamposPorEstado(estadoMadre.value, 'madre');
             }
-            
+
             // Para el padre
             const estadoPadre = document.querySelector('input[name="estado_padre"]:checked');
             if (estadoPadre) {
                 toggleCamposPorEstado(estadoPadre.value, 'padre');
             }
-            
+
             // Event listeners para los radios de estado
             document.querySelectorAll('input[name="estado_madre"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     toggleCamposPorEstado(this.value, 'madre');
                 });
             });
-            
+
             document.querySelectorAll('input[name="estado_padre"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     toggleCamposPorEstado(this.value, 'padre');
                 });
             });
-            
+
             // Inicializar tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
     </script>
-    
+
     @livewireScripts
     @stack('scripts')
 @stop

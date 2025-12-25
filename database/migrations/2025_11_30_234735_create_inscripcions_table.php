@@ -24,6 +24,10 @@ return new class extends Migration
                   ->constrained('grados')
                   ->onDelete('cascade');
 
+            $table->foreignId('seccion_id')->nullable()
+                  ->constrained('seccions')
+                  ->nullOnDelete();
+
             $table->foreignId('padre_id')
                   ->nullable()
                   ->constrained('representantes')
@@ -39,6 +43,8 @@ return new class extends Migration
                   ->references('id')
                   ->on('representante_legal')
                   ->nullOnDelete();
+                  
+            $table->enum('tipo_inscripcion', ['nuevo_ingreso', 'prosecucion']);
 
             // Campos de documentos
             $table->json('documentos')->nullable();
@@ -46,17 +52,8 @@ return new class extends Migration
 
             // Fecha de inscripción
             $table->string('observaciones')->nullable();
-
-            $table->integer('numero_zonificacion');
-            $table->date('anio_egreso');
-            $table->foreignId('institucion_procedencia_id')->constrained('institucion_procedencias')->cascadeOnDelete();
-            $table->foreignId('expresion_literaria_id')->constrained('expresion_literarias')->cascadeOnDelete();
             $table->boolean('acepta_normas_contrato')->default(false);
-
-
-
-
-            $table->string('status')->default('Activo');
+            $table->string('status')->default('Activo'); 
 
             $table->timestamps();
             $table->softDeletes();

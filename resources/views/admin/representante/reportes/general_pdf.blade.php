@@ -3,247 +3,268 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Reporte de Representantes</title>
-<style>
-    body { 
-            font-family: DejaVu Sans, Arial, sans-serif;
+    <style>
+        :root {
+            --color-primario: #4361ee;
+            --color-primario-suave: #6b8aff;
+            --color-primario-pastel: #eef2ff;
+            --color-secundario: #3743a8ff;
+            --color-secundario-pastel: #f3e8ff;
+            --color-acento: #4cc9f0;
+            --color-acento-pastel: #e6f7ff;
+            --color-fondo: #ffffff;
+            --color-borde: #d1daff;
+            --color-texto: #2d3748;
+            --color-texto-suave: #718096;
+        }
+        
+        @page {
+            margin: 1.5cm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
             font-size: 10pt;
             line-height: 1.5;
-            color: #212529;
-            background-color: #fff;
+            color: var(--color-texto);
             margin: 0;
             padding: 0;
+            background: var(--color-fondo);
         }
+        
         .container {
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-            margin-right: auto;
-            margin-left: auto;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 15px;
         }
-        .header {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 20px;
-            text-align: center;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .header h2 {
-            color: #007bff;
-            margin: 0 0 5px 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.3;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .header p {
-            margin: 0;
-            color: #6c757d;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            font-family: DejaVu Sans, Arial, sans-serif;
-        }
-        .section {
-            margin-bottom: 25px;
-            border: 1px solid rgba(0,0,0,.125);
-            border-radius: 0.25rem;
-            overflow: hidden;
-            font-family: DejaVu Sans, Arial, sans-serif;
-        }
-        .section-title {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin: 0;
-            line-height: 1.3;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .info-grid {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: DejaVu Sans, Arial, sans-serif;
-        }
-        .info-item {
-            border-bottom: 1px solid #dee2e6;
-        }
-        .info-item:last-child {
-            border-bottom: none;
-        }
-        .info-label {
-            width: 35%;
-            padding: 10px 15px;
-            font-weight: 700;
-            background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-            line-height: 1.5;
-            vertical-align: top;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            color: #495057;
-        }
-        .info-value {
-            padding: 10px 15px;
-            line-height: 1.5;
-            vertical-align: top;
-            word-wrap: break-word;
-            font-family: DejaVu Sans, Arial, sans-serif;
-            color: #212529;
-        }
-        .footer {
-            margin-top: 30px;
-            padding: 15px;
-            border-top: 1px solid #dee2e6;
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            font-family: DejaVu Sans, Arial, sans-serif;
-        }
+        
         .institution-header {
-            background-color: #007bff;
+            background-color: var(--color-primario);
             color: white;
-            padding: 15px 20px;
-            margin: 0 auto 20px auto;
+            padding: 10px 15px;
+            margin: 0 auto 15px auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(67, 97, 238, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 2px solid var(--color-acento);
         }
+        
         .institution-header img {
             max-height: 70px;
             max-width: 70px;
+            margin-right: 20px;
+            border-radius: 4px;
+            border: none;
+            padding: 0;
+            background: transparent;
+            object-fit: contain;
         }
-        .institution-header h1 {
+        
+        .institution-text {
+            text-align: center;
+        }
+        
+        .institution-text h1 {
+            color: white;
             margin: 0 0 5px 0;
             font-size: 1.5rem;
             font-weight: 700;
             line-height: 1.2;
-            font-family: DejaVu Sans, Arial, sans-serif;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
+        
         .institution-subtitle {
+            color: rgba(255, 255, 255, 0.95);
             font-size: 0.9rem;
             font-weight: 500;
             margin: 0;
-            opacity: 0.9;
-            font-family: DejaVu Sans, Arial, sans-serif;
+            font-style: italic;
         }
-        .text-muted { color: #6c757d !important; }
-        p, td, span {
-            line-height: 1.5;
-            font-family: DejaVu Sans, Arial, sans-serif;
+        
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-bottom: 2px solid var(--color-primario);
+            background: var(--color-primario-pastel);
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(67, 97, 238, 0.08);
         }
+        
+        .header h2 {
+            color: var(--color-primario);
+            margin: 0 0 5px 0;
+            font-size: 14pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        .header p {
+            color: var(--color-texto-suave);
+            margin: 10px 0 0 0;
+            font-size: 9pt;
+            font-style: italic;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 0 0;
+            page-break-inside: avoid;
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(67, 97, 238, 0.08);
+            table-layout: fixed;
+            font-size: 9pt;
+        }
+        
+        th, td {
+            padding: 6px 8px;
+            text-align: left;
+            border: 1px solid var(--color-borde);
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.3;
+            border-top: none;
+            border-bottom: 1px solid var(--color-borde);
+            border-right: 1px solid var(--color-borde);
+            border-left: 1px solid var(--color-borde);
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        th {
+            
+            color: var(--color-texto);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 8pt;
+            letter-spacing: 0.5px;
+            padding: 8px 6px;
+            white-space: nowrap;
+            text-align: center;
+        }
+        
+        tr {
+            border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+        }
+        
+        tr:last-child {
+            border-bottom: none;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--color-primario-pastel);
+        }
+        
+        tr:hover {
+            background-color: var(--color-acento-pastel) !important;
+            transition: background-color 0.2s ease;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: right;
+            font-size: 10px;
+            color: var(--color-texto-suave);
+        }
+        
+        .text-center {
+            text-align: center !important;
+        }
+        
+        .text-right {
+            text-align: right !important;
+        }
+        
         .long-text {
             word-break: break-word;
             overflow-wrap: break-word;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 9px;
-            table-layout: fixed;
-            word-wrap: break-word;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-            text-align: center;
-            padding: 6px;
-            border: 1px solid #dee2e6;
-            font-weight: bold;
-        }
-        td {
-            padding: 5px;
-            border: 1px solid #dee2e6;
-            word-wrap: break-word;
-            vertical-align: top;
-        }
-        td, th {
-            max-width: 100px; /* Ancho máximo para las celdas */
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        .footer {
-            margin-top: 20px;
-            text-align: right;
-            font-size: 10px; 
-            color: #6c757d;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .text-right {
-            text-align: right;
-        }
+        
+        /* Ajuste de columnas específicas */
+        th:nth-child(1), td:nth-child(1) { width: 8%; }  /* Cédula */
+        th:nth-child(2), td:nth-child(2) { width: 18%; } /* Nombres */
+        th:nth-child(3), td:nth-child(3) { width: 8%; }  /* Teléfono */
+        th:nth-child(4), td:nth-child(4) { width: 12%; } /* Correo */
+        th:nth-child(5), td:nth-child(5) { width: 8%; }  /* Estado */
+        th:nth-child(6), td:nth-child(6) { width: 8%; }  /* Municipio */
+        th:nth-child(7), td:nth-child(7) { width: 10%; } /* Parroquia */
+        th:nth-child(8), td:nth-child(8) { width: 10%; } /* Ocupación */
+        th:nth-child(9), td:nth-child(9) { width: 8%; }  /* Tipo */
+        th:nth-child(10), td:nth-child(10) { width: 8%; } /* Banco */
+        th:nth-child(11), td:nth-child(11) { width: 10%; } /* N° Cuenta */
+        th:nth-child(12), td:nth-child(12) { width: 10%; } /* Parentesco */
+        
+        /* Alineación de celdas */
+        td { font-size: 8.5pt; }
+        td.text-center { text-align: center; }
     </style>
 </head>
-<body>
-    <div class="institution-header">
-        <div class="logo-wrapper">
-            <img src="{{ public_path('images/comunidad/liceo_logo.png') }}" alt="Logo" class="institution-logo">
+<body class="clearfix">
+    <div class="container">
+        <div class="institution-header">
+            <img src="{{ public_path('img/Liceo_logo.png') }}" alt="Logo" class="institution-logo">
+            <div class="institution-text">
+                <h1>Liceo Nacional "Gral. Juan Guillermo Iribarren"</h1>
+                <div class="institution-subtitle">Formando líderes para el futuro</div>
+            </div>
         </div>
-        <div class="institution-text">
-            <h1>Liceo Nacional "Gral. Juan Guillermo Iribarren"</h1>
-            <div class="institution-subtitle">Reporte de Representantes</div>
-        </div>
-    </div>
 
-    <div class="header">
-        <h2>REPORTE DE REPRESENTANTES</h2>
-        <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
-        @if(isset($filtros['es_legal']))
-            <p>Tipo: {{ $filtros['es_legal'] ? 'Solo Representantes Legales' : 'Solo Representantes No Legales' }}</p>
-        @else
-            <p>Tipo: Todos los Representantes</p>
-        @endif
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 8%;">Cédula</th>
-                <th style="width: 15%;">Nombres Completos</th>
-                <th style="width: 8%;">Teléfono</th>
-                <th style="width: 12%;">Correo</th>
-                <th style="width: 8%;">Estado</th>
-                <th style="width: 8%;">Municipio</th>
-                <th style="width: 10%;">Parroquia</th>
-                <th style="width: 15%;">Ocupación</th>
-                <th style="width: 8%;">Tipo</th>
+        <div class="header">
+            <h2>REPORTE DE REPRESENTANTES</h2>
+            <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
+            <p>
                 @if(isset($filtros['es_legal']) && $filtros['es_legal'])
-                    <th>Banco</th>
-                    <th>N° Cuenta</th>
-                    <th>Parentesco</th>
+                    Tipo: Representantes Legales
+                @else
+                    Tipo: Todos los Representantes
                 @endif
-            </tr>
-        </thead>
+            </p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Cédula</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Ocupación</th>
+                    <th>Tipo</th>
+                    @if(isset($filtros['es_legal']) && $filtros['es_legal'])
+                        <th>Banco</th>
+                        <th>N° Cuenta</th>
+                        <th>Parentesco</th>
+                    @endif
+                </tr>
+            </thead>
         <tbody>
             @forelse($representantes as $index => $representante)
                 <tr>
-                    <td style="text-align: center;">{{ $representante->numero_documento }}</td>
-                    <td>
-                        {{ $representante->primer_nombre }} 
-                        {{ $representante->segundo_nombre ?? '' }} 
-                        {{ $representante->primer_apellido }} 
-                        {{ $representante->segundo_apellido ?? '' }}
+                    <td class="text-center">{{ $representante->numero_documento ?? 'N/A' }}</td>
+                    <td class="long-text">
+                        {{ $representante->primer_nombre ?? 'N/A' }} 
+                        {{ $representante->segundo_nombre ?? '' }}
                     </td>
-                    <td style="text-align: center;">{{ $representante->telefono ?? 'N/A' }}</td>
-                    <td style="word-break: break-all;">{{ $representante->email ?? 'N/A' }}</td>
-                    <td style="text-align: center;">{{ $representante->estado_nombre ?? 'N/A' }}</td>
-                    <td style="text-align: center;">{{ $representante->municipio_nombre ?? 'N/A' }}</td>
-                    <td style="text-align: center;">{{ $representante->localidad_nombre ?? 'N/A' }}</td>
-                    <td style="word-break: break-word;">{{ $representante->ocupacion_nombre ?? 'N/A' }}</td>
-                    <td style="text-align: center;">{{ $representante->parentesco ? 'Representante Legal' : 'Progenitor' }}</td>
+                    <td>{{ $representante->primer_apellido ?? 'N/A' }} {{ $representante->segundo_apellido ?? '' }}</td>
+                    <td class="text-center">{{ $representante->telefono ?? 'N/A' }}</td>
+                    <td class="long-text">{{ $representante->email ?? 'N/A' }}</td>
+    
+                    <td class="long-text">{{ $representante->ocupacion_nombre ?? 'N/A' }}</td>
+                    <td class="text-center">{{ $representante->parentesco ? 'Representante Legal' : 'Progenitor' }}</td>
                     @if(isset($filtros['es_legal']) && $filtros['es_legal'])
-                        <td style="text-align: center;">{{ $representante->banco_nombre ?? 'N/A' }}</td>
-                        <td style="text-align: center;">{{ $representante->codigo_carnet_patria_representante ?? 'N/A' }}</td>
-                        <td style="text-align: center;">{{ $representante->parentesco ?? 'N/A' }}</td>
+                        <td class="text-center">{{ $representante->banco_nombre ?? 'N/A' }}</td>
+                        <td class="text-center">{{ $representante->codigo_carnet_patria_representante ?? 'N/A' }}</td>
+                        <td class="text-center">{{ $representante->parentesco ?? 'N/A' }}</td>
                     @endif
                 </tr>
             @empty
@@ -263,8 +284,9 @@
         </tfoot>
     </table>
 
-    <div class="footer">
-        <p>Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}</p>
+        <div class="footer">
+            <p>Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}</p>
+        </div>
     </div>
 </body>
 </html>

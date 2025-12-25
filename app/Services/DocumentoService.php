@@ -15,6 +15,8 @@ class DocumentoService
         'foto_representante',
         'carnet_vacunacion',
         'autorizacion_tercero',
+        'notas_certificadas',
+        'liberacion_cupo',
     ];
 
     private array $documentosObligatorios = [
@@ -22,6 +24,8 @@ class DocumentoService
         'boletin_6to_grado',
         'certificado_calificaciones',
         'constancia_aprobacion_primaria',
+        'notas_certificadas',
+        'liberacion_cupo',
     ];
 
     private array $documentosOpcionales = [
@@ -45,6 +49,8 @@ class DocumentoService
         'foto_representante' => 'Fotografía Tipo Carnet del Representante',
         'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
         'autorizacion_tercero' => 'Autorización Firmada',
+        'notas_certificadas' => 'Notas Certificadas',
+        'liberacion_cupo' => 'Liberación de Cupo',
     ];
 
     public function obtenerDocumentosDisponibles(): array
@@ -57,10 +63,27 @@ class DocumentoService
         return $this->documentosEtiquetas;
     }
 
-    public function evaluarEstadoDocumentos(array $seleccionados, bool $requiereAutorizacion): array
-    {
-        // 1. Validar obligatorios
-        $faltanObligatorios = array_diff($this->documentosObligatorios, $seleccionados);
+    public function evaluarEstadoDocumentos(
+        array $seleccionados,
+        bool $requiereAutorizacion,
+        bool $esPrimerGrado
+    ): array {
+        // 1. Definir obligatorios según grado
+        $documentosObligatorios = [
+            'partida_nacimiento',
+            'boletin_6to_grado',
+            'certificado_calificaciones',
+            'constancia_aprobacion_primaria',
+        ];
+
+        // Solo para 2do grado en adelante
+        if (!$esPrimerGrado) {
+            $documentosObligatorios[] = 'notas_certificadas';
+            $documentosObligatorios[] = 'liberacion_cupo';
+        }
+
+        // Validar obligatorios
+        $faltanObligatorios = array_diff($documentosObligatorios, $seleccionados);
 
         if (!empty($faltanObligatorios)) {
             return [
@@ -70,6 +93,7 @@ class DocumentoService
                 'faltantes' => $faltanObligatorios,
             ];
         }
+
 
         // 2. Validar autorización si aplica
         if ($requiereAutorizacion && !in_array($this->documentoAutorizacion, $seleccionados)) {
@@ -102,16 +126,25 @@ class DocumentoService
         ];
     }
 
-    public function generarObservaciones(array $documentos, bool $requiereAutorizacion): ?string
-    {
-        $evaluacion = $this->evaluarEstadoDocumentos($documentos, $requiereAutorizacion);
+    public function generarObservaciones(
+        array $documentos,
+        bool $requiereAutorizacion,
+        bool $esPrimerGrado
+    ): ?string {
+
+        $evaluacion = $this->evaluarEstadoDocumentos(
+            $documentos,
+            $requiereAutorizacion,
+            $esPrimerGrado
+        );
 
         if (empty($evaluacion['faltantes'])) {
             return null;
         }
 
         $nombres = array_map(
-            fn($doc) => $this->documentosEtiquetas[$doc] ?? ucfirst(str_replace('_', ' ', $doc)),
+            fn($doc) => $this->documentosEtiquetas[$doc]
+                ?? ucfirst(str_replace('_', ' ', $doc)),
             $evaluacion['faltantes']
         );
 

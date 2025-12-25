@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Admin\Alumnos;
 
+use Illuminate\Support\Collection;
+
+
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -16,6 +19,8 @@ use App\Models\Localidad;
 use App\Models\OrdenNacimiento;
 use App\Models\Lateralidad;
 use App\Models\AnioEscolar;
+use App\Models\EtniaIndigena;
+use App\Models\Talla;
 
 class AlumnoCreate extends Component
 {
@@ -42,12 +47,20 @@ class AlumnoCreate extends Component
     public $edad = 0;
     public $meses = 0;
 
+    // UI dinámico para documento
+    public $documento_maxlength = 8;
+    public $documento_pattern = '[0-9]+';
+    public $documento_placeholder = '12345678';
+    public $documento_inputmode = 'numeric';
+
+
     // Datos físicos
-    public $talla_estudiante;
+    public $talla_estudiante = '';
     public $peso_estudiante;
-    public $talla_camisa;
+    public $talla_camisa_id;
+    public $tallas = [];
     public $talla_zapato;
-    public $talla_pantalon;
+    public $talla_pantalon_id;
 
     // Lugar de nacimiento
     public $estado_id;
@@ -65,6 +78,8 @@ class AlumnoCreate extends Component
     public $estados = [];
     public $municipios = [];
     public $localidades = [];
+    public $etnia_indigenas = [];
+    public $etnia_indigena_id;
 
     // Año escolar
     public $anioEscolarActivo = false;
@@ -81,9 +96,44 @@ class AlumnoCreate extends Component
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => [
                 'required',
-                'digits_between:6,8',
                 'unique:personas,numero_documento,' . $this->persona_id,
+                function ($attribute, $value, $fail) {
+
+                    switch ((int) $this->tipo_documento_id) {
+
+                        // V - Venezolano (ID 1)
+                        case 1:
+                            if (!ctype_digit($value)) {
+                                $fail('La cédula debe contener solo números.');
+                            }
+                            if (strlen($value) > 8) {
+                                $fail('La cédula venezolana debe tener máximo 8 dígitos.');
+                            }
+                            break;
+
+                        // E - Extranjero (ID 2)
+                        case 2:
+                            if (!ctype_alnum($value)) {
+                                $fail('La cédula de extranjero debe ser alfanumérica.');
+                            }
+                            if (strlen($value) > 12 || strlen($value) < 8) {
+                                $fail('La cédula de extranjero debe tener entre 8 y 12 caracteres.');
+                            }
+                            break;
+
+                        // CE - Cédula Especial (ID 3)
+                        case 3:
+                            if (!ctype_digit($value)) {
+                                $fail('La cédula especial debe contener solo números.');
+                            }
+                            if (strlen($value) > 12 || strlen($value) < 10) {
+                                $fail('La cédula especial debe tener entre 10 y 12 dígitos.');
+                            }
+                            break;
+                    }
+                }
             ],
+
 
             'primer_nombre' => 'required|string|max:50',
             'primer_apellido' => 'required|string|max:50',
@@ -106,11 +156,11 @@ class AlumnoCreate extends Component
             ],
 
             // Datos físicos
-            'talla_estudiante' => 'required|numeric|between:50,250',
+            'talla_estudiante' => 'required|numeric|between:0.50,3.00',
             'peso_estudiante' => 'required|numeric|between:2,300',
-            'talla_camisa' => 'required',
+            'talla_camisa_id' => 'required|exists:tallas,id',
+            'talla_pantalon_id' => 'required|exists:tallas,id',
             'talla_zapato' => 'required|integer',
-            'talla_pantalon' => 'required',
 
             // Residencia
             'estado_id' => 'required|exists:estados,id',
@@ -120,6 +170,7 @@ class AlumnoCreate extends Component
             // Otros
             'lateralidad_id' => 'required|exists:lateralidads,id',
             'orden_nacimiento_id' => 'required|exists:orden_nacimientos,id',
+            'etnia_indigena_id' => 'nullable|exists:etnia_indigenas,id',
         ];
     }
 
@@ -135,27 +186,78 @@ class AlumnoCreate extends Component
         'fecha_nacimiento.before:today' => 'La edad debe estar entre los 10 y 18 años',
         'talla_estudiante.required' => 'Este campo es requerido',
         'talla_estudiante.numeric' => 'Este campo debe ser un número',
-        'talla_estudiante.between' => 'Este campo debe estar entre 50 y 250',
+        'talla_estudiante.between' => 'Este campo debe estar entre 0.50 y 3.00',
         'peso_estudiante.required' => 'Este campo es requerido',
         'peso_estudiante.numeric' => 'Este campo debe ser un número',
         'peso_estudiante.between' => 'Este campo debe estar entre 2 y 300',
-        'talla_camisa.required' => 'Este campo es requerido',
+        'talla_camisa_id.required' => 'Este campo es requerido',
         'talla_zapato.required' => 'Este campo es requerido',
         'talla_zapato.integer' => 'Este campo debe ser un número',
-        'talla_pantalon.required' => 'Este campo es requerido',
+        'talla_pantalon_id.required' => 'Este campo es requerido',
         'estado_id.required' => 'Este campo es requerido',
         'municipio_id.required' => 'Este campo es requerido',
         'localidad_id.required' => 'Este campo es requerido',
         'lateralidad_id.required' => 'Este campo es requerido',
         'orden_nacimiento_id.required' => 'Este campo es requerido',
-
-
-
     ];
 
     public function updated($propertyName)
     {
         $this->validateOnly($propertyName);
+    }
+
+    public function updatedTipoDocumentoId($value)
+    {
+        // Limpiar la cédula al cambiar tipo
+        $this->numero_documento = null;
+
+        switch ((int) $value) {
+
+            // V
+            case 1:
+                $this->documento_maxlength = 8;
+                $this->documento_pattern = '[0-9]+';
+                $this->documento_placeholder = '12345678';
+                $this->documento_inputmode = 'numeric';
+                break;
+
+            // E
+            case 2:
+                $this->documento_maxlength = 12;
+                $this->documento_pattern = '[A-Za-z0-9]+';
+                $this->documento_placeholder = 'AB1234567890';
+                $this->documento_inputmode = 'text';
+                break;
+
+            // CE
+            case 3:
+                $this->documento_maxlength = 12;
+                $this->documento_pattern = '[0-9]+';
+                $this->documento_placeholder = '123456789012';
+                $this->documento_inputmode = 'numeric';
+                break;
+
+            default:
+                $this->documento_maxlength = 8;
+                $this->documento_pattern = '[0-9]+';
+                $this->documento_placeholder = '';
+                $this->documento_inputmode = 'numeric';
+        }
+    }
+
+    public function formatearEstatura()
+    {
+        // Quita todo menos números
+        $valor = preg_replace('/\D/', '', $this->talla_estudiante);
+
+        if (strlen($valor) >= 2) {
+            $this->talla_estudiante = substr($valor, 0, -2) . '.' . substr($valor, -2);
+        }
+    }
+
+    public function validarEstatura()
+    {
+        $this->validateOnly('talla_estudiante');
     }
 
 
@@ -193,6 +295,8 @@ class AlumnoCreate extends Component
         $this->generos = \App\Models\Genero::where('status', true)->get();
         $this->lateralidades = Lateralidad::where('status', true)->get();
         $this->orden_nacimientos = OrdenNacimiento::where('status', true)->get();
+        $this->etnia_indigenas = EtniaIndigena::where('status', true)->get();
+        $this->tallas = Talla::all();
     }
 
 
@@ -201,8 +305,9 @@ class AlumnoCreate extends Component
        ============================================================ */
     public function cargarAlumno($id)
     {
-        $alumno = Alumno::with('persona',
-        
+        $alumno = Alumno::with(
+            'persona',
+
         )->findOrFail($id);
         $persona = $alumno->persona;
 
@@ -219,15 +324,15 @@ class AlumnoCreate extends Component
         $this->genero_id = $persona->genero_id;
 
         // Procedencia y datos físicos
+        $this->talla_camisa_id = $alumno->talla_camisa_id;
+        $this->talla_pantalon_id = $alumno->talla_pantalon_id;
 
-
-        $this->talla_camisa = $alumno->talla_camisa;
-        $this->talla_pantalon = $alumno->talla_pantalon;
         $this->talla_zapato = $alumno->talla_zapato;
         $this->peso_estudiante = $alumno->peso;
         $this->talla_estudiante = $alumno->estatura;
         $this->lateralidad_id = $alumno->lateralidad_id;
         $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
+        $this->etnia_indigena_id = $alumno->etnia_indigena_id;
 
         // Actualiza selects dependientes
         $this->updatedEstadoId($persona->localidad->municipio->estado_id);
@@ -283,16 +388,35 @@ class AlumnoCreate extends Component
         }
     }
 
+    public function inscripcionAnterior($anioActualId)
+    {
+        return $this->inscripcionProsecucions()
+            ->where('anio_escolar_id', '!=', $anioActualId)
+            ->latest('anio_escolar_id')
+            ->first()
+            ?? $this->inscripciones()
+            ->where('anio_escolar_id', '!=', $anioActualId)
+            ->latest('anio_escolar_id')
+            ->first();
+    }
+
+
 
     /* ============================================================
        ========================   GUARDAR   ========================
        ============================================================ */
     public function save()
     {
+
+        if (!$this->etnia_indigena_id) {
+            $this->addError('etnia_indigena_id', 'Debe seleccionar una etnia indígena.');
+            return;
+        }
         $this->validate();
 
         try {
             DB::beginTransaction();
+
 
             // Guardar persona
             $persona = Persona::updateOrCreate(
@@ -313,20 +437,36 @@ class AlumnoCreate extends Component
             );
 
             // Guardar alumno
-            Alumno::updateOrCreate(
-                ['id' => $this->alumno_id],
-                [
+            if ($this->alumno_id) {
+
+                $alumno = Alumno::findOrFail($this->alumno_id);
+                $alumno->update([
                     'persona_id' => $persona->id,
-                    'talla_camisa' => $this->talla_camisa,
-                    'talla_pantalon' => $this->talla_pantalon,
+                    'talla_camisa_id' => $this->talla_camisa_id,
+                    'talla_pantalon_id' => $this->talla_pantalon_id,
                     'talla_zapato' => $this->talla_zapato,
                     'peso' => $this->peso_estudiante,
-                    'estatura' => $this->talla_estudiante,
+                    'estatura' => (float)$this->talla_estudiante,
                     'lateralidad_id' => $this->lateralidad_id,
                     'orden_nacimiento_id' => $this->orden_nacimiento_id,
+                    'etnia_indigena_id' => $this->etnia_indigena_id,
                     'status' => 'Activo',
-                ]
-            );
+                ]);
+            } else {
+
+                Alumno::create([
+                    'persona_id' => $persona->id,
+                    'talla_camisa_id' => $this->talla_camisa_id,
+                    'talla_pantalon_id' => $this->talla_pantalon_id,
+                    'talla_zapato' => $this->talla_zapato,
+                    'peso' => $this->peso_estudiante,
+                    'estatura' => (float)$this->talla_estudiante,
+                    'lateralidad_id' => $this->lateralidad_id,
+                    'orden_nacimiento_id' => $this->orden_nacimiento_id,
+                    'etnia_indigena_id' => $this->etnia_indigena_id,
+                    'status' => 'Activo',
+                ]);
+            }
 
             DB::commit();
 

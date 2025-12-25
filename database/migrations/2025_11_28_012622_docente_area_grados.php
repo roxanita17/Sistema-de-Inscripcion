@@ -27,7 +27,14 @@ return new class extends Migration
                 ->constrained('grados')
                 ->onDelete('cascade');
 
+            // FK a secciones
+            $table->foreignId('seccion_id')
+                ->constrained('seccions')
+                ->onDelete('cascade');
+
             $table->boolean('status')->default(true);
+
+            
 
             $table->timestamps();
         });

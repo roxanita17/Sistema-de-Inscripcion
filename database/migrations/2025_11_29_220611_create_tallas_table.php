@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ejecuciones_percentils', function (Blueprint $table) {
+        Schema::create('tallas', function (Blueprint $table) {
             $table->id();
-            $table->integer('total_evaluados');
-            $table->integer('status');
+            $table->string('nombre');
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ejecuciones_percentils');
+        Schema::dropIfExists('tallas');
     }
 };

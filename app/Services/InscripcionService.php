@@ -7,12 +7,14 @@ use App\Models\Grado;
 use App\Models\Alumno;
 use App\Models\Persona;
 use App\DTOs\InscripcionData;
+use App\Models\InscripcionNuevoIngreso;
+use App\Models\InscripcionProsecucion;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class InscripcionService
 {
-        public function __construct(
+    public function __construct(
         private DocumentoService $documentoService
     ) {}
 
@@ -61,7 +63,7 @@ class InscripcionService
         return $anio <= $actual && $anio >= $actual - 7;
     }
 
-    
+
 
     /**
      * Obtiene el año escolar activo actual
@@ -91,10 +93,16 @@ class InscripcionService
                 throw new \Exception('El grado ha alcanzado el límite de cupos.');
             }
 
+            $grado = Grado::findOrFail($data->grado_id);
+            $esPrimerGrado = ((int) $grado->numero_grado === 1);
+
+
             $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
                 $data->documentos,
-                !$data->padre_id && !$data->madre_id
+                !$data->padre_id && !$data->madre_id,
+                $esPrimerGrado
             );
+
 
             if (!$evaluacion['puede_guardar']) {
                 throw new \Exception('Faltan documentos obligatorios.');
@@ -104,13 +112,11 @@ class InscripcionService
             $anioEscolar = $this->obtenerAnioEscolarActivo();
 
             $inscripcion = Inscripcion::create([
+                'tipo_inscripcion' => $data->tipo_inscripcion,
                 'anio_escolar_id' => $anioEscolar->id,
                 'alumno_id' => $data->alumno_id,
-                'numero_zonificacion' => $data->numero_zonificacion,
-                'institucion_procedencia_id' => $data->institucion_procedencia_id,
-                'anio_egreso' => $data->anio_egreso,
-                'expresion_literaria_id' => $data->expresion_literaria_id,
                 'grado_id' => $data->grado_id,
+                'seccion_id' => $data->seccion_id,
                 'padre_id' => $data->padre_id,
                 'madre_id' => $data->madre_id,
                 'representante_legal_id' => $data->representante_legal_id,
@@ -122,6 +128,27 @@ class InscripcionService
                 'status' => $evaluacion['status_inscripcion'],
             ]);
 
+            $tipo = $data->tipo_inscripcion; // 'nuevo_ingreso' | 'prosecucion'
+
+            if ($tipo === 'nuevo_ingreso') {
+                InscripcionNuevoIngreso::create([
+                    'inscripcion_id' => $inscripcion->id,
+                    'institucion_procedencia_id' => $data->institucion_procedencia_id,
+                    'anio_egreso' => $data->anio_egreso,
+                    'expresion_literaria_id' => $data->expresion_literaria_id,
+                    'numero_zonificacion' => $data->numero_zonificacion,
+                ]);
+            }
+
+            if ($tipo === 'prosecucion') {
+                InscripcionProsecucion::create([
+                    'inscripcion_id' => $inscripcion->id,
+                    'promovido' => $data->promovido,
+                    'repite_grado' => $data->repite_grado,
+                ]);
+            }
+
+
             DB::commit();
 
             return $inscripcion;
@@ -131,8 +158,14 @@ class InscripcionService
         }
     }
 
-    public function registrarConAlumno(array $datosAlumno, InscripcionData $datosInscripcion): Inscripcion
-    {
+    /**
+     * Registra inscripción con alumno nuevo
+     */
+    public function registrarConAlumno(
+        array $datosAlumno,
+        InscripcionData $datosInscripcion,
+        array $discapacidades = []
+    ): Inscripcion {
         DB::beginTransaction();
 
         try {
@@ -152,15 +185,27 @@ class InscripcionService
 
             $alumno = Alumno::create([
                 'persona_id' => $persona->id,
-                'talla_camisa' => $datosAlumno['talla_camisa'],
-                'talla_pantalon' => $datosAlumno['talla_pantalon'],
+                'talla_camisa_id' => $datosAlumno['talla_camisa_id'],
+                'talla_pantalon_id' => $datosAlumno['talla_pantalon_id'],
                 'talla_zapato' => $datosAlumno['talla_zapato'],
                 'peso' => $datosAlumno['peso_estudiante'],
                 'estatura' => $datosAlumno['talla_estudiante'],
                 'lateralidad_id' => $datosAlumno['lateralidad_id'],
                 'orden_nacimiento_id' => $datosAlumno['orden_nacimiento_id'],
+                'etnia_indigena_id' => $datosAlumno['etnia_indigena_id'],
                 'status' => 'Activo',
             ]);
+
+            // Guardar discapacidades del alumno
+            if (!empty($discapacidades)) {
+                foreach ($discapacidades as $discapacidad) {
+                    \App\Models\DiscapacidadEstudiante::create([
+                        'alumno_id' => $alumno->id,
+                        'discapacidad_id' => $discapacidad['id'],
+                        'status' => true
+                    ]);
+                }
+            }
 
             $datosInscripcion->alumno_id = $alumno->id;
             $inscripcion = $this->registrar($datosInscripcion);

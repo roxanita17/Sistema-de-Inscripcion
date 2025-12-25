@@ -108,7 +108,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('estado.index');
-    
+
     // Ruta para verificar la existencia de un estado
     Route::get('estado/verificar', [EstadoController::class, 'verificarExistencia'])->name('estado.verificar');
 
@@ -120,7 +120,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('municipio.index');
-    
+
     // Ruta para verificar la existencia de un municipio
     Route::get('municipio/verificar', [MunicipioController::class, 'verificarExistencia'])->name('municipio.verificar');
 
@@ -132,7 +132,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 ->exists()
         ]);
     })->name('localidad.index');
-    
+
     // Ruta para verificar la existencia de una localidad
     Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
 
@@ -271,8 +271,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('docente/reporte/{id}', [DocenteController::class, 'reportePDF'])->name('docente.reportePDF');
     Route::get('docente/reporte-general', [DocenteController::class, 'reporteGeneralPDF'])->name('docente.reporteGeneralPDF');
 
-    // ===== DASHBOARD ======
-
     // ===== ALUMNOS ======
     Route::get('alumnos',  [AlumnoController::class, 'index'])->name('alumnos.index');
     Route::middleware(['verificar.anio.escolar'])->group(function () {
@@ -285,20 +283,18 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
     });
 
-
-
-
-
     //Reportes
     //Route::get('alumnos/reportes', [AlumnoController::class, 'reportePDF'])->name('alumnos.reportePDF');
     Route::get('alumnos/reporte/{id}', [AlumnoController::class, 'reportePDF'])->name('alumnos.reporte.individual');
     Route::get('alumnos/reportes/general', [AlumnoController::class, 'reporteGeneralPDF'])->name('alumnos.reporteGeneralPDF');
+
     // ===== INSCRIPCIONES ======
     Route::prefix('transacciones')->name('transacciones.')->group(function () {
 
         Route::get('inscripcion', [InscripcionController::class, 'index'])
             ->name('inscripcion.index');
 
+        //Inscripcion Nuevo Ingreso
         Route::get('inscripcion/create', function () {
             return view('admin.transacciones.inscripcion.create');
         })->name('inscripcion.create');
@@ -309,14 +305,24 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
         Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
             ->name('inscripcion.destroy');
+
+        //reportes PDF
+        Route::get('inscripcion/reporte/{id}', [InscripcionController::class, 'reporte'])
+            ->name('inscripcion.reporte');
+
+        /* Ruta AJAX */
+        Route::get(
+            'secciones-por-grado/{grado}',
+            [InscripcionController::class, 'seccionesPorGrado']
+        )->name('secciones.por-grado');
+
+        //Inscripcion Prosecucion
+        Route::get('inscripcion-prosecucion/create', function () {
+            return view('admin.transacciones.inscripcion.createProsecucion');
+        })->name('inscripcion-prosecucion.createProsecucion');
+
+
     });
-
-
-
-
-
-
-
 
     //===== PERCENTIL ======
     Route::get('transacciones/percentil', [EntradasPercentilController::class, 'index'])->name('transacciones.percentil.index');
@@ -337,14 +343,21 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
     // Formulario de creación
     Route::get('/formulario', [RepresentanteController::class, 'mostrarFormulario'])->name('formulario');
 
-    // Guardar / actualizar representante (manejado por el método save del controlador)
+    // Guardar nuevo representante
     Route::post('/save', [RepresentanteController::class, 'save'])->name('save');
+
+    // Actualizar representante existente
+    Route::put('/{id}', [RepresentanteController::class, 'update'])->name('update');
 
     // Formulario de edición de un representante específico
     Route::get('/{id}/editar', [RepresentanteController::class, 'mostrarFormularioEditar'])->name('editar');
 
     // Eliminar representante
     Route::delete('/{id}', [RepresentanteController::class, 'delete'])->name('destroy');
+    
+    // Rutas para manejo de eliminados
+    Route::get('/eliminados', [RepresentanteController::class, 'eliminados'])->name('eliminados');
+    Route::post('/{id}/restaurar', [RepresentanteController::class, 'restaurar'])->name('restaurar');
 
     // Búsqueda por cédula (AJAX)
     Route::get('/buscar-numero_documento', [RepresentanteController::class, 'buscarPornumero_documento'])->name('buscar_numero_documento');

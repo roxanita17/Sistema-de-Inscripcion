@@ -22,10 +22,15 @@ class Representante extends Model
         "convivenciaestudiante_representante",
         "municipio_id",
         "parroquia_id",
+        "status"
     ];
+    protected $attributes = [
+        'status' => 1  // Valor por defecto: 1 = Activo
+    ];
+    
+    protected $dates = ['deleted_at']; 
 
-
-        public function estado()
+    public function estado()
     {
         return $this->belongsTo(Estado::class, "estado_id", "id");
     }
@@ -59,10 +64,13 @@ class Representante extends Model
 
     public static function reportePDF($filtro=null){
     $query=DB::table("representantes")
+    ->where('representantes.status', 1) // Solo registros activos
+    ->where('personas.status', 1)       // Solo personas activas
     ->select(
         // Datos del representante
             'representantes.id as representante_id',
             'representantes.ocupacion_representante',
+            'representantes.status as representante_status',
             
             // Datos de persona
             'personas.primer_nombre',

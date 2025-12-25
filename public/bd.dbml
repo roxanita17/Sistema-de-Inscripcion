@@ -3,6 +3,7 @@
 Table pais {
   id integer [primary key]
   nombre_pais varchar
+  codigo_iso varchar
   status boolean
   created_at timestamp
 }
@@ -38,12 +39,11 @@ Table personas {
   tercer_nombre varchar
   primer_apellido varchar
   segundo_apellido varchar
-  tipo_documento_id int
+  tipo_documento_id integer
   cedula varchar
-  genero_id int
+  genero_id integer
   fecha_nacimiento date
   localidad_id integer
-  telefono_persona_id integer
   status boolean
   created_at timestamp
 }
@@ -51,7 +51,8 @@ Table personas {
 Table telefono_persona{
     id integer [primary key]
     prefijo_id integer
-    telefo_id integer
+    numero_telefono varchar
+    persona_id integer
     status boolean
 }
 
@@ -61,17 +62,12 @@ Table prefijo_telefono{
     status boolean
 }
 
-Table telefono{
-    id integer [primary key]
-    telefono integer
-    status boolean
-}
+
 
 
 Table docentes {
   id integer [primary key]
   persona_id integer
-  primer_telefono integer
   codigo integer
   dependencia varchar
   status boolean
@@ -88,6 +84,8 @@ Table estudios_realizados {
 Table area_formacions {
   id integer [primary key]
   nombre_area_formacion varchar
+  codigo_area integer
+  siglas varchar
   status boolean
   created_at timestamp
 }
@@ -108,7 +106,6 @@ Table grados {
   cantidad_max integer
   max_por_seccion integer
   min_por_seccion integer
-  anio_escolar_id integer
   status boolean
   created_at timestamp
 }
@@ -127,6 +124,7 @@ Table grado_area_formacions {
 /* tabla de la transaccion de docente */
 Table docente_area_grado {
   id integer [primary key]
+  anio_escolar_id integer
   docente_estudio_realizado_id integer
   area_estudios_realizados_id integer
   grado_id integer
@@ -147,6 +145,7 @@ Table docente_estudio_realizado {
 Table institucion_procedencia {
   id integer [primary key]
   nombre_institucion varchar
+  codigo integer
   localidad_id integer
   status boolean
   created_at timestamp
@@ -168,25 +167,15 @@ Table genero{
 
 Table estudiantes{
   id integer [primary key]
-  
-
-  talla_camisa integer
-  talla_pantalon integer
+  talla_camisa_id integer
+  talla_pantalon_id integer
   talla_zapato integer
   peso integer
   estatura integer
   persona_id integer
   orden_nacimiento_id integer
-  discapacidad_estudiante_id integer
   etnia_indigena_id integer
   lateralidad_id integer
-  status boolean
-  created_at timestamp
-}
-
-Table orden_nacimiento{
-  id integer [primary key]
-  numero integer
   status boolean
   created_at timestamp
 }
@@ -201,9 +190,21 @@ Table discapacidad{
 Table discapacidad_estudiante{
   id integer [primary key]
   discapacidad_id integer
-  persona_id interger
+  estudiante_id integer
   status boolean
   created_at timestamp
+}
+
+Table orden_nacimiento{
+  id integer [primary key]
+  numero integer
+  status boolean
+  created_at timestamp
+}
+
+Table tallas{
+  id integer [primary key]
+  nombre varchar
 }
 
 Table etnia_indigena{
@@ -263,20 +264,13 @@ Table representante_legal{
   created_at timestamp
 }
 
-Table representante_estudiante{
-  id integer [primary key]
-  tipo_representante varchar
-  representante_id integer
-  estudiante_id int
-  status boolean
-  created_at timestamp
-}
+
 
 Table anio_escolar{
   id integer [primary key]
   anio_inicio date
   anio_fin date
-  status boolean
+  status varchar
   created_at timestamp
 }
 
@@ -286,7 +280,6 @@ Table historico{
   inscripcion_id integer
   entradas_percentil_id integer
   docente_area_grado_id integer
-  status boolean
   created_at timestamp
 }
 
@@ -304,38 +297,7 @@ Table secciones{
   cantidad_actual integer
   grado_id integer
   ejecucion_percentil_id integer
-  status boolean
-  created_at timestamp
-}
-
-table inscripcion{
-  id integer [primary key]
-  tipo_inscripcion_id integer
-  numero_zonificacion integer
-  institucion_procedencia_id integer
-  anio_egreso date
-  expresion_literaria_id int
-  fecha_creacion date
-  contrato_convivencia text
-  repitiente_estudiante integer
-  estudiante_id integer
-  representante_id integer
-  grado_id integer
-  status varchar
-  created_at timestamp
-}
-
-Table tipo_inscripcion{
-  id integer [primary key]
-  nombre varchar
-  status boolean
-  created_at timestamp
-}
-
-Table representante_inscripcion{
-  id integer [primary key]
-  inscripcion_id integer
-  representante_id integer
+  anio_escolar_id integer
   status boolean
   created_at timestamp
 }
@@ -387,6 +349,45 @@ Table entradas_percentil {
 
   status boolean
   created_at timestamp
+
+}
+
+table inscripcion{
+  id integer [primary key]
+  anio_escolar_id integer
+  estudiante_id integer
+  representante_id integer
+  grado_id integer
+  seccion_id integer
+  tipo_inscripcion enum('nuevo_ingreso','prosecucion')
+  status varchar
+  created_at timestamp
+}
+
+table inscripcion_nuevo_ingreso{
+  id integer [primary key]
+  numero_zonificacion integer
+  institucion_procedencia_id integer
+  anio_egreso date
+  expresion_literaria_id int
+  contrato_convivencia text
+  inscripcion_id integer
+  created_at timestamp
+}
+
+table inscripcion_prosecucion{
+  id integer [primary key]
+  inscripcion_id integer
+  promovido boolean
+  repite_grado boolean
+  created_at timestamp
+}
+
+Table prosecucion_areas{
+  id int [pk]
+  inscripcion_prosecucion_id int
+  grado_area_formacion_id int
+  estado enum('Aprobada','Pendiente')
 }
 
 Ref: entradas_percentil.seccion_id > secciones.id
@@ -447,11 +448,8 @@ Ref: "personas"."id" < "representante"."persona_id"
 
 Ref: "representante"."id" < "representante_legal"."representante_id"
 
-Ref: "representante"."id" < "representante_estudiante"."representante_id"
 
-Ref: "estudiantes"."id" < "representante_estudiante"."estudiante_id"
 
-Ref: "anio_escolar"."id" < "grados"."anio_escolar_id"
 
 Ref: "grados"."id" < "secciones"."grado_id"
 
@@ -461,9 +459,7 @@ Ref: "estudiantes"."id" < "inscripcion"."estudiante_id"
 
 Ref: "representante"."id" < "inscripcion"."representante_id"
 
-Ref: "inscripcion"."id" < "representante_inscripcion"."inscripcion_id"
 
-Ref: "representante"."id" < "representante_inscripcion"."representante_id"
 
 
 
@@ -484,15 +480,11 @@ Ref: "estado"."pais_id" < "pais"."id"
 
 Ref: "discapacidad"."id" < "discapacidad_estudiante"."discapacidad_id"
 
-Ref: "estudiantes"."id" < "discapacidad_estudiante"."persona_id"
+Ref: "estudiantes"."id" < "discapacidad_estudiante"."estudiante_id"
 
-Ref: "expresion_literaria"."id" < "inscripcion"."expresion_literaria_id"
 
-Ref: "institucion_procedencia"."id" < "inscripcion"."institucion_procedencia_id"
 
 Ref: "secciones"."id" < "docente_area_grado"."seccion_id"
-
-Ref: "tipo_inscripcion"."id" < "inscripcion"."tipo_inscripcion_id"
 
 Ref: "anio_escolar"."id" < "historico"."anio_escolar_id"
 
@@ -504,6 +496,39 @@ Ref: "docente_area_grado"."id" < "historico"."docente_area_grado_id"
 
 Ref: "prefijo_telefono"."id" < "telefono_persona"."prefijo_id"
 
-Ref: "telefono"."id" < "telefono_persona"."telefo_id"
 
-Ref: "telefono_persona"."id" < "personas"."telefono_persona_id"
+
+
+
+
+Ref: "anio_escolar"."id" < "inscripcion"."anio_escolar_id"
+
+Ref: "anio_escolar"."id" < "docente_area_grado"."anio_escolar_id"
+
+
+
+
+
+Ref: "secciones"."id" < "inscripcion"."seccion_id"
+
+Ref: "inscripcion"."id" < "inscripcion_nuevo_ingreso"."inscripcion_id"
+
+Ref: "expresion_literaria"."id" < "inscripcion_nuevo_ingreso"."expresion_literaria_id"
+
+Ref: "institucion_procedencia"."id" < "inscripcion_nuevo_ingreso"."institucion_procedencia_id"
+
+Ref: "inscripcion"."id" < "inscripcion_prosecucion"."inscripcion_id"
+
+Ref: "inscripcion_prosecucion"."id" < "prosecucion_areas"."inscripcion_prosecucion_id"
+
+Ref: "grado_area_formacions"."id" < "prosecucion_areas"."grado_area_formacion_id"
+
+Ref: "tallas"."id" < "estudiantes"."talla_camisa_id"
+
+Ref: "tallas"."id" < "estudiantes"."talla_pantalon_id"
+
+Ref: "personas"."id" < "telefono_persona"."persona_id"
+
+Ref: "grados"."numero_grado" < "grados"."cantidad_max"
+
+Ref: "anio_escolar"."id" < "secciones"."anio_escolar_id"

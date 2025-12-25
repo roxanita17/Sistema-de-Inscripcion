@@ -95,7 +95,7 @@
 
                 {{-- Lado derecho --}}
                 <div class="header-right d-flex align-items-center gap-2">
-                    <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#viewModal"
+                    <button @if (!$anioEscolarActivo) disabled @endif type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#viewModal"
                         title="Ver Detalles">
                         <i class="fas fa-eye"></i> Resumen de secciones
                     </button>
@@ -132,15 +132,15 @@
                                         <div class="empty-icon">
                                             <i class="fas fa-inbox"></i>
                                         </div>
-                                        <h4>No hay estudiantes asignados registrados</h4>
-                                        <p>Agrega un nuevo estudiante con el botón superior</p>
+                                        <h4>No hay estudiantes asignados a secciones en el año escolar activo</h4>
+                                        <p>Asigna estudiantes a secciones y calcula los índices para ver los resultados aquí</p>
                                     </div>
                                 </td>
                             </tr>
                         @else
                             {{-- Se recorren los entradasPercentil existentes --}}
                             @foreach ($entradasPercentil as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">
+                                <tr class="  row-12" style="text-align: center">
 
                                     <td>
                                         <div class="student-info">

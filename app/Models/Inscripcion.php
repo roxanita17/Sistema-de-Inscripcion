@@ -20,16 +20,13 @@ class Inscripcion extends Model
         'anio_escolar_id',
         'alumno_id',
         'grado_id',
+        'seccion_id',
         'padre_id',
         'madre_id',
         'representante_legal_id',
         'documentos',
         'estado_documentos',
         'observaciones',
-        'numero_zonificacion',
-        'institucion_procedencia_id',
-        'expresion_literaria_id',
-        'anio_egreso',
         'acepta_normas_contrato',
         'status',
     ];
@@ -39,16 +36,23 @@ class Inscripcion extends Model
         'status' => 'string',
     ];
 
-    public function expresionLiteraria()
+        public function nuevoIngreso()
     {
-        return $this->belongsTo(ExpresionLiteraria::class, 'expresion_literaria_id', 'id');
+        return $this->hasOne(
+            InscripcionNuevoIngreso::class,
+            'inscripcion_id'
+        );
     }
 
-    public function institucionProcedencia()
+    public function prosecucion()
     {
-        return $this->belongsTo(InstitucionProcedencia::class, 'institucion_procedencia_id', 'id');
+        return $this->hasOne(
+            InscripcionProsecucion::class,
+            'inscripcion_id'
+        );
     }
     
+
     /**
      * Relación con EntradasPercentil
      */
@@ -56,7 +60,12 @@ class Inscripcion extends Model
     {
         return $this->hasOne(EntradasPercentil::class, 'inscripcion_id');
     }
-    
+
+    public function seccion()
+    {
+        return $this->belongsTo(Seccion::class,  'seccion_id', 'id');
+    }
+
     /**
      * Relación con Sección a través de EntradasPercentil
      */
@@ -187,6 +196,17 @@ class Inscripcion extends Model
         return $query->whereYear('fecha_inscripcion', now()->year);
     }
 
+    /**
+     * Scope: Inscripciones del año escolar activo o extendido
+     */
+    public function scopeAnioEscolarVigente($query)
+    {
+        return $query->whereHas('anioEscolar', function ($q) {
+            $q->whereIn('status', ['Activo', 'Extendido']);
+        });
+    }
+
+
 
     /**
      * Obtener representante principal (primero disponible)
@@ -204,5 +224,79 @@ class Inscripcion extends Model
                 'status' => 'Inactivo',
                 'updated_at' => now()
             ]);
+    }
+
+    /**
+     * Obtiene todos los datos relacionados con la inscripción incluyendo alumno, representantes, etc.
+     * 
+     * @return array
+     */
+    public function obtenerDatosCompletos()
+    {
+        // Cargar todas las relaciones necesarias
+        $this->load([
+            'alumno.persona',
+            'alumno.ordenNacimiento',
+            'alumno.discapacidad',
+            'alumno.etniaIndigena',
+            'alumno.lateralidad',
+            'grado',
+            'seccion',
+            'padre.persona',
+            'madre.persona',
+            'representanteLegal.representante.persona',
+            'representanteLegal.banco',
+            'institucionProcedencia',
+            'expresionLiteraria',
+            'seccionAsignada'
+        ]);
+
+        // Construir el array con todos los datos
+        $datos = [
+            'inscripcion' => $this->toArray(),
+            'alumno' => $this->alumno ? $this->alumno->toArray() : null,
+            'persona_alumno' => $this->alumno && $this->alumno->persona ? $this->alumno->persona->toArray() : null,
+            'grado' => $this->grado ? $this->grado->toArray() : null,
+            'seccion' => $this->seccion ? $this->seccion->toArray() : null,
+            'padre' => $this->padre ? $this->padre->toArray() : null,
+            'persona_padre' => $this->padre && $this->padre->persona ? $this->padre->persona->toArray() : null,
+            'madre' => $this->madre ? $this->madre->toArray() : null,
+            'persona_madre' => $this->madre && $this->madre->persona ? $this->madre->persona->toArray() : null,
+            'representante_legal' => $this->representanteLegal ? $this->representanteLegal->toArray() : null,
+            'persona_representante_legal' => $this->representanteLegal && $this->representanteLegal->persona ? $this->representanteLegal->persona->toArray() : null,
+            'institucion_procedencia' => $this->institucionProcedencia ? $this->institucionProcedencia->toArray() : null,
+            'expresion_literaria' => $this->expresionLiteraria ? $this->expresionLiteraria->toArray() : null,
+            'seccion_asignada' => $this->seccionAsignada ? $this->seccionAsignada->toArray() : null,
+            'datos_adicionales' => [
+                'orden_nacimiento' => $this->alumno && $this->alumno->ordenNacimiento ? $this->alumno->ordenNacimiento->toArray() : null,
+                'discapacidad' => $this->alumno && $this->alumno->discapacidad ? $this->alumno->discapacidad->toArray() : null,
+                'etnia_indigena' => $this->alumno && $this->alumno->etniaIndigena ? $this->alumno->etniaIndigena->toArray() : null,
+                'lateralidad' => $this->alumno && $this->alumno->lateralidad ? $this->alumno->lateralidad->toArray() : null,
+            ]
+        ];
+
+        return $datos;
+    }
+
+    public static function inactivar($id)
+    {
+        return DB::transaction(function () use ($id) {
+
+            $inscripcion = Inscripcion::with('alumno')->findOrFail($id);
+
+            // Inactivar la inscripción
+            $inscripcion->update([
+                'status' => 'Inactivo',
+            ]);
+
+            // Inactivar el alumno relacionado
+            if ($inscripcion->alumno) {
+                $inscripcion->alumno->update([
+                    'status' => false,
+                ]);
+            }
+
+            return true;
+        });
     }
 }

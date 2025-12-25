@@ -5,6 +5,10 @@
     --primary: #4f46e5;
     --primary-dark: #4338ca;
     --primary-light: #eef2ff;
+    --orange: #f59e0b;
+    --orange-dark: #f59e0b;
+    --grey-pr: hsl(215, 20%, 44%);
+    --grey-dark-pr:hsl(215, 24%, 41%);
     --success: #10b981;
     --success-light: #d1fae5;
     --danger: #ef4444;
@@ -39,7 +43,6 @@
 .text-capitalize {
     text-transform: capitalize;
 }
-
 
 /* Contenedor principal */
 .main-container {
@@ -113,6 +116,24 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: var(--shadow-md);
+    text-decoration: none;
+}
+
+.btn-prosecucion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--grey-pr);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
 }
 
 .btn-percentil {
@@ -151,6 +172,14 @@
     background: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.btn-prosecucion:hover {
+    background: var(--grey-dark-pr);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
 }
 
 .btn-percentil:hover {
@@ -163,6 +192,27 @@
     font-size: 1rem;
 }
 
+.action-btn {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-menu {
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.dropdown-item i {
+    width: 18px;
+}
 /* Alertas modernas */
 .alerts-container {
     margin-bottom: 1.5rem;
@@ -342,12 +392,6 @@
     transition: all 0.2s ease;
 }
 
-.table-row-hover:hover {
-    background: var(--primary-light);
-    transform: scale(1.01);
-    box-shadow: var(--shadow);
-}
-
 .table-modern td {
     padding: 0.3rem 0.3rem;
     font-size: 0.9rem;
@@ -362,6 +406,19 @@
     height: 32px;
     background: var(--gray-100);
     color: var(--gray-700);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.code-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 32px;
+    background: var(--primary);
+    color: white;
     border-radius: 8px;
     font-weight: 600;
     font-size: 0.85rem;

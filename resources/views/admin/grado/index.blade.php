@@ -143,7 +143,7 @@
                         @else
                             {{-- Se recorren los grados existentes --}}
                             @foreach ($grados as $index => $datos)
-                                <tr class="table-row-hover row-12" style="text-align: center">                                    
+                                <tr class="  row-12" style="text-align: center">                                    
                                     <td class="title-main">{{ $datos->numero_grado }}</td>
                                     <td>
                                         @if ($datos->status)
@@ -159,35 +159,56 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <div class="action-buttons">
-                                            {{-- Ver detalles del grado --}}
-                                            <button class="action-btn btn-view"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#viewModal{{ $datos->id }}"
-                                                    @if(!$anioEscolarActivo) disabled @endif
-                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Ver detalles' }}">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
+                                        {{-- BOTONES DE ACCIONES --}}
+                                            <div class="action-buttons">
+                                                <div class="dropdown dropstart text-center">
+                                                    <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                        {{-- Ver mas --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-primary"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#viewModal{{ $datos->id }}"
+                                                                title="Ver mas"
+                                                                @if (!$anioEscolarActivo) disabled @endif
+                                                                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Ver mas' }}">
+                                                                <i class="fas fa-eye me-2"></i>
+                                                                Ver mas
+                                                            </button>
+                                                        </li>
 
-                                            {{-- Editar grado --}}
-                                            <button class="action-btn btn-edit"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#viewModalEditar{{ $datos->id }}"
-                                                    @if(!$anioEscolarActivo) disabled @endif
-                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
-                                                <i class="fas fa-pen"></i>
-                                            </button>
+                                                        {{-- Editar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-warning"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#viewModalEditar{{ $datos->id }}"
+                                                                title="Editar"
+                                                                @if (!$anioEscolarActivo) disabled @endif
+                                                                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
+                                                                <i class="fas fa-pen me-2"></i>
+                                                                Editar
+                                                            </button>
+                                                        </li>
 
-                                            {{-- Eliminar grado --}}
-                                            <button class="action-btn btn-delete"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#confirmarEliminar{{ $datos->id }}"
-                                                    @if(!$anioEscolarActivo) disabled @endif
-                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar' }}">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-
-                                            
+                                                        {{-- Inactivar --}}
+                                                        <li>
+                                                            <button
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                                @disabled(!$anioEscolarActivo) title="Inactivar año escolar">
+                                                                <i class="fas fa-ban me-2"></i>
+                                                                Inactivar
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                     </td>
                                 </tr>
 
@@ -205,15 +226,14 @@
                                                     <div class="modal-icon-delete">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </div>
-                                                    <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                                                    <h5 class="modal-title-delete">Confirmar Inactivacion</h5>
                                                     <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
                                                         <i class="fas fa-times"></i>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body-delete">
-                                                    <p>¿Deseas eliminar este año?</p>
+                                                    <p>¿Deseas inactivar este año?</p>
                                                     <p class="delete-warning">
-                                                        Esta acción no se puede deshacer.
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer-delete">
@@ -222,7 +242,7 @@
                                                         @method('DELETE')
                                                         <div class="footer-buttons">
                                                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
-                                                            <button type="submit" class="btn-modal-delete">Eliminar</button>
+                                                            <button type="submit" class="btn-modal-delete">Inactivar</button>
                                                         </div>
                                                     </form>
                                                 </div>
