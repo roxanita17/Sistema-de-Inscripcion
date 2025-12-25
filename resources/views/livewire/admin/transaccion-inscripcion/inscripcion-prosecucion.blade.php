@@ -395,7 +395,7 @@
         <div class="card-modern">
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="d-flex justify-content-end gap-3">
-                    <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="btn-cancel-modern">
+                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}" class="btn-cancel-modern">
                         <i class="fas fa-arrow-left"></i>
                         Cancelar
                     </a>

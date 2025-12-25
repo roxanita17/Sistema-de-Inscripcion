@@ -68,9 +68,10 @@
                             @if ($tipo === 'inscripciones')
                                 <th>Año Escolar</th>
                                 <th class="text-center">Alumno</th>
-                                <th>Grado</th>
-                                <th>Sección</th>
-                                <th>Tipo de Inscripcion</th>
+                                <th class="text-center">Grado</th>
+                                <th class="text-center">Sección</th>
+                                <th class="text-center">Tipo de Inscripción</th>
+                                <th class="text-center">Acciones</th>
                             @elseif($tipo === 'docentes')
                                 <th>Año Escolar</th>
                                 <th>Docente</th>
@@ -83,41 +84,212 @@
 
                             {{-- INSCRIPCIONES --}}
                             @if ($tipo === 'inscripciones')
-                                @forelse ($inscripciones as $inscripcion)
-                                    <tr>
-                                        <td>
-                                            {{ optional($inscripcion->anioEscolar)->inicio_anio_escolar
-                                                ? \Carbon\Carbon::parse($inscripcion->anioEscolar->inicio_anio_escolar)->format('d/m/Y')
-                                                : '—' }}
-                                            -
-                                            {{ optional($inscripcion->anioEscolar)->cierre_anio_escolar
-                                                ? \Carbon\Carbon::parse($inscripcion->anioEscolar->cierre_anio_escolar)->format('d/m/Y')
-                                                : '—' }}
-                                        </td>
+                                @if ($modalidad === 'prosecucion')
+                                    {{-- TABLA PARA PROSECUCIÓN --}}
+                                    @forelse ($inscripciones as $prosecucion)
+                                        <tr>
+                                            {{-- Año Escolar de Prosecución --}}
+                                            <td>
+                                                {{ optional($prosecucion->anioEscolar)->inicio_anio_escolar
+                                                    ? \Carbon\Carbon::parse($prosecucion->anioEscolar->inicio_anio_escolar)->format('d/m/Y')
+                                                    : '—' }}
+                                                -
+                                                {{ optional($prosecucion->anioEscolar)->cierre_anio_escolar
+                                                    ? \Carbon\Carbon::parse($prosecucion->anioEscolar->cierre_anio_escolar)->format('d/m/Y')
+                                                    : '—' }}
+                                            </td>
 
-                                        <td>
-                                            {{ $inscripcion->alumno->persona->primer_apellido }}
-                                            {{ $inscripcion->alumno->persona->primer_nombre }}
-                                        </td>
+                                            {{-- Alumno --}}
+                                            <td>
+                                                {{ $prosecucion->inscripcion->alumno->persona->primer_apellido }}
+                                                {{ $prosecucion->inscripcion->alumno->persona->primer_nombre }}
+                                            </td>
 
-                                        <td>{{ $inscripcion->grado->numero_grado }}</td>
+                                            {{-- Grado al que fue promovido --}}
+                                            <td>
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span class="badge bg-success mb-1">
+                                                        {{ $prosecucion->grado->numero_grado }}° Grado
+                                                    </span>
+                                                    @if ($prosecucion->repite_grado)
+                                                        <small class="text-danger">
+                                                            <i class="fas fa-redo"></i> Repite
+                                                        </small>
+                                                    @else
+                                                        <small class="text-success">
+                                                            <i class="fas fa-arrow-up"></i> Promovido
+                                                        </small>
+                                                    @endif
+                                                </div>
+                                            </td>
 
-                                        <td>{{ $inscripcion->seccionAsignada->nombre ?? '—' }}</td>
+                                            {{-- Sección Asignada --}}
+                                            <td>{{ $prosecucion->seccion->nombre ?? '—' }}</td>
 
-                                        {{-- MODALIDAD --}}
-                                        <td>
-                                            @if ($inscripcion->prosecucion)
-                                                <span class="badge bg-primary">Prosecución</span>
-                                            @elseif ($inscripcion->nuevoIngreso)
-                                                <span class="badge bg-success">Nuevo Ingreso</span>
-                                            @else
-                                                <span class="badge bg-secondary">—</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    {{-- vacío --}}
-                                @endforelse
+                                            {{-- Tipo --}}
+                                            <td>
+                                                <span class="badge bg-primary">
+                                                    <i class="fas fa-arrows-alt-v"></i> Prosecución
+                                                </span>
+                                            </td>
+
+                                            {{-- Acciones (opcional) --}}
+                                            <td>
+                                                <button class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                                    data-bs-target="#modalDetalleProsecucion{{ $prosecucion->id }}"
+                                                    title="Ver detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-inbox fa-2x"></i>
+                                                    <h4>No hay inscripciones de prosecución</h4>
+                                                    <p>No se encontraron registros para el año escolar seleccionado</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                @elseif($modalidad === 'nuevo_ingreso')
+                                    {{-- TABLA PARA NUEVO INGRESO --}}
+                                    @forelse ($inscripciones as $inscripcion)
+                                        <tr>
+                                            {{-- Año Escolar --}}
+                                            <td>
+                                                {{ optional($inscripcion->anioEscolar)->inicio_anio_escolar
+                                                    ? \Carbon\Carbon::parse($inscripcion->anioEscolar->inicio_anio_escolar)->format('d/m/Y')
+                                                    : '—' }}
+                                                -
+                                                {{ optional($inscripcion->anioEscolar)->cierre_anio_escolar
+                                                    ? \Carbon\Carbon::parse($inscripcion->anioEscolar->cierre_anio_escolar)->format('d/m/Y')
+                                                    : '—' }}
+                                            </td>
+
+                                            {{-- Alumno --}}
+                                            <td>
+                                                {{ $inscripcion->alumno->persona->primer_apellido }}
+                                                {{ $inscripcion->alumno->persona->primer_nombre }}
+                                            </td>
+
+                                            {{-- Grado --}}
+                                            <td>
+                                                <span class="badge bg-info">
+                                                    {{ $inscripcion->grado->numero_grado }}° Grado
+                                                </span>
+                                            </td>
+
+                                            {{-- Sección --}}
+                                            <td>{{ $inscripcion->seccionAsignada->nombre ?? '—' }}</td>
+
+                                            {{-- Tipo --}}
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-star"></i> Nuevo Ingreso
+                                                </span>
+                                            </td>
+
+                                            {{-- Acciones (opcional) --}}
+                                            <td>
+                                                <button class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                                    data-bs-target="#modalDetalleNuevoIngreso{{ $inscripcion->id }}"
+                                                    title="Ver detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-inbox fa-2x"></i>
+                                                    <h4>No hay inscripciones de nuevo ingreso</h4>
+                                                    <p>No se encontraron registros para el año escolar seleccionado</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                @else
+                                    {{-- TABLA PARA TODAS LAS INSCRIPCIONES (SIN FILTRO) --}}
+                                    @forelse ($inscripciones as $inscripcion)
+                                        <tr>
+                                            {{-- Año Escolar --}}
+                                            <td>
+                                                {{ optional($inscripcion->anioEscolar)->inicio_anio_escolar
+                                                    ? \Carbon\Carbon::parse($inscripcion->anioEscolar->inicio_anio_escolar)->format('d/m/Y')
+                                                    : '—' }}
+                                                -
+                                                {{ optional($inscripcion->anioEscolar)->cierre_anio_escolar
+                                                    ? \Carbon\Carbon::parse($inscripcion->anioEscolar->cierre_anio_escolar)->format('d/m/Y')
+                                                    : '—' }}
+                                            </td>
+
+                                            {{-- Alumno --}}
+                                            <td>
+                                                {{ $inscripcion->alumno->persona->primer_apellido }}
+                                                {{ $inscripcion->alumno->persona->primer_nombre }}
+                                            </td>
+
+                                            {{-- Grado --}}
+                                            <td>
+                                                @if ($inscripcion->prosecucion)
+                                                    {{-- Si es prosecución, mostrar el grado de promoción --}}
+                                                    <span class="badge bg-primary">
+                                                        {{ $inscripcion->prosecucion->grado->numero_grado }}° Grado
+                                                    </span>
+                                                @else
+                                                    {{-- Si es nuevo ingreso o base, mostrar el grado de la inscripción --}}
+                                                    <span class="badge bg-info">
+                                                        {{ $inscripcion->grado->numero_grado }}° Grado
+                                                    </span>
+                                                @endif
+                                            </td>
+
+                                            {{-- Sección --}}
+                                            <td>
+                                                @if ($inscripcion->prosecucion)
+                                                    {{ $inscripcion->prosecucion->seccion->nombre ?? '—' }}
+                                                @else
+                                                    {{ $inscripcion->seccionAsignada->nombre ?? '—' }}
+                                                @endif
+                                            </td>
+
+                                            {{-- Tipo --}}
+                                            <td>
+                                                @if ($inscripcion->prosecucion)
+                                                    <span class="badge bg-primary">
+                                                        <i class="fas fa-arrows-alt-v"></i> Prosecución
+                                                    </span>
+                                                @elseif ($inscripcion->nuevoIngreso)
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-star"></i> Nuevo Ingreso
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-secondary">—</span>
+                                                @endif
+                                            </td>
+
+                                            {{-- Acciones (opcional) --}}
+                                            <td>
+                                                <button class="btn btn-sm btn-info" title="Ver detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-inbox fa-2x"></i>
+                                                    <h4>No hay inscripciones</h4>
+                                                    <p>No se encontraron registros para el año escolar seleccionado</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                @endif
                             @endif
 
 

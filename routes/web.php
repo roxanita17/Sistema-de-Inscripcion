@@ -28,6 +28,7 @@ use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\EntradasPercentilController;
 use App\Http\Controllers\HistoricoController;
+use App\Http\Controllers\InscripcionProsecucionController;
 use App\Http\Controllers\InstitucionProcedenciaController;
 use App\Models\Historico;
 
@@ -288,13 +289,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('alumnos/reporte/{id}', [AlumnoController::class, 'reportePDF'])->name('alumnos.reporte.individual');
     Route::get('alumnos/reportes/general', [AlumnoController::class, 'reporteGeneralPDF'])->name('alumnos.reporteGeneralPDF');
 
-    // ===== INSCRIPCIONES ======
+    // ================== TRANSACCIONES ==================
     Route::prefix('transacciones')->name('transacciones.')->group(function () {
 
+        // ========= INSCRIPCIONES (NUEVO INGRESO) =========
         Route::get('inscripcion', [InscripcionController::class, 'index'])
             ->name('inscripcion.index');
 
-        //Inscripcion Nuevo Ingreso
         Route::get('inscripcion/create', function () {
             return view('admin.transacciones.inscripcion.create');
         })->name('inscripcion.create');
@@ -306,31 +307,40 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
             ->name('inscripcion.destroy');
 
-        //reportes PDF
         Route::get('inscripcion/reporte/{id}', [InscripcionController::class, 'reporte'])
             ->name('inscripcion.reporte');
 
-        /* Ruta AJAX */
+        // ========= INSCRIPCIÓN PROSECUCIÓN (LISTADO) =========
+        Route::get(
+            'inscripcion_prosecucion',
+            [InscripcionProsecucionController::class, 'index']
+        )->name('inscripcion_prosecucion.index');
+
+        // ========= INSCRIPCIÓN PROSECUCIÓN (FORMULARIO) =========
+        Route::get('inscripcion-prosecucion/create', function () {
+            return view('admin.transacciones.inscripcion.createProsecucion');
+        })->name('inscripcion-prosecucion.createProsecucion');
+
+        // ========= AJAX =========
         Route::get(
             'secciones-por-grado/{grado}',
             [InscripcionController::class, 'seccionesPorGrado']
         )->name('secciones.por-grado');
 
-        //Inscripcion Prosecucion
-        Route::get('inscripcion-prosecucion/create', function () {
-            return view('admin.transacciones.inscripcion.createProsecucion');
-        })->name('inscripcion-prosecucion.createProsecucion');
+        // ========= PERCENTIL =========
+        Route::get('percentil', [EntradasPercentilController::class, 'index'])
+            ->name('percentil.index');
 
-
+        Route::post(
+            'percentil/boton-percentil',
+            [EntradasPercentilController::class, 'ejecutar']
+        )->name('percentil.boton-percentil');
     });
 
-    //===== PERCENTIL ======
-    Route::get('transacciones/percentil', [EntradasPercentilController::class, 'index'])->name('transacciones.percentil.index');
 
-    Route::post('transacciones/percentil/boton-percentil', [EntradasPercentilController::class, 'ejecutar'])
-        ->name('transacciones.percentil.boton-percentil');
-
-    Route::get('historico', [HistoricoController::class, 'index'])->name('historico.index');
+    // ================== HISTÓRICO ==================
+    Route::get('historico', [HistoricoController::class, 'index'])
+        ->name('historico.index');
 });
 
 
@@ -354,7 +364,7 @@ Route::middleware(['auth'])->prefix('representante')->name('representante.')->gr
 
     // Eliminar representante
     Route::delete('/{id}', [RepresentanteController::class, 'delete'])->name('destroy');
-    
+
     // Rutas para manejo de eliminados
     Route::get('/eliminados', [RepresentanteController::class, 'eliminados'])->name('eliminados');
     Route::post('/{id}/restaurar', [RepresentanteController::class, 'restaurar'])->name('restaurar');
