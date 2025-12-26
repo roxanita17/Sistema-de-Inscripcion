@@ -452,8 +452,14 @@ public function mostrarFormularioEditar($id)
                 'fecha_nacimiento' => $this->parseDate($request->input('fecha-nacimiento-representante')),
                 'genero_id' => $request->input('sexo-representante'),
                 'tipo_documento_id' => $request->input('tipo-ci-representante'),
-                'prefijo_id' => $request->input('prefijo_telefono'),
-                'telefono' => $request->input('telefono_movil'),
+                'prefijo_id' => $request->input('prefijo-representante') 
+                             ?: $request->input('prefijo-madre') 
+                             ?: $request->input('prefijo-padre'),
+                'telefono' => $request->input('telefono-representante') 
+                            ?: $request->input('telefono-madre') 
+                            ?: $request->input('telefono-padre'),
+                'telefono_dos' => $request->input('telefono-dos-representante'),
+                'prefijo_dos_id' => $request->input('prefijo-dos-representante'),
                 'email' => $request->input('correo-representante'),
                 'localidad_id' => $request->input('parroquia_id'),
             ]);
@@ -632,7 +638,15 @@ public function mostrarFormularioEditar($id)
         'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia'),
 
         // Teléfono (se almacena completo en Persona.telefono)
-        'telefono_personas' => $request->input('telefono-representante'),
+        // Teléfono (se almacena completo en Persona.telefono)
+        'telefono_personas' => $request->input('telefono-representante') 
+                            ?: $request->input('telefono-madre') 
+                            ?: $request->input('telefono-padre'),
+        'telefono_dos' => $request->input('telefono-dos-representante'),
+        'prefijo_dos_id' => $request->input('prefijo-dos-representante'),
+        'prefijo_id' => $request->input('prefijo-representante') 
+                     ?: $request->input('prefijo-madre') 
+                     ?: $request->input('prefijo-padre'),
 
         // Ocupación y convivencia
         'ocupacion_representante'             => $request->input('ocupacion-representante'),
