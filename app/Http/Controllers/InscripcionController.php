@@ -48,7 +48,7 @@ class InscripcionController extends Controller
         if ($grado1) {
             $inscritos = Inscripcion::where('grado_id', 1)
                 ->where('status', 'Activo')
-                ->when($anioEscolarActivo, function($q) use ($anioEscolarActivo) {
+                ->when($anioEscolarActivo, function ($q) use ($anioEscolarActivo) {
                     $q->where('anio_escolar_id', $anioEscolarActivo->id);
                 })
                 ->count();
@@ -117,7 +117,7 @@ class InscripcionController extends Controller
             'anioEscolar'
         ])
             // FILTRO POR AÑO ESCOLAR ACTIVO (por defecto)
-            ->when($anioEscolarActivo, function($q) use ($anioEscolarActivo) {
+            ->when($anioEscolarActivo, function ($q) use ($anioEscolarActivo) {
                 $q->where('anio_escolar_id', $anioEscolarActivo->id);
             })
             // Filtro por grado
@@ -125,7 +125,7 @@ class InscripcionController extends Controller
             // Filtro por sección
             ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
             // Filtro por tipo de inscripción
-            ->when($tipoInscripcion, function($q) use ($tipoInscripcion) {
+            ->when($tipoInscripcion, function ($q) use ($tipoInscripcion) {
                 if ($tipoInscripcion === 'nuevo_ingreso') {
                     $q->whereNotNull('nuevo_ingreso_id');
                 } elseif ($tipoInscripcion === 'prosecucion') {
@@ -202,6 +202,20 @@ class InscripcionController extends Controller
     {
         return redirect()->route('admin.transacciones.inscripcion.create');
     }
+
+    public function edit($id)
+    {
+        $inscripcion = Inscripcion::with(['nuevoIngreso', 'alumno'])->findOrFail($id);
+
+        // Verificar que sea nuevo ingreso
+        if (!$inscripcion->nuevoIngreso) {
+            return redirect()->route('admin.transacciones.inscripcion.index')
+                ->with('error', 'Esta inscripción no es de nuevo ingreso.');
+        }
+
+        return view('admin.transacciones.inscripcion.edit', compact('inscripcion'));
+    }
+
 
     public function destroy($id)
     {

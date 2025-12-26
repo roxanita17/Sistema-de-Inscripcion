@@ -21,6 +21,7 @@
     --warning-light: #fef3c7;
     --info: #3b82f6;
     --info-light: #eef2ff;
+    --info-lighter: #f2f5fe;
     --info-dark: #255bb3;
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
@@ -246,10 +247,21 @@
     border-left: 4px solid var(--success);
 }
 
+.alert-info {
+    background: var(--info-lighter);
+    border-left: 4px solid var(--info);
+}
+
 .alert-error {
     background: var(--danger-light);
     border-left: 4px solid var(--danger);
 }
+
+.alert-warning {
+    background: var(--warning-light);
+    border-left: 4px solid var(--warning);
+}
+
 
 .alert-icon {
     font-size: 1.5rem;
@@ -263,6 +275,10 @@
 
 .alert-error .alert-icon {
     color: var(--danger);
+}
+
+.alert-warning .alert-icon {
+    color: var(--warning);
 }
 
 .alert-content h4 {

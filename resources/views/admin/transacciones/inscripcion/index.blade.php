@@ -309,6 +309,19 @@
                                                                 Ver mas
                                                             </button>
                                                         </li>
+                                                        
+                                                        {{-- Editar (solo para nuevo ingreso) --}}
+                                                        @if ($datos->nuevoIngreso)
+                                                            <li>
+                                                                <a href="{{ route('admin.transacciones.inscripcion.edit', $datos->id) }}"
+                                                                    class="dropdown-item d-flex align-items-center text-warning"
+                                                                    @if (!$anioEscolarActivo) disabled @endif
+                                                                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
+                                                                    <i class="fas fa-edit me-2"></i>
+                                                                    Editar
+                                                                </a>
+                                                            </li>
+                                                        @endif
 
                                                         {{-- Inactivar --}}
                                                         <li>

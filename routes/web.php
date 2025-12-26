@@ -304,6 +304,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
             return view('admin.transacciones.inscripcion.create-alumno');
         })->name('inscripcion.create-alumno');
 
+        Route::get('/inscripcion/{id}/edit', [InscripcionController::class, 'edit'])
+            ->name('inscripcion.edit');
+
         Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
             ->name('inscripcion.destroy');
 
