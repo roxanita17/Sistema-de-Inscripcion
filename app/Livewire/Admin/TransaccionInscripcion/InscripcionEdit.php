@@ -10,16 +10,18 @@ use App\Models\InstitucionProcedencia;
 use App\Models\ExpresionLiteraria;
 use App\Repositories\RepresentanteRepository;
 use App\Services\DocumentoService;
+use App\Services\InscripcionService;
 use Illuminate\Support\Facades\DB;
 
 class InscripcionEdit extends Component
 {
+    protected InscripcionService $inscripcionService;
     protected RepresentanteRepository $representanteRepository;
     protected DocumentoService $documentoService;
 
     // ID de la inscripción
     public $inscripcionId;
-    
+
     // IDs de relaciones
     public $alumnoId;
     public $padreId;
@@ -63,21 +65,116 @@ class InscripcionEdit extends Component
     public $statusInscripcion = '';
 
     public function boot(
+        InscripcionService $inscripcionService,
         RepresentanteRepository $representanteRepository,
         DocumentoService $documentoService
     ) {
+        $this->inscripcionService = $inscripcionService;
         $this->representanteRepository = $representanteRepository;
         $this->documentoService = $documentoService;
+    }
+
+    public function rules()
+    {
+        return [
+            'gradoId' => [
+                'required',
+                'exists:grados,id',
+                function ($attribute, $value, $fail) {
+                    if (!$this->inscripcionService->verificarCuposDisponibles($value)) {
+                        $fail('El grado seleccionado ha alcanzado el límite de cupos disponibles.');
+                    }
+                }
+            ],
+            'seccionId' => [
+                function ($attr, $value, $fail) {
+                    if (!$this->esPrimerGrado && !$value) {
+                        $fail('Debe seleccionar una sección.');
+                    }
+
+                    if ($value) {
+                        $existe = Seccion::where('id', $value)
+                            ->where('grado_id', $this->gradoId)
+                            ->where('status', true)
+                            ->exists();
+
+                        if (!$existe) {
+                            $fail('La sección seleccionada no pertenece al grado.');
+                        }
+                    }
+                }
+            ],
+
+            'padreId' => 'nullable|exists:representantes,id',
+            'madreId' => 'nullable|exists:representantes,id',
+            'representanteLegalId' => 'required|exists:representantes,id',
+
+            'documentos' => 'array',
+            'documentos.*' => 'in:' . implode(',', $this->documentosDisponibles),
+
+            'numero_zonificacion' => [
+                'nullable',
+                'regex:/^\d+$/'
+            ],
+            'institucion_procedencia_id' => 'nullable|exists:institucion_procedencias,id',
+            'expresion_literaria_id' => 'nullable|exists:expresion_literarias,id',
+
+            'anio_egreso' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    if (!$this->inscripcionService->validarAnioEgreso($value)) {
+                        $fail('El año de egreso debe ser 7 años antes del año actual.');
+                    }
+                }
+            ],
+
+            'acepta_normas_contrato' => 'accepted',
+        ];
+    }
+
+    protected $messages = [
+        'gradoId.required' => 'Debe seleccionar un grado.',
+        'gradoId.exists' => 'El grado seleccionado no es válido.',
+
+        'documentos.array' => 'Formato inválido de documentos.',
+        'documentos.*.in' => 'Uno o más documentos no son válidos.',
+
+        'numero_zonificacion.regex' =>
+        'El número de zonificación solo puede contener números.',
+
+        'institucion_procedencia_id.exists' =>
+        'La institución seleccionada no es válida.',
+
+        'expresion_literaria_id.exists' =>
+        'La expresión literaria seleccionada no es válida.',
+
+        'anio_egreso.required' => 'Debe indicar el año de egreso.',
+        'anio_egreso.date' => 'El año de egreso debe ser 7 años antes del actual.',
+
+        'representanteLegalId.required' =>
+        'Debe seleccionar un representante legal obligatoriamente.',
+
+        'representanteLegalId.exists' =>
+        'El representante legal seleccionado no es válido.',
+
+        'acepta_normas_contrato.accepted' =>
+        'Debe aceptar las normas del contrato.',
+    ];
+
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
     }
 
     public function mount($inscripcionId)
     {
         $this->inscripcionId = $inscripcionId;
-        
+
         // Cargar documentos disponibles
         $this->documentosDisponibles = $this->documentoService->obtenerDocumentosDisponibles();
         $this->documentosEtiquetas = $this->documentoService->obtenerEtiquetas();
-        
+
         $this->cargarDatosIniciales();
         $this->cargarInscripcion();
     }
@@ -139,7 +236,7 @@ class InscripcionEdit extends Component
 
         // Cargar secciones del grado
         $this->cargarSecciones($this->gradoId);
-        
+
         // Evaluar estado de documentos
         $this->evaluarDocumentos();
     }
@@ -147,7 +244,7 @@ class InscripcionEdit extends Component
     private function evaluarDocumentos()
     {
         $requiereAutorizacion = !$this->padreId && !$this->madreId;
-        
+
         $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
             $this->documentos,
             $requiereAutorizacion,
@@ -157,7 +254,7 @@ class InscripcionEdit extends Component
         $this->documentosFaltantes = $evaluacion['faltantes'];
         $this->estadoDocumentos = $evaluacion['estado_documentos'];
         $this->statusInscripcion = $evaluacion['status_inscripcion'];
-        
+
         // Actualizar seleccionarTodos
         $this->seleccionarTodos = count($this->documentos) === count($this->documentosDisponibles);
     }
@@ -208,7 +305,7 @@ class InscripcionEdit extends Component
         $this->representanteLegalSeleccionado = $value
             ? $this->representanteRepository->obtenerRepresentanteLegalConRelaciones($value)
             : null;
-        
+
         // Re-evaluar documentos cuando cambian los representantes
         $this->evaluarDocumentos();
     }
@@ -224,9 +321,48 @@ class InscripcionEdit extends Component
         $this->evaluarDocumentos();
     }
 
+    private function validarRepresentantes(): bool
+    {
+        if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
+            session()->flash('error', 'Debe seleccionar al menos un representante.');
+            return false;
+        }
+        return true;
+    }
+
+    private function validarNuevoIngreso(Inscripcion $inscripcion): bool
+    {
+        if (!$inscripcion->nuevoIngreso) {
+            return true;
+        }
+
+        if (
+            !$this->institucion_procedencia_id ||
+            !$this->expresion_literaria_id ||
+            !$this->anio_egreso
+        ) {
+            session()->flash(
+                'error',
+                'Debe completar todos los datos de nuevo ingreso.'
+            );
+            return false;
+        }
+
+        return true;
+    }
+
+
+
     public function actualizar()
     {
         // Validación básica
+        try {
+            $this->validate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            session()->flash('error', 'No se pudo guardar la inscripción. Revise los campos obligatorios.');
+            throw $e;
+        }
+
         if (!$this->gradoId) {
             session()->flash('error', 'Debe seleccionar un grado.');
             return;
@@ -247,12 +383,18 @@ class InscripcionEdit extends Component
             return;
         }
 
+        if (!$this->validarRepresentantes()) {
+            return;
+        }
+
+
+
         try {
             DB::beginTransaction();
 
             // Re-evaluar documentos antes de guardar
             $requiereAutorizacion = !$this->padreId && !$this->madreId;
-            
+
             $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
                 $this->documentos,
                 $requiereAutorizacion,
@@ -260,14 +402,24 @@ class InscripcionEdit extends Component
             );
 
             $inscripcion = Inscripcion::findOrFail($this->inscripcionId);
-
+            if (!$evaluacion['puede_guardar']) {
+                DB::rollBack();
+                session()->flash(
+                    'error',
+                    'No se puede guardar la inscripción. Faltan documentos obligatorios.'
+                );
+                return;
+            }
+            if (!$this->validarNuevoIngreso($inscripcion)) {
+                return;
+            }
             // Actualizar inscripción
             $inscripcion->update([
                 'grado_id' => $this->gradoId,
                 'seccion_id' => $this->seccionId,
-                'padre_id' => $this->padreId,
-                'madre_id' => $this->madreId,
-                'representante_legal_id' => $this->representanteLegalId,
+                'padre_id' => $this->padreId ?: null,
+                'madre_id' => $this->madreId ?: null,
+                'representante_legal_id' => $this->representanteLegalId ?: null,
                 'documentos' => $this->documentos,
                 'estado_documentos' => $evaluacion['estado_documentos'],
                 'status' => $evaluacion['status_inscripcion'],
@@ -289,7 +441,6 @@ class InscripcionEdit extends Component
 
             session()->flash('success', 'Inscripción actualizada exitosamente. Estado de documentos: ' . $evaluacion['estado_documentos']);
             return redirect()->route('admin.transacciones.inscripcion.index');
-
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error al actualizar: ' . $e->getMessage());
@@ -305,7 +456,7 @@ class InscripcionEdit extends Component
         // Recargar datos del alumno después de actualizar
         $inscripcion = Inscripcion::with('alumno.persona')->find($this->inscripcionId);
         $this->alumnoSeleccionado = $inscripcion->alumno;
-        
+
         session()->flash('success', 'Datos del alumno actualizados correctamente.');
     }
 

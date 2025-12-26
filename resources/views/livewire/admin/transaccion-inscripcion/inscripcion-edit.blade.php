@@ -186,6 +186,11 @@
                     </select>
                 </div>
             </div>
+            @error('representanteLegalId')
+                <div class="invalid-feedback-modern">
+                    {{ $message }}
+                </div>
+            @enderror
 
             @if ($representanteLegalSeleccionado)
                 <div class="card shadow-sm mt-3">
@@ -222,12 +227,18 @@
                     <label for="grado_id" class="form-label-modern">
                         <i class="fas fa-layer-group"></i> Grado
                     </label>
-                    <select wire:model.live="gradoId" class="form-control-modern">
+                    <select wire:model.live="gradoId"
+                        class="form-control-modern @error('gradoId') is-invalid @enderror">
                         <option value="">Seleccione un grado</option>
                         @foreach ($grados as $grado)
                             <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
                         @endforeach
                     </select>
+                    @error('gradoId')
+                        <div class="invalid-feedback-modern">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
                 @if (!$esPrimerGrado)
@@ -235,13 +246,19 @@
                         <label for="seccion_id" class="form-label-modern">
                             <i class="fas fa-th-large"></i> Sección
                         </label>
-                        <select wire:model.live="seccionId" class="form-control-modern">
+                        <select wire:model.live="seccionId"
+                            class="form-control-modern @error('seccionId') is-invalid @enderror">
                             <option value="">Seleccione una sección</option>
                             @foreach ($secciones as $seccion)
                                 <option value="{{ $seccion->id }}">{{ $seccion->nombre }}</option>
                             @endforeach
                         </select>
                     </div>
+                    @error('seccionId')
+                        <div class="invalid-feedback-modern">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 @endif
 
                 @if ($esPrimerGrado)
@@ -249,8 +266,10 @@
                         <label class="form-label-modern">
                             <i class="fas fa-hashtag"></i> Número de Zonificación
                         </label>
-                        <input type="text" wire:model="numero_zonificacion" class="form-control-modern"
-                            maxlength="3">
+                        <input type="text" wire:model.live="numero_zonificacion"
+                            class="form-control-modern @error('numero_zonificacion') is-invalid @enderror"
+                            maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g,'')"
+                            inputmode="numeric">
                     </div>
                 @endif
             </div>
@@ -260,31 +279,49 @@
                     <label class="form-label-modern">
                         <i class="fas fa-building"></i> Institución de Procedencia
                     </label>
-                    <select wire:model="institucion_procedencia_id" class="form-control-modern">
+                    <select wire:model.live="institucion_procedencia_id"
+                        class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
                         <option value="">Seleccione</option>
                         @foreach ($instituciones as $inst)
                             <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}</option>
                         @endforeach
                     </select>
+                    @error('institucion_procedencia_id')
+                        <div class="invalid-feedback-modern">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
                 <div class="col-md-2">
                     <label class="form-label-modern">
                         <i class="fas fa-font"></i> Literal
                     </label>
-                    <select wire:model="expresion_literaria_id" class="form-control-modern">
+                    <select wire:model.live="expresion_literaria_id"
+                        class="form-control-modern @error('expresion_literaria_id') is-invalid @enderror">
                         <option value="">Seleccione</option>
                         @foreach ($expresiones_literarias as $item)
                             <option value="{{ $item->id }}">{{ $item->letra_expresion_literaria }}</option>
                         @endforeach
                     </select>
+                    @error('expresion_literaria_id')
+                        <div class="invalid-feedback-modern">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label-modern">
                         <i class="fas fa-calendar"></i> Año de Egreso
                     </label>
-                    <input type="date" wire:model="anio_egreso" class="form-control-modern">
+                    <input type="date" wire:model.live="anio_egreso"
+                        class="form-control-modern @error('anio_egreso') is-invalid @enderror">
+                    @error('anio_egreso')
+                        <div class="invalid-feedback-modern">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -438,15 +475,18 @@
             $('.selectpicker').selectpicker();
 
             $('#padre_select').on('changed.bs.select', function() {
-                @this.set('padreId', $(this).val());
+                let value = $(this).val();
+                @this.set('padreId', value, true);
             });
 
             $('#madre_select').on('changed.bs.select', function() {
-                @this.set('madreId', $(this).val());
+                let value = $(this).val();
+                @this.set('madreId', value, true);
             });
 
             $('#representante_legal_select').on('changed.bs.select', function() {
-                @this.set('representanteLegalId', $(this).val());
+                let value = $(this).val();
+                @this.set('representanteLegalId', value, true);
             });
         });
 

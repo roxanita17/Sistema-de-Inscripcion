@@ -100,8 +100,6 @@ class Inscripcion extends Component
     public function rules()
     {
         return [
-            'tipo_inscripcion' => 'required|in:nuevo_ingreso,prosecucion',
-
             'numero_zonificacion' => [
                 'nullable',
                 'regex:/^\d+$/'
