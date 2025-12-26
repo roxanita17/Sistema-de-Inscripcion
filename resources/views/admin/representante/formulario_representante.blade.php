@@ -945,7 +945,20 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
+                        <div class="input-group">
+                            <label class="input-group-text" for="prefijo-padre">Prefijo</label>
+                            <select class="form-select" id="prefijo-padre" name="prefijo-padre"
+                                title="Seleccione el tipo de linea Teléfonica" required>
+                                <option value="">Seleccione</option>
+                                @foreach ($prefijos_telefono as $prefijo)
+                                    <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <small id="prefijo-padre-error" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-3 mb-3">
                         <div class="form-group">
                             <label for="telefono-padre" class="form-label required">Número de Teléfono</label>
                             <div class="input-group">
@@ -959,16 +972,32 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                                        <div class="input-group">
-                                            <label class="input-group-text" for="prefijo_dos"><span
-                                                    class="text-danger">(*)</span>Prefijo 2</label>
-                                            <select class="form-select" id="prefijo_dos" name="prefijo_dos"
-                                                title="Seleccione el tipo de linea Teléfonica" required>
-                                                <option value="">Seleccione</option>
-                                                @foreach ($prefijos_telefono as $prefijo)
-                                                    <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
-                                                @endforeach
-                                            </select>
+                        <div class="input-group">
+                            <label class="input-group-text" for="prefijo_dos_padre">Prefijo 2</label>
+                            <select class="form-select" id="prefijo_dos_padre" name="prefijo_dos_padre"
+                                title="Seleccione el tipo de linea Teléfonica">
+                                <option value="">Seleccione</option>
+                                @foreach ($prefijos_telefono as $prefijo)
+                                    <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <small id="prefijo_dos_padre-error" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="form-group">
+                            <label for="telefono_dos_padre" class="form-label">Número de Teléfono 2</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="telefono_dos_padre" name="telefono_dos_padre"
+                                    pattern="[0-9]+" maxlength="11" title="Ingrese solo números (máximo 11 dígitos)">
+                            </div>
+                            <div class="invalid-feedback">
+                                Por favor ingrese un número de teléfono válido (solo números).
+                            </div>
+                        </div>
+                    </div>
+        
+                                    
                                         </div>
                                         <small id="prefijo_dos-error" class="text-danger"></small>
                                     </div>

@@ -1494,8 +1494,9 @@ public function mostrarFormularioEditar($id)
             $personaPadre->genero_id        = $request->input('sexo-padre');
             $personaPadre->localidad_id     = $request->input('idparroquia-padre');
             $personaPadre->telefono         = $request->input('telefono-padre');
-            $personaPadre->telefono_dos     = $request->input('telefono_dos_padre'); // Asegúrate de que este campo exista en el formulario
-            $personaPadre->prefijo_dos_id   = $request->input('prefijo_dos_padre'); // Asegúrate de que este campo exista en el formulario
+            // Usando los campos específicos para el padre
+            $personaPadre->telefono_dos     = $request->input('telefono_dos_padre');
+            $personaPadre->prefijo_dos_id   = $request->input('prefijo_dos_padre');
             $personaPadre->tipo_documento_id = $request->input('tipo-ci-padre');
             $personaPadre->prefijo_id       = $request->input('prefijo-padre');
             $personaPadre->direccion        = $request->input('direccion-padre');
