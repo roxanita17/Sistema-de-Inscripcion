@@ -510,14 +510,17 @@ public function mostrarFormularioEditar($id)
                 'localidad_id' => $request->input('parroquia_id'),
             ]);
 
-            // Update representante data
-            $representante->update([
+            // Preparar datos de actualización del representante
+            $representanteData = [
                 'estado_id' => $request->input('estado_id'),
                 'municipio_id' => $request->input('municipio_id'),
                 'parroquia_id' => $request->input('parroquia_id'),
                 'ocupacion_representante' => $request->input('ocupacion_id'),
                 'convivenciaestudiante_representante' => $request->input('convive-representante', 'no'),
-            ]);
+            ];
+            
+            // Actualizar datos del representante sin modificar el estatus
+            $representante->update($representanteData);
 
             // Handle legal representative specific data
             if ($isLegalRepresentative) {
@@ -541,15 +544,13 @@ public function mostrarFormularioEditar($id)
                     $representante->legal()->create($legalData);
                 }
                 
-                // Update status to indicate this is a legal representative
-                $representante->update(['status' => 1]);
+                // No actualizamos el status aquí para mantener el valor existente
             } else {
                 // If changing from legal to progenitor, remove legal data
                 if ($representante->legal) {
                     $representante->legal()->delete();
                 }
-                // Update status to indicate this is a progenitor
-                $representante->update(['status' => 0]);
+                // No actualizamos el status para mantener el valor existente
             }
 
             // Log the final state before commit
@@ -579,7 +580,7 @@ public function mostrarFormularioEditar($id)
             ]);
 
             return response()->json([
-                'status' => 'success',
+                'success' => true,
                 'message' => 'Representante actualizado exitosamente',
                 'redirect' => route('representante.index')
             ]);
@@ -1018,16 +1019,42 @@ public function mostrarFormularioEditar($id)
 
     // Campos adicionales del request que no existen en el modelo Persona se ignoran
 
+    // Determinar el status basado en el tipo de representante
+    $status = 1; // Por defecto, activo
+    $tipoRepresentante = $request->input('tipo_representante');
+    
+    // Si es una actualización, obtener el status actual
+    if ($request->representante_id) {
+        $representanteExistente = \App\Models\Representante::find($request->representante_id);
+        if ($representanteExistente) {
+            $status = $representanteExistente->status; // Mantener el status actual
+        }
+    }
+    
+    // Solo actualizar el status si se envía explícitamente en la solicitud
+    if ($request->has('status')) {
+        $status = $request->input('status');
+    } 
+    // Si no se envía status y es un nuevo registro, determinar según el tipo
+    elseif (!$request->representante_id) {
+        if ($tipoRepresentante === 'progenitor_padre_representante') {
+            $status = 2; // Padre
+        } elseif ($tipoRepresentante === 'progenitor_madre_representante') {
+            $status = 3; // Madre
+        }
+    }
+
     // Datos de representante
     $datosRepresentante = [
         "estado_id" => $request->estado_id ?: 1,
         "municipio_id" => $request->municipio_id,
         "parroquia_id" => $request->parroquia_id,
         "ocupacion_representante" => $request->input('ocupacion-madre') 
-    ?: $request->input('ocupacion-padre') 
-    ?: $request->input('ocupacion-representante') 
-    ?: null,
+            ?: $request->input('ocupacion-padre') 
+            ?: $request->input('ocupacion-representante') 
+            ?: null,
         "convivenciaestudiante_representante" => $request->convivenciaestudiante_representante ?: 'no',
+        "status" => $status, // Asignar el status determinado
     ];
 
     if($request->representante_id){

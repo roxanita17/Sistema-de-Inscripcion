@@ -76,9 +76,16 @@
                     <div class="detail-item">
                         <span class="detail-label">
                             <i class="fas fa-phone"></i>
-                            Teléfono
+                            Teléfono 1 
                         </span>
                         <span class="detail-value" id="modal-telefono"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="fas fa-phone"></i>
+                            Teléfono 2
+                        </span>
+                        <span class="detail-value" id="modal-telefono-dos"></span>
                     </div>
 
                     <div class="detail-item" id="correo-detail-item">

@@ -450,8 +450,14 @@
 
                 // Contacto básico
                 if (document.getElementById('modal-telefono')) {
-                    // Teléfono se guarda en Persona.telefono según el controlador
-                    document.getElementById('modal-telefono').textContent = persona.telefono || '';
+                    // Teléfono principal se guarda en Persona.telefono
+                    document.getElementById('modal-telefono').textContent = persona.telefono || 'No especificado';
+                }
+                
+                // Segundo teléfono
+                if (document.getElementById('modal-telefono-dos')) {
+                    // Segundo teléfono se guarda en Persona.telefono_dos
+                    document.getElementById('modal-telefono-dos').textContent = persona.telefono_dos || 'No especificado';
                 }
                 if (document.getElementById('modal-correo')) {
                     const correoItem = document.getElementById('correo-detail-item');

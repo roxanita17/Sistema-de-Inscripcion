@@ -832,14 +832,6 @@
             if (!this.checkValidity()) {
                 e.preventDefault();
                 e.stopPropagation();
-                $(this).addClass('was-validated');
-                
-                // Desplazarse al primer campo con error
-                const firstInvalid = this.querySelector(':invalid');
-                if (firstInvalid) {
-                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    $(firstInvalid).focus();
-                }
                 return false;
             }
             
@@ -848,7 +840,61 @@
             submitBtn.prop('disabled', true);
             submitBtn.html('<i class="fas fa-spinner fa-spin me-1"></i> Guardando...');
             
-            return true;
+            // Enviar el formulario vía AJAX
+            e.preventDefault();
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    console.log('Respuesta del servidor:', response);
+                    // Mostrar mensaje de éxito
+                    if (response.redirect) {
+                        // Si la respuesta incluye una URL de redirección, usarla
+                        window.location.href = response.redirect;
+                    } else if (response.success) {
+                        // Si no hay URL de redirección pero la operación fue exitosa, redirigir al listado
+                        window.location.href = '{{ route('representante.index') }}';
+                    } else {
+                        // Si hay un mensaje de éxito pero no hay redirección, mostrar el mensaje y redirigir
+                        if (response.message) {
+                            alert(response.message);
+                        }
+                        window.location.href = '{{ route('representante.index') }}';
+                    }
+                },
+                error: function(xhr) {
+                    // Habilitar el botón de nuevo
+                    submitBtn.prop('disabled', false);
+                    submitBtn.html('<i class="fas fa-save me-1"></i> Guardar Cambios');
+                    
+                    // Mostrar mensaje de error
+                    let errorMessage = 'Ocurrió un error al guardar los cambios.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    
+                    // Mostrar alerta de error
+                    const alertHtml = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            ${errorMessage}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                    
+                    // Insertar la alerta al inicio del formulario
+                    $('#representante-form').prepend(alertHtml);
+                    
+                    // Hacer scroll hasta la alerta
+                    $('html, body').animate({
+                        scrollTop: $('.alert').offset().top - 100
+                    }, 500);
+                }
+            });
+            
+            return false;
         });
 
         // Inicializar selects dependientes
