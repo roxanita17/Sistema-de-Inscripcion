@@ -324,6 +324,31 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
+                            <label for="prefijo_dos" class="form-label">Prefijo Teléfono 2</label>
+                            <select class="form-select" id="prefijo_dos" name="prefijo_dos">
+                                <option value="">Seleccione</option>
+                                @foreach($prefijos_telefono as $prefijo)
+                                    <option value="{{ $prefijo->id }}" 
+                                        {{ old('prefijo_dos', $representante->persona->prefijo_dos_id ?? '') == $prefijo->id ? 'selected' : '' }}>
+                                        {{ $prefijo->prefijo }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono_dos" class="form-label">Teléfono Móvil 2</label>
+                            <input type="text" class="form-control" id="telefono_dos" name="telefono_dos" 
+                                value="{{ old('telefono_dos', $representante->persona->telefono_dos ?? '') }}" 
+                                pattern="[0-9]+" 
+                                title="Ingrese solo números"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <div class="invalid-feedback">
+                                Por favor ingrese un número de teléfono válido (solo números).
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
                             <label for="ocupacion_id" class="form-label">Ocupación</label>
                             <select class="form-select" id="ocupacion_id" name="ocupacion_id">
                                 <option value="">Seleccione</option>

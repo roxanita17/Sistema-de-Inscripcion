@@ -378,6 +378,10 @@ public function mostrarFormularioEditar($id)
             'persona_id' => $persona->id,
             'tipo' => $isLegalRepresentative ? 'Legal' : 'Progenitor',
             'request_data' => $request->except(['_token', '_method', 'password']),
+            'telefono_dos' => $request->input('telefono_dos'),
+            'prefijo_dos' => $request->input('prefijo_dos'),
+            'telefono_dos_padre' => $request->input('telefono_dos_padre'),
+            'prefijo_dos_padre' => $request->input('prefijo_dos_padre'),
         ]);
 
         // Base validation rules
@@ -441,6 +445,38 @@ public function mostrarFormularioEditar($id)
         DB::beginTransaction();
 
         try {
+            // Log before update with more details
+            Log::info('=== DETALLES DE TELÉFONOS ===', [
+                'telefono_representante' => $request->input('telefono-representante'),
+                'telefono_madre' => $request->input('telefono-madre'),
+                'telefono_padre' => $request->input('telefono-padre'),
+                'telefono_movil' => $request->input('telefono_movil'),
+                'telefono_dos' => $request->input('telefono_dos'),
+                'telefono_dos_padre' => $request->input('telefono_dos_padre'),
+                'prefijo_telefono' => $request->input('prefijo_telefono'),
+                'prefijo_dos' => $request->input('prefijo_dos'),
+                'prefijo_dos_padre' => $request->input('prefijo_dos_padre'),
+                'all_request_data' => $request->all()
+            ]);
+
+            Log::info('Valores a guardar en persona:', [
+                'telefono' => $request->input('telefono-representante') 
+                    ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
+                    : ($request->input('telefono-madre') 
+                        ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
+                        : ($request->input('telefono-padre') 
+                            ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
+                            : null)),
+                'prefijo_id' => $request->input('prefijo-representante') 
+                    ?: $request->input('prefijo-madre') 
+                    ?: $request->input('prefijo-padre'),
+                'telefono_dos' => $request->filled('telefono_dos') 
+                    ? preg_replace('/^0+/', '', (string)$request->input('telefono_dos'))
+                    : null,
+                'prefijo_dos_id' => $request->input('prefijo_dos') ?: null,
+                'isLegalRepresentative' => $isLegalRepresentative
+            ]);
+
             // Update persona data
             $persona->update([
                 'primer_nombre' => $request->input('primer-nombre-representante'),
@@ -452,20 +488,24 @@ public function mostrarFormularioEditar($id)
                 'fecha_nacimiento' => $this->parseDate($request->input('fecha-nacimiento-representante')),
                 'genero_id' => $request->input('sexo-representante'),
                 'tipo_documento_id' => $request->input('tipo-ci-representante'),
-                'prefijo_id' => $request->input('prefijo-representante') 
+                'prefijo_id' => $request->input('prefijo_telefono') 
+                             ?: $request->input('prefijo-representante')
                              ?: $request->input('prefijo-madre') 
                              ?: $request->input('prefijo-padre'),
-                'telefono' => $request->input('telefono-representante') 
-                            ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
-                            : ($request->input('telefono-madre') 
-                                ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
-                                : ($request->input('telefono-padre') 
-                                    ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
-                                    : null)),
+                'telefono' => $request->input('telefono_movil')
+                            ? preg_replace('/^0+/', '', (string)$request->input('telefono_movil'))
+                            : ($request->input('telefono-representante')
+                                ? preg_replace('/^0+/', '', (string)$request->input('telefono-representante'))
+                                : ($request->input('telefono-madre') 
+                                    ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
+                                    : ($request->input('telefono-padre')
+                                        ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
+                                        : null))),
+                // Handle second phone number and prefix
                 'telefono_dos' => $request->filled('telefono_dos') 
                     ? preg_replace('/^0+/', '', (string)$request->input('telefono_dos'))
                     : null,
-                'prefijo_dos_id' => $request->input('prefijo_dos'),
+                'prefijo_dos_id' => $request->input('prefijo_dos') ?: null,
                 'email' => $request->input('correo-representante'),
                 'localidad_id' => $request->input('parroquia_id'),
             ]);
@@ -487,9 +527,7 @@ public function mostrarFormularioEditar($id)
                 $legalData = [
                     'banco_id' => $request->input('banco_id'),
                     'pertenece_a_organizacion_representante' => $perteneceOrganizacion,
-                    'cual_organizacion_representante' => $perteneceOrganizacion ? $request->input('cual_organizacion_representante') : '',
-                    'telefono' => $request->input('telefono_movil'),
-                    'prefijo_id' => $request->input('prefijo_telefono')
+                    'cual_organizacion_representante' => $perteneceOrganizacion ? $request->input('cual_organizacion_representante') : ''
                 ];
                 
                 // Remove cual_organizacion_representante from the data if not in organization
@@ -514,7 +552,31 @@ public function mostrarFormularioEditar($id)
                 $representante->update(['status' => 0]);
             }
 
+            // Log the final state before commit
+            Log::info('=== ESTADO FINAL ANTES DE COMMIT ===', [
+                'representante_id' => $representante->id,
+                'persona_id' => $persona->id,
+                'telefono' => $persona->telefono,
+                'telefono_dos' => $persona->telefono_dos,
+                'prefijo_id' => $persona->prefijo_id,
+                'prefijo_dos_id' => $persona->prefijo_dos_id,
+                'is_dirty' => $persona->isDirty()
+            ]);
+
+            // Save all changes to the database
             DB::commit();
+
+            // Log success after commit
+            $persona->refresh(); // Refresh to get the latest data from the database
+            Log::info('=== REPRESENTANTE ACTUALIZADO EXITOSAMENTE ===', [
+                'representante_id' => $representante->id,
+                'persona_id' => $persona->id,
+                'telefono' => $persona->telefono,
+                'telefono_dos' => $persona->telefono_dos,
+                'prefijo_id' => $persona->prefijo_id,
+                'prefijo_dos_id' => $persona->prefijo_dos_id,
+                'updated_at' => $persona->updated_at
+            ]);
 
             return response()->json([
                 'status' => 'success',
