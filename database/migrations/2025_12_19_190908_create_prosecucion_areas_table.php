@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('status')->enum('Aprobado', 'Pendiente', 'Reprobado');
             $table->timestamps();
         });
-    }
+    } 
 
     /**
      * Reverse the migrations.

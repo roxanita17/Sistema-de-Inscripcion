@@ -35,7 +35,7 @@ class SectionDistributorService
             // 1. Inscripciones activas
             $inscripciones = Inscripcion::where('grado_id', $grado->id)
                 ->where('anio_escolar_id', $anioEscolarActivo->id)
-                ->where('status', 'Activo')
+                ->whereIn('status', ['Activo', 'Pendiente'])
                 ->with(['alumno.persona'])
                 ->get();
 
@@ -112,7 +112,7 @@ class SectionDistributorService
             for ($i = 0; $i < $numSecciones; $i++) {
                 $secciones->push(
                     Seccion::create([
-                        'nombre' => 'Sección ' . $letras[$i],
+                        'nombre' => $letras[$i],
                         'cantidad_actual' => 0,
                         'grado_id' => $grado->id,
                         'ejecucion_percentil_id' => $ejecucion->id,

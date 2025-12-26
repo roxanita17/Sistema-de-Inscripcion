@@ -158,8 +158,14 @@ class InscripcionService
         }
     }
 
-    public function registrarConAlumno(array $datosAlumno, InscripcionData $datosInscripcion): Inscripcion
-    {
+    /**
+     * Registra inscripción con alumno nuevo
+     */
+    public function registrarConAlumno(
+        array $datosAlumno,
+        InscripcionData $datosInscripcion,
+        array $discapacidades = []
+    ): Inscripcion {
         DB::beginTransaction();
 
         try {
@@ -179,8 +185,8 @@ class InscripcionService
 
             $alumno = Alumno::create([
                 'persona_id' => $persona->id,
-                'talla_camisa' => $datosAlumno['talla_camisa'],
-                'talla_pantalon' => $datosAlumno['talla_pantalon'],
+                'talla_camisa_id' => $datosAlumno['talla_camisa_id'],
+                'talla_pantalon_id' => $datosAlumno['talla_pantalon_id'],
                 'talla_zapato' => $datosAlumno['talla_zapato'],
                 'peso' => $datosAlumno['peso_estudiante'],
                 'estatura' => $datosAlumno['talla_estudiante'],
@@ -190,9 +196,19 @@ class InscripcionService
                 'status' => 'Activo',
             ]);
 
+            // Guardar discapacidades del alumno
+            if (!empty($discapacidades)) {
+                foreach ($discapacidades as $discapacidad) {
+                    \App\Models\DiscapacidadEstudiante::create([
+                        'alumno_id' => $alumno->id,
+                        'discapacidad_id' => $discapacidad['id'],
+                        'status' => true
+                    ]);
+                }
+            }
+
             $datosInscripcion->alumno_id = $alumno->id;
             $inscripcion = $this->registrar($datosInscripcion);
-
 
             DB::commit();
 

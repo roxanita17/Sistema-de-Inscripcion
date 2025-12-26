@@ -42,50 +42,6 @@
         </div>
     @endif
 
-    <div class="card-modern mb-4">
-        <div class="card-body-modern">
-            <div class="card-modern mb-4">
-                <div class="card-header-modern">
-                    <div class="header-left">
-                        <div class="header-icon">
-                            <i class="fas fa-school"></i>
-                        </div>
-                        <div>
-                            <h3>Tipo de Inscripcion</h3>
-                            <p>Seleccione el tipo de inscripcion</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body-modern" style="padding: 2rem;">
-                    <div class="row">
-                        {{-- Institucion de procedencia --}}
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="tipo_inscripcion" class="form-label-modern">
-                                    <i class="fas fa-building"></i>
-                                    Tipo de inscripcion
-                                    <span class="required-badge">*</span>
-                                </label>
-                                <select wire:model.live="tipo_inscripcion"
-                                    class="form-control-modern @error('tipo_inscripcion') is-invalid @enderror"
-                                    id="tipo_inscripcion">
-                                    <option value="">Seleccione el tipo de inscripción</option>
-                                    <option value="nuevo_ingreso">Nuevo Ingreso</option>
-                                    <option value="prosecucion">Prosecución</option>
-                                </select>
-                                @error('tipo_inscripcion')
-                                    <div class="invalid-feedback-modern">
-                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{-- Seleccionar Representantes --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
@@ -294,6 +250,8 @@
         </div>
     </div>
 
+
+
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -392,8 +350,7 @@
                     </div>
                 </div>
                 <div class="card-body-modern" style="padding: 2rem;">
-                    <div class="alert alert-danger mb-4"
-                        style="background: var(--danger-light); border-left: 4px solid var(--danger); padding: 1rem; border-radius: 8px;">
+                    <div class="alert alert-info mb-4 align-items-start p-3 shadow-sm">
                         <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
                             style="font-weight: 700;">(*)</span> son obligatorios
                     </div>
@@ -487,6 +444,116 @@
             <livewire:admin.alumnos.alumno-create>
         </div>
     </div>
+    {{-- SECCIÓN: DISCAPACIDADES --}}
+    <div class="card-modern mb-4">
+        <div class="card-header-modern">
+            <div class="header-left">
+                <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <i class="fas fa-wheelchair"></i>
+                </div>
+                <div>
+                    <h3>Discapacidades</h3>
+                    <p>Agregue las discapacidades que presente el estudiante (opcional)</p>
+                </div>
+            </div>
+            @if (!empty($discapacidadesAgregadas))
+                <div class="header-right">
+                    <span class="badge bg-info">
+                        {{ count($discapacidadesAgregadas) }} agregada(s)
+                    </span>
+                </div>
+            @endif
+        </div>
+
+        <div class="card-body-modern" style="padding: 2rem;">
+
+            {{-- Alerta temporal de éxito --}}
+            @if (session()->has('success_temp'))
+                <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> {{ session('success_temp') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            {{-- Formulario para agregar discapacidad --}}
+            <div class="row align-items-end mb-4">
+                <div class="col-md-10">
+                    <label for="discapacidad_select" class="form-label-modern">
+                        <i class="fas fa-list"></i>
+                        Seleccionar Discapacidad
+                    </label>
+                    <select wire:model.defer="discapacidadSeleccionada" id="discapacidad_select"
+                        class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
+                        <option value="">Seleccione una discapacidad</option>
+                        @foreach ($discapacidades as $discapacidad)
+                            <option value="{{ $discapacidad->id }}">
+                                {{ $discapacidad->nombre_discapacidad }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('discapacidadSeleccionada')
+                        <div class="invalid-feedback-modern" style="display: block;">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="col-md-2">
+                    <button type="button" wire:click="agregarDiscapacidad" class="btn-primary-modern w-100"
+                        wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="agregarDiscapacidad">
+                            <i class="fas fa-plus"></i> Agregar
+                        </span>
+                        <span wire:loading wire:target="agregarDiscapacidad">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Tabla de discapacidades agregadas --}}
+            @if (!empty($discapacidadesAgregadas))
+                <div class="table-responsive">
+                    <table class="table table-modern">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px; text-align: center;">#</th>
+                                <th>Discapacidad</th>
+                                <th style="width: 120px; text-align: center;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($discapacidadesAgregadas as $index => $discapacidad)
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <span class="badge bg-primary">{{ $index + 1 }}</span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-wheelchair text-primary"></i>
+                                            <strong>{{ $discapacidad['nombre'] }}</strong>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <button type="button" wire:click="eliminarDiscapacidad({{ $index }})"
+                                            class="btn btn-sm btn-danger" wire:loading.attr="disabled"
+                                            title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="alert alert-info align-items-start p-3 mb-0 shadow-sm">
+                    <i class="fas fa-info-circle"></i>
+                    No se han agregado discapacidades. Si el estudiante no presenta ninguna discapacidad, puede
+                    continuar sin agregar.
+                </div>
+            @endif
+        </div>
+    </div>
 
 
 
@@ -503,23 +570,34 @@
                     <p>Marque los documentos que el estudiante ha entregado</p>
                 </div>
             </div>
+            <div class="header-right">
+                @if ($estadoDocumentos === 'Completos')
+                    <span class="badge bg-success">
+                        <i class="fas fa-check-circle"></i> Completos
+                    </span>
+                @elseif($estadoDocumentos === 'Incompletos')
+                    <span class="badge bg-warning">
+                        <i class="fas fa-exclamation-circle"></i> Incompletos
+                    </span>
+                @else
+                    <span class="badge bg-secondary">
+                        <i class="fas fa-clock"></i> Pendientes
+                    </span>
+                @endif
+            </div>
+
         </div>
 
 
 
         <div class="card-body-modern" style="padding: 2rem;">
-            @if ($errors->has('documentos'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Error</h4>
-                        <p>{{ $errors->first('documentos') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
+            @if (!empty($documentosFaltantes))
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-exclamation-triangle fa-1x me-2"></i>
+                    La inscripción se guardará con estado
+                    <strong>{{ $statusInscripcion }}</strong>
+                    y documentos
+                    <strong>{{ $estadoDocumentos }}</strong>
                 </div>
             @endif
             <div class="row">
@@ -566,17 +644,15 @@
                 @endphp
 
                 <div class="col-md-6 mb-3">
-                    <div class="checkbox-item-modern {{ $esFaltante ? 'checkbox-error' : '' }}">
-                        <input type="checkbox" id="{{ $documento }}" wire:model.live="documentos"
+                    <div class="checkbox-item-modern {{ $esFaltante ? 'checkbox-warning' : '' }}">
+                        <input type="checkbox" id="doc_{{ $documento }}" wire:model.live="documentos"
                             value="{{ $documento }}" class="checkbox-modern">
 
-                        <label for="{{ $documento }}"
-                            class="checkbox-label-modern {{ $esFaltante ? 'text-danger fw-bold' : '' }}">
+                        <label for="doc_{{ $documento }}"
+                            class="checkbox-label-modern {{ $esFaltante ? 'text-warning fw-bold' : '' }}">
                             {{ $etiqueta }}
 
-                            @if ($esFaltante)
-                                <span class="text-danger "></span>
-                            @endif
+
                         </label>
                     </div>
                 </div>
@@ -616,7 +692,6 @@
                     @error('acepta_normas_contrato')
                         <div class="invalid-feedback-modern">
                             {{ $message }}
-
                         </div>
                     @enderror
                 </div>
@@ -778,6 +853,54 @@
 
         .radio-label-modern i {
             color: var(--primary);
+        }
+
+        .checkbox-item-modern {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .checkbox-item-modern:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .checkbox-item-modern.checkbox-warning {
+            background: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .checkbox-item-modern.checkbox-warning:hover {
+            background: #fde68a;
+        }
+
+        .checkbox-modern {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-label-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            margin: 0 0 0 0.75rem;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            user-select: none;
+            flex: 1;
+        }
+
+        .checkbox-label-modern.text-warning {
+            color: #d97706;
         }
     </style>
 @endpush

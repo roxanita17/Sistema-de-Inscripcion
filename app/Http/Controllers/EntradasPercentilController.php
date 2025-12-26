@@ -9,6 +9,7 @@ use App\Models\Inscripcion;
 use App\Models\Grado;
 use App\Services\SectionDistributorService;
 use App\Models\Seccion;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class EntradasPercentilController extends Controller
@@ -28,25 +29,43 @@ class EntradasPercentilController extends Controller
      */
     public function index(Request $request)
     {
-        $hayAnioActivo = $this->verificarAnioEscolar();
-
-        $gradoId = $request->grado_id; // llega desde un botón o selector
+        $gradoId = $request->grado_id;
 
         $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
 
+        // 👉 SI NO HAY AÑO ESCOLAR
+        if (!$anioEscolarActivo) {
+
+            $entradasPercentil = new LengthAwarePaginator(
+                collect(), // items
+                0,         // total
+                10,        // per page
+                1,         // current page
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+
+            return view(
+                'admin.transacciones.percentil.index',
+                [
+                    'entradasPercentil' => $entradasPercentil,
+                    'seccionesResumen' => collect(),
+                    'gradoId' => $gradoId,
+                    'anioEscolarActivo' => null,
+                ]
+            );
+        }
+
+        // 👉 SI HAY AÑO ESCOLAR
         $entradasPercentil = EntradasPercentil::with(['inscripcion.alumno', 'seccion'])
             ->whereHas('ejecucion', function ($q) use ($anioEscolarActivo) {
                 $q->where('anio_escolar_id', $anioEscolarActivo->id);
             })
-            ->whereHas('inscripcion', function ($q) use ($gradoId) {
-                if ($gradoId) {
-                    $q->where('grado_id', $gradoId);
-                }
+            ->when($gradoId, function ($q) use ($gradoId) {
+                $q->whereHas('inscripcion', fn($qq) => $qq->where('grado_id', $gradoId));
             })
             ->orderBy('seccion_id')
             ->orderBy('indice_total')
             ->paginate(10);
-
 
         $seccionesResumen = EntradasPercentil::selectRaw('seccion_id, COUNT(*) as total_estudiantes')
             ->with('seccion')
@@ -59,12 +78,17 @@ class EntradasPercentilController extends Controller
             ->groupBy('seccion_id')
             ->get();
 
-
         return view(
             'admin.transacciones.percentil.index',
-            compact('entradasPercentil', 'hayAnioActivo', 'gradoId', 'seccionesResumen', 'anioEscolarActivo')
+            compact(
+                'entradasPercentil',
+                'gradoId',
+                'seccionesResumen',
+                'anioEscolarActivo'
+            )
         );
     }
+
 
 
     public function store(Inscripcion $inscripcion)

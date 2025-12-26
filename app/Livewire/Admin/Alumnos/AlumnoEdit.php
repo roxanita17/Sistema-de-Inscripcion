@@ -2,37 +2,26 @@
 
 namespace App\Livewire\Admin\Alumnos;
 
-use Illuminate\Support\Collection;
-
-
-use Carbon\Carbon;
 use Livewire\Component;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\DB;
-
-// Modelos
-use App\Models\Persona;
 use App\Models\Alumno;
+use App\Models\Discapacidad;
+use App\Models\Persona;
 use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
-use App\Models\OrdenNacimiento;
-use App\Models\Lateralidad;
-use App\Models\AnioEscolar;
-use App\Models\EtniaIndigena;
 use App\Models\Talla;
+use App\Models\Lateralidad;
+use App\Models\OrdenNacimiento;
+use App\Models\EtniaIndigena;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
-class AlumnoCreate extends Component
+class AlumnoEdit extends Component
 {
-    use WithFileUploads;
-
-    /* ============================================================
-       ===============   PROPIEDADES DEL COMPONENTE  ===============
-       ============================================================ */
-
-    // IDs
-    public $alumno_id;
+    public $alumnoId;
     public $persona_id;
+    public $alumnoSeleccionado;
+
 
     // Datos personales
     public $tipo_documento_id;
@@ -53,12 +42,10 @@ class AlumnoCreate extends Component
     public $documento_placeholder = '12345678';
     public $documento_inputmode = 'numeric';
 
-
     // Datos físicos
     public $talla_estudiante = '';
     public $peso_estudiante;
     public $talla_camisa_id;
-    public $tallas = [];
     public $talla_zapato;
     public $talla_pantalon_id;
 
@@ -67,22 +54,29 @@ class AlumnoCreate extends Component
     public $municipio_id;
     public $localidad_id;
 
-    // Listas para selects
-    public $instituciones;
-    public $tipos_documentos = [];
-    public $generos = [];
-    public $lateralidades = [];
+    // Otros
     public $lateralidad_id;
     public $orden_nacimiento_id;
-    public $orden_nacimientos = [];
+    public $etnia_indigena_id;
+
+    // Listas para selects
+    public $tipos_documentos = [];
+    public $generos = [];
     public $estados = [];
     public $municipios = [];
     public $localidades = [];
+    public $tallas = [];
+    public $lateralidades = [];
+    public $orden_nacimientos = [];
     public $etnia_indigenas = [];
-    public $etnia_indigena_id;
 
-    // Año escolar
-    public $anioEscolarActivo = false;
+    // Para mostrar discapacidades
+    public $discapacidadesAlumno = [];
+    public $discapacidadesAgregadas = [];
+    public $discapacidadSeleccionada;
+    public $discapacidades = [];
+
+    public $enModoEdicion = false;
 
 
     /* ============================================================
@@ -260,248 +254,318 @@ class AlumnoCreate extends Component
         $this->validateOnly('talla_estudiante');
     }
 
-
-    /* ============================================================
-       ========================   MOUNT   ==========================
-       ============================================================ */
-    public function mount($alumno_id = null)
+    public function mount($alumnoId)
     {
-        $this->verificarAnioEscolar();
-        $this->alumno_id = $alumno_id;
-
+        $this->alumnoId = $alumnoId;
         $this->cargarDatosIniciales();
-
-        if ($alumno_id) {
-            $this->cargarAlumno($alumno_id);
-        }
+        $this->cargarAlumno();
+        $this->cargarDiscapacidades();
     }
 
-
-    /* ============================================================
-       ===================   CARGAS INICIALES   ===================
-       ============================================================ */
-    private function verificarAnioEscolar()
+    private function cargarDatosIniciales()
     {
-        // Verifica si hay un año escolar activo o extendido
-        $this->anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->exists();
-    }
-
-    public function cargarDatosIniciales()
-    {
-        // Listas para selects
-        $this->estados = Estado::where('status', true)->get();
-
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
         $this->generos = \App\Models\Genero::where('status', true)->get();
+        $this->estados = Estado::where('status', true)->get();
+        $this->tallas = Talla::all();
         $this->lateralidades = Lateralidad::where('status', true)->get();
         $this->orden_nacimientos = OrdenNacimiento::where('status', true)->get();
         $this->etnia_indigenas = EtniaIndigena::where('status', true)->get();
-        $this->tallas = Talla::all();
+
+        // Cargar discapacidades disponibles
+        $this->discapacidades = Discapacidad::where('status', true)
+            ->orderBy('nombre_discapacidad', 'asc')
+            ->get();
     }
 
-
-    /* ============================================================
-       ======================   CARGA ALUMNO   =====================
-       ============================================================ */
-    public function cargarAlumno($id)
+    private function cargarAlumno()
     {
-        $alumno = Alumno::with(
-            'persona',
-
-        )->findOrFail($id);
+        $alumno = Alumno::with('persona.localidad.municipio.estado')->findOrFail($this->alumnoId);
         $persona = $alumno->persona;
 
-        // Datos personales
+        // Datos de persona
         $this->persona_id = $persona->id;
         $this->tipo_documento_id = $persona->tipo_documento_id;
         $this->numero_documento = $persona->numero_documento;
-        $this->fecha_nacimiento = $persona->fecha_nacimiento->format('Y-m-d');
         $this->primer_nombre = $persona->primer_nombre;
         $this->segundo_nombre = $persona->segundo_nombre;
         $this->tercer_nombre = $persona->tercer_nombre;
         $this->primer_apellido = $persona->primer_apellido;
         $this->segundo_apellido = $persona->segundo_apellido;
         $this->genero_id = $persona->genero_id;
+        $this->fecha_nacimiento = $persona->fecha_nacimiento->format('Y-m-d');
 
-        // Procedencia y datos físicos
+        // Datos físicos
+        $this->talla_estudiante = $alumno->estatura;
+        $this->peso_estudiante = $alumno->peso;
         $this->talla_camisa_id = $alumno->talla_camisa_id;
+        $this->talla_zapato = $alumno->talla_zapato;
         $this->talla_pantalon_id = $alumno->talla_pantalon_id;
 
-        $this->talla_zapato = $alumno->talla_zapato;
-        $this->peso_estudiante = $alumno->peso;
-        $this->talla_estudiante = $alumno->estatura;
+        // Ubicación (validar que exista localidad)
+        if ($persona->localidad) {
+            $this->localidad_id = $persona->localidad_id;
+
+            if ($persona->localidad->municipio) {
+                $this->municipio_id = $persona->localidad->municipio_id;
+                $this->estado_id = $persona->localidad->municipio->estado_id;
+
+                // Cargar municipios y localidades
+                $this->cargarMunicipios($this->estado_id);
+                $this->cargarLocalidades($this->municipio_id);
+            }
+        }
+
+        // Otros
         $this->lateralidad_id = $alumno->lateralidad_id;
         $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
         $this->etnia_indigena_id = $alumno->etnia_indigena_id;
 
-        // Actualiza selects dependientes
-        $this->updatedEstadoId($persona->localidad->municipio->estado_id);
-        $this->updatedMunicipioId($persona->localidad->municipio_id);
-
-        // Calcula edad
-        $this->updatedFechaNacimiento($this->fecha_nacimiento);
+        // Calcular edad
+        $this->calcularEdad($this->fecha_nacimiento);
     }
 
-
-    /* ============================================================
-       ===============   SELECTS DEPENDIENTES (AJAX)   =============
-       ============================================================ */
-    public function updatedEstadoId($estadoId)
+    private function cargarDiscapacidades()
     {
-        $this->municipios = Municipio::where('estado_id', $estadoId)
-            ->where('status', true)
-            ->orderBy('nombre_municipio')
-            ->get();
+        $alumno = \App\Models\Alumno::with('discapacidades')->find($this->alumnoId);
 
+        if ($alumno && $alumno->discapacidades) {
+            $this->discapacidadesAlumno = $alumno->discapacidades->map(function ($disc) {
+                return [
+                    'id' => $disc->id,
+                    'nombre' => $disc->nombre_discapacidad
+                ];
+            })->toArray();
+        }
+    }
+
+    public function updatedEstadoId($value)
+    {
+        $this->cargarMunicipios($value);
         $this->municipio_id = null;
         $this->localidad_id = null;
         $this->localidades = [];
     }
 
-    public function updatedMunicipioId($municipioId)
+    public function updatedMunicipioId($value)
+    {
+        $this->cargarLocalidades($value);
+        $this->localidad_id = null;
+    }
+
+    private function cargarMunicipios($estadoId)
+    {
+        $this->municipios = Municipio::where('estado_id', $estadoId)
+            ->where('status', true)
+            ->orderBy('nombre_municipio')
+            ->get();
+    }
+
+    private function cargarLocalidades($municipioId)
     {
         $this->localidades = Localidad::where('municipio_id', $municipioId)
             ->where('status', true)
             ->orderBy('nombre_localidad')
             ->get();
-
-        $this->localidad_id = null;
     }
 
-
-    /* ============================================================
-       =====================   CALCULAR EDAD   =====================
-       ============================================================ */
     public function updatedFechaNacimiento($value)
     {
-        if (!$value) return;
+        $this->calcularEdad($value);
+    }
+
+    private function calcularEdad($fecha)
+    {
+        if (!$fecha) return;
 
         try {
-            $fecha = Carbon::parse($value);
+            $fechaNac = Carbon::parse($fecha);
             $hoy = Carbon::now();
 
-            $this->edad = $fecha->diffInYears($hoy);
-            $this->meses = $fecha->diffInMonths($hoy) % 12;
+            $this->edad = $fechaNac->diffInYears($hoy);
+            $this->meses = $fechaNac->diffInMonths($hoy) % 12;
         } catch (\Exception $e) {
             $this->edad = 0;
             $this->meses = 0;
         }
     }
 
-    public function inscripcionAnterior($anioActualId)
+
+    public function habilitarEdicion()
     {
-        return $this->inscripcionProsecucions()
-            ->where('anio_escolar_id', '!=', $anioActualId)
-            ->latest('anio_escolar_id')
-            ->first()
-            ?? $this->inscripciones()
-            ->where('anio_escolar_id', '!=', $anioActualId)
-            ->latest('anio_escolar_id')
-            ->first();
+        $this->enModoEdicion = true;
+        // Copiar discapacidades actuales al array de edición
+        $this->discapacidadesAgregadas = $this->discapacidadesAlumno;
+    }
+
+    public function cancelarEdicion()
+    {
+        $this->enModoEdicion = false;
+        $this->cargarAlumno();
+        $this->cargarDiscapacidades();
+        // Limpiar selección de discapacidad
+        $this->discapacidadSeleccionada = null;
+        $this->resetErrorBag('discapacidadSeleccionada');
+    }
+
+    /**
+     * Agrega una discapacidad a la lista temporal
+     */
+    public function agregarDiscapacidad()
+    {
+        $this->validate([
+            'discapacidadSeleccionada' => 'required|exists:discapacidads,id'
+        ], [
+            'discapacidadSeleccionada.required' => 'Debe seleccionar una discapacidad.',
+            'discapacidadSeleccionada.exists' => 'La discapacidad seleccionada no es válida.'
+        ]);
+
+        if (collect($this->discapacidadesAgregadas)->contains('id', $this->discapacidadSeleccionada)) {
+            $this->addError('discapacidadSeleccionada', 'Esta discapacidad ya ha sido agregada.');
+            return;
+        }
+
+        $discapacidad = Discapacidad::find($this->discapacidadSeleccionada);
+
+        if ($discapacidad) {
+            // Agregar a la lista temporal
+            $nueva = [
+                'id' => $discapacidad->id,
+                'nombre' => $discapacidad->nombre_discapacidad
+            ];
+
+            $this->discapacidadesAgregadas[] = $nueva;
+
+            // Guardar en DB
+            \App\Models\DiscapacidadEstudiante::updateOrCreate(
+                [
+                    'alumno_id' => $this->alumnoId,
+                    'discapacidad_id' => $discapacidad->id
+                ],
+                ['status' => true]
+            );
+
+            // **Actualizar la lista que se muestra en la vista**
+            $this->discapacidadesAlumno[] = $nueva;
+
+            // Limpiar selección
+            $this->discapacidadSeleccionada = null;
+            $this->resetErrorBag('discapacidadSeleccionada');
+
+            session()->flash('success_temp', 'Discapacidad agregada correctamente.');
+        }
     }
 
 
 
-    /* ============================================================
-       ========================   GUARDAR   ========================
-       ============================================================ */
-    public function save()
+    /**
+     * Elimina una discapacidad de la lista temporal
+     */
+    public function eliminarDiscapacidad($index)
     {
+        if (isset($this->discapacidadesAgregadas[$index])) {
+            $discapacidad = $this->discapacidadesAgregadas[$index];
 
-        if (!$this->etnia_indigena_id) {
-            $this->addError('etnia_indigena_id', 'Debe seleccionar una etnia indígena.');
+            // Marcar como inactiva en DB
+            \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
+                ->where('discapacidad_id', $discapacidad['id'])
+                ->update(['status' => false]);
+
+            // Quitar de las listas temporales y de la vista
+            unset($this->discapacidadesAgregadas[$index]);
+
+            // También actualizar la lista mostrada
+            $this->discapacidadesAlumno = array_values(
+                array_filter($this->discapacidadesAlumno, fn($d) => $d['id'] != $discapacidad['id'])
+            );
+
+            // Reindexar
+            $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
+
+            session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
+        }
+    }
+
+
+    /**
+     * Guarda las discapacidades del alumno
+     */
+    private function guardarDiscapacidades()
+    {
+        // Primero, inactivar todas las discapacidades actuales
+        \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
+            ->update(['status' => false]);
+
+        // Luego, agregar o reactivar las discapacidades seleccionadas
+        foreach ($this->discapacidadesAgregadas as $discapacidad) {
+            \App\Models\DiscapacidadEstudiante::updateOrCreate(
+                [
+                    'alumno_id' => $this->alumnoId,
+                    'discapacidad_id' => $discapacidad['id']
+                ],
+                [
+                    'status' => true
+                ]
+            );
+        }
+    }
+
+    public function guardar()
+    {
+        // Validación básica
+        if (!$this->localidad_id) {
+            session()->flash('error', 'Debe seleccionar una localidad.');
             return;
         }
+
         $this->validate();
 
         try {
             DB::beginTransaction();
 
+            $persona = Persona::findOrFail($this->persona_id);
+            $persona->update([
+                'primer_nombre' => $this->primer_nombre,
+                'segundo_nombre' => $this->segundo_nombre,
+                'tercer_nombre' => $this->tercer_nombre,
+                'primer_apellido' => $this->primer_apellido,
+                'segundo_apellido' => $this->segundo_apellido,
+                'tipo_documento_id' => $this->tipo_documento_id,
+                'numero_documento' => $this->numero_documento,
+                'genero_id' => $this->genero_id,
+                'fecha_nacimiento' => $this->fecha_nacimiento,
+                'localidad_id' => $this->localidad_id,
+            ]);
 
-            // Guardar persona
-            $persona = Persona::updateOrCreate(
-                ['id' => $this->persona_id],
-                [
-                    'primer_nombre' => $this->primer_nombre,
-                    'segundo_nombre' => $this->segundo_nombre ?? null,
-                    'tercer_nombre' => $this->tercer_nombre ?? null,
-                    'primer_apellido' => $this->primer_apellido,
-                    'segundo_apellido' => $this->segundo_apellido ?? null,
-                    'tipo_documento_id' => $this->tipo_documento_id,
-                    'numero_documento' => $this->numero_documento,
-                    'genero_id' => $this->genero_id,
-                    'fecha_nacimiento' => $this->fecha_nacimiento,
-                    'localidad_id' => $this->localidad_id,
-                    'status' => true,
-                ]
-            );
+            $alumno = Alumno::findOrFail($this->alumnoId);
+            $alumno->update([
+                'talla_camisa_id' => $this->talla_camisa_id,
+                'talla_pantalon_id' => $this->talla_pantalon_id,
+                'talla_zapato' => $this->talla_zapato,
+                'peso' => $this->peso_estudiante,
+                'estatura' => (float)$this->talla_estudiante,
+                'lateralidad_id' => $this->lateralidad_id,
+                'orden_nacimiento_id' => $this->orden_nacimiento_id,
+                'etnia_indigena_id' => $this->etnia_indigena_id,
+            ]);
 
-            // Guardar alumno
-            if ($this->alumno_id) {
-
-                $alumno = Alumno::findOrFail($this->alumno_id);
-                $alumno->update([
-                    'persona_id' => $persona->id,
-                    'talla_camisa_id' => $this->talla_camisa_id,
-                    'talla_pantalon_id' => $this->talla_pantalon_id,
-                    'talla_zapato' => $this->talla_zapato,
-                    'peso' => $this->peso_estudiante,
-                    'estatura' => (float)$this->talla_estudiante,
-                    'lateralidad_id' => $this->lateralidad_id,
-                    'orden_nacimiento_id' => $this->orden_nacimiento_id,
-                    'etnia_indigena_id' => $this->etnia_indigena_id,
-                    'status' => 'Activo',
-                ]);
-            } else {
-
-                Alumno::create([
-                    'persona_id' => $persona->id,
-                    'talla_camisa_id' => $this->talla_camisa_id,
-                    'talla_pantalon_id' => $this->talla_pantalon_id,
-                    'talla_zapato' => $this->talla_zapato,
-                    'peso' => $this->peso_estudiante,
-                    'estatura' => (float)$this->talla_estudiante,
-                    'lateralidad_id' => $this->lateralidad_id,
-                    'orden_nacimiento_id' => $this->orden_nacimiento_id,
-                    'etnia_indigena_id' => $this->etnia_indigena_id,
-                    'status' => 'Activo',
-                ]);
-            }
+            // Guardar discapacidades
+            $this->guardarDiscapacidades();
 
             DB::commit();
 
-            session()->flash('success', 'Alumno guardado exitosamente');
-            return redirect()->route('admin.alumnos.index');
+            $this->enModoEdicion = false;
+            $this->cargarDiscapacidades(); // Recargar para actualizar la vista
+            $this->dispatch('actualizarAlumno');
+            session()->flash('success', 'Datos del alumno y discapacidades actualizados correctamente.');
         } catch (\Exception $e) {
-
             DB::rollBack();
-            session()->flash('error', 'Error al guardar: ' . $e->getMessage());
+            session()->flash('error', 'Error al actualizar: ' . $e->getMessage());
         }
     }
 
-
-    /* ============================================================
-       =========   COMUNICACIÓN CON COMPONENTE PADRE   ============
-       ============================================================ */
-    protected $listeners = [
-        'solicitarDatosAlumno' => 'enviarDatosAlumno'
-    ];
-
-    public function enviarDatosAlumno()
-    {
-        // Validar sin guardar en BD
-        $datos = $this->validate();
-
-        // Enviar datos al componente padre (Inscripción)
-        $this->dispatch('recibirDatosAlumno', datos: $datos);
-    }
-
-
-    /* ============================================================
-       =========================   VISTA   =========================
-       ============================================================ */
     public function render()
     {
-        return view('livewire.admin.alumnos.alumno-create');
+        return view('livewire.admin.alumnos.alumno-edit');
     }
 }

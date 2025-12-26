@@ -7,18 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Run the migrations. 
      */
     public function up(): void
     {
         Schema::create('alumnos', function (Blueprint $table) {
             $table->id();
-            
-            $table->string('talla_camisa');
-            $table->string('talla_pantalon');
+
+            $table->foreignId('talla_camisa_id')->nullable()->constrained('tallas')->nullOnDelete();
+            $table->foreignId('talla_pantalon_id')->nullable()->constrained('tallas')->nullOnDelete();
             $table->string('talla_zapato');
             $table->integer('peso');
-            $table->integer('estatura');
+            $table->decimal('estatura', 4, 2);
             $table->foreignId('orden_nacimiento_id')->nullable()->constrained('orden_nacimientos')->cascadeOnDelete();
             $table->foreignId('lateralidad_id')->nullable()->constrained('lateralidads')->cascadeOnDelete();
             $table->foreignId('etnia_indigena_id')->nullable()->constrained('etnia_indigenas')->cascadeOnDelete();

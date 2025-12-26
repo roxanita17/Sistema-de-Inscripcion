@@ -36,7 +36,7 @@ class Inscripcion extends Model
         'status' => 'string',
     ];
 
-        public function nuevoIngreso()
+    public function nuevoIngreso()
     {
         return $this->hasOne(
             InscripcionNuevoIngreso::class,
@@ -51,7 +51,34 @@ class Inscripcion extends Model
             'inscripcion_id'
         );
     }
-    
+
+    public function getTipoInscripcionAttribute()
+    {
+        if ($this->nuevoIngreso) {
+            return 'nuevo_ingreso';
+        }
+
+        if ($this->prosecucion) {
+            return 'prosecucion';
+        }
+
+        return null;
+    }
+
+    public function getGradoActualAttribute()
+    {
+        if ($this->nuevoIngreso) {
+            return $this->grado;
+        }
+
+        if ($this->prosecucion) {
+            return $this->prosecucion->grado;
+        }
+
+        return null;
+    }
+
+
 
     /**
      * Relación con EntradasPercentil
@@ -197,7 +224,7 @@ class Inscripcion extends Model
     }
 
     /**
-     * Scope: Inscripciones del año escolar activo o extendido
+     * Scope: Inscripciones del año escolar o extendido
      */
     public function scopeAnioEscolarVigente($query)
     {

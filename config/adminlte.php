@@ -219,7 +219,8 @@ return [
             'text' => 'Buscar...',
         ],
 
-        // Panel principal
+
+        // ================== PANEL PRINCIPAL ==================
         [
             'text' => 'Panel Principal',
             'url' => 'home',
@@ -228,56 +229,67 @@ return [
             'active' => ['home', 'home/*'],
         ],
 
-        //A;o escolar
+        // ================== CONFIGURACIÓN BASE ==================
         [
             'text' => 'Año Escolar',
             'url'  => 'admin/anio_escolar',
-            'icon' => 'fas fa-calendar-alt',
+            'icon' => 'fas fa-calendar-check',
+            'icon_color' => 'warning',
         ],
 
-        // Historico
         [
-            'text' => 'Historico',
+            'text' => 'Histórico',
             'url'  => 'admin/historico',
-            'icon' => 'fas fa-calendar-alt',
+            'icon' => 'fas fa-history',
+            'icon_color' => 'secondary',
         ],
 
-        ['header' => 'GESTIÓN DE INSCRIPCIONES'],
+        ['header' => 'INSCRIPCIONES'],
 
-        //Alumnos
+        // ================== INSCRIPCIONES ==================
+        [
+            'text' => 'Inscripciones',
+            'icon' => 'fas fa-fw fa-clipboard-list',
+            'icon_color' => 'primary',
+            'submenu' => [
+                [
+                    'text' => 'Nuevo Ingreso',
+                    'url' => 'admin/transacciones/inscripcion',
+                    'icon' => 'fas fa-fw fa-user-plus',
+                    'active' => ['admin/transacciones/inscripcion', 'admin/transacciones/inscripcion/*'],
+                ],
+                [
+                    'text' => 'Prosecución',
+                    'url' => 'admin/transacciones/inscripcion_prosecucion',
+                    'icon' => 'fas fa-fw fa-user-graduate',
+                    'active' => ['admin/transacciones/inscripcion_prosecucion', 'admin/transacciones/inscripcion_prosecucion/*'],
+                ],
+            ],
+        ],
+
+        // ================== EVALUACIÓN ==================
+        [
+            'text' => 'Historial del Percentil',
+            'url' => 'admin/transacciones/percentil',
+            'icon' => 'fas fa-fw fa-chart-line',
+            'icon_color' => 'success',
+            'active' => ['admin/transacciones/percentil', 'admin/transacciones/percentil/*'],
+        ],
+
+        ['header' => 'GESTIÓN ACADÉMICA'],
+
+        // ================== PERSONAS ==================
         [
             'text' => 'Alumnos',
             'url' => 'admin/alumnos',
             'icon' => 'fas fa-fw fa-user-graduate',
-            'icon_color' => 'primary',
             'active' => ['admin/alumnos', 'admin/alumnos/*'],
         ],
-
-        //Inscripciones
-        [
-            'text' => 'Inscripciones',
-            'url' => 'admin/transacciones/inscripcion',
-            'icon' => 'fas fa-fw fa-book-open',
-            'icon_color' => 'primary',
-            'active' => ['admin/transacciones/inscripcion', 'admin/transacciones/inscripcion/*'],
-        ],
-
-        //Historial del percentil
-        [
-            'text' => 'Historial del Percentil',
-            'url' => 'admin/transacciones/percentil',
-            'icon' => 'fas fa-fw fa-user-graduate',
-            'icon_color' => 'primary',
-            'active' => ['admin/transacciones/percentil', 'admin/transacciones/percentil/*'],
-        ],
-
-        //Representantes
 
         [
             'text' => 'Representantes',
             'url' => 'representante',
             'icon' => 'fas fa-fw fa-user-tie',
-            'icon_color' => 'info',
             'active' => ['representante', 'representante/*'],
         ],
 
@@ -314,14 +326,14 @@ return [
         ],
 
 
-        
+
 
         // ============================================================
         //  GESTIÓN ACADÉMICA
         // ============================================================
         ['header' => 'GESTIÓN ACADÉMICA'],
 
-        
+
 
         [
             'text' => 'Años',
@@ -449,7 +461,7 @@ return [
         // Separador
 
         // Representantes
-        
+
 
 
         // ============================================================

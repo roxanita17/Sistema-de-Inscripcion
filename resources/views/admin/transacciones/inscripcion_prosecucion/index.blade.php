@@ -16,19 +16,19 @@
                     <i class="fas fa-layer-group"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Gestión de inscripciones nuevo ingreso</h1>
+                    <h1 class="title-main">Gestión de inscripciones de prosecucion</h1>
                     <p class="title-subtitle">
-                        Administración de las inscripciones de nuevo ingreso
+                        Administración de las inscripciones de prosecucion
                     </p>
                 </div>
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
-                    <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
-                        @if (!$anioEscolarActivo) disabled @endif
+                    <a href="{{ route('admin.transacciones.inscripcion-prosecucion.createProsecucion') }}"
+                        class="btn-create" @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
-                        <span>Inscripcion Nuevo Ingreso</span>
+                        <span>Inscripcion Prosecucion</span>
                     </a>
                 </div>
             </div>
@@ -122,6 +122,8 @@
         @endif
 
 
+
+
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -132,7 +134,7 @@
                 </div>
 
                 {{-- Buscador --}}
-                <form action="{{ route('admin.transacciones.inscripcion.index') }}">
+                <form action="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}">
                     {{-- Mantener filtros en búsqueda --}}
                     <input type="hidden" name="grado_id" value="{{ request('grado_id') }}">
                     <input type="hidden" name="seccion_id" value="{{ request('seccion_id') }}">
@@ -146,18 +148,6 @@
                         </div>
                     </div>
                 </form>
-
-                {{-- Boton de percentil --}}
-                <div style="padding:">
-                    @foreach ($grados as $grado)
-                        @if ($grado->id === 1)
-                            @include('admin.transacciones.percentil.boton-percentil', [
-                                'anioEscolarActivo' => $anioEscolarActivo,
-                                'gradoId' => $grado->id,
-                            ])
-                        @endif
-                    @endforeach
-                </div>
 
                 {{-- Boton de filtros --}}
                 <div>
@@ -198,7 +188,7 @@
                         </thead>
 
                         <tbody class="text-center">
-                            @if ($inscripciones->isEmpty())
+                            @if ($prosecuciones->isEmpty())
                                 <tr>
                                     <td colspan="9">
                                         <div class="empty-state">
@@ -215,64 +205,52 @@
                                     </td>
                                 </tr>
                             @else
-                                @foreach ($inscripciones as $datos)
+                                @foreach ($prosecuciones as $datos)
                                     <tr class="row-12">
 
                                         {{-- NUMERO --}}
                                         <td style="font-weight: bold">
-                                            {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
+                                            {{ $datos->inscripcion->alumno->persona->tipoDocumento->nombre }}-{{ $datos->inscripcion->alumno->persona->numero_documento }}
                                         </td>
 
                                         {{-- ESTUDIANTE --}}
                                         <td class="tittle-main fw-bold">
-                                            {{ $datos->alumno->persona->primer_nombre }}
-                                            {{ $datos->alumno->persona->primer_apellido }}
+                                            {{ $datos->inscripcion->alumno->persona->primer_nombre }}
+                                            {{ $datos->inscripcion->alumno->persona->primer_apellido }}
                                             <br>
                                             <small>
-                                                Edad: {{ $datos->alumno->persona->fecha_nacimiento->age }} |
-                                                Peso: {{ $datos->alumno->peso }} |
-                                                Estatura: {{ $datos->alumno->estatura }}
+                                                Edad: {{ $datos->inscripcion->alumno->persona->fecha_nacimiento->age }} |
+                                                Peso: {{ $datos->inscripcion->alumno->peso }} |
+                                                Estatura: {{ $datos->inscripcion->alumno->estatura }}
                                             </small>
                                         </td>
 
                                         {{-- TIPO DE INSCRIPCIÓN --}}
                                         <td class="text-center">
-                                            @if ($datos->tipo_inscripcion === 'nuevo_ingreso')
-                                                <span class="badge bg-info">Nuevo Ingreso</span>
-                                            @elseif ($datos->tipo_inscripcion === 'prosecucion')
-                                                <span class="badge bg-success">Prosecución</span>
-                                            @endif
+                                            <span class="badge bg-success">Prosecución</span>
                                         </td>
 
 
                                         {{-- REPRESENTANTE LEGAL --}}
                                         <td class="text-center">
-                                            @if($datos->representanteLegal && $datos->representanteLegal->representante)
-                                                {{ $datos->representanteLegal->representante->persona->primer_nombre }}
-                                                {{ $datos->representanteLegal->representante->persona->primer_apellido }}
-                                            @else
-                                                No especificado
-                                            @endif
+                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_nombre }}
+                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_apellido }}
                                         </td>
 
                                         {{-- PARENTESCO --}}
                                         <td class="text-center">
-                                            {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
+                                            {{ $datos->inscripcion->representanteLegal->parentesco ?? 'No especificado' }}
                                         </td>
 
                                         {{-- GRADO --}}
                                         <td class="text-center">
-                                            {{ $datos->grado_actual?->numero_grado ?? 'N/A' }}
+                                            {{ $datos->grado?->numero_grado ?? 'N/A' }}
                                         </td>
 
 
                                         {{-- SECCION --}}
                                         <td class="text-center">
-                                            @if ($datos->seccion)
-                                                {{ $datos->seccion->nombre }}
-                                            @else
-                                                Sin asignar
-                                            @endif
+                                            {{ $datos->seccion?->nombre ?? 'N/A' }}
                                         </td>
 
                                         {{-- STATUS --}}
@@ -313,19 +291,6 @@
                                                                 Ver mas
                                                             </button>
                                                         </li>
-                                                        
-                                                        {{-- Editar (solo para nuevo ingreso) --}}
-                                                        @if ($datos->nuevoIngreso)
-                                                            <li>
-                                                                <a href="{{ route('admin.transacciones.inscripcion.edit', $datos->id) }}"
-                                                                    class="dropdown-item d-flex align-items-center text-warning"
-                                                                    @if (!$anioEscolarActivo) disabled @endif
-                                                                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
-                                                                    <i class="fas fa-edit me-2"></i>
-                                                                    Editar
-                                                                </a>
-                                                            </li>
-                                                        @endif
 
                                                         {{-- Inactivar --}}
                                                         <li>
@@ -339,15 +304,7 @@
                                                             </button>
                                                         </li>
 
-                                                        {{-- Generar PDF --}}
-                                                        <li>
-                                                            <a href="{{ route('admin.transacciones.inscripcion.reporte', $datos->id) }}"
-                                                                class="dropdown-item d-flex align-items-center text-danger"
-                                                                title="Generar Reporte PDF" target="_blank">
-                                                                <i class="fas fa-file-pdf me-2"></i>
-                                                                PDF
-                                                            </a>
-                                                        </li>
+
                                                     </ul>
                                                 </div>
                                             </div>
@@ -355,7 +312,7 @@
                                     </tr>
 
                                     {{-- Modal de ver --}}
-                                    @include('admin.transacciones.inscripcion.modales.showModal')
+                                    {{-- @include('admin.transacciones.inscripcion.modales.showModal') --}}
                                 @endforeach
                             @endif
                         </tbody>
@@ -363,7 +320,7 @@
                 </div>
 
                 {{-- MODAL DE INACTIVACIÓN --}}
-                @foreach ($inscripciones as $datos)
+                @foreach ($prosecuciones as $datos)
                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content modal-modern">
@@ -409,11 +366,11 @@
                 @endforeach
 
                 {{-- Modal de filtros --}}
-                @include('admin.transacciones.inscripcion.modales.filtroModal')
+                @include('admin.transacciones.inscripcion_prosecucion.modales.filtroModal')
             </div>
             <div class="mt-3" style="display:flex; align-items:center; position:relative;">
                 <div style="margin: 0 auto;">
-                    <x-pagination :paginator="$inscripciones" />
+                    <x-pagination :paginator="$prosecuciones" />
                 </div>
             </div>
         </div>
