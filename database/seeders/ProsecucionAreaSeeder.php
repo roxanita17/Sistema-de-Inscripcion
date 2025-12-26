@@ -18,11 +18,7 @@ class ProsecucionAreaSeeder extends Seeder
                 'grado_area_formacion_id' => 1,
                 'status' => 'Pendiente',
             ]);
-            ProsecucionArea::create([
-                'inscripcion_prosecucion_id' => 2,
-                'grado_area_formacion_id' => 13,
-                'status' => 'Pendiente',
-            ]);
+           
 
             
         }

@@ -85,32 +85,38 @@
             </div>
         @endif
 
-        {{-- Indicador de filtros activos --}}
+        {{-- Filtros activos --}}
         @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion'))
-            <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-2">
+            <div class="card-modern filtros-simple mb-3">
+                <div class="filtros-simple-content">
+
+                    <div class="filtros-text">
                         <i class="fas fa-filter"></i>
-                        <span><strong>Filtros activos:</strong></span>
+                        <span>Filtros activos:</span>
+
                         @if (request('tipo_inscripcion'))
-                            <span class="badge bg-primary">
+                            <span class="badge-filtros-small">
                                 {{ request('tipo_inscripcion') == 'nuevo_ingreso' ? 'Nuevo Ingreso' : 'Prosecución' }}
                             </span>
                         @endif
+
                         @if (request('grado_id'))
-                            <span class="badge bg-primary">
-                                Grado: {{ $grados->find(request('grado_id'))->numero_grado ?? 'N/A' }}
+                            <span class="badge-filtros-small">
+                                Grado {{ $grados->find(request('grado_id'))->numero_grado ?? 'N/A' }}
                             </span>
                         @endif
+
                         @if (request('seccion_id'))
-                            <span class="badge bg-primary">
-                                Sección: {{ $secciones->find(request('seccion_id'))->nombre ?? 'N/A' }}
+                            <span class="badge-filtros-small">
+                                Sección {{ $secciones->find(request('seccion_id'))->nombre ?? 'N/A' }}
                             </span>
                         @endif
                     </div>
-                    <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-times"></i> Limpiar filtros
+
+                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}" class="btn-clear-simple">
+                        <i class="fas fa-times"></i>
                     </a>
+
                 </div>
             </div>
         @endif

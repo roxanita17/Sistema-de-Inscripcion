@@ -24,8 +24,8 @@
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
-                    <a href="{{ route('admin.transacciones.inscripcion-prosecucion.createProsecucion') }}" class="btn-create"
-                        @if (!$anioEscolarActivo) disabled @endif
+                    <a href="{{ route('admin.transacciones.inscripcion-prosecucion.createProsecucion') }}"
+                        class="btn-create" @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
                         <span>Inscripcion Prosecucion</span>
@@ -85,44 +85,41 @@
             </div>
         @endif
 
-{{-- Filtros activos --}}
-@if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion'))
-    <div class="card-modern filtros-simple mb-3">
-        <div class="filtros-simple-content">
+        {{-- Filtros activos --}}
+        @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion'))
+            <div class="card-modern filtros-simple mb-3">
+                <div class="filtros-simple-content">
 
-            <div class="filtros-text">
-                <i class="fas fa-filter"></i>
-                <span>Filtros activos:</span>
+                    <div class="filtros-text">
+                        <i class="fas fa-filter"></i>
+                        <span>Filtros activos:</span>
 
-                @if (request('tipo_inscripcion'))
-                    <span class="badge-filtros-small">
-                        {{ request('tipo_inscripcion') == 'nuevo_ingreso'
-                            ? 'Nuevo Ingreso'
-                            : 'Prosecución' }}
-                    </span>
-                @endif
+                        @if (request('tipo_inscripcion'))
+                            <span class="badge-filtros-small">
+                                {{ request('tipo_inscripcion') == 'nuevo_ingreso' ? 'Nuevo Ingreso' : 'Prosecución' }}
+                            </span>
+                        @endif
 
-                @if (request('grado_id'))
-                    <span class="badge-filtros-small">
-                        Grado {{ $grados->find(request('grado_id'))->numero_grado ?? 'N/A' }}
-                    </span>
-                @endif
+                        @if (request('grado_id'))
+                            <span class="badge-filtros-small">
+                                Grado {{ $grados->find(request('grado_id'))->numero_grado ?? 'N/A' }}
+                            </span>
+                        @endif
 
-                @if (request('seccion_id'))
-                    <span class="badge-filtros-small">
-                        Sección {{ $secciones->find(request('seccion_id'))->nombre ?? 'N/A' }}
-                    </span>
-                @endif
+                        @if (request('seccion_id'))
+                            <span class="badge-filtros-small">
+                                Sección {{ $secciones->find(request('seccion_id'))->nombre ?? 'N/A' }}
+                            </span>
+                        @endif
+                    </div>
+
+                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}" class="btn-clear-simple">
+                        <i class="fas fa-times"></i>
+                    </a>
+
+                </div>
             </div>
-
-            <a href="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}"
-               class="btn-clear-simple">
-                <i class="fas fa-times"></i>
-            </a>
-
-        </div>
-    </div>
-@endif
+        @endif
 
 
 
@@ -230,7 +227,7 @@
 
                                         {{-- TIPO DE INSCRIPCIÓN --}}
                                         <td class="text-center">
-                                                <span class="badge bg-success">Prosecución</span>
+                                            <span class="badge bg-success">Prosecución</span>
                                         </td>
 
 
@@ -307,7 +304,7 @@
                                                             </button>
                                                         </li>
 
-                                                        
+
                                                     </ul>
                                                 </div>
                                             </div>
