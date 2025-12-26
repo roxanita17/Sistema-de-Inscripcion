@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Alumnos;
 
 use Livewire\Component;
 use App\Models\Alumno;
+use App\Models\Discapacidad;
 use App\Models\Persona;
 use App\Models\Estado;
 use App\Models\Municipio;
@@ -19,6 +20,8 @@ class AlumnoEdit extends Component
 {
     public $alumnoId;
     public $persona_id;
+    public $alumnoSeleccionado;
+
 
     // Datos personales
     public $tipo_documento_id;
@@ -66,6 +69,12 @@ class AlumnoEdit extends Component
     public $lateralidades = [];
     public $orden_nacimientos = [];
     public $etnia_indigenas = [];
+
+    // Para mostrar discapacidades
+    public $discapacidadesAlumno = [];
+    public $discapacidadesAgregadas = [];
+    public $discapacidadSeleccionada;
+    public $discapacidades = [];
 
     public $enModoEdicion = false;
 
@@ -250,6 +259,7 @@ class AlumnoEdit extends Component
         $this->alumnoId = $alumnoId;
         $this->cargarDatosIniciales();
         $this->cargarAlumno();
+        $this->cargarDiscapacidades();
     }
 
     private function cargarDatosIniciales()
@@ -261,6 +271,11 @@ class AlumnoEdit extends Component
         $this->lateralidades = Lateralidad::where('status', true)->get();
         $this->orden_nacimientos = OrdenNacimiento::where('status', true)->get();
         $this->etnia_indigenas = EtniaIndigena::where('status', true)->get();
+
+        // Cargar discapacidades disponibles
+        $this->discapacidades = Discapacidad::where('status', true)
+            ->orderBy('nombre_discapacidad', 'asc')
+            ->get();
     }
 
     private function cargarAlumno()
@@ -308,6 +323,20 @@ class AlumnoEdit extends Component
 
         // Calcular edad
         $this->calcularEdad($this->fecha_nacimiento);
+    }
+
+    private function cargarDiscapacidades()
+    {
+        $alumno = \App\Models\Alumno::with('discapacidades')->find($this->alumnoId);
+
+        if ($alumno && $alumno->discapacidades) {
+            $this->discapacidadesAlumno = $alumno->discapacidades->map(function ($disc) {
+                return [
+                    'id' => $disc->id,
+                    'nombre' => $disc->nombre_discapacidad
+                ];
+            })->toArray();
+        }
     }
 
     public function updatedEstadoId($value)
@@ -361,15 +390,124 @@ class AlumnoEdit extends Component
         }
     }
 
+
     public function habilitarEdicion()
     {
         $this->enModoEdicion = true;
+        // Copiar discapacidades actuales al array de edición
+        $this->discapacidadesAgregadas = $this->discapacidadesAlumno;
     }
 
     public function cancelarEdicion()
     {
         $this->enModoEdicion = false;
         $this->cargarAlumno();
+        $this->cargarDiscapacidades();
+        // Limpiar selección de discapacidad
+        $this->discapacidadSeleccionada = null;
+        $this->resetErrorBag('discapacidadSeleccionada');
+    }
+
+    /**
+     * Agrega una discapacidad a la lista temporal
+     */
+    public function agregarDiscapacidad()
+    {
+        $this->validate([
+            'discapacidadSeleccionada' => 'required|exists:discapacidads,id'
+        ], [
+            'discapacidadSeleccionada.required' => 'Debe seleccionar una discapacidad.',
+            'discapacidadSeleccionada.exists' => 'La discapacidad seleccionada no es válida.'
+        ]);
+
+        if (collect($this->discapacidadesAgregadas)->contains('id', $this->discapacidadSeleccionada)) {
+            $this->addError('discapacidadSeleccionada', 'Esta discapacidad ya ha sido agregada.');
+            return;
+        }
+
+        $discapacidad = Discapacidad::find($this->discapacidadSeleccionada);
+
+        if ($discapacidad) {
+            // Agregar a la lista temporal
+            $nueva = [
+                'id' => $discapacidad->id,
+                'nombre' => $discapacidad->nombre_discapacidad
+            ];
+
+            $this->discapacidadesAgregadas[] = $nueva;
+
+            // Guardar en DB
+            \App\Models\DiscapacidadEstudiante::updateOrCreate(
+                [
+                    'alumno_id' => $this->alumnoId,
+                    'discapacidad_id' => $discapacidad->id
+                ],
+                ['status' => true]
+            );
+
+            // **Actualizar la lista que se muestra en la vista**
+            $this->discapacidadesAlumno[] = $nueva;
+
+            // Limpiar selección
+            $this->discapacidadSeleccionada = null;
+            $this->resetErrorBag('discapacidadSeleccionada');
+
+            session()->flash('success_temp', 'Discapacidad agregada correctamente.');
+        }
+    }
+
+
+
+    /**
+     * Elimina una discapacidad de la lista temporal
+     */
+    public function eliminarDiscapacidad($index)
+    {
+        if (isset($this->discapacidadesAgregadas[$index])) {
+            $discapacidad = $this->discapacidadesAgregadas[$index];
+
+            // Marcar como inactiva en DB
+            \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
+                ->where('discapacidad_id', $discapacidad['id'])
+                ->update(['status' => false]);
+
+            // Quitar de las listas temporales y de la vista
+            unset($this->discapacidadesAgregadas[$index]);
+
+            // También actualizar la lista mostrada
+            $this->discapacidadesAlumno = array_values(
+                array_filter($this->discapacidadesAlumno, fn($d) => $d['id'] != $discapacidad['id'])
+            );
+
+            // Reindexar
+            $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
+
+            session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
+        }
+    }
+
+
+    /**
+     * Guarda las discapacidades del alumno
+     */
+    private function guardarDiscapacidades()
+    {
+        // Primero, inactivar todas las discapacidades actuales
+        \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
+            ->update(['status' => false]);
+
+        // Luego, agregar o reactivar las discapacidades seleccionadas
+        foreach ($this->discapacidadesAgregadas as $discapacidad) {
+            \App\Models\DiscapacidadEstudiante::updateOrCreate(
+                [
+                    'alumno_id' => $this->alumnoId,
+                    'discapacidad_id' => $discapacidad['id']
+                ],
+                [
+                    'status' => true
+                ]
+            );
+        }
     }
 
     public function guardar()
@@ -380,10 +518,12 @@ class AlumnoEdit extends Component
             return;
         }
 
+        $this->validate();
+
         try {
             DB::beginTransaction();
 
-            $persona = Persona::findOrFail($this->personaId);
+            $persona = Persona::findOrFail($this->persona_id);
             $persona->update([
                 'primer_nombre' => $this->primer_nombre,
                 'segundo_nombre' => $this->segundo_nombre,
@@ -409,11 +549,15 @@ class AlumnoEdit extends Component
                 'etnia_indigena_id' => $this->etnia_indigena_id,
             ]);
 
+            // Guardar discapacidades
+            $this->guardarDiscapacidades();
+
             DB::commit();
 
             $this->enModoEdicion = false;
+            $this->cargarDiscapacidades(); // Recargar para actualizar la vista
             $this->dispatch('actualizarAlumno');
-            session()->flash('success', 'Datos del alumno actualizados correctamente.');
+            session()->flash('success', 'Datos del alumno y discapacidades actualizados correctamente.');
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error al actualizar: ' . $e->getMessage());
