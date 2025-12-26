@@ -264,8 +264,8 @@ class Inscripcion extends Model
         $this->load([
             'alumno.persona',
             'alumno.ordenNacimiento',
-            'alumno.discapacidad',
-            'alumno.etniaIndigena',
+            //'alumno.discapacidad',
+            //'alumno.etniaIndigena',
             'alumno.lateralidad',
             'grado',
             'seccion',
@@ -273,9 +273,9 @@ class Inscripcion extends Model
             'madre.persona',
             'representanteLegal.representante.persona',
             'representanteLegal.banco',
-            'institucionProcedencia',
+            /*'institucionProcedencia',
             'expresionLiteraria',
-            'seccionAsignada'
+            'seccionAsignada'*/
         ]);
 
         // Construir el array con todos los datos

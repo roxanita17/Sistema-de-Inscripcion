@@ -456,10 +456,16 @@ public function mostrarFormularioEditar($id)
                              ?: $request->input('prefijo-madre') 
                              ?: $request->input('prefijo-padre'),
                 'telefono' => $request->input('telefono-representante') 
-                            ?: $request->input('telefono-madre') 
-                            ?: $request->input('telefono-padre'),
-                'telefono_dos' => $request->input('telefono-dos-representante'),
-                'prefijo_dos_id' => $request->input('prefijo-dos-representante'),
+                            ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
+                            : ($request->input('telefono-madre') 
+                                ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
+                                : ($request->input('telefono-padre') 
+                                    ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
+                                    : null)),
+                'telefono_dos' => $request->filled('telefono_dos') 
+                    ? preg_replace('/^0+/', '', (string)$request->input('telefono_dos'))
+                    : null,
+                'prefijo_dos_id' => $request->input('prefijo_dos'),
                 'email' => $request->input('correo-representante'),
                 'localidad_id' => $request->input('parroquia_id'),
             ]);
@@ -554,9 +560,18 @@ public function mostrarFormularioEditar($id)
             'wants_json' => $request->wantsJson(),
             'is_ajax' => $request->ajax(),
             'content_type' => $request->header('Content-Type'),
-            'is_update' => $isUpdate,
+            'is_update' => $id !== null,
             'id' => $id
         ]);
+            
+            // Debug: Verificar valores de teléfono
+            Log::info('Valores de teléfono recibidos:', [
+                'telefono-representante' => $request->input('telefono-representante'),
+                'telefono-madre' => $request->input('telefono-madre'),
+                'telefono-padre' => $request->input('telefono-padre'),
+                'telefono_dos' => $request->input('telefono_dos'),
+                'prefijo_dos' => $request->input('prefijo_dos')
+            ]);
 
     // Verificar si es un progenitor que también es representante
     $tipoRepresentante = $request->input('tipo_representante');
@@ -638,12 +653,17 @@ public function mostrarFormularioEditar($id)
         'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia'),
 
         // Teléfono (se almacena completo en Persona.telefono)
-        // Teléfono (se almacena completo en Persona.telefono)
         'telefono_personas' => $request->input('telefono-representante') 
-                            ?: $request->input('telefono-madre') 
-                            ?: $request->input('telefono-padre'),
-        'telefono_dos' => $request->input('telefono-dos-representante'),
-        'prefijo_dos_id' => $request->input('prefijo-dos-representante'),
+                            ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
+                            : ($request->input('telefono-madre') 
+                                ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
+                                : ($request->input('telefono-padre') 
+                                    ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
+                                    : null)),
+        'telefono_dos' => $request->input('telefono_dos') 
+            ? preg_replace('/^0+/', '', $request->input('telefono_dos'))
+            : null,
+        'prefijo_dos_id' => $request->input('prefijo_dos'),
         'prefijo_id' => $request->input('prefijo-representante') 
                      ?: $request->input('prefijo-madre') 
                      ?: $request->input('prefijo-padre'),
@@ -1088,7 +1108,19 @@ public function mostrarFormularioEditar($id)
                     ], $datosPersona);
                     
                     try {
-                        $persona = Persona::create($datosPersona);
+                        // Crear la persona con los datos básicos
+                        $persona = new Persona();
+                        $persona->fill($datosPersona);
+                        
+                        // Asignar manualmente los campos que no están en $fillable
+                        if (isset($datosPersona['telefono_dos'])) {
+                            $persona->telefono_dos = $datosPersona['telefono_dos'];
+                        }
+                        if (isset($datosPersona['prefijo_dos_id'])) {
+                            $persona->prefijo_dos_id = $datosPersona['prefijo_dos_id'];
+                        }
+                        
+                        $persona->save();
                         $isUpdate = false;
                         
                         Log::info('Nuevo registro creado para el progenitor', [
@@ -1214,8 +1246,27 @@ public function mostrarFormularioEditar($id)
                 'datos_persona' => $datosPersona
             ]);
             
-            $persona->update($datosPersona);
-            Log::info('Persona actualizada: ID ' . $persona->id);
+            // Actualizar la persona con los datos básicos
+            $persona->fill($datosPersona);
+            
+            // Asignar manualmente los campos que no están en $fillable
+            if (isset($datosPersona['telefono_dos'])) {
+                $persona->telefono_dos = $datosPersona['telefono_dos'];
+            } else {
+                $persona->telefono_dos = null;
+            }
+            
+            if (isset($datosPersona['prefijo_dos_id'])) {
+                $persona->prefijo_dos_id = $datosPersona['prefijo_dos_id'];
+            } else {
+                $persona->prefijo_dos_id = null;
+            }
+            
+            $persona->save();
+            Log::info('Persona actualizada: ID ' . $persona->id, [
+                'telefono_dos' => $persona->telefono_dos,
+                'prefijo_dos_id' => $persona->prefijo_dos_id
+            ]);
 
             // 2. Actualizar o crear representante asociado a la persona
             $representante = Representante::where('persona_id', $persona->id)->first();
@@ -1292,6 +1343,8 @@ public function mostrarFormularioEditar($id)
                 'localidad_id' => $datosPersona['localidad_id'] ?? 1,
                 'prefijo_id' => $datosPersona['prefijo_id'] ?? 1,
                 'telefono' => $telefono, // Usamos el teléfono obtenido
+                'telefono_dos' => $request->input('telefono_dos'),
+                'prefijo_dos_id' => $request->input('prefijo_dos'),
                 'status' => true
             ], $datosPersona);
 
@@ -1302,8 +1355,20 @@ public function mostrarFormularioEditar($id)
             
             $persona = new Persona();
             $persona->fill($datosPersona); // Llena solo los campos fillable
+            
+            // Asignar manualmente los campos que no están en $fillable
             $persona->telefono = $telefono; // Asignación directa del teléfono
+            $persona->telefono_dos = $request->input('telefono_dos');
+            $persona->prefijo_dos_id = $request->input('prefijo_dos');
+            
             $persona->save();
+            
+            // Depuración
+            Log::info('Datos guardados en la persona:', [
+                'telefono' => $persona->telefono,
+                'telefono_dos' => $persona->telefono_dos,
+                'prefijo_dos_id' => $persona->prefijo_dos_id
+            ]);
             
             Log::info('Persona creada: ID ' . $persona->id);
 
@@ -1342,10 +1407,19 @@ public function mostrarFormularioEditar($id)
             $personaMadre->genero_id        = $request->input('sexo');
             $personaMadre->localidad_id     = $request->input('idparroquia');
             $personaMadre->telefono         = $request->input('telefono');
+            $personaMadre->telefono_dos     = $request->input('telefono_dos');
+            $personaMadre->prefijo_dos_id   = $request->input('prefijo_dos');
             $personaMadre->tipo_documento_id = $request->input('tipo-ci');
             $personaMadre->prefijo_id       = $request->input('prefijo');
             $personaMadre->direccion        = $request->input('lugar-nacimiento');
             $personaMadre->status           = $personaMadre->status ?? true;
+            
+            Log::info('Datos de la madre a guardar:', [
+                'telefono' => $personaMadre->telefono,
+                'telefono_dos' => $personaMadre->telefono_dos,
+                'prefijo_dos_id' => $personaMadre->prefijo_dos_id,
+                'prefijo_id' => $personaMadre->prefijo_id
+            ]);
 
             $personaMadre->save();
 
@@ -1420,10 +1494,19 @@ public function mostrarFormularioEditar($id)
             $personaPadre->genero_id        = $request->input('sexo-padre');
             $personaPadre->localidad_id     = $request->input('idparroquia-padre');
             $personaPadre->telefono         = $request->input('telefono-padre');
+            $personaPadre->telefono_dos     = $request->input('telefono_dos_padre'); // Asegúrate de que este campo exista en el formulario
+            $personaPadre->prefijo_dos_id   = $request->input('prefijo_dos_padre'); // Asegúrate de que este campo exista en el formulario
             $personaPadre->tipo_documento_id = $request->input('tipo-ci-padre');
             $personaPadre->prefijo_id       = $request->input('prefijo-padre');
             $personaPadre->direccion        = $request->input('direccion-padre');
             $personaPadre->status           = $personaPadre->status ?? true;
+            
+            Log::info('Datos del padre a guardar:', [
+                'telefono' => $personaPadre->telefono,
+                'telefono_dos' => $personaPadre->telefono_dos,
+                'prefijo_dos_id' => $personaPadre->prefijo_dos_id,
+                'prefijo_id' => $personaPadre->prefijo_id
+            ]);
 
             $personaPadre->save();
 

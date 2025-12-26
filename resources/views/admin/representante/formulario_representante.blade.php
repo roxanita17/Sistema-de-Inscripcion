@@ -611,10 +611,9 @@
                                     
                                     <div class="col-md-3 mb-3">
                                         <div class="input-group">
-                                            <label class="input-group-text" for="prefijo_dos"><span
-                                                    class="text-danger">(*)</span>Prefijo 2</label>
+                                            <label class="input-group-text" for="prefijo_dos">Prefijo 2</label>
                                             <select class="form-select" id="prefijo_dos" name="prefijo_dos"
-                                                title="Seleccione el tipo de linea Teléfonica" required>
+                                                title="Seleccione el tipo de linea Teléfonica">
                                                 <option value="">Seleccione</option>
                                                 @foreach ($prefijos_telefono as $prefijo)
                                                     <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
@@ -625,13 +624,11 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="input-group">
-                                            <span class="input-group-text" id="inputGroup-sizing-default"><span
-                                                    class="text-danger">(*)</span>Número de Teléfono 2:</span>
+                                            <span class="input-group-text" id="inputGroup-sizing-default">Número de Teléfono 2:</span>
                                             <input type="text" class="form-control" aria-label="Sizing example input"
                                                 id="telefono_dos" name="telefono_dos"
                                                 aria-describedby="inputGroup-sizing-default" pattern="[0-9]+"
-                                                maxlength="11" title="Ingresa solamente numeros,no se permiten letras"
-                                                required>
+                                                maxlength="11" title="Ingresa solamente numeros, no se permiten letras">
                                         </div>
                                         <small id="telefono_dos-error" class="text-danger"></small>
                                     </div>

@@ -24,11 +24,14 @@ class Persona extends Model
         'fecha_nacimiento',
         'direccion',
         'email', 
+        'telefono',
+        'telefono_dos',
         'status',
         'tipo_documento_id',
         'genero_id',
         'localidad_id',
         'prefijo_id',
+        'prefijo_dos_id',
     ];
 
     protected $capitalizar = [
