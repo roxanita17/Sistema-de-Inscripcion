@@ -24,7 +24,7 @@
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
-                    <a href="{{ route('admin.transacciones.inscripcion-prosecucion.createProsecucion') }}"
+                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.create') }}"
                         class="btn-create" @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>

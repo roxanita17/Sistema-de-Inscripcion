@@ -125,60 +125,147 @@
             </div>
 
             @if ($padreSeleccionado)
-                <div class="card mt-3 mb-4">
-                    <div class="card-body">
+                <div class="card-body-modern" style="padding: 0;">
 
-                        <h5>Datos del Padre</h5>
+                    <div class="details-grid">
 
-                        <p><strong>Nombre completo:</strong>
-                            {{ $padreSeleccionado->persona->primer_nombre }}
-                            {{ $padreSeleccionado->persona->segundo_nombre }}
-                            {{ $padreSeleccionado->persona->tercer_nombre }}
-                            {{ $padreSeleccionado->persona->primer_apellido }}
-                            {{ $padreSeleccionado->persona->segundo_apellido }}
-                        </p>
+                        {{-- COLUMNA IZQUIERDA --}}
+                        <div class="details-section">
 
-                        <p><strong>Documento:</strong>
-                            {{ $padreSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }} -
-                            {{ $padreSeleccionado->persona->numero_documento }}
-                        </p>
+                            {{-- Identificación --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-id-badge"></i>
+                                    <h4>Datos de Identificación</h4>
+                                </div>
 
-                        <p><strong>Género:</strong>
-                            {{ $padreSeleccionado->persona->genero->genero ?? 'N/A' }}
-                        </p>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-id-card"></i>
+                                            Documento
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $padreSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }} -
+                                            {{ $padreSeleccionado->persona->numero_documento }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p><strong>Teléfono:</strong>
-                            {{ $padreSeleccionado->persona->telefono ?? 'N/A' }}
-                        </p>
+                            {{-- Información Personal --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-user"></i>
+                                    <h4>Información Personal</h4>
+                                </div>
 
-                        <p><strong>Email:</strong>
-                            {{ $padreSeleccionado->persona->email ?? 'N/A' }}
-                        </p>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-user"></i>
+                                            Nombre Completo
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $padreSeleccionado->persona->primer_nombre }}
+                                            {{ $padreSeleccionado->persona->segundo_nombre }}
+                                            {{ $padreSeleccionado->persona->tercer_nombre }}
+                                            {{ $padreSeleccionado->persona->primer_apellido }}
+                                            {{ $padreSeleccionado->persona->segundo_apellido }}
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <p><strong>Ocupación:</strong>
-                            {{ $padreSeleccionado->ocupacion->nombre_ocupacion ?? 'N/A' }}
-                        </p>
+                                <div
+                                    style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
+                                    <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                <i class="fas fa-venus-mars"></i>
+                                                Género
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $padreSeleccionado->persona->genero->genero ?? 'N/A' }}
+                                            </span>
+                                        </div>
 
-                        <p><strong>Estado:</strong>
-                            {{ $padreSeleccionado->estado->nombre_estado ?? 'N/A' }}
-                        </p>
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                <i class="fas fa-phone"></i>
+                                                Teléfono
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $padreSeleccionado->persona->telefono ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p><strong>Municipio:</strong>
-                            {{ $padreSeleccionado->municipios->nombre_municipio ?? 'N/A' }}
-                        </p>
+                        </div>
 
-                        <p><strong>Localidad / Parroquia:</strong>
-                            {{ $padreSeleccionado->localidads->nombre_localidad ?? 'N/A' }}
-                        </p>
+                        {{-- COLUMNA DERECHA --}}
+                        <div class="details-section">
 
-                        <p><strong>Convive con el estudiante:</strong>
-                            {{ $padreSeleccionado->convivenciaestudiante_representante ? 'Sí' : 'No' }}
-                        </p>
+                            {{-- Ubicación --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <h4>Ubicación</h4>
+                                </div>
 
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-map"></i>
+                                            Estado / Municipio / Localidad
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $padreSeleccionado->estado->nombre_estado ?? 'N/A' }},
+                                            {{ $padreSeleccionado->municipios->nombre_municipio ?? 'N/A' }},
+                                            {{ $padreSeleccionado->localidads->nombre_localidad ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Datos Laborales --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-briefcase"></i>
+                                    <h4>Información Laboral</h4>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-user-tie"></i>
+                                            Ocupación
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $padreSeleccionado->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="info-group pt-3">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-home"></i>
+                                            Convive con el Estudiante
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $padreSeleccionado->convivenciaestudiante_representante ? 'Sí' : 'No' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
+
                 </div>
             @endif
-
 
             {{-- Madre --}}
             <div class="row mb-3">
@@ -201,56 +288,145 @@
             </div>
 
             @if ($madreSeleccionado)
-                <div class="card mt-3 mb-4">
-                    <div class="card-body">
+                <div class="card-body-modern" style="padding: 0;">
 
-                        <h5>Datos de la Madre</h5>
+                    <div class="details-grid">
 
-                        <p><strong>Nombre completo:</strong>
-                            {{ $madreSeleccionado->persona->primer_nombre }}
-                            {{ $madreSeleccionado->persona->segundo_nombre }}
-                            {{ $madreSeleccionado->persona->tercer_nombre }}
-                            {{ $madreSeleccionado->persona->primer_apellido }}
-                            {{ $madreSeleccionado->persona->segundo_apellido }}
-                        </p>
+                        {{-- COLUMNA IZQUIERDA --}}
+                        <div class="details-section">
 
-                        <p><strong>Documento:</strong>
-                            {{ $madreSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }} -
-                            {{ $madreSeleccionado->persona->numero_documento }}
-                        </p>
+                            {{-- Identificación --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-id-badge"></i>
+                                    <h4>Datos de Identificación</h4>
+                                </div>
 
-                        <p><strong>Género:</strong>
-                            {{ $madreSeleccionado->persona->genero->genero ?? 'N/A' }}
-                        </p>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-id-card"></i>
+                                            Documento
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $madreSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }} -
+                                            {{ $madreSeleccionado->persona->numero_documento }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p><strong>Teléfono:</strong>
-                            {{ $madreSeleccionado->persona->telefono ?? 'N/A' }}
-                        </p>
+                            {{-- Información Personal --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-user"></i>
+                                    <h4>Información Personal</h4>
+                                </div>
 
-                        <p><strong>Email:</strong>
-                            {{ $madreSeleccionado->persona->email ?? 'N/A' }}
-                        </p>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-user"></i>
+                                            Nombre Completo
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $madreSeleccionado->persona->primer_nombre }}
+                                            {{ $madreSeleccionado->persona->segundo_nombre }}
+                                            {{ $madreSeleccionado->persona->tercer_nombre }}
+                                            {{ $madreSeleccionado->persona->primer_apellido }}
+                                            {{ $madreSeleccionado->persona->segundo_apellido }}
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <p><strong>Ocupación:</strong>
-                            {{ $madreSeleccionado->ocupacion->nombre_ocupacion ?? 'N/A' }}
-                        </p>
+                                <div
+                                    style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
+                                    <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                <i class="fas fa-venus-mars"></i>
+                                                Género
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $madreSeleccionado->persona->genero->genero ?? 'N/A' }}
+                                            </span>
+                                        </div>
 
-                        <p><strong>Estado:</strong>
-                            {{ $madreSeleccionado->estado->nombre_estado ?? 'N/A' }}
-                        </p>
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                <i class="fas fa-phone"></i>
+                                                Teléfono
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $madreSeleccionado->persona->telefono ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p><strong>Municipio:</strong>
-                            {{ $madreSeleccionado->municipios->nombre_municipio ?? 'N/A' }}
-                        </p>
+                        </div>
 
-                        <p><strong>Localidad / Parroquia:</strong>
-                            {{ $madreSeleccionado->localidads->nombre_localidad ?? 'N/A' }}
-                        </p>
+                        {{-- COLUMNA DERECHA --}}
+                        <div class="details-section">
 
-                        <p><strong>Convive con el estudiante:</strong>
-                            {{ $madreSeleccionado->convivenciaestudiante_representante ? 'Sí' : 'No' }}
-                        </p>
+                            {{-- Ubicación --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <h4>Ubicación</h4>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-map"></i>
+                                            Estado / Municipio / Localidad
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $madreSeleccionado->estado->nombre_estado ?? 'N/A' }},
+                                            {{ $madreSeleccionado->municipios->nombre_municipio ?? 'N/A' }},
+                                            {{ $madreSeleccionado->localidads->nombre_localidad ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Datos Laborales --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-briefcase"></i>
+                                    <h4>Información Laboral</h4>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-user-tie"></i>
+                                            Ocupación
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $madreSeleccionado->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="info-group pt-3">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-home"></i>
+                                            Convive con el Estudiante
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $madreSeleccionado->convivenciaestudiante_representante ? 'Sí' : 'No' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
+
                 </div>
             @endif
 
@@ -281,104 +457,249 @@
             @enderror
 
             @if ($representanteLegalSeleccionado)
-                <div class="card mt-3 mb-4">
-                    <div class="card-body">
+                <div class="card-body-modern" style="padding: 0;">
+                    <div class="details-grid">
 
-                        <h5>Datos del Representante Legal</h5>
+                        {{-- COLUMNA IZQUIERDA --}}
+                        <div class="details-section">
 
-                        {{-- Datos personales --}}
-                        <p><strong>Nombre completo:</strong>
-                            {{ $representanteLegalSeleccionado->representante->persona->primer_nombre }}
-                            {{ $representanteLegalSeleccionado->representante->persona->segundo_nombre }}
-                            {{ $representanteLegalSeleccionado->representante->persona->tercer_nombre }}
-                            {{ $representanteLegalSeleccionado->representante->persona->primer_apellido }}
-                            {{ $representanteLegalSeleccionado->representante->persona->segundo_apellido }}
-                        </p>
+                            {{-- Identificación --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-id-badge"></i>
+                                    <h4>Datos de Identificación</h4>
+                                </div>
 
-                        <p><strong>Documento:</strong>
-                            {{ $representanteLegalSeleccionado->representante->persona->tipoDocumento->nombre ?? 'N/A' }}
-                            -
-                            {{ $representanteLegalSeleccionado->representante->persona->numero_documento }}
-                        </p>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-id-card"></i>
+                                            Documento
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $representanteLegalSeleccionado->representante->persona->tipoDocumento->nombre ?? 'N/A' }}
+                                            -
+                                            {{ $representanteLegalSeleccionado->representante->persona->numero_documento }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p><strong>Género:</strong>
-                            {{ $representanteLegalSeleccionado->representante->persona->genero->genero ?? 'N/A' }}
-                        </p>
+                            {{-- Información Personal --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-user"></i>
+                                    <h4>Información Personal</h4>
+                                </div>
 
-                        <p><strong>Teléfono:</strong>
-                            {{ $representanteLegalSeleccionado->representante->persona->telefono ?? 'N/A' }}
-                        </p>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-user"></i>
+                                            Nombre Completo
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $representanteLegalSeleccionado->representante->persona->primer_nombre }}
+                                            {{ $representanteLegalSeleccionado->representante->persona->segundo_nombre }}
+                                            {{ $representanteLegalSeleccionado->representante->persona->tercer_nombre }}
+                                            {{ $representanteLegalSeleccionado->representante->persona->primer_apellido }}
+                                            {{ $representanteLegalSeleccionado->representante->persona->segundo_apellido }}
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <p><strong>Email:</strong>
-                            {{ $representanteLegalSeleccionado->representante->persona->email ?? 'N/A' }}
-                        </p>
+                                <div
+                                    style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
+                                    <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                <i class="fas fa-venus-mars"></i>
+                                                Género
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $representanteLegalSeleccionado->representante->persona->genero->genero ?? 'N/A' }}
+                                            </span>
+                                        </div>
 
-                        {{-- Datos del representante --}}
-                        <p><strong>Ocupación:</strong>
-                            {{ $representanteLegalSeleccionado->representante->ocupacion->nombre_ocupacion ?? 'N/A' }}
-                        </p>
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                <i class="fas fa-phone"></i>
+                                                Teléfono
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $representanteLegalSeleccionado->representante->persona->telefono ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p><strong>Estado:</strong>
-                            {{ $representanteLegalSeleccionado->representante->estado->nombre_estado ?? 'N/A' }}
-                        </p>
+                        </div>
 
-                        <p><strong>Municipio:</strong>
-                            {{ $representanteLegalSeleccionado->representante->municipios->nombre_municipio ?? 'N/A' }}
-                        </p>
+                        {{-- COLUMNA DERECHA --}}
+                        <div class="details-section">
 
-                        <p><strong>Localidad / Parroquia:</strong>
-                            {{ $representanteLegalSeleccionado->representante->localidads->nombre_localidad ?? 'N/A' }}
-                        </p>
+                            {{-- Ubicación --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <h4>Ubicación</h4>
+                                </div>
 
-                        <p><strong>Convive con el estudiante:</strong>
-                            {{ $representanteLegalSeleccionado->representante->convivenciaestudiante_representante ? 'Sí' : 'No' }}
-                        </p>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-map"></i>
+                                            Estado / Municipio / Localidad
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $representanteLegalSeleccionado->representante->persona->estado->nombre_estado ?? 'N/A' }},
+                                            {{ $representanteLegalSeleccionado->representante->persona->municipios->nombre_municipio ?? 'N/A' }},
+                                            {{ $representanteLegalSeleccionado->representante->persona->localidads->nombre_localidad ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p><strong>Status:</strong>
-                            {{ $representanteLegalSeleccionado->representante->status ? 'Activo' : 'Inactivo' }}
-                        </p>
+                            {{-- Datos Laborales --}}
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <i class="fas fa-briefcase"></i>
+                                    <h4>Información Laboral</h4>
+                                </div>
 
-                        {{-- Datos legales --}}
-                        <hr>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-user-tie"></i>
+                                            Ocupación
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $representanteLegalSeleccionado->representante->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <p><strong>Parentesco:</strong>
-                            {{ $representanteLegalSeleccionado->parentesco ?? 'N/A' }}
-                        </p>
+                                <div class="info-group pt-3">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-home"></i>
+                                            Convive con el Estudiante
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $representanteLegalSeleccionado->representante->convivenciaestudiante_representante ? 'Sí' : 'No' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <p><strong>Correo representante:</strong>
-                            {{ $representanteLegalSeleccionado->correo_representante ?? 'N/A' }}
-                        </p>
-
-                        <p><strong>Pertenece a organización:</strong>
-                            {{ $representanteLegalSeleccionado->pertenece_a_organizacion_representante ? 'Sí' : 'No' }}
-                        </p>
-
-                        <p><strong>Organización:</strong>
-                            {{ $representanteLegalSeleccionado->cual_organizacion_representante ?? 'N/A' }}
-                        </p>
-
-                        <p><strong>Carnet de la Patria:</strong>
-                            {{ $representanteLegalSeleccionado->carnet_patria_afiliado ? 'Sí' : 'No' }}
-                        </p>
-
-                        <p><strong>Serial Carnet Patria:</strong>
-                            {{ $representanteLegalSeleccionado->serial_carnet_patria_representante ?? 'N/A' }}
-                        </p>
-
-                        <p><strong>Banco:</strong>
-                            {{ $representanteLegalSeleccionado->banco->nombre_banco ?? 'N/A' }}
-                        </p>
-
-                        <p><strong>Tipo de Cuenta:</strong>
-                            {{ $representanteLegalSeleccionado->tipo_cuenta ?? 'N/A' }}
-                        </p>
-
-                        <p><strong>Código Carnet Patria:</strong>
-                            {{ $representanteLegalSeleccionado->codigo_carnet_patria_representante ?? 'N/A' }}
-                        </p>
+                        </div>
 
                     </div>
+
+
                 </div>
+                {{-- Datos Legales --}}
+                <div class="info-section mt-4">
+                    <div class="section-header">
+                        <i class="fas fa-gavel"></i>
+                        <h4>Información Legal</h4>
+                    </div>
+
+                    <div style="display:flex; justify-content:center; align-items:center;">
+                        <div class="info-group pt-3"
+                            style="display:flex; gap:2rem; flex-wrap:wrap; justify-content:center; flex-direction:row;">
+
+                            <div class="info-item" style="width: 15rem;">
+                                <span class="info-label">
+                                    <i class="fas fa-users"></i>
+                                    Parentesco
+                                </span>
+                                <span class="info-value">
+                                    {{ $representanteLegalSeleccionado->parentesco ?? 'N/A' }}
+                                </span>
+                            </div>
+
+                            <div class="info-item" style="width: 18rem;">
+                                <span class="info-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Correo del Representante
+                                </span>
+                                <span class="info-value">
+                                    {{ $representanteLegalSeleccionado->correo_representante ?? 'N/A' }}
+                                </span>
+                            </div>
+                            @if ($representanteLegalSeleccionado->pertenece_a_organizacion_representante)
+                                <div class="info-item" style="width: 18rem;">
+                                    <span class="info-label">
+                                        <i class="fas fa-id-card-alt"></i>
+                                        Organizacion
+                                    </span>
+                                    <span class="info-value">
+                                        {{ $representanteLegalSeleccionado->cual_organizacion_representante ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            @endif
+
+
+                            <div class="info-item" style="width: 12rem;">
+                                <span class="info-label">
+                                    <i class="fas fa-id-card-alt"></i>
+                                    Carnet de la Patria
+                                </span>
+                                <span class="info-value">
+                                    {{ $representanteLegalSeleccionado->carnet_patria_afiliado ? 'Sí' : 'No' }}
+                                </span>
+                            </div>
+
+
+                            <div class="info-item" style="width: 14rem;">
+                                <span class="info-label">
+                                    <i class="fas fa-barcode"></i>
+                                    Serial Carnet Patria
+                                </span>
+                                <span class="info-value">
+                                    {{ $representanteLegalSeleccionado->serial_carnet_patria_representante ?? 'N/A' }}
+                                </span>
+                            </div>
+                            <div class="info-item" style="width: 14rem;">
+                                <span class="info-label">
+                                    <i class="fas fa-key"></i>
+                                    Código Carnet Patria
+                                </span>
+                                <span class="info-value">
+                                    {{ $representanteLegalSeleccionado->codigo_carnet_patria_representante ?? 'N/A' }}
+                                </span>
+                            </div>
+
+                            <div class="info-item" style="width: 18rem;">
+                                <span class="info-label">
+                                    <i class="fas fa-university"></i>
+                                    Banco
+                                </span>
+                                <span class="info-value">
+                                    {{ $representanteLegalSeleccionado->banco->codigo_banco ?? 'N/A' }}-{{ $representanteLegalSeleccionado->banco->nombre_banco ?? 'N/A' }}
+                                </span>
+                            </div>
+
+                            <div class="info-item" style="width: 18rem;">
+                                <span class="info-label">
+                                    <i class="fas fa-credit-card"></i>
+                                    Tipo de Cuenta
+                                </span>
+                                <span class="info-value">
+                                    {{ $representanteLegalSeleccionado->tipo_cuenta ?? 'N/A' }}
+                                </span>
+                            </div>
+
+                            
+
+                        </div>
+                    </div>
+                </div>
+
+
+
             @endif
 
         </div>

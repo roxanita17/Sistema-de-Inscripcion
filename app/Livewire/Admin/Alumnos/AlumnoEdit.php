@@ -15,13 +15,13 @@ use App\Models\OrdenNacimiento;
 use App\Models\EtniaIndigena;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Validate;
 
 class AlumnoEdit extends Component
 {
     public $alumnoId;
     public $persona_id;
     public $alumnoSeleccionado;
-
 
     // Datos personales
     public $tipo_documento_id;
@@ -78,23 +78,19 @@ class AlumnoEdit extends Component
 
     public $enModoEdicion = false;
 
-
     /* ============================================================
        =====================   VALIDACIÓN   ========================
        ============================================================ */
     protected function rules()
     {
         return [
-
             // Persona
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => [
                 'required',
                 'unique:personas,numero_documento,' . $this->persona_id,
                 function ($attribute, $value, $fail) {
-
                     switch ((int) $this->tipo_documento_id) {
-
                         // V - Venezolano (ID 1)
                         case 1:
                             if (!ctype_digit($value)) {
@@ -127,7 +123,6 @@ class AlumnoEdit extends Component
                     }
                 }
             ],
-
 
             'primer_nombre' => 'required|string|max:50',
             'primer_apellido' => 'required|string|max:50',
@@ -171,30 +166,32 @@ class AlumnoEdit extends Component
     protected $messages = [
         'tipo_documento_id.required' => 'Debe seleccionar tipo de documento',
         'numero_documento.required' => 'Debe ingresar la cédula',
-        'numero_documento.digits_between' => 'La cédula debe tener entre 6 y 8 dígitos',
         'numero_documento.unique' => 'Esta cédula ya está registrada en el sistema',
-        'primer_nombre.required' => 'Debe ingresar un nombre',
-        'primer_apellido.required' => 'Debe ingresar un apellido',
-        'genero_id.required' => 'Debe seleccionar un genero',
+        'primer_nombre.required' => 'Debe ingresar el primer nombre',
+        'primer_nombre.max' => 'El nombre no puede exceder 50 caracteres',
+        'primer_apellido.required' => 'Debe ingresar el primer apellido',
+        'primer_apellido.max' => 'El apellido no puede exceder 50 caracteres',
+        'genero_id.required' => 'Debe seleccionar un género',
         'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
-        'fecha_nacimiento.before:today' => 'La edad debe estar entre los 10 y 18 años',
-        'talla_estudiante.required' => 'Este campo es requerido',
-        'talla_estudiante.numeric' => 'Este campo debe ser un número',
-        'talla_estudiante.between' => 'Este campo debe estar entre 0.50 y 3.00',
-        'peso_estudiante.required' => 'Este campo es requerido',
-        'peso_estudiante.numeric' => 'Este campo debe ser un número',
-        'peso_estudiante.between' => 'Este campo debe estar entre 2 y 300',
-        'talla_camisa_id.required' => 'Este campo es requerido',
-        'talla_zapato.required' => 'Este campo es requerido',
-        'talla_zapato.integer' => 'Este campo debe ser un número',
-        'talla_pantalon_id.required' => 'Este campo es requerido',
-        'estado_id.required' => 'Este campo es requerido',
-        'municipio_id.required' => 'Este campo es requerido',
-        'localidad_id.required' => 'Este campo es requerido',
-        'lateralidad_id.required' => 'Este campo es requerido',
-        'orden_nacimiento_id.required' => 'Este campo es requerido',
+        'fecha_nacimiento.before' => 'La fecha debe ser anterior a hoy',
+        'talla_estudiante.required' => 'La estatura es requerida',
+        'talla_estudiante.numeric' => 'La estatura debe ser un número',
+        'talla_estudiante.between' => 'La estatura debe estar entre 0.50 y 3.00 metros',
+        'peso_estudiante.required' => 'El peso es requerido',
+        'peso_estudiante.numeric' => 'El peso debe ser un número',
+        'peso_estudiante.between' => 'El peso debe estar entre 2 y 300 kg',
+        'talla_camisa_id.required' => 'Debe seleccionar una talla de camisa',
+        'talla_zapato.required' => 'Debe seleccionar una talla de zapato',
+        'talla_zapato.integer' => 'La talla debe ser un número entero',
+        'talla_pantalon_id.required' => 'Debe seleccionar una talla de pantalón',
+        'estado_id.required' => 'Debe seleccionar un estado',
+        'municipio_id.required' => 'Debe seleccionar un municipio',
+        'localidad_id.required' => 'Debe seleccionar una localidad',
+        'lateralidad_id.required' => 'Debe seleccionar la lateralidad',
+        'orden_nacimiento_id.required' => 'Debe seleccionar el orden de nacimiento',
     ];
 
+    // Validación en tiempo real
     public function updated($propertyName)
     {
         $this->validateOnly($propertyName);
@@ -204,9 +201,9 @@ class AlumnoEdit extends Component
     {
         // Limpiar la cédula al cambiar tipo
         $this->numero_documento = null;
+        $this->resetErrorBag('numero_documento');
 
         switch ((int) $value) {
-
             // V
             case 1:
                 $this->documento_maxlength = 8;
@@ -239,19 +236,32 @@ class AlumnoEdit extends Component
         }
     }
 
-    public function formatearEstatura()
+    public function updatedNumeroDocumento()
     {
-        // Quita todo menos números
-        $valor = preg_replace('/\D/', '', $this->talla_estudiante);
-
-        if (strlen($valor) >= 2) {
-            $this->talla_estudiante = substr($valor, 0, -2) . '.' . substr($valor, -2);
+        if ($this->tipo_documento_id) {
+            $this->validateOnly('numero_documento');
         }
     }
 
-    public function validarEstatura()
+    public function updatedPrimerNombre()
     {
-        $this->validateOnly('talla_estudiante');
+        $this->validateOnly('primer_nombre');
+    }
+
+    public function updatedPrimerApellido()
+    {
+        $this->validateOnly('primer_apellido');
+    }
+
+    public function updatedGeneroId()
+    {
+        $this->validateOnly('genero_id');
+    }
+
+    public function updatedFechaNacimiento($value)
+    {
+        $this->calcularEdad($value);
+        $this->validateOnly('fecha_nacimiento');
     }
 
     public function mount($alumnoId)
@@ -369,11 +379,6 @@ class AlumnoEdit extends Component
             ->get();
     }
 
-    public function updatedFechaNacimiento($value)
-    {
-        $this->calcularEdad($value);
-    }
-
     private function calcularEdad($fecha)
     {
         if (!$fecha) return;
@@ -390,7 +395,6 @@ class AlumnoEdit extends Component
         }
     }
 
-
     public function habilitarEdicion()
     {
         $this->enModoEdicion = true;
@@ -405,7 +409,7 @@ class AlumnoEdit extends Component
         $this->cargarDiscapacidades();
         // Limpiar selección de discapacidad
         $this->discapacidadSeleccionada = null;
-        $this->resetErrorBag('discapacidadSeleccionada');
+        $this->resetErrorBag();
     }
 
     /**
@@ -456,8 +460,6 @@ class AlumnoEdit extends Component
         }
     }
 
-
-
     /**
      * Elimina una discapacidad de la lista temporal
      */
@@ -485,7 +487,6 @@ class AlumnoEdit extends Component
             session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
         }
     }
-
 
     /**
      * Guarda las discapacidades del alumno
