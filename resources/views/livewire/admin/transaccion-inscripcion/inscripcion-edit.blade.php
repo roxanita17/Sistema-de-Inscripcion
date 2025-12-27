@@ -30,6 +30,7 @@
         </div>
     @endif
 
+
     {{-- Resumen de Estado de Inscripción --}}
     <div class="card-modern mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="card-body-modern" style="padding: 1.5rem;">
@@ -124,16 +125,60 @@
             </div>
 
             @if ($padreSeleccionado)
-                <div class="card shadow-sm mt-3 mb-4">
+                <div class="card mt-3 mb-4">
                     <div class="card-body">
-                        <h5 class="mb-3"><i class="fas fa-user text-primary"></i> Datos del Padre</h5>
-                        <p><strong>Nombre:</strong> {{ $padreSeleccionado->persona->primer_nombre }}
-                            {{ $padreSeleccionado->persona->primer_apellido }}</p>
-                        <p><strong>Documento:</strong> {{ $padreSeleccionado->persona->tipoDocumento->nombre }} -
-                            {{ $padreSeleccionado->persona->numero_documento }}</p>
+
+                        <h5>Datos del Padre</h5>
+
+                        <p><strong>Nombre completo:</strong>
+                            {{ $padreSeleccionado->persona->primer_nombre }}
+                            {{ $padreSeleccionado->persona->segundo_nombre }}
+                            {{ $padreSeleccionado->persona->tercer_nombre }}
+                            {{ $padreSeleccionado->persona->primer_apellido }}
+                            {{ $padreSeleccionado->persona->segundo_apellido }}
+                        </p>
+
+                        <p><strong>Documento:</strong>
+                            {{ $padreSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }} -
+                            {{ $padreSeleccionado->persona->numero_documento }}
+                        </p>
+
+                        <p><strong>Género:</strong>
+                            {{ $padreSeleccionado->persona->genero->genero ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Teléfono:</strong>
+                            {{ $padreSeleccionado->persona->telefono ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Email:</strong>
+                            {{ $padreSeleccionado->persona->email ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Ocupación:</strong>
+                            {{ $padreSeleccionado->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Estado:</strong>
+                            {{ $padreSeleccionado->estado->nombre_estado ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Municipio:</strong>
+                            {{ $padreSeleccionado->municipios->nombre_municipio ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Localidad / Parroquia:</strong>
+                            {{ $padreSeleccionado->localidads->nombre_localidad ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Convive con el estudiante:</strong>
+                            {{ $padreSeleccionado->convivenciaestudiante_representante ? 'Sí' : 'No' }}
+                        </p>
+
                     </div>
                 </div>
             @endif
+
 
             {{-- Madre --}}
             <div class="row mb-3">
@@ -156,16 +201,59 @@
             </div>
 
             @if ($madreSeleccionado)
-                <div class="card shadow-sm mt-3 mb-4">
+                <div class="card mt-3 mb-4">
                     <div class="card-body">
-                        <h5 class="mb-3"><i class="fas fa-user text-primary"></i> Datos de la Madre</h5>
-                        <p><strong>Nombre:</strong> {{ $madreSeleccionado->persona->primer_nombre }}
-                            {{ $madreSeleccionado->persona->primer_apellido }}</p>
-                        <p><strong>Documento:</strong> {{ $madreSeleccionado->persona->tipoDocumento->nombre }} -
-                            {{ $madreSeleccionado->persona->numero_documento }}</p>
+
+                        <h5>Datos de la Madre</h5>
+
+                        <p><strong>Nombre completo:</strong>
+                            {{ $madreSeleccionado->persona->primer_nombre }}
+                            {{ $madreSeleccionado->persona->segundo_nombre }}
+                            {{ $madreSeleccionado->persona->tercer_nombre }}
+                            {{ $madreSeleccionado->persona->primer_apellido }}
+                            {{ $madreSeleccionado->persona->segundo_apellido }}
+                        </p>
+
+                        <p><strong>Documento:</strong>
+                            {{ $madreSeleccionado->persona->tipoDocumento->nombre ?? 'N/A' }} -
+                            {{ $madreSeleccionado->persona->numero_documento }}
+                        </p>
+
+                        <p><strong>Género:</strong>
+                            {{ $madreSeleccionado->persona->genero->genero ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Teléfono:</strong>
+                            {{ $madreSeleccionado->persona->telefono ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Email:</strong>
+                            {{ $madreSeleccionado->persona->email ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Ocupación:</strong>
+                            {{ $madreSeleccionado->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Estado:</strong>
+                            {{ $madreSeleccionado->estado->nombre_estado ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Municipio:</strong>
+                            {{ $madreSeleccionado->municipios->nombre_municipio ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Localidad / Parroquia:</strong>
+                            {{ $madreSeleccionado->localidads->nombre_localidad ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Convive con el estudiante:</strong>
+                            {{ $madreSeleccionado->convivenciaestudiante_representante ? 'Sí' : 'No' }}
+                        </p>
                     </div>
                 </div>
             @endif
+
 
             {{-- Representante Legal --}}
             <div class="row">
@@ -193,18 +281,106 @@
             @enderror
 
             @if ($representanteLegalSeleccionado)
-                <div class="card shadow-sm mt-3">
+                <div class="card mt-3 mb-4">
                     <div class="card-body">
-                        <h5 class="mb-3"><i class="fas fa-user text-primary"></i> Datos del Representante Legal</h5>
-                        <p><strong>Nombre:</strong>
+
+                        <h5>Datos del Representante Legal</h5>
+
+                        {{-- Datos personales --}}
+                        <p><strong>Nombre completo:</strong>
                             {{ $representanteLegalSeleccionado->representante->persona->primer_nombre }}
-                            {{ $representanteLegalSeleccionado->representante->persona->primer_apellido }}</p>
+                            {{ $representanteLegalSeleccionado->representante->persona->segundo_nombre }}
+                            {{ $representanteLegalSeleccionado->representante->persona->tercer_nombre }}
+                            {{ $representanteLegalSeleccionado->representante->persona->primer_apellido }}
+                            {{ $representanteLegalSeleccionado->representante->persona->segundo_apellido }}
+                        </p>
+
                         <p><strong>Documento:</strong>
-                            {{ $representanteLegalSeleccionado->representante->persona->tipoDocumento->nombre }} -
-                            {{ $representanteLegalSeleccionado->representante->persona->numero_documento }}</p>
+                            {{ $representanteLegalSeleccionado->representante->persona->tipoDocumento->nombre ?? 'N/A' }}
+                            -
+                            {{ $representanteLegalSeleccionado->representante->persona->numero_documento }}
+                        </p>
+
+                        <p><strong>Género:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->genero->genero ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Teléfono:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->telefono ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Email:</strong>
+                            {{ $representanteLegalSeleccionado->representante->persona->email ?? 'N/A' }}
+                        </p>
+
+                        {{-- Datos del representante --}}
+                        <p><strong>Ocupación:</strong>
+                            {{ $representanteLegalSeleccionado->representante->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Estado:</strong>
+                            {{ $representanteLegalSeleccionado->representante->estado->nombre_estado ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Municipio:</strong>
+                            {{ $representanteLegalSeleccionado->representante->municipios->nombre_municipio ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Localidad / Parroquia:</strong>
+                            {{ $representanteLegalSeleccionado->representante->localidads->nombre_localidad ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Convive con el estudiante:</strong>
+                            {{ $representanteLegalSeleccionado->representante->convivenciaestudiante_representante ? 'Sí' : 'No' }}
+                        </p>
+
+                        <p><strong>Status:</strong>
+                            {{ $representanteLegalSeleccionado->representante->status ? 'Activo' : 'Inactivo' }}
+                        </p>
+
+                        {{-- Datos legales --}}
+                        <hr>
+
+                        <p><strong>Parentesco:</strong>
+                            {{ $representanteLegalSeleccionado->parentesco ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Correo representante:</strong>
+                            {{ $representanteLegalSeleccionado->correo_representante ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Pertenece a organización:</strong>
+                            {{ $representanteLegalSeleccionado->pertenece_a_organizacion_representante ? 'Sí' : 'No' }}
+                        </p>
+
+                        <p><strong>Organización:</strong>
+                            {{ $representanteLegalSeleccionado->cual_organizacion_representante ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Carnet de la Patria:</strong>
+                            {{ $representanteLegalSeleccionado->carnet_patria_afiliado ? 'Sí' : 'No' }}
+                        </p>
+
+                        <p><strong>Serial Carnet Patria:</strong>
+                            {{ $representanteLegalSeleccionado->serial_carnet_patria_representante ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Banco:</strong>
+                            {{ $representanteLegalSeleccionado->banco->nombre_banco ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Tipo de Cuenta:</strong>
+                            {{ $representanteLegalSeleccionado->tipo_cuenta ?? 'N/A' }}
+                        </p>
+
+                        <p><strong>Código Carnet Patria:</strong>
+                            {{ $representanteLegalSeleccionado->codigo_carnet_patria_representante ?? 'N/A' }}
+                        </p>
+
                     </div>
                 </div>
             @endif
+
         </div>
     </div>
 

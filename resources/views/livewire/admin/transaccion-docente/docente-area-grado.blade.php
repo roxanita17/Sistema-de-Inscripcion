@@ -101,7 +101,7 @@
         </div>
     @endif
 
-    {{-- Card: Información del Docente Seleccionado --}}
+    {{-- Card: Información del Docente Seleccionado --}} 
     @if ($docenteId)
         <div class="card-modern" wire:transition 
             wire:key="docente-info-{{ $docenteId }}">

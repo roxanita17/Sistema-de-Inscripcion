@@ -1,419 +1,664 @@
 <div>
     @if (!$enModoEdicion)
         {{-- Modo Vista --}}
-        <div class="row">
-            <div class="col-md-12 text-end mb-3">
-                <button type="button" wire:click="habilitarEdicion" class="btn btn-primary">
-                    <i class="fas fa-edit"></i> Editar Datos
-                </button>
-            </div>
-        </div>
-
-        <div class="row">
-            {{-- Columna Izquierda --}}
-            <div class="col-md-6">
-                <h6 class="text-primary mb-3"><i class="fas fa-id-card"></i> Datos Personales</h6>
-
-                <p><strong>Tipo de Documento:</strong>
-                    {{ $tipos_documentos->find($tipo_documento_id)->nombre ?? 'N/A' }}</p>
-                <p><strong>Número de Documento:</strong> {{ $numero_documento }}</p>
-
-                <p><strong>Primer Nombre:</strong> {{ $primer_nombre }}</p>
-                @if ($segundo_nombre)
-                    <p><strong>Segundo Nombre:</strong> {{ $segundo_nombre }}</p>
-                @endif
-                @if ($tercer_nombre)
-                    <p><strong>Tercer Nombre:</strong> {{ $tercer_nombre }}</p>
-                @endif
-
-                <p><strong>Primer Apellido:</strong> {{ $primer_apellido }}</p>
-                @if ($segundo_apellido)
-                    <p><strong>Segundo Apellido:</strong> {{ $segundo_apellido }}</p>
-                @endif
-
-                <p><strong>Nombre Completo:</strong>
-                    {{ $primer_nombre }} {{ $segundo_nombre }} {{ $tercer_nombre }}
-                    {{ $primer_apellido }} {{ $segundo_apellido }}
-                </p>
-
-                <p><strong>Fecha de Nacimiento:</strong>
-                    {{ \Carbon\Carbon::parse($fecha_nacimiento)->format('d/m/Y') }}
-                </p>
-
-                <p><strong>Edad:</strong> {{ $edad }} años, {{ $meses }} meses</p>
-
-                <p><strong>Género:</strong> {{ $generos->find($genero_id)->genero ?? 'N/A' }}</p>
-
-                <hr class="my-3">
-
-                <h6 class="text-primary mb-3"><i class="fas fa-ruler-combined"></i> Datos Físicos</h6>
-
-                <p><strong>Estatura:</strong> {{ $talla_estudiante }} m</p>
-                <p><strong>Peso:</strong> {{ $peso_estudiante }} kg</p>
-                <p><strong>Talla Camisa:</strong> {{ $tallas->find($talla_camisa_id)->nombre ?? 'N/A' }}</p>
-                <p><strong>Talla Pantalón:</strong> {{ $tallas->find($talla_pantalon_id)->nombre ?? 'N/A' }}</p>
-                <p><strong>Talla Zapato:</strong> {{ $talla_zapato }}</p>
-            </div>
-
-            {{-- Columna Derecha --}}
-            <div class="col-md-6">
-                <h6 class="text-primary mb-3"><i class="fas fa-map-marker-alt"></i> Lugar de Nacimiento</h6>
-
-                @if ($localidad_id)
-                    <p><strong>Estado:</strong> {{ $estados->find($estado_id)->nombre_estado ?? 'N/A' }}</p>
-                    <p><strong>Municipio:</strong> {{ $municipios->find($municipio_id)->nombre_municipio ?? 'N/A' }}
-                    </p>
-                    <p><strong>Localidad:</strong> {{ $localidades->find($localidad_id)->nombre_localidad ?? 'N/A' }}
-                    </p>
-
-                    <p><strong>Dirección Completa:</strong>
-                        {{ $estados->find($estado_id)->nombre_estado ?? '' }},
-                        {{ $municipios->find($municipio_id)->nombre_municipio ?? '' }},
-                        {{ $localidades->find($localidad_id)->nombre_localidad ?? '' }}
-                    </p>
-                @else
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        No se ha registrado el lugar de nacimiento. Por favor, edite los datos para agregarlo.
+        <div class="card-body-modern" style="padding: 0;">
+            <div class="details-grid">
+                {{-- COLUMNA IZQUIERDA --}}
+                <div class="details-section">
+                    {{-- Sección: Identificación --}}
+                    <div class="info-section">
+                        <div class="section-header">
+                            <i class="fas fa-id-badge"></i>
+                            <h4>Datos de Identificación</h4>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <i class="fas fa-id-card"></i>
+                                    Número de Cédula
+                                </span>
+                                <span class="info-value">
+                                    {{ $tipos_documentos->find($tipo_documento_id)->nombre ?? 'N/A' }}-{{ $numero_documento }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                @endif
 
-                <hr class="my-3">
+                    {{-- Sección: Datos Personales --}}
+                    <div class="info-section">
+                        <div class="section-header">
+                            <i class="fas fa-user"></i>
+                            <h4>Información Personal</h4>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <i class="fas fa-user"></i>
+                                    Nombre Completo
+                                </span>
+                                <span class="info-value">
+                                    {{ $primer_nombre }} {{ $segundo_nombre }} {{ $primer_apellido }}
+                                    {{ $segundo_apellido }}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="align-items: center; display:flex; flex-direction: column;">
 
-                <h6 class="text-primary mb-3"><i class="fas fa-info-circle"></i> Información Adicional</h6>
 
-                <p><strong>Lateralidad:</strong>
-                    {{ $lateralidades->find($lateralidad_id)->lateralidad ?? 'N/A' }}
-                </p>
+                            <div class="info-group pt-3" style="display: flex; flex-direction: row; ">
+                                <div class="info-item" style="width: 15rem">
+                                    <span class="info-label">
+                                        <i class="fas fa-calendar"></i>
+                                        Fecha de Nacimiento
+                                    </span>
+                                    <span class="info-value">
+                                        {{ \Carbon\Carbon::parse($fecha_nacimiento)->format('d/m/Y') }}
+                                    </span>
+                                </div>
+                                <div class="info-item" style="width: 15rem">
+                                    <span class="info-label">
+                                        <i class="fas fa-venus-mars"></i>
+                                        Género
+                                    </span>
+                                    <span class="info-value">
+                                        {{ $generos->find($genero_id)->genero ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <p><strong>Orden de Nacimiento:</strong>
-                    {{ $orden_nacimientos->find($orden_nacimiento_id)->orden_nacimiento ?? 'N/A' }}
-                </p>
+                </div>
 
-                <p><strong>Etnia Indígena:</strong>
-                    {{ $etnia_indigenas->find($etnia_indigena_id)->nombre ?? 'N/A' }}
-                </p>
+                {{-- COLUMNA DERECHA --}}
+                <div class="details-section">
+                    {{-- Sección: Lugar de Nacimiento --}}
+                    <div class="info-section">
+                        <div class="section-header">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h4>Lugar de Nacimiento</h4>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <i class="fas fa-map"></i>
+                                    Estado, Municipio, Localidad
+                                </span>
+                                @if ($localidad_id)
+                                    <span class="info-value">
+                                        {{ $estados->find($estado_id)->nombre_estado ?? '' }},
+                                        {{ $municipios->find($municipio_id)->nombre_municipio ?? '' }},
+                                        {{ $localidades->find($localidad_id)->nombre_localidad ?? '' }}
+                                    </span>
+                                @else
+                                    <span class="info-value text-muted">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        No registrado
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Sección: Datos Físicos --}}
+                    <div class="info-section">
+                        <div class="section-header">
+                            <i class="fas fa-ruler-combined"></i>
+                            <h4>Información Física</h4>
+                        </div>
+                        <div style="align-items: center; display:flex; flex-direction: column;">
+                            <div class="info-group" style="display: flex; flex-direction: row; ">
+                                <div class="info-item" style="width: 10rem;">
+                                    <span class="info-label">
+                                        <i class="fas fa-ruler-vertical"></i>
+                                        Estatura
+                                    </span>
+                                    <span class="info-value">
+                                        {{ $talla_estudiante }} m
+                                    </span>
+
+                                </div>
+                                <div class="info-item" style="width: 10rem;">
+                                    <span class="info-label">
+                                        <i class="fas fa-weight"></i>
+                                        Peso
+                                    </span>
+                                    <span class="info-value">
+                                        {{ $peso_estudiante }} kg
+                                    </span>
+                                </div>
+                                <div class="info-item" style="width: 10rem;">
+                                    <span class="info-label">
+                                        <i class="fas fa-tshirt"></i>
+                                        Talla Camisa
+                                    </span>
+                                    <span class="info-value">
+                                        {{ $tallas->find($talla_camisa_id)->nombre ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="info-group pt-3" style="display: flex; flex-direction: row;">
+                                <div class="info-item" style="width: 15rem;">
+                                    <span class="info-label">
+                                        <i class="fas fa-socks"></i>
+                                        Talla Pantalón
+                                    </span>
+                                    <span class="info-value">
+                                        {{ $tallas->find($talla_pantalon_id)->nombre ?? 'N/A' }}
+                                    </span>
+                                </div>
+                                <div class="info-item" style="width: 15rem;">
+                                    <span class="info-label">
+                                        <i class="fas fa-shoe-prints"></i>
+                                        Talla Zapato
+                                    </span>
+                                    <span class="info-value">
+                                        {{ $talla_zapato }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        {{-- Sección de Discapacidades si existen --}}
-        @if (!empty($discapacidadesAlumno))
-            <div class="row mt-4">
-                <div class="col-12">
-                    <hr>
-                    <h6 class="text-primary mb-3">
-                        <i class="fas fa-wheelchair"></i> Discapacidades Registradas
-                    </h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Discapacidad</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($discapacidadesAlumno as $index => $discapacidad)
+            {{-- Sección: Características Adicionales --}}
+            <div class="info-section">
+                <div class="section-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h4>Características Adicionales</h4>
+                </div>
+                <div style="align-items: center; display:flex; flex-direction: column;">
+                    <div class="info-group" style="display: flex; flex-direction: row;">
+                        <div class="info-item" style="width: 19rem;">
+                            <span class="info-label">
+                                <i class="fas fa-hand-paper"></i>
+                                Lateralidad
+                            </span>
+                            <span class="info-value">
+                                {{ $lateralidades->find($lateralidad_id)->lateralidad ?? 'N/A' }}
+                            </span>
+                        </div>
+                        <div class="info-item" style="width: 19rem;">
+                            <span class="info-label">
+                                <i class="fas fa-sort-numeric-up"></i>
+                                Orden de Nacimiento
+                            </span>
+                            <span class="info-value">
+                                {{ $orden_nacimientos->find($orden_nacimiento_id)->orden_nacimiento ?? 'N/A' }}
+                            </span>
+                        </div>
+                        <div class="info-item" style="width: 19rem;">
+                            <span class="info-label">
+                                <i class="fas fa-users"></i>
+                                Etnia Indígena
+                            </span>
+                            <span class="info-value">
+                                {{ $etnia_indigenas->find($etnia_indigena_id)->nombre ?? 'N/A' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Sección de Discapacidades --}}
+            <div class="card-modern mt-4">
+                <div class="card-header-modern">
+                    <div class="header-left">
+                        <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                            <i class="fas fa-wheelchair"></i>
+                        </div>
+                        <div>
+                            <h3>Discapacidades Registradas</h3>
+                            <p>{{ count($discapacidadesAlumno) }} discapacidades registradas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body-modern">
+                    @if (!empty($discapacidadesAlumno))
+                        <div class="table-wrapper">
+                            <table class="table-modern">
+                                <thead>
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $discapacidad['nombre'] }}</td>
-                                        <td>
-                                            <span class="badge bg-success">Activo</span>
-                                        </td>
+                                        <th style="text-align: center; vertical-align: middle;">#</th>
+                                        <th style="text-align: center; vertical-align: middle;">Discapacidad</th>
+                                        <th style="text-align: center; vertical-align: middle;">Estado</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    @foreach ($discapacidadesAlumno as $index => $discapacidad)
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <span class="number-badge">{{ $index + 1 }}</span>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <div
+                                                    style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                                                    <div
+                                                        style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; flex-shrink: 0;">
+                                                        <i class="fas fa-wheelchair"></i>
+                                                    </div>
+                                                    <div
+                                                        style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
+                                                        {{ $discapacidad['nombre'] }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <span class="badge-estudio"
+                                                    style="background: var(--success-light); color: var(--success);">
+                                                    <i class="fas fa-check-circle"></i> Activo
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div style="text-align: center; padding: 3rem; color: var(--gray-500);">
+                            <i class="fas fa-info-circle"
+                                style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p style="font-size: 1.1rem; margin: 0;">No se han registrado discapacidades para este
+                                estudiante.</p>
+                        </div>
+                    @endif
+                </div>
+
+            </div>
+            <div class="header-container" style="display: flex; align-items: center;">
+                <div class="header-right" style="margin-left: auto;">
+                    <button type="button" wire:click="habilitarEdicion" class="btn-primary-modern">
+                        <i class="fas fa-edit"></i> Editar Datos
+                    </button>
                 </div>
             </div>
-        @else
-            <div class="row mt-4">
-                <div class="col-12">
-                    <hr>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        No se han registrado discapacidades para este estudiante.
-                    </div>
-                </div>
-            </div>
-        @endif
+        </div>
     @else
         {{-- Modo Edición --}}
         <form wire:submit.prevent="guardar">
-            {{-- Datos Personales --}}
-            <div class="row">
-                <div class="col-md-2">
-                    <label class="form-label-modern">
-                        <i class="fas fa-id-card"></i> Tipo Doc.
-                    </label>
-                    <select wire:model="tipo_documento_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($tipos_documentos as $tipo)
-                            <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
-                        @endforeach
-                    </select>
+            <div class="card-modern">
+                <div class="card-header-modern">
+                    <div class="header-left">
+                        <div class="header-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div>
+                            <h3>Editar Información del Estudiante</h3>
+                            <p>Modifique los datos del estudiante</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label-modern">
-                        <i class="fas fa-id-card"></i> Cédula
-                    </label>
-                    <input type="text" wire:model="numero_documento" class="form-control-modern" maxlength="8">
-                </div>
+                <div class="card-body-modern" style="padding: 2rem;">
+                    {{-- Datos de Identificación --}}
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <h5
+                                style="color: var(--gray-700); font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-id-badge"></i> Datos de Identificación
+                            </h5>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-modern">
+                                <i class="fas fa-id-card"></i> Tipo Doc.
+                                <span class="required-badge">*</span>
+                            </label>
+                            <select wire:model="tipo_documento_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($tipos_documentos as $tipo)
+                                    <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-birthday-cake"></i> Fecha Nacimiento
-                    </label>
-                    <input type="date" wire:model.live="fecha_nacimiento" class="form-control-modern">
-                </div>
+                        <div class="col-md-2">
+                            <label class="form-label-modern">
+                                <i class="fas fa-id-card"></i> Cédula
+                                <span class="required-badge">*</span>
+                            </label>
+                            <input type="text" wire:model="numero_documento" class="form-control-modern"
+                                maxlength="8">
+                        </div>
 
-                <div class="col-md-2">
-                    <label class="form-label-modern">Edad</label>
-                    <input type="text" value="{{ $edad }} años, {{ $meses }} meses"
-                        class="form-control-modern" disabled>
-                </div>
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-birthday-cake"></i> Fecha Nacimiento
+                                <span class="required-badge">*</span>
+                            </label>
+                            <input type="date" wire:model.live="fecha_nacimiento" class="form-control-modern">
+                        </div>
 
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-venus-mars"></i> Género
-                    </label>
-                    <select wire:model="genero_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($generos as $genero)
-                            <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
-                        @endforeach
-                    </select>
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-venus-mars"></i> Género
+                                <span class="required-badge">*</span>
+                            </label>
+                            <select wire:model="genero_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($generos as $genero)
+                                    <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Datos Personales --}}
+                    <div class="row mt-4">
+                        <div class="col-12 mb-3">
+                            <h5
+                                style="color: var(--gray-700); font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-user"></i> Datos Personales
+                            </h5>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-user"></i> Primer Nombre
+                                <span class="required-badge">*</span>
+                            </label>
+                            <input type="text" wire:model="primer_nombre"
+                                class="form-control-modern text-capitalize">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label-modern">Segundo Nombre</label>
+                            <input type="text" wire:model="segundo_nombre"
+                                class="form-control-modern text-capitalize">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label-modern">Tercer Nombre</label>
+                            <input type="text" wire:model="tercer_nombre"
+                                class="form-control-modern text-capitalize">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-user"></i> Primer Apellido
+                                <span class="required-badge">*</span>
+                            </label>
+                            <input type="text" wire:model="primer_apellido"
+                                class="form-control-modern text-capitalize">
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <label class="form-label-modern">Segundo Apellido</label>
+                            <input type="text" wire:model="segundo_apellido"
+                                class="form-control-modern text-capitalize">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-hand-paper"></i> Lateralidad
+                            </label>
+                            <select wire:model="lateralidad_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($lateralidades as $lat)
+                                    <option value="{{ $lat->id }}">{{ $lat->lateralidad }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-sort-numeric-up"></i> Orden Nacimiento
+                            </label>
+                            <select wire:model="orden_nacimiento_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($orden_nacimientos as $orden)
+                                    <option value="{{ $orden->id }}">{{ $orden->orden_nacimiento }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-users"></i> Etnia Indígena
+                            </label>
+                            <select wire:model="etnia_indigena_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($etnia_indigenas as $etnia)
+                                    <option value="{{ $etnia->id }}">{{ $etnia->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Datos Físicos --}}
+                    <div class="row mt-4">
+                        <div class="col-12 mb-3">
+                            <h5
+                                style="color: var(--gray-700); font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-ruler-combined"></i> Datos Físicos
+                            </h5>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-ruler-vertical"></i> Altura (m)
+                            </label>
+                            <input type="text" wire:model="talla_estudiante" class="form-control-modern"
+                                placeholder="1.65">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label-modern">
+                                <i class="fas fa-weight"></i> Peso (kg)
+                            </label>
+                            <input type="number" wire:model="peso_estudiante" class="form-control-modern"
+                                step="0.1">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label-modern">
+                                <i class="fas fa-tshirt"></i> Talla Camisa
+                            </label>
+                            <select wire:model="talla_camisa_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($tallas as $talla)
+                                    <option value="{{ $talla->id }}">{{ $talla->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label-modern">
+                                <i class="fas fa-socks"></i> Talla Pantalón
+                            </label>
+                            <select wire:model="talla_pantalon_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($tallas as $talla)
+                                    <option value="{{ $talla->id }}">{{ $talla->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label-modern">
+                                <i class="fas fa-shoe-prints"></i> Talla Zapato
+                            </label>
+                            <select wire:model="talla_zapato" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach (range(30, 45) as $talla)
+                                    <option value="{{ $talla }}">{{ $talla }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Lugar de Nacimiento --}}
+                    <div class="row mt-4">
+                        <div class="col-12 mb-3">
+                            <h5
+                                style="color: var(--gray-700); font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-map-marker-alt"></i> Lugar de Nacimiento
+                            </h5>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label-modern">
+                                <i class="fas fa-map"></i> Estado
+                            </label>
+                            <select wire:model.live="estado_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($estados as $estado)
+                                    <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label-modern">
+                                <i class="fas fa-map-marked-alt"></i> Municipio
+                            </label>
+                            <select wire:model.live="municipio_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($municipios as $municipio)
+                                    <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label-modern">
+                                <i class="fas fa-map-pin"></i> Localidad
+                            </label>
+                            <select wire:model="localidad_id" class="form-control-modern">
+                                <option value="">Seleccione</option>
+                                @foreach ($localidades as $localidad)
+                                    <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="row mt-3">
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-user"></i> Primer Nombre
-                    </label>
-                    <input type="text" wire:model="primer_nombre" class="form-control-modern text-capitalize">
+            {{-- Sección de Discapacidades en modo edición --}}
+            <div class="card-modern mt-4">
+                <div class="card-header-modern">
+                    <div class="header-left">
+                        <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                            <i class="fas fa-wheelchair"></i>
+                        </div>
+                        <div>
+                            <h3>Gestionar Discapacidades</h3>
+                            <p>{{ count($discapacidadesAlumno) }} discapacidades registradas</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label-modern">Segundo Nombre</label>
-                    <input type="text" wire:model="segundo_nombre" class="form-control-modern text-capitalize">
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label-modern">Tercer Nombre</label>
-                    <input type="text" wire:model="tercer_nombre" class="form-control-modern text-capitalize">
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-user"></i> Primer Apellido
-                    </label>
-                    <input type="text" wire:model="primer_apellido" class="form-control-modern text-capitalize">
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-3">
-                    <label class="form-label-modern">Segundo Apellido</label>
-                    <input type="text" wire:model="segundo_apellido" class="form-control-modern text-capitalize">
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-hand-paper"></i> Lateralidad
-                    </label>
-                    <select wire:model="lateralidad_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($lateralidades as $lat)
-                            <option value="{{ $lat->id }}">{{ $lat->lateralidad }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-sort-numeric-up"></i> Orden Nacimiento
-                    </label>
-                    <select wire:model="orden_nacimiento_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($orden_nacimientos as $orden)
-                            <option value="{{ $orden->id }}">{{ $orden->orden_nacimiento }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-users"></i> Etnia Indígena
-                    </label>
-                    <select wire:model="etnia_indigena_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($etnia_indigenas as $etnia)
-                            <option value="{{ $etnia->id }}">{{ $etnia->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            {{-- Datos Físicos --}}
-            <div class="row mt-3">
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-ruler-vertical"></i> Altura (m)
-                    </label>
-                    <input type="text" wire:model="talla_estudiante" class="form-control-modern"
-                        placeholder="1.65">
-                </div>
-
-                <div class="col-md-2">
-                    <label class="form-label-modern">
-                        <i class="fas fa-weight"></i> Peso (kg)
-                    </label>
-                    <input type="number" wire:model="peso_estudiante" class="form-control-modern" step="0.1">
-                </div>
-
-                <div class="col-md-2">
-                    <label class="form-label-modern">
-                        <i class="fas fa-tshirt"></i> Talla Camisa
-                    </label>
-                    <select wire:model="talla_camisa_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($tallas as $talla)
-                            <option value="{{ $talla->id }}">{{ $talla->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label class="form-label-modern">
-                        <i class="fas fa-socks"></i> Talla Pantalón
-                    </label>
-                    <select wire:model="talla_pantalon_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($tallas as $talla)
-                            <option value="{{ $talla->id }}">{{ $talla->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label-modern">
-                        <i class="fas fa-shoe-prints"></i> Talla Zapato
-                    </label>
-                    <select wire:model="talla_zapato" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach (range(30, 45) as $talla)
-                            <option value="{{ $talla }}">{{ $talla }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            {{-- Lugar de Nacimiento --}}
-            <div class="row mt-3">
-                <div class="col-md-4">
-                    <label class="form-label-modern">
-                        <i class="fas fa-map"></i> Estado
-                    </label>
-                    <select wire:model.live="estado_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($estados as $estado)
-                            <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label-modern">
-                        <i class="fas fa-map-marked-alt"></i> Municipio
-                    </label>
-                    <select wire:model.live="municipio_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($municipios as $municipio)
-                            <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label-modern">
-                        <i class="fas fa-map-pin"></i> Localidad
-                    </label>
-                    <select wire:model="localidad_id" class="form-control-modern">
-                        <option value="">Seleccione</option>
-                        @foreach ($localidades as $localidad)
-                            <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h5>Discapacidades</h5>
+                <div class="card-body-modern" style="padding: 2rem;">
+                    {{-- Agregar discapacidad --}}
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <label class="form-label-modern">
+                                <i class="fas fa-wheelchair"></i> Discapacidad
+                            </label>
+                            <select wire:model.defer="discapacidadSeleccionada"
+                                class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
+                                <option value="">Seleccione una discapacidad</option>
+                                @foreach ($discapacidades as $discapacidad)
+                                    <option value="{{ $discapacidad->id }}">
+                                        {{ $discapacidad->nombre_discapacidad }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('discapacidadSeleccionada')
+                                <div class="invalid-feedback-modern" style="display: block;">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="button" wire:click="agregarDiscapacidad" class="btn-primary-modern w-100"
+                                style="margin-bottom: 0;">
+                                <span wire:loading.remove wire:target="agregarDiscapacidad">
+                                    <i class="fas fa-plus"></i> Agregar
+                                </span>
+                            </button>
+                        </div>
+                    </div>
 
                     @if (!empty($discapacidadesAlumno))
-                        <ul class="list-group">
-                            @foreach ($discapacidadesAlumno as $disc)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    {{ $disc['nombre'] }}
-                                    @if ($enModoEdicion)
-                                        <button type="button" wire:click="eliminarDiscapacidad({{ $loop->index }})"
-                                            class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    @endif
-                                </li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <div class="alert alert-info">
-                            Este alumno no tiene discapacidades registradas.
-                        </div>
-                    @endif
-
-                    @if ($enModoEdicion)
-                        <div class="mt-3 row align-items-end">
-                            <div class="col-md-8">
-                                <select wire:model.defer="discapacidadSeleccionada" class="form-control">
-                                    <option value="">Seleccione una discapacidad</option>
-                                    @foreach ($discapacidades as $discapacidad)
-                                        <option value="{{ $discapacidad->id }}">
-                                            {{ $discapacidad->nombre_discapacidad }}</option>
+                        <div class="table-wrapper pt-4">
+                            <table class="table-modern">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;">#</th>
+                                        <th style="text-align: center; vertical-align: middle;">Discapacidad</th>
+                                        <th style="text-align: center; vertical-align: middle;">Estado</th>
+                                        <th style="text-align: center; vertical-align: middle;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($discapacidadesAlumno as $index => $disc)
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <span class="number-badge">{{ $index + 1 }}</span>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <div
+                                                    style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                                                    <div
+                                                        style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; flex-shrink: 0;">
+                                                        <i class="fas fa-wheelchair"></i>
+                                                    </div>
+                                                    <div
+                                                        style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
+                                                        {{ $disc['nombre'] }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <span class="badge-estudio"
+                                                    style="background: var(--success-light); color: var(--success);">
+                                                    <i class="fas fa-check-circle"></i> Activo
+                                                </span>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <div style="display: flex; justify-content: center;">
+                                                    <button type="button"
+                                                        wire:click="eliminarDiscapacidad({{ $loop->index }})"
+                                                        class="action-btn btn-delete" title="Eliminar">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
-                                </select>
-                                @error('discapacidadSeleccionada')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-4">
-                                <button type="button" wire:click="agregarDiscapacidad"
-                                    class="btn btn-primary w-100">
-                                    <i class="fas fa-plus"></i> Agregar
-                                </button>
-                            </div>
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                            <i class="fas fa-info-circle"
+                                style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p style="font-size: 1rem; margin: 0;">No hay discapacidades registradas.</p>
                         </div>
                     @endif
-                </div>
-            </div>
 
-            {{-- Botones --}}
-            <div class="row mt-4">
-                <div class="col-12 text-end">
-                    <button type="button" wire:click="cancelarEdicion" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-success ms-2" wire:loading.attr="disabled">
-                        <span wire:loading.remove wire:target="guardar">
-                            <i class="fas fa-save"></i> Guardar Cambios
-                        </span>
-                        <span wire:loading wire:target="guardar">
-                            <i class="fas fa-spinner fa-spin"></i> Guardando...
-                        </span>
-                    </button>
+                    {{-- Botones --}}
+                    <div class="card-body-modern" style="padding: 2rem;">
+                        <div class="d-flex justify-content-end gap-3">
+                            <button type="button" wire:click="cancelarEdicion" class="btn-cancel-modern">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn-primary-modern" wire:loading.attr="disabled">
+                                <span wire:loading.remove wire:target="guardar">
+                                    <i class="fas fa-save"></i> Guardar Cambios
+                                </span>
+                                <span wire:loading wire:target="guardar">
+                                    <i class="fas fa-spinner fa-spin"></i> Guardando...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
