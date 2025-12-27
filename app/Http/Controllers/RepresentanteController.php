@@ -71,10 +71,14 @@ class RepresentanteController extends Controller
     public function index()
     {
         $anioEscolarActivo = $this->verificarAnioEscolar();
+        $buscar = request('buscar');
         
         // Construir la consulta
         $query = \App\Models\Representante::with([
-            'persona', 
+            'persona.tipoDocumento',
+            'persona.genero', 
+            'persona.prefijo',
+            'persona.prefijoDos',
             'legal' => function($query) {
                 $query->with(['banco' => function($q) {
                     $q->select('id', 'nombre_banco');
@@ -82,8 +86,23 @@ class RepresentanteController extends Controller
             },
             'estado',
             'municipios',
-            'localidads'
+            'localidads',
+            'ocupacion'
         ]);
+        
+        // Aplicar búsqueda
+        if (!empty($buscar)) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('id', 'LIKE', "%{$buscar}%")
+                  ->orWhereHas('persona', function($query) use ($buscar) {
+                      $query->where('numero_documento', 'LIKE', "%{$buscar}%")
+                            ->orWhere('primer_nombre', 'LIKE', "%{$buscar}%")
+                            ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
+                            ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                            ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%");
+                  });
+            });
+        }
         
         // Aplicar filtros
         if (request()->has('es_legal') && request('es_legal') !== '') {
@@ -103,11 +122,26 @@ class RepresentanteController extends Controller
         $query->orderBy('id', 'desc');
         
         // Ejecutar la consulta con paginación
-        $representantes = $query->paginate(10);
+        $representantes = $query->paginate(10)
+                              ->appends(request()->query());
         
-        // Mantener los parámetros de filtro en la paginación
-        if (request()->has('es_legal')) {
-            $representantes->appends(['es_legal' => request('es_legal')]);
+        // Debug: verificar datos cargados
+        if ($representantes->count() > 0) {
+            $primerRep = $representantes->first();
+            \Log::info('Datos del primer representante:', [
+                'persona_id' => $primerRep->persona_id,
+                'tiene_persona' => isset($primerRep->persona),
+                'persona_tipo_documento_id' => $primerRep->persona ? $primerRep->persona->tipo_documento_id : null,
+                'persona_tipo_documento' => $primerRep->persona ? $primerRep->persona->tipo_documento : null,
+                'persona_genero' => $primerRep->persona ? $primerRep->persona->genero : null,
+                'persona_prefijo' => $primerRep->persona ? $primerRep->persona->prefijo : null,
+                'persona_prefijoDos' => $primerRep->persona ? $primerRep->persona->prefijoDos : null,
+                'tiene_estado' => isset($primerRep->estado),
+                'tiene_municipios' => isset($primerRep->municipios),
+                'tiene_localidads' => isset($primerRep->localidads),
+                'tiene_ocupacion' => isset($primerRep->ocupacion),
+                'tiene_legal' => isset($primerRep->legal),
+            ]);
         }
         
         return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));

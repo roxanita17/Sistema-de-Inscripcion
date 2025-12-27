@@ -3,15 +3,250 @@
 @section('title', 'Gestión de Representantes')
 
 @section('css')
+    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+    <style>
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+            font-size: 0.8em;
+        }
+        .action-buttons .dropdown-menu {
+            min-width: 10rem;
+        }
+        .table-modern {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+            border-collapse: collapse;
+        }
+        .table-modern th,
+        .table-modern td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+        }
+        .table-modern thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+            background-color: #f8f9fa;
+        }
+        .table-modern tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        /* Estilos personalizados para los badges de tipo de representante */
+        .status-legal {
+            background: rgba(79, 70, 229, 0.1);
+            color: #4f46e5;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+        
+        .status-progenitor {
+            background: rgba(59, 130, 246, 0.1);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .status-legal .status-dot {
+            background: #4f46e5;
+        }
+        
+        .status-progenitor .status-dot {
+            background: #1d4ed8;
+        }
+
+        /* Estilos mejorados para el modal - usando los mismos estilos que el sistema */
+        .details-card {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--info);
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 140px;
+        }
+
+        .detail-label i {
+            color: var(--info);
+            font-size: 1rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: var(--gray-800);
+            text-align: right;
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .detail-value.fw-bold {
+            color: var(--gray-800);
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--info-dark);
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Ajustes para campos en columnas */
+        .row .detail-item {
+            margin-bottom: 0;
+        }
+
+        .row.g-3 .detail-item {
+            margin-bottom: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .modal-xl {
+                max-width: 95%;
+                margin: 1rem;
+            }
+            
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem 0;
+            }
+            
+            .detail-label {
+                min-width: auto;
+                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .detail-value {
+                text-align: left;
+                margin-left: 0;
+                font-size: 0.95rem;
+            }
+            
+            .card-header-custom {
+                margin: -1.5rem -1.5rem 1rem -1.5rem;
+                padding: 1rem 1.5rem;
+            }
+            
+            .details-card {
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .modal-body-view {
+                padding: 1rem !important;
+            }
+            
+            .row.g-4 > div {
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .modal-dialog {
+                margin: 0.5rem;
+                max-width: calc(100% - 1rem);
+            }
+            
+            .modal-header-view {
+                padding: 1rem;
+            }
+            
+            .modal-title-view {
+                font-size: 1.1rem !important;
+            }
+            
+            .detail-label i {
+                width: 18px;
+                font-size: 0.9rem;
+            }
+            
+            .badge.fs-6 {
+                font-size: 0.7rem !important;
+            }
+        }
+
+        /* Animaciones y transiciones */
+        .modal-content {
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Mejoras para badges */
+        .badge {
+            font-weight: 500;
+            border-radius: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.025em;
+        }
+
+        .badge.bg-success {
+            background-color: #10b981 !important;
+        }
+
+        .badge.bg-primary {
+            background-color: #3b82f6 !important;
+        }
+
+        .badge.bg-info {
+            background-color: #06b6d4 !important;
+        }
+
+        .badge.bg-secondary {
+            background-color: #6b7280 !important;
+        }
+    </style>
 @stop
 
 @section('content_header')
+    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
-
             <div class="header-title">
                 <div class="icon-wrapper">
                     <i class="fas fa-user-friends"></i>
@@ -38,123 +273,154 @@
 @section('content')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="card-title mb-0">Listado de Representantes</h3>
-                        <div class="d-flex gap-2">
-
-                            <form class="d-flex" role="search">
-                                <input class="form-control" type="search"
-                                    placeholder="Buscar por cédula, nombre o apellido" aria-label="Search" id="buscador">
-                            </form>
-                            <div class="header-right" style="display: flex; gap: 5px;">
-                                <div>
-                                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
-                                        <i class="fas fa-filter"></i>
-                                        Filtros
-                                    </button>
-                                </div>
-                                <a href="{{ route('representante.reporte_pdf') }}" class="btn-pdf" id="generarPdfBtn" target="_blank">
-                                    <i class="fas fa-file-pdf me-2"></i>Generar PDF
-                                </a>
-
-                                <div class="date-badge">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <span>{{ now()->translatedFormat('d M Y') }}</span>
-                                </div>
-                            </div>
-
-
-                        </div>
+    <div class="main-container">
+        {{-- Alerta si NO hay año escolar activo --}}
+        @if (!$anioEscolarActivo)
+            <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                        <p class="mb-0">
+                            Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> representantes hasta
+                            que se registre un año escolar activo.
+                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                        </p>
                     </div>
+                </div>
+            </div>
+        @endif
 
-                    <div class="card-body-modern">
-                        <div class="table-wrapper">
-                            <table class="table-modern overflow-hidden hidden">
-                                <thead>
-                                    <tr style="text-align: center">
-                                        <th style="text-align: center">Cédula</th>
-                                        <th style="text-align: center">Nombre</th>
-                                        <th style="text-align: center">Apellido</th>
-                                        <th style="text-align: center">Tipo</th>
-                                        <th style="text-align: center">Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-representantes" style="text-align: center">
-                                    @forelse($representantes as $rep)
-                                        <tr>
-                                            <td>{{ $rep->persona->numero_documento ?? 'N/A' }}</td>
-                                            <td>{{ $rep->persona->primer_nombre ?? 'N/A' }}</td>
-                                            <td>{{ $rep->persona->primer_apellido ?? 'N/A' }}</td>
-                                            <td>
-                                                @php
-                                                    $tipoRepresentante = $rep->legal
-                                                        ? 'Representante Legal'
-                                                        : 'Progenitor';
-                                                @endphp
-                                                @if ($tipoRepresentante === 'Representante Legal')
-                                                    <span class="badge bg-primary">Representante Legal</span>
-                                                @else
-                                                    <span class="badge bg-secondary">Progenitor</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <div class="action-buttons">
-                                                    <div class="dropdown dropstart text-center">
+        {{-- Contenedor principal de la tabla de representantes --}}
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <div>
+                        <h3>Listado de Representantes</h3>
+                        <p>{{ $representantes->total() }} registros encontrados</p>
+                    </div>
+                </div>
+                {{-- Buscador --}}
+                <form action="{{ route('representante.index') }}" method="GET" class="d-flex align-items-center">
+                    <div class="form-group-modern mb-0">
+                        <div class="search-modern">
+                            <i class="fas fa-search"></i>
+                            <input type="text" 
+                                   name="buscar" 
+                                   id="buscador" 
+                                   class="form-control-modern"
+                                   placeholder="Buscar..." 
+                                   value="{{ request('buscar') }}"
+                                   autocomplete="off">
+                        </div>
+                        <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);">
+                            <i class="fas fa-info-circle"></i>
+                            Buscar por cédula, nombre o apellido
+                        </small>
+                    </div>
+                </form>
+                <div class="header-right" style="display: flex; gap: 5px;">
+                    <div>
+                        <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                            <i class="fas fa-filter"></i>
+                            Filtros
+                        </button>
+                    </div>
+                    <a href="{{ route('representante.reporte_pdf') }}" class="btn-pdf" id="generarPdfBtn" target="_blank">
+                        <i class="fas fa-file-pdf me-2"></i>Generar PDF
+                    </a>
+
+                    <div class="date-badge">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{{ now()->translatedFormat('d M Y') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body-modern">
+                <div class="table-wrapper">
+                    <table class="table-modern overflow-hidden">
+                        <thead>
+                            <tr style="text-align: center">
+                                <th style="text-align: center">Cédula</th>
+                                <th style="text-align: center">Nombre</th>
+                                <th style="text-align: center">Apellido</th>
+                                <th style="text-align: center">Tipo</th>
+                                <th style="text-align: center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-representantes" style="text-align: center">
+                            @forelse($representantes as $rep)
+                                <tr>
+                                    <td><strong>{{ $rep->persona->numero_documento ?? 'N/A' }}</strong></td>
+                                    <td>{{ $rep->persona->primer_nombre ?? 'N/A' }}</td>
+                                    <td>{{ $rep->persona->primer_apellido ?? 'N/A' }}</td>
+                                    <td>
+                                        @php
+                                            $tipoRepresentante = $rep->legal ? 'Representante Legal' : 'Progenitor';
+                                        @endphp
+                                        <span class="status-badge {{ $tipoRepresentante === 'Representante Legal' ? 'status-legal' : 'status-progenitor' }}">
+                                            <span class="status-dot"></span>
+                                            {{ $tipoRepresentante }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <div class="dropdown dropstart text-center">
+                                                <button
+                                                    class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                    type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                                    title="Acciones">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                    {{-- Ver mas --}}
+                                                    <li>
                                                         <button
-                                                            class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
-                                                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="fas fa-ellipsis-v"></i>
+                                                            class="dropdown-item d-flex align-items-center text-primary view-details-btn"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalVerDetalleRegistro"
+                                                            data-persona='@json($rep->persona)'
+                                                            data-representante='@json($rep->toArray())'
+                                                            data-legal='@json($rep->legal)'
+                                                            data-banco='@json($rep->legal ? $rep->legal->banco : null)'
+                                                            title="Ver detalle">
+                                                            <i class="fas fa-eye me-2"></i>
+                                                            Ver
                                                         </button>
+                                                    </li>
 
-                                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                                            {{-- Ver mas --}}
-                                                            <li>
-                                                                <button
-                                                                    class="dropdown-item d-flex align-items-center text-primary"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#modalVerDetalleRegistro"
-                                                                    onclick='llenarModalRepresentante(@json($rep->persona), @json($rep), @json($rep->legal), @json($rep->legal ? $rep->legal->banco : null))'
-                                                                    title="Ver detalle  ">
-                                                                    <i class="fas fa-eye me-2"></i>
-                                                                    Ver más
-                                                                </button>
-                                                            </li>
+                                                    {{-- Editar --}}
+                                                    <li>
+                                                        <a href="{{ route('representante.editar', $rep->id) }}" 
+                                                           class="dropdown-item d-flex align-items-center text-warning"
+                                                           @if (!$anioEscolarActivo) disabled @endif
+                                                           title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
+                                                            <i class="fas fa-pen me-2"></i>
+                                                            Editar
+                                                        </a>
+                                                    </li>
 
-                                                            {{-- Editar --}}
-                                                            <li>
-                                                                <a type="button"
-                                                                    class="dropdown-item d-flex align-items-center text-warning"
-                                                                    href="{{ route('representante.editar', $rep->id) }}"
-                                                                    title="Editar"
-                                                                    @if (!$anioEscolarActivo) disabled @endif
-                                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
-                                                                    <i class="fas fa-pen me-2"></i>
-                                                                    Editar
-                                                                </a>
-                                                            </li>
+                                                    {{-- Inactivar --}}
+                                                    <li>
+                                                        <button
+                                                            class="dropdown-item d-flex align-items-center text-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmarEliminarRepresentante{{ $rep->id }}"
+                                                            @disabled(!$anioEscolarActivo)
+                                                            title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar' }}">
+                                                            <i class="fas fa-trash me-2"></i>
+                                                            Eliminar
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
 
-                                                            {{-- Inactivar --}}
-                                                            <li>
-                                                                <button
-                                                                    class="dropdown-item d-flex align-items-center text-danger"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#confirmarEliminarRepresentante{{ $rep->id }}"
-                                                                    @disabled(!$anioEscolarActivo) title="Eliminar">
-                                                                    <i class="fas fa-trash me-2"></i>
-                                                                    Eliminar
-                                                                </button>
-                                                            </li>
-
-                                                            
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
                                         {{-- Modal de confirmación para eliminar representante --}}
                                         <div class="modal fade" id="confirmarEliminarRepresentante{{ $rep->id }}"
                                             tabindex="-1" aria-labelledby="modalLabelEliminarRep{{ $rep->id }}"
@@ -228,148 +494,102 @@
 
 @section('js')
     <script>
-        // Obtener la lista de ocupaciones desde el controlador
+        // Obtener las listas de datos desde el controlador
         const ocupaciones = @json(\App\Models\Ocupacion::all());
+        const tiposDocumentos = @json(\App\Models\TipoDocumento::all());
+        const generos = @json(\App\Models\Genero::all());
+        const estados = @json(\App\Models\Estado::all());
+        const municipios = @json(\App\Models\Municipio::all());
+        const parroquias = @json(\App\Models\Localidad::all());
+        const bancos = @json(\App\Models\Banco::all());
         
-        // Configuración de fechas por defecto
-        
-        // Manejar la búsqueda de representantes
+        // Inicialización cuando el documento esté listo
         document.addEventListener('DOMContentLoaded', function() {
-            const buscador = document.getElementById('buscador');
-            const tbody = document.getElementById('tbody-representantes');
-            const pagination = document.querySelector('.pagination');
-            const tabla = document.querySelector('.table-modern');
-
-            if (buscador && tbody) {
-                let timeoutId;
-                
-                // Función para realizar la búsqueda
-                const buscarRepresentantes = async (termino) => {
-                    try {
-                        const response = await fetch(`/representante/filtrar?buscador=${encodeURIComponent(termino)}`, {
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        });
-                        
-                        if (!response.ok) {
-                            const errorText = await response.text();
-                            console.error('Error en la respuesta del servidor:', response.status, errorText);
-                            throw new Error(`Error en la búsqueda: ${response.status} ${response.statusText}`);
-                        }
-                        
-                        let data;
-                        try {
-                            data = await response.json();
-                        } catch (e) {
-                            console.error('Error al analizar la respuesta JSON:', e);
-                            const errorText = await response.text();
-                            console.error('Respuesta del servidor:', errorText);
-                            throw new Error('La respuesta del servidor no es un JSON válido');
-                        }
-                        
-                        if (data.status === 'success') {
-                            // Actualizar la tabla con los resultados
-                            tbody.innerHTML = '';
-                            
-                            if (data.data.data && data.data.data.length > 0) {
-                                data.data.data.forEach(rep => {
-                                    const fila = document.createElement('tr');
-                                    
-                                    // Crear celdas con los datos del representante
-                                    const celdas = [
-                                        rep.persona?.numero_documento || 'N/A',
-                                        rep.persona?.primer_nombre || 'N/A',
-                                        rep.persona?.primer_apellido || 'N/A',
-                                        // Agregar más celdas según sea necesario
-                                        `
-                                        <div class="action-buttons">
-                                            <div class="dropdown dropstart text-center">
-                                                <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" onclick="verDetalles(${rep.id})">
-                                                            <i class="fas fa-eye me-2"></i> Ver Detalles
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="/representante/" + rep.id + "/editar">
-                                                            <i class="fas fa-edit me-2"></i> Editar
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#confirmarEliminarRepresentante${rep.id}">
-                                                            <i class="fas fa-trash-alt me-2"></i> Eliminar
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        `
-                                    ];
-                                    
-                                    celdas.forEach(texto => {
-                                        const celda = document.createElement('td');
-                                        celda.innerHTML = texto;
-                                        fila.appendChild(celda);
-                                    });
-                                    
-                                    tbody.appendChild(fila);
-                                });
-                            } else {
-                                const fila = document.createElement('tr');
-                                const celda = document.createElement('td');
-                                celda.colSpan = 5;
-                                celda.className = 'text-center py-3';
-                                celda.textContent = 'No se encontraron resultados';
-                                fila.appendChild(celda);
-                                tbody.appendChild(fila);
-                            }
-                            
-                            // Actualizar la paginación si existe
-                            if (pagination && data.data.links) {
-                                pagination.innerHTML = '';
-                                data.data.links.forEach(link => {
-                                    const li = document.createElement('li');
-                                    li.className = `page-item ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`;
-                                    
-                                    const a = document.createElement('a');
-                                    a.className = 'page-link';
-                                    a.href = link.url || '#';
-                                    a.innerHTML = link.label.replace('&laquo;', '«').replace('&raquo;', '»');
-                                    
-                                    li.appendChild(a);
-                                    pagination.appendChild(li);
-                                });
-                            }
-                            
-                            // Mostrar la tabla si estaba oculta
-                            if (tabla) {
-                                tabla.classList.remove('hidden');
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error al buscar representantes:', error);
-                    }
-                };
-                
-                // Evento para el campo de búsqueda
-                buscador.addEventListener('input', function(e) {
-                    clearTimeout(timeoutId);
-                    const termino = e.target.value.trim();
+            console.log('JavaScript cargado y DOM listo');
+            
+            // Manejar clic en botones de ver detalles
+            document.addEventListener('click', function(e) {
+                console.log('Click detectado en:', e.target);
+                const btn = e.target.closest('.view-details-btn');
+                if (btn) {
+                    console.log('Botón Ver encontrado');
+                    e.preventDefault();
                     
-                    // Esperar 500ms después de que el usuario deje de escribir
-                    timeoutId = setTimeout(() => {
-                        if (termino.length >= 2 || termino.length === 0) {
-                            buscarRepresentantes(termino);
-                        }
-                    }, 500);
+                    // Obtener los datos de los atributos data
+                    const personaData = btn.dataset.persona ? JSON.parse(btn.dataset.persona) : null;
+                    const representanteData = btn.dataset.representante ? JSON.parse(btn.dataset.representante) : null;
+                    const legalData = btn.dataset.legal && btn.dataset.legal !== 'null' ? JSON.parse(btn.dataset.legal) : null;
+                    const bancoData = btn.dataset.banco && btn.dataset.banco !== 'null' ? JSON.parse(btn.dataset.banco) : null;
+                    
+                    // Debug detallado
+                    console.log('=== DATOS RECIBIDOS EN EL CLIENTE ===');
+                    console.log('personaData:', personaData);
+                    console.log('representanteData:', representanteData);
+                    console.log('legalData:', legalData);
+                    console.log('bancoData:', bancoData);
+                    
+                    if (personaData) {
+                        console.log('Campos de persona:', {
+                            primer_nombre: personaData.primer_nombre,
+                            primer_apellido: personaData.primer_apellido,
+                            numero_documento: personaData.numero_documento,
+                            tipo_documento: personaData.tipo_documento,
+                            genero: personaData.genero,
+                            prefijo: personaData.prefijo,
+                            prefijo_dos: personaData.prefijo_dos,
+                            telefono: personaData.telefono,
+                            telefono_dos: personaData.telefono_dos,
+                            direccion: personaData.direccion
+                        });
+                    }
+                    
+                    if (representanteData) {
+                        console.log('Campos de representante:', {
+                            estado: representanteData.estado,
+                            municipios: representanteData.municipios,
+                            localidads: representanteData.localidads,
+                            ocupacion: representanteData.ocupacion,
+                            ocupacion_representante: representanteData.ocupacion_representante,
+                            convivenciaestudiante_representante: representanteData.convivenciaestudiante_representante
+                        });
+                    }
+                    
+                    // Llenar el modal con los datos
+                    llenarModalRepresentante(personaData, representanteData, legalData, bancoData);
+                    
+                    // Mostrar el modal usando Bootstrap 5
+                    const modal = new bootstrap.Modal(document.getElementById('modalVerDetalleRegistro'));
+                    modal.show();
+                }
+            });
+            
+            // Corregir problema del backdrop que no se cierra
+            const modalElement = document.getElementById('modalVerDetalleRegistro');
+            if (modalElement) {
+                modalElement.addEventListener('hidden.bs.modal', function () {
+                    // Eliminar cualquier backdrop residual
+                    const backdrops = document.querySelectorAll('.modal-backdrop');
+                    backdrops.forEach(backdrop => backdrop.remove());
+                    
+                    // Restaurar el scroll del body
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                    
+                    // Eliminar cualquier clase modal-open del body
+                    document.body.classList.remove('modal-open');
+                });
+                
+                // También manejar el evento show para asegurar que se limpie antes de abrir
+                modalElement.addEventListener('show.bs.modal', function () {
+                    // Limpiar cualquier backdrop residual antes de mostrar
+                    const backdrops = document.querySelectorAll('.modal-backdrop');
+                    backdrops.forEach(backdrop => backdrop.remove());
                 });
             }
         });
+        
+        // Configuración de fechas por defecto
         document.addEventListener('DOMContentLoaded', function() {
             // Establecer rango de fechas por defecto (mes actual)
             const today = new Date();
@@ -389,26 +609,32 @@
             };
 
             // Establecer valores por defecto
-            document.getElementById('fecha_inicio').value = formatDate(firstDay);
-            document.getElementById('fecha_fin').value = formatDate(today);
+            const fechaInicio = document.getElementById('fecha_inicio');
+            const fechaFin = document.getElementById('fecha_fin');
+            if (fechaInicio) fechaInicio.value = formatDate(firstDay);
+            if (fechaFin) fechaFin.value = formatDate(today);
 
             // Validación de fechas
-            document.getElementById('formReporte').addEventListener('submit', function(e) {
-                const fechaInicio = document.getElementById('fecha_inicio').value;
-                const fechaFin = document.getElementById('fecha_fin').value;
+            const formReporte = document.getElementById('formReporte');
+            if (formReporte) {
+                formReporte.addEventListener('submit', function(e) {
+                    const fechaInicioVal = document.getElementById('fecha_inicio').value;
+                    const fechaFinVal = document.getElementById('fecha_fin').value;
 
-                if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'La fecha de inicio no puede ser mayor a la fecha de fin',
-                        confirmButtonColor: '#3085d6',
-                    });
-                }
-            });
+                    if (fechaInicioVal && fechaFinVal && new Date(fechaInicioVal) > new Date(fechaFinVal)) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'La fecha de inicio no puede ser mayor a la fecha de fin',
+                            confirmButtonColor: '#3085d6',
+                        });
+                    }
+                });
+            }
         });
 
+        // Función para llenar el modal con los datos del representante
         function llenarModalRepresentante(persona, representante, legal, banco) {
             try {
                 console.log('=== llenarModalRepresentante llamado ===');
@@ -416,108 +642,239 @@
                 console.log('representante:', representante);
                 console.log('legal:', legal);
                 console.log('banco:', banco);
+                
+                // Debug: verificar estructura de datos
+                console.log('Estructura de persona:', {
+                    tiene_tipo_documento: !!persona.tipo_documento,
+                    tiene_genero: !!persona.genero,
+                    tiene_prefijo: !!persona.prefijo,
+                    tiene_prefijo_dos: !!persona.prefijo_dos
+                });
+                
+                console.log('Estructura de representante:', {
+                    tiene_estado: !!representante.estado,
+                    tiene_municipios: !!representante.municipios,
+                    tiene_localidads: !!representante.localidads,
+                    tiene_ocupacion: !!representante.ocupacion
+                });
+
+                // Asegurarse de que los datos sean objetos
+                if (typeof persona === 'string') persona = JSON.parse(persona);
+                if (typeof representante === 'string') representante = JSON.parse(representante);
+                if (legal && typeof legal === 'string') legal = JSON.parse(legal);
+                if (banco && typeof banco === 'string') banco = JSON.parse(banco);
 
                 // Actualizar el título con el tipo de representante
                 const tipoBadge = document.getElementById('tipo-representante-badge');
-                if (legal && legal.id) {
+                const isLegal = legal && (legal.id || (typeof legal === 'object' && Object.keys(legal).length > 0));
+                
+                if (isLegal) {
                     // Es representante legal
                     tipoBadge.textContent = 'Representante Legal';
-                    tipoBadge.className = 'text-white fw-medium';
+                    tipoBadge.className = 'badge bg-primary fs-6';
                 } else {
                     // Es progenitor
                     tipoBadge.textContent = 'Progenitor';
-                    tipoBadge.className = 'text-white fw-medium';
+                    tipoBadge.className = 'badge bg-info fs-6';
                 }
 
-                // Datos personales
-                document.getElementById('modal-primer-nombre').textContent = persona.primer_nombre || '';
-                document.getElementById('modal-segundo-nombre').textContent = persona.segundo_nombre || '';
-                document.getElementById('modal-primer-apellido').textContent = persona.primer_apellido || '';
-                document.getElementById('modal-segundo-apellido').textContent = persona.segundo_apellido || '';
-                document.getElementById('modal-numero_documento').textContent = persona.numero_documento || '';
+                // === DATOS PERSONALES ===
                 
-                // Formatear fecha de nacimiento
+                // Tipo de documento
+                let tipoDocumento = '';
+                if (persona.tipo_documento && persona.tipo_documento.nombre) {
+                    tipoDocumento = persona.tipo_documento.nombre;
+                } else if (persona.tipo_documento_id) {
+                    // Buscar en el array global de tipos de documento si existe
+                    if (typeof tiposDocumentos !== 'undefined' && tiposDocumentos.length > 0) {
+                        const tipoDoc = tiposDocumentos.find(td => td.id == persona.tipo_documento_id);
+                        tipoDocumento = tipoDoc ? tipoDoc.nombre : `ID: ${persona.tipo_documento_id}`;
+                    } else {
+                        tipoDocumento = `ID: ${persona.tipo_documento_id}`;
+                    }
+                }
+                document.getElementById('modal-tipo-documento').textContent = tipoDocumento || 'No especificado';
+
+                // Número de cédula
+                document.getElementById('modal-numero_documento').textContent = persona.numero_documento || 'No especificado';
+                
+                // Nombres completos
+                const nombres = [persona.primer_nombre, persona.segundo_nombre, persona.tercer_nombre]
+                    .filter(n => n && n.trim())
+                    .join(' ');
+                document.getElementById('modal-primer-nombre').textContent = persona.primer_nombre || '';
+                document.getElementById('modal-segundo-nombre').textContent = persona.segundo_nombre ? ' ' + persona.segundo_nombre : '';
+                document.getElementById('modal-tercer-nombre').textContent = persona.tercer_nombre ? ' ' + persona.tercer_nombre : '';
+                
+                // Apellidos completos
+                const apellidos = [persona.primer_apellido, persona.segundo_apellido]
+                    .filter(a => a && a.trim())
+                    .join(' ');
+                document.getElementById('modal-primer-apellido').textContent = persona.primer_apellido || '';
+                document.getElementById('modal-segundo-apellido').textContent = persona.segundo_apellido ? ' ' + persona.segundo_apellido : '';
+                
+                // Fecha de nacimiento
                 let fechaNacimiento = persona.fecha_nacimiento ? new Date(persona.fecha_nacimiento) : null;
                 if (fechaNacimiento && !isNaN(fechaNacimiento)) {
                     const dia = String(fechaNacimiento.getDate()).padStart(2, '0');
                     const mes = String(fechaNacimiento.getMonth() + 1).padStart(2, '0');
                     const anio = fechaNacimiento.getFullYear();
-                    document.getElementById('modal-lugar-nacimiento').textContent = `${dia}/${mes}/${anio}`;
+                    document.getElementById('modal-fecha-nacimiento').textContent = `${dia}/${mes}/${anio}`;
                 } else {
-                    // Si no hay fecha de nacimiento, mostrar lugar de nacimiento o mensaje por defecto
-                    document.getElementById('modal-lugar-nacimiento').textContent = persona.lugar_nacimiento || 'No especificado';
+                    document.getElementById('modal-fecha-nacimiento').textContent = 'No especificada';
                 }
 
-                // Contacto básico
-                if (document.getElementById('modal-telefono')) {
-                    // Teléfono principal se guarda en Persona.telefono
-                    document.getElementById('modal-telefono').textContent = persona.telefono || 'No especificado';
+                // Género
+                let genero = '';
+                if (persona.genero && persona.genero.genero) {
+                    genero = persona.genero.genero;
+                } else if (persona.genero_id) {
+                    // Buscar en el array global de géneros si existe
+                    if (typeof generos !== 'undefined' && generos.length > 0) {
+                        const gen = generos.find(g => g.id == persona.genero_id);
+                        genero = gen ? gen.genero : `ID: ${persona.genero_id}`;
+                    } else {
+                        genero = `ID: ${persona.genero_id}`;
+                    }
                 }
+                document.getElementById('modal-genero').textContent = genero || 'No especificado';
+
+                // === CONTACTO Y UBICACIÓN ===
                 
-                // Segundo teléfono
-                if (document.getElementById('modal-telefono-dos')) {
-                    // Segundo teléfono se guarda en Persona.telefono_dos
-                    document.getElementById('modal-telefono-dos').textContent = persona.telefono_dos || 'No especificado';
+                // Teléfono principal
+                let telefonoCompleto = '';
+                if (persona.prefijo && persona.prefijo.prefijo) {
+                    telefonoCompleto = persona.prefijo.prefijo + ' ' + (persona.telefono || '');
+                } else if (persona.telefono) {
+                    telefonoCompleto = persona.telefono;
                 }
+                document.getElementById('modal-telefono').textContent = telefonoCompleto || 'No especificado';
+                
+                // Teléfono secundario
+                let telefonoDosCompleto = '';
+                if (persona.prefijo_dos && persona.prefijo_dos.prefijo) {
+                    telefonoDosCompleto = persona.prefijo_dos.prefijo + ' ' + (persona.telefono_dos || '');
+                } else if (persona.telefono_dos) {
+                    telefonoDosCompleto = persona.telefono_dos;
+                }
+                document.getElementById('modal-telefono-dos').textContent = telefonoDosCompleto || 'No especificado';
+                
+                // Correo electrónico (solo para representantes legales)
                 if (document.getElementById('modal-correo')) {
                     const correoItem = document.getElementById('correo-detail-item');
                     if (legal && legal.correo_representante) {
-                        // Solo mostrar correo cuando hay representante legal
                         document.getElementById('modal-correo').textContent = legal.correo_representante;
                         if (correoItem) correoItem.style.display = '';
                     } else {
-                        // Para progenitor, ocultar completamente el bloque de correo
                         document.getElementById('modal-correo').textContent = '';
                         if (correoItem) correoItem.style.display = 'none';
                     }
                 }
 
-                // Ocupación (usando relación ocupacion si viene cargada)
+                // Ubicación - Estado
+                let estado = '';
+                if (representante.estado && representante.estado.nombre_estado) {
+                    estado = representante.estado.nombre_estado;
+                } else if (representante.estado_id) {
+                    // Buscar en el array global de estados si existe
+                    if (typeof estados !== 'undefined' && estados.length > 0) {
+                        const est = estados.find(e => e.id == representante.estado_id);
+                        estado = est ? est.nombre_estado : `ID: ${representante.estado_id}`;
+                    } else {
+                        estado = `ID: ${representante.estado_id}`;
+                    }
+                }
+                document.getElementById('modal-estado').textContent = estado || 'No especificado';
+
+                // Ubicación - Municipio
+                let municipio = '';
+                if (representante.municipios && representante.municipios.nombre_municipio) {
+                    municipio = representante.municipios.nombre_municipio;
+                } else if (representante.municipio_id) {
+                    // Buscar en el array global de municipios si existe
+                    if (typeof municipios !== 'undefined' && municipios.length > 0) {
+                        const mun = municipios.find(m => m.id == representante.municipio_id);
+                        municipio = mun ? mun.nombre_municipio : `ID: ${representante.municipio_id}`;
+                    } else {
+                        municipio = `ID: ${representante.municipio_id}`;
+                    }
+                }
+                document.getElementById('modal-municipio').textContent = municipio || 'No especificado';
+
+                // Ubicación - Parroquia
+                let parroquia = '';
+                if (representante.localidads && representante.localidads.nombre_localidad) {
+                    parroquia = representante.localidads.nombre_localidad;
+                } else if (representante.parroquia_id) {
+                    // Buscar en el array global de parroquias si existe
+                    if (typeof parroquias !== 'undefined' && parroquias.length > 0) {
+                        const parr = parroquias.find(p => p.id == representante.parroquia_id);
+                        parroquia = parr ? parr.nombre_localidad : `ID: ${representante.parroquia_id}`;
+                    } else {
+                        parroquia = `ID: ${representante.parroquia_id}`;
+                    }
+                }
+                document.getElementById('modal-parroquia').textContent = parroquia || 'No especificado';
+
+                // Dirección de habitación
+                document.getElementById('modal-direccion').textContent = persona.direccion || 'No especificada';
+
+                // === INFORMACIÓN LABORAL ===
+                
+                // Ocupación
                 let ocupacionNombre = '';
                 if (representante.ocupacion && representante.ocupacion.nombre_ocupacion) {
-                    // Si la relación ocupación está cargada con el modelo
                     ocupacionNombre = representante.ocupacion.nombre_ocupacion;
                 } else if (typeof ocupaciones !== 'undefined' && ocupaciones.length > 0 && representante.ocupacion_representante) {
-                    // Buscar la ocupación por ID en el array global de ocupaciones
                     const ocupacion = ocupaciones.find(oc => oc.id == representante.ocupacion_representante);
                     ocupacionNombre = ocupacion ? ocupacion.nombre_ocupacion : `ID: ${representante.ocupacion_representante}`;
                 } else if (representante.ocupacion_representante) {
-                    // Si no hay array de ocupaciones, mostrar el ID como último recurso
                     ocupacionNombre = `ID: ${representante.ocupacion_representante}`;
                 }
                 document.getElementById('modal-ocupacion').textContent = ocupacionNombre || 'No especificada';
 
                 // Convive con el estudiante
                 let convive = representante.convivenciaestudiante_representante;
+                const conviveElement = document.getElementById('modal-convive');
                 if (typeof convive !== 'undefined' && convive !== null) {
-                    document.getElementById('modal-convive').textContent = (convive === true || convive === 1 || convive ===
-                        'si' || convive === 'Sí') ? 'Sí' : 'No';
+                    const conviveValue = (convive === true || convive === 1 || convive === 'si' || convive === 'Sí');
+                    conviveElement.textContent = conviveValue ? 'Sí' : 'No';
+                    conviveElement.className = conviveValue ? 'badge bg-success' : 'badge bg-secondary';
                 } else {
-                    document.getElementById('modal-convive').textContent = '';
+                    conviveElement.textContent = 'No especificado';
+                    conviveElement.className = 'badge bg-secondary';
                 }
 
-                // Sección de representante legal
+                // === SECCIÓN DE REPRESENTANTE LEGAL ===
                 const legalSection = document.getElementById('legal-info-section');
                 if (legal && legalSection) {
                     legalSection.style.display = 'block';
 
-                    document.getElementById('modal-parentesco').textContent = legal.parentesco || '';
+                    // Parentesco
+                    document.getElementById('modal-parentesco').textContent = legal.parentesco || 'No especificado';
 
                     // Carnet de la patria (afiliado o no)
                     const carnetEl = document.getElementById('modal-carnet-afiliado');
                     if (carnetEl) {
-                        const tieneCarnet = legal.carnet_patria_afiliado; // 1 / 0
-                        carnetEl.textContent = tieneCarnet ? 'Afiliado' : 'No afiliado';
+                        const tieneCarnet = legal.carnet_patria_afiliado;
+                        if (tieneCarnet === 1 || tieneCarnet === '1') {
+                            carnetEl.textContent = 'Afiliado';
+                            carnetEl.className = 'badge bg-success';
+                        } else if (tieneCarnet === 0 || tieneCarnet === '0') {
+                            carnetEl.textContent = 'No afiliado';
+                            carnetEl.className = 'badge bg-secondary';
+                        } else {
+                            carnetEl.textContent = 'No especificado';
+                            carnetEl.className = 'badge bg-secondary';
+                        }
                     }
 
-                    // Código y serial de carnet (según controlador)
+                    // Código y serial de carnet
                     if (document.getElementById('modal-codigo')) {
-                        document.getElementById('modal-codigo').textContent = legal.codigo_carnet_patria_representante ||
-                        '';
+                        document.getElementById('modal-codigo').textContent = legal.codigo_carnet_patria_representante || 'No especificado';
                     }
                     if (document.getElementById('modal-serial')) {
-                        document.getElementById('modal-serial').textContent = legal.serial_carnet_patria_representante ||
-                        '';
+                        document.getElementById('modal-serial').textContent = legal.serial_carnet_patria_representante || 'No especificado';
                     }
 
                     // Pertenece a organización
@@ -525,17 +882,36 @@
                     const campoOrg = document.getElementById('campo-organizacion');
                     if (perteneceOrgEl) {
                         const pertenece = legal.pertenece_a_organizacion_representante;
-                        if (pertenece) {
+                        if (pertenece === 1 || pertenece === true) {
                             perteneceOrgEl.textContent = 'Sí';
+                            perteneceOrgEl.className = 'badge bg-success';
                             if (campoOrg) campoOrg.style.display = '';
-                            document.getElementById('modal-org-pertenece').textContent = legal
-                                .cual_organizacion_representante || '';
+                            document.getElementById('modal-org-pertenece').textContent = legal.cual_organizacion_representante || 'No especificada';
                         } else {
                             perteneceOrgEl.textContent = 'No';
+                            perteneceOrgEl.className = 'badge bg-secondary';
                             if (campoOrg) campoOrg.style.display = 'none';
                             document.getElementById('modal-org-pertenece').textContent = '';
                         }
                     }
+
+                    // Tipo de cuenta bancaria
+                    document.getElementById('modal-tipo-cuenta').textContent = legal.tipo_cuenta || 'No especificado';
+
+                    // Banco
+                    let bancoNombre = '';
+                    if (banco && banco.nombre_banco) {
+                        bancoNombre = banco.nombre_banco;
+                    } else if (legal && legal.banco_id) {
+                        // Buscar en el array global de bancos si existe
+                        if (typeof bancos !== 'undefined' && bancos.length > 0) {
+                            const ban = bancos.find(b => b.id == legal.banco_id);
+                            bancoNombre = ban ? ban.nombre_banco : `ID: ${legal.banco_id}`;
+                        } else {
+                            bancoNombre = `ID: ${legal.banco_id}`;
+                        }
+                    }
+                    document.getElementById('modal-banco').textContent = bancoNombre || 'No especificado';
 
                 } else if (legalSection) {
                     // Si no es representante legal, ocultar sección
