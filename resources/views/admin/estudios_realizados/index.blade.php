@@ -106,30 +106,21 @@
                         <p>{{ $estudiosRealizados->total() }} registros encontrados</p>
                     </div>
                 </div>
-                <div class="header-right">
-                    <form action="{{ route('admin.estudios_realizados.index') }}" method="GET" class="d-flex align-items-center gap-3">
-                        <div class="search-box">
-                            <input type="text" name="buscar" class="form-control search-input" 
-                                placeholder="Buscar estudios..." value="{{ $buscar ?? '' }}">
-                            <button type="submit" class="search-btn">
-                                <i class="fas fa-search"></i>
-                            </button>
-                            @if(request('buscar'))
-                                <a href="{{ route('admin.estudios_realizados.index') }}" class="clear-search" title="Limpiar búsqueda">
-                                    <i class="fas fa-times"></i>
-                                </a>
-                            @endif
+                {{-- Buscador --}}
+                <form action="{{ route('admin.estudios_realizados.index') }}">
+                    <div class="form-group-modern mb-2">
+                        <div class="search-modern">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="buscar" id="buscar" class="form-control-modern"
+                                placeholder="Buscar..." value="{{ request('buscar') }}">
                         </div>
-                        
-                        <div class="status-filter">
-                            <select name="estatus" class="form-select" onchange="this.form.submit()">
-                                <option value="todos" {{ $estatus === 'todos' ? 'selected' : '' }}>Todos</option>
-                                <option value="Activo" {{ $estatus === 'Activo' ? 'selected' : '' }}>Activos</option>
-                                <option value="Inactivo" {{ $estatus === 'Inactivo' ? 'selected' : '' }}>Inactivos</option>
-                            </select>
-                        </div>
-                    </form>
-                    
+                        <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);">
+                            <i class="fas fa-info-circle"></i>
+                            Buscar por nombre de estudio o ID
+                        </small>
+                    </div>
+                </form>
+                <div class="header-right" style="display: flex; gap: 5px;">
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ now()->translatedFormat('d M Y') }}</span>

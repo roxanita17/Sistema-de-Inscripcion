@@ -58,7 +58,6 @@ class EstudiosRealizadoController extends Controller
     public function index()
     {
         $buscar = request('buscar');
-        $estatus = request('estatus', 'Activo');
         
         // Construir la consulta base
         $query = EstudiosRealizado::query();
@@ -69,15 +68,6 @@ class EstudiosRealizadoController extends Controller
                 $q->where('estudios', 'LIKE', "%{$buscar}%")
                   ->orWhere('id', 'LIKE', "%{$buscar}%");
             });
-        }
-        
-        // Aplicar filtro de estatus
-        if ($estatus === 'todos') {
-            $query->whereIn('status', [true, false]);
-        } else if ($estatus === 'Activo') {
-            $query->where('status', true);
-        } else if ($estatus === 'Inactivo') {
-            $query->where('status', false);
         }
         
         // Ordenar y paginar
@@ -91,8 +81,7 @@ class EstudiosRealizadoController extends Controller
         return view('admin.estudios_realizados.index', compact(
             'estudiosRealizados', 
             'anioEscolarActivo',
-            'buscar',
-            'estatus'
+            'buscar'
         ));
     }
 
