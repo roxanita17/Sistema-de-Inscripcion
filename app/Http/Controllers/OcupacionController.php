@@ -52,17 +52,36 @@ class OcupacionController extends Controller
      */
     public function index()
     {
-        // Se obtienen todas las ocupaciones registradas (activas e inactivas)
-        // y se ordenan alfabéticamente por nombre.
-        $ocupacion = Ocupacion::orderBy('nombre_ocupacion', 'asc')
-            ->where('status', true)
-            ->paginate(10);
+        $buscar = request('buscar');
+        
+        // Construir la consulta base
+        $query = Ocupacion::query();
+        
+        // Aplicar búsqueda
+        if (!empty($buscar)) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('nombre_ocupacion', 'LIKE', "%{$buscar}%")
+                  ->orWhere('id', 'LIKE', "%{$buscar}%");
+            });
+        }
+        
+        // Filtrar solo activos
+        $query->where('status', true);
+        
+        // Ordenar y paginar
+        $ocupacion = $query->orderBy('nombre_ocupacion', 'asc')
+                         ->paginate(10)
+                         ->appends(request()->query());
 
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Se retorna la vista principal con la colección de ocupaciones.
-        return view("admin.ocupacion.index", compact("ocupacion", "anioEscolarActivo"));
+        return view("admin.ocupacion.index", compact(
+            "ocupacion", 
+            "anioEscolarActivo",
+            'buscar'
+        ));
     }
 
     /**
