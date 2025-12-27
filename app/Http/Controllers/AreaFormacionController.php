@@ -46,6 +46,7 @@ class AreaFormacionController extends Controller
     {
         $validated = $request->validate([
             'nombre_grupo_estable' => 'required|string|max:255',
+            
         ]);
 
         // Verificar si ya existe un grupo estable activo con el mismo nombre
@@ -62,6 +63,7 @@ class AreaFormacionController extends Controller
         try {
             $grupoEstable = new GrupoEstable();
             $grupoEstable->nombre_grupo_estable = $validated['nombre_grupo_estable'];
+            
             $grupoEstable->status = true;
             $grupoEstable->save();
 
@@ -82,6 +84,8 @@ class AreaFormacionController extends Controller
     {
         $validated = $request->validate([
             'nombre_area_formacion' => 'required|string|max:255',
+            'codigo_area' => 'required|numeric',
+            'siglas' => 'required|string|max:255',
         ]);
 
         // Verificar si ya existe un área de formación activa con el mismo nombre
@@ -98,6 +102,8 @@ class AreaFormacionController extends Controller
         try {
             $areaFormacion = new AreaFormacion();
             $areaFormacion->nombre_area_formacion = $validated['nombre_area_formacion'];
+            $areaFormacion->codigo_area = $validated['codigo_area'];
+            $areaFormacion->siglas = $validated['siglas'];
             $areaFormacion->status = true;
             $areaFormacion->save();
 
@@ -156,6 +162,8 @@ class AreaFormacionController extends Controller
 
         $validated = $request->validate([
             'nombre_area_formacion' => 'required|string|max:255',
+            'codigo_area' => 'required|numeric',
+            'siglas' => 'required|string|max:255',
         ]);
 
         // Verificar si ya existe otra área de formación activa con el mismo nombre
@@ -172,6 +180,8 @@ class AreaFormacionController extends Controller
 
         try {
             $areaFormacion->nombre_area_formacion = $validated['nombre_area_formacion'];
+            $areaFormacion->codigo_area = $validated['codigo_area'];
+            $areaFormacion->siglas = $validated['siglas'];
             $areaFormacion->save();
 
             return redirect()
@@ -282,8 +292,10 @@ class AreaFormacionController extends Controller
         try {
             $areaFormacion = AreaFormacion::find($id);
 
+
             if ($areaFormacion) {
                 $areaFormacion->update(['status' => false]);
+                
 
                 return redirect()
                     ->route('admin.area_formacion.index')
