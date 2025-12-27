@@ -123,15 +123,6 @@
             gap: 0.5rem;
         }
 
-        /* Ajustes para campos en columnas */
-        .row .detail-item {
-            margin-bottom: 0;
-        }
-
-        .row.g-3 .detail-item {
-            margin-bottom: 0;
-        }
-
         /* Responsive design */
         @media (max-width: 768px) {
             .modal-xl {

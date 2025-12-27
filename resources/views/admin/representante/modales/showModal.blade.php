@@ -71,7 +71,7 @@
                                 </span>
                             </div>
 
-                            <div class="row g-3">
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="detail-item">
                                         <span class="detail-label">

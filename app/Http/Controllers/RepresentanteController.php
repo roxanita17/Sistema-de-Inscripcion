@@ -46,6 +46,20 @@ class RepresentanteController extends Controller
     }
 
     /**
+     * Mapear los valores del carnet patria afiliado a números
+     */
+    private function mapearCarnetPatriaAfiliado($valor)
+    {
+        $mapeo = [
+            'madre' => 1,
+            'padre' => 2,
+            'otro' => 3,
+        ];
+        
+        return $mapeo[$valor] ?? 0; // 0 para 'No especificado' o valores no reconocidos
+    }
+
+    /**
      * Obtiene el tipo de cuenta basado en la selección
      * 
      * @param string $tipo
@@ -235,7 +249,7 @@ class RepresentanteController extends Controller
         $bancos = Banco::WHERE('status', true)->orderBy("nombre_banco","ASC")->get();
         $prefijos_telefono = PrefijoTelefono::WHERE('status', true)->orderBy("prefijo", "ASC")->get();
         $ocupaciones = Ocupacion::WHERE('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
-        $tipoDocumentos = TipoDocumento::WHERE('status', true)->get();
+        $tipoDocumentos = TipoDocumento::WHERE('status', true)->where('nombre', '!=', 'CE')->get();
         $generos = Genero::WHERE('status', true)->get();
         
         return view("admin.representante.formulario_representante", 
@@ -295,6 +309,7 @@ public function mostrarFormularioEditar($id)
         ->get();
         
     $tipoDocumentos = TipoDocumento::where('status', true)
+        ->where('nombre', '!=', 'CE')
         ->orderBy('nombre', 'ASC')
         ->get();
 
@@ -775,7 +790,7 @@ public function mostrarFormularioEditar($id)
         'cual_organizacion_representante'        => $request->input('cual-organizacion'),
 
         // Mapeo de campos de carnet de la patria y banco desde el formulario
-        'carnet_patria_afiliado'             => $request->input('carnet-patria'),
+        'carnet_patria_afiliado'             => $request->input('carnet-patria-afiliado'),
         'serial_carnet_patria_representante' => $request->input('serial'),
         'banco_id'                           => $request->input('banco-representante'),
         'direccion_representante'            => $request->input('direccion-habitacion'),
@@ -1114,9 +1129,9 @@ public function mostrarFormularioEditar($id)
         "correo_representante" => $request->correo_representante ?: '',
         "pertenece_a_organizacion_representante" => $perteneceOrganizacion,
         "cual_organizacion_representante" => $cualOrganizacion,
-        "carnet_patria_afiliado" => $request->carnet_patria_afiliado ?: 0,
-        "serial_carnet_patria_representante" => $request->serial_carnet_patria_representante ?: '',
-        "codigo_carnet_patria_representante" => !empty($request->codigo) ? (int)$request->codigo : null,
+        "carnet_patria_afiliado" => $this->mapearCarnetPatriaAfiliado($request->carnet_patria_afiliado),
+        "serial_carnet_patria_representante" => !empty($request->input('serial-patria')) ? $request->input('serial-patria') : null,
+        "codigo_carnet_patria_representante" => !empty($request->input('codigo-patria')) ? $request->input('codigo-patria') : null,
         "direccion_representante" => $request->direccion_representante ?: '',
         "estados_representante" => $request->estados_representante ?: '',
         "tipo_cuenta" => $this->obtenerTipoCuenta($request->input('tipo-cuenta', '')),
