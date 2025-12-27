@@ -6,6 +6,7 @@ use App\Models\Inscripcion;
 use App\Models\Seccion;
 use App\Models\EjecucionesPercentil;
 use App\Models\EntradasPercentil;
+use App\Models\AnioEscolar;
 use App\Services\PercentilService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +25,7 @@ class SectionDistributorService
         return DB::transaction(function () use ($grado) {
 
             // Verificar año escolar activo
-            $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+            $anioEscolarActivo = AnioEscolar::where('status', 'Activo')
                 ->orWhere('status', 'Extendido')
                 ->first();
 
@@ -32,12 +33,39 @@ class SectionDistributorService
                 throw new \Exception('No hay un año escolar activo');
             }
 
-            // 1. Inscripciones activas
             $inscripciones = Inscripcion::where('grado_id', $grado->id)
-                ->where('anio_escolar_id', $anioEscolarActivo->id)
                 ->whereIn('status', ['Activo', 'Pendiente'])
-                ->with(['alumno.persona'])
+                ->where(function ($q) use ($grado, $anioEscolarActivo) {
+
+                    if ((int) $grado->numero_grado === 1) {
+
+                        // NUEVO INGRESO
+                        $q->where(function ($qq) use ($anioEscolarActivo) {
+                            $qq->whereHas('nuevoIngreso')
+                            ->where('anio_escolar_id', $anioEscolarActivo->id);
+                        })
+
+                        // REPITIENTE (NO promovido)
+                        ->orWhere(function ($qq) use ($anioEscolarActivo) {
+                            $qq->whereHas('prosecucion', function ($p) use ($anioEscolarActivo) {
+                                $p->where('anio_escolar_id', $anioEscolarActivo->id)
+                                ->where('status', 'Activo')
+                                ->where('promovido', 0);
+                            });
+                        });
+
+                    } else {
+
+                        // otros grados (solo promovidos)
+                        $q->whereHas('prosecucion', function ($p) {
+                            $p->where('promovido', 1);
+                        });
+                    }
+                })
+                ->with(['alumno.persona', 'nuevoIngreso', 'prosecucion'])
                 ->get();
+
+
 
 
             if ($inscripciones->isEmpty()) {
@@ -124,9 +152,11 @@ class SectionDistributorService
             EntradasPercentil::where('ejecucion_percentil_id', $ejecucion->id)
                 ->update(['seccion_id' => null]);
 
-            Inscripcion::where('grado_id', $grado->id)
+            DB::table('inscripcion_prosecucions')
                 ->where('anio_escolar_id', $anioEscolarActivo->id)
+                ->where('status', 'Activo')
                 ->update(['seccion_id' => null]);
+
 
 
 
@@ -150,9 +180,27 @@ class SectionDistributorService
                     ]);
 
                     // Guardar sección TAMBIÉN en inscripción
-                    $entrada->inscripcion->update([
-                        'seccion_id' => $seccion->id
-                    ]);
+                    $inscripcion = $entrada->inscripcion;
+
+                    // ¿Tiene prosecución activa para este año escolar?
+                    $prosecucion = $inscripcion->prosecucion()
+                        ->where('anio_escolar_id', $anioEscolarActivo->id)
+                        ->where('status', 'Activo')
+                        ->first();
+
+
+                    if ($prosecucion) {
+                        // 👉 Asignar sección en PROSECUCIÓN
+                        $prosecucion->update([
+                            'seccion_id' => $seccion->id
+                        ]);
+                    } else {
+                        // 👉 Solo si NO hay prosecución (nuevo ingreso real)
+                        $inscripcion->update([
+                            'seccion_id' => $seccion->id
+                        ]);
+                    }
+
 
                     // Aumentar contador
                     $seccion->increment('cantidad_actual');
@@ -161,6 +209,18 @@ class SectionDistributorService
                 }
             }
 
+            Log::info('QUERY INSCRIPCIONES', [
+                'sql' => $inscripciones = Inscripcion::where('grado_id', $grado->id)
+                    ->where('anio_escolar_id', $anioEscolarActivo->id)
+                    ->whereIn('status', ['Activo', 'Pendiente'])
+                    ->whereHas('nuevoIngreso')
+                    ->toSql(),
+                'bindings' => $inscripciones = Inscripcion::where('grado_id', $grado->id)
+                    ->where('anio_escolar_id', $anioEscolarActivo->id)
+                    ->whereIn('status', ['Activo', 'Pendiente'])
+                    ->whereHas('nuevoIngreso')
+                    ->getBindings(),
+            ]);
 
             return [
                 'total_secciones' => $numSecciones,

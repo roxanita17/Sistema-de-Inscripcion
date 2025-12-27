@@ -56,7 +56,7 @@ class DocenteController extends Controller
         $personas = Persona::all();
         $prefijos = PrefijoTelefono::all();
         $generos = Genero::all();
-        $tipoDocumentos = TipoDocumento::all();
+        $tipoDocumentos = TipoDocumento::whereIn('nombre', ['V', 'E'])->get();
         $docentes = Docente::all();
 
         return view('admin.docente.create', compact('personas', 'prefijos', 'generos', 'tipoDocumentos', 'docentes'));
