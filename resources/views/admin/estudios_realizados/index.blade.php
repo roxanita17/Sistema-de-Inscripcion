@@ -107,6 +107,29 @@
                     </div>
                 </div>
                 <div class="header-right">
+                    <form action="{{ route('admin.estudios_realizados.index') }}" method="GET" class="d-flex align-items-center gap-3">
+                        <div class="search-box">
+                            <input type="text" name="buscar" class="form-control search-input" 
+                                placeholder="Buscar estudios..." value="{{ $buscar ?? '' }}">
+                            <button type="submit" class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            @if(request('buscar'))
+                                <a href="{{ route('admin.estudios_realizados.index') }}" class="clear-search" title="Limpiar búsqueda">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            @endif
+                        </div>
+                        
+                        <div class="status-filter">
+                            <select name="estatus" class="form-select" onchange="this.form.submit()">
+                                <option value="todos" {{ $estatus === 'todos' ? 'selected' : '' }}>Todos</option>
+                                <option value="Activo" {{ $estatus === 'Activo' ? 'selected' : '' }}>Activos</option>
+                                <option value="Inactivo" {{ $estatus === 'Inactivo' ? 'selected' : '' }}>Inactivos</option>
+                            </select>
+                        </div>
+                    </form>
+                    
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ now()->translatedFormat('d M Y') }}</span>

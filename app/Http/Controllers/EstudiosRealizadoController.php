@@ -57,15 +57,43 @@ class EstudiosRealizadoController extends Controller
      */
     public function index()
     {
-
-        $estudiosRealizados = EstudiosRealizado::where('status', true)
-            ->orderBy('estudios', 'asc')
-            ->paginate(10);
+        $buscar = request('buscar');
+        $estatus = request('estatus', 'Activo');
+        
+        // Construir la consulta base
+        $query = EstudiosRealizado::query();
+        
+        // Aplicar búsqueda
+        if (!empty($buscar)) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('estudios', 'LIKE', "%{$buscar}%")
+                  ->orWhere('id', 'LIKE', "%{$buscar}%");
+            });
+        }
+        
+        // Aplicar filtro de estatus
+        if ($estatus === 'todos') {
+            $query->whereIn('status', [true, false]);
+        } else if ($estatus === 'Activo') {
+            $query->where('status', true);
+        } else if ($estatus === 'Inactivo') {
+            $query->where('status', false);
+        }
+        
+        // Ordenar y paginar
+        $estudiosRealizados = $query->orderBy('estudios', 'asc')
+                                  ->paginate(10)
+                                  ->appends(request()->query());
 
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
         
-        return view('admin.estudios_realizados.index', compact('estudiosRealizados', 'anioEscolarActivo'));
+        return view('admin.estudios_realizados.index', compact(
+            'estudiosRealizados', 
+            'anioEscolarActivo',
+            'buscar',
+            'estatus'
+        ));
     }
 
     /**
