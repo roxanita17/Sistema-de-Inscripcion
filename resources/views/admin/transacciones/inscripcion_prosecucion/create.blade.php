@@ -56,7 +56,7 @@
                         </div>
                     @endif
                 </div> --}}
-            <a href="{{ route('admin.transacciones.inscripcion.index') }}" 
+            <a href="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}" 
                class="btn-create" style="background: var(--gray-500);">
                 <i class="fas fa-arrow-left"></i>
                 <span>Volver</span>

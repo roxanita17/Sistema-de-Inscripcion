@@ -24,7 +24,7 @@ class InscripcionSeeder extends Seeder
 
             // Crear inscripción
             $inscripcion = Inscripcion::create([
-                'anio_escolar_id' => rand(1, 2),
+                'anio_escolar_id' => rand(1, 3),
                 'alumno_id' => $i,
                 'grado_id' => 1,
                 'seccion_id' => null,
@@ -71,34 +71,7 @@ class InscripcionSeeder extends Seeder
             ]
 
         );
-        InscripcionProsecucion::create(
-            [
-                'inscripcion_id' => 2,
-                'promovido' => true,
-                'grado_id' => 2,
-                'seccion_id' => 2,
-                'repite_grado' => false,
-                'acepta_normas_contrato' => true,
-                'anio_escolar_id' => 1,
-                'observaciones' => 'Inscripción por nuevo ingreso',
-                'status' => 'Activo',
-            ]
-
-        );
-        InscripcionProsecucion::create(
-            [
-                'inscripcion_id' => 2,
-                'promovido' => true,
-                'grado_id' => 3,
-                'seccion_id' => 2,
-                'repite_grado' => false,
-                'acepta_normas_contrato' => true,
-                'anio_escolar_id' => 2,
-                'observaciones' => 'Inscripción por nuevo ingreso',
-                'status' => 'Activo',
-            ]
-
-        );
+        
 
         $this->command->info('Seeder de Inscripción Nuevo Ingreso ejecutado correctamente.');
     }

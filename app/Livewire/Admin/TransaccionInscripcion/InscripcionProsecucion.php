@@ -141,30 +141,39 @@ class InscripcionProsecucion extends Component
             return;
         }
 
-        // Obtener alumnos que:
-        // 1. Tienen inscripción o prosecución en el año anterior
-        // 2. NO tienen inscripción ni prosecución en el año actual
         $this->alumnos = Alumno::where(function ($q) use ($anioAnterior) {
+
+            // Inscripción normal en el año anterior
             $q->whereHas('inscripciones', function ($q) use ($anioAnterior) {
-                $q->where('anio_escolar_id', $anioAnterior->id);
+                $q->where('inscripcions.anio_escolar_id', $anioAnterior->id);
             })
+
+                // Prosecución en el año anterior
                 ->orWhereHas('inscripcionProsecucions', function ($q) use ($anioAnterior) {
                     $q->where('inscripcion_prosecucions.anio_escolar_id', $anioAnterior->id);
                 });
         })
+
+            // No debe tener inscripción normal en el año actual
             ->whereDoesntHave('inscripciones', function ($q) use ($anioActual) {
-                $q->where('anio_escolar_id', $anioActual->id);
+                $q->where('inscripcions.anio_escolar_id', $anioActual->id);
             })
+
+            // No debe tener prosecución en el año actual
             ->whereDoesntHave('inscripcionProsecucions', function ($q) use ($anioActual) {
                 $q->where('inscripcion_prosecucions.anio_escolar_id', $anioActual->id);
             })
+
             ->with([
                 'persona.tipoDocumento',
                 'inscripciones.grado',
                 'inscripcionProsecucions.grado'
             ])
+            ->orderBy('id', 'asc')
             ->get();
     }
+
+
 
     /**
      * Carga todos los grados disponibles
@@ -179,6 +188,7 @@ class InscripcionProsecucion extends Component
     /**
      * Carga los grados permitidos según si repite o promueve
      */
+
     private function cargarGradosPermitidos()
     {
         if (!$this->gradoAnteriorId) {
@@ -197,11 +207,7 @@ class InscripcionProsecucion extends Component
 
         // Si repite: solo el mismo grado
         if ($this->repite_grado) {
-            $this->gradosPermitidos = Grado::where('id', $gradoAnterior->id)
-                ->where('status', true)
-                ->get();
-
-            $this->gradoPromocionId = $gradoAnterior->id;
+            $this->gradosPermitidos = collect([$gradoAnterior]);
             return;
         }
 
@@ -213,15 +219,8 @@ class InscripcionProsecucion extends Component
             ])
             ->orderBy('numero_grado')
             ->get();
-
-        // Auto seleccionar el grado siguiente si existe
-        $gradoSiguiente = $this->gradosPermitidos
-            ->firstWhere('numero_grado', $gradoAnterior->numero_grado + 1);
-
-        if ($gradoSiguiente) {
-            $this->gradoPromocionId = $gradoSiguiente->id;
-        }
     }
+
 
     /* ============================================================
        SELECCIÓN DE ALUMNO
@@ -440,6 +439,20 @@ class InscripcionProsecucion extends Component
         return $this->gradosPermitidos->contains('id', $gradoId);
     }
 
+    private function alumnoYaPromovido($alumnoId, $anioActualId): bool
+    {
+        return Inscripcion::where('alumno_id', $alumnoId)
+            ->where('anio_escolar_id', $anioActualId)
+            ->exists()
+
+            || ModeloInscripcionProsecucion::whereHas('inscripcion', function ($q) use ($alumnoId, $anioActualId) {
+                $q->where('inscripcions.alumno_id', $alumnoId)
+                    ->where('inscripcions.anio_escolar_id', $anioActualId);
+            })->exists();
+    }
+
+
+
     /* ============================================================
        GUARDAR INSCRIPCIÓN
        ============================================================ */
@@ -449,11 +462,29 @@ class InscripcionProsecucion extends Component
      */
     public function finalizar()
     {
+
         // Validar formulario
         $this->validate();
 
+        // Obtener año escolar activo (ANTES de usarlo)
+        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+
+        if (!$anioActual) {
+            $this->addError('general', 'No hay un año escolar activo.');
+            return;
+        }
+
         // Validaciones adicionales
         if (!$this->validarAntesDeGuardar()) {
+            return;
+        }
+
+        // Evitar duplicados
+        if ($this->alumnoYaPromovido($this->alumnoId, $anioActual->id)) {
+            $this->addError(
+                'alumnoId',
+                'Este estudiante ya fue inscrito o promovido en el año escolar actual.'
+            );
             return;
         }
 
@@ -488,7 +519,7 @@ class InscripcionProsecucion extends Component
             DB::commit();
 
             session()->flash('success', 'Inscripción por prosecución registrada correctamente.');
-            return redirect()->route('admin.transacciones.inscripcion.index');
+            return redirect()->route('admin.transacciones.inscripcion_prosecucion.index');
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);

@@ -1,0 +1,340 @@
+/* ========================================
+   ESTILOS PARA VISTA DE DATOS DEL ESTUDIANTE
+   ======================================== */
+
+.student-details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Secciones de información */
+.info-section-modern {
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.info-section-modern:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--gray-300);
+}
+
+/* Header de sección */
+.section-header-modern {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, var(--gray-50), white);
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.section-icon-modern {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+}
+
+.section-title-modern {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.section-subtitle-modern {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    margin: 0.25rem 0 0 0;
+    line-height: 1;
+}
+
+/* Grid de información */
+.info-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    padding: 1.5rem 2rem;
+}
+
+.info-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Tarjetas de información */
+.info-card-modern {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+}
+
+.info-card-modern:hover {
+    background: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.info-card-full {
+    grid-column: 1 / -1;
+}
+
+.info-icon-modern {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    border: 2px solid var(--gray-200);
+    transition: all 0.3s ease;
+}
+
+.info-card-modern:hover .info-icon-modern {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    transform: scale(1.1);
+}
+
+.info-content-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.info-label-modern {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value-modern {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.info-badge-modern {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: fit-content;
+    margin-top: 0.25rem;
+}
+
+/* Alertas modernas */
+.alert-modern {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    margin: 1.5rem 2rem;
+}
+
+.alert-modern i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+}
+
+.alert-modern strong {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.alert-modern p {
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.alert-warning-modern {
+    background: var(--warning-light);
+    border: 1px solid var(--warning);
+    color: var(--gray-800);
+}
+
+.alert-warning-modern i {
+    color: var(--warning);
+}
+
+.alert-info-modern {
+    background: var(--info-lighter);
+    border: 1px solid var(--info);
+    color: var(--gray-800);
+}
+
+.alert-info-modern i {
+    color: var(--info);
+}
+
+/* Grid de discapacidades */
+.discapacidades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+}
+
+.discapacidad-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--success-light);
+    border: 1px solid var(--success);
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+}
+
+.discapacidad-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.discapacidad-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--success);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.discapacidad-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.discapacidad-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    line-height: 1.3;
+}
+
+.discapacidad-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--success);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .info-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-header-modern {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .section-icon-modern {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+    }
+
+    .section-title-modern {
+        font-size: 1rem;
+    }
+
+    .section-subtitle-modern {
+        font-size: 0.75rem;
+    }
+
+    .info-grid-modern,
+    .info-grid-3 {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .info-card-modern {
+        padding: 1rem;
+    }
+
+    .info-icon-modern {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .info-value-modern {
+        font-size: 0.875rem;
+    }
+
+    .alert-modern {
+        margin: 1.25rem 1.5rem;
+        padding: 1rem;
+    }
+
+    .discapacidades-grid {
+        grid-template-columns: 1fr;
+        padding: 1.25rem 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-header-modern {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .info-card-modern {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .info-icon-modern {
+        margin: 0 auto;
+    }
+
+    .info-content-modern {
+        align-items: center;
+    }
+}

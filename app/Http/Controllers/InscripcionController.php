@@ -30,6 +30,11 @@ class InscripcionController extends Controller
 
     public function index(Request $request)
     {
+        // Obtener el año escolar activo
+        $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->first();
+
         // Obtener todos los grados
         $grados = Grado::where('status', true)
             ->orderBy('numero_grado', 'asc')
@@ -43,6 +48,9 @@ class InscripcionController extends Controller
         if ($grado1) {
             $inscritos = Inscripcion::where('grado_id', 1)
                 ->where('status', 'Activo')
+                ->when($anioEscolarActivo, function ($q) use ($anioEscolarActivo) {
+                    $q->where('anio_escolar_id', $anioEscolarActivo->id);
+                })
                 ->count();
 
             $infoCupos = [
@@ -60,8 +68,11 @@ class InscripcionController extends Controller
                 'inscripcion.alumno.persona.tipoDocumento',
                 'seccion'
             ])
-                ->whereHas('inscripcion', function ($q) use ($grado1) {
+                ->whereHas('inscripcion', function ($q) use ($grado1, $anioEscolarActivo) {
                     $q->where('grado_id', $grado1->id);
+                    if ($anioEscolarActivo) {
+                        $q->where('anio_escolar_id', $anioEscolarActivo->id);
+                    }
                 })
                 ->orderBy('seccion_id')
                 ->get();
@@ -69,8 +80,11 @@ class InscripcionController extends Controller
             // Obtener resumen de secciones
             $seccionesResumen = EntradasPercentil::select('seccion_id')
                 ->with('seccion')
-                ->whereHas('inscripcion', function ($q) use ($grado1) {
+                ->whereHas('inscripcion', function ($q) use ($grado1, $anioEscolarActivo) {
                     $q->where('grado_id', $grado1->id);
+                    if ($anioEscolarActivo) {
+                        $q->where('anio_escolar_id', $anioEscolarActivo->id);
+                    }
                 })
                 ->groupBy('seccion_id')
                 ->selectRaw('count(*) as total_estudiantes, seccion_id')
@@ -81,6 +95,7 @@ class InscripcionController extends Controller
         $buscar = $request->get('buscar');
         $gradoId = $request->get('grado_id');
         $seccionId = $request->get('seccion_id');
+        $tipoInscripcion = $request->get('tipo_inscripcion');
 
         // Cargar secciones según el grado seleccionado
         $secciones = collect();
@@ -91,9 +106,6 @@ class InscripcionController extends Controller
                 ->get();
         }
 
-        // Verificar si hay año escolar activo
-        $anioEscolarActivo = $this->verificarAnioEscolar();
-
         // Query de inscripciones
         $inscripciones = Inscripcion::with([
             'alumno.persona',
@@ -101,10 +113,26 @@ class InscripcionController extends Controller
             'grado',
             'seccionAsignada',
             'nuevoIngreso',
-            'prosecucion'
+            'prosecucion',
+            'anioEscolar'
         ])
+            // FILTRO POR AÑO ESCOLAR ACTIVO (por defecto)
+            ->when($anioEscolarActivo, function ($q) use ($anioEscolarActivo) {
+                $q->where('anio_escolar_id', $anioEscolarActivo->id);
+            })
+            // Filtro por grado
             ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
+            // Filtro por sección
             ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
+            // Filtro por tipo de inscripción
+            ->when($tipoInscripcion, function ($q) use ($tipoInscripcion) {
+                if ($tipoInscripcion === 'nuevo_ingreso') {
+                    $q->whereNotNull('nuevo_ingreso_id');
+                } elseif ($tipoInscripcion === 'prosecucion') {
+                    $q->whereNotNull('prosecucion_id');
+                }
+            })
+            // Búsqueda
             ->when($buscar, function ($q) use ($buscar) {
                 $q->whereHas('alumno.persona', function ($qq) use ($buscar) {
                     $qq->where('primer_nombre', 'like', "%$buscar%")
@@ -116,33 +144,16 @@ class InscripcionController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-
-        /* FILTRO POR GRADO */
-        if (!empty($gradoId)) {
-            $inscripciones->where('inscripcions.grado_id', $gradoId);
-        }
-        /* FILTRO POR SECCIÓN */
-        if (!empty($seccionId)) {
-            $inscripciones->where('inscripcions.seccion_id', $seccionId);
-        }
-
-        /* BUSCADOR */
-        if (!empty($buscar)) {
-            $inscripciones->where(function ($q) use ($buscar) {
-                $q->where('personas.primer_nombre', 'like', "%$buscar%")
-                    ->orWhere('personas.primer_apellido', 'like', "%$buscar%")
-                    ->orWhere('personas.numero_documento', 'like', "%$buscar%");
-            });
-        }
-
         return view('admin.transacciones.inscripcion.index', [
-            'anioEscolarActivo' => $anioEscolarActivo,
+            'anioEscolarActivo' => $anioEscolarActivo ? true : false,
+            'anioEscolar' => $anioEscolarActivo,
             'inscripciones' => $inscripciones,
             'grados' => $grados,
             'secciones' => $secciones,
             'buscar' => $buscar,
             'gradoId' => $gradoId,
             'seccionId' => $seccionId,
+            'tipoInscripcion' => $tipoInscripcion,
             'infoCupos' => $infoCupos,
             'entradasPercentil' => $entradasPercentil,
             'seccionesResumen' => $seccionesResumen
@@ -191,6 +202,20 @@ class InscripcionController extends Controller
     {
         return redirect()->route('admin.transacciones.inscripcion.create');
     }
+
+    public function edit($id)
+    {
+        $inscripcion = Inscripcion::with(['nuevoIngreso', 'alumno'])->findOrFail($id);
+
+        // Verificar que sea nuevo ingreso
+        if (!$inscripcion->nuevoIngreso) {
+            return redirect()->route('admin.transacciones.inscripcion.index')
+                ->with('error', 'Esta inscripción no es de nuevo ingreso.');
+        }
+
+        return view('admin.transacciones.inscripcion.edit', compact('inscripcion'));
+    }
+
 
     public function destroy($id)
     {

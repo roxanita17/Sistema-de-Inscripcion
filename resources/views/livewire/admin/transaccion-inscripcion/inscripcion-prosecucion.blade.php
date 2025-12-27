@@ -165,7 +165,8 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    El estudiante tiene materias reprobadas de grados anteriores. Debe aprobarlas todas; de lo contrario, deberá repetir el grado completo.
+                                    El estudiante tiene materias reprobadas de grados anteriores. Debe aprobarlas todas;
+                                    de lo contrario, deberá repetir el grado completo.
                                     <b>Marque las materias que el estudiante aprobo</b>
                                 </small>
                             </div>
@@ -247,8 +248,6 @@
                             </div>
                         </div>
                     @endif
-
-                    
                 @else
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i>
@@ -290,11 +289,16 @@
                         </label>
                         <select wire:model.live="gradoPromocionId" id="grado_promocion"
                             class="form-control-modern @error('gradoPromocionId') is-invalid @enderror">
+
                             <option value="">Seleccione un grado</option>
-                            @foreach ($gradosPermitidos as $grado)
-                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
+
+                            @foreach ($grados as $grado)
+                                <option value="{{ $grado->id }}">
+                                    {{ $grado->numero_grado }}° Grado
+                                </option>
                             @endforeach
                         </select>
+
                         @error('gradoPromocionId')
                             <div class="invalid-feedback-modern" style="display: block;">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -395,7 +399,8 @@
         <div class="card-modern">
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="d-flex justify-content-end gap-3">
-                    <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="btn-cancel-modern">
+                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}"
+                        class="btn-cancel-modern">
                         <i class="fas fa-arrow-left"></i>
                         Cancelar
                     </a>

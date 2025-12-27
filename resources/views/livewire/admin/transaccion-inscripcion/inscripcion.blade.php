@@ -350,8 +350,7 @@
                     </div>
                 </div>
                 <div class="card-body-modern" style="padding: 2rem;">
-                    <div class="alert alert-danger mb-4"
-                        style="background: var(--danger-light); border-left: 4px solid var(--danger); padding: 1rem; border-radius: 8px;">
+                    <div class="alert alert-info mb-4 align-items-start p-3 shadow-sm">
                         <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
                             style="font-weight: 700;">(*)</span> son obligatorios
                     </div>
@@ -470,7 +469,7 @@
 
             {{-- Alerta temporal de éxito --}}
             @if (session()->has('success_temp'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
                     <i class="fas fa-check-circle"></i> {{ session('success_temp') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -547,7 +546,7 @@
                     </table>
                 </div>
             @else
-                <div class="alert alert-info">
+                <div class="alert alert-info align-items-start p-3 mb-0 shadow-sm">
                     <i class="fas fa-info-circle"></i>
                     No se han agregado discapacidades. Si el estudiante no presenta ninguna discapacidad, puede
                     continuar sin agregar.
@@ -571,23 +570,34 @@
                     <p>Marque los documentos que el estudiante ha entregado</p>
                 </div>
             </div>
+            <div class="header-right">
+                @if ($estadoDocumentos === 'Completos')
+                    <span class="badge bg-success">
+                        <i class="fas fa-check-circle"></i> Completos
+                    </span>
+                @elseif($estadoDocumentos === 'Incompletos')
+                    <span class="badge bg-warning">
+                        <i class="fas fa-exclamation-circle"></i> Incompletos
+                    </span>
+                @else
+                    <span class="badge bg-secondary">
+                        <i class="fas fa-clock"></i> Pendientes
+                    </span>
+                @endif
+            </div>
+
         </div>
 
 
 
         <div class="card-body-modern" style="padding: 2rem;">
-            @if ($errors->has('documentos'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Error</h4>
-                        <p>{{ $errors->first('documentos') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
+            @if (!empty($documentosFaltantes))
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-exclamation-triangle fa-1x me-2"></i>
+                    La inscripción se guardará con estado
+                    <strong>{{ $statusInscripcion }}</strong>
+                    y documentos
+                    <strong>{{ $estadoDocumentos }}</strong>
                 </div>
             @endif
             <div class="row">
@@ -634,17 +644,15 @@
                 @endphp
 
                 <div class="col-md-6 mb-3">
-                    <div class="checkbox-item-modern {{ $esFaltante ? 'checkbox-error' : '' }}">
-                        <input type="checkbox" id="{{ $documento }}" wire:model.live="documentos"
+                    <div class="checkbox-item-modern {{ $esFaltante ? 'checkbox-warning' : '' }}">
+                        <input type="checkbox" id="doc_{{ $documento }}" wire:model.live="documentos"
                             value="{{ $documento }}" class="checkbox-modern">
 
-                        <label for="{{ $documento }}"
-                            class="checkbox-label-modern {{ $esFaltante ? 'text-danger fw-bold' : '' }}">
+                        <label for="doc_{{ $documento }}"
+                            class="checkbox-label-modern {{ $esFaltante ? 'text-warning fw-bold' : '' }}">
                             {{ $etiqueta }}
 
-                            @if ($esFaltante)
-                                <span class="text-danger "></span>
-                            @endif
+
                         </label>
                     </div>
                 </div>
@@ -684,7 +692,6 @@
                     @error('acepta_normas_contrato')
                         <div class="invalid-feedback-modern">
                             {{ $message }}
-
                         </div>
                     @enderror
                 </div>
@@ -846,6 +853,54 @@
 
         .radio-label-modern i {
             color: var(--primary);
+        }
+
+        .checkbox-item-modern {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .checkbox-item-modern:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .checkbox-item-modern.checkbox-warning {
+            background: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .checkbox-item-modern.checkbox-warning:hover {
+            background: #fde68a;
+        }
+
+        .checkbox-modern {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-label-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            margin: 0 0 0 0.75rem;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            user-select: none;
+            flex: 1;
+        }
+
+        .checkbox-label-modern.text-warning {
+            color: #d97706;
         }
     </style>
 @endpush

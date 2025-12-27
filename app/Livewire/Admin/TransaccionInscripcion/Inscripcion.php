@@ -59,6 +59,9 @@ class Inscripcion extends Component
     public $documentosDisponibles = [];
     public $documentosEtiquetas = [];
 
+    public string $estadoDocumentos = '';
+    public string $statusInscripcion = '';
+
     public bool $esPrimerGrado = true;
 
     public string $tipo_inscripcion = 'nuevo_ingreso';
@@ -97,8 +100,6 @@ class Inscripcion extends Component
     public function rules()
     {
         return [
-            'tipo_inscripcion' => 'required|in:nuevo_ingreso,prosecucion',
-
             'numero_zonificacion' => [
                 'nullable',
                 'regex:/^\d+$/'
@@ -223,6 +224,7 @@ class Inscripcion extends Component
         $this->representanteLegalSeleccionado = $value
             ? $this->representanteRepository->obtenerRepresentanteLegalConRelaciones($value)
             : null;
+        $this->evaluarDocumentosVisual();
     }
 
     /* ============================================================
@@ -261,15 +263,14 @@ class Inscripcion extends Component
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
-        $this->validarDocumentosEnTiempoReal();
-        $this->actualizarObservacionesPorDocumentos();
+    $this->evaluarDocumentosVisual();
     }
 
     public function updatedDocumentos()
     {
-        $this->seleccionarTodos = count($this->documentos) === count($this->documentosDisponibles);
         $this->validarDocumentosEnTiempoReal();
         $this->actualizarObservacionesPorDocumentos();
+        $this->evaluarDocumentosVisual();
     }
 
     private function validarDocumentosEnTiempoReal(): void
@@ -283,13 +284,6 @@ class Inscripcion extends Component
         );
 
         $this->documentosFaltantes = $evaluacion['faltantes'];
-
-        if (!$evaluacion['puede_guardar']) {
-            $this->addError(
-                'documentos',
-                'Debe seleccionar los documentos obligatorios para continuar.'
-            );
-        }
     }
 
     private function actualizarObservacionesPorDocumentos()
@@ -301,10 +295,29 @@ class Inscripcion extends Component
         );
     }
 
+
     private function requiereAutorizacion(): bool
     {
         return !$this->padreId && !$this->madreId;
     }
+
+    private function evaluarDocumentosVisual(): void
+    {
+        $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
+            $this->documentos,
+            $this->requiereAutorizacion(),
+            $this->esPrimerGrado
+        );
+
+        $this->documentosFaltantes = $evaluacion['faltantes'];
+        $this->estadoDocumentos = $evaluacion['estado_documentos'];
+        $this->statusInscripcion = $evaluacion['status_inscripcion'];
+
+        $this->seleccionarTodos =
+            count($this->documentos) === count($this->documentosDisponibles);
+    }
+
+
 
 
     /* ============================================================
@@ -337,6 +350,7 @@ class Inscripcion extends Component
         }
 
         $this->validarDocumentosEnTiempoReal();
+        $this->evaluarDocumentosVisual();
     }
 
     /* ============================================================
