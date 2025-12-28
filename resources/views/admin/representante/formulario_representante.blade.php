@@ -2632,9 +2632,9 @@
                     // Agregar las nuevas opciones
                     municipioSelect.innerHTML = options;
                     
-                    // Forzar re-inicialización completa con liveSearch
+                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
                     const $municipioSelect = $(municipioSelect);
-                    if ($municipioSelect.hasClass('selectpicker')) {
+                    try {
                         $municipioSelect.selectpicker('destroy');
                         $municipioSelect.selectpicker({
                             liveSearch: true,
@@ -2646,6 +2646,19 @@
                             width: 'auto'
                         });
                         console.log('Municipios cargados y re-inicializado con buscador para:', municipioSelect.id);
+                    } catch (e) {
+                        console.error('Error al re-inicializar municipios:', e);
+                        // Intentar inicializar directamente si destroy falla
+                        $municipioSelect.selectpicker({
+                            liveSearch: true,
+                            size: 8,
+                            noneResultsText: 'No hay resultados para {0}',
+                            selectOnTab: false,
+                            showSubtext: false,
+                            showIcon: true,
+                            width: 'auto'
+                        });
+                        console.log('Municipios inicializados directamente con buscador para:', municipioSelect.id);
                     }
                     
                     console.log('Municipios cargados correctamente en', municipioSelectId);
@@ -2717,9 +2730,9 @@
                     // Agregar las nuevas opciones
                     localidadSelect.innerHTML = options;
                     
-                    // Forzar re-inicialización completa con liveSearch
+                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
                     const $localidadSelect = $(localidadSelect);
-                    if ($localidadSelect.hasClass('selectpicker')) {
+                    try {
                         $localidadSelect.selectpicker('destroy');
                         $localidadSelect.selectpicker({
                             liveSearch: true,
@@ -2731,6 +2744,19 @@
                             width: 'auto'
                         });
                         console.log('Localidades cargadas y re-inicializado con buscador para:', localidadSelect.id);
+                    } catch (e) {
+                        console.error('Error al re-inicializar localidades:', e);
+                        // Intentar inicializar directamente si destroy falla
+                        $localidadSelect.selectpicker({
+                            liveSearch: true,
+                            size: 8,
+                            noneResultsText: 'No hay resultados para {0}',
+                            selectOnTab: false,
+                            showSubtext: false,
+                            showIcon: true,
+                            width: 'auto'
+                        });
+                        console.log('Localidades inicializadas directamente con buscador para:', localidadSelect.id);
                     }
                     
                     console.log('Localidades cargadas correctamente en', localidadSelectId);
