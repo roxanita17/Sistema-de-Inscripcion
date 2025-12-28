@@ -76,6 +76,22 @@ class Persona extends Model
         return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
     }
 
+    /**
+     * Alias para prefijoTelefono para mantener compatibilidad
+     */
+    public function prefijo()
+    {
+        return $this->prefijoTelefono();
+    }
+
+    /**
+     * Relación con el segundo prefijo de teléfono
+     */
+    public function prefijoDos()
+    {
+        return $this->belongsTo(PrefijoTelefono::class, 'prefijo_dos_id', 'id');
+    }
+
 
     /**
      * Relación con Localidad

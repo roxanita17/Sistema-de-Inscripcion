@@ -324,6 +324,31 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
+                            <label for="prefijo_dos" class="form-label">Prefijo Teléfono 2</label>
+                            <select class="form-select" id="prefijo_dos" name="prefijo_dos">
+                                <option value="">Seleccione</option>
+                                @foreach($prefijos_telefono as $prefijo)
+                                    <option value="{{ $prefijo->id }}" 
+                                        {{ old('prefijo_dos', $representante->persona->prefijo_dos_id ?? '') == $prefijo->id ? 'selected' : '' }}>
+                                        {{ $prefijo->prefijo }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono_dos" class="form-label">Teléfono Móvil 2</label>
+                            <input type="text" class="form-control" id="telefono_dos" name="telefono_dos" 
+                                value="{{ old('telefono_dos', $representante->persona->telefono_dos ?? '') }}" 
+                                pattern="[0-9]+" 
+                                title="Ingrese solo números"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <div class="invalid-feedback">
+                                Por favor ingrese un número de teléfono válido (solo números).
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
                             <label for="ocupacion_id" class="form-label">Ocupación</label>
                             <select class="form-select" id="ocupacion_id" name="ocupacion_id">
                                 <option value="">Seleccione</option>
@@ -807,14 +832,6 @@
             if (!this.checkValidity()) {
                 e.preventDefault();
                 e.stopPropagation();
-                $(this).addClass('was-validated');
-                
-                // Desplazarse al primer campo con error
-                const firstInvalid = this.querySelector(':invalid');
-                if (firstInvalid) {
-                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    $(firstInvalid).focus();
-                }
                 return false;
             }
             
@@ -823,7 +840,61 @@
             submitBtn.prop('disabled', true);
             submitBtn.html('<i class="fas fa-spinner fa-spin me-1"></i> Guardando...');
             
-            return true;
+            // Enviar el formulario vía AJAX
+            e.preventDefault();
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    console.log('Respuesta del servidor:', response);
+                    // Mostrar mensaje de éxito
+                    if (response.redirect) {
+                        // Si la respuesta incluye una URL de redirección, usarla
+                        window.location.href = response.redirect;
+                    } else if (response.success) {
+                        // Si no hay URL de redirección pero la operación fue exitosa, redirigir al listado
+                        window.location.href = '{{ route('representante.index') }}';
+                    } else {
+                        // Si hay un mensaje de éxito pero no hay redirección, mostrar el mensaje y redirigir
+                        if (response.message) {
+                            alert(response.message);
+                        }
+                        window.location.href = '{{ route('representante.index') }}';
+                    }
+                },
+                error: function(xhr) {
+                    // Habilitar el botón de nuevo
+                    submitBtn.prop('disabled', false);
+                    submitBtn.html('<i class="fas fa-save me-1"></i> Guardar Cambios');
+                    
+                    // Mostrar mensaje de error
+                    let errorMessage = 'Ocurrió un error al guardar los cambios.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    
+                    // Mostrar alerta de error
+                    const alertHtml = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            ${errorMessage}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                    
+                    // Insertar la alerta al inicio del formulario
+                    $('#representante-form').prepend(alertHtml);
+                    
+                    // Hacer scroll hasta la alerta
+                    $('html, body').animate({
+                        scrollTop: $('.alert').offset().top - 100
+                    }, 500);
+                }
+            });
+            
+            return false;
         });
 
         // Inicializar selects dependientes

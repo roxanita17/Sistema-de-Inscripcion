@@ -46,6 +46,20 @@ class RepresentanteController extends Controller
     }
 
     /**
+     * Mapear los valores del carnet patria afiliado a números
+     */
+    private function mapearCarnetPatriaAfiliado($valor)
+    {
+        $mapeo = [
+            'madre' => 1,
+            'padre' => 2,
+            'otro' => 3,
+        ];
+        
+        return $mapeo[$valor] ?? 0; // 0 para 'No especificado' o valores no reconocidos
+    }
+
+    /**
      * Obtiene el tipo de cuenta basado en la selección
      * 
      * @param string $tipo
@@ -71,10 +85,14 @@ class RepresentanteController extends Controller
     public function index()
     {
         $anioEscolarActivo = $this->verificarAnioEscolar();
+        $buscar = request('buscar');
         
         // Construir la consulta
         $query = \App\Models\Representante::with([
-            'persona', 
+            'persona.tipoDocumento',
+            'persona.genero', 
+            'persona.prefijo',
+            'persona.prefijoDos',
             'legal' => function($query) {
                 $query->with(['banco' => function($q) {
                     $q->select('id', 'nombre_banco');
@@ -82,8 +100,23 @@ class RepresentanteController extends Controller
             },
             'estado',
             'municipios',
-            'localidads'
+            'localidads',
+            'ocupacion'
         ]);
+        
+        // Aplicar búsqueda
+        if (!empty($buscar)) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('id', 'LIKE', "%{$buscar}%")
+                  ->orWhereHas('persona', function($query) use ($buscar) {
+                      $query->where('numero_documento', 'LIKE', "%{$buscar}%")
+                            ->orWhere('primer_nombre', 'LIKE', "%{$buscar}%")
+                            ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
+                            ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                            ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%");
+                  });
+            });
+        }
         
         // Aplicar filtros
         if (request()->has('es_legal') && request('es_legal') !== '') {
@@ -103,11 +136,26 @@ class RepresentanteController extends Controller
         $query->orderBy('id', 'desc');
         
         // Ejecutar la consulta con paginación
-        $representantes = $query->paginate(10);
+        $representantes = $query->paginate(10)
+                              ->appends(request()->query());
         
-        // Mantener los parámetros de filtro en la paginación
-        if (request()->has('es_legal')) {
-            $representantes->appends(['es_legal' => request('es_legal')]);
+        // Debug: verificar datos cargados
+        if ($representantes->count() > 0) {
+            $primerRep = $representantes->first();
+            \Log::info('Datos del primer representante:', [
+                'persona_id' => $primerRep->persona_id,
+                'tiene_persona' => isset($primerRep->persona),
+                'persona_tipo_documento_id' => $primerRep->persona ? $primerRep->persona->tipo_documento_id : null,
+                'persona_tipo_documento' => $primerRep->persona ? $primerRep->persona->tipo_documento : null,
+                'persona_genero' => $primerRep->persona ? $primerRep->persona->genero : null,
+                'persona_prefijo' => $primerRep->persona ? $primerRep->persona->prefijo : null,
+                'persona_prefijoDos' => $primerRep->persona ? $primerRep->persona->prefijoDos : null,
+                'tiene_estado' => isset($primerRep->estado),
+                'tiene_municipios' => isset($primerRep->municipios),
+                'tiene_localidads' => isset($primerRep->localidads),
+                'tiene_ocupacion' => isset($primerRep->ocupacion),
+                'tiene_legal' => isset($primerRep->legal),
+            ]);
         }
         
         return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
@@ -201,7 +249,7 @@ class RepresentanteController extends Controller
         $bancos = Banco::WHERE('status', true)->orderBy("nombre_banco","ASC")->get();
         $prefijos_telefono = PrefijoTelefono::WHERE('status', true)->orderBy("prefijo", "ASC")->get();
         $ocupaciones = Ocupacion::WHERE('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
-        $tipoDocumentos = TipoDocumento::WHERE('status', true)->get();
+        $tipoDocumentos = TipoDocumento::WHERE('status', true)->where('nombre', '!=', 'CE')->get();
         $generos = Genero::WHERE('status', true)->get();
         
         return view("admin.representante.formulario_representante", 
@@ -261,6 +309,7 @@ public function mostrarFormularioEditar($id)
         ->get();
         
     $tipoDocumentos = TipoDocumento::where('status', true)
+        ->where('nombre', '!=', 'CE')
         ->orderBy('nombre', 'ASC')
         ->get();
 
@@ -303,7 +352,10 @@ public function mostrarFormularioEditar($id)
      */
     private function parseDate($dateString)
     {
+        Log::info('parseDate llamado con:', ['dateString' => $dateString]);
+        
         if (empty($dateString)) {
+            Log::info('dateString está vacío, retornando null');
             return null;
         }
 
@@ -314,7 +366,9 @@ public function mostrarFormularioEditar($id)
 
         foreach ($formats as $format) {
             try {
-                return \Carbon\Carbon::createFromFormat($format, $dateString)->format('Y-m-d');
+                $result = \Carbon\Carbon::createFromFormat($format, $dateString)->format('Y-m-d');
+                Log::info("parseDate éxito con formato $format:", ['result' => $result]);
+                return $result;
             } catch (\Exception $e) {
                 continue;
             }
@@ -322,7 +376,9 @@ public function mostrarFormularioEditar($id)
 
         // If no format matched, try PHP's strtotime as a fallback
         try {
-            return \Carbon\Carbon::parse($dateString)->format('Y-m-d');
+            $result = \Carbon\Carbon::parse($dateString)->format('Y-m-d');
+            Log::info('parseDate éxito con strtotime:', ['result' => $result]);
+            return $result;
         } catch (\Exception $e) {
             Log::error('Error al analizar la fecha: ' . $dateString, [
                 'error' => $e->getMessage(),
@@ -378,6 +434,10 @@ public function mostrarFormularioEditar($id)
             'persona_id' => $persona->id,
             'tipo' => $isLegalRepresentative ? 'Legal' : 'Progenitor',
             'request_data' => $request->except(['_token', '_method', 'password']),
+            'telefono_dos' => $request->input('telefono_dos'),
+            'prefijo_dos' => $request->input('prefijo_dos'),
+            'telefono_dos_padre' => $request->input('telefono_dos_padre'),
+            'prefijo_dos_padre' => $request->input('prefijo_dos_padre'),
         ]);
 
         // Base validation rules
@@ -441,6 +501,38 @@ public function mostrarFormularioEditar($id)
         DB::beginTransaction();
 
         try {
+            // Log before update with more details
+            Log::info('=== DETALLES DE TELÉFONOS ===', [
+                'telefono_representante' => $request->input('telefono-representante'),
+                'telefono_madre' => $request->input('telefono-madre'),
+                'telefono_padre' => $request->input('telefono-padre'),
+                'telefono_movil' => $request->input('telefono_movil'),
+                'telefono_dos' => $request->input('telefono_dos'),
+                'telefono_dos_padre' => $request->input('telefono_dos_padre'),
+                'prefijo_telefono' => $request->input('prefijo_telefono'),
+                'prefijo_dos' => $request->input('prefijo_dos'),
+                'prefijo_dos_padre' => $request->input('prefijo_dos_padre'),
+                'all_request_data' => $request->all()
+            ]);
+
+            Log::info('Valores a guardar en persona:', [
+                'telefono' => $request->input('telefono-representante') 
+                    ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
+                    : ($request->input('telefono-madre') 
+                        ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
+                        : ($request->input('telefono-padre') 
+                            ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
+                            : null)),
+                'prefijo_id' => $request->input('prefijo-representante') 
+                    ?: $request->input('prefijo-madre') 
+                    ?: $request->input('prefijo-padre'),
+                'telefono_dos' => $request->filled('telefono_dos') 
+                    ? preg_replace('/^0+/', '', (string)$request->input('telefono_dos'))
+                    : null,
+                'prefijo_dos_id' => $request->input('prefijo_dos') ?: null,
+                'isLegalRepresentative' => $isLegalRepresentative
+            ]);
+
             // Update persona data
             $persona->update([
                 'primer_nombre' => $request->input('primer-nombre-representante'),
@@ -452,32 +544,39 @@ public function mostrarFormularioEditar($id)
                 'fecha_nacimiento' => $this->parseDate($request->input('fecha-nacimiento-representante')),
                 'genero_id' => $request->input('sexo-representante'),
                 'tipo_documento_id' => $request->input('tipo-ci-representante'),
-                'prefijo_id' => $request->input('prefijo-representante') 
+                'prefijo_id' => $request->input('prefijo_telefono') 
+                             ?: $request->input('prefijo-representante')
                              ?: $request->input('prefijo-madre') 
                              ?: $request->input('prefijo-padre'),
-                'telefono' => $request->input('telefono-representante') 
-                            ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
-                            : ($request->input('telefono-madre') 
-                                ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
-                                : ($request->input('telefono-padre') 
-                                    ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
-                                    : null)),
+                'telefono' => $request->input('telefono_movil')
+                            ? preg_replace('/^0+/', '', (string)$request->input('telefono_movil'))
+                            : ($request->input('telefono-representante')
+                                ? preg_replace('/^0+/', '', (string)$request->input('telefono-representante'))
+                                : ($request->input('telefono-madre') 
+                                    ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
+                                    : ($request->input('telefono-padre')
+                                        ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
+                                        : null))),
+                // Handle second phone number and prefix
                 'telefono_dos' => $request->filled('telefono_dos') 
                     ? preg_replace('/^0+/', '', (string)$request->input('telefono_dos'))
                     : null,
-                'prefijo_dos_id' => $request->input('prefijo_dos'),
+                'prefijo_dos_id' => $request->input('prefijo_dos') ?: null,
                 'email' => $request->input('correo-representante'),
                 'localidad_id' => $request->input('parroquia_id'),
             ]);
 
-            // Update representante data
-            $representante->update([
+            // Preparar datos de actualización del representante
+            $representanteData = [
                 'estado_id' => $request->input('estado_id'),
                 'municipio_id' => $request->input('municipio_id'),
                 'parroquia_id' => $request->input('parroquia_id'),
                 'ocupacion_representante' => $request->input('ocupacion_id'),
                 'convivenciaestudiante_representante' => $request->input('convive-representante', 'no'),
-            ]);
+            ];
+            
+            // Actualizar datos del representante sin modificar el estatus
+            $representante->update($representanteData);
 
             // Handle legal representative specific data
             if ($isLegalRepresentative) {
@@ -487,9 +586,7 @@ public function mostrarFormularioEditar($id)
                 $legalData = [
                     'banco_id' => $request->input('banco_id'),
                     'pertenece_a_organizacion_representante' => $perteneceOrganizacion,
-                    'cual_organizacion_representante' => $perteneceOrganizacion ? $request->input('cual_organizacion_representante') : '',
-                    'telefono' => $request->input('telefono_movil'),
-                    'prefijo_id' => $request->input('prefijo_telefono')
+                    'cual_organizacion_representante' => $perteneceOrganizacion ? $request->input('cual_organizacion_representante') : ''
                 ];
                 
                 // Remove cual_organizacion_representante from the data if not in organization
@@ -503,21 +600,43 @@ public function mostrarFormularioEditar($id)
                     $representante->legal()->create($legalData);
                 }
                 
-                // Update status to indicate this is a legal representative
-                $representante->update(['status' => 1]);
+                // No actualizamos el status aquí para mantener el valor existente
             } else {
                 // If changing from legal to progenitor, remove legal data
                 if ($representante->legal) {
                     $representante->legal()->delete();
                 }
-                // Update status to indicate this is a progenitor
-                $representante->update(['status' => 0]);
+                // No actualizamos el status para mantener el valor existente
             }
 
+            // Log the final state before commit
+            Log::info('=== ESTADO FINAL ANTES DE COMMIT ===', [
+                'representante_id' => $representante->id,
+                'persona_id' => $persona->id,
+                'telefono' => $persona->telefono,
+                'telefono_dos' => $persona->telefono_dos,
+                'prefijo_id' => $persona->prefijo_id,
+                'prefijo_dos_id' => $persona->prefijo_dos_id,
+                'is_dirty' => $persona->isDirty()
+            ]);
+
+            // Save all changes to the database
             DB::commit();
 
+            // Log success after commit
+            $persona->refresh(); // Refresh to get the latest data from the database
+            Log::info('=== REPRESENTANTE ACTUALIZADO EXITOSAMENTE ===', [
+                'representante_id' => $representante->id,
+                'persona_id' => $persona->id,
+                'telefono' => $persona->telefono,
+                'telefono_dos' => $persona->telefono_dos,
+                'prefijo_id' => $persona->prefijo_id,
+                'prefijo_dos_id' => $persona->prefijo_dos_id,
+                'updated_at' => $persona->updated_at
+            ]);
+
             return response()->json([
-                'status' => 'success',
+                'success' => true,
                 'message' => 'Representante actualizado exitosamente',
                 'redirect' => route('representante.index')
             ]);
@@ -627,6 +746,20 @@ public function mostrarFormularioEditar($id)
     // Estos nombres vienen del formulario de representante en la vista
     // admin/representante/formulario_representante.blade.php
 
+    // Fecha de nacimiento: tomar la del representante y formatear correctamente
+        $fechaNacimientoRaw = $request->input('fecha-nacimiento-representante');
+        Log::info('Fecha de nacimiento recibida del formulario:', [
+            'fecha-nacimiento-representante' => $fechaNacimientoRaw,
+            'parseDate_result' => $this->parseDate($fechaNacimientoRaw)
+        ]);
+        
+        $fechaNacimientoParseada = $this->parseDate($fechaNacimientoRaw);
+        // Si parseDate devuelve null, usar la fecha actual como fallback
+        if ($fechaNacimientoParseada === null) {
+            Log::warning('parseDate devolvió null, usando fecha actual como fallback');
+            $fechaNacimientoParseada = now()->subYears(18)->format('Y-m-d'); // Usar hace 18 años como valor por defecto
+        }
+        
     $request->merge([
         // Identificación persona/representante
         'numero_numero_documento_persona' => $request->input('numero_documento-representante'),
@@ -637,8 +770,8 @@ public function mostrarFormularioEditar($id)
         'apellido_dos'          => $request->input('segundo-apellido-representante'),
 
         // Fecha de nacimiento: tomar la del representante y formatear correctamente
-        'fecha_nacimiento' => $this->parseDate($request->input('fecha-nacimiento-representante')),
-        'fecha_nacimiento_personas' => $this->parseDate($request->input('fecha-nacimiento-representante')),
+        'fecha_nacimiento' => $fechaNacimientoParseada,
+        'fecha_nacimiento_personas' => $fechaNacimientoParseada,
 
         // Género del representante: tomar el del bloque de representante, y si viene vacío usar madre o padre
         'sexo_representante'    => $request->input('sexo-representante')
@@ -653,7 +786,7 @@ public function mostrarFormularioEditar($id)
         'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia'),
 
         // Teléfono (se almacena completo en Persona.telefono)
-        'telefono_personas' => $request->input('telefono-representante') 
+        'telefono' => $request->input('telefono-representante') 
                             ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
                             : ($request->input('telefono-madre') 
                                 ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
@@ -678,9 +811,9 @@ public function mostrarFormularioEditar($id)
         'cual_organizacion_representante'        => $request->input('cual-organizacion'),
 
         // Mapeo de campos de carnet de la patria y banco desde el formulario
-        'carnet_patria_afiliado'             => $request->input('carnet-patria'),
+        'carnet_patria_afiliado'             => $request->input('carnet-patria-afiliado'),
         'serial_carnet_patria_representante' => $request->input('serial'),
-        'banco_id'                           => $request->input('banco-representante'),
+        'banco_id'                           => $request->input('banco_id'),
         'direccion_representante'            => $request->input('direccion-habitacion'),
 
         // IDs para edición
@@ -956,16 +1089,42 @@ public function mostrarFormularioEditar($id)
 
     // Campos adicionales del request que no existen en el modelo Persona se ignoran
 
+    // Determinar el status basado en el tipo de representante
+    $status = 1; // Por defecto, activo
+    $tipoRepresentante = $request->input('tipo_representante');
+    
+    // Si es una actualización, obtener el status actual
+    if ($request->representante_id) {
+        $representanteExistente = \App\Models\Representante::find($request->representante_id);
+        if ($representanteExistente) {
+            $status = $representanteExistente->status; // Mantener el status actual
+        }
+    }
+    
+    // Solo actualizar el status si se envía explícitamente en la solicitud
+    if ($request->has('status')) {
+        $status = $request->input('status');
+    } 
+    // Si no se envía status y es un nuevo registro, determinar según el tipo
+    elseif (!$request->representante_id) {
+        if ($tipoRepresentante === 'progenitor_padre_representante') {
+            $status = 2; // Padre
+        } elseif ($tipoRepresentante === 'progenitor_madre_representante') {
+            $status = 3; // Madre
+        }
+    }
+
     // Datos de representante
     $datosRepresentante = [
         "estado_id" => $request->estado_id ?: 1,
         "municipio_id" => $request->municipio_id,
         "parroquia_id" => $request->parroquia_id,
         "ocupacion_representante" => $request->input('ocupacion-madre') 
-    ?: $request->input('ocupacion-padre') 
-    ?: $request->input('ocupacion-representante') 
-    ?: null,
+            ?: $request->input('ocupacion-padre') 
+            ?: $request->input('ocupacion-representante') 
+            ?: null,
         "convivenciaestudiante_representante" => $request->convivenciaestudiante_representante ?: 'no',
+        "status" => $status, // Asignar el status determinado
     ];
 
     if($request->representante_id){
@@ -991,9 +1150,9 @@ public function mostrarFormularioEditar($id)
         "correo_representante" => $request->correo_representante ?: '',
         "pertenece_a_organizacion_representante" => $perteneceOrganizacion,
         "cual_organizacion_representante" => $cualOrganizacion,
-        "carnet_patria_afiliado" => $request->carnet_patria_afiliado ?: 0,
-        "serial_carnet_patria_representante" => $request->serial_carnet_patria_representante ?: '',
-        "codigo_carnet_patria_representante" => !empty($request->codigo) ? (int)$request->codigo : null,
+        "carnet_patria_afiliado" => $this->mapearCarnetPatriaAfiliado($request->carnet_patria_afiliado),
+        "serial_carnet_patria_representante" => !empty($request->input('serial-patria')) ? $request->input('serial-patria') : null,
+        "codigo_carnet_patria_representante" => !empty($request->input('codigo-patria')) ? $request->input('codigo-patria') : null,
         "direccion_representante" => $request->direccion_representante ?: '',
         "estados_representante" => $request->estados_representante ?: '',
         "tipo_cuenta" => $this->obtenerTipoCuenta($request->input('tipo-cuenta', '')),
@@ -1076,7 +1235,7 @@ public function mostrarFormularioEditar($id)
                     
                     // Actualizar solo los campos que no están vacíos en el formulario
                     $camposActualizables = [
-                        'telefono_personas', 'correo_persona', 'direccion_habitacion',
+                        'telefono', 'correo_persona', 'direccion_habitacion',
                         'estado_id', 'municipio_id', 'parroquia_id'
                     ];
                     
@@ -1104,7 +1263,7 @@ public function mostrarFormularioEditar($id)
                         'prefijo_id' => $datosPersona['prefijo_id'] ?? 1, // Valor por defecto para prefijo
                         'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
                         'primer_apellido' => $datosPersona['primer_apellido'] ?? 'SIN APELLIDO',
-                        'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->format('Y-m-d')
+                        'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->subYears(18)->format('Y-m-d')
                     ], $datosPersona);
                     
                     try {
@@ -1337,7 +1496,7 @@ public function mostrarFormularioEditar($id)
             $datosPersona = array_merge([
                 'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
                 'primer_apellido' => $datosPersona['primer_apellido'] ?? 'SIN APELLIDO',
-                'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->format('Y-m-d'),
+                'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->subYears(18)->format('Y-m-d'),
                 'tipo_documento_id' => $datosPersona['tipo_documento_id'] ?? 1,
                 'genero_id' => $datosPersona['genero_id'] ?? 1,
                 'localidad_id' => $datosPersona['localidad_id'] ?? 1,
