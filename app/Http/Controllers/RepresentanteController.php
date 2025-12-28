@@ -352,7 +352,10 @@ public function mostrarFormularioEditar($id)
      */
     private function parseDate($dateString)
     {
+        Log::info('parseDate llamado con:', ['dateString' => $dateString]);
+        
         if (empty($dateString)) {
+            Log::info('dateString está vacío, retornando null');
             return null;
         }
 
@@ -363,7 +366,9 @@ public function mostrarFormularioEditar($id)
 
         foreach ($formats as $format) {
             try {
-                return \Carbon\Carbon::createFromFormat($format, $dateString)->format('Y-m-d');
+                $result = \Carbon\Carbon::createFromFormat($format, $dateString)->format('Y-m-d');
+                Log::info("parseDate éxito con formato $format:", ['result' => $result]);
+                return $result;
             } catch (\Exception $e) {
                 continue;
             }
@@ -371,7 +376,9 @@ public function mostrarFormularioEditar($id)
 
         // If no format matched, try PHP's strtotime as a fallback
         try {
-            return \Carbon\Carbon::parse($dateString)->format('Y-m-d');
+            $result = \Carbon\Carbon::parse($dateString)->format('Y-m-d');
+            Log::info('parseDate éxito con strtotime:', ['result' => $result]);
+            return $result;
         } catch (\Exception $e) {
             Log::error('Error al analizar la fecha: ' . $dateString, [
                 'error' => $e->getMessage(),
@@ -739,6 +746,20 @@ public function mostrarFormularioEditar($id)
     // Estos nombres vienen del formulario de representante en la vista
     // admin/representante/formulario_representante.blade.php
 
+    // Fecha de nacimiento: tomar la del representante y formatear correctamente
+        $fechaNacimientoRaw = $request->input('fecha-nacimiento-representante');
+        Log::info('Fecha de nacimiento recibida del formulario:', [
+            'fecha-nacimiento-representante' => $fechaNacimientoRaw,
+            'parseDate_result' => $this->parseDate($fechaNacimientoRaw)
+        ]);
+        
+        $fechaNacimientoParseada = $this->parseDate($fechaNacimientoRaw);
+        // Si parseDate devuelve null, usar la fecha actual como fallback
+        if ($fechaNacimientoParseada === null) {
+            Log::warning('parseDate devolvió null, usando fecha actual como fallback');
+            $fechaNacimientoParseada = now()->subYears(18)->format('Y-m-d'); // Usar hace 18 años como valor por defecto
+        }
+        
     $request->merge([
         // Identificación persona/representante
         'numero_numero_documento_persona' => $request->input('numero_documento-representante'),
@@ -749,8 +770,8 @@ public function mostrarFormularioEditar($id)
         'apellido_dos'          => $request->input('segundo-apellido-representante'),
 
         // Fecha de nacimiento: tomar la del representante y formatear correctamente
-        'fecha_nacimiento' => $this->parseDate($request->input('fecha-nacimiento-representante')),
-        'fecha_nacimiento_personas' => $this->parseDate($request->input('fecha-nacimiento-representante')),
+        'fecha_nacimiento' => $fechaNacimientoParseada,
+        'fecha_nacimiento_personas' => $fechaNacimientoParseada,
 
         // Género del representante: tomar el del bloque de representante, y si viene vacío usar madre o padre
         'sexo_representante'    => $request->input('sexo-representante')
@@ -1242,7 +1263,7 @@ public function mostrarFormularioEditar($id)
                         'prefijo_id' => $datosPersona['prefijo_id'] ?? 1, // Valor por defecto para prefijo
                         'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
                         'primer_apellido' => $datosPersona['primer_apellido'] ?? 'SIN APELLIDO',
-                        'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->format('Y-m-d')
+                        'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->subYears(18)->format('Y-m-d')
                     ], $datosPersona);
                     
                     try {
@@ -1475,7 +1496,7 @@ public function mostrarFormularioEditar($id)
             $datosPersona = array_merge([
                 'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
                 'primer_apellido' => $datosPersona['primer_apellido'] ?? 'SIN APELLIDO',
-                'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->format('Y-m-d'),
+                'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->subYears(18)->format('Y-m-d'),
                 'tipo_documento_id' => $datosPersona['tipo_documento_id'] ?? 1,
                 'genero_id' => $datosPersona['genero_id'] ?? 1,
                 'localidad_id' => $datosPersona['localidad_id'] ?? 1,

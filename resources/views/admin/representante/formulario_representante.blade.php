@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+    <!-- Bootstrap Select CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
     <style>
         /* Progress Steps Enhancement */
         .progress-steps {
@@ -30,6 +32,37 @@
             color: var(--gray-600);
             font-weight: 500;
             font-size: 0.875rem;
+        }
+        
+        /* Arreglos para Selectpicker */
+        .bootstrap-select .dropdown-menu {
+            z-index: 9999 !important;
+        }
+        
+        .bootstrap-select .dropdown-menu.show {
+            z-index: 9999 !important;
+        }
+        
+        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item.disabled {
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
+        
+        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item[disabled] {
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
+        
+        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item[data-tokens="loading"] {
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+            font-style: italic;
         }
         
         .step-indicator:hover .step-text {
@@ -445,7 +478,8 @@
                                                         Estado
                                                         <span class="required-badge">*</span>
                                                     </label>
-                                                    <select class="form-control-modern" id="idEstado" name="idEstado"
+                                                    <select class="form-control-modern selectpicker" id="idEstado" name="idEstado"
+                                                        data-live-search="true" title="Seleccione un estado"
                                                         aria-label="Seleccione un estado">
                                                         <option value="">Seleccione un estado</option>
                                                         @foreach ($estados as $estado)
@@ -469,9 +503,9 @@
                                                         Municipio
                                                         <span class="required-badge">*</span>
                                                     </label>
-                                                    <select class="form-control-modern" id="idMunicipio" name="idMunicipio"
+                                                    <select class="form-control-modern selectpicker" id="idMunicipio" name="idMunicipio"
+                                                        data-live-search="true" title="Seleccione un municipio"
                                                         aria-label="Seleccione un municipio">
-                                                        <option value="">Seleccione un municipio</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         Por favor seleccione un municipio.
@@ -487,9 +521,9 @@
                                                         Localidad
                                                         <span class="required-badge">*</span>
                                                     </label>
-                                                    <select class="form-control-modern" id="idparroquia" name="idparroquia"
+                                                    <select class="form-control-modern selectpicker" id="idparroquia" name="idparroquia"
+                                                        data-live-search="true" title="Seleccione una parroquia"
                                                         aria-label="Seleccione una parroquia">
-                                                        <option value="">Seleccione una parroquia</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         Por favor seleccione una parroquia.
@@ -539,7 +573,8 @@
                                                     Prefijo Tel.
                                                     <span class="required-badge">*</span>
                                                 </label>
-                                                <select class="form-control-modern" id="prefijo" name="prefijo" required>
+                                                <select class="form-control-modern selectpicker" id="prefijo" name="prefijo" 
+                                                        data-live-search="true" title="Seleccione" required>
                                                     <option value="" disabled selected>Seleccione</option>
                                                     @foreach ($prefijos_telefono as $prefijo)
                                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
@@ -577,8 +612,8 @@
                                                     <i class="fas fa-phone"></i>
                                                     Prefijo 2
                                                 </label>
-                                                <select class="form-control-modern" id="prefijo_dos" name="prefijo_dos"
-                                                    title="Seleccione el tipo de linea Teléfonica">
+                                                <select class="form-control-modern selectpicker" id="prefijo_dos" name="prefijo_dos"
+                                                    data-live-search="true" title="Seleccione el tipo de linea Teléfonica">
                                                     <option value="">Seleccione</option>
                                                     @foreach ($prefijos_telefono as $prefijo)
                                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
@@ -628,12 +663,24 @@
                                                         Ocupación
                                                         <span class="required-badge">*</span>
                                                     </label>
-                                                    <select name="ocupacion-madre" id="ocupacion-madre" class="form-control-modern" required>
+                                                    <select name="ocupacion-madre" id="ocupacion-madre" class="form-control-modern selectpicker" 
+                                                            data-live-search="true" title="Seleccione una ocupación" required>
                                                         <option value="" disabled selected>Seleccione</option>
                                                         @foreach ($ocupaciones as $ocupacion)
                                                             <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}
                                                             </option>
                                                         @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        Por favor seleccione una ocupación.
+                                                    </div>
+                                                </div>
+                                                <small id="ocupacion-madre-error" class="text-danger"></small>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group d-none" id="otra-ocupacion-container">
                                         <label for="otra-ocupacion" class="form-label-modern">
                                             <i class="fas fa-briefcase"></i>
                                             Otra Ocupación
@@ -910,7 +957,8 @@
                                 Estado
                                 <span class="required-badge">*</span>
                             </label>
-                            <select class="form-control-modern" id="idEstado-padre" name="idEstado-padre" required>
+                            <select class="form-control-modern selectpicker" id="idEstado-padre" name="idEstado-padre" 
+                                data-live-search="true" title="Seleccione un estado" required>
                                 <option value="" disabled selected>Seleccione un estado</option>
                                 @foreach ($estados as $estado)
                                     <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
@@ -929,8 +977,8 @@
                                 Municipio
                                 <span class="required-badge">*</span>
                             </label>
-                            <select class="form-control-modern" id="idMunicipio-padre" name="idMunicipio-padre" required>
-                                <option value="" disabled selected>Seleccione un municipio</option>
+                            <select class="form-control-modern selectpicker" id="idMunicipio-padre" name="idMunicipio-padre" 
+                                data-live-search="true" title="Buscar municipio..." required>
                             </select>
                             <div class="invalid-feedback">
                                 Por favor seleccione un municipio.
@@ -945,8 +993,8 @@
                                 Parroquia
                                 <span class="required-badge">*</span>
                             </label>
-                            <select class="form-control-modern" id="idparroquia-padre" name="idparroquia-padre" required>
-                                <option value="" disabled selected>Seleccione una parroquia</option>
+                            <select class="form-control-modern selectpicker" id="idparroquia-padre" name="idparroquia-padre" 
+                                data-live-search="true" title="Buscar parroquia..." required>
                             </select>
                             <div class="invalid-feedback">
                                 Por favor seleccione una parroquia.
@@ -991,7 +1039,8 @@
                                 Prefijo Tel.
                                 <span class="required-badge">*</span>
                             </label>
-                            <select class="form-control-modern" id="prefijo-padre" name="prefijo-padre" required>
+                            <select class="form-control-modern selectpicker" id="prefijo-padre" name="prefijo-padre" 
+                                data-live-search="true" title="Seleccione" required>
                                 <option value="" disabled selected>Seleccione</option>
                                 @foreach ($prefijos_telefono as $prefijo)
                                     <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
@@ -1027,8 +1076,8 @@
                                 <i class="fas fa-phone"></i>
                                 Prefijo 2
                             </label>
-                            <select class="form-control-modern" id="prefijo_dos_padre" name="prefijo_dos_padre"
-                                title="Seleccione el tipo de linea Teléfonica">
+                            <select class="form-control-modern selectpicker" id="prefijo_dos_padre" name="prefijo_dos_padre"
+                                data-live-search="true" title="Seleccione el tipo de linea Teléfonica">
                                 <option value="">Seleccione</option>
                                 @foreach ($prefijos_telefono as $prefijo)
                                     <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
@@ -1077,7 +1126,8 @@
                                 Ocupación
                                 <span class="required-badge">*</span>
                             </label>
-                            <select class="form-control-modern" id="ocupacion-padre" name="ocupacion-padre" required>
+                            <select class="form-control-modern selectpicker" id="ocupacion-padre" name="ocupacion-padre" 
+                                data-live-search="true" title="Seleccione una ocupación" required>
                                 <option value="" disabled selected>Seleccione</option>
                                 @foreach ($ocupaciones as $ocupacion)
                                     <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
@@ -1410,9 +1460,8 @@
                                     Estado
                                     <span class="required-badge">*</span>
                                 </label>
-                                <select class="form-control-modern" id="idEstado-representante" name="idEstado-representante"
-                                    onchange="window.cargarMunicipiosRepresentante(this.value)" required>
-                                    <option value="" disabled selected>Seleccione un estado</option>
+                                <select class="form-control-modern selectpicker" id="idEstado-representante" name="idEstado-representante"
+                                    data-live-search="true" title="Seleccione un estado" required>
                                     @foreach ($estados as $estado)
                                         <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
                                     @endforeach
@@ -1431,10 +1480,9 @@
                                     Municipio
                                     <span class="required-badge">*</span>
                                 </label>
-                                <select class="form-control-modern" id="idMunicipio-representante"
+                                <select class="form-control-modern selectpicker" id="idMunicipio-representante"
                                     name="idMunicipio-representante"
-                                    onchange="window.cargarParroquiasRepresentante(this.value)">
-                                    <option value="" disabled selected>Seleccione un municipio</option>
+                                    data-live-search="true" title="Buscar municipio...">
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione un municipio.
@@ -1450,9 +1498,9 @@
                                     Localidad
                                     <span class="required-badge">*</span>
                                 </label>
-                                <select class="form-control-modern" id="idparroquia-representante"
-                                    name="idparroquia-representante">
-                                    <option value="" disabled selected>Seleccione una parroquia</option>
+                                <select class="form-control-modern selectpicker" id="idparroquia-representante"
+                                    name="idparroquia-representante" 
+                                    data-live-search="true" title="Seleccione una parroquia">
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione una parroquia.
@@ -1502,8 +1550,8 @@
                                     Prefijo Tel.
                                     <span class="required-badge">*</span>
                                 </label>
-                                <select class="form-control-modern" id="prefijo-representante" name="prefijo-representante"
-                                    title="Seleccione el tipo de linea Teléfonica" required>
+                                <select class="form-control-modern selectpicker" id="prefijo-representante" name="prefijo-representante"
+                                    data-live-search="true" title="Seleccione" required>
                                     <option value="" disabled selected>Seleccione</option>
                                     @foreach ($prefijos_telefono as $prefijo)
                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
@@ -1541,8 +1589,8 @@
                                     <i class="fas fa-phone"></i>
                                     Prefijo 2
                                 </label>
-                                <select class="form-control-modern" id="prefijo_dos-representante" name="prefijo_dos-representante"
-                                    title="Seleccione el tipo de linea Teléfonica">
+                                <select class="form-control-modern selectpicker" id="prefijo_dos-representante" name="prefijo_dos-representante"
+                                    data-live-search="true" title="Seleccione el tipo de linea Teléfonica">
                                     <option value="">Seleccione</option>
                                     @foreach ($prefijos_telefono as $prefijo)
                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
@@ -1593,7 +1641,8 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select name="ocupacion-representante" id="ocupacion-representante"
-                                    class="form-control-modern" required>
+                                    class="form-control-modern selectpicker" 
+                                    data-live-search="true" title="Seleccione una ocupación" required>
                                     <option value="" disabled selected>Seleccione</option>
                                     @foreach ($ocupaciones as $ocupacion)
                                         <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
@@ -2028,7 +2077,12 @@
 @stop
 
 @section('js')
+    <!-- Bootstrap Select JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script>
+        // Variable para almacenar estados anteriores
+        const estadoAnterior = {};
+        
         // Función para mostrar alerta moderna de ausencia
         function mostrarAlertaAusencia(tipo) {
             const nombre = tipo === 'madre' ? 'la madre' : 'el padre';
@@ -2141,6 +2195,9 @@
             
             if (codigoInput) validarSoloNumeros(codigoInput);
             if (serialInput) validarSoloNumeros(serialInput);
+            
+            // Inicializar selectpicker para todos los selects con buscador
+            $('.selectpicker').selectpicker();
         });
 
         // Inicialización de tooltips
@@ -2232,14 +2289,26 @@
                 return;
             }
 
-            // Limpiar selects
-            municipioSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+            // Limpiar selects - sin opciones temporales
+            municipioSelect.innerHTML = '';
             if (parroquiaSelect) {
-                parroquiaSelect.innerHTML = '<option value="">Seleccione un municipio primero</option>';
+                parroquiaSelect.innerHTML = '';
+                // Refrescar selectpicker si aplica
+                if ($(parroquiaSelect).hasClass('selectpicker')) {
+                    $(parroquiaSelect).selectpicker('refresh');
+                }
+            }
+            // Refrescar selectpicker si aplica
+            if ($(municipioSelect).hasClass('selectpicker')) {
+                $(municipioSelect).selectpicker('refresh');
             }
 
             if (!estadoId) {
-                municipioSelect.innerHTML = '<option value="">Seleccione un estado</option>';
+                municipioSelect.innerHTML = '';
+                // Refrescar selectpicker si aplica
+                if ($(municipioSelect).hasClass('selectpicker')) {
+                    $(municipioSelect).selectpicker('refresh');
+                }
                 return;
             }
 
@@ -2249,7 +2318,11 @@
 
                 if (!estado) {
                     console.error('No se encontró el estado con ID:', estadoId);
-                    municipioSelect.innerHTML = '<option value="">Error: Estado no encontrado</option>';
+                    municipioSelect.innerHTML = '';
+                    // Refrescar selectpicker si aplica
+                    if ($(municipioSelect).hasClass('selectpicker')) {
+                        $(municipioSelect).selectpicker('refresh');
+                    }
                     return;
                 }
 
@@ -2265,13 +2338,30 @@
                         options += `<option value="${municipio.id}">${nombre}</option>`;
                     });
 
+                    // Limpiar completamente el select antes de agregar nuevas opciones
+                    municipioSelect.innerHTML = '';
+                    
+                    // Agregar las nuevas opciones
                     municipioSelect.innerHTML = options;
+                    
+                    // Refrescar selectpicker manteniendo configuración
+                    if ($(municipioSelect).hasClass('selectpicker')) {
+                        $(municipioSelect).selectpicker('refresh');
+                    }
                 } else {
-                    municipioSelect.innerHTML = '<option value="">No hay municipios disponibles</option>';
+                    municipioSelect.innerHTML = '';
+                    // Refrescar selectpicker si aplica
+                    if ($(municipioSelect).hasClass('selectpicker')) {
+                        $(municipioSelect).selectpicker('refresh');
+                    }
                 }
             } catch (error) {
                 console.error('Error al cargar municipios:', error);
-                municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
+                municipioSelect.innerHTML = '';
+                // Refrescar selectpicker si aplica
+                if ($(municipioSelect).hasClass('selectpicker')) {
+                    $(municipioSelect).selectpicker('refresh');
+                }
             }
 
             console.log('=== FIN cargarMunicipiosRepresentante ===');
@@ -2289,7 +2379,11 @@
             }
 
             // Limpiar opciones existentes
-            selectParroquia.innerHTML = '<option value="">Seleccione</option>';
+            selectParroquia.innerHTML = '';
+            // Refrescar selectpicker manteniendo configuración
+            if ($(selectParroquia).hasClass('selectpicker')) {
+                $(selectParroquia).selectpicker('refresh');
+            }
 
             if (!municipioId) {
                 console.log('No se proporcionó ID de municipio');
@@ -2308,20 +2402,53 @@
                 }
             }
 
-            if (municipioEncontrado && municipioEncontrado.localidades) {
-                console.log(
-                    `Encontradas ${municipioEncontrado.localidades.length} parroquias para el municipio ${municipioId}`
-                );
+            if (municipioEncontrado) {
+                console.log('Municipio encontrado:', municipioEncontrado);
+                console.log('Propiedades del municipio:', Object.keys(municipioEncontrado));
+                console.log('¿Tiene localidades?', 'localidades' in municipioEncontrado);
+                console.log('¿Tiene municipio?', 'municipio' in municipioEncontrado);
+                
+                // Intentar con diferentes nombres de propiedad
+                const localidades = municipioEncontrado.localidades || 
+                                  municipioEncontrado.municipio || 
+                                  municipioEncontrado.parroquias || [];
+                
+                console.log('Localidades encontradas:', localidades.length);
+                console.log('Contenido de localidades:', localidades);
 
+                if (localidades.length > 0) {
+
+                // Limpiar opciones existentes antes de agregar nuevas
+                selectParroquia.innerHTML = '';
+                
+                // Agregar opción placeholder inicial
+                const placeholderOption = document.createElement('option');
+                placeholderOption.value = '';
+                placeholderOption.textContent = 'Seleccione una parroquia';
+                selectParroquia.appendChild(placeholderOption);
+                
                 // Agregar opciones de parroquias
-                municipioEncontrado.localidades.forEach(parroquia => {
+                localidades.forEach(parroquia => {
                     const option = document.createElement('option');
                     option.value = parroquia.id;
-                    option.textContent = parroquia.nombre_parroquia || parroquia.nombre;
+                    option.textContent = parroquia.nombre_parroquia || parroquia.nombre || parroquia.nombre_localidad;
                     selectParroquia.appendChild(option);
                 });
+                
+                console.log('Opciones agregadas al select:', selectParroquia.options.length);
+                
+                // Refrescar selectpicker manteniendo configuración (mismo método que madre)
+                if ($(selectParroquia).hasClass('selectpicker')) {
+                    console.log('Refrescando selectpicker de parroquias del representante');
+                    $(selectParroquia).selectpicker('refresh');
+                }
+                }
             } else {
                 console.log('No se encontraron parroquias para el municipio', municipioId);
+                // Refrescar selectpicker si aplica
+                if ($(selectParroquia).hasClass('selectpicker')) {
+                    $(selectParroquia).selectpicker('refresh');
+                }
             }
 
             console.log('=== FIN cargarParroquiasRepresentante ===');
@@ -2336,28 +2463,47 @@
             const municipioSelect = document.getElementById(municipioSelectId);
             const localidadSelect = localidadSelectId ? document.getElementById(localidadSelectId) : null;
 
-            // Limpiar los selects
-            municipioSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+            // Limpiar los selects - sin opciones temporales
+            municipioSelect.innerHTML = '';
+            // Refrescar selectpicker si aplica
+            if ($(municipioSelect).hasClass('selectpicker')) {
+                $(municipioSelect).selectpicker('refresh');
+            }
 
             if (localidadSelect) {
-                localidadSelect.innerHTML = '<option value="">Seleccione un municipio primero</option>';
+                localidadSelect.innerHTML = '';
+                // Refrescar selectpicker si aplica
+                if ($(localidadSelect).hasClass('selectpicker')) {
+                    $(localidadSelect).selectpicker('refresh');
+                }
             }
 
             if (!estadoId || estadoId === '') {
                 console.log('Estado ID vacío, limpiando selects');
-                municipioSelect.innerHTML = '<option value="">Seleccione un estado primero</option>';
+                municipioSelect.innerHTML = '';
+                // Refrescar selectpicker si aplica
+                if ($(municipioSelect).hasClass('selectpicker')) {
+                    $(municipioSelect).selectpicker('refresh');
+                }
                 return;
             }
 
             try {
                 console.log('Buscando estado con ID:', estadoId);
+                console.log('Tipo de estadoId:', typeof estadoId);
+                console.log('Estados disponibles:', ubicacionesData.map(e => ({ id: e.id, nombre: e.nombre_estado })));
 
                 // Buscar el estado por ID - usar 'id' (no 'id_estado')
                 const estado = ubicacionesData.find(e => e.id == estadoId);
 
                 if (!estado) {
                     console.error('No se encontró el estado con ID:', estadoId);
-                    municipioSelect.innerHTML = '<option value="">Error: Estado no encontrado</option>';
+                    console.log('IDs disponibles en datos:', ubicacionesData.map(e => e.id));
+                    municipioSelect.innerHTML = '';
+                    // Refrescar selectpicker si aplica
+                    if ($(municipioSelect).hasClass('selectpicker')) {
+                        $(municipioSelect).selectpicker('refresh');
+                    }
                     return;
                 }
 
@@ -2379,15 +2525,37 @@
                         options += `<option value="${id}">${nombre}</option>`;
                     });
 
+                    // Limpiar completamente el select antes de agregar nuevas opciones
+                    municipioSelect.innerHTML = '';
+                    
+                    // Agregar las nuevas opciones
                     municipioSelect.innerHTML = options;
+                    
+                    // Refrescar selectpicker manteniendo configuración
+                    if ($(municipioSelect).hasClass('selectpicker')) {
+                        console.log('Refrescando selectpicker para municipio del representante');
+                        $(municipioSelect).selectpicker('refresh');
+                        console.log('Selectpicker refrescado. Options actuales:', municipioSelect.options.length);
+                    } else {
+                        console.log('El select no tiene la clase selectpicker');
+                    }
+                    
                     console.log('Municipios cargados correctamente en', municipioSelectId);
                 } else {
                     console.warn('No se encontraron municipios para el estado:', estado.nombre_estado);
-                    municipioSelect.innerHTML = '<option value="">No hay municipios disponibles</option>';
+                    municipioSelect.innerHTML = '';
+                    // Refrescar selectpicker si aplica
+                    if ($(municipioSelect).hasClass('selectpicker')) {
+                        $(municipioSelect).selectpicker('refresh');
+                    }
                 }
             } catch (error) {
                 console.error('Error al cargar municipios:', error);
-                municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
+                municipioSelect.innerHTML = '';
+                // Refrescar selectpicker si aplica
+                if ($(municipioSelect).hasClass('selectpicker')) {
+                    $(municipioSelect).selectpicker('refresh');
+                }
             }
         }
 
@@ -2397,10 +2565,18 @@
             console.log('Localidad Select ID:', localidadSelectId);
 
             const localidadSelect = document.getElementById(localidadSelectId);
-            localidadSelect.innerHTML = '<option value="">Cargando localidades...</option>';
+            localidadSelect.innerHTML = '';
+            // Refrescar selectpicker si aplica
+            if ($(localidadSelect).hasClass('selectpicker')) {
+                $(localidadSelect).selectpicker('refresh');
+            }
 
             if (!municipioId) {
-                localidadSelect.innerHTML = '<option value="">Seleccione un municipio primero</option>';
+                localidadSelect.innerHTML = '';
+                // Refrescar selectpicker si aplica
+                if ($(localidadSelect).hasClass('selectpicker')) {
+                    $(localidadSelect).selectpicker('refresh');
+                }
                 return;
             }
 
@@ -2445,15 +2621,33 @@
                         options += `<option value="${id}">${nombre}</option>`;
                     });
 
+                    // Limpiar completamente el select antes de agregar nuevas opciones
+                    localidadSelect.innerHTML = '';
+                    
+                    // Agregar las nuevas opciones
                     localidadSelect.innerHTML = options;
+                    
+                    // Refrescar selectpicker manteniendo configuración
+                    if ($(localidadSelect).hasClass('selectpicker')) {
+                        $(localidadSelect).selectpicker('refresh');
+                    }
+                    
                     console.log('Localidades cargadas correctamente en', localidadSelectId);
                 } else {
                     console.warn('No se encontraron localidades para el municipio ID:', municipioId);
-                    localidadSelect.innerHTML = '<option value="">No hay localidades disponibles</option>';
+                    localidadSelect.innerHTML = '';
+                    // Refrescar selectpicker si aplica
+                    if ($(localidadSelect).hasClass('selectpicker')) {
+                        $(localidadSelect).selectpicker('refresh');
+                    }
                 }
             } catch (error) {
                 console.error('Error al cargar localidades:', error);
-                localidadSelect.innerHTML = '<option value="">Error al cargar localidades</option>';
+                localidadSelect.innerHTML = '';
+                // Refrescar selectpicker si aplica
+                if ($(localidadSelect).hasClass('selectpicker')) {
+                    $(localidadSelect).selectpicker('refresh');
+                }
             }
         }
 
@@ -2510,7 +2704,7 @@
                 console.log('=== CAMBIO DE ESTADO (representante) ===');
                 console.log('Estado seleccionado:', estadoId);
 
-                cargarMunicipios(estadoId, 'idMunicipio-representante', 'idparroquia-representante');
+                window.cargarMunicipiosRepresentante(estadoId);
             });
 
             document.getElementById('idMunicipio-representante').addEventListener('change', function() {
@@ -2518,7 +2712,7 @@
                 console.log('=== CAMBIO DE MUNICIPIO (representante) ===');
                 console.log('Municipio seleccionado:', municipioId);
 
-                cargarLocalidades(municipioId, 'idparroquia-representante');
+                window.cargarParroquiasRepresentante(municipioId);
             });
 
             // Funciones globales para compatibilidad
