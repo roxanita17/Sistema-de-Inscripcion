@@ -786,7 +786,7 @@ public function mostrarFormularioEditar($id)
         'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia'),
 
         // Teléfono (se almacena completo en Persona.telefono)
-        'telefono_personas' => $request->input('telefono-representante') 
+        'telefono' => $request->input('telefono-representante') 
                             ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
                             : ($request->input('telefono-madre') 
                                 ? preg_replace('/^0+/', '', $request->input('telefono-madre'))
@@ -813,7 +813,7 @@ public function mostrarFormularioEditar($id)
         // Mapeo de campos de carnet de la patria y banco desde el formulario
         'carnet_patria_afiliado'             => $request->input('carnet-patria-afiliado'),
         'serial_carnet_patria_representante' => $request->input('serial'),
-        'banco_id'                           => $request->input('banco-representante'),
+        'banco_id'                           => $request->input('banco_id'),
         'direccion_representante'            => $request->input('direccion-habitacion'),
 
         // IDs para edición
@@ -1235,7 +1235,7 @@ public function mostrarFormularioEditar($id)
                     
                     // Actualizar solo los campos que no están vacíos en el formulario
                     $camposActualizables = [
-                        'telefono_personas', 'correo_persona', 'direccion_habitacion',
+                        'telefono', 'correo_persona', 'direccion_habitacion',
                         'estado_id', 'municipio_id', 'parroquia_id'
                     ];
                     

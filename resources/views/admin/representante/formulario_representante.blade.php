@@ -1679,7 +1679,7 @@
                                     Parentesco
                                     <span class="required-badge">*</span>
                                 </label>
-                                <select class="form-control-modern" id="parentesco" name="parentesco" required>
+                                <select class="form-control-modern selectpicker" id="parentesco" name="parentesco" data-live-search="true" title="Seleccione el parentesco" required>
                                     <option value="" disabled selected>Seleccione</option>
                                     <option value="Papá">Papá</option>
                                     <option value="Mamá">Mamá</option>
@@ -1832,17 +1832,7 @@
                                 <small id="carnet-patria-afiliado-error" class="text-danger"></small>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="carnet-patria" class="form-label-modern">
-                                    <i class="fas fa-id-card"></i>
-                                    Carnet de la Patria
-                                </label>
-                                <input type="text" class="form-control-modern" id="carnet-patria"
-                                    name="carnet-patria" placeholder="Número de Carnet">
-                                <small id="carnet-patria-error" class="text-danger"></small>
-                            </div>
-                        </div>
+                       
                         <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <label for="codigo-patria" class="form-label-modern">
@@ -1885,18 +1875,15 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="form-group">
-                                <label for="banco" class="form-label-modern">
+                                <label for="banco_id" class="form-label-modern">
                                     <i class="fas fa-university"></i>
                                     Banco
                                 </label>
-                                <select class="form-control-modern" id="banco" name="banco">
+                                <select class="form-control-modern selectpicker" id="banco_id" name="banco_id" data-live-search="true" title="Seleccione un banco">
                                     <option value="">Seleccione...</option>
-                                    <option value="Banco de Venezuela">Banco de Venezuela</option>
-                                    <option value="Banco Mercantil">Banco Mercantil</option>
-                                    <option value="Banco Provincial">Banco Provincial</option>
-                                    <option value="Banesco">Banesco</option>
-                                    <option value="Banco Bicentenario">Banco Bicentenario</option>
-                                    <option value="Otro">Otro</option>
+                                    @foreach ($bancos as $banco)
+                                        <option value="{{ $banco->id }}">{{ $banco->nombre_banco }}</option>
+                                    @endforeach
                                 </select>
                                 <small id="banco-error" class="text-danger"></small>
                             </div>
@@ -2131,6 +2118,16 @@
             // Mostrar modal
             const modal = new bootstrap.Modal(document.getElementById('alertaAusenciaModal'));
             modal.show();
+            
+            // Manejar el foco al cerrar el modal
+            const modalElement = document.getElementById('alertaAusenciaModal');
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                // Restaurar foco al elemento que activó el modal
+                const triggerElement = document.activeElement;
+                if (triggerElement && triggerElement !== document.body) {
+                    triggerElement.focus();
+                }
+            });
             
             // Manejar confirmación
             document.getElementById('btnConfirmarAusencia').addEventListener('click', function() {
@@ -4048,11 +4045,7 @@
                         destino: 'idEstado-representante',
                         esSelect: true,
                         callback: function() {
-                            const estadoId = document.getElementById('idEstado-representante').value;
-                            if (estadoId) {
-                                cargarMunicipios(estadoId, 'idMunicipio-representante',
-                                    'idparroquia-representante');
-                            }
+                            // Este callback se ejecutará después de copiar todos los valores
                         }
                     },
                     {
@@ -4060,10 +4053,7 @@
                         destino: 'idMunicipio-representante',
                         esSelect: true,
                         callback: function() {
-                            const municipioId = document.getElementById('idMunicipio-representante').value;
-                            if (municipioId) {
-                                cargarLocalidades(municipioId, 'idparroquia-representante');
-                            }
+                            // Este callback se ejecutará después de copiar todos los valores
                         }
                     },
                     {
@@ -4078,6 +4068,15 @@
                     {
                         origen: `telefono${prefijo}`,
                         destino: 'telefono-representante'
+                    },
+                    {
+                        origen: `prefijo_dos${esMadre ? '' : '_padre'}`,
+                        destino: 'prefijo_dos-representante',
+                        esSelect: true
+                    },
+                    {
+                        origen: `telefono_dos${esMadre ? '' : '_padre'}`,
+                        destino: 'telefono_dos-representante'
                     },
                     {
                         origen: `email${prefijo}`,
@@ -4172,12 +4171,23 @@
                 toggleCamposRepresentante(true);
 
                 // Manejar la convivencia
-                const convive = document.querySelector(`input[name="convive${prefijo}"]:checked`);
+                const conviveNombreCampo = esMadre ? 'convive' : 'convive-padre';
+                console.log('Buscando campo de convivencia:', conviveNombreCampo);
+                const convive = document.querySelector(`input[name="${conviveNombreCampo}"]:checked`);
+                console.log('Campo de convivencia encontrado:', convive ? `${convive.value} (${convive.checked})` : 'No encontrado');
+                
                 if (convive) {
+                    // Convertir el valor: 1 -> "si", 0 -> "no"
+                    const valorConvivencia = convive.value === '1' ? 'si' : 'no';
+                    console.log('Valor de convivencia convertido:', convive.value, '->', valorConvivencia);
+                    
                     const conviveRepresentante = document.querySelector(
-                        `input[name="convive-representante"][value="${convive.value}"]`);
+                        `input[name="convive-representante"][value="${valorConvivencia}"]`);
+                    console.log('Campo de convivencia del representante:', conviveRepresentante ? `encontrado con valor ${valorConvivencia}` : 'no encontrado');
+                    
                     if (conviveRepresentante) {
                         conviveRepresentante.checked = true;
+                        console.log('Convivencia del representante marcada como:', valorConvivencia);
                         // Disparar evento change para actualizar la interfaz
                         const event = new Event('change');
                         conviveRepresentante.dispatchEvent(event);
@@ -4217,6 +4227,57 @@
                 if (typeof $.fn.select2 === 'function') {
                     $('select').select2();
                 }
+
+                // Refrescar todos los selectpickers para asegurar que se actualicen los valores
+                $('.selectpicker').each(function() {
+                    const $this = $(this);
+                    if ($this.data('selectpicker')) {
+                        $this.selectpicker('refresh');
+                    }
+                });
+
+                // Cargar municipios y localidades en el orden correcto después de copiar los valores
+                setTimeout(() => {
+                    const estadoId = document.getElementById('idEstado-representante').value;
+                    const municipioId = document.getElementById('idMunicipio-representante').value;
+                    const parroquiaId = document.getElementById('idparroquia-representante').value;
+                    
+                    console.log('Cargando ubicación después de copiar:', { estadoId, municipioId, parroquiaId });
+                    
+                    if (estadoId) {
+                        // Primero cargar municipios
+                        cargarMunicipios(estadoId, 'idMunicipio-representante', 'idparroquia-representante');
+                        
+                        // Seleccionar el municipio después de cargar las opciones
+                        setTimeout(() => {
+                            if (municipioId) {
+                                const municipioSelect = document.getElementById('idMunicipio-representante');
+                                if (municipioSelect) {
+                                    municipioSelect.value = municipioId;
+                                    $(municipioSelect).selectpicker('refresh');
+                                    console.log('Municipio seleccionado:', municipioId);
+                                    
+                                    // Cargar localidades del municipio seleccionado
+                                    setTimeout(() => {
+                                        cargarLocalidades(municipioId, 'idparroquia-representante');
+                                        
+                                        // Si ya hay una parroquia, seleccionarla después de cargar las localidades
+                                        if (parroquiaId) {
+                                            setTimeout(() => {
+                                                const parroquiaSelect = document.getElementById('idparroquia-representante');
+                                                if (parroquiaSelect) {
+                                                    parroquiaSelect.value = parroquiaId;
+                                                    $(parroquiaSelect).selectpicker('refresh');
+                                                    console.log('Parroquia seleccionada:', parroquiaId);
+                                                }
+                                            }, 100);
+                                        }
+                                    }, 200);
+                                }
+                            }
+                        }, 300); // Esperar a que se carguen los municipios
+                    }
+                }, 100);
 
                 console.log(`Datos ${mensajeExito} copiados al representante`);
             }
@@ -4750,6 +4811,12 @@
 
                 // Agregar nuestro manejador
                 formulario.addEventListener('submit', function(e) {
+                    // Habilitar temporalmente todos los campos readOnly para que se envíen
+                    const readonlyFields = formulario.querySelectorAll('[readonly]');
+                    readonlyFields.forEach(field => {
+                        field.readOnly = false;
+                    });
+                    
                     let valido = true;
 
                     // Limpiar errores previos
