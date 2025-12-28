@@ -2193,16 +2193,30 @@
             if (codigoInput) validarSoloNumeros(codigoInput);
             if (serialInput) validarSoloNumeros(serialInput);
             
-            // Inicializar selectpicker para todos los selects con buscador forzado
+            // Inicializar selectpicker con configuración consistente
             $('.selectpicker').selectpicker({
                 liveSearch: true,
-                size: 8,
+                size: 5, // Limitar a 5 opciones visibles
                 noneResultsText: 'No hay resultados para {0}',
                 selectOnTab: false,
                 showSubtext: false,
                 showIcon: true,
-                width: 'auto'
+                width: 'auto',
+                container: 'body' // Evitar problemas de z-index
             });
+            
+            // Configuración especial para el select de banco sin dropupAuto
+            $('#banco_id').selectpicker('destroy').selectpicker({
+                liveSearch: true,
+                size: 5,
+                noneResultsText: 'No hay resultados para {0}',
+                selectOnTab: false,
+                showSubtext: false,
+                showIcon: true,
+                width: 'auto',
+                container: 'body'
+            });
+            
             console.log('Selectpicker global inicializado con liveSearch: true para todos los selects');
             
             // Forzar re-inicialización después de cargar para asegurar consistencia
@@ -2320,12 +2334,14 @@
                 // Inicializar con configuración completa que incluye el buscador
                 $selectElement.selectpicker({
                     liveSearch: true,
-                    size: 8,
+                    size: 5, // Limitar a 5 opciones visibles
                     noneResultsText: 'No hay resultados para {0}',
                     selectOnTab: false,
                     showSubtext: false,
                     showIcon: true,
-                    width: 'auto'
+                    width: 'auto',
+                    dropupAuto: true, // Permitir que se despliegue hacia arriba automáticamente
+                    container: 'body' // Evitar problemas de z-index
                 });
                 
                 console.log('Selectpicker inicializado con buscador para:', $selectElement.attr('id'));
