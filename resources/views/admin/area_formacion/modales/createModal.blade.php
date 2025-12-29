@@ -34,7 +34,47 @@
                                 Este campo es obligatorio.
                             </div>
                         @enderror
-                    </div>              
+                    </div> 
+                    
+                    <!-- Código del area de formación -->
+                    <div class="form-group-modern">
+                        <label for="codigo_area" class="form-label-modern">
+                            <i class="fas fa-book"></i>
+                            Código del area de formación
+                        </label>
+                        <input type="text" 
+                            name="codigo_area" 
+                            id="codigo_area" 
+                            class="form-control-modern" 
+                            placeholder="Ingrese el código del area de formación"
+                            required>
+                        
+                        @error('codigo_area')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
+                    </div>
+                    
+                    <!-- Siglas del area de formación -->
+                    <div class="form-group-modern">
+                        <label for="siglas" class="form-label-modern">
+                            <i class="fas fa-book"></i>
+                            Siglas del area de formación
+                        </label>
+                        <input type="text" 
+                            name="siglas" 
+                            id="siglas" 
+                            class="form-control-modern" 
+                            placeholder="Ingrese las siglas del area de formación"
+                            required>
+                        
+                        @error('siglas')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
+                    </div> 
 
                     {{-- Botones --}}
                     <div class="modal-footer-create">
