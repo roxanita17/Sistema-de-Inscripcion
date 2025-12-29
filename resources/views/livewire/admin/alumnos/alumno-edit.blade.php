@@ -210,7 +210,6 @@
             </div>
 
             {{-- Sección de Discapacidades --}}
-            <div class="card-modern mt-4">
                 <div class="card-header-modern">
                     <div class="header-left">
                         <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
@@ -231,7 +230,6 @@
                                     <tr>
                                         <th style="text-align: center; vertical-align: middle;">#</th>
                                         <th style="text-align: center; vertical-align: middle;">Discapacidad</th>
-                                        <th style="text-align: center; vertical-align: middle;">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -253,12 +251,6 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td style="text-align: center; vertical-align: middle;">
-                                                <span class="badge-estudio"
-                                                    style="background: var(--success-light); color: var(--success);">
-                                                    <i class="fas fa-check-circle"></i> Activo
-                                                </span>
-                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -274,21 +266,19 @@
                     @endif
                 </div>
 
-            </div>
 
         </div>
     @else
         {{-- Modo Edición --}}
         <form wire:submit.prevent="guardar">
-            <div class="card-modern">
                 <div class="card-header-modern">
                     <div class="header-left">
                         <div class="header-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
                             <i class="fas fa-edit"></i>
                         </div>
                         <div>
-                            <h3>Editar Información del Estudiante</h3>
-                            <p>Modifique los datos del estudiante</p>
+                            <h3>Puede editar información del estudiante</h3>
+                            <p>Actualice los datos del estudiante según sea necesario</p>
                         </div>
                     </div>
                 </div>
@@ -327,13 +317,19 @@
                                 <i class="fas fa-id-card"></i> Cédula
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="text" wire:model="numero_documento"
-                                class="form-control-modern @error('numero_documento') is-invalid @enderror"
-                                maxlength="8">
+                            <input type="text" wire:model.live="numero_documento"
+                                class="form-control-modern @error('numero_documento') is-invalid @enderror
+                                text-uppercase"
+                                maxlength="{{ $documento_maxlength }}" pattern="{{ $documento_pattern }}"
+                                inputmode="{{ $documento_inputmode }}" placeholder="{{ $documento_placeholder }}"
+                                oninput="
+                                @if ($tipo_documento_id == 1 || $tipo_documento_id == 3) this.value = this.value.replace(/[^0-9]/g,'')
+                                @elseif($tipo_documento_id == 2)
+                                this.value = this.value.replace(/[^a-zA-Z0-9]/g,'') @endif
+                                ">
                             @error('numero_documento')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -366,9 +362,8 @@
                                 @endforeach
                             </select>
                             @error('genero_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -383,16 +378,15 @@
                             </h5>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label-modern">
+                            <label class="form-label-modern ">
                                 <i class="fas fa-user"></i> Primer Nombre
                                 <span class="required-badge">*</span>
                             </label>
                             <input type="text" wire:model.live="primer_nombre"
-                                class="form-control-modern text-capitalize">
+                                class="form-control-modern text-capitalize @error('primer_nombre') is-invalid @enderror">
                             @error('primer_nombre')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -417,9 +411,8 @@
                             <input type="text" wire:model.live="primer_apellido"
                                 class="form-control-modern text-capitalize @error('primer_apellido') is-invalid @enderror">
                             @error('primer_apellido')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -445,9 +438,8 @@
                                 @endforeach
                             </select>
                             @error('lateralidad_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -465,9 +457,8 @@
                                 @endforeach
                             </select>
                             @error('orden_nacimiento_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -476,19 +467,12 @@
                             <label class="form-label-modern">
                                 <i class="fas fa-users"></i> Etnia Indígena
                             </label>
-                            <select wire:model.live="etnia_indigena_id"
-                                class="form-control-modern @error('etnia_indigena_id') is-invalid @enderror">
+                            <select wire:model="etnia_indigena_id" class="form-control-modern">
                                 <option value="">Seleccione</option>
                                 @foreach ($etnia_indigenas as $etnia)
                                     <option value="{{ $etnia->id }}">{{ $etnia->nombre }}</option>
                                 @endforeach
                             </select>
-                            @error('etnia_indigena_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
-                                </div>
-                            @enderror
                         </div>
                     </div>
 
@@ -505,13 +489,13 @@
                                 <i class="fas fa-ruler-vertical"></i> Altura (m)
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="text" wire:model.live="talla_estudiante"
+                            <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
+                                wire:keyup='formatearEstatura'
                                 class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
                                 placeholder="1.65">
                             @error('talla_estudiante')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -521,9 +505,14 @@
                                 <i class="fas fa-weight"></i> Peso (kg)
                                 <span class="required-badge">*</span>
                             </label>
-                            <input type="number" wire:model="peso_estudiante"
+                            <input type="number" wire:model.live="peso_estudiante"
                                 class="form-control-modern @error('peso_estudiante') is-invalid @enderror"
                                 step="0.1">
+                            @error('peso_estudiante')
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="col-md-2">
@@ -531,16 +520,16 @@
                                 <i class="fas fa-tshirt"></i> Talla Camisa
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="talla_camisa_id" class="form-control-modern @error('talla_camisa_id') is-invalid @enderror">
+                            <select wire:model.live="talla_camisa_id"
+                                class="form-control-modern @error('talla_camisa_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($tallas as $talla)
                                     <option value="{{ $talla->id }}">{{ $talla->nombre }}</option>
                                 @endforeach
                             </select>
                             @error('talla_camisa_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -550,16 +539,16 @@
                                 <i class="fas fa-socks"></i> Talla Pantalón
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="talla_pantalon_id" class="form-control-modern @error('talla_pantalon_id') is-invalid @enderror">
+                            <select wire:model.live="talla_pantalon_id"
+                                class="form-control-modern @error('talla_pantalon_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($tallas as $talla)
                                     <option value="{{ $talla->id }}">{{ $talla->nombre }}</option>
                                 @endforeach
                             </select>
                             @error('talla_pantalon_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -569,16 +558,16 @@
                                 <i class="fas fa-shoe-prints"></i> Talla Zapato
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="talla_zapato" class="form-control-modern @error('talla_zapato') is-invalid @enderror">
+                            <select wire:model.live="talla_zapato"
+                                class="form-control-modern @error('talla_zapato') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach (range(30, 45) as $talla)
                                     <option value="{{ $talla }}">{{ $talla }}</option>
                                 @endforeach
                             </select>
                             @error('talla_zapato')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -597,16 +586,16 @@
                                 <i class="fas fa-map"></i> Estado
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live="estado_id" class="form-control-modern @error('estado_id') is-invalid @enderror">
+                            <select wire:model.live="estado_id"
+                                class="form-control-modern @error('estado_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($estados as $estado)
                                     <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
                                 @endforeach
                             </select>
                             @error('estado_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -616,16 +605,16 @@
                                 <i class="fas fa-map-marked-alt"></i> Municipio
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live="municipio_id" class="form-control-modern @error('municipio_id') is-invalid @enderror">
+                            <select wire:model.live="municipio_id"
+                                class="form-control-modern @error('municipio_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($municipios as $municipio)
                                     <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
                                 @endforeach
                             </select>
                             @error('municipio_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
@@ -635,132 +624,136 @@
                                 <i class="fas fa-map-pin"></i> Localidad
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model="localidad_id" class="form-control-modern @error('localidad_id') is-invalid @enderror">
+                            <select wire:model.live="localidad_id"
+                                class="form-control-modern @error('localidad_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($localidades as $localidad)
                                     <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}</option>
                                 @endforeach
                             </select>
                             @error('localidad_id')
-                                <div class="invalid-feedback-modern" style="display:block">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    {{ $message }}
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
                     </div>
                 </div>
 
-                {{-- Sección de Discapacidades en modo edición --}}
-                <div class="card-modern mt-4">
-                    <div class="card-header-modern">
-                        <div class="header-left">
-                            <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
-                                <i class="fas fa-wheelchair"></i>
-                            </div>
-                            <div>
-                                <h3>Gestionar Discapacidades</h3>
-                                <p>{{ count($discapacidadesAlumno) }} discapacidades registradas</p>
-                            </div>
+            {{-- Sección de Discapacidades en modo edición --}}
+            <div class="card-modern mt-4">
+                <div class="card-header-modern">
+                    <div class="header-left">
+                        <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                            <i class="fas fa-wheelchair"></i>
                         </div>
-                    </div>
-
-                    <div class="card-body-modern" style="padding: 2rem;">
-                        @if (!empty($discapacidadesAlumno))
-                            <div class="table-wrapper">
-                                <table class="table-modern">
-                                    <thead>
-                                        <tr>
-                                            <th style="text-align: center; vertical-align: middle;">#</th>
-                                            <th style="text-align: center; vertical-align: middle;">Discapacidad</th>
-                                            <th style="text-align: center; vertical-align: middle;">Estado</th>
-                                            <th style="text-align: center; vertical-align: middle;">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($discapacidadesAlumno as $index => $disc)
-                                            <tr>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    <span class="number-badge">{{ $index + 1 }}</span>
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    <div
-                                                        style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
-                                                        <div
-                                                            style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; flex-shrink: 0;">
-                                                            <i class="fas fa-wheelchair"></i>
-                                                        </div>
-                                                        <div
-                                                            style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
-                                                            {{ $disc['nombre'] }}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    <span class="badge-estudio"
-                                                        style="background: var(--success-light); color: var(--success);">
-                                                        <i class="fas fa-check-circle"></i> Activo
-                                                    </span>
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    <div style="display: flex; justify-content: center;">
-                                                        <button type="button"
-                                                            wire:click="eliminarDiscapacidad({{ $loop->index }})"
-                                                            class="action-btn btn-delete" title="Eliminar">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
-                                <i class="fas fa-info-circle"
-                                    style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                                <p style="font-size: 1rem; margin: 0;">No hay discapacidades registradas.</p>
-                            </div>
-                        @endif
-
-                        {{-- Agregar discapacidad --}}
-                        <div class="row mt-4">
-                            <div class="col-12 mb-2">
-                                <h6 style="color: var(--gray-700); font-weight: 600;">
-                                    <i class="fas fa-plus-circle"></i> Agregar Nueva Discapacidad
-                                </h6>
-                            </div>
-                            <div class="col-md-8">
-                                <label class="form-label-modern">
-                                    <i class="fas fa-wheelchair"></i> Discapacidad
-                                </label>
-                                <select wire:model.defer="discapacidadSeleccionada"
-                                    class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
-                                    <option value="">Seleccione una discapacidad</option>
-                                    @foreach ($discapacidades as $discapacidad)
-                                        <option value="{{ $discapacidad->id }}">
-                                            {{ $discapacidad->nombre_discapacidad }}</option>
-                                    @endforeach
-                                </select>
-                                @error('discapacidadSeleccionada')
-                                    <div class="invalid-feedback-modern" style="display: block;">
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button type="button" wire:click="agregarDiscapacidad"
-                                    class="btn-primary-modern w-100" style="margin-bottom: 0;">
-                                    <span wire:loading.remove wire:target="agregarDiscapacidad">
-                                        <i class="fas fa-plus"></i> Agregar
-                                    </span>
-                                </button>
-                            </div>
+                        <div>
+                            <h3>Gestionar Discapacidades</h3>
+                            <p>{{ count($discapacidadesAlumno) }} discapacidades registradas</p>
                         </div>
                     </div>
                 </div>
+
+                <div class="card-body-modern" style="padding: 2rem;">
+                    @if (!empty($discapacidadesAlumno))
+                        <div class="table-wrapper">
+                            <table class="table-modern">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;">#</th>
+                                        <th style="text-align: center; vertical-align: middle;">Discapacidad</th>
+                                        <th style="text-align: center; vertical-align: middle;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($discapacidadesAlumno as $index => $disc)
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <span class="number-badge">{{ $index + 1 }}</span>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <div
+                                                    style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                                                    <div
+                                                        style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; flex-shrink: 0;">
+                                                        <i class="fas fa-wheelchair"></i>
+                                                    </div>
+                                                    <div
+                                                        style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
+                                                        {{ $disc['nombre'] }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                           
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <div style="display: flex; justify-content: center;">
+                                                    <button type="button"
+                                                        wire:click="eliminarDiscapacidad({{ $loop->index }})"
+                                                        class="action-btn btn-delete" title="Eliminar">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                            <i class="fas fa-info-circle"
+                                style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p style="font-size: 1rem; margin: 0;">No hay discapacidades registradas.</p>
+                        </div>
+                    @endif
+
+                    {{-- Agregar discapacidad --}}
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <label class="form-label-modern">
+                                <i class="fas fa-wheelchair"></i> Discapacidad
+                            </label>
+                            <select wire:model.defer="discapacidadSeleccionada"
+                                class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
+                                <option value="">Seleccione una discapacidad</option>
+                                @foreach ($discapacidades as $discapacidad)
+                                    <option value="{{ $discapacidad->id }}">{{ $discapacidad->nombre_discapacidad }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('discapacidadSeleccionada')
+                                <div class="invalid-feedback-modern" style="display: block;">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="button" wire:click="agregarDiscapacidad" class="btn-primary-modern w-100"
+                                style="margin-bottom: 0;">
+                                <span wire:loading.remove wire:target="agregarDiscapacidad">
+                                    <i class="fas fa-plus"></i> Agregar
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- Botones --}}
+            <div class="card-body-modern" style="padding: 2rem;">
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="submit" class="btn-primary-modern" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="guardar">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </span>
+                        <span wire:loading wire:target="guardar">
+                            <i class="fas fa-spinner fa-spin"></i> Guardando...
+                        </span>
+                    </button>
+                </div>
+            </div>
+
         </form>
+
     @endif
 </div>

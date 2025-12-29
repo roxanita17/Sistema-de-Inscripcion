@@ -34,8 +34,6 @@
     @endif --}}
 
     <form wire:submit.prevent="save">
-
-
         {{-- Card: Datos del Estudiante --}}
         <div class="card-modern mb-4">
             <div class="card-header-modern">

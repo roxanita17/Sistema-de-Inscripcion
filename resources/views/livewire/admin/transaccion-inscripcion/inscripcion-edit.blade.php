@@ -76,7 +76,7 @@
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
-                <div class="header-icon" style="background: linear-gradient(135deg, var(--info), #0284c7);">
+                <div class="header-icon" >
                     <i class="fas fa-user-graduate"></i>
                 </div>
                 <div>
@@ -126,19 +126,15 @@
 
             @if ($padreSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
-
                     <div class="details-grid">
-
                         {{-- COLUMNA IZQUIERDA --}}
                         <div class="details-section">
-
                             {{-- Identificación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-id-badge"></i>
                                     <h4>Datos de Identificación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">

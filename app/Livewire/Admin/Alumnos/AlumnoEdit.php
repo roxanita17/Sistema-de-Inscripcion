@@ -264,6 +264,22 @@ class AlumnoEdit extends Component
         $this->validateOnly('fecha_nacimiento');
     }
 
+    public function formatearEstatura()
+    {
+        // Quita todo menos números
+        $valor = preg_replace('/\D/', '', $this->talla_estudiante);
+
+        if (strlen($valor) >= 2) {
+            $this->talla_estudiante = substr($valor, 0, -2) . '.' . substr($valor, -2);
+        }
+    }
+
+    public function validarEstatura()
+    {
+        $this->validateOnly('talla_estudiante');
+    }
+
+
     public function mount($alumnoId)
     {
         $this->alumnoId = $alumnoId;
@@ -271,6 +287,7 @@ class AlumnoEdit extends Component
         $this->cargarAlumno();
         $this->cargarDiscapacidades();
     }
+
 
     private function cargarDatosIniciales()
     {
