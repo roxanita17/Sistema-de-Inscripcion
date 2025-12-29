@@ -76,7 +76,7 @@
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
-                <div class="header-icon" >
+                <div class="header-icon">
                     <i class="fas fa-user-graduate"></i>
                 </div>
                 <div>
@@ -121,7 +121,20 @@
                             </option>
                         @endforeach
                     </select>
+                    <div class="col-md-2 text-end">
+                        @if ($padreId)
+                            <a href="{{ route('representante.editar', [
+                                'id' => $representanteLegalId,
+                                'from' => 'inscripcion_edit',
+                                'inscripcion_id' => $inscripcionId,
+                            ]) }}"
+                                class="btn btn-warning btn-sm">
+                                Editar Representante
+                            </a>
+                        @endif
+                    </div>
                 </div>
+
             </div>
 
             @if ($padreSeleccionado)
@@ -688,7 +701,7 @@
                                 </span>
                             </div>
 
-                            
+
 
                         </div>
                     </div>
@@ -948,6 +961,7 @@
                 <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="btn-cancel-modern">
                     <i class="fas fa-arrow-left"></i> Cancelar
                 </a>
+
                 <button type="button" wire:click="actualizar" class="btn-primary-modern"
                     wire:loading.attr="disabled">
                     <span wire:loading.remove wire:target="actualizar">

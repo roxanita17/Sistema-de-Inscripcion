@@ -344,6 +344,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ================== HISTÓRICO ==================
     Route::get('historico', [HistoricoController::class, 'index'])
         ->name('historico.index');
+
 });
 
 
