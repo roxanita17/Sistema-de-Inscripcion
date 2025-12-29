@@ -223,7 +223,7 @@ class InscripcionEdit extends Component
             $this->expresion_literaria_id = $inscripcion->nuevoIngreso->expresion_literaria_id;
             $this->anio_egreso = $inscripcion->nuevoIngreso->anio_egreso;
         }
-
+ 
         // Cargar datos seleccionados
         $this->alumnoSeleccionado = $inscripcion->alumno;
         $this->padreSeleccionado = $inscripcion->padre;
