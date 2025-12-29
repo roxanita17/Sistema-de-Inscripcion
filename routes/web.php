@@ -320,9 +320,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         )->name('inscripcion_prosecucion.index');
 
         // ========= INSCRIPCIÓN PROSECUCIÓN (FORMULARIO) =========
-        Route::get('inscripcion-prosecucion/create', function () {
-            return view('admin.transacciones.inscripcion.createProsecucion');
-        })->name('inscripcion-prosecucion.createProsecucion');
+        Route::get('inscripcion_prosecucion/create', function () {
+            return view('admin.transacciones.inscripcion_prosecucion.create');
+        })->name('inscripcion_prosecucion.create');
 
         // ========= AJAX =========
         Route::get(

@@ -263,7 +263,7 @@ class Inscripcion extends Component
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
-    $this->evaluarDocumentosVisual();
+        $this->evaluarDocumentosVisual();
     }
 
     public function updatedDocumentos()

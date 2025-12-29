@@ -7,8 +7,10 @@ use App\Models\Persona;
 use App\Models\Genero;
 use App\Models\TipoDocumento;
 use App\Models\Alumno;
+use App\Models\ExpresionLiteraria;
 use App\Models\InscripcionProsecucion;
 use App\Models\Grado;
+use App\Models\InstitucionProcedencia;
 use App\Models\Seccion;
 use Illuminate\Http\Request;
 
@@ -93,7 +95,17 @@ class InscripcionProsecucionController extends Controller
         return response()->json($secciones);
     }
 
+    public function create()
+    {
+        $this->verificarAnioEscolar();
+        $personas = Persona::all();
+        $generos = Genero::all();
+        $tipoDocumentos = TipoDocumento::all();
+        $alumnos = Alumno::all();
+        $grados = Grado::all();
+        $expresion_literaria = ExpresionLiteraria::all();
+        $institucion_procedencia = InstitucionProcedencia::all();
 
-
-    // Add other methods as needed (create, store, edit, update, destroy)
+        return view('admin.transacciones.inscripcion_prosecucion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
+    }
 }

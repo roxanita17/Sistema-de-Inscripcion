@@ -294,9 +294,12 @@ class DocenteAreaGrado extends Component
 
         $this->secciones = Seccion::where('status', true)
             ->where('grado_id', $this->gradoId)
+            ->where('cantidad_actual', '>', 0) // 👈 LA CLAVE
             ->orderBy('nombre', 'asc')
             ->get();
     }
+
+
 
     /**
      * REGISTRA UNA NUEVA ASIGNACIÓN

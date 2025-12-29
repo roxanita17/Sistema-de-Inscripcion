@@ -44,13 +44,15 @@ class Inscripcion extends Model
         );
     }
 
+    // App\Models\Inscripcion.php
     public function prosecucion()
     {
         return $this->hasOne(
-            InscripcionProsecucion::class,
+            \App\Models\InscripcionProsecucion::class,
             'inscripcion_id'
         );
     }
+
 
     public function getTipoInscripcionAttribute()
     {
