@@ -496,18 +496,9 @@ Ref: "docente_area_grado"."id" < "historico"."docente_area_grado_id"
 
 Ref: "prefijo_telefono"."id" < "telefono_persona"."prefijo_id"
 
-
-
-
-
-
-Ref: "anio_escolar"."id" < "inscripcion"."anio_escolar_id"
+Ref: "anio_escolar"."id" < "inscripcion"."anio_escolar_id" 
 
 Ref: "anio_escolar"."id" < "docente_area_grado"."anio_escolar_id"
-
-
-
-
 
 Ref: "secciones"."id" < "inscripcion"."seccion_id"
 

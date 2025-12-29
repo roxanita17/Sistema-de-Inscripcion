@@ -394,4 +394,4 @@
 
 </style>
     
-@endpush --}}
+@endpush 

@@ -72,25 +72,24 @@
                         Buscar Estudiante
                         <span class="required-badge">*</span>
                     </label>
+
                     <select id="alumno_select"
                         class="form-control-modern selectpicker @error('alumnoId') is-invalid @enderror"
                         data-live-search="true" data-size="8" data-width="100%">
                         <option value="">Seleccione un estudiante</option>
+
                         @foreach ($alumnos as $alumno)
-                            @php
-                                $anioActual = \App\Models\AnioEscolar::where('status', 'Activo')->first();
-                                $inscripcionAnterior = $alumno->ultimaInscripcionAntesDe($anioActual->id);
-                                $gradoAnterior = $inscripcionAnterior?->grado?->numero_grado;
-                            @endphp
                             <option value="{{ $alumno->id }}"
-                                data-subtext="{{ $alumno->persona->tipoDocumento->nombre ?? '' }}-{{ $alumno->persona->numero_documento }} {{ $gradoAnterior ? ' | ' . $gradoAnterior . '° Grado' : '' }}">
-                                {{ $alumno->persona->primer_nombre }} {{ $alumno->persona->primer_apellido }}
+                                data-subtext="{{ $alumno->persona->tipoDocumento->nombre ?? '' }}-{{ $alumno->persona->numero_documento }}">
+                                {{ $alumno->persona->primer_nombre }}
+                                {{ $alumno->persona->primer_apellido }}
                             </option>
                         @endforeach
                     </select>
+
                     @error('alumnoId')
-                        <div class="invalid-feedback-modern" style="display: block;">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        <div class="invalid-feedback-modern" style="display:block">
+                            {{ $message }}
                         </div>
                     @enderror
                 </div>
@@ -98,12 +97,26 @@
 
             {{-- Información del alumno seleccionado --}}
             @if ($alumnoSeleccionado && $gradoAnteriorId)
+                <div class="card-modern mb-4 mt-4">
+                    <div class="card-header-modern">
+                        <div class="header-left">
+                            <div class="header-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div>
+                                <h3>Datos del Estudiante</h3>
+                                <p>Información personal del estudiante inscrito</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body-modern" style="padding: 2rem;">
+                        <livewire:admin.alumnos.alumno-edit :alumnoId="$alumnoId" />
+                    </div>
+                </div>
                 <div class="alert alert-info mt-3">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-info-circle fa-2x"></i>
                         <div>
-                            <strong>Estudiante:</strong> {{ $alumnoSeleccionado->persona->primer_nombre }}
-                            {{ $alumnoSeleccionado->persona->primer_apellido }}<br>
                             <strong>Grado cursado:</strong>
                             {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }}° Grado
                         </div>
@@ -427,31 +440,30 @@
     @push('js')
         <script>
             document.addEventListener('livewire:init', () => {
-                // Inicializar selectpicker
-                $('.selectpicker').selectpicker();
 
-                // Manejar selección de alumno
-                $('#alumno_select').on('changed.bs.select', function() {
-                    let alumnoId = $(this).val();
+                const select = $('#alumno_select');
+
+                // 1️⃣ Inicializar UNA SOLA VEZ
+                select.selectpicker();
+
+                // 2️⃣ Listener ÚNICO
+                select.on('changed.bs.select', function() {
+                    const alumnoId = $(this).val();
                     Livewire.dispatch('seleccionarAlumno', {
-                        alumnoId: alumnoId
+                        alumnoId
                     });
                 });
-            });
 
-            // Refrescar selectpickers cuando Livewire actualiza
-            document.addEventListener('livewire:updated', function() {
-                $('.selectpicker').selectpicker('refresh');
-            });
-
-            // Auto-cerrar alertas
-            setTimeout(function() {
-                $('.alert-modern').fadeOut('slow', function() {
-                    $(this).remove();
+                // 3️⃣ Refresh SOLO cuando Livewire lo pide
+                Livewire.on('refreshSelectAlumno', () => {
+                    select.selectpicker('destroy');
+                    select.selectpicker();
                 });
-            }, 5000);
+
+            });
         </script>
     @endpush
+
 
     <style>
         /* Secciones de materias */
