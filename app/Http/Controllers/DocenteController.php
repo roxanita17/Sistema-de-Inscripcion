@@ -105,8 +105,9 @@ class DocenteController extends Controller
             'correo' => 'nullable|email|max:100',
             'direccion' => 'nullable|string|max:255',
             'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
+            'prefijo_dos_id' => 'nullable|exists:prefijo_telefonos,id',
             'primer_telefono' => 'nullable|string|max:20',
-            'segundo_telefono' => 'nullable|string|max:20',
+            'telefono_dos' => 'nullable|string|max:20',
             'codigo' => 'nullable|numeric',
             'dependencia' => 'nullable|string|max:100',
         ], [
@@ -141,6 +142,8 @@ class DocenteController extends Controller
                 'genero_id' => $request->genero,
                 'localidad_id' => null,
                 'prefijo_id' => $request->prefijo_id,
+                'prefijo_dos_id' => $request->prefijo_dos_id,
+                'telefono_dos' => $request->telefono_dos,
             ]);
 
             // 2. GUARDAR DOCENTE
@@ -206,6 +209,7 @@ class DocenteController extends Controller
             'direccion' => 'nullable|string|max:255',
             'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
             'primer_telefono' => 'nullable|string|max:20',
+            'telefono_dos' => 'nullable|string|max:20',
             'codigo' => 'nullable|numeric',
             'dependencia' => 'nullable|string|max:100',
         ], [
@@ -238,6 +242,8 @@ class DocenteController extends Controller
                 'tipo_documento_id' => $request->tipo_documento_id,
                 'genero_id' => $request->genero,
                 'prefijo_id' => $request->prefijo_id,
+                'prefijo_dos_id' => $request->prefijo_dos_id,
+                'telefono_dos' => $request->telefono_dos,
             ]);
 
             // 2. ACTUALIZAR DOCENTE
@@ -270,6 +276,7 @@ class DocenteController extends Controller
             'persona.tipoDocumento',
             'persona.genero',
             'persona.prefijoTelefono',
+            'persona.prefijoDos',          
             'detalleEstudios' => function ($q) {
                 $q->where('status', true);
             },
@@ -353,6 +360,7 @@ class DocenteController extends Controller
                 $docente->email = $docente->persona->email ?? 'N/A';
                 $docente->direccion = $docente->persona->direccion ?? 'N/A';
                 $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
+                $docente->telefono_dos = $docente->persona->telefono_dos ?? 'N/A';
             }
 
             // Para depuración
@@ -390,6 +398,7 @@ class DocenteController extends Controller
                         $docente->email = $docente->persona->email ?? 'N/A';
                         $docente->direccion = $docente->persona->direccion ?? 'N/A';
                         $docente->telefono = $docente->primer_telefono ?? $docente->persona->telefono ?? 'N/A';
+                        $docente->telefono_dos = $docente->persona->telefono_dos ?? 'N/A';
                     }
                     return $docente;
                 })
