@@ -228,16 +228,16 @@ class InscripcionController extends Controller
         $inscripcion = Inscripcion::with([
             'alumno.persona',
             'alumno.ordenNacimiento',
-            'alumno.discapacidades',
-            'alumno.etniaIndigena',
+            //'alumno.discapacidades',
+            //'alumno.etniaIndigena',
             'alumno.lateralidad',
             'grado',
             'padre.persona',
             'madre.persona',
             'representanteLegal.representante.persona',
-            'institucionProcedencia',
-            'expresionLiteraria',
-            'seccionAsignada'
+            //'institucionProcedencia',
+            //'expresionLiteraria',
+            //'seccionAsignada'
         ])->findOrFail($id);
 
         $datosCompletos = $inscripcion->obtenerDatosCompletos();

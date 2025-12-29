@@ -247,8 +247,12 @@
 
                                         {{-- REPRESENTANTE LEGAL --}}
                                         <td class="text-center">
-                                            {{ $datos->representanteLegal->representante->persona->primer_nombre }}
-                                            {{ $datos->representanteLegal->representante->persona->primer_apellido }}
+                                            @if($datos->representanteLegal && $datos->representanteLegal->representante)
+                                                {{ $datos->representanteLegal->representante->persona->primer_nombre }}
+                                                {{ $datos->representanteLegal->representante->persona->primer_apellido }}
+                                            @else
+                                                No especificado
+                                            @endif
                                         </td>
 
                                         {{-- PARENTESCO --}}

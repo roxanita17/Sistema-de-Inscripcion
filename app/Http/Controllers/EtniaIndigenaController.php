@@ -23,16 +23,36 @@ class EtniaIndigenaController extends Controller
      */
     public function index()
     {
-        // Obtener todas las etnias indígenas ordenadas alfabéticamente
-        $etniaIndigena = EtniaIndigena::orderBy('nombre', 'asc')
-            ->where('status', true)
-            ->paginate(10);
+        $buscar = request('buscar');
+        
+        // Construir la consulta base
+        $query = EtniaIndigena::query();
+        
+        // Aplicar búsqueda
+        if (!empty($buscar)) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('nombre', 'LIKE', "%{$buscar}%")
+                  ->orWhere('id', 'LIKE', "%{$buscar}%");
+            });
+        }
+        
+        // Filtrar solo activos
+        $query->where('status', true);
+        
+        // Ordenar y paginar
+        $etniaIndigena = $query->orderBy('nombre', 'asc')
+                             ->paginate(10)
+                             ->appends(request()->query());
 
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Retornar la vista principal con los datos obtenidos
-        return view("admin.etnia_indigena.index", compact("etniaIndigena", "anioEscolarActivo"));
+        return view("admin.etnia_indigena.index", compact(
+            "etniaIndigena", 
+            "anioEscolarActivo",
+            'buscar'
+        ));
     }
 
     /**

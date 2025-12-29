@@ -80,6 +80,7 @@ class Representante extends Model
             'personas.segundo_apellido',
             'personas.numero_documento',
             'personas.telefono',
+            //'personas.telefono_dos',
             'personas.email',
             'personas.status',
             'personas.tipo_documento_id',

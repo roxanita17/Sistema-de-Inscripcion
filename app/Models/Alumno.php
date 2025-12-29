@@ -239,11 +239,9 @@ class Alumno extends Model
 
                 'etnia_indigenas.nombre as etnia',
                 'lateralidads.lateralidad',
-                'orden_nacimientos.orden_nacimiento',
-                'discapacidads.nombre_discapacidad',
+                'orden_nacimientos.orden_nacimiento'
             )
             ->join("personas", "personas.id", "=", "alumnos.persona_id")
-            ->leftJoin("discapacidads", "discapacidads.id", "=", "alumnos.discapacidad_id")
             ->leftJoin("orden_nacimientos", "orden_nacimientos.id", "=", "alumnos.orden_nacimiento_id")
             ->leftJoin("etnia_indigenas", "etnia_indigenas.id", "=", "alumnos.etnia_indigena_id")
             ->leftJoin("lateralidads", "lateralidads.id", "=", "alumnos.lateralidad_id")

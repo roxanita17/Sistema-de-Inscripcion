@@ -294,19 +294,19 @@
             <tbody>
                 @forelse($alumnos as $index => $alumno)
                     <tr>
-                        <td>{{ $alumno->tipo_documento ?? 'N/A' }}-{{ $alumno->numero_documento ?? 'N/A' }}</td>
-                        <td>{{ ($alumno->primer_apellido ?? '') . ' ' . ($alumno->segundo_apellido ?? '') }}</td>
-                        <td>{{ ($alumno->primer_nombre ?? '') . ' ' . ($alumno->segundo_nombre ?? '') . ' ' . ($alumno->tercer_nombre ?? '') }}</td>
-                        <td class="text-center">{{ $alumno->fecha_nacimiento ? date('d/m/Y', strtotime($alumno->fecha_nacimiento)) : 'N/A' }}</td>
+                        <td>{{ $alumno['tipo_documento'] ? $alumno['tipo_documento'] . '-' : '' }}{{ $alumno['numero_documento'] ?? 'N/A' }}</td>
+                        <td>{{ trim($alumno['primer_apellido'] . ' ' . $alumno['segundo_apellido']) }}</td>
+                        <td>{{ trim($alumno['primer_nombre'] . ' ' . $alumno['segundo_nombre'] . ' ' . $alumno['tercer_nombre']) }}</td>
+                        <td class="text-center">{{ $alumno['fecha_nacimiento'] ? date('d/m/Y', strtotime($alumno['fecha_nacimiento'])) : 'N/A' }}</td>
                         <td class="text-center">
-                            @if($alumno->fecha_nacimiento)
-                                {{ \Carbon\Carbon::parse($alumno->fecha_nacimiento)->age }} años
+                            @if($alumno['fecha_nacimiento'])
+                                {{ $alumno['edad'] }} años
                             @else
                                 N/A
                             @endif
                         </td>
-                        <td class="text-center">{{ $alumno->nombre_genero ?? 'N/A' }}</td>
-                        <td class="text-center">{{ $alumno->nombre_discapacidad ?? 'No' }}</td>
+                        <td class="text-center">{{ $alumno['genero'] }}</td>
+                        <td class="text-center">{{ $alumno['discapacidad'] }}</td>
                     </tr>
                 @empty
                     <tr>

@@ -24,11 +24,14 @@ class Persona extends Model
         'fecha_nacimiento',
         'direccion',
         'email', 
+        'telefono',
+        'telefono_dos',
         'status',
         'tipo_documento_id',
         'genero_id',
         'localidad_id',
         'prefijo_id',
+        'prefijo_dos_id',
     ];
 
     protected $capitalizar = [
@@ -71,6 +74,22 @@ class Persona extends Model
     public function prefijoTelefono()
     {
         return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
+    }
+
+    /**
+     * Alias para prefijoTelefono para mantener compatibilidad
+     */
+    public function prefijo()
+    {
+        return $this->prefijoTelefono();
+    }
+
+    /**
+     * Relación con el segundo prefijo de teléfono
+     */
+    public function prefijoDos()
+    {
+        return $this->belongsTo(PrefijoTelefono::class, 'prefijo_dos_id', 'id');
     }
 
 

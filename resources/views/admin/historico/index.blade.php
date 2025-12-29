@@ -26,9 +26,6 @@
 
 @section('content')
     <div class="main-container">
-
-
-
         {{-- TABLA DEL HISTÓRICO --}}
         <div class="card-modern">
             <div class="card-header-modern">
@@ -54,9 +51,7 @@
                             Filtros
                         </button>
                     </div>
-
-
-
+                    
                 </div>
             </div>
 
