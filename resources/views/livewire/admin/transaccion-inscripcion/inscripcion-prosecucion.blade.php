@@ -97,19 +97,66 @@
             </div>
 
             {{-- Información del alumno seleccionado --}}
-            @if ($alumnoSeleccionado && $gradoAnteriorId)
-                <div class="alert alert-info mt-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fas fa-info-circle fa-2x"></i>
-                        <div>
-                            <strong>Estudiante:</strong> {{ $alumnoSeleccionado->persona->primer_nombre }}
-                            {{ $alumnoSeleccionado->persona->primer_apellido }}<br>
-                            <strong>Grado cursado:</strong>
-                            {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }}° Grado
+            {{-- FICHA DEL ESTUDIANTE --}}
+            {{-- <div class="card-body-modern" style="padding: 2rem;">
+                <livewire:admin.alumnos.alumno-edit :alumnoId="$alumnoId" />
+            </div> --}}
+            @if ($alumnoSeleccionado)
+                <div class="card-modern mt-4">
+                    <div class="card-header-modern">
+                        <div class="header-left">
+                            <div class="header-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <div>
+                                <h3>Datos del Estudiante</h3>
+                                <p>Información general y grado cursado</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body-modern">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Cédula:</strong>
+                                    {{ $alumnoSeleccionado->persona->tipoDocumento->nombre ?? '' }}
+                                    - {{ $alumnoSeleccionado->persona->numero_documento }}
+                                </p>
+
+                                <p><strong>Nombre Completo:</strong>
+                                    {{ $alumnoSeleccionado->persona->primer_nombre }}
+                                    {{ $alumnoSeleccionado->persona->segundo_nombre }}
+                                    {{ $alumnoSeleccionado->persona->primer_apellido }}
+                                    {{ $alumnoSeleccionado->persona->segundo_apellido }}
+                                </p>
+                            </div>
+
+                            <div class="col-md-6">
+                                <p><strong>Fecha de Nacimiento:</strong>
+                                    {{ \Carbon\Carbon::parse($alumnoSeleccionado->persona->fecha_nacimiento)->format('d/m/Y') }}
+                                </p>
+
+                                <p><strong>Género:</strong>
+                                    {{ $alumnoSeleccionado->persona->genero->genero ?? 'N/A' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr>
+                        {{-- GRADO ANTERIOR --}}
+                        <div class="alert alert-primary mt-3">
+                            <i class="fas fa-graduation-cap"></i>
+                            <strong>Grado cursado anteriormente:</strong>
+                            @if ($gradoAnteriorId)
+                                {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }}° Grado
+                            @else
+                                <span class="text-muted">No registrado</span>
+                            @endif
                         </div>
                     </div>
                 </div>
             @endif
+
         </div>
     </div>
 

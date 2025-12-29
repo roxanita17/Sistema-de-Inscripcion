@@ -159,12 +159,20 @@
             </div>
 
             <div class="card-body-modern" style="padding: 2rem;">
-                <form id="representante-form" action="{{ route('representante.update', $representante->id) }}"
-                    method="POST" class="form-modern needs-validation" novalidate onsubmit="return validateForm()">
-                    <input type="hidden" name="from" value="{{ request('from') }}">
-                    <input type="hidden" name="inscripcion_id" value="{{ request('inscripcion_id') }}">
+                <form id="representante-form"
+                    action="{{ route('representante.update', $representante->id) }}"
+                    method="POST"
+                    class="form-modern needs-validation"
+                    novalidate>
+
                     @csrf
                     @method('PUT')
+
+                    @if ($from === 'inscripcion_edit')
+                        <input type="hidden" name="from" value="{{ $from }}">
+                        <input type="hidden" name="inscripcion_id" value="{{ $inscripcion_id }}">
+                    @endif
+
 
                     <input type="hidden" name="id" value="{{ $representante->id }}">
                     <input type="hidden" name="es_legal" id="es_legal"
@@ -469,8 +477,7 @@
                                                 name="correo-representante" maxlength="254"
                                                 title="No olvide incluir el símbolo @ en la dirección de correo"
                                                 placeholder="ejemplo@correo.com"
-                                                value="{{ old('correo-representante', $representante->persona->email ?? '') }}"
-                                                required>
+                                                value="{{ old('correo-representante', $representante->persona->email ?? '') }}">
                                         </div>
                                         <small id="correo-representante-error" class="text-danger"></small>
                                     </div>
@@ -738,38 +745,6 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
-        // Función para validar el formulario antes de enviar
-        function validateForm(event) {
-            const form = document.getElementById('representante-form');
-
-            // Validar todos los campos requeridos
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-                form.classList.add('was-validated');
-
-                // Desplazarse al primer campo con error
-                const firstInvalid = form.querySelector(':invalid');
-                if (firstInvalid) {
-                    firstInvalid.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                    firstInvalid.focus();
-                }
-
-                return false;
-            }
-
-            // Mostrar loading en el botón de guardar
-            const submitBtn = form.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Guardando...';
-
-            // Forzar el envío del formulario
-            return true;
-        }
-
         // Función para inicializar los selects dependientes
         function inicializarSelectsDependientes() {
             const $estadoSelect = $('#estado_id');
@@ -854,56 +829,60 @@
 
         // Función para mostrar/ocultar campo de organización
         function toggleCampoOrganizacion() {
-            const valorSeleccionado = $('input[name="pertenece_organizacion"]:checked').val();
-            console.log('toggleCampoOrganizacion - Valor seleccionado:', valorSeleccionado);
+            const pertenece = $('input[name="pertenece_organizacion"]:checked').val();
 
-            if (valorSeleccionado === '1') {
+            if (pertenece === '1') {
                 $('#campo_organizacion').show();
-                $('#nombre_organizacion').prop('required', true);
-                console.log('Mostrando campo de organización');
+                $('#cual_organizacion_representante').prop('required', true);
             } else {
                 $('#campo_organizacion').hide();
-                $('#nombre_organizacion').prop('required', false);
-                console.log('Ocultando campo de organización');
+                $('#cual_organizacion_representante')
+                    .prop('required', false)
+                    .val('');
             }
         }
+
 
         // Función para mostrar/ocultar campos según el tipo de representante
         function toggleRepresentativeFields() {
             const isLegal = $('input[name="tipo_representante"]:checked').val() === 'legal';
 
-            // Mostrar/ocultar secciones completas
-            $('#seccion-conectividad').toggle(isLegal);
-            $('#seccion-identificacion-familiar').toggle(isLegal);
+            const legalFields = [
+                '#correo-representante',
+                '#banco_id',
+                '#parentesco'
+            ];
 
-            // Si no es legal, limpiar los campos requeridos que se están ocultando
-            if (!isLegal) {
-                // Limpiar campos de conectividad
-                $('#correo-representante').val('').removeAttr('required');
-                $('input[name="pertenece_organizacion"]').prop('checked', false);
-                $('#cual_organizacion_representante').val('').removeAttr('required');
+            if (isLegal) {
+                $('#seccion-conectividad').show();
+                $('#seccion-identificacion-familiar').show();
 
-                // Limpiar campos de identificación familiar
-                $('#parentesco').val('').removeAttr('required');
-                $('#carnet_patria_afiliado').val('');
-                $('#codigo_carnet').val('');
-                $('#serial_carnet').val('');
-                $('#tipo_cuenta').val('');
-                $('#banco_id').val('');
-            } else {
-                // Si es legal, hacer los campos requeridos
-                $('#correo-representante').attr('required', 'required');
-                $('#parentesco').attr('required', 'required');
+                legalFields.forEach(selector => {
+                    $(selector).prop('required', true);
+                });
 
-                // Si hay valor en el campo de organización, hacerlo requerido
-                if ($('#cual_organizacion_representante').val()) {
-                    $('#cual_organizacion_representante').attr('required', 'required');
+                if ($('input[name="pertenece_organizacion"]:checked').val() === '1') {
+                    $('#cual_organizacion_representante').prop('required', true);
                 }
-            }
 
-            // Actualizar la validación del formulario
-            $('form')[0].checkValidity();
+            } else {
+                $('#seccion-conectividad').hide();
+                $('#seccion-identificacion-familiar').hide();
+
+                legalFields.forEach(selector => {
+                    $(selector)
+                        .prop('required', false)
+                        .val('');
+                });
+
+                $('#cual_organizacion_representante')
+                    .prop('required', false)
+                    .val('');
+
+                $('input[name="pertenece_organizacion"]').prop('checked', false);
+            }
         }
+
 
         $(document).ready(function() {
             console.log('Documento listo - Inicializando campo de organización');
@@ -916,74 +895,64 @@
             });
 
             // Asegurar que el formulario se envíe correctamente
-            $('#representante-form').on('submit', function(e) {
-                if (!this.checkValidity()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return false;
-                }
-
-                // Mostrar loading en el botón de guardar
-                const submitBtn = $(this).find('button[type="submit"]');
-                submitBtn.prop('disabled', true);
-                submitBtn.html('<i class="fas fa-spinner fa-spin me-1"></i> Guardando...');
-
-                // Enviar el formulario vía AJAX
+            $('#representante-form').on('submit', function (e) {
                 e.preventDefault();
 
+                const form = this;
+
+                // Validación HTML5
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+
+                    const firstInvalid = form.querySelector(':invalid');
+                    if (firstInvalid) {
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalid.focus();
+                    }
+                    return;
+                }
+
+                // 🔥 IMPORTANTE: habilitar selects disabled
+                $('#municipio_id').prop('disabled', false);
+                $('#parroquia_id').prop('disabled', false);
+
+                const submitBtn = $(form).find('button[type="submit"]');
+                submitBtn.prop('disabled', true)
+                        .html('<i class="fas fa-spinner fa-spin me-1"></i> Guardando...');
+
                 $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        console.log('Respuesta del servidor:', response);
-                        // Mostrar mensaje de éxito
+                    url: $(form).attr('action'),
+                    type: 'POST', // Laravel usará _method=PUT
+                    data: $(form).serialize(),
+                    dataType: 'json',
+
+                    success: function (response) {
                         if (response.redirect) {
-                            // Si la respuesta incluye una URL de redirección, usarla
                             window.location.href = response.redirect;
-                        } else if (response.success) {
-                            // Si no hay URL de redirección pero la operación fue exitosa, redirigir al listado
-                            window.location.href = '{{ route('representante.index') }}';
                         } else {
-                            // Si hay un mensaje de éxito pero no hay redirección, mostrar el mensaje y redirigir
-                            if (response.message) {
-                                alert(response.message);
-                            }
                             window.location.href = '{{ route('representante.index') }}';
                         }
                     },
-                    error: function(xhr) {
-                        // Habilitar el botón de nuevo
-                        submitBtn.prop('disabled', false);
-                        submitBtn.html('<i class="fas fa-save me-1"></i> Guardar Cambios');
 
-                        // Mostrar mensaje de error
-                        let errorMessage = 'Ocurrió un error al guardar los cambios.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
+                    error: function (xhr) {
+                        submitBtn.prop('disabled', false)
+                                .html('<i class="fas fa-save me-1"></i> Guardar Cambios');
+
+                        let msg = 'Error al guardar.';
+                        if (xhr.responseJSON?.message) {
+                            msg = xhr.responseJSON.message;
                         }
 
-                        // Mostrar alerta de error
-                        const alertHtml = `
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            ${errorMessage}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    `;
-
-                        // Insertar la alerta al inicio del formulario
-                        $('#representante-form').prepend(alertHtml);
-
-                        // Hacer scroll hasta la alerta
-                        $('html, body').animate({
-                            scrollTop: $('.alert').offset().top - 100
-                        }, 500);
+                        $('#representante-form').prepend(`
+                            <div class="alert alert-danger alert-dismissible fade show">
+                                ${msg}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `);
                     }
                 });
-
-                return false;
             });
+
 
             // Inicializar selects dependientes
             inicializarSelectsDependientes();
@@ -1003,26 +972,6 @@
             $('input[name="tipo_representante"]').on('change', function() {
                 toggleRepresentativeFields();
             });
-
-            // Forzar la validación inicial
-            $('form').on('submit', function() {
-                $('form').addClass('was-validated');
-            });
-
-            // Validación de formulario
-            (function() {
-                'use strict';
-                var forms = document.querySelectorAll('.needs-validation');
-                Array.prototype.slice.call(forms).forEach(function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-            })();
         });
     </script>
 @endsection

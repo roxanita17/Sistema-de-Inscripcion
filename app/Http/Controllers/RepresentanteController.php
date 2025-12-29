@@ -266,17 +266,18 @@ class RepresentanteController extends Controller
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
 
-    public function mostrarFormularioEditar($id)
+    public function mostrarFormularioEditar(Request $request, $id)
     {
         $representante = Representante::with([
-            'persona.prefijo',  // Cargar la relación prefijo de la persona
+            'persona.prefijo',
             'estado',
-            'municipios',  // Relación en Representante (plural)
-            'localidads',  // Relación en Representante (plural)
+            'municipios',
+            'localidads',
             'legal' => function ($query) {
                 $query->with(['banco', 'prefijo']);
             }
         ])->findOrFail($id);
+
 
         // Cargar estados con sus relaciones
         $estados = Estado::where('status', true)
@@ -320,16 +321,21 @@ class RepresentanteController extends Controller
             ->orderBy('nombre_localidad', 'ASC')
             ->get();
 
+        $from = $request->query('from');
+        $inscripcion_id = $request->query('inscripcion_id');
+
         return view("admin.representante.modales.editarModal", compact(
             'representante',
             'estados',
-            'municipios',  // Asegúrate de incluir esta variable
+            'municipios',
             'bancos',
             'ocupaciones',
             'generos',
             'prefijos_telefono',
             'tipoDocumentos',
-            'parroquias_cargadas'
+            'parroquias_cargadas',
+            'from',
+            'inscripcion_id'
         ));
     }
 
@@ -424,10 +430,9 @@ class RepresentanteController extends Controller
 
         return view('admin.representante.formulario_representante', [
             'representante' => $representante,
-            'from' => $request->from, // inscripcion_edit
+            'from' => $request->from,
             'inscripcion_id' => $request->inscripcion_id,
-            'tipo' => $request->tipo, // padre | madre | representante_legal
-            // cargas normales
+            'tipo' => $request->tipo,
             'estados' => Estado::with('municipio.localidades')->get(),
             'bancos' => Banco::where('status', true)->get(),
             'prefijos_telefono' => PrefijoTelefono::where('status', true)->get(),
@@ -452,7 +457,8 @@ class RepresentanteController extends Controller
         $persona = $representante->persona;
 
         // Determine if this is a legal representative or progenitor
-        $isLegalRepresentative = $request->input('es_legal') == '1';
+        $isLegalRepresentative = $request->input('tipo_representante') === 'legal';
+
 
         // Log the update attempt
         Log::info('=== ACTUALIZANDO REPRESENTANTE ===', [
@@ -606,8 +612,7 @@ class RepresentanteController extends Controller
 
             // Handle legal representative specific data
             if ($isLegalRepresentative) {
-                $perteneceOrganizacion = $request->input('pertenece_organizacion') == '1';
-
+                $perteneceOrganizacion = $request->boolean('pertenece_organizacion');
                 // Update or create legal representative data
                 $legalData = [
                     'banco_id' => $request->input('banco_id'),
@@ -661,20 +666,26 @@ class RepresentanteController extends Controller
                 'updated_at' => $persona->updated_at
             ]);
 
-            $redirect = $request->from === 'inscripcion_edit'
-                ? route('admin.transacciones.inscripcion.edit', $request->inscripcion_id)
-                : route('representante.index');
+            Log::info('FROM DEBUG', [
+                'from' => $request->from,
+                'inscripcion_id' => $request->inscripcion_id,
+            ]);
 
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Representante actualizado exitosamente',
-                    'redirect' => $redirect
-                ]);
+
+            switch ($request->from) {
+                case 'inscripcion_edit':
+                    $redirect = route('admin.transacciones.inscripcion.edit', $request->inscripcion_id);
+                    break;
+                default:
+                    $redirect = route('representante.index');
             }
 
-            return redirect($redirect)
-                ->with('success', 'Representante actualizado exitosamente');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Representante actualizado exitosamente',
+                'redirect' => $redirect
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al actualizar representante: ' . $e->getMessage(), [

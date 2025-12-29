@@ -124,12 +124,13 @@
                     <div class="col-md-2 text-end">
                         @if ($padreId)
                             <a href="{{ route('representante.editar', [
-                                'id' => $representanteLegalId,
+                                'id' => $padreId,
                                 'from' => 'inscripcion_edit',
                                 'inscripcion_id' => $inscripcionId,
                             ]) }}"
-                                class="btn btn-warning btn-sm">
-                                Editar Representante
+                                class="btn btn-warning btn-sm"
+                                >
+                                <i class="fas fa-edit me-1"></i> Editar
                             </a>
                         @endif
                     </div>
