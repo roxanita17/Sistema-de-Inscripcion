@@ -72,86 +72,53 @@
                         Buscar Estudiante
                         <span class="required-badge">*</span>
                     </label>
+
                     <select id="alumno_select"
                         class="form-control-modern selectpicker @error('alumnoId') is-invalid @enderror"
                         data-live-search="true" data-size="8" data-width="100%">
                         <option value="">Seleccione un estudiante</option>
+
                         @foreach ($alumnos as $alumno)
-                            @php
-                                $anioActual = \App\Models\AnioEscolar::where('status', 'Activo')->first();
-                                $inscripcionAnterior = $alumno->ultimaInscripcionAntesDe($anioActual->id);
-                                $gradoAnterior = $inscripcionAnterior?->grado?->numero_grado;
-                            @endphp
                             <option value="{{ $alumno->id }}"
-                                data-subtext="{{ $alumno->persona->tipoDocumento->nombre ?? '' }}-{{ $alumno->persona->numero_documento }} {{ $gradoAnterior ? ' | ' . $gradoAnterior . '° Grado' : '' }}">
-                                {{ $alumno->persona->primer_nombre }} {{ $alumno->persona->primer_apellido }}
+                                data-subtext="{{ $alumno->persona->tipoDocumento->nombre ?? '' }}-{{ $alumno->persona->numero_documento }}">
+                                {{ $alumno->persona->primer_nombre }}
+                                {{ $alumno->persona->primer_apellido }}
                             </option>
                         @endforeach
                     </select>
+
                     @error('alumnoId')
-                        <div class="invalid-feedback-modern" style="display: block;">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        <div class="invalid-feedback-modern" style="display:block">
+                            {{ $message }}
                         </div>
                     @enderror
                 </div>
             </div>
 
             {{-- Información del alumno seleccionado --}}
-            {{-- FICHA DEL ESTUDIANTE --}}
-            {{-- <div class="card-body-modern" style="padding: 2rem;">
-                <livewire:admin.alumnos.alumno-edit :alumnoId="$alumnoId" />
-            </div> --}}
-            @if ($alumnoSeleccionado)
-                <div class="card-modern mt-4">
+            @if ($alumnoSeleccionado && $gradoAnteriorId)
+                <div class="card-modern mb-4 mt-4">
                     <div class="card-header-modern">
                         <div class="header-left">
-                            <div class="header-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
-                                <i class="fas fa-id-card"></i>
+                            <div class="header-icon">
+                                <i class="fas fa-user-graduate"></i>
                             </div>
                             <div>
                                 <h3>Datos del Estudiante</h3>
-                                <p>Información general y grado cursado</p>
+                                <p>Información personal del estudiante inscrito</p>
                             </div>
                         </div>
                     </div>
-
-                    <div class="card-body-modern">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Cédula:</strong>
-                                    {{ $alumnoSeleccionado->persona->tipoDocumento->nombre ?? '' }}
-                                    - {{ $alumnoSeleccionado->persona->numero_documento }}
-                                </p>
-
-                                <p><strong>Nombre Completo:</strong>
-                                    {{ $alumnoSeleccionado->persona->primer_nombre }}
-                                    {{ $alumnoSeleccionado->persona->segundo_nombre }}
-                                    {{ $alumnoSeleccionado->persona->primer_apellido }}
-                                    {{ $alumnoSeleccionado->persona->segundo_apellido }}
-                                </p>
-                            </div>
-
-                            <div class="col-md-6">
-                                <p><strong>Fecha de Nacimiento:</strong>
-                                    {{ \Carbon\Carbon::parse($alumnoSeleccionado->persona->fecha_nacimiento)->format('d/m/Y') }}
-                                </p>
-
-                                <p><strong>Género:</strong>
-                                    {{ $alumnoSeleccionado->persona->genero->genero ?? 'N/A' }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <hr>
-                        {{-- GRADO ANTERIOR --}}
-                        <div class="alert alert-primary mt-3">
-                            <i class="fas fa-graduation-cap"></i>
-                            <strong>Grado cursado anteriormente:</strong>
-                            @if ($gradoAnteriorId)
-                                {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }}° Grado
-                            @else
-                                <span class="text-muted">No registrado</span>
-                            @endif
+                    <div class="card-body-modern" style="padding: 2rem;">
+                        <livewire:admin.alumnos.alumno-edit :alumnoId="$alumnoId" />
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-info-circle fa-2x"></i>
+                        <div>
+                            <strong>Grado cursado:</strong>
+                            {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }}° Grado
                         </div>
                     </div>
                 </div>
@@ -474,31 +441,30 @@
     @push('js')
         <script>
             document.addEventListener('livewire:init', () => {
-                // Inicializar selectpicker
-                $('.selectpicker').selectpicker();
 
-                // Manejar selección de alumno
-                $('#alumno_select').on('changed.bs.select', function() {
-                    let alumnoId = $(this).val();
+                const select = $('#alumno_select');
+
+                // 1️⃣ Inicializar UNA SOLA VEZ
+                select.selectpicker();
+
+                // 2️⃣ Listener ÚNICO
+                select.on('changed.bs.select', function() {
+                    const alumnoId = $(this).val();
                     Livewire.dispatch('seleccionarAlumno', {
-                        alumnoId: alumnoId
+                        alumnoId
                     });
                 });
-            });
 
-            // Refrescar selectpickers cuando Livewire actualiza
-            document.addEventListener('livewire:updated', function() {
-                $('.selectpicker').selectpicker('refresh');
-            });
-
-            // Auto-cerrar alertas
-            setTimeout(function() {
-                $('.alert-modern').fadeOut('slow', function() {
-                    $(this).remove();
+                // 3️⃣ Refresh SOLO cuando Livewire lo pide
+                Livewire.on('refreshSelectAlumno', () => {
+                    select.selectpicker('destroy');
+                    select.selectpicker();
                 });
-            }, 5000);
+
+            });
         </script>
     @endpush
+
 
     <style>
         /* Secciones de materias */

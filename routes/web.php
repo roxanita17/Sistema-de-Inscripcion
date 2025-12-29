@@ -324,6 +324,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
             return view('admin.transacciones.inscripcion_prosecucion.create');
         })->name('inscripcion_prosecucion.create');
 
+        Route::get(
+            'inscripcion_prosecucion/create-alumno',
+            function () {
+                return view('admin.transacciones.inscripcion_prosecucion.create-alumno');
+            }
+        )->name('inscripcion_prosecucion.create-alumno');
+
+
         // ========= AJAX =========
         Route::get(
             'secciones-por-grado/{grado}',

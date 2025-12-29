@@ -47,6 +47,7 @@ class InscripcionProsecucion extends Component
 
     protected $listeners = [
         'seleccionarAlumno' => 'seleccionarAlumno',
+        'actualizarAlumno' => 'manejarActualizacionAlumno'
     ];
 
     /* ============================================================
@@ -616,6 +617,33 @@ class InscripcionProsecucion extends Component
             ]);
         }
     }
+
+    public function manejarActualizacionAlumno()
+    {
+        if (!$this->alumnoId) {
+            return;
+        }
+
+        $this->alumnoSeleccionado = Alumno::with([
+            'persona.tipoDocumento',
+            'inscripciones.grado',
+            'inscripcionProsecucions.grado'
+        ])->find($this->alumnoId);
+
+        // 🔥 RECARGA LISTA
+        $this->cargarDatosIniciales();
+
+        // 🔥 AVISA A JS
+        $this->dispatch('refreshSelectAlumno');
+
+        session()->flash(
+            'success',
+            'Datos del estudiante actualizados correctamente.'
+        );
+    }
+
+
+
 
     /* ============================================================
        RENDER
