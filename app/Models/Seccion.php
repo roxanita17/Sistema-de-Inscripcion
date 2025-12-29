@@ -20,6 +20,16 @@ class Seccion extends Model
         'status',
     ];
 
+    // App\Models\Seccion.php
+    public function inscripcionesProsecucion()
+    {
+        return $this->hasMany(
+            InscripcionProsecucion::class,
+            'seccion_id'
+        );
+    }
+
+
     /**
      * Relación con Grado
      */

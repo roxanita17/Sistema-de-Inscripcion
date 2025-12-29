@@ -238,16 +238,15 @@ class InscripcionEdit extends Component
         $this->cargarSecciones($this->gradoId);
 
         // Evaluar estado de documentos
-        $this->evaluarDocumentos();
+        $this->evaluarDocumentosVisual();
+        $this->actualizarObservacionesPorDocumentos();
     }
 
-    private function evaluarDocumentos()
+    private function evaluarDocumentosVisual(): void
     {
-        $requiereAutorizacion = !$this->padreId && !$this->madreId;
-
         $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
             $this->documentos,
-            $requiereAutorizacion,
+            !$this->padreId && !$this->madreId,
             $this->esPrimerGrado
         );
 
@@ -255,9 +254,10 @@ class InscripcionEdit extends Component
         $this->estadoDocumentos = $evaluacion['estado_documentos'];
         $this->statusInscripcion = $evaluacion['status_inscripcion'];
 
-        // Actualizar seleccionarTodos
-        $this->seleccionarTodos = count($this->documentos) === count($this->documentosDisponibles);
+        $this->seleccionarTodos =
+            count($this->documentos) === count($this->documentosDisponibles);
     }
+
 
     public function updatedGradoId($value)
     {
@@ -307,19 +307,47 @@ class InscripcionEdit extends Component
             : null;
 
         // Re-evaluar documentos cuando cambian los representantes
-        $this->evaluarDocumentos();
+        $this->evaluarDocumentosVisual();
     }
 
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
-        $this->evaluarDocumentos();
+        $this->evaluarDocumentosVisual();
     }
 
     public function updatedDocumentos()
     {
-        $this->evaluarDocumentos();
+        $this->sincronizarDocumentos();
+        $this->evaluarDocumentosVisual();
+        $this->actualizarObservacionesPorDocumentos();
     }
+
+    private function actualizarObservacionesPorDocumentos(): void
+    {
+        $this->observaciones = $this->documentoService->generarObservaciones(
+            $this->documentos,
+            !$this->padreId && !$this->madreId,
+            $this->esPrimerGrado
+        );
+    }
+
+
+    private function sincronizarDocumentos(): void
+    {
+        $requiereAutorizacion = !$this->padreId && !$this->madreId;
+
+        $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
+            $this->documentos,
+            $requiereAutorizacion,
+            $this->esPrimerGrado
+        );
+
+        // NO marcar automáticamente, solo recalcular faltantes
+        $this->documentosFaltantes = $evaluacion['faltantes'];
+    }
+
+
 
     private function validarRepresentantes(): bool
     {

@@ -513,6 +513,29 @@ class InscripcionProsecucion extends Component
                 'status' => 'Activo',
             ]);
 
+            if ($this->seccion_id) {
+
+                $seccion = Seccion::lockForUpdate()->find($this->seccion_id);
+
+                if (!$seccion) {
+                    throw new \Exception('La sección seleccionada no existe.');
+                }
+
+                // Capacidad máxima (del grado)
+                $grado = Grado::findOrFail($this->gradoPromocionId);
+                $capacidadMax = $grado->max_seccion ?? 35;
+
+                if ($seccion->cantidad_actual >= $capacidadMax) {
+                    throw new \Exception(
+                        "La sección {$seccion->nombre} ya alcanzó su capacidad máxima ({$capacidadMax} alumnos)."
+                    );
+                }
+
+                // ✅ SUMAR ESTUDIANTE
+                $seccion->increment('cantidad_actual');
+            }
+
+
             // Guardar estado de cada materia
             $this->guardarMateriasEstado($prosecucion->id);
 
