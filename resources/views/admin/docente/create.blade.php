@@ -407,45 +407,110 @@
                     </div>
 
 
-                    <!-- {{-- Prefijo de telefono 2 --}}
-                    <div class="col-md-2 mb-3"> 
+                    <!-- --------------------------- -->
+
+                        <!-- {{-- Formulario para agregar estudios --}}
+    <div class="card-modern mb-4">
+        <div class="card-header-modern">
+            <div class="header-left">
+                <div class="header-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h3>Agregar Estudios Realizados</h3>
+                    <p>Seleccione los estudios del docente</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body-modern" style="padding: 2rem;">
+            <div class="row">
+                <div class="col-md-8" wire:ignore>
+                    
+
+                    <div class ="row">
+                        {{-- Prefijo de telefono --}}
+                    <div class="col-md-3 mb-3"> 
                         <label class="form-label-modern">
                             <i class="fas fa-id-card-alt"></i>
-                            Prefijo 2
+                            Prefijo 
                         </label>
-                        <select name="prefijo_dos_id" 
-                                id="prefijo_dos_id"
-                                class="form-control-modern @error('prefijo_dos_id') is-invalid @enderror"
-                                >
+                        <select name="prefijo_id" 
+                                id="prefijo_id"
+                                class="form-control-modern @error('prefijo_id') is-invalid @enderror"
+                                required>
                             <option value="" selected disabled>Seleccione</option>
                             @foreach ($prefijos as $item)
-                                <option value="{{ $item->id }}" {{ old('prefijo_dos_id') == $item->id ? 'selected' : '' }}>
+                                <option value="{{ $item->id }}" {{ old('prefijo_id') == $item->id ? 'selected' : '' }}>
                                     {{ $item->prefijo }}
                                 </option>
                             @endforeach
                         </select>
-                        
+                        @error('prefijo_id')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
-                    {{-- Segundo telefono --}}
-                    <div class="col-md-4 mb-3">
+                    {{-- Primer telefono --}}
+                    <div class="col-md-5 mb-3">
                         <label class="form-label-modern">
                             <i class="fas fa-phone"></i>
-                            Numero de teléfono 2
+                            Numero de teléfono
                         </label>
                         <input type="text" 
-                            name="segundo_telefono"
-                            id="segundo_telefono"
+                            name="primer_telefono"
+                            id="primer_telefono"
                             inputmode="numeric"
                             pattern="[0-9]*"
                             maxlength="10"
                             oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                            
-                            class="form-control-modern @error('segundo_telefono') is-invalid @enderror"
-                            value="{{ old('segundo_telefono') }}"
+                            required
+                            class="form-control-modern @error('primer_telefono') is-invalid @enderror"
+                            value="{{ old('primer_telefono') }}"
                             placeholder="Ej: 12345678">
-                        
-                    </div> -->
+                        @error('primer_telefono')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    </div>
+
+                    <small class="form-text-modern">
+                        <i class="fas fa-info-circle"></i>
+                        Seleccione el título académico del docente
+                    </small>
+                </div>
+
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn-primary-modern w-100" wire:click="agregarEstudio" wire:loading.attr="disabled"
+                        style="margin-bottom: 1.5rem;">
+                        <span wire:loading.remove wire:target="agregarEstudio">
+                            <i class="fas fa-plus"></i> Agregar telefono
+                        </span>
+                        <span wire:loading wire:target="agregarEstudio">
+                            <i class="fas fa-spinner fa-spin"></i> Agregando...
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+
+                    <!-- --------------------------- -->
+
+
+                    <!-- --------------------------- -->
+
+                    
+
+                    <!-- --------------------------- -->
 
                     
 
