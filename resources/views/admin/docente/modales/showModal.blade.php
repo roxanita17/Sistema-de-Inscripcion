@@ -19,7 +19,7 @@
 
             <!-- Body -->
             <div class="modal-body-view">
-
+                    
                 <div class="details-card">
 
                     <!-- =======================
@@ -108,6 +108,17 @@
                         <span class="detail-value">
                             @if ($datos->persona->prefijoTelefono)
                                 {{ $datos->persona->prefijoTelefono->prefijo }}-{{ $datos->primer_telefono }}
+                            @else
+                                Sin registrar
+                            @endif
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-phone"></i> Segundo Teléfono</span>
+                        <span class="detail-value">
+                            @if ($datos->persona->prefijoDos)
+                                {{ $datos->persona->prefijoDos->prefijo}}-{{ $datos->persona->telefono_dos }}
                             @else
                                 Sin registrar
                             @endif
