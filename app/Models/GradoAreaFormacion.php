@@ -16,6 +16,8 @@ class GradoAreaFormacion extends Model
         'status',
     ];
 
+     protected $appends = ['clave_materia']; 
+
     // Cada asignación pertenece a un grado
     public function grado()
     {
@@ -27,6 +29,39 @@ class GradoAreaFormacion extends Model
     {
         return $this->belongsTo(AreaFormacion::class, 'area_formacion_id', 'id');
     }
+
+//    /**
+//      * Accessor para la Clave Materia
+//      * Formato: número de grado - código - siglas
+//      */
+    public function getClaveMateriaAttribute()
+{
+    $gradoNum = $this->grado->numero_grado ?? '';
+    $siglas = $this->area_formacion->siglas ?? '';
+    
+    // Obtener solo la parte numérica del código generado (001)
+    $codigoNumerico = '';
+    if ($this->codigo) {
+        // Extraer los primeros 3 dígitos (001 de 001-CAS)
+        preg_match('/^(\d{3})/', $this->codigo, $matches);
+        $codigoNumerico = $matches[1] ?? substr($this->codigo, 0, 3);
+    }
+    
+    // Limpiar
+    $gradoNum = trim((string)$gradoNum);
+    $codigoNumerico = trim((string)$codigoNumerico);
+    $siglas = trim((string)$siglas);
+    
+    // Construir la clave
+    $partes = [];
+    if ($gradoNum) $partes[] = $gradoNum;
+    if ($codigoNumerico) $partes[] = $codigoNumerico;
+    if ($siglas) $partes[] = $siglas;
+    
+    return implode('-', $partes);
+}
+
+
 
     protected static function booted()
     {
@@ -40,6 +75,9 @@ class GradoAreaFormacion extends Model
             }
         });
     }
+
+
+
 
    protected function generarCodigo(): void
 {
