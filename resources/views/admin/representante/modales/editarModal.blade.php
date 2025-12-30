@@ -920,7 +920,7 @@
                     return;
                 }
 
-                // 🔥 IMPORTANTE: habilitar selects disabled
+                //habilitar selects disabled
                 $('#municipio_id').prop('disabled', false);
                 $('#parroquia_id').prop('disabled', false);
 
