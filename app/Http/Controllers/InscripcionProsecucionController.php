@@ -46,7 +46,6 @@ class InscripcionProsecucionController extends Controller
             'seccion',
             'anioEscolar',
         ])
-            ->where('status', 'Activo')
             ->when(
                 $anioEscolarActivo,
                 fn($q) =>
@@ -107,5 +106,20 @@ class InscripcionProsecucionController extends Controller
         $institucion_procedencia = InstitucionProcedencia::all();
 
         return view('admin.transacciones.inscripcion_prosecucion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
+    }
+
+    public function destroy($inscripcionId)
+    {
+        try {
+            InscripcionProsecucion::inactivar($inscripcionId);
+
+            return redirect()
+                ->route('admin.transacciones.inscripcion_prosecucion.index')
+                ->with('success', 'Inscripción por prosecución inactivada correctamente');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.transacciones.inscripcion_prosecucion.index')
+                ->with('error', 'Error al inactivar la inscripción: ' . $e->getMessage());
+        }
     }
 }

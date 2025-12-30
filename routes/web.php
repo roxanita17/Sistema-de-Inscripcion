@@ -331,6 +331,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
             }
         )->name('inscripcion_prosecucion.create-alumno');
 
+        Route::delete(
+            'inscripcion-prosecucion/{inscripcion}',
+            [InscripcionProsecucionController::class, 'destroy']
+        )->name('inscripcion_prosecucion.destroy');
 
         // ========= AJAX =========
         Route::get(
@@ -352,7 +356,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ================== HISTÓRICO ==================
     Route::get('historico', [HistoricoController::class, 'index'])
         ->name('historico.index');
-
 });
 
 

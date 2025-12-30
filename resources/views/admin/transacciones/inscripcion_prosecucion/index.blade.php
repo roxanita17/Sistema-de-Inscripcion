@@ -372,8 +372,9 @@
                                     </p>
                                 </div>
                                 <div class="modal-footer-delete">
-                                    <form action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"
-                                        method="POST" class="w-100">
+                                    <form
+                                        action="{{ route('admin.transacciones.inscripcion_prosecucion.destroy', $datos->inscripcion_id) }}"
+                                        method="POST">
                                         @csrf
                                         @method('DELETE')
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,5 +54,26 @@ class InscripcionProsecucion extends Model
         return $this->belongsTo(Alumno::class);
     }
 
-    
+    public static function inactivar($inscripcionId)
+    {
+        return DB::transaction(function () use ($inscripcionId) {
+
+            $prosecucion = self::where('inscripcion_id', $inscripcionId)->firstOrFail();
+            $inscripcion = Inscripcion::with('alumno')->findOrFail($inscripcionId);
+
+            // Inactivar prosecución
+            $prosecucion->update([
+                'status' => 'Inactivo',
+            ]);
+
+            // Inactivar alumno
+            if ($inscripcion->alumno) {
+                $inscripcion->alumno->update([
+                    'status' => false,
+                ]);
+            }
+
+            return true;
+        });
+    }
 }
