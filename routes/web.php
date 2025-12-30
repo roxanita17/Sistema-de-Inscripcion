@@ -310,31 +310,30 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
             ->name('inscripcion.destroy');
 
+        Route::get('inscripcion/{id}/restore', [InscripcionController::class, 'restore'])
+            ->name('inscripcion.restore');
+
         Route::get('inscripcion/reporte/{id}', [InscripcionController::class, 'reporte'])
             ->name('inscripcion.reporte');
 
         // ========= INSCRIPCIÓN PROSECUCIÓN (LISTADO) =========
-        Route::get(
-            'inscripcion_prosecucion',
-            [InscripcionProsecucionController::class, 'index']
-        )->name('inscripcion_prosecucion.index');
+        Route::get('inscripcion_prosecucion', [InscripcionProsecucionController::class, 'index'])
+            ->name('inscripcion_prosecucion.index');
 
         // ========= INSCRIPCIÓN PROSECUCIÓN (FORMULARIO) =========
         Route::get('inscripcion_prosecucion/create', function () {
             return view('admin.transacciones.inscripcion_prosecucion.create');
         })->name('inscripcion_prosecucion.create');
 
-        Route::get(
-            'inscripcion_prosecucion/create-alumno',
-            function () {
-                return view('admin.transacciones.inscripcion_prosecucion.create-alumno');
-            }
-        )->name('inscripcion_prosecucion.create-alumno');
+        Route::get('inscripcion_prosecucion/create-alumno', function () {
+            return view('admin.transacciones.inscripcion_prosecucion.create-alumno');
+        })->name('inscripcion_prosecucion.create-alumno');
 
-        Route::delete(
-            'inscripcion-prosecucion/{inscripcion}',
-            [InscripcionProsecucionController::class, 'destroy']
-        )->name('inscripcion_prosecucion.destroy');
+        Route::delete('inscripcion-prosecucion/{inscripcion}', [InscripcionProsecucionController::class, 'destroy'])
+            ->name('inscripcion_prosecucion.destroy');
+
+        Route::get('inscripcion-prosecucion/{id}/restore', [InscripcionProsecucionController::class, 'restore'])
+            ->name('inscripcion_prosecucion.restore');
 
         // ========= AJAX =========
         Route::get(

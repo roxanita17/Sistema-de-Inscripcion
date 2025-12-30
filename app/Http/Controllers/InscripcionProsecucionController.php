@@ -122,4 +122,10 @@ class InscripcionProsecucionController extends Controller
                 ->with('error', 'Error al inactivar la inscripción: ' . $e->getMessage());
         }
     }
+
+    public function restore($id)
+    {
+        InscripcionProsecucion::restaurar($id);
+        return redirect()->route('admin.transacciones.inscripcion_prosecucion.index')->with('success', 'Inscripción por prosecución restaurada correctamente');
+    }
 }

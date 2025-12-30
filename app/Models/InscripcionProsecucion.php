@@ -54,22 +54,42 @@ class InscripcionProsecucion extends Model
         return $this->belongsTo(Alumno::class);
     }
 
-    public static function inactivar($inscripcionId)
+    public static function inactivar($prosecucionId)
     {
-        return DB::transaction(function () use ($inscripcionId) {
+        return DB::transaction(function () use ($prosecucionId) {
 
-            $prosecucion = self::where('inscripcion_id', $inscripcionId)->firstOrFail();
-            $inscripcion = Inscripcion::with('alumno')->findOrFail($inscripcionId);
+            $prosecucion = self::with('inscripcion.alumno')
+                ->findOrFail($prosecucionId);
 
-            // Inactivar prosecución
             $prosecucion->update([
                 'status' => 'Inactivo',
             ]);
 
-            // Inactivar alumno
-            if ($inscripcion->alumno) {
-                $inscripcion->alumno->update([
+            if ($prosecucion->inscripcion?->alumno) {
+                $prosecucion->inscripcion->alumno->update([
                     'status' => false,
+                ]);
+            }
+
+            return true;
+        });
+    }
+
+
+    public static function restaurar($prosecucionId)
+    {
+        return DB::transaction(function () use ($prosecucionId) {
+
+            $prosecucion = self::with('inscripcion.alumno')
+                ->findOrFail($prosecucionId);
+
+            $prosecucion->update([
+                'status' => 'Activo',
+            ]);
+
+            if ($prosecucion->inscripcion?->alumno) {
+                $prosecucion->inscripcion->alumno->update([
+                    'status' => true,
                 ]);
             }
 

@@ -326,16 +326,27 @@
                                                             </button>
                                                         </li>
 
-                                                        {{-- Inactivar --}}
+                                                        {{-- Inactivar y restaurar --}}
                                                         <li>
-                                                            <button
-                                                                class="dropdown-item d-flex align-items-center text-danger"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
-                                                                @disabled(!$anioEscolarActivo)>
-                                                                <i class="fas fa-ban me-2"></i>
-                                                                Inactivar
-                                                            </button>
+                                                            @if ($datos->status === 'Activo')
+                                                                <button
+                                                                    class="dropdown-item d-flex align-items-center text-danger"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                                    @disabled(!$anioEscolarActivo)>
+                                                                    <i class="fas fa-ban me-2"></i>
+                                                                    Inactivar
+                                                                </button>
+                                                            @else
+                                                                <button
+                                                                    class="dropdown-item d-flex align-items-center text-success"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#confirmarRestaurar{{ $datos->id }}"
+                                                                    @disabled(!$anioEscolarActivo)>
+                                                                    <i class="fas fa-undo me-2"></i>
+                                                                    Restaurar
+                                                                </button>
+                                                            @endif
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -350,49 +361,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                {{-- MODAL DE INACTIVACIÓN --}}
-                @foreach ($prosecuciones as $datos)
-                    <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content modal-modern">
-                                <div class="modal-header-delete">
-                                    <div class="modal-icon-delete">
-                                        <i class="fas fa-ban"></i>
-                                    </div>
-                                    <h5 class="modal-title-delete">Confirmar inactivación</h5>
-                                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                                <div class="modal-body-delete">
-                                    <p>¿Deseas inactivar esta inscripción?</p>
-                                    <p class="delete-warning">
-                                        El estudiante también será inactivado.
-                                    </p>
-                                </div>
-                                <div class="modal-footer-delete">
-                                    <form
-                                        action="{{ route('admin.transacciones.inscripcion_prosecucion.destroy', $datos->inscripcion_id) }}"
-                                        method="POST">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <div class="footer-buttons">
-                                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
-                                                Cancelar
-                                            </button>
-                                            <button type="submit" class="btn-modal-delete">
-                                                Inactivar
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-
                 {{-- Modal de filtros --}}
                 @include('admin.transacciones.inscripcion_prosecucion.modales.filtroModal')
             </div>
@@ -403,4 +371,17 @@
             </div>
         </div>
     </div>
+    {{-- Modal de inactivar --}}
+    @foreach ($prosecuciones as $datos)
+        @include('admin.transacciones.inscripcion_prosecucion.modales.inactivarModal', [
+            'datos' => $datos,
+        ])
+    @endforeach
+
+    {{-- Modal de restaurar --}}
+    @foreach ($prosecuciones as $datos)
+        @include('admin.transacciones.inscripcion_prosecucion.modales.restaurarModal', [
+            'datos' => $datos,
+        ])
+    @endforeach
 @endsection

@@ -328,4 +328,26 @@ class Inscripcion extends Model
             return true;
         });
     }
+
+    public static function restaurar($id)
+    {
+        return DB::transaction(function () use ($id) {
+
+            $inscripcion = Inscripcion::with('alumno')->findOrFail($id);
+
+            // Restaurar la inscripción
+            $inscripcion->update([
+                'status' => 'Activo',
+            ]);
+
+            // Restaurar el alumno relacionado
+            if ($inscripcion->alumno) {
+                $inscripcion->alumno->update([
+                    'status' => true,
+                ]);
+            }
+
+            return true;
+        });
+    }
 }
