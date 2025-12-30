@@ -1105,8 +1105,17 @@
                             <i class="fas fa-comment"></i>
                             Observaciones
                         </label>
-                        <textarea wire:model.live="observaciones" id="observaciones" class="form-control-modern" rows="3"
-                            placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
+                        <textarea wire:model.live="observaciones" id="observaciones"
+                            class="form-control-modern @error('observaciones') is-invalid @enderror" rows="3"
+                            placeholder="Agregue observaciones adicionales sobre la inscripción (opcional)" maxlength="500"></textarea>
+                        @error('observaciones')
+                            <div class="invalid-feedback-modern" style="display: block;">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                        <small class="form-text text-muted">
+                            {{ strlen($observaciones ?? '') }}/500 caracteres
+                        </small>
                     </div>
                 </div>
             </div>

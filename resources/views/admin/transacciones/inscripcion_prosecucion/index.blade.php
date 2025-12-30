@@ -24,8 +24,8 @@
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
-                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.create') }}"
-                        class="btn-create" @if (!$anioEscolarActivo) disabled @endif
+                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.create') }}" class="btn-create"
+                        @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
                         <span>Inscripcion Prosecucion</span>
@@ -121,9 +121,6 @@
             </div>
         @endif
 
-
-
-
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -169,55 +166,51 @@
                     </div>
                 </div>
 
-                                                                           <div class="header-right">
-                <!-- --------------------------- -->
+                <div class="header-right">
 
-@php
-    $anioActivo = \App\Models\AnioEscolar::activos()->first();
-    $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-    $mostrarAnio = $anioActivo ?? $anioExtendido;
-@endphp
+                    @php
+                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
+                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
+                        $mostrarAnio = $anioActivo ?? $anioExtendido;
+                    @endphp
 
-@if($mostrarAnio)
-    <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1 mb-2 border">
-        <div class="d-flex align-items-center">
-            <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                <i class="fas fa-calendar-check me-1"></i>
-                
-                Año Escolar
-            </span>
-            
-            <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                <span class="text-muted me-2">
-                    <i class="fas fa-play-circle text-primary me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                <span class="text-muted me-2">
-                    <i class="fas fa-flag-checkered text-danger me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                
+                    @if ($mostrarAnio)
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1 mb-2 border">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
+                                    <i class="fas fa-calendar-check me-1"></i>
+
+                                    Año Escolar
+                                </span>
+
+                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-play-circle text-primary me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1 mb-2 border border-warning">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
+                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
+                            </div>
+
+                        </div>
+                    @endif
+                </div>
             </div>
-        </div>
-    </div>
-@else
-    <div class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1 mb-2 border border-warning">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-        </div>
-        
-    </div>
-@endif
-<!-- --------------------------- -->
-
-            </div>
-
-            </div>
-
-
 
             <div class="card-body-modern">
                 <div class="table-wrapper">
@@ -226,7 +219,6 @@
                             <tr class="text-center">
                                 <th style="font-weight: bold">Cedula</th>
                                 <th class="text-center">Estudiante</th>
-                                <th class="text-center">Tipo</th>
                                 <th class="text-center">Representante Legal</th>
                                 <th class="text-center">Parentesco</th>
                                 <th class="text-center">Año</th>
@@ -274,12 +266,6 @@
                                             </small>
                                         </td>
 
-                                        {{-- TIPO DE INSCRIPCIÓN --}}
-                                        <td class="text-center">
-                                            <span class="badge bg-success">Prosecución</span>
-                                        </td>
-
-
                                         {{-- REPRESENTANTE LEGAL --}}
                                         <td class="text-center">
                                             {{ $datos->inscripcion->representanteLegal->representante->persona->primer_nombre }}
@@ -295,7 +281,6 @@
                                         <td class="text-center">
                                             {{ $datos->grado?->numero_grado ?? 'N/A' }}
                                         </td>
-
 
                                         {{-- SECCION --}}
                                         <td class="text-center">
@@ -352,8 +337,6 @@
                                                                 Inactivar
                                                             </button>
                                                         </li>
-
-
                                                     </ul>
                                                 </div>
                                             </div>
@@ -373,7 +356,6 @@
                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content modal-modern">
-
                                 <div class="modal-header-delete">
                                     <div class="modal-icon-delete">
                                         <i class="fas fa-ban"></i>
@@ -383,14 +365,12 @@
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
-
                                 <div class="modal-body-delete">
                                     <p>¿Deseas inactivar esta inscripción?</p>
                                     <p class="delete-warning">
                                         El estudiante también será inactivado.
                                     </p>
                                 </div>
-
                                 <div class="modal-footer-delete">
                                     <form action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"
                                         method="POST" class="w-100">
@@ -401,14 +381,12 @@
                                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
                                                 Cancelar
                                             </button>
-
                                             <button type="submit" class="btn-modal-delete">
                                                 Inactivar
                                             </button>
                                         </div>
                                     </form>
                                 </div>
-
                             </div>
                         </div>
                     </div>

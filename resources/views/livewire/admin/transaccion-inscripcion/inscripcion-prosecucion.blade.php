@@ -79,10 +79,17 @@
                         <option value="">Seleccione un estudiante</option>
 
                         @foreach ($alumnos as $alumno)
+                            @php
+                                $anioActual = \App\Models\AnioEscolar::where('status', 'Activo')->first();
+                                $inscripcionAnterior = $alumno->ultimaInscripcionAntesDe($anioActual->id);
+                                $gradoAnterior = $inscripcionAnterior?->grado?->numero_grado;
+                            @endphp
                             <option value="{{ $alumno->id }}"
-                                data-subtext="{{ $alumno->persona->tipoDocumento->nombre ?? '' }}-{{ $alumno->persona->numero_documento }}">
-                                {{ $alumno->persona->primer_nombre }}
-                                {{ $alumno->persona->primer_apellido }}
+                                data-subtext="{{ $alumno->persona->tipoDocumento->nombre ?? '' }}
+                                -{{ $alumno->persona->numero_documento }} 
+                                {{ $gradoAnterior ? ' | ' . $gradoAnterior . ' Año' : '' }}">
+                                {{ $alumno->persona->primer_nombre }} {{ $alumno->persona->primer_apellido }}
+
                             </option>
                         @endforeach
                     </select>
@@ -117,8 +124,8 @@
                     <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-info-circle fa-2x"></i>
                         <div>
-                            <strong>Grado cursado:</strong>
-                            {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }}° Grado
+                            <strong>Año cursado:</strong>
+                            {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }} Año
                         </div>
                     </div>
                 </div>
@@ -166,7 +173,7 @@
                         <div class="alert alert-danger mb-3">
                             <i class="fas fa-exclamation-triangle"></i>
                             <strong>Atención:</strong> Con 4 o más materias pendientes el estudiante debe repetir el
-                            mismo grado.
+                            mismo año.
                         </div>
                     @endif
                     {{-- SECCIÓN: Materias reprobadas --}}
@@ -179,8 +186,8 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    El estudiante tiene materias reprobadas de grados anteriores. Debe aprobarlas todas;
-                                    de lo contrario, deberá repetir el grado completo.
+                                    El estudiante tiene materias reprobadas de años anteriores. Debe aprobarlas todas;
+                                    de lo contrario, deberá repetir el año completo.
                                     <b>Marque las materias que el estudiante aprobo</b>
                                 </small>
                             </div>
@@ -202,7 +209,7 @@
                                                         <small class="text-muted">
                                                             <i class="fas fa-tag"></i> Código: {{ $materia['codigo'] }}
                                                             |
-                                                            <i class="fas fa-layer-group"></i> Grado:
+                                                            <i class="fas fa-layer-group"></i> Año:
                                                             {{ $materia['grado'] }}°
                                                         </small>
                                                     </div>
@@ -226,11 +233,11 @@
                             <div class="section-header-primary mb-3">
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="fas fa-book-open"></i>
-                                    <h5 class="mb-0">Materias del Grado Actual</h5>
+                                    <h5 class="mb-0">Materias del Año Actual</h5>
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    Marque las materias del grado cursado que quedaron pendientes por aprobar.
+                                    Marque las materias del año cursado que quedaron pendientes por aprobar.
                                 </small>
                             </div>
 
@@ -250,7 +257,7 @@
                                                         <small class="text-muted">
                                                             <i class="fas fa-tag"></i> Código:
                                                             {{ $materia['codigo'] }} |
-                                                            <i class="fas fa-layer-group"></i> Grado:
+                                                            <i class="fas fa-layer-group"></i> Año:
                                                             {{ $materia['grado'] }}°
                                                         </small>
                                                     </div>
@@ -279,14 +286,14 @@
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <div>
-                        <h3>Paso 3: Grado y Sección</h3>
-                        <p>Seleccione el grado al que será promovido el estudiante</p>
+                        <h3>Paso 3: Año y Sección</h3>
+                        <p>Seleccione el año al que será promovido el estudiante</p>
                     </div>
                 </div>
                 @if ($repite_grado)
                     <div class="header-right">
                         <span class="badge bg-danger">
-                            <i class="fas fa-redo"></i> Repite Grado
+                            <i class="fas fa-redo"></i> Repite Año
                         </span>
                     </div>
                 @endif
@@ -294,21 +301,21 @@
 
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
-                    {{-- Grado de Promoción --}}
+                    {{-- Año de Promoción --}}
                     <div class="col-md-4">
                         <label for="grado_promocion" class="form-label-modern">
                             <i class="fas fa-layer-group"></i>
-                            Grado de Promoción
+                            Año de Promoción
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="gradoPromocionId" id="grado_promocion"
                             class="form-control-modern @error('gradoPromocionId') is-invalid @enderror">
 
-                            <option value="">Seleccione un grado</option>
+                            <option value="">Seleccione un año</option>
 
                             @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}">
-                                    {{ $grado->numero_grado }}° Grado
+                                    {{ $grado->numero_grado }}° Año
                                 </option>
                             @endforeach
                         </select>
@@ -321,7 +328,7 @@
                         @if ($repite_grado)
                             <small class="form-text text-danger">
                                 <i class="fas fa-info-circle"></i>
-                                El estudiante debe repetir el mismo grado
+                                El estudiante debe repetir el mismo año
                             </small>
                         @endif
                     </div>
@@ -369,7 +376,7 @@
                             <i class="fas fa-comment"></i>
                             Observaciones
                         </label>
-                        <textarea wire:model.defer="observaciones" id="observaciones"
+                        <textarea wire:model.live="observaciones" id="observaciones"
                             class="form-control-modern @error('observaciones') is-invalid @enderror" rows="3"
                             placeholder="Agregue observaciones adicionales sobre la inscripción (opcional)" maxlength="500"></textarea>
                         @error('observaciones')

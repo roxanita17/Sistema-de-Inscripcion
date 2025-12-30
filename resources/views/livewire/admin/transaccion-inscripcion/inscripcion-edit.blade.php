@@ -105,8 +105,8 @@
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
             {{-- Padre --}}
-            <div class="row mb-3">
-                <div class="col-md-12" wire:ignore>
+            <div  class="row align-items-center mb-4 mt-4">
+                <div class="col-md-9" wire:ignore>
                     <label for="padre_select" class="form-label-modern">
                         <i class="fas fa-male"></i> Padre
                     </label>
@@ -121,21 +121,19 @@
                             </option>
                         @endforeach
                     </select>
-                    <div class="col-md-2 text-end">
-                        @if ($padreId)
-                            <a href="{{ route('representante.editar', [
-                                'id' => $padreId,
-                                'from' => 'inscripcion_edit',
-                                'inscripcion_id' => $inscripcionId,
-                            ]) }}"
-                                class="btn btn-warning btn-sm"
-                                >
-                                <i class="fas fa-edit me-1"></i> Editar
-                            </a>
-                        @endif
-                    </div>
                 </div>
-
+                <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                    @if ($padreId)
+                        <a href="{{ route('representante.editar', [
+                            'id' => $padreId,
+                            'from' => 'inscripcion_edit',
+                            'inscripcion_id' => $inscripcionId,
+                        ]) }}"
+                            class="btn-create btn-sm">
+                            <i class="fas fa-edit me-1"></i> Editar
+                        </a>
+                    @endif
+                </div>
             </div>
 
             @if ($padreSeleccionado)
@@ -278,8 +276,8 @@
             @endif
 
             {{-- Madre --}}
-            <div class="row mb-3">
-                <div class="col-md-12" wire:ignore>
+            <div class="row align-items-center mb-4 mt-4">
+                <div class="col-md-10" wire:ignore>
                     <label for="madre_select" class="form-label-modern">
                         <i class="fas fa-female"></i> Madre
                     </label>
@@ -294,6 +292,18 @@
                             </option>
                         @endforeach
                     </select>
+                </div>
+                <div class="col-md-2 text-md-end mt-3 mt-md-0">
+                    @if ($madreId)
+                        <a href="{{ route('representante.editar', [
+                            'id' => $madreId,
+                            'from' => 'inscripcion_edit',
+                            'inscripcion_id' => $inscripcionId,
+                        ]) }}"
+                            class="btn-create btn-sm">
+                            <i class="fas fa-edit me-1"></i> Editar
+                        </a>
+                    @endif
                 </div>
             </div>
 
@@ -442,8 +452,8 @@
 
 
             {{-- Representante Legal --}}
-            <div class="row">
-                <div class="col-md-12" wire:ignore>
+            <div class="row align-items-center mb-4 mt-4">
+                <div class="col-md-10" wire:ignore>
                     <label for="representante_legal_select" class="form-label-modern">
                         <i class="fas fa-gavel"></i> Representante Legal
                     </label>
@@ -458,6 +468,18 @@
                             </option>
                         @endforeach
                     </select>
+                </div>
+                <div class="col-md-2 text-md-end mt-3 mt-md-0">
+                    @if ($representanteLegalId)
+                        <a href="{{ route('representante.editar', [
+                            'id' => $representanteLegalId,
+                            'from' => 'inscripcion_edit',
+                            'inscripcion_id' => $inscripcionId,
+                        ]) }}"
+                            class="btn-create btn-sm">
+                            <i class="fas fa-edit me-1"></i> Editar
+                        </a>
+                    @endif
                 </div>
             </div>
             @error('representanteLegalId')
@@ -732,13 +754,14 @@
             <div class="row">
                 <div class="col-md-4">
                     <label for="grado_id" class="form-label-modern">
-                        <i class="fas fa-layer-group"></i> Grado
+                        <i class="fas fa-layer-group"></i> Año
                     </label>
                     <select wire:model.live="gradoId"
                         class="form-control-modern @error('gradoId') is-invalid @enderror">
-                        <option value="">Seleccione un grado</option>
+                        <option value="">Seleccione un año</option>
                         @foreach ($grados as $grado)
-                            <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
+                            <option value="{{ $grado->id }}">{{ $grado->numero_grado }} Año
+                            </option>
                         @endforeach
                     </select>
                     @error('gradoId')
@@ -946,8 +969,17 @@
                     <label class="form-label-modern">
                         <i class="fas fa-comment"></i> Observaciones
                     </label>
-                    <textarea wire:model="observaciones" class="form-control-modern" rows="3"
-                        placeholder="Observaciones adicionales sobre la inscripción..."></textarea>
+                    <textarea wire:model.live="observaciones" id="observaciones"
+                        class="form-control-modern @error('observaciones') is-invalid @enderror" rows="3"
+                        placeholder="Agregue observaciones adicionales sobre la inscripción (opcional)" maxlength="500"></textarea>
+                    @error('observaciones')
+                        <div class="invalid-feedback-modern" style="display: block;">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
+                    <small class="form-text text-muted">
+                        {{ strlen($observaciones ?? '') }}/500 caracteres
+                    </small>
                 </div>
             </div>
         </div>
