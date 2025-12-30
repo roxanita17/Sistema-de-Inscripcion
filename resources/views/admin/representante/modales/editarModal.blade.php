@@ -100,10 +100,18 @@
                 </div>
             </div>
 
-            <a href="{{ route('representante.index') }}" class="btn-create" style="background: var(--gray-700);">
-                <i class="fas fa-arrow-left"></i>
-                <span>Volver al Listado</span>
-            </a>
+            @if (request('from') === 'inscripcion_edit')
+                <a href="{{ route('admin.transacciones.inscripcion.edit', request('inscripcion_id'))  }}" class="btn-create"
+                    style="background: var(--gray-700);">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver al Listado</span>
+                </a>
+            @else
+                <a href="{{ route('representante.index') }}" class="btn-create" style="background: var(--gray-700);">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver al Listado</span>
+                </a>
+            @endif
         </div>
     </div>
 @stop
@@ -159,11 +167,8 @@
             </div>
 
             <div class="card-body-modern" style="padding: 2rem;">
-                <form id="representante-form"
-                    action="{{ route('representante.update', $representante->id) }}"
-                    method="POST"
-                    class="form-modern needs-validation"
-                    novalidate>
+                <form id="representante-form" action="{{ route('representante.update', $representante->id) }}"
+                    method="POST" class="form-modern needs-validation" novalidate>
 
                     @csrf
                     @method('PUT')
@@ -895,7 +900,7 @@
             });
 
             // Asegurar que el formulario se envíe correctamente
-            $('#representante-form').on('submit', function (e) {
+            $('#representante-form').on('submit', function(e) {
                 e.preventDefault();
 
                 const form = this;
@@ -906,7 +911,10 @@
 
                     const firstInvalid = form.querySelector(':invalid');
                     if (firstInvalid) {
-                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalid.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
                         firstInvalid.focus();
                     }
                     return;
@@ -918,7 +926,7 @@
 
                 const submitBtn = $(form).find('button[type="submit"]');
                 submitBtn.prop('disabled', true)
-                        .html('<i class="fas fa-spinner fa-spin me-1"></i> Guardando...');
+                    .html('<i class="fas fa-spinner fa-spin me-1"></i> Guardando...');
 
                 $.ajax({
                     url: $(form).attr('action'),
@@ -926,7 +934,7 @@
                     data: $(form).serialize(),
                     dataType: 'json',
 
-                    success: function (response) {
+                    success: function(response) {
                         if (response.redirect) {
                             window.location.href = response.redirect;
                         } else {
@@ -934,9 +942,9 @@
                         }
                     },
 
-                    error: function (xhr) {
+                    error: function(xhr) {
                         submitBtn.prop('disabled', false)
-                                .html('<i class="fas fa-save me-1"></i> Guardar Cambios');
+                            .html('<i class="fas fa-save me-1"></i> Guardar Cambios');
 
                         let msg = 'Error al guardar.';
                         if (xhr.responseJSON?.message) {

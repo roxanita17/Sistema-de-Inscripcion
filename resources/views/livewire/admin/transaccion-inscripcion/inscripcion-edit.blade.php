@@ -106,7 +106,7 @@
         <div class="card-body-modern" style="padding: 2rem;">
             {{-- Padre --}}
             <div  class="row align-items-center mb-4 mt-4">
-                <div class="col-md-9" wire:ignore>
+                <div class="col-md-10" wire:ignore>
                     <label for="padre_select" class="form-label-modern">
                         <i class="fas fa-male"></i> Padre
                     </label>
@@ -122,7 +122,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                <div class="col-md-2 text-md-end mt-3 mt-md-0">
                     @if ($padreId)
                         <a href="{{ route('representante.editar', [
                             'id' => $padreId,
