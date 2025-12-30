@@ -19,6 +19,7 @@ class Docente extends Model
     protected $fillable = [
         'anio_escolar_id',
         'primer_telefono',
+        'telefono_dos',
         'segundo_telefono',
         'codigo',
         'dependencia',
@@ -188,6 +189,7 @@ class Docente extends Model
             $docente->email = $docente->persona->email ?? 'N/A';
             $docente->direccion = $docente->persona->direccion ?? 'N/A';
             $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
+            $docente->telefono_dos = $docente->persona->telefono_dos ?? 'N/A';
         }
 
         // Obtener estudios realizados

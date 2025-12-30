@@ -406,6 +406,62 @@
                         @enderror
                     </div>
 
+                    <!-- --------------------------- -->
+
+                    {{-- Prefijo de telefono 2 --}}
+                    <div class="col-md-2 mb-3"> 
+                        <label class="form-label-modern">
+                            <i class="fas fa-id-card-alt"></i>
+                            Prefijo 2
+                        </label>
+                        <select name="prefijo_dos_id" 
+                                id="prefijo_dos_id"
+                                class="form-control-modern @error('prefijo_dos_id') is-invalid @enderror"
+                                >
+                            <option value="" selected disabled>Seleccione</option>
+                            @foreach ($prefijos as $item)
+                                <option value="{{ $item->id }}" {{ old('prefijo_dos_id') == $item->id ? 'selected' : '' }}>
+                                    {{ $item->prefijo }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <!-- @error('prefijo_dos_id')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror -->
+                    </div>
+
+                    {{-- Segundo telefono --}}
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label-modern">
+                            <i class="fas fa-phone"></i>
+                            Segundo teléfono
+                        </label>
+                        <input type="text" 
+                            name="telefono_dos"
+                            id="telefono_dos"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            maxlength="10"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                            
+                            class="form-control-modern @error('telefono_dos') is-invalid @enderror"
+                            value="{{ old('telefono_dos') }}"
+                            placeholder="Ej: 12345678">
+                        <!-- @error('telefono_dos')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror -->
+                    </div>
+                    <!-- --------------------------- -->
+
+
+
+                    
 
                     {{-- Correo --}}
                     <div class="col-md-6 mb-3">

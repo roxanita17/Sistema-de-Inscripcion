@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('area_formacions', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_area_formacion');
+            $table->integer('codigo_area');
+            $table->string('siglas');
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

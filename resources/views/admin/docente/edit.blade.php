@@ -406,6 +406,58 @@
                         @enderror
                     </div>
 
+                    <!-- --------------------------- -->
+
+                    {{-- Prefijo Telefono 2 --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-modern">
+                            <i class="fas fa-phone"></i>
+                            Prefijo Telefono
+                        </label>
+                        <select name="prefijo_dos_id"
+                                id="prefijoTelefono"
+                                class="form-control-modern 
+                                @error('prefijo_dos_id') is-invalid @enderror">
+                            <option value="" disabled selected>Seleccione</option>
+                            @foreach ($prefijos as $item)
+                                <option value="{{ $item->id }}"
+                                    {{ (old('prefijo_dos_id', $docente->persona->prefijo_dos_id) == $item->id) ? 'selected' : '' }}>
+                                    {{ $item->prefijo }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('prefijo_dos_id')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Segundo Telefono --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-modern">
+                            <i class="fas fa-phone"></i>
+                            Segundo Telefono
+                        </label>
+                        <input type="text" name="telefono_dos"
+                            class="form-control-modern 
+                            @error('telefono_dos') is-invalid @enderror"
+                            id="telefono_dos"
+                            maxlength="8"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                            value="{{ old('telefono_dos', $docente->persona->telefono_dos) }}"
+                            placeholder="Ej: 12345678">
+                        @error('telefono_dos')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    
+                    <!-- --------------------------- -->
+
                     {{-- Dependencia --}}
                     <div class="col-md-6 mb-3">
                         <label class="form-label-modern">

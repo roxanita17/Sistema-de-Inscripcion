@@ -223,6 +223,12 @@ class InscripcionController extends Controller
         return redirect()->route('admin.transacciones.inscripcion.index')->with('success', 'Inscripción inactivada correctamente');
     }
 
+    public function restore($id)
+    {
+        Inscripcion::restaurar($id);
+        return redirect()->route('admin.transacciones.inscripcion.index')->with('success', 'Inscripción restaurada correctamente');
+    }
+
     public function reporte($id)
     {
         $inscripcion = Inscripcion::with([

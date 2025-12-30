@@ -13,6 +13,8 @@ class AreaFormacion extends Model
 
     protected $fillable = [
         'nombre_area_formacion',
+        'codigo_area',
+        'siglas',
         'status',
     ];
 

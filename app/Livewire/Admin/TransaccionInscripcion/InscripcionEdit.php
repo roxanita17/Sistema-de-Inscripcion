@@ -488,6 +488,21 @@ class InscripcionEdit extends Component
         session()->flash('success', 'Datos del alumno actualizados correctamente.');
     }
 
+    public function irACrearRepresentante()
+    {
+        session()->put('inscripcion_temp', [
+            'alumnoId' => $this->alumnoId,
+            'padreId' => $this->padreId,
+            'madreId' => $this->madreId,
+            'representanteLegalId' => $this->representanteLegalId,
+            'gradoId' => $this->gradoId,
+            'observaciones' => $this->observaciones,
+            'documentos' => $this->documentos,
+        ]);
+
+        return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
+    }
+
     public function render()
     {
         return view('livewire.admin.transaccion-inscripcion.inscripcion-edit');

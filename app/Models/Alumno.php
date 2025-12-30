@@ -249,8 +249,8 @@ class Alumno extends Model
             ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id");
 
         /*
-            * Filtros
-            */
+        * Filtros
+        */
 
         if ($genero) {
             $query->where("generos.genero", $genero);
@@ -285,4 +285,5 @@ class Alumno extends Model
             return true;
         });
     }
+
 }

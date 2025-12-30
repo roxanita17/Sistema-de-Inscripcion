@@ -23,6 +23,10 @@ class InscripcionProsecucion extends Component
     public $alumnoSeleccionado;
     public $alumnos = [];
 
+    public $inscripcionAnterior;
+
+
+
     // Grados y Secciones
     public $grados = [];
     public $secciones = [];
@@ -47,6 +51,7 @@ class InscripcionProsecucion extends Component
 
     protected $listeners = [
         'seleccionarAlumno' => 'seleccionarAlumno',
+        'actualizarAlumno' => 'manejarActualizacionAlumno'
     ];
 
     /* ============================================================
@@ -235,7 +240,8 @@ class InscripcionProsecucion extends Component
 
         $this->alumnoSeleccionado = Alumno::with([
             'persona.tipoDocumento',
-            'inscripciones.grado'
+            'inscripciones.grado',
+            'inscripciones.representanteLegal.representante.persona.tipoDocumento',
         ])->find($alumnoId);
 
         if (!$this->alumnoSeleccionado) {
@@ -245,7 +251,37 @@ class InscripcionProsecucion extends Component
 
         // Cargar el grado anterior del alumno
         $this->cargarGradoDesdeInscripcionAnterior();
+
+        $this->cargarGradoDesdeInscripcionAnterior();
+
+
+        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        $this->inscripcionAnterior = $this->alumnoSeleccionado
+            ->inscripcionAnterior($anioActual->id); 
     }
+
+    public function getRepresentantesProperty()
+    {
+        if (!$this->alumnoSeleccionado) {
+            return collect();
+        }
+
+        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        if (!$anioActual) {
+            return collect();
+        }
+
+        $inscripcionAnterior = $this->alumnoSeleccionado
+            ->inscripcionAnterior($anioActual->id);
+
+        if (!$inscripcionAnterior) {
+            return collect();
+        }
+
+        return collect($inscripcionAnterior->representanteLegal ?? []);
+    }
+
+
 
     /**
      * Obtiene el último grado cursado por el alumno
@@ -616,6 +652,33 @@ class InscripcionProsecucion extends Component
             ]);
         }
     }
+
+    public function manejarActualizacionAlumno()
+    {
+        if (!$this->alumnoId) {
+            return;
+        }
+
+        $this->alumnoSeleccionado = Alumno::with([
+            'persona.tipoDocumento',
+            'inscripciones.grado',
+            'inscripcionProsecucions.grado'
+        ])->find($this->alumnoId);
+
+        // 🔥 RECARGA LISTA
+        $this->cargarDatosIniciales();
+
+        // 🔥 AVISA A JS
+        $this->dispatch('refreshSelectAlumno');
+
+        session()->flash(
+            'success',
+            'Datos del estudiante actualizados correctamente.'
+        );
+    }
+
+
+
 
     /* ============================================================
        RENDER

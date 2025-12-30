@@ -277,9 +277,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::middleware(['verificar.anio.escolar'])->group(function () {
         Route::get('alumnos/create', [AlumnoController::class, 'create'])->name('alumnos.create');
         Route::post('alumnos/store', [AlumnoController::class, 'store'])->name('alumnos.store');
-        Route::get('alumnos/{id}/edit', [AlumnoController::class, 'edit'])->name('alumnos.edit');
+        Route::get('alumnos/{alumno}/edit', [AlumnoController::class, 'edit'])
+            ->name('alumnos.edit');
 
-        Route::post('alumnos/{id}/update', [AlumnoController::class, 'update'])->name('alumnos.update');
+        Route::post('alumnos/{alumno}/update', [AlumnoController::class, 'update'])
+            ->name('alumnos.update');
+
 
         Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
     });
@@ -310,19 +313,30 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('inscripcion/{id}', [InscripcionController::class, 'destroy'])
             ->name('inscripcion.destroy');
 
+        Route::get('inscripcion/{id}/restore', [InscripcionController::class, 'restore'])
+            ->name('inscripcion.restore');
+
         Route::get('inscripcion/reporte/{id}', [InscripcionController::class, 'reporte'])
             ->name('inscripcion.reporte');
 
         // ========= INSCRIPCIÓN PROSECUCIÓN (LISTADO) =========
-        Route::get(
-            'inscripcion_prosecucion',
-            [InscripcionProsecucionController::class, 'index']
-        )->name('inscripcion_prosecucion.index');
+        Route::get('inscripcion_prosecucion', [InscripcionProsecucionController::class, 'index'])
+            ->name('inscripcion_prosecucion.index');
 
         // ========= INSCRIPCIÓN PROSECUCIÓN (FORMULARIO) =========
         Route::get('inscripcion_prosecucion/create', function () {
             return view('admin.transacciones.inscripcion_prosecucion.create');
         })->name('inscripcion_prosecucion.create');
+
+        Route::get('inscripcion_prosecucion/create-alumno', function () {
+            return view('admin.transacciones.inscripcion_prosecucion.create-alumno');
+        })->name('inscripcion_prosecucion.create-alumno');
+
+        Route::delete('inscripcion-prosecucion/{inscripcion}', [InscripcionProsecucionController::class, 'destroy'])
+            ->name('inscripcion_prosecucion.destroy');
+
+        Route::get('inscripcion-prosecucion/{id}/restore', [InscripcionProsecucionController::class, 'restore'])
+            ->name('inscripcion_prosecucion.restore');
 
         // ========= AJAX =========
         Route::get(

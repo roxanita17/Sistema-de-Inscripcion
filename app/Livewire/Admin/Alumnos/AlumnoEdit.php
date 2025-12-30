@@ -77,6 +77,7 @@ class AlumnoEdit extends Component
     public $discapacidades = [];
 
     public $enModoEdicion = false;
+    public bool $soloEdicion = false;
 
     /* ============================================================
        =====================   VALIDACIÓN   ========================
@@ -280,10 +281,15 @@ class AlumnoEdit extends Component
     }
 
 
-    public function mount($alumnoId)
+    public function mount($alumnoId,  $soloEdicion = false)
     {
         $this->alumnoId = $alumnoId;
         $this->cargarDatosIniciales();
+        $this->soloEdicion = $soloEdicion;
+
+        if ($this->soloEdicion) {
+            $this->enModoEdicion = true;
+        }
         $this->cargarAlumno();
         $this->cargarDiscapacidades();
     }
@@ -576,6 +582,10 @@ class AlumnoEdit extends Component
             $this->cargarDiscapacidades(); // Recargar para actualizar la vista
             $this->dispatch('actualizarAlumno');
             session()->flash('success', 'Datos del alumno y discapacidades actualizados correctamente.');
+            // Redireccion condicionada
+            if ($this->soloEdicion) {
+                return redirect()->route('admin.alumnos.index');
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error al actualizar: ' . $e->getMessage());
