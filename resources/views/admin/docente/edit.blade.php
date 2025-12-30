@@ -412,7 +412,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label-modern">
                             <i class="fas fa-phone"></i>
-                            Prefijo Telefono
+                            Prefijo Telefono 2
                         </label>
                         <select name="prefijo_dos_id"
                                 id="prefijoTelefono"
@@ -456,8 +456,6 @@
                         @enderror
                     </div>
                     
-                    <!-- --------------------------- -->
-
                     {{-- Dependencia --}}
                     <div class="col-md-6 mb-3">
                         <label class="form-label-modern">

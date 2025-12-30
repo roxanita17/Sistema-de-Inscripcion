@@ -84,6 +84,7 @@ class DocenteAreaGrado extends Component
         $this->docenteSeleccionado = Docente::with([
             'persona',
             'persona.prefijoTelefono',
+            'persona.prefijoDos',
             'persona.tipoDocumento',
             'persona.genero',
             'detalleEstudios.estudiosRealizado',
@@ -107,6 +108,7 @@ class DocenteAreaGrado extends Component
             'persona.tipoDocumento',
             'persona.genero',
             'persona.prefijoTelefono',
+            'persona.prefijoDos',
             'detalleDocenteEstudio.estudiosRealizado'
         ])
             ->whereHas('persona', fn($q) => $q->where('status', true))
@@ -153,6 +155,7 @@ class DocenteAreaGrado extends Component
             'persona.tipoDocumento',
             'persona.genero',
             'persona.prefijoTelefono',
+            'persona.prefijoDos',
             'detalleDocenteEstudio.estudiosRealizado'
         ])->find($this->docenteId);
 
@@ -294,7 +297,7 @@ class DocenteAreaGrado extends Component
 
         $this->secciones = Seccion::where('status', true)
             ->where('grado_id', $this->gradoId)
-            ->where('cantidad_actual', '>', 0) // 👈 LA CLAVE
+            ->where('cantidad_actual', '>', 0) 
             ->orderBy('nombre', 'asc')
             ->get();
     }
