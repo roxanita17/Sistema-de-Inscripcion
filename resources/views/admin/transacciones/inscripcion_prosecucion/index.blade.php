@@ -355,7 +355,7 @@
                                     </tr>
 
                                     {{-- Modal de ver --}}
-                                    {{-- @include('admin.transacciones.inscripcion.modales.showModal') --}}
+                                    @include('admin.transacciones.inscripcion_prosecucion.modales.showModal')
                                 @endforeach
                             @endif
                         </tbody>

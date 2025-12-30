@@ -10,7 +10,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <hr>
-
+ 
             <!-- Body -->
             <div class="modal-body pt-0">
                 <form id="filtroForm" action="{{ route('admin.alumnos.index') }}" method="GET">

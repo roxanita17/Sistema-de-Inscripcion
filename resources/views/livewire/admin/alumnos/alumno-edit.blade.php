@@ -270,7 +270,10 @@
 
 
         </div>
-    @else
+    @endif
+    @if ($enModoEdicion)
+
+        
         {{-- Modo Edición --}}
         <form wire:submit.prevent="guardar">
             <div class="card-header-modern">
@@ -742,6 +745,11 @@
             {{-- Botones --}}
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="d-flex justify-content-end gap-3">
+                    @if ($soloEdicion)
+                        <a href="{{ route('admin.alumnos.index') }}" class="btn-secondary-modern">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                    @endif
                     <button type="submit" class="btn-primary-modern" wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="guardar">
                             <i class="fas fa-save"></i> Guardar Cambios

@@ -37,6 +37,9 @@ class InscripcionProsecucionController extends Controller
         }
 
         $prosecuciones = InscripcionProsecucion::with([
+            'prosecucionAreas',
+            'inscripcion.alumno.persona',
+            
             // inscripción base
             'inscripcion.alumno.persona.tipoDocumento',
             'inscripcion.representanteLegal.representante.persona',

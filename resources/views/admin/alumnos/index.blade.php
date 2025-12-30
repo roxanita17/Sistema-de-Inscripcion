@@ -108,77 +108,70 @@
                     </div>
                 </form>
                 <div class="header-right" style="display: flex; gap: 5px;">
-                                <div>
-                                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
-                                        <i class="fas fa-filter"></i>
-                                        Filtros
-                                    </button>
-                                </div>
+                    <div>
+                        <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                            <i class="fas fa-filter"></i>
+                            Filtros
+                        </button>
+                    </div>
                     <!-- Botón que genera el PDF con los filtros actuales -->
                     <div>
                         <a href="{{ route('admin.alumnos.reporteGeneralPDF', [
                             'genero' => request('genero'),
                             'tipo_documento' => request('tipo_documento'),
-                            'estatus' => request('estatus', 'Activo')
-                        ]) }}" target="_blank" class="btn-modal-create" style="background-color: #dc3545; border-color: #dc3545;">
+                            'estatus' => request('estatus', 'Activo'),
+                        ]) }}"
+                            target="_blank" class="btn-modal-create"
+                            style="background-color: #dc3545; border-color: #dc3545;">
                             <i class="fas fa-file-pdf"></i> PDF General
                         </a>
                     </div>
-
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ now()->translatedFormat('d M Y') }}</span>
                     </div>
-
-                    
-
                 </div>
+                <div class="header-right">
+                    @php
+                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
+                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
+                        $mostrarAnio = $anioActivo ?? $anioExtendido;
+                    @endphp
 
-                                                       <div class="header-right">
-                <!-- --------------------------- -->
+                    @if ($mostrarAnio)
+                        <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
+                                    <i class="fas fa-calendar-check me-1"></i>
 
-@php
-    $anioActivo = \App\Models\AnioEscolar::activos()->first();
-    $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-    $mostrarAnio = $anioActivo ?? $anioExtendido;
-@endphp
+                                    Año Escolar
+                                </span>
 
-@if($mostrarAnio)
-    <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
-        <div class="d-flex align-items-center">
-            <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                <i class="fas fa-calendar-check me-1"></i>
-                
-                Año Escolar
-            </span>
-            
-            <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                <span class="text-muted me-2">
-                    <i class="fas fa-play-circle text-primary me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                <span class="text-muted me-2">
-                    <i class="fas fa-flag-checkered text-danger me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                
-            </div>
-        </div>
-    </div>
-@else
-    <div class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-        </div>
-    </div>
-@endif
-<!-- --------------------------- -->
+                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-play-circle text-primary me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                                    </span>
 
-            </div>
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                                    </span>
 
+
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
+                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
+                            </div>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             {{-- Cuerpo de la tarjeta con la tabla --}}
@@ -267,14 +260,13 @@
 
                                                         {{-- Editar --}}
                                                         <li>
-                                                            <button
+                                                            <a
+                                                                href="{{ route('admin.alumnos.edit', $datos->id) }}"
                                                                 class="dropdown-item d-flex align-items-center text-warning"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#viewModalEditar{{ $datos->id }}"
                                                                 title="Editar">
                                                                 <i class="fas fa-edit me-2"></i>
                                                                 Editar
-                                                            </button>
+                                                            </a>
                                                         </li>
 
                                                         {{-- Inactivar --}}
@@ -293,9 +285,8 @@
                                                         <li>
                                                             {{-- Botón de reporte individual --}}
                                                             <a href="{{ route('admin.alumnos.reporte.individual', ['id' => $datos->id]) }}"
-                                                                class="dropdown-item d-flex align-items-center text-danger" 
-                                                                title="Generar reporte PDF"
-                                                                target="_blank">
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                title="Generar reporte PDF" target="_blank">
                                                                 <i class="fas fa-file-pdf"></i>
                                                                 PDF
                                                             </a>

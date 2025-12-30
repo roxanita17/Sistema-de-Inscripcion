@@ -35,68 +35,71 @@ class AlumnoController extends Controller
         $estatus = request('estatus', 'Activo');
         $genero = request('genero');
         $tipo_documento = request('tipo_documento');
-        
+
         // Construir la consulta base
         $query = Alumno::with([
-            'persona', 
-            'etniaIndigena', 
-            'ordenNacimiento', 
-            'lateralidad', 
+            'persona',
+            'etniaIndigena',
+            'ordenNacimiento',
+            'lateralidad',
             'inscripciones',
             'persona.genero',
-            'persona.tipoDocumento'
+            'persona.tipoDocumento',
+            'inscripciones.grado',
+            'inscripciones.anioEscolar',
+            'inscripciones.seccion',
         ]);
-        
+
         // Aplicar búsqueda
         if (!empty($buscar)) {
-            $query->where(function($q) use ($buscar) {
-                $q->whereHas('persona', function($persona) use ($buscar) {
+            $query->where(function ($q) use ($buscar) {
+                $q->whereHas('persona', function ($persona) use ($buscar) {
                     $persona->where('primer_nombre', 'LIKE', "%{$buscar}%")
-                           ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
-                           ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
-                           ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%")
-                           ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
+                        ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
+                        ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                        ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%")
+                        ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
                 });
             });
         }
-        
+
         // Aplicar filtro de estatus
         if ($estatus === 'todos') {
             $query->whereIn('status', ['Activo', 'Inactivo']);
         } else {
             $query->where('status', $estatus);
         }
-        
+
         // Aplicar filtro de género
         if (!empty($genero)) {
-            $query->whereHas('persona', function($q) use ($genero) {
+            $query->whereHas('persona', function ($q) use ($genero) {
                 $q->where('genero_id', $genero);
             });
         }
-        
+
         // Aplicar filtro de tipo de documento
         if (!empty($tipo_documento)) {
-            $query->whereHas('persona', function($q) use ($tipo_documento) {
+            $query->whereHas('persona', function ($q) use ($tipo_documento) {
                 $q->where('tipo_documento_id', $tipo_documento);
             });
         }
-        
+
         // Obtener datos para los filtros
         $generos = \App\Models\Genero::all();
         $tiposDocumento = \App\Models\TipoDocumento::all();
-        
+
         // Ordenar y paginar
         $alumnos = $query->orderBy('created_at', 'desc')
-                        ->paginate(10)
-                        ->appends(request()->query());
+            ->paginate(10)
+            ->appends(request()->query());
 
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Se envían los datos a la vista
         return view('admin.alumnos.index', compact(
-            'alumnos', 
-            'anioEscolarActivo', 
+            'alumnos',
+            'anioEscolarActivo',
             'buscar',
             'estatus',
             'generos',
@@ -124,24 +127,8 @@ class AlumnoController extends Controller
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
 
-        return view('admin.alumnos.create',compact('anioEscolarActivo',  ));
-    }
-
-    
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        return view('admin.alumnos.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Alumno $alumno)
-    {
-        //
+        $anioEscolarActivo = $this->verificarAnioEscolar();
+        return view('admin.alumnos.create', compact('anioEscolarActivo'));
     }
 
     /**
@@ -149,15 +136,12 @@ class AlumnoController extends Controller
      */
     public function edit(Alumno $alumno)
     {
-        //
-    }
+        $anioEscolarActivo = $this->verificarAnioEscolar();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Alumno $alumno)
-    {
-        //
+        return view('admin.alumnos.edit', compact(
+            'alumno',
+            'anioEscolarActivo'
+        ));
     }
 
     /**
@@ -166,100 +150,101 @@ class AlumnoController extends Controller
     public function destroy($id)
     {
         Alumno::eliminar($id);
-        
+
         return redirect()->route('admin.alumnos.index')->with('success', 'Alumno eliminado correctamente');
     }
 
-    public function reportePDF($id){
+    public function reportePDF($id)
+    {
         $alumno = Alumno::where('id', $id)
-        ->with([
-            'persona.tipoDocumento',
-            'persona.genero',
+            ->with([
+                'persona.tipoDocumento',
+                'persona.genero',
 
 
-            'ordenNacimiento',
-            'lateralidad',
-            'etniaIndigena'
-        ])
-        ->firstOrFail();
+                'ordenNacimiento',
+                'lateralidad',
+                'etniaIndigena'
+            ])
+            ->firstOrFail();
 
         $pdf = PDF::loadView('admin.alumnos.reportes.general_est', compact('alumno'));
         return $pdf->stream('alumno_' . $alumno->persona->numero_documento . '.pdf');
     }
 
-public function reporteGeneralPDF(Request $request)
-{
-    // Obtener los parámetros de filtrado
-    $genero = $request->input('genero');
-    $tipo_documento = $request->input('tipo_documento');
-    $estatus = $request->input('estatus', 'Activo');
-    
-    // Construir la consulta base
-    $query = Alumno::with(['persona', 'etniaIndigena', 'ordenNacimiento', 'lateralidad', 'persona.genero', 'persona.tipoDocumento']);
-    
-    // Aplicar filtro de estatus
-    if ($estatus === 'todos') {
-        $query->whereIn('status', ['Activo', 'Inactivo']);
-    } else {
-        $query->where('status', $estatus);
-    }
-    
-    // Aplicar filtro de género
-    if (!empty($genero)) {
-        $query->whereHas('persona', function($q) use ($genero) {
-            $q->where('genero_id', $genero);
-        });
-    }
-    
-    // Aplicar filtro de tipo de documento
-    if (!empty($tipo_documento)) {
-        $query->whereHas('persona', function($q) use ($tipo_documento) {
-            $q->where('tipo_documento_id', $tipo_documento);
-        });
-    }
-    
-    // Asegurarse de cargar las relaciones necesarias con sus respectivas columnas
-    $query->with([
-        'persona.tipoDocumento:id,nombre',
-        'persona.genero:id,genero',
-        'discapacidad:id,nombre_discapacidad'
-    ]);
+    public function reporteGeneralPDF(Request $request)
+    {
+        // Obtener los parámetros de filtrado
+        $genero = $request->input('genero');
+        $tipo_documento = $request->input('tipo_documento');
+        $estatus = $request->input('estatus', 'Activo');
 
-    // Obtener los alumnos con los filtros aplicados y formatear los datos
-    $alumnos = $query->orderBy('created_at', 'desc')->get()->map(function($alumno) {
-        $tipoDocumento = optional($alumno->persona->tipoDocumento)->nombre;
-        
-        return [
-            'tipo_documento' => $tipoDocumento ?? 'N/A',
-            'numero_documento' => $alumno->persona->numero_documento ?? 'N/A',
-            'primer_apellido' => $alumno->persona->primer_apellido ?? 'N/A',
-            'segundo_apellido' => $alumno->persona->segundo_apellido ?? '',
-            'primer_nombre' => $alumno->persona->primer_nombre ?? 'N/A',
-            'segundo_nombre' => $alumno->persona->segundo_nombre ?? '',
-            'tercer_nombre' => $alumno->persona->tercer_nombre ?? '',
-            'fecha_nacimiento' => $alumno->persona->fecha_nacimiento ?? null,
-            'edad' => $alumno->persona->fecha_nacimiento ? \Carbon\Carbon::parse($alumno->persona->fecha_nacimiento)->age : 'N/A',
-            'genero' => $alumno->persona->genero->genero ?? 'N/A',
-            'discapacidad' => $alumno->discapacidad->nombre_discapacidad ?? 'Ninguna'
+        // Construir la consulta base
+        $query = Alumno::with(['persona', 'etniaIndigena', 'ordenNacimiento', 'lateralidad', 'persona.genero', 'persona.tipoDocumento']);
+
+        // Aplicar filtro de estatus
+        if ($estatus === 'todos') {
+            $query->whereIn('status', ['Activo', 'Inactivo']);
+        } else {
+            $query->where('status', $estatus);
+        }
+
+        // Aplicar filtro de género
+        if (!empty($genero)) {
+            $query->whereHas('persona', function ($q) use ($genero) {
+                $q->where('genero_id', $genero);
+            });
+        }
+
+        // Aplicar filtro de tipo de documento
+        if (!empty($tipo_documento)) {
+            $query->whereHas('persona', function ($q) use ($tipo_documento) {
+                $q->where('tipo_documento_id', $tipo_documento);
+            });
+        }
+
+        // Asegurarse de cargar las relaciones necesarias con sus respectivas columnas
+        $query->with([
+            'persona.tipoDocumento:id,nombre',
+            'persona.genero:id,genero',
+            'discapacidad:id,nombre_discapacidad'
+        ]);
+
+        // Obtener los alumnos con los filtros aplicados y formatear los datos
+        $alumnos = $query->orderBy('created_at', 'desc')->get()->map(function ($alumno) {
+            $tipoDocumento = optional($alumno->persona->tipoDocumento)->nombre;
+
+            return [
+                'tipo_documento' => $tipoDocumento ?? 'N/A',
+                'numero_documento' => $alumno->persona->numero_documento ?? 'N/A',
+                'primer_apellido' => $alumno->persona->primer_apellido ?? 'N/A',
+                'segundo_apellido' => $alumno->persona->segundo_apellido ?? '',
+                'primer_nombre' => $alumno->persona->primer_nombre ?? 'N/A',
+                'segundo_nombre' => $alumno->persona->segundo_nombre ?? '',
+                'tercer_nombre' => $alumno->persona->tercer_nombre ?? '',
+                'fecha_nacimiento' => $alumno->persona->fecha_nacimiento ?? null,
+                'edad' => $alumno->persona->fecha_nacimiento ? \Carbon\Carbon::parse($alumno->persona->fecha_nacimiento)->age : 'N/A',
+                'genero' => $alumno->persona->genero->genero ?? 'N/A',
+                'discapacidad' => $alumno->discapacidad->nombre_discapacidad ?? 'Ninguna'
+            ];
+        });
+
+        if ($alumnos->isEmpty()) {
+            return response('No se encontraron alumnos con los criterios seleccionados', 404);
+        }
+
+        // Pasar los filtros a la vista para mostrarlos en el PDF
+        $filtros = [
+            'genero' => $genero ? \App\Models\Genero::find($genero)->genero ?? null : null,
+            'tipo_documento' => $tipo_documento ? \App\Models\TipoDocumento::find($tipo_documento)->nombre ?? null : null,
+            'estatus' => $estatus
         ];
-    });
-    
-    if ($alumnos->isEmpty()) {
-        return response('No se encontraron alumnos con los criterios seleccionados', 404);
-    }
-    
-    // Pasar los filtros a la vista para mostrarlos en el PDF
-    $filtros = [
-        'genero' => $genero ? \App\Models\Genero::find($genero)->genero ?? null : null,
-        'tipo_documento' => $tipo_documento ? \App\Models\TipoDocumento::find($tipo_documento)->nombre ?? null : null,
-        'estatus' => $estatus
-    ];
 
-    $pdf = PDF::loadview('admin.alumnos.reportes.Reporte_General', [
-        'alumnos' => $alumnos,
-        'filtros' => $filtros
-    ]);
-    
-    return $pdf->stream('reporte_alumnos.pdf');
-}
+        $pdf = PDF::loadview('admin.alumnos.reportes.Reporte_General', [
+            'alumnos' => $alumnos,
+            'filtros' => $filtros
+        ]);
+
+        return $pdf->stream('reporte_alumnos.pdf');
+    }
 }

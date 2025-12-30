@@ -54,6 +54,25 @@ class InscripcionProsecucion extends Model
         return $this->belongsTo(Alumno::class);
     }
 
+    public function prosecucionAreas()
+    {
+        return $this->hasMany(
+            ProsecucionArea::class,
+            'inscripcion_prosecucion_id'
+        );
+    }
+
+    public function getGradoInscritoAttribute()
+    {
+        return $this->grado;
+    }
+
+    public function representantes()
+    {
+        return $this->hasMany(Representante::class);
+    }
+
+
     public static function inactivar($prosecucionId)
     {
         return DB::transaction(function () use ($prosecucionId) {
