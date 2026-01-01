@@ -124,6 +124,7 @@ class SectionDistributorService
             $max = $grado->max_por_seccion ?? 30;
             $total = $ordenados->count();
 
+            
             $numSecciones = (int) ceil($total / $max);
 
             if (($total / $numSecciones) < $min && $numSecciones > 1) {
@@ -190,12 +191,12 @@ class SectionDistributorService
 
 
                     if ($prosecucion) {
-                        // 👉 Asignar sección en PROSECUCIÓN
+                        //  Asignar sección en PROSECUCIÓN
                         $prosecucion->update([
                             'seccion_id' => $seccion->id
                         ]);
                     } else {
-                        // 👉 Solo si NO hay prosecución (nuevo ingreso real)
+                        // Solo si NO hay prosecución (nuevo ingreso real)
                         $inscripcion->update([
                             'seccion_id' => $seccion->id
                         ]);

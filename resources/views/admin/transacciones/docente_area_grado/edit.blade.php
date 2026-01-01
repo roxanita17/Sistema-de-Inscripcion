@@ -70,11 +70,11 @@
     <livewire:admin.transaccion-docente.docente-area-grado :docenteId="$docenteId"/>
 
     <div class="form-actions-modern">
-                    <a href="{{ route('admin.transacciones.docente_area_grado.index') }}" class="btn-secondary-modern">
+                    <a href="{{ route('admin.transacciones.docente_area_grado.index') }}" type="button" class="btn-secondary-modern">
                         <i class="fas fa-arrow-left"></i> Cancelar
                     </a>
 
-                    <a href="{{ route('admin.transacciones.docente_area_grado.index') }}" class="btn-primary-modern">
+                    <a href="{{ route('admin.transacciones.docente_area_grado.index') }}" type="button" class="btn-create">
                         <i class="fas fa-save"></i> Editar Asignación
                     </a>
                 </div>

@@ -396,7 +396,7 @@
                             id="primer_telefono"
                             maxlength="8"
                             oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                            value="{{ old('primer_telefono', $docente->primer_telefono) }}"
+                            value="{{ old('primer_telefono', $docente->persona->telefono) }}"
                             placeholder="Ej: 12345678">
                         @error('primer_telefono')
                             <div class="invalid-feedback-modern">
@@ -405,8 +405,6 @@
                             </div>
                         @enderror
                     </div>
-
-                    <!-- --------------------------- -->
 
                     {{-- Prefijo Telefono 2 --}}
                     <div class="col-md-6 mb-3">

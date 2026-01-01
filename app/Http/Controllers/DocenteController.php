@@ -126,7 +126,7 @@ class DocenteController extends Controller
 
         try {
             $anioEscolar = $this->obtenerAnioEscolarActivo();
-            // 1. GUARDAR PERSONA
+            // 1. PERSONA
             $persona = Persona::create([
                 'primer_nombre' => $request->primer_nombre,
                 'segundo_nombre' => $request->segundo_nombre,
@@ -137,24 +137,24 @@ class DocenteController extends Controller
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,
-                'status' => true,
-                'tipo_documento_id' => $request->tipo_documento_id,
-                'genero_id' => $request->genero,
-                'localidad_id' => null,
+                'telefono' => $request->primer_telefono,
+                'telefono_dos' => $request->telefono_dos,
                 'prefijo_id' => $request->prefijo_id,
                 'prefijo_dos_id' => $request->prefijo_dos_id,
-                'telefono_dos' => $request->telefono_dos,
+                'tipo_documento_id' => $request->tipo_documento_id,
+                'genero_id' => $request->genero,
+                'status' => true,
             ]);
 
-            // 2. GUARDAR DOCENTE
+            // 2. DOCENTE
             $docente = Docente::create([
                 'anio_escolar_id' => $anioEscolar->id,
-                'primer_telefono' => $request->primer_telefono,
                 'codigo' => $request->codigo,
                 'dependencia' => $request->dependencia,
                 'persona_id' => $persona->id,
                 'status' => true,
             ]);
+
 
             DB::commit();
 
@@ -191,44 +191,47 @@ class DocenteController extends Controller
         $persona = $docente->persona;
 
         // VALIDACIÓN (excluyendo la cédula actual)
-        $validated = $request->validate([
-            'tipo_documento_id' => 'required|exists:tipo_documentos,id',
-            'numero_documento' => 'required|string|max:20' . $persona->numero_documento,
-            'primer_nombre' => 'required|string|max:50',
-            'segundo_nombre' => 'nullable|string|max:50',
-            'tercer_nombre' => 'nullable|string|max:50',
-            'primer_apellido' => 'required|string|max:50',
-            'segundo_apellido' => 'nullable|string|max:50',
-            'genero' => 'required|exists:generos,id',
-            'fecha_nacimiento' => [
-                'required',
-                'date',
-                'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+        $validated = $request->validate(
+            [
+                'tipo_documento_id' => 'required|exists:tipo_documentos,id',
+                'numero_documento' => 'required|string|max:20|unique:personas,numero_documento,' . $persona->id,
+                'primer_nombre' => 'required|string|max:50',
+                'segundo_nombre' => 'nullable|string|max:50',
+                'tercer_nombre' => 'nullable|string|max:50',
+                'primer_apellido' => 'required|string|max:50',
+                'segundo_apellido' => 'nullable|string|max:50',
+                'genero' => 'required|exists:generos,id',
+                'fecha_nacimiento' => [
+                    'required',
+                    'date',
+                    'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+                ],
+                'correo' => 'nullable|email|max:100',
+                'direccion' => 'nullable|string|max:255',
+                'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
+                'prefijo_dos_id' => 'nullable|exists:prefijo_telefonos,id',
+                'primer_telefono' => 'nullable|string|max:20',
+                'telefono_dos' => 'nullable|string|max:20',
+                'codigo' => 'nullable|numeric',
+                'dependencia' => 'nullable|string|max:100',
             ],
-            'correo' => 'nullable|email|max:100',
-            'direccion' => 'nullable|string|max:255',
-            'prefijo_id' => 'nullable|exists:prefijo_telefonos,id',
-            'primer_telefono' => 'nullable|string|max:20',
-            'telefono_dos' => 'nullable|string|max:20',
-            'codigo' => 'nullable|numeric',
-            'dependencia' => 'nullable|string|max:100',
-        ], [
-            'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
-            'numero_documento.required' => 'La cédula es obligatoria',
-            'numero_documento.unique' => 'Esta cédula ya está registrada',
-            'primer_nombre.required' => 'El primer nombre es obligatorio',
-            'primer_apellido.required' => 'El primer apellido es obligatorio',
-            'genero.required' => 'El género es obligatorio',
-            'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
-            'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento debe corresponder a una persona mayor de 18 años',
-            'correo.email' => 'El correo electrónico no tiene un formato válido',
-        ]);
+            [
+                'tipo_documento_id.required' => 'El tipo de documento es obligatorio',
+                'numero_documento.required' => 'La cédula es obligatoria',
+                'numero_documento.unique' => 'Esta cédula ya está registrada',
+                'primer_nombre.required' => 'El primer nombre es obligatorio',
+                'primer_apellido.required' => 'El primer apellido es obligatorio',
+                'genero.required' => 'El género es obligatorio',
+                'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
+                'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento debe corresponder a una persona mayor de 18 años',
+                'correo.email' => 'El correo electrónico no tiene un formato válido',
+            ]
+        );
 
         DB::beginTransaction();
 
         try {
             $anioEscolar = $this->obtenerAnioEscolarActivo();
-            // 1. ACTUALIZAR PERSONA
             $persona->update([
                 'primer_nombre' => $request->primer_nombre,
                 'segundo_nombre' => $request->segundo_nombre,
@@ -239,20 +242,20 @@ class DocenteController extends Controller
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'direccion' => $request->direccion,
                 'email' => $request->correo,
-                'tipo_documento_id' => $request->tipo_documento_id,
-                'genero_id' => $request->genero,
+                'telefono' => $request->primer_telefono,
+                'telefono_dos' => $request->telefono_dos,
                 'prefijo_id' => $request->prefijo_id,
                 'prefijo_dos_id' => $request->prefijo_dos_id,
-                'telefono_dos' => $request->telefono_dos,
+                'tipo_documento_id' => $request->tipo_documento_id,
+                'genero_id' => $request->genero,
             ]);
 
-            // 2. ACTUALIZAR DOCENTE
             $docente->update([
                 'anio_escolar_id' => $anioEscolar->id,
-                'primer_telefono' => $request->primer_telefono,
                 'codigo' => $request->codigo,
                 'dependencia' => $request->dependencia,
             ]);
+
 
             DB::commit();
 
@@ -276,7 +279,7 @@ class DocenteController extends Controller
             'persona.tipoDocumento',
             'persona.genero',
             'persona.prefijoTelefono',
-            'persona.prefijoDos',          
+            'persona.prefijoDos',
             'detalleEstudios' => function ($q) {
                 $q->where('status', true);
             },
@@ -292,7 +295,14 @@ class DocenteController extends Controller
      */
     public function estudios($id)
     {
-        $docentes = Docente::with(['persona.tipoDocumento', 'persona.genero', 'persona.prefijoTelefono'])
+        $docentes = Docente::with(
+            [
+                'persona.tipoDocumento',
+                'persona.genero',
+                'persona.prefijoTelefono',
+                'persona.prefijoDos',
+            ]
+        )
             ->findOrFail($id);
         $estudios = EstudiosRealizado::all();
         $docenteEstudios = DetalleDocenteEstudio::all();

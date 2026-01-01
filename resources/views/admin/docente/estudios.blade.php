@@ -128,16 +128,14 @@
 
                     <div class="info-item">
                         <span class="info-label"><i class="fas fa-phone"></i> Telefono:</span>
-                        <span
-                            class="info-value">{{ $docentes->persona->prefijoTelefono->prefijo ?? '' }}-{{ $docentes->primer_telefono ?? '—' }}</span>
+                        <span class="info-value">{{ $docentes->persona->telefono_completo ?? ' — ' }}</span>
                     </div>
 
                     <div class="info-item">
-                        @if ($docentes->persona->prefijoDos)
+                        @if ($docentes->persona->telefono_dos_completo)
                             <span class="info-label"><i class="fas fa-phone"></i> Segundo Telefono:</span>
 
-                            <span
-                                class="info-value">{{ $docentes->persona->prefijoDos->prefijo ?? '' }}-{{ $docentes->persona->telefono_dos ?? '' }}</span>
+                            <span class="info-value">{{ $docentes->persona->telefono_dos_completo }}</span>
                         @else
                             Sin registrar
                         @endif

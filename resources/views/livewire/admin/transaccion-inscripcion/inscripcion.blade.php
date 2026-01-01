@@ -1155,7 +1155,7 @@
                         <i class="fas fa-arrow-left"></i>
                         Cancelar
                     </a>
-                    <button type="button" wire:click="finalizar" class="btn-primary-modern"
+                    <button type="button" wire:click="finalizar" class="btn-create"
                         wire:loading.attr="disabled" @if (!$acepta_normas_contrato) disabled @endif>
                         <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))>
                             <i class="fas fa-save"></i>

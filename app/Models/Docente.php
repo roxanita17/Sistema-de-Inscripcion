@@ -18,16 +18,13 @@ class Docente extends Model
 
     protected $fillable = [
         'anio_escolar_id',
-        'primer_telefono',
-        'telefono_dos',
-        'segundo_telefono',
         'codigo',
         'dependencia',
         'status',
         'persona_id',
     ];
 
-        protected $mayusculas = [
+    protected $mayusculas = [
         'dependencia'
     ];
 
@@ -89,6 +86,21 @@ class Docente extends Model
         );
     }
 
+    public function getTelefonoCompletoAttribute()
+    {
+        return trim(
+            ($this->prefijoTelefono->prefijo ?? '') . ' ' . ($this->telefono ?? '')
+        );
+    }
+
+    public function getTelefonoDosCompletoAttribute()
+    {
+        return trim(
+            ($this->prefijoDos->prefijo ?? '') . ' ' . ($this->telefono_dos ?? '')
+        );
+    }
+
+
     public function asignacionesAreasActivas()
     {
         return $this->asignacionesAreas()->where('docente_area_grados.status', true);
@@ -138,15 +150,6 @@ class Docente extends Model
                 $this->persona->primer_apellido . ' ' .
                 ($this->persona->segundo_apellido ?? '')
         );
-    }
-
-    /**
-     * Accessor para obtener el teléfono completo
-     */
-    public function getTelefonoCompletoAttribute()
-    {
-        $prefijo = $this->prefijoTelefono->prefijo ?? '';
-        return $prefijo . $this->primer_telefono;
     }
 
 

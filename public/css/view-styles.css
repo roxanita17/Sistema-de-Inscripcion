@@ -736,6 +736,7 @@ input[type="file"].form-control-modern::file-selector-button:hover {
 .btn-secondary-modern {
     background: var(--gray-100);
     color: var(--gray-700);
+    text-decoration: none;
 }
 
 .btn-secondary-modern:hover:not(:disabled) {
@@ -1188,6 +1189,15 @@ button:disabled {
     border-radius: 8px;
     border: none;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+
+.btn-cancel-modern:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-400);
+    color: var(--gray-900);
+    text-decoration: none;
 }
 
 .btn-delete-modern {

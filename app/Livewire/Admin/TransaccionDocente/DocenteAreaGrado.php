@@ -142,30 +142,57 @@ class DocenteAreaGrado extends Component
 
 
     /**
-     * EVENTO PRINCIPAL: SELECCIONA DOCENTE
-     * (solo se usa en modo normal)
+     * EVENTO AUTOMÁTICO: Se ejecuta cuando cambia docenteId
+     * Esta es la clave para la selección automática
      */
-    public function seleccionarDocente()
+    public function updatedDocenteId($value)
     {
-        $this->validate([
-            'docenteId' => 'required|exists:docentes,id',
-        ]);
+        if (!$value) {
+            $this->reset([
+                'docenteSeleccionado',
+                'materiaId',
+                'materias',
+                'gradoId',
+                'grados',
+                'seccionId',
+                'secciones',
+                'asignaciones',
+            ]);
 
+            $this->dispatch('resetSelects');
+            return;
+        }
+
+        // 1️⃣ Cargar docente
         $this->docenteSeleccionado = Docente::with([
             'persona.tipoDocumento',
             'persona.genero',
             'persona.prefijoTelefono',
             'persona.prefijoDos',
             'detalleDocenteEstudio.estudiosRealizado'
-        ])->find($this->docenteId);
+        ])->find($value);
 
+        // 2️⃣ Resetear selects dependientes
+        $this->reset([
+            'materiaId',
+            'gradoId',
+            'seccionId',
+            'grados',
+            'secciones',
+        ]);
+
+        // 3️⃣ Cargar materias del nuevo docente
         $this->cargarMateriasPorEstudios();
-        $this->grados = collect(); // Inicializar grados vacíos
-        $this->cargarSecciones();
+
+        // 4️⃣ Cargar asignaciones
         $this->cargarAsignaciones();
+
+        // 5️⃣ Avisar al frontend
+        $this->dispatch('resetSelects');
 
         session()->flash('success', 'Docente seleccionado correctamente.');
     }
+
 
 
     /**
@@ -297,7 +324,7 @@ class DocenteAreaGrado extends Component
 
         $this->secciones = Seccion::where('status', true)
             ->where('grado_id', $this->gradoId)
-            ->where('cantidad_actual', '>', 0) 
+            ->where('cantidad_actual', '>', 0)
             ->orderBy('nombre', 'asc')
             ->get();
     }

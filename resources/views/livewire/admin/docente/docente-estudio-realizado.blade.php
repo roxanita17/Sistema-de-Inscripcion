@@ -1,5 +1,5 @@
 <div>
-    {{-- Alertas al inicio (estilo año escolar) --}}
+    {{-- Alertas de anio escolar --}}
     @if (session()->has('success') || session()->has('error'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
