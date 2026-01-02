@@ -462,7 +462,7 @@ class AlumnoCreate extends Component
                     'orden_nacimiento_id' => $this->orden_nacimiento_id,
                     'etnia_indigena_id' => $this->etnia_indigena_id,
                     'status' => 'Activo',
-                ]);
+                ]); 
             } else {
 
                 Alumno::create([
