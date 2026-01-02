@@ -66,6 +66,9 @@ class Inscripcion extends Component
 
     public string $tipo_inscripcion = 'nuevo_ingreso';
 
+    public bool $gradoSinCupos = false;
+    public string $mensajeCupos = '';
+
 
     /* ============================================================
        BOOT & MOUNT
@@ -375,6 +378,10 @@ class Inscripcion extends Component
        ============================================================ */
     public function updatedGradoId($value)
     {
+        $this->resetErrorBag('gradoId');
+        $this->gradoSinCupos = false;
+        $this->mensajeCupos = '';
+
         if (!$value) {
             $this->infoCupos = null;
             $this->secciones = [];
@@ -384,17 +391,22 @@ class Inscripcion extends Component
 
         $this->infoCupos = $this->inscripcionService->obtenerInfoCupos($value);
 
+        if ($this->infoCupos['cupos_disponibles'] <= 0) {
+            $this->gradoSinCupos = true;
+            $this->mensajeCupos = 'Este grado ha alcanzado el máximo de cupos disponibles.';
+            $this->addError('gradoId', $this->mensajeCupos);
+            return;
+        }
+
         $grado = \App\Models\Grado::find($value);
         $this->esPrimerGrado = ((int) $grado->numero_grado === 1);
 
-        // Si NO es primer grado → cargar secciones
         if (!$this->esPrimerGrado) {
             $this->secciones = \App\Models\Seccion::where('grado_id', $value)
                 ->where('status', true)
                 ->orderBy('nombre')
                 ->get();
         } else {
-            // Limpiar si es primer grado
             $this->secciones = [];
             $this->seccion_id = null;
         }
@@ -403,6 +415,7 @@ class Inscripcion extends Component
         $this->evaluarDocumentosVisual();
         $this->recalcularObservaciones();
     }
+
 
     /* ============================================================
        REGISTRO DE DISCAPACIDADES

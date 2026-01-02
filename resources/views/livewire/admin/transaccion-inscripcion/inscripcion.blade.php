@@ -591,8 +591,8 @@
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <div>
-                    <h3>Seleccionar Grado</h3>
-                    <p>Seleccione el grado al que desea inscribir al estudiante</p>
+                    <h3>Seleccionar Año</h3>
+                    <p>Seleccione el año al que desea inscribir al estudiante</p>
                 </div>
             </div>
         </div>
@@ -601,14 +601,14 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="grado_id" class="form-label-modern">
-                            Grado
+                            Año
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="gradoId" id="grado_id"
                             class="form-control-modern @error('gradoId') is-invalid @enderror">
-                            <option value="">Seleccione un grado</option>
+                            <option value="">Seleccione un año</option>
                             @foreach ($grados as $grado)
-                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
+                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }} Año</option>
                             @endforeach
                         </select>
                         @error('gradoId')
@@ -1006,7 +1006,8 @@
                     </a>
                     <button type="button" wire:click="finalizar" class="btn-create" wire:loading.attr="disabled"
                         @if (!$acepta_normas_contrato) disabled @endif>
-                        <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))>
+                        <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))
+                        @disabled($gradoSinCupos)>
                             <i class="fas fa-save"></i>
                             Guardar Inscripción
                         </span>

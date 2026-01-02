@@ -43,6 +43,10 @@ class InscripcionProsecucion extends Component
     public $acepta_normas_contrato = true;
     public $observaciones;
 
+    public ?int $gradoSugeridoId = null;
+    public ?int $seccionSugeridaId = null;
+    public ?string $mensajeSugerencia = null;
+
     /* ============================================================
        LISTENERS
        ============================================================ */
@@ -272,6 +276,8 @@ class InscripcionProsecucion extends Component
         $anioActual = AnioEscolar::where('status', 'Activo')->first();
         $this->inscripcionAnterior = $this->alumnoSeleccionado
             ->inscripcionAnterior($anioActual->id);
+
+        $this->calcularSugerenciaInscripcion();
     }
 
 
@@ -384,6 +390,7 @@ class InscripcionProsecucion extends Component
         }
 
         $this->cargarGradosPermitidos();
+        $this->calcularSugerenciaInscripcion();
     }
 
     /**
@@ -425,6 +432,12 @@ class InscripcionProsecucion extends Component
 
         return $aprobadasArrastradas->count() < $arrastradasIds->count();
     }
+
+    public function updatedRepiteGrado()
+    {
+        $this->calcularSugerenciaInscripcion();
+    }
+
 
 
     private function materiasArrastradasSeleccionadas(): array
@@ -502,6 +515,51 @@ class InscripcionProsecucion extends Component
             })->exists();
     }
 
+
+    private function calcularSugerenciaInscripcion(): void
+    {
+        $this->mensajeSugerencia = null;
+        $this->gradoSugeridoId = null;
+        $this->seccionSugeridaId = null;
+
+        if (!$this->inscripcionAnterior || !$this->gradoAnteriorId) {
+            return;
+        }
+
+        $gradoAnterior = Grado::find($this->gradoAnteriorId);
+        if (!$gradoAnterior) {
+            return;
+        }
+
+        // GRADO SUGERIDO
+        if ($this->repite_grado) {
+            $gradoSugerido = $gradoAnterior;
+        } else {
+            $gradoSugerido = Grado::where('numero_grado', $gradoAnterior->numero_grado + 1)
+                ->where('status', true)
+                ->first();
+        }
+
+        if (!$gradoSugerido) {
+            return;
+        }
+
+        $this->gradoSugeridoId = $gradoSugerido->id;
+
+        //  SECCIÓN SUGERIDA (MISMA QUE EL AÑO ANTERIOR)
+        if ($this->inscripcionAnterior->seccion_id) {
+            $this->seccionSugeridaId = $this->inscripcionAnterior->seccion_id;
+        }
+
+        // MENSAJE
+        $this->mensajeSugerencia = sprintf(
+            'Sugerencia: inscribir en %s° Año%s.',
+            $gradoSugerido->numero_grado,
+            $this->seccionSugeridaId
+                ? ' – Sección ' . optional(Seccion::find($this->seccionSugeridaId))->nombre
+                : ''
+        );
+    }
 
 
     /* ============================================================

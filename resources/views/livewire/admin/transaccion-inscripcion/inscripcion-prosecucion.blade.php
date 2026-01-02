@@ -1,5 +1,4 @@
 <div>
-    {{-- ALERTAS --}}
     @if (session()->has('success') || session()->has('error') || session()->has('warning'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
@@ -14,7 +13,6 @@
                     </button>
                 </div>
             @endif
-
             @if (session()->has('error'))
                 <div class="alert-modern alert-error alert alert-dismissible fade show">
                     <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
@@ -27,7 +25,6 @@
                     </button>
                 </div>
             @endif
-
             @if (session()->has('warning'))
                 <div class="alert-modern alert-warning alert alert-dismissible fade show">
                     <div class="alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
@@ -43,7 +40,6 @@
         </div>
     @endif
 
-    {{-- PASO 1: SELECCIONAR ESTUDIANTE --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -56,7 +52,6 @@
                 </div>
             </div>
         </div>
-
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="row">
                 <div class="col-md-12" wire:ignore>
@@ -65,12 +60,10 @@
                         Buscar Estudiante
                         <span class="required-badge">*</span>
                     </label>
-
                     <select id="alumno_select"
                         class="form-control-modern selectpicker @error('alumnoId') is-invalid @enderror"
                         data-live-search="true" data-size="8" data-width="100%">
                         <option value="">Seleccione un estudiante</option>
-
                         @foreach ($alumnos as $alumno)
                             @php
                                 $anioActual = \App\Models\AnioEscolar::where('status', 'Activo')->first();
@@ -82,11 +75,9 @@
                                 -{{ $alumno->persona->numero_documento }} 
                                 {{ $gradoAnterior ? ' | ' . $gradoAnterior . ' Año' : '' }}">
                                 {{ $alumno->persona->primer_nombre }} {{ $alumno->persona->primer_apellido }}
-
                             </option>
                         @endforeach
                     </select>
-
                     @error('alumnoId')
                         <div class="invalid-feedback-modern" style="display:block">
                             {{ $message }}
@@ -95,7 +86,6 @@
                 </div>
             </div>
 
-            {{-- Información del alumno seleccionado --}}
             @if ($alumnoSeleccionado && $gradoAnteriorId)
                 <div class="card-modern mb-4 mt-4">
                     <div class="card-header-modern">
@@ -113,15 +103,10 @@
                         <livewire:admin.alumnos.alumno-edit :alumnoId="$alumnoId" :key="'alumno-edit-' . $alumnoId" />
                     </div>
                 </div>
-
                 @php
                     $ins = $inscripcionAnterior;
                 @endphp
-
-
                 <div class="card-body-modern" style="padding: 0;">
-
-                    {{-- Card de Representantes --}}
                     @if ($ins && ($ins->padre || $ins->madre || $ins->representanteLegal))
                         <div class="card-modern mb-4">
                             <div class="card-header-modern">
@@ -135,9 +120,7 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="card-body-modern" style="padding: 1.25rem;">
-                                {{-- PADRE --}}
                                 @if ($ins->padre)
                                     <div class="representante-card">
                                         <div class="representante-badge-wrapper">
@@ -211,7 +194,6 @@
                                     </div>
                                 @endif
 
-                                {{-- MADRE --}}
                                 @if ($ins->madre)
                                     <div class="representante-card">
                                         <div class="representante-badge-wrapper">
@@ -285,7 +267,6 @@
                                     </div>
                                 @endif
 
-                                {{-- REPRESENTANTE LEGAL --}}
                                 @if ($ins->representanteLegal)
                                     <div class="representante-card">
                                         <div class="representante-badge-wrapper">
@@ -417,7 +398,6 @@
                             </div>
                         </div>
                     @endif
-
                     <div class="alert alert-info mt-3">
                         <div class="d-flex align-items-center gap-2">
                             <i class="fas fa-info-circle fa-2x"></i>
@@ -425,27 +405,25 @@
                                 <strong>Año cursado:</strong>
                                 {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }} Año
                             </div>
+                            <div>
+                                <strong>Sección:</strong>
+                                {{ $inscripcionAnterior->seccion->nombre }}
+                            </div>
                         </div>
                     </div>
                 </div>
             @endif
-
         </div>
     </div>
 
-    {{-- PASO 2: MATERIAS PENDIENTES --}}
     @if ($alumnoSeleccionado)
         <div class="card-modern mb-4">
             @php
                 $materiasArrastradas = collect($materias)->where('origen', 'pendiente_anterior')->sortBy('nombre');
-
                 $materiasActuales = collect($materias)->where('origen', 'grado_actual')->sortBy('nombre');
-
                 $idsArrastradas = $materiasArrastradas->pluck('id')->toArray();
-
                 $pendientesActuales = collect($materiasSeleccionadas)->diff($idsArrastradas)->count();
             @endphp
-
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
@@ -456,10 +434,8 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-body-modern" style="padding: 2rem;">
                 @if (count($materias) > 0)
-                    {{-- SECCIÓN: Materias reprobadas --}}
                     @if ($materiasArrastradas->isNotEmpty())
                         <div class="materias-section mb-4">
                             <div class="section-header-warning mb-3">
@@ -469,12 +445,12 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    El estudiante tiene areas de formacion reprobadas de años anteriores. Debe aprobarlas todas;
+                                    El estudiante tiene areas de formacion reprobadas de años anteriores. Debe
+                                    aprobarlas todas;
                                     de lo contrario, deberá repetir el año completo.
                                     <b>MARQUE las areas de formacion que el estudiante APROBO</b>
                                 </small>
                             </div>
-
                             <div class="row">
                                 @foreach ($materiasArrastradas as $materia)
                                     <div class="col-md-6 mb-3">
@@ -504,14 +480,10 @@
                                 @endforeach
                             </div>
                         </div>
-
-                        {{-- Divisor visual --}}
                         <div class="divider-section my-4">
                             <hr class="divider-line">
                         </div>
                     @endif
-
-                    {{-- SECCIÓN: MATERIAS DEL GRADO ACTUAL --}}
                     @if ($materiasActuales->isNotEmpty())
                         <div class="materias-section">
                             <div class="section-header-primary mb-3">
@@ -521,10 +493,10 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                   <b>MARQUE</b> las materias del año cursado que quedaron <b>PENDIENTES</b> por aprobar.
+                                    <b>MARQUE</b> las materias del año cursado que quedaron <b>PENDIENTES</b> por
+                                    aprobar.
                                 </small>
                             </div>
-
                             <div class="row">
                                 @foreach ($materiasActuales as $materia)
                                     <div class="col-md-6 mb-3">
@@ -561,8 +533,6 @@
                 @endif
             </div>
         </div>
-
-        {{-- PASO 3: GRADO Y SECCIÓN --}}
         <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -575,10 +545,14 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
-                    {{-- Año de Promoción --}}
+                    @if ($mensajeSugerencia)
+                        <div class="alert alert-info mt-2">
+                            <i class="fas fa-lightbulb"></i>
+                            {{ $mensajeSugerencia }}
+                        </div>
+                    @endif
                     <div class="col-md-4">
                         <label for="grado_promocion" class="form-label-modern">
                             <i class="fas fa-layer-group"></i>
@@ -587,16 +561,13 @@
                         </label>
                         <select wire:model.live="gradoPromocionId" id="grado_promocion"
                             class="form-control-modern @error('gradoPromocionId') is-invalid @enderror">
-
                             <option value="">Seleccione un año</option>
-
                             @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}">
                                     {{ $grado->numero_grado }}° Año
                                 </option>
                             @endforeach
                         </select>
-
                         @error('gradoPromocionId')
                             <div class="invalid-feedback-modern" style="display: block;">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -609,8 +580,6 @@
                             </small>
                         @endif
                     </div>
-
-                    {{-- Sección (solo si no es primer grado) --}}
                     @if (!$esPrimerGrado && $gradoPromocionId)
                         <div class="col-md-4">
                             <label for="seccion" class="form-label-modern">
@@ -634,8 +603,6 @@
                             @enderror
                         </div>
                     @endif
-
-                    {{-- Fecha de Inscripción --}}
                     <div class="col-md-4">
                         <label for="fecha" class="form-label-modern">
                             <i class="fas fa-calendar"></i>
@@ -645,8 +612,6 @@
                             class="form-control-modern" disabled>
                     </div>
                 </div>
-
-                {{-- Observaciones --}}
                 <div class="row mt-3">
                     <div class="col-12">
                         <label for="observaciones" class="form-label-modern">
@@ -666,8 +631,6 @@
                         </small>
                     </div>
                 </div>
-
-                {{-- Aceptar Normas --}}
                 <div class="row mt-3">
                     <div class="col-12">
                         <div class="checkbox-item-modern">
@@ -692,8 +655,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- BOTONES DE ACCIÓN --}}
         <div class="card-modern">
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="d-flex justify-content-end gap-3">
@@ -717,21 +678,15 @@
             </div>
         </div>
     @endif
-
-
-    {{-- Modal de Contrato --}}
     @include('admin.transacciones.inscripcion.modales.showContratoModal')
-
     @push('js')
         <script>
             document.addEventListener('livewire:init', () => {
 
                 const select = $('#alumno_select');
 
-                // 1️⃣ Inicializar UNA SOLA VEZ
                 select.selectpicker();
 
-                // 2️⃣ Listener ÚNICO
                 select.on('changed.bs.select', function() {
                     const alumnoId = $(this).val();
                     Livewire.dispatch('seleccionarAlumno', {
@@ -739,7 +694,6 @@
                     });
                 });
 
-                // 3️⃣ Refresh SOLO cuando Livewire lo pide
                 Livewire.on('refreshSelectAlumno', () => {
                     select.selectpicker('destroy');
                     select.selectpicker();
@@ -748,6 +702,3 @@
             });
         </script>
     @endpush
-
-
-
