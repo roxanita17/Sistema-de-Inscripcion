@@ -86,6 +86,7 @@ class Inscripcion extends Component
 
     public function mount()
     {
+        $this->acepta_normas_contrato = true;
         $this->discapacidadesAgregadas = [];
         $this->discapacidadSeleccionada = null;
         $this->documentosDisponibles = $this->documentoService->obtenerDocumentosDisponibles();
@@ -576,8 +577,6 @@ class Inscripcion extends Component
             'acepta_normas_contrato' => $this->acepta_normas_contrato,
         ]);
     }
-
-
 
     /* ============================================================
        LISTENERS
