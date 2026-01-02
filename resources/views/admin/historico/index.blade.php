@@ -117,7 +117,7 @@
                             @elseif($tipo === 'docentes')
                                 <th>Año Escolar</th>
                                 <th>Docente</th>
-                                <th>Grado</th>
+                                <th>Año</th>
                                 <th>Área</th>
                                 <th>Sección</th>
                             @endif
@@ -219,7 +219,7 @@
                                             {{-- Grado --}}
                                             <td>
                                                 <span class="badge bg-info">
-                                                    {{ $inscripcion->grado->numero_grado }}° Grado
+                                                    {{ $inscripcion->grado->numero_grado }}° Año
                                                 </span>
                                             </td>
 
