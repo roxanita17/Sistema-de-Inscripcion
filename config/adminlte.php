@@ -276,7 +276,7 @@ return [
             'active' => ['admin/transacciones/percentil', 'admin/transacciones/percentil/*'],
         ],
 
-        ['header' => 'GESTIÓN ACADÉMICA'],
+        ['header' => 'INFORMACION ACADÉMICA'],
 
         // ================== PERSONAS ==================
         [
