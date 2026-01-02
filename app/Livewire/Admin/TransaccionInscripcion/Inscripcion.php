@@ -42,7 +42,7 @@ class Inscripcion extends Component
 
     public $documentos = [];
     public array $documentosFaltantes = [];
-    public $observaciones;
+    public ?string $observaciones = null;
     public $numero_zonificacion;
     public $institucion_procedencia_id;
     public $expresion_literaria_id;
@@ -263,14 +263,15 @@ class Inscripcion extends Component
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
+
         $this->evaluarDocumentosVisual();
+        $this->recalcularObservaciones();
     }
 
     public function updatedDocumentos()
     {
-        $this->validarDocumentosEnTiempoReal();
-        $this->actualizarObservacionesPorDocumentos();
         $this->evaluarDocumentosVisual();
+        $this->recalcularObservaciones();
     }
 
     private function validarDocumentosEnTiempoReal(): void
@@ -288,11 +289,7 @@ class Inscripcion extends Component
 
     private function actualizarObservacionesPorDocumentos()
     {
-        $this->observaciones = $this->documentoService->generarObservaciones(
-            $this->documentos,
-            $this->requiereAutorizacion(),
-            $this->esPrimerGrado
-        );
+        $this->recalcularObservaciones();
     }
 
 
@@ -317,8 +314,60 @@ class Inscripcion extends Component
             count($this->documentos) === count($this->documentosDisponibles);
     }
 
+    private function recalcularObservaciones(): void
+    {
+        $observaciones = [];
 
+        // Observaciones por documentos
+        $obsDocumentos = $this->documentoService->generarObservaciones(
+            $this->documentos,
+            !$this->padreId && !$this->madreId,
+            $this->esPrimerGrado
+        );
 
+        if ($obsDocumentos) {
+            $observaciones[] = $obsDocumentos;
+        }
+
+        // Observaciones por discapacidades
+        $obsDiscapacidades = $this->generarObservacionesDiscapacidades();
+        if ($obsDiscapacidades) {
+            $observaciones[] = $obsDiscapacidades;
+        }
+
+        // Unir todo
+        $this->observaciones = implode(PHP_EOL . PHP_EOL, $observaciones);
+    }
+
+    private function generarObservacionesDiscapacidades(): ?string
+    {
+        $nombres = [];
+
+        // Discapacidades ya guardadas (si existe alumno)
+        if ($this->alumnoId) {
+            $alumno = \App\Models\Alumno::with('discapacidades')->find($this->alumnoId);
+
+            if ($alumno) {
+                $nombres = $alumno->discapacidades
+                    ->pluck('nombre_discapacidad')
+                    ->toArray();
+            }
+        }
+
+        // Discapacidades agregadas en esta inscripción
+        foreach ($this->discapacidadesAgregadas as $discapacidad) {
+            $nombres[] = $discapacidad['nombre'];
+        }
+
+        $nombres = array_unique($nombres);
+
+        if (empty($nombres)) {
+            return null;
+        }
+
+        return 'Discapacidades registradas:' . PHP_EOL .
+            implode(PHP_EOL, $nombres);
+    }
 
     /* ============================================================
        INFORMACIÓN DE CUPOS
@@ -351,6 +400,7 @@ class Inscripcion extends Component
 
         $this->validarDocumentosEnTiempoReal();
         $this->evaluarDocumentosVisual();
+        $this->recalcularObservaciones();
     }
 
     /* ============================================================
@@ -388,6 +438,8 @@ class Inscripcion extends Component
             $this->discapacidadSeleccionada = null;
             $this->resetErrorBag('discapacidadSeleccionada');
 
+            $this->recalcularObservaciones();
+
             session()->flash('success_temp', 'Discapacidad agregada correctamente.');
         }
     }
@@ -403,6 +455,8 @@ class Inscripcion extends Component
 
             // Reindexar el array
             $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
+
+            $this->recalcularObservaciones();
 
             session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
         }

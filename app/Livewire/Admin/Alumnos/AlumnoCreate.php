@@ -134,7 +134,6 @@ class AlumnoCreate extends Component
                 }
             ],
 
-
             'primer_nombre' => 'required|string|max:50',
             'primer_apellido' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
@@ -156,7 +155,29 @@ class AlumnoCreate extends Component
             ],
 
             // Datos físicos
-            'talla_estudiante' => 'required|numeric|between:0.50,3.00',
+            'talla_estudiante' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    $valor = (float) str_replace(',', '.', $value);
+
+                    if ($valor <= 0) {
+                        $fail('La estatura no es válida.');
+                    }
+
+                    // Si parece cm
+                    if ($valor > 3 && ($valor < 50 || $valor > 250)) {
+                        $fail('La estatura en cm debe estar entre 50 y 250.');
+                    }
+
+                    // Si parece metros
+                    if ($valor <= 3 && ($valor < 0.5 || $valor > 2.5)) {
+                        $fail('La estatura en metros debe estar entre 0.50 y 2.50.');
+                    }
+                }
+            ],
+
+
             'peso_estudiante' => 'required|numeric|between:2,300',
             'talla_camisa_id' => 'required|exists:tallas,id',
             'talla_pantalon_id' => 'required|exists:tallas,id',
@@ -245,15 +266,31 @@ class AlumnoCreate extends Component
         }
     }
 
-    public function formatearEstatura()
+    private function normalizarEstaturaEnMetros($valor): float
     {
-        // Quita todo menos números
-        $valor = preg_replace('/\D/', '', $this->talla_estudiante);
-
-        if (strlen($valor) >= 2) {
-            $this->talla_estudiante = substr($valor, 0, -2) . '.' . substr($valor, -2);
+        if ($valor === null || $valor === '') {
+            return 0;
         }
+
+        // Forzar string
+        $valor = str_replace(',', '.', (string) $valor);
+
+        if (!is_numeric($valor)) {
+            return 0;
+        }
+
+        $valor = (float) $valor;
+
+        // Si es mayor a 3 → es cm
+        if ($valor > 3) {
+            return round($valor / 100, 2);
+        }
+
+        // Ya está en metros
+        return round($valor, 2);
     }
+
+
 
     public function validarEstatura()
     {
@@ -446,7 +483,7 @@ class AlumnoCreate extends Component
                     'talla_pantalon_id' => $this->talla_pantalon_id,
                     'talla_zapato' => $this->talla_zapato,
                     'peso' => $this->peso_estudiante,
-                    'estatura' => (float)$this->talla_estudiante,
+                    'estatura' => $this->talla_estudiante,
                     'lateralidad_id' => $this->lateralidad_id,
                     'orden_nacimiento_id' => $this->orden_nacimiento_id,
                     'etnia_indigena_id' => $this->etnia_indigena_id,
@@ -460,7 +497,7 @@ class AlumnoCreate extends Component
                     'talla_pantalon_id' => $this->talla_pantalon_id,
                     'talla_zapato' => $this->talla_zapato,
                     'peso' => $this->peso_estudiante,
-                    'estatura' => (float)$this->talla_estudiante,
+                    'estatura' =>  $this->talla_estudiante,
                     'lateralidad_id' => $this->lateralidad_id,
                     'orden_nacimiento_id' => $this->orden_nacimiento_id,
                     'etnia_indigena_id' => $this->etnia_indigena_id,
