@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/materias-styles.css') }}">
 
 @stop
 
