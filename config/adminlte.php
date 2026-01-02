@@ -335,7 +335,7 @@ return [
 
         [
             'text' => 'Configuraciones',
-            'icon' => 'fas fa-fw fa-share',
+            'icon' => 'fas fa-fw fa-cogs',
             'submenu' => [
                 ['header' => 'GESTIÓN ACADÉMICA'],
 
@@ -343,7 +343,6 @@ return [
                     'text' => 'Años',
                     'url' => 'admin/grado',
                     'icon' => 'fas fa-fw fa-layer-group',
-                    'icon_color' => 'primary',
                     'active' => ['admin/grado', 'admin/grado/*'],
                 ],
 
@@ -377,7 +376,7 @@ return [
                 [
                     
                     'text' => 'DATOS',
-                    'icon' => 'fas fa-fw fa-link',
+                    'icon' => 'fas fa-fw fa-user',
                     'active' => ['admin/etnia_indigena*', 'admin/discapacidad*', 'admin/ocupacion*'],
                     'submenu' => [
                         [
@@ -402,7 +401,7 @@ return [
 
                 [
                     'text' => 'Ubicaciones',
-                    'icon' => 'fas fa-map-marked-alt',
+                    'icon' => 'fas fa-fw fa-map-marker-alt',
                     'active' => ['admin/estado*', 'admin/municipio*', 'admin/localidad*'],
                     'submenu' => [
                         [
@@ -427,7 +426,7 @@ return [
 
                 [
                     'text' => 'Parametros Generales',
-                    'icon' => 'fas fa-map-marked-alt',
+                    'icon' => 'fas fa-fw fa-cogs',
                     'active' => ['admin/banco*', 'admin/prefijo_telefono*', 'admin/institucion_procedencia*'],
                     'submenu' => [
                         [
