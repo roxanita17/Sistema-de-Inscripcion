@@ -26,8 +26,8 @@ class InscripcionSeeder extends Seeder
             $inscripcion = Inscripcion::create([
                 'anio_escolar_id' => rand(1, 3),
                 'alumno_id' => $i,
-                'grado_id' => rand(2, 5),
-                'seccion_id' => rand(1, 5),
+                'grado_id' => 1,
+                'seccion_id' => null,
 
                 'padre_id' => 1,
                 'madre_id' => 2,

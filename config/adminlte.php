@@ -308,7 +308,7 @@ return [
                     'icon' => 'fas fa-user',
                 ],
                 [
-                    'text' => 'Asignar Materias',
+                    'text' => 'Asignar Area Formación',
                     'url'  => 'admin/transacciones/docente_area_grado',
                     'icon' => 'fas fa-book-reader',
                 ],
@@ -359,11 +359,6 @@ return [
             'icon_color' => 'cyan',
             'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*', 'admin/transacciones/docente*'],
             'submenu' => [
-                [
-                    'text' => 'Años',
-                    'url'  => 'admin/grado',
-                    'icon' => 'fas fa-list-ol',
-                ],
                 [
                     'text' => 'Áreas Académicas',
                     'url'  => 'admin/area_formacion',
