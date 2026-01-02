@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('talla_pantalon_id')->nullable()->constrained('tallas')->nullOnDelete();
             $table->string('talla_zapato');
             $table->integer('peso');
-            $table->decimal('estatura', 4, 2);
+            $table->decimal('estatura', 5, 2);
             $table->foreignId('orden_nacimiento_id')->nullable()->constrained('orden_nacimientos')->cascadeOnDelete();
             $table->foreignId('lateralidad_id')->nullable()->constrained('lateralidads')->cascadeOnDelete();
             $table->foreignId('etnia_indigena_id')->nullable()->constrained('etnia_indigenas')->cascadeOnDelete();

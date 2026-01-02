@@ -11,6 +11,7 @@ use App\Models\Discapacidad;
 use App\Models\ExpresionLiteraria;
 use App\Models\Lateralidad;
 use App\Models\EtniaIndigena;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Alumno extends Model
 
@@ -31,6 +32,43 @@ class Alumno extends Model
         'estatura',
         'status',
     ];
+
+    protected function estatura(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                // Quita .00 si es entero
+                if ((float)$value == (int)$value) {
+                    return (int)$value;
+                }
+
+                // Quita ceros innecesarios (1.50 → 1.5)
+                return rtrim(rtrim($value, '0'), '.');
+            },
+
+            set: function ($value) {
+
+                if ($value === null || $value === '') {
+                    return null;
+                }
+
+                $value = str_replace(',', '.', (string) $value);
+
+                if (!is_numeric($value)) {
+                    return null;
+                }
+
+                $value = (float) $value;
+
+                // Si viene en cm cambiar a metros
+                if ($value > 3) {
+                    return round($value / 100, 2);
+                }
+
+                return round($value, 2);
+            }
+        );
+    }
 
 
 
@@ -285,5 +323,4 @@ class Alumno extends Model
             return true;
         });
     }
-
 }
