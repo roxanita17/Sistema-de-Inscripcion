@@ -120,8 +120,8 @@ class SectionDistributorService
 
 
             // 5. Calcular secciones
-            $min = $grado->min_por_seccion ?? 20;
-            $max = $grado->max_por_seccion ?? 30;
+            $min = $grado->min_seccion ?? 20;
+            $max = $grado->max_seccion ?? 30;
             $total = $ordenados->count();
 
             
