@@ -110,156 +110,97 @@
                         </div>
                     </div>
                     <div class="card-body-modern" style="padding: 2rem;">
-                        <livewire:admin.alumnos.alumno-edit :alumnoId="$alumnoId" />
+                        <livewire:admin.alumnos.alumno-edit :alumnoId="$alumnoId" :key="'alumno-edit-' . $alumnoId" />
                     </div>
                 </div>
 
                 @php
                     $ins = $inscripcionAnterior;
                 @endphp
-                @if ($ins && ($ins->padre || $ins->madre || $ins->representanteLegal))
-                    <div class="card-modern mb-4">
-                        <div class="card-header-modern">
-                            <div class="header-left">
-                                <div class="header-icon">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <div>
-                                    <h3>Representantes del Estudiante</h3>
-                                    <p>Padres o responsables legales</p>
+
+
+                <div class="card-body-modern" style="padding: 0;">
+
+                    {{-- Card de Representantes --}}
+                    @if ($ins && ($ins->padre || $ins->madre || $ins->representanteLegal))
+                        <div class="card-modern mb-4">
+                            <div class="card-header-modern">
+                                <div class="header-left">
+                                    <div class="header-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div>
+                                        <h3>Representantes del Estudiante</h3>
+                                        <p>Información de padres y responsables legales</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="card-body-modern" style="padding: 0;">
+                            <div class="card-body-modern" style="padding: 1.25rem;">
+                                {{-- PADRE --}}
+                                @if ($ins->padre)
+                                    <div class="representante-card">
+                                        <div class="representante-badge-wrapper">
+                                            <span class="representante-badge representante-padre">
+                                                <i class="fas fa-user"></i>
+                                                PADRE
+                                            </span>
+                                        </div>
 
-                            @if ($ins->padre)
-                                <div class="card-body-modern" style="padding: 0;">
-                                    <div class="mb-3 text-center">
-                                        <span class="status-parent status-badge px-4 py-2 mt-4">
-                                            <i class="fas fa-user"></i> PADRE
-                                        </span>
-                                        <div class="details-grid">
-                                            {{-- COLUMNA IZQUIERDA --}}
-                                            <div class="details-section">
-                                                {{-- Identificación --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-id-badge"></i>
-                                                        <h4>Datos de Identificación</h4>
+                                        <div class="representante-grid">
+                                            <!-- Columna Izquierda -->
+                                            <div class="representante-column">
+                                                <div class="info-block">
+                                                    <div class="info-block-header">
+                                                        <i class="fas fa-id-card"></i>
+                                                        <span>Identificación</span>
                                                     </div>
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Documento
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->padre->persona->tipoDocumento->nombre ?? 'N/A' }}
-                                                                -
-                                                                {{ $ins->padre->persona->numero_documento }}
+                                                    <div class="info-row-inline">
+                                                        <div class="info-col">
+                                                            <span class="info-key">Documento:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->padre->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->padre->persona->numero_documento }}
                                                             </span>
                                                         </div>
+                                                        <div class="info-col">
+                                                            <span class="info-key">Telefono:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->padre->persona->telefono_completo }}
+                                                            </span>
+                                                        </div>
+                                                        @if ($ins->padre->persona->telefono_dos_completo)
+                                                            <div class="info-col">
+                                                                <span class="info-key">Segundo Telefono:</span>
+                                                                <span class="info-val">
+                                                                    {{ $ins->padre->persona->telefono_dos_completo }}
+                                                                </span>
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
+                                            </div>
 
-                                                {{-- Información Personal --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
+                                            <!-- Columna Derecha -->
+                                            <div class="representante-column">
+                                                <div class="info-block">
+                                                    <div class="info-block-header">
                                                         <i class="fas fa-user"></i>
-                                                        <h4>Información Personal</h4>
+                                                        <span>Informacion personal</span>
                                                     </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Nombre Completo
-                                                            </span>
-                                                            <span class="info-value">
+                                                    <div class="info-row-inline">
+                                                        <div class="info-col">
+                                                            <span class="info-key">Nombre:</span>
+                                                            <span class="info-val">
                                                                 {{ $ins->padre->persona->primer_nombre }}
                                                                 {{ $ins->padre->persona->segundo_nombre }}
-                                                                {{ $ins->padre->persona->tercer_nombre }}
                                                                 {{ $ins->padre->persona->primer_apellido }}
                                                                 {{ $ins->padre->persona->segundo_apellido }}
                                                             </span>
                                                         </div>
-                                                    </div>
-
-                                                    <div
-                                                        style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                                                        <div class="info-group pt-3"
-                                                            style="display:flex; gap:2rem; flex-direction:row">
-                                                            <div class="info-item" style="width: 15rem;">
-                                                                <span class="info-label">
-                                                                    Género
-                                                                </span>
-                                                                <span class="info-value">
-                                                                    {{ $ins->padre->persona->genero->genero ?? 'N/A' }}
-                                                                </span>
-                                                            </div>
-
-                                                            <div class="info-item" style="width: 15rem;">
-                                                                <span class="info-label">
-                                                                    Teléfono
-                                                                </span>
-                                                                <span class="info-value">
-                                                                    {{ $ins->padre->persona->telefono ?? 'N/A' }}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            {{-- COLUMNA DERECHA --}}
-                                            <div class="details-section">
-
-                                                {{-- Ubicación --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-map-marker-alt"></i>
-                                                        <h4>Ubicación</h4>
-                                                    </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Estado / Municipio / Localidad
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->padre->estado->nombre_estado ?? 'N/A' }},
-                                                                {{ $ins->padre->municipios->nombre_municipio ?? 'N/A' }},
-                                                                {{ $ins->padre->localidads->nombre_localidad ?? 'N/A' }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {{-- Datos Laborales --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-briefcase"></i>
-                                                        <h4>Información Laboral</h4>
-                                                    </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Ocupación
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->padre->ocupacion->nombre_ocupacion ?? 'N/A' }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="info-group pt-3">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Convive con el Estudiante
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->padre->convivenciaestudiante_representante ? 'Sí' : 'No' }}
+                                                        <div class="info-col">
+                                                            <span class="info-key">Ocupacion:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->padre->ocupacion->nombre_ocupacion }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -267,143 +208,73 @@
 
                                             </div>
                                         </div>
-
                                     </div>
-                                </div>
-                            @endif
+                                @endif
 
-                            <div class="rep-divider">
-                                <i class="fas fa-users"></i>
-                            </div>
+                                {{-- MADRE --}}
+                                @if ($ins->madre)
+                                    <div class="representante-card">
+                                        <div class="representante-badge-wrapper">
+                                            <span class="representante-badge representante-madre">
+                                                <i class="fas fa-user"></i>
+                                                MADRE
+                                            </span>
+                                        </div>
 
-
-                            @if ($ins->madre)
-                                <div class="card-body-modern" style="padding: 0;">
-                                    <div class="mb-3 text-center">
-                                        <span class="status-parent status-badge px-4 py-2 mt-4">
-                                            <i class="fas fa-user"></i> MADRE
-                                        </span>
-                                        <div class="details-grid">
-                                            {{-- COLUMNA IZQUIERDA --}}
-                                            <div class="details-section">
-                                                {{-- Identificación --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-id-badge"></i>
-                                                        <h4>Datos de Identificación</h4>
+                                        <div class="representante-grid">
+                                            <!-- Columna Izquierda -->
+                                            <div class="representante-column">
+                                                <div class="info-block">
+                                                    <div class="info-block-header">
+                                                        <i class="fas fa-id-card"></i>
+                                                        <span>Identificación</span>
                                                     </div>
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Documento
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->madre->persona->tipoDocumento->nombre ?? 'N/A' }}
-                                                                -
-                                                                {{ $ins->madre->persona->numero_documento }}
+                                                    <div class="info-row-inline">
+                                                        <div class="info-col">
+                                                            <span class="info-key">Documento:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->madre->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->madre->persona->numero_documento }}
                                                             </span>
                                                         </div>
+                                                        <div class="info-col">
+                                                            <span class="info-key">Telefono:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->madre->persona->telefono_completo }}
+                                                            </span>
+                                                        </div>
+                                                        @if ($ins->madre->persona->telefono_dos_completo)
+                                                            <div class="info-col">
+                                                                <span class="info-key">Segundo Telefono:</span>
+                                                                <span class="info-val">
+                                                                    {{ $ins->madre->persona->telefono_dos_completo }}
+                                                                </span>
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
+                                            </div>
 
-                                                {{-- Información Personal --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
+                                            <!-- Columna Derecha -->
+                                            <div class="representante-column">
+                                                <div class="info-block">
+                                                    <div class="info-block-header">
                                                         <i class="fas fa-user"></i>
-                                                        <h4>Información Personal</h4>
+                                                        <span>Informacion personal</span>
                                                     </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Nombre Completo
-                                                            </span>
-                                                            <span class="info-value">
+                                                    <div class="info-row-inline">
+                                                        <div class="info-col">
+                                                            <span class="info-key">Nombre:</span>
+                                                            <span class="info-val">
                                                                 {{ $ins->madre->persona->primer_nombre }}
                                                                 {{ $ins->madre->persona->segundo_nombre }}
-                                                                {{ $ins->madre->persona->tercer_nombre }}
                                                                 {{ $ins->madre->persona->primer_apellido }}
                                                                 {{ $ins->madre->persona->segundo_apellido }}
                                                             </span>
                                                         </div>
-                                                    </div>
-
-                                                    <div
-                                                        style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                                                        <div class="info-group pt-3"
-                                                            style="display:flex; gap:2rem; flex-direction:row">
-                                                            <div class="info-item" style="width: 15rem;">
-                                                                <span class="info-label">
-                                                                    Género
-                                                                </span>
-                                                                <span class="info-value">
-                                                                    {{ $ins->madre->persona->genero->genero ?? 'N/A' }}
-                                                                </span>
-                                                            </div>
-
-                                                            <div class="info-item" style="width: 15rem;">
-                                                                <span class="info-label">
-                                                                    Teléfono
-                                                                </span>
-                                                                <span class="info-value">
-                                                                    {{ $ins->madre->persona->telefono ?? 'N/A' }}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            {{-- COLUMNA DERECHA --}}
-                                            <div class="details-section">
-
-                                                {{-- Ubicación --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-map-marker-alt"></i>
-                                                        <h4>Ubicación</h4>
-                                                    </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Estado / Municipio / Localidad
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->madre->estado->nombre_estado ?? 'N/A' }},
-                                                                {{ $ins->madre->municipios->nombre_municipio ?? 'N/A' }},
-                                                                {{ $ins->madre->localidads->nombre_localidad ?? 'N/A' }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {{-- Datos Laborales --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-briefcase"></i>
-                                                        <h4>Información Laboral</h4>
-                                                    </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Ocupación
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->madre->ocupacion->nombre_ocupacion ?? 'N/A' }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="info-group pt-3">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Convive con el Estudiante
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->madre->convivenciaestudiante_representante ? 'Sí' : 'No' }}
+                                                        <div class="info-col">
+                                                            <span class="info-key">Ocupacion:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->madre->ocupacion->nombre_ocupacion }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -411,251 +282,149 @@
 
                                             </div>
                                         </div>
-
                                     </div>
-                                </div>
-                            @endif
+                                @endif
 
-                            <div class="rep-divider">
-                                <i class="fas fa-users"></i>
-                            </div>
+                                {{-- REPRESENTANTE LEGAL --}}
+                                @if ($ins->representanteLegal)
+                                    <div class="representante-card">
+                                        <div class="representante-badge-wrapper">
+                                            <span class="representante-badge representante-legal">
+                                                <i class="fas fa-gavel"></i>
+                                                REPRESENTANTE LEGAL
+                                            </span>
+                                        </div>
 
-                            @if ($ins->representanteLegal)
-                                <div class="card-body-modern" style="padding: 0;">
-                                    <div class="mb-3 text-center">
-                                        <span class="status-parent status-badge px-4 py-2 mt-4">
-                                            <i class="fas fa-user"></i>REPRESENTANTE LEGAL
-                                        </span>
-                                        <div class="details-grid">
-
-                                            {{-- COLUMNA IZQUIERDA --}}
-                                            <div class="details-section">
-
-                                                {{-- Identificación --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-id-badge"></i>
-                                                        <h4>Datos de Identificación</h4>
+                                        <div class="representante-grid">
+                                            <!-- Columna Izquierda -->
+                                            <div class="representante-column">
+                                                <div class="info-block">
+                                                    <div class="info-block-header">
+                                                        <i class="fas fa-id-card"></i>
+                                                        <span>Identificación</span>
                                                     </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Documento
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->representanteLegal->representante->persona->tipoDocumento->nombre ?? 'N/A' }}
-                                                                -
-                                                                {{ $ins->representanteLegal->representante->persona->numero_documento }}
+                                                    <div class="info-row-inline">
+                                                        <div class="info-col">
+                                                            <span class="info-key">Documento:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->representanteLegal->representante->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->representanteLegal->representante->persona->numero_documento }}
                                                             </span>
                                                         </div>
+                                                        <div class="info-col">
+                                                            <span class="info-key">Telefono:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->representanteLegal->representante->persona->telefono_completo }}
+                                                            </span>
+                                                        </div>
+                                                        @if ($ins->representanteLegal->representante->persona->telefono_dos_completo)
+                                                            <div class="info-col">
+                                                                <span class="info-key">Segundo Telefono:</span>
+                                                                <span class="info-val">
+                                                                    {{ $ins->representanteLegal->representante->persona->telefono_dos_completo }}
+                                                                </span>
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
+                                            </div>
 
-                                                {{-- Información Personal --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
+                                            <!-- Columna Derecha -->
+                                            <div class="representante-column">
+                                                <div class="info-block">
+                                                    <div class="info-block-header">
                                                         <i class="fas fa-user"></i>
-                                                        <h4>Información Personal</h4>
+                                                        <span>Informacion personal</span>
                                                     </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Nombre Completo
-                                                            </span>
-                                                            <span class="info-value">
+                                                    <div class="info-row-inline">
+                                                        <div class="info-col">
+                                                            <span class="info-key">Nombre:</span>
+                                                            <span class="info-val">
                                                                 {{ $ins->representanteLegal->representante->persona->primer_nombre }}
                                                                 {{ $ins->representanteLegal->representante->persona->segundo_nombre }}
-                                                                {{ $ins->representanteLegal->representante->persona->tercer_nombre }}
                                                                 {{ $ins->representanteLegal->representante->persona->primer_apellido }}
                                                                 {{ $ins->representanteLegal->representante->persona->segundo_apellido }}
                                                             </span>
                                                         </div>
-                                                    </div>
-
-                                                    <div
-                                                        style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                                                        <div class="info-group pt-3"
-                                                            style="display:flex; gap:2rem; flex-direction:row">
-                                                            <div class="info-item" style="width: 15rem;">
-                                                                <span class="info-label">
-                                                                    Género
-                                                                </span>
-                                                                <span class="info-value">
-                                                                    {{ $ins->representanteLegal->representante->persona->genero->genero ?? 'N/A' }}
-                                                                </span>
-                                                            </div>
-
-                                                            <div class="info-item" style="width: 15rem;">
-                                                                <span class="info-label">
-                                                                    Teléfono
-                                                                </span>
-                                                                <span class="info-value">
-                                                                    {{ $ins->representanteLegal->representante->persona->telefono ?? 'N/A' }}
-                                                                </span>
-                                                            </div>
+                                                        <div class="info-col">
+                                                            <span class="info-key">Ocupacion:</span>
+                                                            <span class="info-val">
+                                                                {{ $ins->representanteLegal->representante->ocupacion->nombre_ocupacion }}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                             </div>
+                                        </div>
 
-                                            {{-- COLUMNA DERECHA --}}
-                                            <div class="details-section">
-
-                                                {{-- Ubicación --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-map-marker-alt"></i>
-                                                        <h4>Ubicación</h4>
-                                                    </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Estado / Municipio / Localidad
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->representanteLegal->representante->persona->estado->nombre_estado ?? 'N/A' }},
-                                                                {{ $ins->representanteLegal->representante->persona->municipios->nombre_municipio ?? 'N/A' }},
-                                                                {{ $ins->representanteLegal->representante->persona->localidads->nombre_localidad ?? 'N/A' }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {{-- Datos Laborales --}}
-                                                <div class="info-section">
-                                                    <div class="section-header">
-                                                        <i class="fas fa-briefcase"></i>
-                                                        <h4>Información Laboral</h4>
-                                                    </div>
-
-                                                    <div class="info-group">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Ocupación
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->representanteLegal->representante->ocupacion->nombre_ocupacion ?? 'N/A' }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="info-group pt-3">
-                                                        <div class="info-item">
-                                                            <span class="info-label">
-                                                                Convive con el Estudiante
-                                                            </span>
-                                                            <span class="info-value">
-                                                                {{ $ins->representanteLegal->representante->convivenciaestudiante_representante ? 'Sí' : 'No' }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        {{-- Información Legal Adicional --}}
+                                        <div class="legal-info-section">
+                                            <div class="info-block-header">
+                                                <i class="fas fa-file-contract"></i>
+                                                <span>Información Legal</span>
                                             </div>
-                                        </div>
-                                    </div>
-                                    {{-- Datos Legales --}}
-                                    <div class="info-section mt-4">
-                                        <div class="section-header">
-                                            <i class="fas fa-gavel"></i>
-                                            <h4>Información Legal</h4>
-                                        </div>
-
-                                        <div style="display:flex; justify-content:center; align-items:center;">
-                                            <div class="info-group pt-3"
-                                                style="display:flex; gap:2rem; flex-wrap:wrap; justify-content:center; flex-direction:row; margin-bottom:20px">
-
-                                                <div class="info-item" style="width: 15rem;">
-                                                    <span class="info-label">
-                                                        Parentesco
-                                                    </span>
-                                                    <span class="info-value">
-                                                        {{ $ins->representanteLegal->parentesco ?? 'N/A' }}
-                                                    </span>
+                                            <div class="legal-grid">
+                                                <div class="info-col">
+                                                    <span class="info-key">Parentesco:</span>
+                                                    <span
+                                                        class="info-val">{{ $ins->representanteLegal->parentesco ?? 'N/A' }}</span>
                                                 </div>
-
-                                                <div class="info-item" style="width: 18rem;">
-                                                    <span class="info-label">
-                                                        Correo del Representante
-                                                    </span>
-                                                    <span class="info-value">
-                                                        {{ $ins->representanteLegal->correo_representante ?? 'N/A' }}
-                                                    </span>
+                                                <div class="info-col">
+                                                    <span class="info-key">Correo:</span>
+                                                    <span
+                                                        class="info-val">{{ $ins->representanteLegal->correo_representante ?? 'N/A' }}</span>
                                                 </div>
                                                 @if ($ins->representanteLegal->pertenece_a_organizacion_representante)
-                                                    <div class="info-item" style="width: 18rem;">
-                                                        <span class="info-label">
-                                                            Organizacion
-                                                        </span>
-                                                        <span class="info-value">
-                                                            {{ $ins->representanteLegal->cual_organizacion_representante ?? 'N/A' }}
-                                                        </span>
+                                                    <div class="info-col">
+                                                        <span class="info-key">Organización:</span>
+                                                        <span
+                                                            class="info-val">{{ $ins->representanteLegal->cual_organizacion_representante ?? 'N/A' }}</span>
                                                     </div>
                                                 @endif
-
-
-                                                <div class="info-item" style="width: 12rem;">
-                                                    <span class="info-label">
-                                                        Carnet de la Patria
-                                                    </span>
-                                                    <span class="info-value">
+                                                <div class="info-col">
+                                                    <span class="info-key">Carnet Patria:</span>
+                                                    <span
+                                                        class="info-val-badge {{ $ins->representanteLegal->carnet_patria_afiliado ? 'badge-yes' : 'badge-no' }}">
                                                         {{ $ins->representanteLegal->carnet_patria_afiliado ? 'Sí' : 'No' }}
                                                     </span>
                                                 </div>
-
-
-                                                <div class="info-item" style="width: 14rem;">
-                                                    <span class="info-label">
-                                                        Serial Carnet Patria
-                                                    </span>
-                                                    <span class="info-value">
-                                                        {{ $ins->representanteLegal->serial_carnet_patria_representante ?? 'N/A' }}
-                                                    </span>
+                                                @if ($ins->representanteLegal->carnet_patria_afiliado)
+                                                    <div class="info-col">
+                                                        <span class="info-key">Serial:</span>
+                                                        <span
+                                                            class="info-val">{{ $ins->representanteLegal->serial_carnet_patria_representante ?? 'N/A' }}</span>
+                                                    </div>
+                                                    <div class="info-col">
+                                                        <span class="info-key">Código:</span>
+                                                        <span
+                                                            class="info-val">{{ $ins->representanteLegal->codigo_carnet_patria_representante ?? 'N/A' }}</span>
+                                                    </div>
+                                                @endif
+                                                <div class="info-col">
+                                                    <span class="info-key">Banco:</span>
+                                                    <span
+                                                        class="info-val">{{ $ins->representanteLegal->banco->nombre_banco ?? 'N/A' }}</span>
                                                 </div>
-                                                <div class="info-item" style="width: 14rem;">
-                                                    <span class="info-label">
-                                                        Código Carnet Patria
-                                                    </span>
-                                                    <span class="info-value">
-                                                        {{ $ins->representanteLegal->codigo_carnet_patria_representante ?? 'N/A' }}
-                                                    </span>
-                                                </div>
-
-                                                <div class="info-item" style="width: 18rem;">
-                                                    <span class="info-label">
-                                                        Banco
-                                                    </span>
-                                                    <span class="info-value">
-                                                        {{ $ins->representanteLegal->banco->codigo_banco ?? 'N/A' }}-{{ $ins->representanteLegal->banco->nombre_banco ?? 'N/A' }}
-                                                    </span>
-                                                </div>
-
-                                                <div class="info-item" style="width: 18rem;">
-                                                    <span class="info-label">
-                                                        Tipo de Cuenta
-                                                    </span>
-                                                    <span class="info-value">
-                                                        {{ $ins->representanteLegal->tipo_cuenta ?? 'N/A' }}
-                                                    </span>
+                                                <div class="info-col">
+                                                    <span class="info-key">Tipo Cuenta:</span>
+                                                    <span
+                                                        class="info-val">{{ $ins->representanteLegal->tipo_cuenta ?? 'N/A' }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endif
+                                @endif
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
 
-                <div class="alert alert-info mt-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fas fa-info-circle fa-2x"></i>
-                        <div>
-                            <strong>Año cursado:</strong>
-                            {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }} Año
+                    <div class="alert alert-info mt-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-info-circle fa-2x"></i>
+                            <div>
+                                <strong>Año cursado:</strong>
+                                {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }} Año
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -25,8 +25,6 @@ class InscripcionProsecucion extends Component
 
     public $inscripcionAnterior;
 
-
-
     // Grados y Secciones
     public $grados = [];
     public $secciones = [];
@@ -42,7 +40,7 @@ class InscripcionProsecucion extends Component
 
     // Otros datos
     public $repite_grado = false;
-    public $acepta_normas_contrato = false;
+    public $acepta_normas_contrato = true;
     public $observaciones;
 
     /* ============================================================
@@ -236,6 +234,25 @@ class InscripcionProsecucion extends Component
      */
     public function seleccionarAlumno($alumnoId)
     {
+        // LIMPIAR ESTADO ANTERIOR
+        $this->reset([
+            'alumnoSeleccionado',
+            'gradoAnteriorId',
+            'gradoPromocionId',
+            'seccion_id',
+            'secciones',
+            'materias',
+            'materiasSeleccionadas',
+            'repite_grado',
+            'acepta_normas_contrato',
+            'observaciones',
+            'gradosPermitidos',
+            'inscripcionAnterior',
+        ]);
+
+        $this->resetErrorBag();
+
+        // ASIGNAR NUEVO ALUMNO
         $this->alumnoId = $alumnoId;
 
         $this->alumnoSeleccionado = Alumno::with([
@@ -249,16 +266,14 @@ class InscripcionProsecucion extends Component
             return;
         }
 
-        // Cargar el grado anterior del alumno
+        // CARGAR DATOS DEL NUEVO ALUMNO
         $this->cargarGradoDesdeInscripcionAnterior();
-
-        $this->cargarGradoDesdeInscripcionAnterior();
-
 
         $anioActual = AnioEscolar::where('status', 'Activo')->first();
         $this->inscripcionAnterior = $this->alumnoSeleccionado
-            ->inscripcionAnterior($anioActual->id); 
+            ->inscripcionAnterior($anioActual->id);
     }
+
 
     public function getRepresentantesProperty()
     {
@@ -665,10 +680,10 @@ class InscripcionProsecucion extends Component
             'inscripcionProsecucions.grado'
         ])->find($this->alumnoId);
 
-        // 🔥 RECARGA LISTA
+        //  RECARGA LISTA
         $this->cargarDatosIniciales();
 
-        // 🔥 AVISA A JS
+        // AVISA A JS
         $this->dispatch('refreshSelectAlumno');
 
         session()->flash(

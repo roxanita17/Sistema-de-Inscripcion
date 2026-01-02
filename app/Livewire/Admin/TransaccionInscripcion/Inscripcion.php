@@ -96,7 +96,7 @@ class Inscripcion extends Component
     }
 
     /* ============================================================
-       VALIDACIÓN
+       VALIDACIÓN 
        ============================================================ */
     public function rules()
     {
