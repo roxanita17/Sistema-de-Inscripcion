@@ -93,8 +93,8 @@
 
     {{-- Card: Información del Docente Seleccionado --}}
     @if ($docenteSeleccionado)
-        <div class="card-modern mb-4" >
-            <div class="card-header-modern" >
+        <div class="card-modern mb-4">
+            <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, var(--success), #059669);">
                         <i class="fas fa-user-check"></i>
@@ -191,31 +191,31 @@
                                 <h4>Información de Contacto</h4>
                             </div>
                             <div class="info-group">
-                                @if ($docenteSeleccionado->persona->prefijoTelefono && $docenteSeleccionado->persona->primer_telefono)
+                                @if (!empty($docenteSeleccionado->persona->telefono_completo))
                                     <div class="info-item">
                                         <span class="info-label">
                                             <i class="fas fa-phone"></i>
                                             Teléfono
                                         </span>
                                         <span class="info-value">
-                                            {{ $docenteSeleccionado->persona->prefijoTelefono->prefijo }} -
-                                            {{ $docenteSeleccionado->persona->primer_telefono }}
+                                            {{ $docenteSeleccionado->persona->telefono_completo }}
                                         </span>
                                     </div>
                                 @endif
 
-                                @if ($docenteSeleccionado->persona->prefijoDos && $docenteSeleccionado->persona->telefono_dos)
+
+                                @if ($docenteSeleccionado->persona->telefono_dos_completo)
                                     <div class="info-item">
                                         <span class="info-label">
                                             <i class="fas fa-phone"></i>
                                             Teléfono 2
                                         </span>
                                         <span class="info-value">
-                                            {{ $docenteSeleccionado->persona->prefijoDos->prefijo }} -
-                                            {{ $docenteSeleccionado->persona->telefono_dos }}
+                                            {{ $docenteSeleccionado->persona->telefono_dos_completo }}
                                         </span>
                                     </div>
                                 @endif
+
 
                                 @if ($docenteSeleccionado->dependencia)
                                     <div class="info-item">

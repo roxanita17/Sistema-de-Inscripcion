@@ -36,6 +36,9 @@
                         <p><strong>Código Interno:</strong>
                             {{ $datos->codigo ?? 'No asignado' }}
                         </p>
+                        <p><strong>Genero:</strong>
+                            {{ $datos->persona->genero->genero ?? 'No asignado' }}
+                        </p>
                     </div>
 
                     <div class="col-md-6">
@@ -46,7 +49,26 @@
                         <p><strong>Dependencia:</strong>
                             {{ $datos->dependencia ?? 'Sin especificar' }}
                         </p>
+
+                        @if (!empty($datos->persona->telefono_completo))
+                            <p>
+                                <strong>
+                                    Teléfono:
+                                </strong>
+                                {{ $datos->persona->telefono_completo }}
+                            </p>
+                        @endif
+
+                        @if (!empty($datos->persona->telefono_dos_completo))
+                            <p>
+                                <strong>
+                                    Segundo telefono:
+                                </strong>
+                                {{ $datos->persona->telefono_dos_completo }}
+                            </p>
+                        @endif
                     </div>
+
                 </div>
 
                 <!-- ======================
