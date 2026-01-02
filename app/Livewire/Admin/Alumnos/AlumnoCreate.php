@@ -266,32 +266,6 @@ class AlumnoCreate extends Component
         }
     }
 
-    private function normalizarEstaturaEnMetros($valor): float
-    {
-        if ($valor === null || $valor === '') {
-            return 0;
-        }
-
-        // Forzar string
-        $valor = str_replace(',', '.', (string) $valor);
-
-        if (!is_numeric($valor)) {
-            return 0;
-        }
-
-        $valor = (float) $valor;
-
-        // Si es mayor a 3 → es cm
-        if ($valor > 3) {
-            return round($valor / 100, 2);
-        }
-
-        // Ya está en metros
-        return round($valor, 2);
-    }
-
-
-
     public function validarEstatura()
     {
         $this->validateOnly('talla_estudiante');

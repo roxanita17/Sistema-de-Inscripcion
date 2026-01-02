@@ -494,7 +494,7 @@
                             <span class="required-badge">*</span>
                         </label>
                         <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
-                            wire:keyup='formatearEstatura'
+                            placeholder="Ej: 1.66 o 166"
                             class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
                             placeholder="1.65">
                         @error('talla_estudiante')
