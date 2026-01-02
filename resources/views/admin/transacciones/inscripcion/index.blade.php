@@ -60,33 +60,34 @@
         @endif
 
         {{-- ALERTAS --}}
-        @if (session('success') || session('error'))
-            <div class="alerts-container">
-                @if (session('success'))
-                    <div class="alert-modern alert-success alert alert-dismissible fade show">
-                        <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="alert-content">
-                            <h4>Éxito</h4>
-                            <p>{{ session('success') }}</p>
-                        </div>
-                        <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="alert-modern alert-error alert alert-dismissible fade show">
-                        <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
-                        <div class="alert-content">
-                            <h4>Error</h4>
-                            <p>{{ session('error') }}</p>
-                        </div>
-                        <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                @endif
-            </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'No se puede ejecutar el percentil',
+                html: `{!! nl2br(e(session('error'))) !!}`,
+                showCancelButton: true,
+                confirmButtonText: 'Ir a configuración',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('admin.grado.index') }}";
+                }
+            });
+        </script>
+        @endif
+
+        @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Proceso completado',
+                html: `{!! nl2br(e(session('success'))) !!}`,
+                confirmButtonText: 'Aceptar'
+            });
+        </script>
         @endif
 
         {{-- Filtros activos --}}
@@ -162,7 +163,6 @@
                         @endif
                     @endforeach
                 </div>
-
                 {{-- Boton de filtros --}}
                 <div>
                     <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
