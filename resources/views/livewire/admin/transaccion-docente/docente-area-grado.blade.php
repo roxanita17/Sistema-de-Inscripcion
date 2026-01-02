@@ -396,8 +396,12 @@
 
                     {{-- Botón Agregar --}}
                     <div class="col-md-2 d-flex align-items-end">
-                        <button class="btn-primary-modern w-100" wire:click="agregarAsignacion"
-                            wire:loading.attr="disabled" style="margin-bottom: 1.5rem;">
+                        <button class="btn-primary-modern w-100"
+                            wire:click="agregarAsignacion"
+                            wire:loading.attr="disabled"
+                            style="margin-bottom: 1.5rem;"
+                            @disabled(! $this->puedeAgregarAsignacion)
+                            title="{{ ! $this->puedeAgregarAsignacion ? 'Seleccione materia, año y sección' : '' }}">
                             <span wire:loading.remove wire:target="agregarAsignacion">
                                 <i class="fas fa-plus"></i> Agregar
                             </span>
