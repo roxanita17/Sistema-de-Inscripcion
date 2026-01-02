@@ -110,7 +110,7 @@
                             @if ($tipo === 'inscripciones')
                                 <th>Año Escolar</th>
                                 <th class="text-center">Alumno</th>
-                                <th class="text-center">Grado</th>
+                                <th class="text-center">Año</th>
                                 <th class="text-center">Sección</th>
                                 <th class="text-center">Tipo de Inscripción</th>
                                 <th class="text-center">Acciones</th>
