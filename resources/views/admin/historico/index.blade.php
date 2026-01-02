@@ -279,12 +279,12 @@
                                                 @if ($inscripcion->prosecucion)
                                                     {{-- Si es prosecución, mostrar el grado de promoción --}}
                                                     <span class="badge bg-primary">
-                                                        {{ $inscripcion->prosecucion->grado->numero_grado }}° Grado
+                                                        {{ $inscripcion->prosecucion->grado->numero_grado }}° Año
                                                     </span>
                                                 @else
                                                     {{-- Si es nuevo ingreso o base, mostrar el grado de la inscripción --}}
                                                     <span class="badge bg-info">
-                                                        {{ $inscripcion->grado->numero_grado }}° Grado
+                                                        {{ $inscripcion->grado->numero_grado }}° Año
                                                     </span>
                                                 @endif
                                             </td>
