@@ -75,7 +75,6 @@ class Docente extends Model
 
     public function asignacionesAreas()
     {
-        // hasManyThrough(Target, Through, firstKeyOnThrough, secondKeyOnTarget, localKey, secondLocalKey)
         return $this->hasManyThrough(
             DocenteAreaGrado::class,
             DetalleDocenteEstudio::class,
@@ -85,21 +84,6 @@ class Docente extends Model
             'id'                             // PK local en detalle_docente_estudios
         );
     }
-
-    public function getTelefonoCompletoAttribute()
-    {
-        return trim(
-            ($this->prefijoTelefono->prefijo ?? '') . ' ' . ($this->telefono ?? '')
-        );
-    }
-
-    public function getTelefonoDosCompletoAttribute()
-    {
-        return trim(
-            ($this->prefijoDos->prefijo ?? '') . ' ' . ($this->telefono_dos ?? '')
-        );
-    }
-
 
     public function asignacionesAreasActivas()
     {
@@ -191,7 +175,7 @@ class Docente extends Model
             $docente->genero = $docente->persona->genero->nombre ?? 'N/A';
             $docente->email = $docente->persona->email ?? 'N/A';
             $docente->direccion = $docente->persona->direccion ?? 'N/A';
-            $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
+            $docente->telefono = $docente->persona->primer_telefono ?? $docente->persona->segundo_telefono ?? 'N/A';
             $docente->telefono_dos = $docente->persona->telefono_dos ?? 'N/A';
         }
 

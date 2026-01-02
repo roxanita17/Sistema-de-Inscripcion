@@ -140,6 +140,12 @@ class DocenteAreaGrado extends Component
             ->get();
     }
 
+    public function getPuedeAgregarAsignacionProperty()
+    {
+        return $this->materiaId && $this->gradoId && $this->seccionId;
+    }
+
+
 
     /**
      * EVENTO AUTOMÁTICO: Se ejecuta cuando cambia docenteId
