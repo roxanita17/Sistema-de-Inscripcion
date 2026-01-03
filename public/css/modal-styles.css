@@ -331,17 +331,22 @@
     gap: 0.5rem;
 }
 
+/* ===== HEADER PRIMARIO (AZUL SUAVE) ===== */
 .card-header.bg-primary {
-    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6) !important;
+    color: #ffffff !important;
 }
 
+/* ===== HEADER PELIGRO (ROSADO / ROJO SUAVE) ===== */
 .card-header.bg-danger {
-    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+    color: #ffffff !important;
 }
 
+/* ===== HEADER ADVERTENCIA (AMARILLO CÁLIDO SUAVE) ===== */
 .card-header.bg-warning {
-    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
-    color: #111827 !important;
+    background: linear-gradient(135deg, #fde68a, #fbbf24) !important;
+    color: #92400e !important;
 }
 
 .card-body {
@@ -764,7 +769,7 @@ hr {
 }
 
 .documento-wrapper {
-    flex: 1 1 320px;   /* crece, se reduce y tiene ancho base */
+    flex: 1 1 320px; /* crece, se reduce y tiene ancho base */
     max-width: 33%;
 }
 
