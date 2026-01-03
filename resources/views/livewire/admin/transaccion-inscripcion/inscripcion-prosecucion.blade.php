@@ -407,7 +407,7 @@
                             </div>
                             <div>
                                 <strong>Sección:</strong>
-                                {{ $inscripcionAnterior->seccion->nombre }}
+                                {{ $inscripcionAnterior->seccion->nombre_seccion  ?? 'N/A' }}
                             </div>
                         </div>
                     </div>
