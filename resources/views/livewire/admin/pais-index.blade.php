@@ -1,6 +1,6 @@
 <div class="main-container">
-    @include('admin.estado.modales.createModal')
-    @include('admin.estado.modales.editModal')
+    @include('admin.pais.modales.createModal')
+    @include('admin.pais.modales.editModal')
 
     @if (!$anioEscolarActivo)
         <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
@@ -61,8 +61,8 @@
                     <i class="fas fa-list-ul"></i>
                 </div>
                 <div>
-                    <h3>Listado de Estados</h3>
-                    <p>{{ $estados->total() }} registros encontrados</p>
+                    <h3>Listado de Paises</h3>
+                    <p>{{ $paises->total() }} registros encontrados</p>
                 </div>
             </div>
 
@@ -141,22 +141,22 @@
                     <thead>
                         <tr class="text-center">
                             <th>#</th>
-                            <th class="text-center">Estado</th>
+                            <th class="text-center">Pais</th>
                             <th class="text-center">Estado</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
 
                     <tbody class="text-center">
-                        {{-- SI NO HAY ESTADOS --}}
-                        @if ($estados->isEmpty())
+                        {{-- SI NO HAY PAISES --}}
+                        @if ($paises->isEmpty())
                             <tr>
                                 <td colspan="4">
                                     <div class="empty-state">
                                         <div class="empty-icon">
                                             <i class="fas fa-inbox"></i>
                                         </div>
-                                        <h4>No hay estados registrados</h4>
+                                        <h4>No hay paises registrados</h4>
                                         <p>Agrega un nuevo estado con el botón superior</p>
                                     </div>
                                 </td>
@@ -164,13 +164,13 @@
                         @endif
 
                         {{-- LISTADO --}}
-                        @foreach ($estados as $index => $datos)
+                        @foreach ($paises as $index => $datos)
                             <tr class="  row-12">
                                 {{-- Número --}}
-                                <td>{{ $estados->firstItem() + $index }}</td>
+                                <td>{{ $paises->firstItem() + $index }}</td>
 
                                 {{-- Nombre --}}
-                                <td class="title-main">{{ $datos->nombre_estado }}</td>
+                                <td class="title-main">{{ $datos->nameES }}</td>
 
                                 {{-- Badge --}}
                                 <td>
@@ -248,7 +248,7 @@
 
         {{-- Paginación --}}
         <div class="mt-3">
-            {{ $estados->links() }}
+            {{ $paises->links() }}
         </div>
     </div>
 

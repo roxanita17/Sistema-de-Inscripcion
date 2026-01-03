@@ -8,6 +8,7 @@ use App\Http\Controllers\BancoController;
 use App\Http\Controllers\EtniaIndigenaController;
 use App\Http\Controllers\OcupacionController;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\PaisController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
 use App\Http\Controllers\GradoController;
@@ -101,6 +102,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('ocupacion/{id}', [OcupacionController::class, 'destroy'])->name('ocupacion.destroy');
     });
 
+    // ===== PAIS (LIVEWIRE) =====
+    Route::get('pais', function () {
+        return view('admin.pais.index', [
+            'anioEscolarActivo' => \App\Models\AnioEscolar::activos()
+                ->where('cierre_anio_escolar', '>=', now())
+                ->exists()
+        ]);
+    })->name('pais.index');
+
+    // Ruta para verificar la existencia de un estado
+    Route::get('pais/verificar', [PaisController::class, 'verificarExistencia'])->name('pais.verificar');
     // ===== ESTADO (LIVEWIRE) =====
     Route::get('estado', function () {
         return view('admin.estado.index', [

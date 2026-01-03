@@ -405,9 +405,14 @@ return [
                     'active' => ['admin/estado*', 'admin/municipio*', 'admin/localidad*'],
                     'submenu' => [
                         [
+                            'text' => 'Paises',
+                            'url'  => 'admin/pais',
+                            'icon' => 'fas fa-flag',
+                        ],
+                        [
                             'text' => 'Estados',
                             'url'  => 'admin/estado',
-                            'icon' => 'fas fa-globe',
+                            'icon' => 'fas fa-map',
                         ],
                         [
                             'text' => 'Municipios',
