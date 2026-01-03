@@ -17,6 +17,8 @@ class DocenteAreaGrado extends Component
     /**
      * PROPIEDADES PRINCIPALES
      */
+
+    
     public $docenteId;
     public $docentes = [];
     public $docenteSeleccionado = null;

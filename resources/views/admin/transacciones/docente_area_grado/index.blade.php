@@ -190,7 +190,16 @@
 <!-- --------------------------- -->
 
             </div>
+
+                    <div>
+                        <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                            <i class="fas fa-filter"></i>
+                            Filtros
+                        </button>
+                    </div>
+                    
                 </div>
+            </div>
 
                 <div class="card-body-modern">
                     <div class="table-wrapper">
@@ -448,6 +457,7 @@
                 </div>
             </div>
     </div>
+    @include('admin.transacciones.docente_area_grado.modales.filtroModal')
 
     {{-- Paginación --}}
     <x-pagination :paginator="$docentes" />
