@@ -26,16 +26,15 @@ class DocenteAreaGradoController extends Controller
             ->exists();
     }
 
-    private function verificarPercentilEjecutado()
-    {
-        return \App\Models\EjecucionesPercentil::where('status', true)->exists();
-    }
-
     /**
      * Muestra el listado de docentes
      */
     public function index(Request $request)
     {
+        $gradosEscolares = collect();
+        $secciones = collect();
+        $areasFormacion = collect();
+
         $gradoId = $request->grado_id;
         $seccionNombre = $request->seccion_id;
         $areaFormacionId = $request->area_formacion_id;
@@ -79,17 +78,9 @@ class DocenteAreaGradoController extends Controller
 
 
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        $percentilEjecutado = $this->verificarPercentilEjecutado();
 
 
-        if (!$percentilEjecutado) {
-            return view('admin.transacciones.docente_area_grado.index', compact(
-                'docentes',
-                'anioEscolarActivo',
-                'buscar',
-                'percentilEjecutado'
-            ));
-        }
+
 
         $gradosEscolares = Grado::where('status', true)
             ->orderBy('numero_grado')
@@ -101,7 +92,6 @@ class DocenteAreaGradoController extends Controller
             ->orderBy('nombre')
             ->get();
 
-
         $areasFormacion = AreaFormacion::where('status', true)
             ->orderBy('nombre_area_formacion')
             ->get();
@@ -111,11 +101,11 @@ class DocenteAreaGradoController extends Controller
             'docentes',
             'anioEscolarActivo',
             'buscar',
-            'percentilEjecutado',
             'gradosEscolares',
             'secciones',
             'areasFormacion'
         ));
+
 
     }
 

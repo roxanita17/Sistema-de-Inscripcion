@@ -54,11 +54,6 @@ class DocenteAreaGrado extends Component
      */
     public function mount($docenteId = null)
     {
-        $this->percentilEjecutado = EjecucionesPercentil::where('status', true)->exists();
-
-        if (!$this->percentilEjecutado) {
-            return; // Bloquea todo
-        }
 
         if ($docenteId) {
 
@@ -332,10 +327,10 @@ class DocenteAreaGrado extends Component
 
         $this->secciones = Seccion::where('status', true)
             ->where('grado_id', $this->gradoId)
-            ->where('cantidad_actual', '>', 0)
             ->orderBy('nombre', 'asc')
             ->get();
     }
+
 
 
 

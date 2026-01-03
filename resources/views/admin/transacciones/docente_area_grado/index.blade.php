@@ -21,20 +21,13 @@
                 </div>
             </div>
 
-            @if ($percentilEjecutado)
-                <a type="button" class="btn-create" href="{{ route('admin.transacciones.docente_area_grado.create') }}"
-                    @if (!$anioEscolarActivo) disabled @endif
-                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nueva asignación' }}">
-                    <i class="fas fa-plus"></i>
-                    <span>Nueva Asignación</span>
-                </a>
-            @else
-                 <a type="button" class="btn-create" disabled
-                   >
-                    <i class="fas fa-plus"></i>
-                    <span>Nueva Asignación</span>
-                </a>
-            @endif
+            <a type="button" class="btn-create" href="{{ route('admin.transacciones.docente_area_grado.create') }}"
+                @if (!$anioEscolarActivo) disabled @endif
+                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nueva asignación' }}">
+                <i class="fas fa-plus"></i>
+                <span>Nueva Asignación</span>
+            </a>
+
         </div>
     </div>
 @stop
@@ -53,20 +46,6 @@
                                 se
                                 registre un año escolar activo.
                                 <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            @endif
-            @if (!$percentilEjecutado)
-                <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
-                        <div>
-                            <h5 class="alert-heading mb-1">Atención: Percentil no ejecutado</h5>
-                            <p class="mb-0">
-                                Debe ejecutar el percentil para poder realizar asignaciones de docentes. <strong>No podrás crear, editar o eliminar registros</strong> hasta que se ejecute el percentil.
-                                <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="alert-link">Ir a Inscripción</a>
                             </p>
                         </div>
                     </div>
