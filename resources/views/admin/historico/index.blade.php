@@ -146,11 +146,11 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-info" data-bs-toggle="modal"
-                                                    data-bs-target="#modalDetalleProsecucion{{ $prosecucion->id }}"
-                                                    title="Ver detalles">
+                                                <a href="#viewModal{{-- {{ $datos->id }} --}}" class="btn btn-info btn-sm"
+                                                    title="Ver detalles" data-bs-toggle="modal"
+                                                    data-bs-target="#viewModal{{-- {{ $datos->id }} --}}">
                                                     <i class="fas fa-eye"></i>
-                                                </button>
+                                                </a>
                                             </td>
                                         </tr>
                                     @empty
@@ -192,13 +192,17 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-info" data-bs-toggle="modal"
-                                                    data-bs-target="#modalDetalleNuevoIngreso{{ $inscripcion->id }}"
-                                                    title="Ver detalles">
+                                                <button class="btn btn-info btn-sm" title="Ver detalles"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#viewModal{{ $inscripcion->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </td>
                                         </tr>
+                                        
+                                        @include('admin.historico.modales.showModal', [
+                                            'datos' => $inscripcion,
+                                        ])
                                     @empty
                                         <tr>
                                             <td colspan="6">
@@ -258,9 +262,11 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-info" title="Ver detalles">
+                                                <a href="#viewModal{{-- {{ $datos->id }} --}}" class="btn btn-info btn-sm"
+                                                    title="Ver detalles" data-bs-toggle="modal"
+                                                    data-bs-target="#viewModal{{-- {{ $datos->id }} --}}">
                                                     <i class="fas fa-eye"></i>
-                                                </button>
+                                                </a>
                                             </td>
                                         </tr>
                                     @empty
@@ -324,6 +330,13 @@
                                         </td>
                                         <td>
                                             —
+                                        </td>
+                                        <td>
+                                            <a href="#viewModal{{-- {{ $datos->id }} --}}" class="btn btn-info btn-sm"
+                                                title="Ver detalles" data-bs-toggle="modal"
+                                                data-bs-target="#viewModal{{-- {{ $datos->id }} --}}">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 @empty

@@ -636,9 +636,6 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-2"></i>Cerrar
                     </button>
-                    {{-- <button type="button" class="btn btn-primary" onclick="window.print()">
-                    <i class="fas fa-print me-2"></i>Imprimir
-                </button> --}}
                 </div>
 
             </div>
