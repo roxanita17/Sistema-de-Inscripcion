@@ -41,9 +41,9 @@
                         <span>Datos del Estudiante</span>
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
-                        <div class="row g-3">
+                        <div class="row">
                             <!-- Información personal -->
-                            <div class="col-md-3">
+                            <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Cedula
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Fecha de Nacimiento
@@ -68,7 +68,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Nombre Completo
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Género
@@ -93,7 +93,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Peso
@@ -104,7 +104,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Estatura
@@ -115,7 +115,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Lateralidad
@@ -126,7 +126,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Orden de Nacimiento
@@ -137,7 +137,7 @@
                                 </div>
 
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Lugar de nacimiento
@@ -151,7 +151,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Talla Zapato
@@ -162,7 +162,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Talla Camisa
@@ -173,7 +173,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Talla Pantalones
@@ -183,6 +183,7 @@
                                     </span>
                                 </div>
                             </div>
+                        </div>
                             <div class="row">
                                 @if ($datos->alumno->etniaIndigena)
 
@@ -193,7 +194,7 @@
                                             </span>
 
                                             @if ($datos->alumno->etniaIndigena->count() > 0)
-                                                <div class="d-flex flex-wrap gap-2 mt-1">
+                                                <div class="d-flex flex-wrap mt-1">
                                                     {{ $datos->alumno->etniaIndigena->nombre }}
                                                 </div>
                                             @else
@@ -213,7 +214,7 @@
                                             </span>
 
                                             @if ($datos->alumno->discapacidades->count() > 0)
-                                                <div class="d-flex flex-wrap gap-2 mt-1">
+                                                <div class="d-flex flex-wrap mt-1">
                                                     @foreach ($datos->alumno->discapacidades as $discapacidad)
                                                         • {{ $discapacidad->nombre_discapacidad }} <br>
                                                     @endforeach
