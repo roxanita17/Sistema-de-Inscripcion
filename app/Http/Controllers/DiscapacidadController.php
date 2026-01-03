@@ -55,14 +55,35 @@ class DiscapacidadController extends Controller
      */
     public function index()
     {
-        $discapacidad = Discapacidad::where('status', true)
-            ->orderBy('nombre_discapacidad', 'asc')
-            ->paginate(10);
+        $buscar = request('buscar');
+        
+        // Construir la consulta base
+        $query = Discapacidad::query();
+        
+        // Aplicar búsqueda
+        if (!empty($buscar)) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('nombre_discapacidad', 'LIKE', "%{$buscar}%")
+                  ->orWhere('id', 'LIKE', "%{$buscar}%");
+            });
+        }
+        
+        // Filtrar solo activos
+        $query->where('status', true);
+        
+        // Ordenar y paginar
+        $discapacidad = $query->orderBy('nombre_discapacidad', 'asc')
+                            ->paginate(10)
+                            ->appends(request()->query());
         
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
         
-        return view('admin.discapacidad.index', compact('discapacidad', 'anioEscolarActivo'));
+        return view('admin.discapacidad.index', compact(
+            'discapacidad', 
+            'anioEscolarActivo',
+            'buscar'
+        ));
     }
 
     /**

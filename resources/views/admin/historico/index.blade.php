@@ -26,9 +26,6 @@
 
 @section('content')
     <div class="main-container">
-
-
-
         {{-- TABLA DEL HISTÓRICO --}}
         <div class="card-modern">
             <div class="card-header-modern">
@@ -48,15 +45,60 @@
 
                         </div>
                     </div>
+
+                                               <div class="header-right">
+                <!-- --------------------------- -->
+
+@php
+    $anioActivo = \App\Models\AnioEscolar::activos()->first();
+    $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
+    $mostrarAnio = $anioActivo ?? $anioExtendido;
+@endphp
+
+@if($mostrarAnio)
+    <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
+        <div class="d-flex align-items-center">
+            <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
+                <i class="fas fa-calendar-check me-1"></i>
+                
+                Año Escolar
+            </span>
+            
+            <div class="d-flex align-items-center" style="font-size: 0.8rem;">
+                <span class="text-muted me-2">
+                    <i class="fas fa-play-circle text-primary me-1"></i>
+                    {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                </span>
+                
+                <span class="text-muted me-2">
+                    <i class="fas fa-flag-checkered text-danger me-1"></i>
+                    {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                </span>
+                
+                
+            </div>
+        </div>
+    </div>
+@else
+    <div class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
+            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
+        </div>
+        
+    </div>
+@endif
+<!-- --------------------------- -->
+
+            </div>
+
                     <div>
                         <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
                             <i class="fas fa-filter"></i>
                             Filtros
                         </button>
                     </div>
-
-
-
+                    
                 </div>
             </div>
 
@@ -68,14 +110,14 @@
                             @if ($tipo === 'inscripciones')
                                 <th>Año Escolar</th>
                                 <th class="text-center">Alumno</th>
-                                <th class="text-center">Grado</th>
+                                <th class="text-center">Año</th>
                                 <th class="text-center">Sección</th>
                                 <th class="text-center">Tipo de Inscripción</th>
                                 <th class="text-center">Acciones</th>
                             @elseif($tipo === 'docentes')
                                 <th>Año Escolar</th>
                                 <th>Docente</th>
-                                <th>Grado</th>
+                                <th>Año</th>
                                 <th>Área</th>
                                 <th>Sección</th>
                             @endif
@@ -177,7 +219,7 @@
                                             {{-- Grado --}}
                                             <td>
                                                 <span class="badge bg-info">
-                                                    {{ $inscripcion->grado->numero_grado }}° Grado
+                                                    {{ $inscripcion->grado->numero_grado }}° Año
                                                 </span>
                                             </td>
 
@@ -237,12 +279,12 @@
                                                 @if ($inscripcion->prosecucion)
                                                     {{-- Si es prosecución, mostrar el grado de promoción --}}
                                                     <span class="badge bg-primary">
-                                                        {{ $inscripcion->prosecucion->grado->numero_grado }}° Grado
+                                                        {{ $inscripcion->prosecucion->grado->numero_grado }}° Año
                                                     </span>
                                                 @else
                                                     {{-- Si es nuevo ingreso o base, mostrar el grado de la inscripción --}}
                                                     <span class="badge bg-info">
-                                                        {{ $inscripcion->grado->numero_grado }}° Grado
+                                                        {{ $inscripcion->grado->numero_grado }}° Año
                                                     </span>
                                                 @endif
                                             </td>

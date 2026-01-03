@@ -11,6 +11,7 @@ use App\Models\Discapacidad;
 use App\Models\ExpresionLiteraria;
 use App\Models\Lateralidad;
 use App\Models\EtniaIndigena;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Alumno extends Model
 
@@ -31,6 +32,43 @@ class Alumno extends Model
         'estatura',
         'status',
     ];
+
+    protected function estatura(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                // Quita .00 si es entero
+                if ((float)$value == (int)$value) {
+                    return (int)$value;
+                }
+
+                // Quita ceros innecesarios (1.50 → 1.5)
+                return rtrim(rtrim($value, '0'), '.');
+            },
+
+            set: function ($value) {
+
+                if ($value === null || $value === '') {
+                    return null;
+                }
+
+                $value = str_replace(',', '.', (string) $value);
+
+                if (!is_numeric($value)) {
+                    return null;
+                }
+
+                $value = (float) $value;
+
+                // Si viene en cm cambiar a metros
+                if ($value > 3) {
+                    return round($value / 100, 2);
+                }
+
+                return round($value, 2);
+            }
+        );
+    }
 
 
 
@@ -239,11 +277,9 @@ class Alumno extends Model
 
                 'etnia_indigenas.nombre as etnia',
                 'lateralidads.lateralidad',
-                'orden_nacimientos.orden_nacimiento',
-                'discapacidads.nombre_discapacidad',
+                'orden_nacimientos.orden_nacimiento'
             )
             ->join("personas", "personas.id", "=", "alumnos.persona_id")
-            ->leftJoin("discapacidads", "discapacidads.id", "=", "alumnos.discapacidad_id")
             ->leftJoin("orden_nacimientos", "orden_nacimientos.id", "=", "alumnos.orden_nacimiento_id")
             ->leftJoin("etnia_indigenas", "etnia_indigenas.id", "=", "alumnos.etnia_indigena_id")
             ->leftJoin("lateralidads", "lateralidads.id", "=", "alumnos.lateralidad_id")
@@ -251,8 +287,8 @@ class Alumno extends Model
             ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id");
 
         /*
-            * Filtros
-            */
+        * Filtros
+        */
 
         if ($genero) {
             $query->where("generos.genero", $genero);

@@ -42,7 +42,7 @@ class Inscripcion extends Component
 
     public $documentos = [];
     public array $documentosFaltantes = [];
-    public $observaciones;
+    public ?string $observaciones = null;
     public $numero_zonificacion;
     public $institucion_procedencia_id;
     public $expresion_literaria_id;
@@ -66,6 +66,9 @@ class Inscripcion extends Component
 
     public string $tipo_inscripcion = 'nuevo_ingreso';
 
+    public bool $gradoSinCupos = false;
+    public string $mensajeCupos = '';
+
 
     /* ============================================================
        BOOT & MOUNT
@@ -86,6 +89,7 @@ class Inscripcion extends Component
 
     public function mount()
     {
+        $this->acepta_normas_contrato = true;
         $this->discapacidadesAgregadas = [];
         $this->discapacidadSeleccionada = null;
         $this->documentosDisponibles = $this->documentoService->obtenerDocumentosDisponibles();
@@ -95,7 +99,7 @@ class Inscripcion extends Component
     }
 
     /* ============================================================
-       VALIDACIÓN
+       VALIDACIÓN 
        ============================================================ */
     public function rules()
     {
@@ -263,14 +267,15 @@ class Inscripcion extends Component
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
-    $this->evaluarDocumentosVisual();
+
+        $this->evaluarDocumentosVisual();
+        $this->recalcularObservaciones();
     }
 
     public function updatedDocumentos()
     {
-        $this->validarDocumentosEnTiempoReal();
-        $this->actualizarObservacionesPorDocumentos();
         $this->evaluarDocumentosVisual();
+        $this->recalcularObservaciones();
     }
 
     private function validarDocumentosEnTiempoReal(): void
@@ -288,11 +293,7 @@ class Inscripcion extends Component
 
     private function actualizarObservacionesPorDocumentos()
     {
-        $this->observaciones = $this->documentoService->generarObservaciones(
-            $this->documentos,
-            $this->requiereAutorizacion(),
-            $this->esPrimerGrado
-        );
+        $this->recalcularObservaciones();
     }
 
 
@@ -317,14 +318,70 @@ class Inscripcion extends Component
             count($this->documentos) === count($this->documentosDisponibles);
     }
 
+    private function recalcularObservaciones(): void
+    {
+        $observaciones = [];
 
+        // Observaciones por documentos
+        $obsDocumentos = $this->documentoService->generarObservaciones(
+            $this->documentos,
+            !$this->padreId && !$this->madreId,
+            $this->esPrimerGrado
+        );
 
+        if ($obsDocumentos) {
+            $observaciones[] = $obsDocumentos;
+        }
+
+        // Observaciones por discapacidades
+        $obsDiscapacidades = $this->generarObservacionesDiscapacidades();
+        if ($obsDiscapacidades) {
+            $observaciones[] = $obsDiscapacidades;
+        }
+
+        // Unir todo
+        $this->observaciones = implode(PHP_EOL . PHP_EOL, $observaciones);
+    }
+
+    private function generarObservacionesDiscapacidades(): ?string
+    {
+        $nombres = [];
+
+        // Discapacidades ya guardadas (si existe alumno)
+        if ($this->alumnoId) {
+            $alumno = \App\Models\Alumno::with('discapacidades')->find($this->alumnoId);
+
+            if ($alumno) {
+                $nombres = $alumno->discapacidades
+                    ->pluck('nombre_discapacidad')
+                    ->toArray();
+            }
+        }
+
+        // Discapacidades agregadas en esta inscripción
+        foreach ($this->discapacidadesAgregadas as $discapacidad) {
+            $nombres[] = $discapacidad['nombre'];
+        }
+
+        $nombres = array_unique($nombres);
+
+        if (empty($nombres)) {
+            return null;
+        }
+
+        return 'Discapacidades registradas:' . PHP_EOL .
+            implode(PHP_EOL, $nombres);
+    }
 
     /* ============================================================
        INFORMACIÓN DE CUPOS
        ============================================================ */
     public function updatedGradoId($value)
     {
+        $this->resetErrorBag('gradoId');
+        $this->gradoSinCupos = false;
+        $this->mensajeCupos = '';
+
         if (!$value) {
             $this->infoCupos = null;
             $this->secciones = [];
@@ -334,24 +391,31 @@ class Inscripcion extends Component
 
         $this->infoCupos = $this->inscripcionService->obtenerInfoCupos($value);
 
+        if ($this->infoCupos['cupos_disponibles'] <= 0) {
+            $this->gradoSinCupos = true;
+            $this->mensajeCupos = 'Este grado ha alcanzado el máximo de cupos disponibles.';
+            $this->addError('gradoId', $this->mensajeCupos);
+            return;
+        }
+
         $grado = \App\Models\Grado::find($value);
         $this->esPrimerGrado = ((int) $grado->numero_grado === 1);
 
-        // Si NO es primer grado → cargar secciones
         if (!$this->esPrimerGrado) {
             $this->secciones = \App\Models\Seccion::where('grado_id', $value)
                 ->where('status', true)
                 ->orderBy('nombre')
                 ->get();
         } else {
-            // Limpiar si es primer grado
             $this->secciones = [];
             $this->seccion_id = null;
         }
 
         $this->validarDocumentosEnTiempoReal();
         $this->evaluarDocumentosVisual();
+        $this->recalcularObservaciones();
     }
+
 
     /* ============================================================
        REGISTRO DE DISCAPACIDADES
@@ -388,6 +452,8 @@ class Inscripcion extends Component
             $this->discapacidadSeleccionada = null;
             $this->resetErrorBag('discapacidadSeleccionada');
 
+            $this->recalcularObservaciones();
+
             session()->flash('success_temp', 'Discapacidad agregada correctamente.');
         }
     }
@@ -403,6 +469,8 @@ class Inscripcion extends Component
 
             // Reindexar el array
             $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
+
+            $this->recalcularObservaciones();
 
             session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
         }
@@ -522,8 +590,6 @@ class Inscripcion extends Component
             'acepta_normas_contrato' => $this->acepta_normas_contrato,
         ]);
     }
-
-
 
     /* ============================================================
        LISTENERS

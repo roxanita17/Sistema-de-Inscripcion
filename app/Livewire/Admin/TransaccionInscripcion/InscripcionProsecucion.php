@@ -23,6 +23,8 @@ class InscripcionProsecucion extends Component
     public $alumnoSeleccionado;
     public $alumnos = [];
 
+    public $inscripcionAnterior;
+
     // Grados y Secciones
     public $grados = [];
     public $secciones = [];
@@ -38,8 +40,12 @@ class InscripcionProsecucion extends Component
 
     // Otros datos
     public $repite_grado = false;
-    public $acepta_normas_contrato = false;
+    public $acepta_normas_contrato = true;
     public $observaciones;
+
+    public ?int $gradoSugeridoId = null;
+    public ?int $seccionSugeridaId = null;
+    public ?string $mensajeSugerencia = null;
 
     /* ============================================================
        LISTENERS
@@ -47,6 +53,7 @@ class InscripcionProsecucion extends Component
 
     protected $listeners = [
         'seleccionarAlumno' => 'seleccionarAlumno',
+        'actualizarAlumno' => 'manejarActualizacionAlumno'
     ];
 
     /* ============================================================
@@ -231,11 +238,31 @@ class InscripcionProsecucion extends Component
      */
     public function seleccionarAlumno($alumnoId)
     {
+        // LIMPIAR ESTADO ANTERIOR
+        $this->reset([
+            'alumnoSeleccionado',
+            'gradoAnteriorId',
+            'gradoPromocionId',
+            'seccion_id',
+            'secciones',
+            'materias',
+            'materiasSeleccionadas',
+            'repite_grado',
+            'acepta_normas_contrato',
+            'observaciones',
+            'gradosPermitidos',
+            'inscripcionAnterior',
+        ]);
+
+        $this->resetErrorBag();
+
+        // ASIGNAR NUEVO ALUMNO
         $this->alumnoId = $alumnoId;
 
         $this->alumnoSeleccionado = Alumno::with([
             'persona.tipoDocumento',
-            'inscripciones.grado'
+            'inscripciones.grado',
+            'inscripciones.representanteLegal.representante.persona.tipoDocumento',
         ])->find($alumnoId);
 
         if (!$this->alumnoSeleccionado) {
@@ -243,9 +270,39 @@ class InscripcionProsecucion extends Component
             return;
         }
 
-        // Cargar el grado anterior del alumno
+        // CARGAR DATOS DEL NUEVO ALUMNO
         $this->cargarGradoDesdeInscripcionAnterior();
+
+        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        $this->inscripcionAnterior = $this->alumnoSeleccionado
+            ->inscripcionAnterior($anioActual->id);
+
+        $this->calcularSugerenciaInscripcion();
     }
+
+
+    public function getRepresentantesProperty()
+    {
+        if (!$this->alumnoSeleccionado) {
+            return collect();
+        }
+
+        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        if (!$anioActual) {
+            return collect();
+        }
+
+        $inscripcionAnterior = $this->alumnoSeleccionado
+            ->inscripcionAnterior($anioActual->id);
+
+        if (!$inscripcionAnterior) {
+            return collect();
+        }
+
+        return collect($inscripcionAnterior->representanteLegal ?? []);
+    }
+
+
 
     /**
      * Obtiene el último grado cursado por el alumno
@@ -333,6 +390,7 @@ class InscripcionProsecucion extends Component
         }
 
         $this->cargarGradosPermitidos();
+        $this->calcularSugerenciaInscripcion();
     }
 
     /**
@@ -374,6 +432,12 @@ class InscripcionProsecucion extends Component
 
         return $aprobadasArrastradas->count() < $arrastradasIds->count();
     }
+
+    public function updatedRepiteGrado()
+    {
+        $this->calcularSugerenciaInscripcion();
+    }
+
 
 
     private function materiasArrastradasSeleccionadas(): array
@@ -452,6 +516,51 @@ class InscripcionProsecucion extends Component
     }
 
 
+    private function calcularSugerenciaInscripcion(): void
+    {
+        $this->mensajeSugerencia = null;
+        $this->gradoSugeridoId = null;
+        $this->seccionSugeridaId = null;
+
+        if (!$this->inscripcionAnterior || !$this->gradoAnteriorId) {
+            return;
+        }
+
+        $gradoAnterior = Grado::find($this->gradoAnteriorId);
+        if (!$gradoAnterior) {
+            return;
+        }
+
+        // GRADO SUGERIDO
+        if ($this->repite_grado) {
+            $gradoSugerido = $gradoAnterior;
+        } else {
+            $gradoSugerido = Grado::where('numero_grado', $gradoAnterior->numero_grado + 1)
+                ->where('status', true)
+                ->first();
+        }
+
+        if (!$gradoSugerido) {
+            return;
+        }
+
+        $this->gradoSugeridoId = $gradoSugerido->id;
+
+        //  SECCIÓN SUGERIDA (MISMA QUE EL AÑO ANTERIOR)
+        if ($this->inscripcionAnterior->seccion_id) {
+            $this->seccionSugeridaId = $this->inscripcionAnterior->seccion_id;
+        }
+
+        // MENSAJE
+        $this->mensajeSugerencia = sprintf(
+            'Sugerencia: inscribir en %s° Año%s.',
+            $gradoSugerido->numero_grado,
+            $this->seccionSugeridaId
+                ? ' – Sección ' . optional(Seccion::find($this->seccionSugeridaId))->nombre
+                : ''
+        );
+    }
+
 
     /* ============================================================
        GUARDAR INSCRIPCIÓN
@@ -512,6 +621,29 @@ class InscripcionProsecucion extends Component
                 'acepta_normas_contrato' => $this->acepta_normas_contrato,
                 'status' => 'Activo',
             ]);
+
+            if ($this->seccion_id) {
+
+                $seccion = Seccion::lockForUpdate()->find($this->seccion_id);
+
+                if (!$seccion) {
+                    throw new \Exception('La sección seleccionada no existe.');
+                }
+
+                // Capacidad máxima (del grado)
+                $grado = Grado::findOrFail($this->gradoPromocionId);
+                $capacidadMax = $grado->max_seccion ?? 35;
+
+                if ($seccion->cantidad_actual >= $capacidadMax) {
+                    throw new \Exception(
+                        "La sección {$seccion->nombre} ya alcanzó su capacidad máxima ({$capacidadMax} alumnos)."
+                    );
+                }
+
+                // ✅ SUMAR ESTUDIANTE
+                $seccion->increment('cantidad_actual');
+            }
+
 
             // Guardar estado de cada materia
             $this->guardarMateriasEstado($prosecucion->id);
@@ -593,6 +725,33 @@ class InscripcionProsecucion extends Component
             ]);
         }
     }
+
+    public function manejarActualizacionAlumno()
+    {
+        if (!$this->alumnoId) {
+            return;
+        }
+
+        $this->alumnoSeleccionado = Alumno::with([
+            'persona.tipoDocumento',
+            'inscripciones.grado',
+            'inscripcionProsecucions.grado'
+        ])->find($this->alumnoId);
+
+        //  RECARGA LISTA
+        $this->cargarDatosIniciales();
+
+        // AVISA A JS
+        $this->dispatch('refreshSelectAlumno');
+
+        session()->flash(
+            'success',
+            'Datos del estudiante actualizados correctamente.'
+        );
+    }
+
+
+
 
     /* ============================================================
        RENDER

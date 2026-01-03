@@ -129,25 +129,46 @@ class DocumentoService
     public function generarObservaciones(
         array $documentos,
         bool $requiereAutorizacion,
-        bool $esPrimerGrado
+        bool $esPrimerGrado,
+        ?int $alumnoId = null
     ): ?string {
 
         $evaluacion = $this->evaluarEstadoDocumentos(
             $documentos,
             $requiereAutorizacion,
-            $esPrimerGrado
+            $esPrimerGrado,
+            $alumnoId
         );
 
-        if (empty($evaluacion['faltantes'])) {
-            return null;
+        $observaciones = [];
+
+        if (!empty($evaluacion['faltantes'])) {
+            foreach ($evaluacion['faltantes'] as $doc) {
+                $observaciones[] =
+                    $this->documentosEtiquetas[$doc]
+                    ?? ucfirst(str_replace('_', ' ', $doc));
+            }
         }
 
-        $nombres = array_map(
-            fn($doc) => $this->documentosEtiquetas[$doc]
-                ?? ucfirst(str_replace('_', ' ', $doc)),
-            $evaluacion['faltantes']
-        );
+        $discapacidades = \App\Models\DiscapacidadEstudiante::with('discapacidad')
+            ->where('alumno_id', $alumnoId)
+            ->where('status', true)
+            ->get()
+            ->pluck('discapacidad.nombre_discapacidad')
+            ->filter()
+            ->values();
 
-        return 'Documentos pendientes por:' . PHP_EOL . implode(PHP_EOL, $nombres);
+        if ($discapacidades->isNotEmpty()) {
+            $observaciones[] = 'Discapacidades del estudiante:';
+
+            foreach ($discapacidades as $nombre) {
+                $observaciones[] = $nombre;
+            }
+        }
+
+
+        return empty($observaciones)
+            ? null
+            : 'Observaciones:' . PHP_EOL . PHP_EOL . 'Documentos faltantes:' . PHP_EOL . implode(PHP_EOL, $observaciones);
     }
 }

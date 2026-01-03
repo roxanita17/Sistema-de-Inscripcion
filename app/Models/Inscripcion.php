@@ -44,13 +44,15 @@ class Inscripcion extends Model
         );
     }
 
+    // App\Models\Inscripcion.php
     public function prosecucion()
     {
         return $this->hasOne(
-            InscripcionProsecucion::class,
+            \App\Models\InscripcionProsecucion::class,
             'inscripcion_id'
         );
     }
+
 
     public function getTipoInscripcionAttribute()
     {
@@ -264,8 +266,8 @@ class Inscripcion extends Model
         $this->load([
             'alumno.persona',
             'alumno.ordenNacimiento',
-            'alumno.discapacidad',
-            'alumno.etniaIndigena',
+            //'alumno.discapacidad',
+            //'alumno.etniaIndigena',
             'alumno.lateralidad',
             'grado',
             'seccion',
@@ -273,9 +275,9 @@ class Inscripcion extends Model
             'madre.persona',
             'representanteLegal.representante.persona',
             'representanteLegal.banco',
-            'institucionProcedencia',
+            /*'institucionProcedencia',
             'expresionLiteraria',
-            'seccionAsignada'
+            'seccionAsignada'*/
         ]);
 
         // Construir el array con todos los datos
@@ -320,6 +322,28 @@ class Inscripcion extends Model
             if ($inscripcion->alumno) {
                 $inscripcion->alumno->update([
                     'status' => false,
+                ]);
+            }
+
+            return true;
+        });
+    }
+
+    public static function restaurar($id)
+    {
+        return DB::transaction(function () use ($id) {
+
+            $inscripcion = Inscripcion::with('alumno')->findOrFail($id);
+
+            // Restaurar la inscripción
+            $inscripcion->update([
+                'status' => 'Activo',
+            ]);
+
+            // Restaurar el alumno relacionado
+            if ($inscripcion->alumno) {
+                $inscripcion->alumno->update([
+                    'status' => true,
                 ]);
             }
 

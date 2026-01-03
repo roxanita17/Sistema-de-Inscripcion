@@ -31,6 +31,8 @@
                 </div>
             </div>
 
+
+
             <!-- Botón para abrir la modal de crear año escolar -->
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAnioEscolar">
                 <i class="fas fa-plus"></i>
@@ -50,6 +52,9 @@
         $anioEscolarActivo = \App\Models\AnioEscolar::activos()->exists();
     @endphp
 
+
+
+
     @if (!$anioEscolarActivo)
         <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
             <div class="d-flex align-items-center">
@@ -62,6 +67,8 @@
             </div>
         </div>
     @endif
+
+
 
     {{-- Alertas de sesión --}}
     @if (session('success') || session('error') || session('warning'))
@@ -130,6 +137,7 @@
                     <i class="fas fa-calendar-alt"></i>
                     <span>{{ now()->translatedFormat('d M Y') }}</span>
                 </div>
+
             </div>
         </div>
 
@@ -224,19 +232,20 @@
 
                                                 {{-- Inactivar --}}
                                                 <li>
-                                                    <button class="dropdown-item d-flex align-items-center text-danger"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModal{{ $datos->id }}"
-                                                        @disabled(!$anioEscolarActivo)
-                                                        title="Inactivar año escolar">
-                                                        <i class="fas fa-ban me-2"></i>
-                                                        Inactivar
-                                                    </button>
+                                                    @if (in_array($datos->status, ['Activo', 'Extendido']))
+                                                        <button class="dropdown-item d-flex align-items-center text-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deleteModal{{ $datos->id }}"
+                                                            @disabled(!$anioEscolarActivo) title="Inactivar año escolar">
+                                                            <i class="fas fa-ban me-2"></i>
+                                                            Inactivar
+                                                        </button>
+                                                    @endif
                                                 </li>
 
 
                                             </ul>
-                                        </div>                                        
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

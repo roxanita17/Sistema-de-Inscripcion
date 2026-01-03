@@ -13,13 +13,8 @@
             <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
-                    @if ($datos->tipo_inscripcion === 'nuevo_ingreso')
                         <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
                         <p><b>Nuevo Ingreso</b></p>
-                    @else
-                        <h5 class="modal-title-view mb-2">Información de la Inscripción</h5>
-                        <p><b>Prosecucion</b></p>
-                    @endif
 
                     <div class="d-flex justify-content-center gap-2">
                         <span class="badge badge-status badge-{{ strtolower($datos->status) }}">

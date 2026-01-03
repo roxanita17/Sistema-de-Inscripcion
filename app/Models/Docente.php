@@ -7,26 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ConvierteAMayusculas;
 
-
 class Docente extends Model
 {
     use HasFactory;
     use ConvierteAMayusculas;
 
-
     protected $table = 'docentes';
 
     protected $fillable = [
         'anio_escolar_id',
-        'primer_telefono',
-        'segundo_telefono',
         'codigo',
         'dependencia',
         'status',
         'persona_id',
     ];
 
-        protected $mayusculas = [
+    protected $mayusculas = [
         'dependencia'
     ];
 
@@ -77,7 +73,6 @@ class Docente extends Model
 
     public function asignacionesAreas()
     {
-        // hasManyThrough(Target, Through, firstKeyOnThrough, secondKeyOnTarget, localKey, secondLocalKey)
         return $this->hasManyThrough(
             DocenteAreaGrado::class,
             DetalleDocenteEstudio::class,
@@ -139,15 +134,6 @@ class Docente extends Model
         );
     }
 
-    /**
-     * Accessor para obtener el teléfono completo
-     */
-    public function getTelefonoCompletoAttribute()
-    {
-        $prefijo = $this->prefijoTelefono->prefijo ?? '';
-        return $prefijo . $this->primer_telefono;
-    }
-
 
     public function reportePDF($id)
     {
@@ -187,7 +173,8 @@ class Docente extends Model
             $docente->genero = $docente->persona->genero->nombre ?? 'N/A';
             $docente->email = $docente->persona->email ?? 'N/A';
             $docente->direccion = $docente->persona->direccion ?? 'N/A';
-            $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
+            $docente->telefono = $docente->persona->primer_telefono ?? $docente->persona->segundo_telefono ?? 'N/A';
+            $docente->telefono_dos = $docente->persona->telefono_dos ?? 'N/A';
         }
 
         // Obtener estudios realizados

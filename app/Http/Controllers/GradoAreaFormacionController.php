@@ -26,11 +26,22 @@ class GradoAreaFormacionController extends Controller
     public function index()
     {
         // Se obtienen todas las asignaciones con sus relaciones, ordenadas por número de grado
-        $gradoAreaFormacion = GradoAreaFormacion::with(['grado', 'area_formacion'])
-            ->join('grados', 'grados.id', '=', 'grado_area_formacions.grado_id')
-            ->orderBy('grados.numero_grado', 'asc')
-            ->select('grado_area_formacions.*')
-            ->paginate(10);
+        // $gradoAreaFormacion = GradoAreaFormacion::with(['grado', 'area_formacion','siglas'])
+        //     ->join('grados', 'grados.id', '=', 'grado_area_formacions.grado_id')
+        //     ->orderBy('grados.numero_grado', 'asc')
+        //     ->select('grado_area_formacions.*')
+        //     ->paginate(10);
+
+        $gradoAreaFormacion = GradoAreaFormacion::with([
+        'grado',
+        'area_formacion' => function($query) {
+            $query->select('id', 'nombre_area_formacion', 'siglas'); // Agrega 'siglas'
+        }
+    ])
+    ->join('grados', 'grados.id', '=', 'grado_area_formacions.grado_id')
+    ->orderBy('grados.numero_grado', 'asc')
+    ->select('grado_area_formacions.*')
+    ->paginate(10);
  
         // Se obtienen los grados activos
         $grados = Grado::where('status', true)
@@ -40,6 +51,7 @@ class GradoAreaFormacionController extends Controller
         // Se obtienen las áreas de formación activas
         $areaFormacion = AreaFormacion::where('status', true)
             ->orderBy('nombre_area_formacion', 'asc')
+            ->select('id', 'nombre_area_formacion', 'siglas') 
             ->get();
 
         // Verificar si hay año escolar activo

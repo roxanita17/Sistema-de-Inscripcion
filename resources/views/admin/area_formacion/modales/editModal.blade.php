@@ -40,6 +40,44 @@
                         @enderror
                     </div>
 
+                    {{-- Codigo del area de formación --}}
+                    <div class="form-group-modern">
+                        <label for="codigo_area_{{ $datos->id }}" class="form-label-modern">
+                            Codigo del Area de Formación
+                        </label>
+                        <input type="text" 
+                               class="form-control-modern" 
+                               id="codigo_area_{{ $datos->id }}" 
+                               name="codigo_area" 
+                               value="{{ $datos->codigo_area }}" 
+                               required>
+                        @error('codigo_area')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Siglas del area de formación --}}
+                    <div class="form-group-modern">
+                        <label for="siglas_{{ $datos->id }}" class="form-label-modern">
+                            Siglas del Area de Formación
+                        </label>
+                        <input type="text" 
+                               class="form-control-modern" 
+                               id="siglas_{{ $datos->id }}" 
+                               name="siglas" 
+                               value="{{ $datos->siglas }}" 
+                               required>
+                        @error('siglas')
+                            <div class="error-message">
+                                Este campo es obligatorio.
+                            </div>
+                        @enderror
+                    </div>
+
+
+
                     
 
                     {{-- Botones --}}

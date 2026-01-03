@@ -77,6 +77,7 @@ class AlumnoEdit extends Component
     public $discapacidades = [];
 
     public $enModoEdicion = false;
+    public bool $soloEdicion = false;
 
     /* ============================================================
        =====================   VALIDACIÓN   ========================
@@ -145,7 +146,27 @@ class AlumnoEdit extends Component
             ],
 
             // Datos físicos
-            'talla_estudiante' => 'required|numeric|between:0.50,3.00',
+            'talla_estudiante' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    $valor = (float) str_replace(',', '.', $value);
+
+                    if ($valor <= 0) {
+                        $fail('La estatura no es válida.');
+                    }
+
+                    // Si parece cm
+                    if ($valor > 3 && ($valor < 50 || $valor > 250)) {
+                        $fail('La estatura en cm debe estar entre 50 y 250.');
+                    }
+
+                    // Si parece metros
+                    if ($valor <= 3 && ($valor < 0.5 || $valor > 2.5)) {
+                        $fail('La estatura en metros debe estar entre 0.50 y 2.50.');
+                    }
+                }
+            ],
             'peso_estudiante' => 'required|numeric|between:2,300',
             'talla_camisa_id' => 'required|exists:tallas,id',
             'talla_pantalon_id' => 'required|exists:tallas,id',
@@ -264,13 +285,35 @@ class AlumnoEdit extends Component
         $this->validateOnly('fecha_nacimiento');
     }
 
-    public function mount($alumnoId)
+    public function formatearEstatura()
+    {
+        // Quita todo menos números
+        $valor = preg_replace('/\D/', '', $this->talla_estudiante);
+
+        if (strlen($valor) >= 2) {
+            $this->talla_estudiante = substr($valor, 0, -2) . '.' . substr($valor, -2);
+        }
+    }
+
+    public function validarEstatura()
+    {
+        $this->validateOnly('talla_estudiante');
+    }
+
+
+    public function mount($alumnoId,  $soloEdicion = false)
     {
         $this->alumnoId = $alumnoId;
         $this->cargarDatosIniciales();
+        $this->soloEdicion = $soloEdicion;
+
+        if ($this->soloEdicion) {
+            $this->enModoEdicion = true;
+        }
         $this->cargarAlumno();
         $this->cargarDiscapacidades();
     }
+
 
     private function cargarDatosIniciales()
     {
@@ -544,7 +587,7 @@ class AlumnoEdit extends Component
                 'talla_pantalon_id' => $this->talla_pantalon_id,
                 'talla_zapato' => $this->talla_zapato,
                 'peso' => $this->peso_estudiante,
-                'estatura' => (float)$this->talla_estudiante,
+                'estatura' =>  $this->talla_estudiante,
                 'lateralidad_id' => $this->lateralidad_id,
                 'orden_nacimiento_id' => $this->orden_nacimiento_id,
                 'etnia_indigena_id' => $this->etnia_indigena_id,
@@ -559,6 +602,10 @@ class AlumnoEdit extends Component
             $this->cargarDiscapacidades(); // Recargar para actualizar la vista
             $this->dispatch('actualizarAlumno');
             session()->flash('success', 'Datos del alumno y discapacidades actualizados correctamente.');
+            // Redireccion condicionada
+            if ($this->soloEdicion) {
+                return redirect()->route('admin.alumnos.index');
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error al actualizar: ' . $e->getMessage());

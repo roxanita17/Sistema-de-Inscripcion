@@ -1,42 +1,4 @@
-    {{-- Alertas --}}
-    {{--     @if (session()->has('success') || session()->has('error'))
-        <div class="alerts-container mb-3">
-            @if (session()->has('success'))
-                <div class="alert-modern alert-success alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Éxito</h4>
-                        <p>{{ session('success') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
-
-            @if (session()->has('error'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Error</h4>
-                        <p>{{ session('error') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
-        </div>
-    @endif --}}
-
     <form wire:submit.prevent="save">
-
-
-        {{-- Card: Datos del Estudiante --}}
         <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -55,7 +17,6 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="tipo_ci" class="form-label-modern">
-                                <i class="fas fa-id-card"></i>
                                 Doc.
                                 <span class="required-badge">*</span>
                             </label>
@@ -77,7 +38,6 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="numero_documento" class="form-label-modern">
-                                <i class="fas fa-id-card"></i>
                                 Cédula
                                 <span class="required-badge">*</span>
                             </label>
@@ -98,11 +58,9 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="fecha_nacimiento" class="form-label-modern">
-                                <i class="fas fa-birthday-cake"></i>
                                 Fecha de Nacimiento
                                 <span class="required-badge">*</span>
                             </label>
@@ -115,15 +73,11 @@
                             @enderror
                         </div>
                     </div>
-
-
                 </div>
-
                 <div class="row mt-3">
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="primer_nombre" class="form-label-modern">
-                                <i class="fas fa-user"></i>
                                 Primer Nombre
                                 <span class="required-badge">*</span>
                             </label>
@@ -137,22 +91,18 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="segundo_nombre" class="form-label-modern">
-                                <i class="fas fa-user"></i>
                                 Segundo Nombre
                             </label>
                             <input type="text" wire:model="segundo_nombre"
                                 class="form-control-modern text-capitalize" placeholder="Segundo nombre">
                         </div>
                     </div>
-
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="tercer_nombre" class="form-label-modern ">
-                                <i class="fas fa-user"></i>
                                 Tercer Nombre
                             </label>
                             <input type="text" wire:model.live="tercer_nombre"
@@ -160,12 +110,10 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="primer_apellido" class="form-label-modern ">
-                                <i class="fas fa-user"></i>
                                 Primer Apellido
                                 <span class="required-badge">*</span>
                             </label>
@@ -179,11 +127,9 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="segundo_apellido" class="form-label-modern ">
-                                <i class="fas fa-user"></i>
                                 Segundo Apellido
                             </label>
                             <input type="text" wire:model.live="segundo_apellido"
@@ -191,12 +137,10 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row mt-3">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="genero" class="form-label-modern">
-                                <i class="fas fa-venus-mars"></i>
                                 Genero
                                 <span class="required-badge">*</span>
                             </label>
@@ -214,11 +158,9 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="lateralidad" class="form-label-modern">
-                                <i class="fas fa-hand-paper"></i>
                                 Lateralidad
                                 <span class="required-badge">*</span>
                             </label>
@@ -236,11 +178,9 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="orden_nacimiento" class="form-label-modern">
-                                <i class="fas fa-sort-numeric-up"></i>
                                 Orden de Nacimiento
                                 <span class="required-badge">*</span>
                             </label>
@@ -261,8 +201,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- Card: Lugar de Nacimiento --}}
         <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -275,13 +213,11 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="estado_id" class="form-label-modern">
-                                <i class="fas fa-map"></i>
                                 Estado
                                 <span class="required-badge">*</span>
                             </label>
@@ -299,11 +235,9 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="municipio_id" class="form-label-modern">
-                                <i class="fas fa-map-marked-alt"></i>
                                 Municipio
                                 <span class="required-badge">*</span>
                             </label>
@@ -321,11 +255,9 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="localidad_id" class="form-label-modern">
-                                <i class="fas fa-map-pin"></i>
                                 Localidad
                                 <span class="required-badge">*</span>
                             </label>
@@ -346,10 +278,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- CONTINUACIÓN DEL FORMULARIO --}}
-
-        {{-- Card: Descripciones Físicas --}}
         <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -368,12 +296,11 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="talla_estudiante" class="form-label-modern">
-                                <i class="fas fa-ruler-vertical"></i>
                                 Altura (m)
                                 <span class="required-badge">*</span>
                             </label>
                             <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
-                                wire:keyup='formatearEstatura' placeholder="Ej: 1.66"
+                                placeholder="Ej: 1.66 o 166"
                                 class="form-control-modern @error('talla_estudiante') is-invalid @enderror">
                             @error('talla_estudiante')
                                 <div class="invalid-feedback-modern">
@@ -382,11 +309,9 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="peso_estudiante" class="form-label-modern">
-                                <i class="fas fa-weight"></i>
                                 Peso (kg)
                                 <span class="required-badge">*</span>
                             </label>
@@ -403,7 +328,6 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="talla_zapato" class="form-label-modern">
-                                <i class="fas fa-shoe-prints"></i>
                                 Talla Zapato
                                 <span class="required-badge">*</span>
                             </label>
@@ -424,7 +348,6 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="talla_camisa_id" class="form-label-modern">
-                                <i class="fas fa-tshirt"></i>
                                 Talla Camisa
                                 <span class="required-badge">*</span>
                             </label>
@@ -446,7 +369,6 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="talla_pantalon_id" class="form-label-modern">
-                                <i class="fas fa-socks"></i>
                                 Talla Pantalón
                                 <span class="required-badge">*</span>
                             </label>
@@ -486,7 +408,6 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="etnia_indigena_id" class="form-label-modern">
-                                <i class="fas fa-id-card"></i>
                                 Etnia Indigena
                                 <span class="required-badge">*</span>
                             </label>
@@ -508,5 +429,3 @@
             </div>
         </div>
     </form>
-
-      

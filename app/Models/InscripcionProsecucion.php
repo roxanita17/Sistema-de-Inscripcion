@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,5 +54,65 @@ class InscripcionProsecucion extends Model
         return $this->belongsTo(Alumno::class);
     }
 
-    
+    public function prosecucionAreas()
+    {
+        return $this->hasMany(
+            ProsecucionArea::class,
+            'inscripcion_prosecucion_id'
+        );
+    }
+
+    public function getGradoInscritoAttribute()
+    {
+        return $this->grado;
+    }
+
+    public function representantes()
+    {
+        return $this->hasMany(Representante::class);
+    }
+
+
+    public static function inactivar($prosecucionId)
+    {
+        return DB::transaction(function () use ($prosecucionId) {
+
+            $prosecucion = self::with('inscripcion.alumno')
+                ->findOrFail($prosecucionId);
+
+            $prosecucion->update([
+                'status' => 'Inactivo',
+            ]);
+
+            if ($prosecucion->inscripcion?->alumno) {
+                $prosecucion->inscripcion->alumno->update([
+                    'status' => false,
+                ]);
+            }
+
+            return true;
+        });
+    }
+
+
+    public static function restaurar($prosecucionId)
+    {
+        return DB::transaction(function () use ($prosecucionId) {
+
+            $prosecucion = self::with('inscripcion.alumno')
+                ->findOrFail($prosecucionId);
+
+            $prosecucion->update([
+                'status' => 'Activo',
+            ]);
+
+            if ($prosecucion->inscripcion?->alumno) {
+                $prosecucion->inscripcion->alumno->update([
+                    'status' => true,
+                ]);
+            }
+
+            return true;
+        });
+    }
 }

@@ -36,7 +36,6 @@
     </div>
 @stop
 
-
 @section('content')
     <div class="main-container">
         @if (!$anioEscolarActivo)
@@ -55,72 +54,62 @@
             </div>
         @endif
 
-        {{-- ALERTAS --}}
-        @if (session('success') || session('error'))
-            <div class="alerts-container">
-                @if (session('success'))
-                    <div class="alert-modern alert-success alert alert-dismissible fade show">
-                        <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="alert-content">
-                            <h4>Éxito</h4>
-                            <p>{{ session('success') }}</p>
-                        </div>
-                        <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="alert-modern alert-error alert alert-dismissible fade show">
-                        <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
-                        <div class="alert-content">
-                            <h4>Error</h4>
-                            <p>{{ session('error') }}</p>
-                        </div>
-                        <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                @endif
-            </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        @if (session('error'))
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No se puede ejecutar el percentil',
+                    html: `{!! nl2br(e(session('error'))) !!}`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Ir a configuración',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('admin.grado.index') }}";
+                    }
+                });
+            </script>
         @endif
 
-        {{-- Filtros activos --}}
+        @if (session('success'))
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Proceso completado',
+                    html: `{!! nl2br(e(session('success'))) !!}`,
+                    confirmButtonText: 'Aceptar'
+                });
+            </script>
+        @endif
         @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion'))
             <div class="card-modern filtros-simple mb-3">
                 <div class="filtros-simple-content">
-
                     <div class="filtros-text">
                         <i class="fas fa-filter"></i>
                         <span>Filtros activos:</span>
-
                         @if (request('tipo_inscripcion'))
                             <span class="badge-filtros-small">
                                 {{ request('tipo_inscripcion') == 'nuevo_ingreso' ? 'Nuevo Ingreso' : 'Prosecución' }}
                             </span>
                         @endif
-
                         @if (request('grado_id'))
                             <span class="badge-filtros-small">
                                 Grado {{ $grados->find(request('grado_id'))->numero_grado ?? 'N/A' }}
                             </span>
                         @endif
-
                         @if (request('seccion_id'))
                             <span class="badge-filtros-small">
                                 Sección {{ $secciones->find(request('seccion_id'))->nombre ?? 'N/A' }}
                             </span>
                         @endif
                     </div>
-
                     <a href="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}" class="btn-clear-simple">
                         <i class="fas fa-times"></i>
                     </a>
-
                 </div>
             </div>
         @endif
-
 
         <div class="card-modern">
             <div class="card-header-modern">
@@ -130,14 +119,10 @@
                         <h3>Listado de inscripciones</h3>
                     </div>
                 </div>
-
-                {{-- Buscador --}}
                 <form action="{{ route('admin.transacciones.inscripcion.index') }}">
-                    {{-- Mantener filtros en búsqueda --}}
                     <input type="hidden" name="grado_id" value="{{ request('grado_id') }}">
                     <input type="hidden" name="seccion_id" value="{{ request('seccion_id') }}">
                     <input type="hidden" name="tipo_inscripcion" value="{{ request('tipo_inscripcion') }}">
-
                     <div class="form-group-modern mb-2">
                         <div class="search-modern">
                             <i class="fas fa-search"></i>
@@ -146,8 +131,6 @@
                         </div>
                     </div>
                 </form>
-
-                {{-- Boton de percentil --}}
                 <div style="padding:">
                     @foreach ($grados as $grado)
                         @if ($grado->id === 1)
@@ -158,8 +141,6 @@
                         @endif
                     @endforeach
                 </div>
-
-                {{-- Boton de filtros --}}
                 <div>
                     <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
                         <i class="fas fa-filter"></i>
@@ -171,12 +152,43 @@
                         @endif
                     </button>
                 </div>
-
                 <div class="header-right">
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
-                    </div>
+                    @php
+                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
+                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
+                        $mostrarAnio = $anioActivo ?? $anioExtendido;
+                    @endphp
+
+                    @if ($mostrarAnio)
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1 mb-2 border">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
+                                    <i class="fas fa-calendar-check me-1"></i>
+                                    Año Escolar
+                                </span>
+                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-play-circle text-primary me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1 mb-2 border border-warning">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
+                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -187,7 +199,6 @@
                             <tr class="text-center">
                                 <th style="font-weight: bold">Cedula</th>
                                 <th class="text-center">Estudiante</th>
-                                <th class="text-center">Tipo</th>
                                 <th class="text-center">Representante Legal</th>
                                 <th class="text-center">Parentesco</th>
                                 <th class="text-center">Año</th>
@@ -196,7 +207,6 @@
                                 <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
-
                         <tbody class="text-center">
                             @if ($inscripciones->isEmpty())
                                 <tr>
@@ -217,13 +227,9 @@
                             @else
                                 @foreach ($inscripciones as $datos)
                                     <tr class="row-12">
-
-                                        {{-- NUMERO --}}
                                         <td style="font-weight: bold">
                                             {{ $datos->alumno->persona->tipoDocumento->nombre }}-{{ $datos->alumno->persona->numero_documento }}
                                         </td>
-
-                                        {{-- ESTUDIANTE --}}
                                         <td class="tittle-main fw-bold">
                                             {{ $datos->alumno->persona->primer_nombre }}
                                             {{ $datos->alumno->persona->primer_apellido }}
@@ -234,44 +240,27 @@
                                                 Estatura: {{ $datos->alumno->estatura }}
                                             </small>
                                         </td>
-
-                                        {{-- TIPO DE INSCRIPCIÓN --}}
                                         <td class="text-center">
-                                            @if ($datos->tipo_inscripcion === 'nuevo_ingreso')
-                                                <span class="badge bg-info">Nuevo Ingreso</span>
-                                            @elseif ($datos->tipo_inscripcion === 'prosecucion')
-                                                <span class="badge bg-success">Prosecución</span>
+                                            @if ($datos->representanteLegal && $datos->representanteLegal->representante)
+                                                {{ $datos->representanteLegal->representante->persona->primer_nombre }}
+                                                {{ $datos->representanteLegal->representante->persona->primer_apellido }}
+                                            @else
+                                                No especificado
                                             @endif
                                         </td>
-
-
-                                        {{-- REPRESENTANTE LEGAL --}}
-                                        <td class="text-center">
-                                            {{ $datos->representanteLegal->representante->persona->primer_nombre }}
-                                            {{ $datos->representanteLegal->representante->persona->primer_apellido }}
-                                        </td>
-
-                                        {{-- PARENTESCO --}}
                                         <td class="text-center">
                                             {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
                                         </td>
-
-                                        {{-- GRADO --}}
                                         <td class="text-center">
                                             {{ $datos->grado_actual?->numero_grado ?? 'N/A' }}
                                         </td>
-
-
-                                        {{-- SECCION --}}
                                         <td class="text-center">
                                             @if ($datos->seccion)
                                                 {{ $datos->seccion->nombre }}
                                             @else
-                                                Sin asignar
+                                                N/A
                                             @endif
                                         </td>
-
-                                        {{-- STATUS --}}
                                         <td class="text-center">
                                             @if ($datos->status === 'Activo')
                                                 <span class="status-badge status-active">
@@ -287,8 +276,6 @@
                                                 </span>
                                             @endif
                                         </td>
-
-                                        {{-- ACCIONES --}}
                                         <td>
                                             <div class="action-buttons">
                                                 <div class="dropdown dropstart text-center">
@@ -297,9 +284,7 @@
                                                         type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
-
                                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                                        {{-- Ver mas --}}
                                                         <li>
                                                             <button
                                                                 class="dropdown-item d-flex align-items-center text-primary"
@@ -309,8 +294,6 @@
                                                                 Ver mas
                                                             </button>
                                                         </li>
-                                                        
-                                                        {{-- Editar (solo para nuevo ingreso) --}}
                                                         @if ($datos->nuevoIngreso)
                                                             <li>
                                                                 <a href="{{ route('admin.transacciones.inscripcion.edit', $datos->id) }}"
@@ -322,20 +305,27 @@
                                                                 </a>
                                                             </li>
                                                         @endif
-
-                                                        {{-- Inactivar --}}
                                                         <li>
-                                                            <button
-                                                                class="dropdown-item d-flex align-items-center text-danger"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
-                                                                @disabled(!$anioEscolarActivo)>
-                                                                <i class="fas fa-ban me-2"></i>
-                                                                Inactivar
-                                                            </button>
+                                                            @if ($datos->status === 'Activo')
+                                                                <button
+                                                                    class="dropdown-item d-flex align-items-center text-danger"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#confirmarEliminar{{ $datos->id }}"
+                                                                    @disabled(!$anioEscolarActivo)>
+                                                                    <i class="fas fa-ban me-2"></i>
+                                                                    Inactivar
+                                                                </button>
+                                                            @else
+                                                                <button
+                                                                    class="dropdown-item d-flex align-items-center text-success"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#confirmarRestaurar{{ $datos->id }}"
+                                                                    @disabled(!$anioEscolarActivo)>
+                                                                    <i class="fas fa-undo me-2"></i>
+                                                                    Restaurar
+                                                                </button>
+                                                            @endif
                                                         </li>
-
-                                                        {{-- Generar PDF --}}
                                                         <li>
                                                             <a href="{{ route('admin.transacciones.inscripcion.reporte', $datos->id) }}"
                                                                 class="dropdown-item d-flex align-items-center text-danger"
@@ -349,62 +339,12 @@
                                             </div>
                                         </td>
                                     </tr>
-
-                                    {{-- Modal de ver --}}
                                     @include('admin.transacciones.inscripcion.modales.showModal')
                                 @endforeach
                             @endif
                         </tbody>
                     </table>
                 </div>
-
-                {{-- MODAL DE INACTIVACIÓN --}}
-                @foreach ($inscripciones as $datos)
-                    <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content modal-modern">
-
-                                <div class="modal-header-delete">
-                                    <div class="modal-icon-delete">
-                                        <i class="fas fa-ban"></i>
-                                    </div>
-                                    <h5 class="modal-title-delete">Confirmar inactivación</h5>
-                                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-
-                                <div class="modal-body-delete">
-                                    <p>¿Deseas inactivar esta inscripción?</p>
-                                    <p class="delete-warning">
-                                        El estudiante también será inactivado.
-                                    </p>
-                                </div>
-
-                                <div class="modal-footer-delete">
-                                    <form action="{{ route('admin.transacciones.inscripcion.destroy', $datos->id) }}"
-                                        method="POST" class="w-100">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <div class="footer-buttons">
-                                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
-                                                Cancelar
-                                            </button>
-
-                                            <button type="submit" class="btn-modal-delete">
-                                                Inactivar
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-
-                {{-- Modal de filtros --}}
                 @include('admin.transacciones.inscripcion.modales.filtroModal')
             </div>
             <div class="mt-3" style="display:flex; align-items:center; position:relative;">
@@ -414,4 +354,14 @@
             </div>
         </div>
     </div>
+    @foreach ($inscripciones as $datos)
+        @include('admin.transacciones.inscripcion.modales.inactivarModal', [
+            'datos' => $datos,
+        ])
+    @endforeach
+    @foreach ($inscripciones as $datos)
+        @include('admin.transacciones.inscripcion.modales.restaurarModal', [
+            'datos' => $datos,
+        ])
+    @endforeach
 @endsection

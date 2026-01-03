@@ -1,5 +1,3 @@
-@import "tailwindcss";
-
 /* Variables de colores */
 :root {
     --primary: #4f46e5;
@@ -9,7 +7,7 @@
     --orange: #f59e0b;
     --orange-dark: #f59e0b;
     --grey-pr: hsl(215, 20%, 44%);
-    --grey-dark-pr:hsl(215, 24%, 41%);
+    --grey-dark-pr: hsl(215, 24%, 41%);
     --success: #10b981;
     --success-light: #d1fae5;
     --danger: #ef4444;
@@ -44,6 +42,75 @@
 
 .text-capitalize {
     text-transform: capitalize;
+}
+
+/* Search Box */
+.search-box {
+    position: relative;
+    width: 250px;
+}
+
+.search-input {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.search-btn {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--gray-500);
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.clear-search {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-500);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.clear-search:hover {
+    color: var(--danger);
+}
+
+/* Status Filter */
+.status-filter {
+    min-width: 150px;
+}
+
+.status-filter .form-select {
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.status-filter .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Header right adjustments */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 /* Contenedor principal */
@@ -278,7 +345,6 @@
     border-left: 4px solid var(--warning);
 }
 
-
 .alert-icon {
     font-size: 1.5rem;
     display: flex;
@@ -492,6 +558,11 @@
 .status-extended {
     background: var(--warning-light);
     color: var(--warning);
+}
+
+.status-parent {
+    background: var(--primary-light);
+    color: var(--primary);
 }
 
 .status-dot {
@@ -861,6 +932,17 @@
 .form-control-modern.is-invalid {
     border-color: var(--danger);
 }
+input.form-control-modern::placeholder,
+textarea.form-control-modern::placeholder {
+    color: var(--gray-300) !important;
+    opacity: 1 !important;
+}
+.form-control-modern::placeholder { color: var(--gray-400); }
+.form-control-modern::-webkit-input-placeholder { color: var(--gray-400); }
+.form-control-modern::-moz-placeholder { color: var(--gray-400); opacity: 1; }
+.form-control-modern:-ms-input-placeholder { color: var(--gray-400); }
+.form-control-modern:-moz-placeholder { color: var(--gray-400); }
+
 
 /* Texto de ayuda */
 .form-text-modern {
@@ -1083,7 +1165,6 @@ textarea.form-control-modern {
     background-color: #ef4444;
 }
 
-
 /* ===============================
    FILTROS ACTIVOS - SIMPLE
    =============================== */
@@ -1134,6 +1215,31 @@ textarea.form-control-modern {
     background: var(--danger-light);
     color: var(--danger);
     border-color: var(--danger);
+}
+
+.rep-divider {
+    position: relative;
+    text-align: center;
+    margin: 2.5rem 0;
+}
+
+.rep-divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #dee2e6;
+    z-index: 1;
+}
+
+.rep-divider i {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    padding: 0 1rem;
+    color: #6c757d;
 }
 
 

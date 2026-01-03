@@ -13,7 +13,7 @@ class Persona extends Model
     use ConvierteAMayusculas;
     use Capitalizar;
     protected $table = 'personas';
-    
+
     protected $fillable = [
         'primer_nombre',
         'segundo_nombre',
@@ -23,12 +23,15 @@ class Persona extends Model
         'numero_documento',
         'fecha_nacimiento',
         'direccion',
-        'email', 
+        'email',
+        'telefono',
+        'telefono_dos',
         'status',
         'tipo_documento_id',
         'genero_id',
         'localidad_id',
         'prefijo_id',
+        'prefijo_dos_id',
     ];
 
     protected $capitalizar = [
@@ -73,6 +76,22 @@ class Persona extends Model
         return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
     }
 
+    /**
+     * Alias para prefijoTelefono para mantener compatibilidad
+     */
+    public function prefijo()
+    {
+        return $this->prefijoTelefono();
+    }
+
+    /**
+     * Relación con el segundo prefijo de teléfono
+     */
+    public function prefijoDos()
+    {
+        return $this->belongsTo(PrefijoTelefono::class, 'prefijo_dos_id', 'id');
+    }
+
 
     /**
      * Relación con Localidad
@@ -90,7 +109,7 @@ class Persona extends Model
         return $this->hasOne(Docente::class, 'persona_id', 'id');
     }
 
-//relacion con el representante
+    //relacion con el representante
     public function representante()
     {
         return $this->hasOne(Representante::class, 'persona_id');
@@ -102,10 +121,10 @@ class Persona extends Model
     {
         return trim(
             $this->primer_nombre . ' ' .
-            ($this->segundo_nombre ?? '') . ' ' .
-            ($this->tercer_nombre ?? '') . ' ' .
-            $this->primer_apellido . ' ' .
-            ($this->segundo_apellido ?? '')
+                ($this->segundo_nombre ?? '') . ' ' .
+                ($this->tercer_nombre ?? '') . ' ' .
+                $this->primer_apellido . ' ' .
+                ($this->segundo_apellido ?? '')
         );
     }
 
@@ -117,4 +136,25 @@ class Persona extends Model
         return $this->fecha_nacimiento ? $this->fecha_nacimiento->age : null;
     }
 
+    public function getTelefonoCompletoAttribute()
+    {
+        if (!$this->telefono) {
+            return null;
+        }
+
+        return trim(
+            ($this->prefijoTelefono->prefijo ?? '') . ' ' . $this->telefono
+        );
+    }
+
+    public function getTelefonoDosCompletoAttribute()
+    {
+        if (!$this->telefono_dos) {
+            return null;
+        }
+
+        return trim(
+            ($this->prefijoDos->prefijo ?? '') . ' ' . $this->telefono_dos
+        );
+    }
 }

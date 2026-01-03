@@ -1,6 +1,6 @@
 <!-- Modal Ver Detalles de datos -->
-<div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1"
-    aria-labelledby="viewModalLabel{{ $datos->id }}" aria-hidden="true">
+<div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content modal-modern">
 
@@ -106,8 +106,19 @@
                     <div class="detail-item">
                         <span class="detail-label"><i class="fas fa-phone"></i> Teléfono</span>
                         <span class="detail-value">
-                            @if ($datos->persona->prefijoTelefono)
-                                {{ $datos->persona->prefijoTelefono->prefijo }}-{{ $datos->primer_telefono }}
+                            @if ($datos->persona->telefono_completo)
+                                {{ $datos->persona->telefono_completo }}
+                            @else
+                                Sin registrar
+                            @endif
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-phone"></i> Segundo Teléfono</span>
+                        <span class="detail-value">
+                            @if ($datos->persona->telefono_dos_completo)
+                                {{ $datos->persona->telefono_dos_completo }}
                             @else
                                 Sin registrar
                             @endif
@@ -159,15 +170,15 @@
                     </div>
 
                     @if ($datos->updated_at != $datos->created_at)
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-edit"></i> Última actualización</span>
-                        <span class="detail-value">
-                            {{ $datos->updated_at->format('d/m/Y H:i:s') }}
-                            <small style="display:block;color:var(--gray-700);font-size:.8rem;">
-                                ({{ $datos->updated_at->diffForHumans() }})
-                            </small>
-                        </span>
-                    </div>
+                        <div class="detail-item">
+                            <span class="detail-label"><i class="fas fa-edit"></i> Última actualización</span>
+                            <span class="detail-value">
+                                {{ $datos->updated_at->format('d/m/Y H:i:s') }}
+                                <small style="display:block;color:var(--gray-700);font-size:.8rem;">
+                                    ({{ $datos->updated_at->diffForHumans() }})
+                                </small>
+                            </span>
+                        </div>
                     @endif
 
                 </div>

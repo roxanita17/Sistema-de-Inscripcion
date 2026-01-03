@@ -276,7 +276,7 @@ return [
             'active' => ['admin/transacciones/percentil', 'admin/transacciones/percentil/*'],
         ],
 
-        ['header' => 'GESTIÓN ACADÉMICA'],
+        ['header' => 'INFORMACION ACADÉMICA'],
 
         // ================== PERSONAS ==================
         [
@@ -308,7 +308,7 @@ return [
                     'icon' => 'fas fa-user',
                 ],
                 [
-                    'text' => 'Asignar Materias',
+                    'text' => 'Asignar Area Formación',
                     'url'  => 'admin/transacciones/docente_area_grado',
                     'icon' => 'fas fa-book-reader',
                 ],
@@ -331,53 +331,125 @@ return [
         // ============================================================
         //  GESTIÓN ACADÉMICA
         // ============================================================
-        ['header' => 'GESTIÓN ACADÉMICA'],
-
-
+        ['header' => 'CONFIGURACIÓN GENERAL'],
 
         [
-            'text' => 'Años',
-            'url' => 'admin/grado',
-            'icon' => 'fas fa-fw fa-layer-group',
-            'icon_color' => 'primary',
-            'active' => ['admin/grado', 'admin/grado/*'],
-        ],
-
-        // Áreas de Formación
-        [
-            'text' => 'Áreas de Formación',
-            'url' => 'admin/area_formacion',
-            'icon' => 'fas fa-fw fa-book-open',
-            'icon_color' => 'primary',
-            'active' => ['admin/area_formacion', 'admin/area_formacion/*'],
-        ],
-
-        // Asignaciones
-        [
-            'text' => 'Asignaciones',
-            'icon' => 'fas fa-fw fa-link',
-            'icon_color' => 'cyan',
-            'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*', 'admin/transacciones/docente*'],
+            'text' => 'Configuraciones',
+            'icon' => 'fas fa-fw fa-cogs',
             'submenu' => [
+                ['header' => 'GESTIÓN ACADÉMICA'],
+
                 [
                     'text' => 'Años',
-                    'url'  => 'admin/grado',
-                    'icon' => 'fas fa-list-ol',
+                    'url' => 'admin/grado',
+                    'icon' => 'fas fa-fw fa-layer-group',
+                    'active' => ['admin/grado', 'admin/grado/*'],
                 ],
+
+                // Asignaciones
                 [
-                    'text' => 'Áreas Académicas',
-                    'url'  => 'admin/area_formacion',
-                    'icon' => 'fas fa-book-open',
+                    
+                    'text' => 'Asignaciones',
+                    'icon' => 'fas fa-fw fa-link',
+                    'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*', 'admin/transacciones/docente*'],
+                    'submenu' => [
+                        [
+                            'text' => 'Áreas de Formación',
+                            'url'  => 'admin/area_formacion',
+                            'icon' => 'fas fa-book-open',
+                        ],
+                        [
+                            'text' => 'Años → Área Académica',
+                            'url'  => 'admin/transacciones/grado_area_formacion',
+                            'icon' => 'fas fa-link',
+                        ],
+                        [
+                            'text' => 'Área → Estudios Realizados',
+                            'url'  => 'admin/transacciones/area_estudio_realizado',
+                            'icon' => 'fas fa-arrow-right',
+                        ],
+                    ],
                 ],
+
+                ['header' => 'DATOS PERSONALES'],
+                
                 [
-                    'text' => 'Años → Área Académica',
-                    'url'  => 'admin/transacciones/grado_area_formacion',
-                    'icon' => 'fas fa-link',
+                    
+                    'text' => 'DATOS',
+                    'icon' => 'fas fa-fw fa-user',
+                    'active' => ['admin/etnia_indigena*', 'admin/discapacidad*', 'admin/ocupacion*'],
+                    'submenu' => [
+                        [
+                            'text' => 'Etnias Indígenas',
+                            'url'  => 'admin/etnia_indigena',
+                            'icon' => 'fas fa-users',
+                        ],
+                        [
+                            'text' => 'Discapacidades',
+                            'url'  => 'admin/discapacidad',
+                            'icon' => 'fas fa-wheelchair',
+                        ],
+                        [
+                            'text' => 'Ocupaciones',
+                            'url'  => 'admin/ocupacion',
+                            'icon' => 'fas fa-briefcase',
+                        ],
+                    ],
                 ],
+
+                ['header' => 'UBICACIÓN GEOGRÁFICA'],
+
                 [
-                    'text' => 'Área → Estudios Realizados',
-                    'url'  => 'admin/transacciones/area_estudio_realizado',
-                    'icon' => 'fas fa-arrow-right',
+                    'text' => 'Ubicaciones',
+                    'icon' => 'fas fa-fw fa-map-marker-alt',
+                    'active' => ['admin/estado*', 'admin/municipio*', 'admin/localidad*'],
+                    'submenu' => [
+                        [
+                            'text' => 'Paises',
+                            'url'  => 'admin/pais',
+                            'icon' => 'fas fa-flag',
+                        ],
+                        [
+                            'text' => 'Estados',
+                            'url'  => 'admin/estado',
+                            'icon' => 'fas fa-map',
+                        ],
+                        [
+                            'text' => 'Municipios',
+                            'url'  => 'admin/municipio',
+                            'icon' => 'fas fa-city',
+                        ],
+                        [
+                            'text' => 'Localidades',
+                            'url'  => 'admin/localidad',
+                            'icon' => 'fas fa-home',
+                        ],
+                    ],
+                ],
+
+                ['header' => 'PARAMETROS GENERALES'],
+
+                [
+                    'text' => 'Parametros Generales',
+                    'icon' => 'fas fa-fw fa-cogs',
+                    'active' => ['admin/banco*', 'admin/prefijo_telefono*', 'admin/institucion_procedencia*'],
+                    'submenu' => [
+                        [
+                            'text' => 'Bancos',
+                            'url'  => 'admin/banco',
+                            'icon' => 'fas fa-university',
+                        ],
+                        [
+                            'text' => 'Prefijos de Teléfono',
+                            'url'  => 'admin/prefijo_telefono',
+                            'icon' => 'fas fa-phone',
+                        ],
+                        [
+                            'text' => 'Instituciones de Procedencia',
+                            'url'  => 'admin/institucion_procedencia',
+                            'icon' => 'fas fa-school',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -386,77 +458,17 @@ return [
         // ============================================================
         //  DATOS PERSONALES
         // ============================================================
-        ['header' => 'DATOS PERSONALES'],
-
-        [
-            'text' => 'Etnias Indígenas',
-            'url'  => 'admin/etnia_indigena',
-            'icon' => 'fas fa-users',
-        ],
-
-        [
-            'text' => 'Discapacidades',
-            'url'  => 'admin/discapacidad',
-            'icon' => 'fas fa-wheelchair',
-        ],
-
-        [
-            'text' => 'Ocupaciones',
-            'url'  => 'admin/ocupacion',
-            'icon' => 'fas fa-briefcase',
-        ],
+        
 
 
         // ============================================================
         //  UBICACIÓN GEOGRÁFICA
         // ============================================================
-        ['header' => 'UBICACIÓN GEOGRÁFICA'],
-
-        [
-            'text' => 'Ubicaciones',
-            'icon' => 'fas fa-map-marked-alt',
-            'submenu' => [
-                [
-                    'text' => 'Estados',
-                    'url'  => 'admin/estado',
-                    'icon' => 'fas fa-globe',
-                ],
-                [
-                    'text' => 'Municipios',
-                    'url'  => 'admin/municipio',
-                    'icon' => 'fas fa-city',
-                ],
-                [
-                    'text' => 'Localidades',
-                    'url'  => 'admin/localidad',
-                    'icon' => 'fas fa-home',
-                ],
-            ],
-        ],
-
+        
 
         // ============================================================
         //  CONFIGURACIÓN GENERAL
         // ============================================================
-        ['header' => 'CONFIGURACIÓN GENERAL'],
-
-        [
-            'text' => 'Bancos',
-            'url'  => 'admin/banco',
-            'icon' => 'fas fa-university',
-        ],
-
-        [
-            'text' => 'Prefijos de Teléfono',
-            'url'  => 'admin/prefijo_telefono',
-            'icon' => 'fas fa-phone',
-        ],
-
-        [
-            'text' => 'Instituciones de Procedencia',
-            'url'  => 'admin/institucion_procedencia',
-            'icon' => 'fas fa-school',
-        ],
 
         // Separador
 

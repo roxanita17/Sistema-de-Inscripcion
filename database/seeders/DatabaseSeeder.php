@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            PaisSeeder::class,
             AnioEscolarSeeder::class,
             GradoSeeder::class,
             AreaFormacionSeeder::class,

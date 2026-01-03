@@ -108,68 +108,69 @@
                     </div>
                 </form>
                 <div class="header-right" style="display: flex; gap: 5px;">
-
-                    <!-- Botón que abre el modal de filtro PDF -->
-                    <button type="button" class="btn-pdf" data-bs-toggle="modal" data-bs-target="#pdfFilterModal">
-                        <i class="fas fa-file-pdf"></i> PDF General
-                    </button>
-
-                    <!-- Modal de Filtro PDF -->
-                    <div class="modal fade" id="pdfFilterModal" tabindex="-1" aria-labelledby="pdfFilterModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content modal-modern">
-                                <div class="modal-header"
-                                    style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; padding: 1.5rem; border-radius: 8px 8px 0 0;">
-                                    <h5 class="modal-title mb-0" id="pdfFilterModalLabel">
-                                        <i class="fas fa-file-pdf me-2"></i>Generar Reporte PDF
-                                    </h5>
-                                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal"
-                                        aria-label="Cerrar">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                                <form id="pdfFilterForm" action="{{ route('admin.alumnos.reporteGeneralPDF') }}"
-                                    method="GET" target="_blank">
-                                    <div class="modal-body">
-                                        <div class="form-group-modern mb-3">
-                                            <label for="genero" class="form-label">Filtrar por género</label>
-                                            <select class="form-control-modern" id="genero" name="genero">
-                                                <option value="">Todos los géneros</option>
-                                                <option value="Femenino">Femenino</option>
-                                                <option value="Masculino">Masculino</option>
-                                                <option value="Otro">Otro</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group-modern mb-3">
-                                            <label for="tipo_documento" class="form-label">Filtrar por tipo de documento
-                                                (Extranjero o Venezolano)</label>
-                                            <select class="form-control-modern" id="tipo_documento"
-                                                name="tipo_documento">
-                                                <option value="">Todos los tipos de documento</option>
-                                                <option value="V">V - Venezolano</option>
-                                                <option value="E">E - Extranjero</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer"
-                                        style="border-top: 1px solid var(--gray-200); padding: 1.25rem 1.5rem;">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
-                                            style="padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 500;">
-                                            <i class="fas fa-times me-2"></i>Cancelar
-                                        </button>
-                                        <button type="submit" class="btn-pdf">
-                                            <i class="fas fa-file-pdf me-2"></i>Generar PDF
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                    <div>
+                        <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                            <i class="fas fa-filter"></i>
+                            Filtros
+                        </button>
+                    </div>
+                    <!-- Botón que genera el PDF con los filtros actuales -->
+                    <div>
+                        <a href="{{ route('admin.alumnos.reporteGeneralPDF', [
+                            'genero' => request('genero'),
+                            'tipo_documento' => request('tipo_documento'),
+                            'estatus' => request('estatus', 'Activo'),
+                        ]) }}"
+                            target="_blank" class="btn-modal-create"
+                            style="background-color: #dc3545; border-color: #dc3545;">
+                            <i class="fas fa-file-pdf"></i> PDF General
+                        </a>
                     </div>
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ now()->translatedFormat('d M Y') }}</span>
                     </div>
+                </div>
+                <div class="header-right">
+                    @php
+                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
+                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
+                        $mostrarAnio = $anioActivo ?? $anioExtendido;
+                    @endphp
+
+                    @if ($mostrarAnio)
+                        <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
+                                    <i class="fas fa-calendar-check me-1"></i>
+
+                                    Año Escolar
+                                </span>
+
+                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-play-circle text-primary me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
+                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -259,14 +260,13 @@
 
                                                         {{-- Editar --}}
                                                         <li>
-                                                            <button
+                                                            <a
+                                                                href="{{ route('admin.alumnos.edit', $datos->id) }}"
                                                                 class="dropdown-item d-flex align-items-center text-warning"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#viewModalEditar{{ $datos->id }}"
                                                                 title="Editar">
                                                                 <i class="fas fa-edit me-2"></i>
                                                                 Editar
-                                                            </button>
+                                                            </a>
                                                         </li>
 
                                                         {{-- Inactivar --}}
@@ -285,9 +285,8 @@
                                                         <li>
                                                             {{-- Botón de reporte individual --}}
                                                             <a href="{{ route('admin.alumnos.reporte.individual', ['id' => $datos->id]) }}"
-                                                                class="dropdown-item d-flex align-items-center text-danger" 
-                                                                title="Generar reporte PDF"
-                                                                target="_blank">
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                title="Generar reporte PDF" target="_blank">
                                                                 <i class="fas fa-file-pdf"></i>
                                                                 PDF
                                                             </a>
@@ -352,3 +351,4 @@
     </div>
 
 @endsection
+@include('admin.alumnos.modales.filtroModal')
