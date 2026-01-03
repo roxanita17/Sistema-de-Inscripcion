@@ -419,10 +419,7 @@ class AlumnoCreate extends Component
     public function save()
     {
 
-        if (!$this->etnia_indigena_id) {
-            $this->addError('etnia_indigena_id', 'Debe seleccionar una etnia indígena.');
-            return;
-        }
+        
         $this->validate();
 
         try {

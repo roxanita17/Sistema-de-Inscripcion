@@ -269,12 +269,6 @@
     transition: all 0.2s ease;
 }
 
-.detail-item:hover {
-    border-color: #4f46e5;
-    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
-    transform: translateY(-1px);
-}
-
 .detail-label {
     font-size: 0.75rem;
     font-weight: 600;
@@ -373,11 +367,6 @@
 .documento-faltante {
     border-color: #fca5a5;
     background: #fef2f2;
-}
-
-.documento-item:hover {
-    transform: translateX(3px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .documento-icon {
@@ -1406,16 +1395,6 @@ input[type="date"].form-control-modern:focus {
     }
 }
 
-.section-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--info-dark);
-    margin-top: 1rem;
-    margin-bottom: 0.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
 
 .title-gradient {
     background: linear-gradient(135deg, #6f42c1 0%, #9c27b0 100%);
@@ -1438,23 +1417,38 @@ input[type="date"].form-control-modern:focus {
 }
 
 .rule-number {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+
     border-radius: 50%;
     background: var(--primary);
-    color: white;
-    text-align: center;
-    margin-right: 8px;
-    font-weight: bold;
-    font-size: 0.9em;
+    color: #fff;
+
+    font-weight: 700;
+    font-size: 0.7rem;
+
+    margin: 0 6px 0 4px;
+    line-height: 1;
 }
 
+
+
 .section-title {
-    color: #6f42c1 !important;
+    font-size: 1rem;
     font-weight: 600;
+    color: #6f42c1;
+    margin: 1rem 0 0.25rem;
+    line-height: 1.3;
+
+    display: inline-flex;
+    align-items: center;
 }
+
 
 .contract-content {
     font-size: 0.95rem;
