@@ -70,7 +70,6 @@
 
 @section('content')
     <div class="main-container">
-        {{-- AÑO ESCOLAR --}}
         @php
             $anoActivo = App\Models\AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
         @endphp
@@ -81,8 +80,6 @@
                 <a href="{{ route('admin.anio_escolar.index') }}">Ir a Año Escolar</a>
             </div>
         @endif
-
-        {{-- COMPOSICIÓN PRINCIPAL LIVEWIRE --}}
         <livewire:admin.transaccion-inscripcion.inscripcion-prosecucion />
     </div>
 @stop

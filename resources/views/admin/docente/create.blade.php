@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
@@ -10,7 +9,6 @@
 @section('title', 'Crear Docente')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -22,8 +20,6 @@
                     <p class="title-subtitle">Registra la información del docente</p>
                 </div>
             </div>
-
-            {{-- Botón para volver al listado --}}
             <a href="{{ route('admin.docente.index') }}" class="btn-create" style="background: var(--gray-700);">
                 <i class="fas fa-arrow-left"></i>
                 <span>Volver al Listado</span>
@@ -34,7 +30,6 @@
 
 @section('content')
     <div class="main-container">
-        {{-- Sección de alertas de error de validación --}}
         @if ($errors->any())
             <div class="alerts-container">
                 <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
@@ -55,14 +50,11 @@
                 </div>
             </div>
         @endif
-
         @if (session('error'))
             <div class="alert alert-danger">
                 {{ session('error') }}
             </div>
         @endif
-
-        {{-- Formulario de creación --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -81,22 +73,13 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Datos personales --}}
             <div class="card-body-modern" style="padding: 2rem;">
                 <form id="docenteForm" action="{{ route('admin.docente.store') }}" method="POST" class="form-modern">
                     @csrf
-
-                    {{-- ========================= --}}
-                    {{--   SECCIÓN 1: IDENTIDAD   --}}
-                    {{-- ========================= --}}
                     <div class="section-title-modern">
                         <i class="fas fa-id-badge"></i> Datos de Identificación
                     </div>
-
                     <div class="row">
-
-                        {{-- Tipo de documento --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-id-card-alt"></i>
@@ -123,8 +106,6 @@
                                 Seleccione V, E
                             </small>
                         </div>
-
-                        {{-- Cédula --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-id-card"></i>
@@ -145,8 +126,6 @@
                                 Solo números, máximo 8 dígitos
                             </small>
                         </div>
-
-                        {{-- Código --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-hashtag"></i>
@@ -167,27 +146,19 @@
                                 Código interno opcional
                             </small>
                         </div>
+                    </div> 
 
-                    </div> {{-- row --}}
-
-                    {{-- ========================= --}}
-                    {{--   SECCIÓN 2: PERSONALES   --}}
-                    {{-- ========================= --}}
                     <div class="section-title-modern" style="margin-top: 2rem;">
                         <i class="fas fa-user"></i> Datos Personales
                     </div>
-
                     <div class="row">
-
-                        {{-- Primer nombre --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-user"></i>
                                 Primer nombre <span class="required-badge">*</span>
                             </label>
                             <input type="text" name="primer_nombre" id="primer_nombre"
-                                class="form-control-modern @error('primer_nombre') is-invalid @enderror
-                            text-uppercase"
+                                class=" text-capitalize form-control-modern @error('primer_nombre') is-invalid @enderror"
                                 value="{{ old('primer_nombre') }}" placeholder="Ej: Juan" required>
                             @error('primer_nombre')
                                 <div class="invalid-feedback-modern">
@@ -196,16 +167,13 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Segundo nombre --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-user"></i>
                                 Segundo nombre
                             </label>
                             <input type="text" name="segundo_nombre" id="segundo_nombre"
-                                class="form-control-modern @error('segundo_nombre') is-invalid @enderror
-                            text-uppercase"
+                                class="text-capitalize form-control-modern @error('segundo_nombre') is-invalid @enderror"
                                 value="{{ old('segundo_nombre') }}" placeholder="Ej: Carlos">
                             @error('segundo_nombre')
                                 <div class="invalid-feedback-modern">
@@ -214,16 +182,13 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Tercer nombre --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-user"></i>
                                 Tercer nombre
                             </label>
                             <input type="text" name="tercer_nombre" id="tercer_nombre"
-                                class="form-control-modern @error('tercer_nombre') is-invalid @enderror
-                            text-uppercase"
+                                class="text-capitalize form-control-modern @error('tercer_nombre') is-invalid @enderror"
                                 value="{{ old('tercer_nombre') }}" placeholder="Opcional">
                             @error('tercer_nombre')
                                 <div class="invalid-feedback-modern">
@@ -232,16 +197,13 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Primer apellido --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-user-tag"></i>
                                 Primer apellido <span class="required-badge">*</span>
                             </label>
                             <input type="text" name="primer_apellido" id="primer_apellido"
-                                class="form-control-modern @error('primer_apellido') is-invalid @enderror
-                            text-uppercase"
+                                class="text-capitalize form-control-modern @error('primer_apellido') is-invalid @enderror"
                                 value="{{ old('primer_apellido') }}" placeholder="Ej: Pérez" required>
                             @error('primer_apellido')
                                 <div class="invalid-feedback-modern">
@@ -250,16 +212,13 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Segundo apellido --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-user-tag"></i>
                                 Segundo apellido
                             </label>
                             <input type="text" name="segundo_apellido" id="segundo_apellido"
-                                class="form-control-modern @error('segundo_apellido') is-invalid @enderror
-                            text-uppercase"
+                                class="text-capitalize form-control-modern @error('segundo_apellido') is-invalid @enderror"
                                 value="{{ old('segundo_apellido') }}" placeholder="Ej: Gómez">
                             @error('segundo_apellido')
                                 <div class="invalid-feedback-modern">
@@ -268,8 +227,6 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Género --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-venus-mars"></i>
@@ -293,8 +250,6 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Fecha de nacimiento --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-calendar"></i>
@@ -314,19 +269,12 @@
                                 La fecha debe corresponder a una persona mayor de 18 años
                             </small>
                         </div>
+                    </div> 
 
-                    </div> {{-- row --}}
-
-                    {{-- ========================= --}}
-                    {{--    SECCIÓN 3: CONTACTO    --}}
-                    {{-- ========================= --}}
                     <div class="section-title-modern" style="margin-top: 2rem;">
                         <i class="fas fa-phone"></i> Información de Contacto
                     </div>
-
                     <div class="row">
-
-                        {{-- Prefijo de telefono --}}
                         <div class="col-md-2 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-id-card-alt"></i>
@@ -349,8 +297,6 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Primer telefono --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-phone"></i>
@@ -367,8 +313,6 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Prefijo de telefono 2 --}}
                         <div class="col-md-2 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-id-card-alt"></i>
@@ -391,8 +335,6 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Segundo telefono --}}
                         <div class="col-md-4 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-phone"></i>
@@ -409,8 +351,6 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Correo --}}
                         <div class="col-md-6 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-envelope"></i>
@@ -430,16 +370,13 @@
                                 Opcional, para notificaciones
                             </small>
                         </div>
-
-                        {{-- Dependencia --}}
                         <div class="col-md-6 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-building"></i>
                                 Dependencia
                             </label>
                             <input type="text" name="dependencia" id="dependencia" required
-                                class="form-control-modern @error('dependencia') is-invalid @enderror
-                            text-uppercase"
+                                class=" text-capitalize form-control-modern @error('dependencia') is-invalid @enderror"
                                 value="{{ old('dependencia') }}" placeholder="Ej: Departamento de Matemáticas">
                             @error('dependencia')
                                 <div class="invalid-feedback-modern">
@@ -452,16 +389,13 @@
                                 Unidad o área de trabajo
                             </small>
                         </div>
-
-                        {{-- Dirección --}}
                         <div class="col-md-6 mb-3">
                             <label class="form-label-modern">
                                 <i class="fas fa-map-marker-alt"></i>
                                 Dirección
                             </label>
                             <textarea
-                                class="form-control-modern @error('direccion') is-invalid @enderror
-                            text-uppercase"
+                                class="text-capitalize form-control-modern @error('direccion') is-invalid @enderror"
                                 name="direccion" id="direccion" rows="3" required placeholder="Ingrese la dirección completa">{{ old('direccion') }}</textarea>
                             @error('direccion')
                                 <div class="invalid-feedback-modern">
@@ -470,27 +404,19 @@
                                 </div>
                             @enderror
                         </div>
-
-                    </div> {{-- row --}}
-
-                    {{-- Botones de acción --}}
+                    </div> 
                     <div class="form-actions-modern">
                         <a href="{{ route('admin.docente.index') }}" class="btn-secondary-modern">
                             <i class="fas fa-arrow-left"></i> Regresar
                         </a>
-
                         <button type="submit" class="btn-primary-modern">
                             <i class="fas fa-save"></i> Siguiente
                         </button>
                     </div>
-
                 </form>
-
             </div>
-
         </div>
     </div>
-
 @stop
 
 @section('js')

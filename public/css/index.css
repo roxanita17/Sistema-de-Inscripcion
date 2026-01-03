@@ -932,6 +932,17 @@
 .form-control-modern.is-invalid {
     border-color: var(--danger);
 }
+input.form-control-modern::placeholder,
+textarea.form-control-modern::placeholder {
+    color: var(--gray-300) !important;
+    opacity: 1 !important;
+}
+.form-control-modern::placeholder { color: var(--gray-400); }
+.form-control-modern::-webkit-input-placeholder { color: var(--gray-400); }
+.form-control-modern::-moz-placeholder { color: var(--gray-400); opacity: 1; }
+.form-control-modern:-ms-input-placeholder { color: var(--gray-400); }
+.form-control-modern:-moz-placeholder { color: var(--gray-400); }
+
 
 /* Texto de ayuda */
 .form-text-modern {
