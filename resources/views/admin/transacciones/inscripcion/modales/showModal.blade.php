@@ -389,10 +389,9 @@
                             <i class="fas fa-file-signature"></i>
                             <span>Datos de Inscripción</span>
                         </div>
-
-                        <div class="row g-2 mt-2">
+                        <div class="row g-2 mt-3">
                             @if ($esPrimerGrado)
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="detail-item">
                                         <span class="detail-label">
                                             N° Zonificación
@@ -402,7 +401,6 @@
                                     </div>
                                 </div>
                             @endif
-
                             <div class="col-md-3">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -414,7 +412,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Año Egreso
@@ -447,10 +445,10 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3    ">
+                            <div class="col-md-3 ">
                                 <div class="detail-item">
                                     <span class="detail-label">
-                                        <i class="fas fa-file-contract"></i> Aceptó Normas
+                                        Aceptó Normas
                                     </span>
                                     <span class="detail-value">
                                         @if ($datos->acepta_normas_contrato)
@@ -467,7 +465,13 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- DIVISOR -->
                     <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
+
+                    <!-- ======================
+                    SECCIÓN 4: DOCUMENTOS
+                ======================= -->
                     <div class="mb-4">
                         <div class="section-title">
                             <i class="fas fa-folder-open"></i>
@@ -575,9 +579,6 @@
                                             <div class="flex-grow-1 text-start">
                                                 <div class="documento-label">
                                                     {{ $info['label'] }}
-                                                    @if ($info['obligatorio'])
-                                                        <span class="badge badge-sm bg-danger ms-1">Obligatorio</span>
-                                                    @endif
                                                 </div>
                                             </div>
 
