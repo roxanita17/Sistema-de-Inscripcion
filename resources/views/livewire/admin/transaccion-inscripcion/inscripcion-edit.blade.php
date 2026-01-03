@@ -1,5 +1,4 @@
 <div>
-    {{-- Alertas --}}
     @if (session()->has('success') || session()->has('error'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
@@ -30,8 +29,6 @@
         </div>
     @endif
 
-
-    {{-- Resumen de Estado de Inscripción --}}
     <div class="card-modern mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="card-body-modern" style="padding: 1.5rem;">
             <div class="row text-white">
@@ -72,7 +69,6 @@
         </div>
     </div>
 
-    {{-- Datos del Alumno --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -90,7 +86,6 @@
         </div>
     </div>
 
-    {{-- Seleccionar Representantes --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -104,8 +99,7 @@
             </div>
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
-            {{-- Padre --}}
-            <div  class="row align-items-center mb-4 mt-4">
+            <div class="row align-items-center mb-4 mt-4">
                 <div class="col-md-10" wire:ignore>
                     <label for="padre_select" class="form-label-modern">
                         <i class="fas fa-male"></i> Padre
@@ -139,9 +133,7 @@
             @if ($padreSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
                     <div class="details-grid">
-                        {{-- COLUMNA IZQUIERDA --}}
                         <div class="details-section">
-                            {{-- Identificación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-id-badge"></i>
@@ -150,7 +142,6 @@
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-id-card"></i>
                                             Documento
                                         </span>
                                         <span class="info-value">
@@ -161,17 +152,14 @@
                                 </div>
                             </div>
 
-                            {{-- Información Personal --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-user"></i>
                                     <h4>Información Personal</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user"></i>
                                             Nombre Completo
                                         </span>
                                         <span class="info-value">
@@ -183,49 +171,49 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div
                                     style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
                                     <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-venus-mars"></i>
                                                 Género
                                             </span>
                                             <span class="info-value">
                                                 {{ $padreSeleccionado->persona->genero->genero ?? 'N/A' }}
                                             </span>
                                         </div>
-
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-phone"></i>
                                                 Teléfono
                                             </span>
                                             <span class="info-value">
-                                                {{ $padreSeleccionado->persona->telefono ?? 'N/A' }}
+                                                {{ $padreSeleccionado->persona->telefono_completo ?? 'N/A' }}
                                             </span>
                                         </div>
+                                        @if ($padreSeleccionado->persona->telefono_dos_completo)
+                                            <div class="info-item" style="width: 15rem;">
+                                                <span class="info-label">
+                                                    Segundo Teléfono
+                                                </span>
+                                                <span class="info-value">
+                                                    {{ $padreSeleccionado->persona->telefono_dos_completo ?? 'N/A' }}
+                                                </span>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
-                        {{-- COLUMNA DERECHA --}}
                         <div class="details-section">
-
-                            {{-- Ubicación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <h4>Ubicación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-map"></i>
                                             Estado / Municipio / Localidad
                                         </span>
                                         <span class="info-value">
@@ -236,18 +224,14 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Datos Laborales --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-briefcase"></i>
                                     <h4>Información Laboral</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user-tie"></i>
                                             Ocupación
                                         </span>
                                         <span class="info-value">
@@ -255,11 +239,9 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div class="info-group pt-3">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-home"></i>
                                             Convive con el Estudiante
                                         </span>
                                         <span class="info-value">
@@ -268,14 +250,11 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             @endif
 
-            {{-- Madre --}}
             <div class="row align-items-center mb-4 mt-4">
                 <div class="col-md-10" wire:ignore>
                     <label for="madre_select" class="form-label-modern">
@@ -306,26 +285,18 @@
                     @endif
                 </div>
             </div>
-
             @if ($madreSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
-
                     <div class="details-grid">
-
-                        {{-- COLUMNA IZQUIERDA --}}
                         <div class="details-section">
-
-                            {{-- Identificación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-id-badge"></i>
                                     <h4>Datos de Identificación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-id-card"></i>
                                             Documento
                                         </span>
                                         <span class="info-value">
@@ -335,18 +306,14 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Información Personal --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-user"></i>
                                     <h4>Información Personal</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user"></i>
                                             Nombre Completo
                                         </span>
                                         <span class="info-value">
@@ -358,23 +325,19 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div
                                     style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
                                     <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-venus-mars"></i>
                                                 Género
                                             </span>
                                             <span class="info-value">
                                                 {{ $madreSeleccionado->persona->genero->genero ?? 'N/A' }}
                                             </span>
                                         </div>
-
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-phone"></i>
                                                 Teléfono
                                             </span>
                                             <span class="info-value">
@@ -384,23 +347,17 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
-                        {{-- COLUMNA DERECHA --}}
                         <div class="details-section">
-
-                            {{-- Ubicación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <h4>Ubicación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-map"></i>
                                             Estado / Municipio / Localidad
                                         </span>
                                         <span class="info-value">
@@ -411,18 +368,14 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Datos Laborales --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-briefcase"></i>
                                     <h4>Información Laboral</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user-tie"></i>
                                             Ocupación
                                         </span>
                                         <span class="info-value">
@@ -430,11 +383,9 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div class="info-group pt-3">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-home"></i>
                                             Convive con el Estudiante
                                         </span>
                                         <span class="info-value">
@@ -443,15 +394,11 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             @endif
 
-
-            {{-- Representante Legal --}}
             <div class="row align-items-center mb-4 mt-4">
                 <div class="col-md-10" wire:ignore>
                     <label for="representante_legal_select" class="form-label-modern">
@@ -487,25 +434,18 @@
                     {{ $message }}
                 </div>
             @enderror
-
             @if ($representanteLegalSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
                     <div class="details-grid">
-
-                        {{-- COLUMNA IZQUIERDA --}}
                         <div class="details-section">
-
-                            {{-- Identificación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-id-badge"></i>
                                     <h4>Datos de Identificación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-id-card"></i>
                                             Documento
                                         </span>
                                         <span class="info-value">
@@ -517,17 +457,14 @@
                                 </div>
                             </div>
 
-                            {{-- Información Personal --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-user"></i>
                                     <h4>Información Personal</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user"></i>
                                             Nombre Completo
                                         </span>
                                         <span class="info-value">
@@ -539,13 +476,11 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div
                                     style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
                                     <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-venus-mars"></i>
                                                 Género
                                             </span>
                                             <span class="info-value">
@@ -555,7 +490,6 @@
 
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-phone"></i>
                                                 Teléfono
                                             </span>
                                             <span class="info-value">
@@ -565,13 +499,8 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
-                        {{-- COLUMNA DERECHA --}}
                         <div class="details-section">
-
-                            {{-- Ubicación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -581,7 +510,6 @@
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-map"></i>
                                             Estado / Municipio / Localidad
                                         </span>
                                         <span class="info-value">
@@ -592,18 +520,14 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Datos Laborales --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-briefcase"></i>
                                     <h4>Información Laboral</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user-tie"></i>
                                             Ocupación
                                         </span>
                                         <span class="info-value">
@@ -615,7 +539,6 @@
                                 <div class="info-group pt-3">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-home"></i>
                                             Convive con el Estudiante
                                         </span>
                                         <span class="info-value">
@@ -624,37 +547,28 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
-
-
                 </div>
-                {{-- Datos Legales --}}
+
                 <div class="info-section mt-4">
                     <div class="section-header">
                         <i class="fas fa-gavel"></i>
                         <h4>Información Legal</h4>
                     </div>
-
                     <div style="display:flex; justify-content:center; align-items:center;">
                         <div class="info-group pt-3"
                             style="display:flex; gap:2rem; flex-wrap:wrap; justify-content:center; flex-direction:row;">
-
                             <div class="info-item" style="width: 15rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-users"></i>
                                     Parentesco
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->parentesco ?? 'N/A' }}
                                 </span>
                             </div>
-
                             <div class="info-item" style="width: 18rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-envelope"></i>
                                     Correo del Representante
                                 </span>
                                 <span class="info-value">
@@ -664,7 +578,6 @@
                             @if ($representanteLegalSeleccionado->pertenece_a_organizacion_representante)
                                 <div class="info-item" style="width: 18rem;">
                                     <span class="info-label">
-                                        <i class="fas fa-id-card-alt"></i>
                                         Organizacion
                                     </span>
                                     <span class="info-value">
@@ -672,22 +585,16 @@
                                     </span>
                                 </div>
                             @endif
-
-
                             <div class="info-item" style="width: 12rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-id-card-alt"></i>
                                     Carnet de la Patria
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->carnet_patria_afiliado ? 'Sí' : 'No' }}
                                 </span>
                             </div>
-
-
                             <div class="info-item" style="width: 14rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-barcode"></i>
                                     Serial Carnet Patria
                                 </span>
                                 <span class="info-value">
@@ -696,48 +603,35 @@
                             </div>
                             <div class="info-item" style="width: 14rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-key"></i>
                                     Código Carnet Patria
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->codigo_carnet_patria_representante ?? 'N/A' }}
                                 </span>
                             </div>
-
                             <div class="info-item" style="width: 18rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-university"></i>
                                     Banco
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->banco->codigo_banco ?? 'N/A' }}-{{ $representanteLegalSeleccionado->banco->nombre_banco ?? 'N/A' }}
                                 </span>
                             </div>
-
                             <div class="info-item" style="width: 18rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-credit-card"></i>
                                     Tipo de Cuenta
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->tipo_cuenta ?? 'N/A' }}
                                 </span>
                             </div>
-
-
-
                         </div>
                     </div>
                 </div>
-
-
-
             @endif
-
         </div>
     </div>
 
-    {{-- Datos de Grado y Procedencia --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -754,7 +648,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <label for="grado_id" class="form-label-modern">
-                        <i class="fas fa-layer-group"></i> Año
+                         Año
                     </label>
                     <select wire:model.live="gradoId"
                         class="form-control-modern @error('gradoId') is-invalid @enderror">
@@ -770,7 +664,6 @@
                         </div>
                     @enderror
                 </div>
-
                 @if (!$esPrimerGrado)
                     <div class="col-md-4">
                         <label for="seccion_id" class="form-label-modern">
@@ -790,11 +683,10 @@
                         </div>
                     @enderror
                 @endif
-
                 @if ($esPrimerGrado)
                     <div class="col-md-4">
                         <label class="form-label-modern">
-                            <i class="fas fa-hashtag"></i> Número de Zonificación
+                            Número de Zonificación
                         </label>
                         <input type="text" wire:model.live="numero_zonificacion"
                             class="form-control-modern @error('numero_zonificacion') is-invalid @enderror"
@@ -803,11 +695,10 @@
                     </div>
                 @endif
             </div>
-
             <div class="row mt-3">
                 <div class="col-md-4">
                     <label class="form-label-modern">
-                        <i class="fas fa-building"></i> Institución de Procedencia
+                        Institución de Procedencia
                     </label>
                     <select wire:model.live="institucion_procedencia_id"
                         class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
@@ -822,10 +713,9 @@
                         </div>
                     @enderror
                 </div>
-
                 <div class="col-md-2">
                     <label class="form-label-modern">
-                        <i class="fas fa-font"></i> Literal
+                        Literal
                     </label>
                     <select wire:model.live="expresion_literaria_id"
                         class="form-control-modern @error('expresion_literaria_id') is-invalid @enderror">
@@ -840,10 +730,9 @@
                         </div>
                     @enderror
                 </div>
-
                 <div class="col-md-3">
                     <label class="form-label-modern">
-                        <i class="fas fa-calendar"></i> Año de Egreso
+                        Año de Egreso
                     </label>
                     <input type="date" wire:model.live="anio_egreso"
                         class="form-control-modern @error('anio_egreso') is-invalid @enderror">
@@ -857,7 +746,6 @@
         </div>
     </div>
 
-    {{-- Documentos y Observaciones --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -882,7 +770,6 @@
             </div>
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
-            {{-- Seleccionar todos --}}
             <div class="row">
                 <div class="col-12 mb-4">
                     <div class="checkbox-item-modern">
@@ -895,7 +782,6 @@
                 </div>
             </div>
 
-            {{-- Lista de documentos --}}
             <div class="row">
                 @php
                     $colCounter = 0;
@@ -903,7 +789,6 @@
 
                 @foreach ($documentosEtiquetas as $documento => $etiqueta)
                     @php
-                        // Saltar documentos que no aplican para primer grado
                         if ($esPrimerGrado && in_array($documento, ['notas_certificadas', 'liberacion_cupo'])) {
                             continue;
                         }
@@ -935,35 +820,6 @@
                 @endforeach
             </div>
 
-            {{-- Información sobre documentos faltantes --}}
-            @if (!empty($documentosFaltantes))
-                <div class="alert alert-warning mt-3">
-                    <div class="d-flex align-items-start">
-                        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
-                        <div>
-                            <h6 class="mb-2"><strong>Documentos Pendientes:</strong></h6>
-                            <ul class="mb-0">
-                                @foreach ($documentosFaltantes as $faltante)
-                                    <li>{{ $documentosEtiquetas[$faltante] ?? $faltante }}</li>
-                                @endforeach
-                            </ul>
-                            <small class="text-muted mt-2 d-block">
-                                <i class="fas fa-info-circle"></i>
-                                La inscripción se actualizará a estado "{{ $statusInscripcion }}" con documentos
-                                "{{ $estadoDocumentos }}"
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            @else
-                <div class="alert alert-success mt-3">
-                    <i class="fas fa-check-circle"></i>
-                    <strong>¡Todos los documentos están completos!</strong>
-                    La inscripción se actualizará a estado "Activo".
-                </div>
-            @endif
-
-            {{-- Observaciones --}}
             <div class="row mt-4">
                 <div class="col-12">
                     <label class="form-label-modern">
@@ -986,8 +842,6 @@
     </div>
     @include('admin.transacciones.inscripcion.modales.showContratoModal')
 
-
-    {{-- Botones de Acción --}}
     <div class="card-modern">
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="d-flex justify-content-end gap-3">
@@ -1034,54 +888,4 @@
             $('.selectpicker').selectpicker('refresh');
         });
     </script>
-
-    <style>
-        .checkbox-item-modern {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            background: var(--gray-50);
-            border-radius: var(--radius);
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-        }
-
-        .checkbox-item-modern:hover {
-            background: var(--primary-light);
-            border-color: var(--primary);
-        }
-
-        .checkbox-item-modern.checkbox-warning {
-            background: #fef3c7;
-            border-color: #fbbf24;
-        }
-
-        .checkbox-item-modern.checkbox-warning:hover {
-            background: #fde68a;
-        }
-
-        .checkbox-modern {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .checkbox-label-modern {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            margin: 0 0 0 0.75rem;
-            font-size: 0.9rem;
-            color: var(--gray-700);
-            font-weight: 500;
-            user-select: none;
-            flex: 1;
-        }
-
-        .checkbox-label-modern.text-warning {
-            color: #d97706;
-        }
-    </style>
 @endpush

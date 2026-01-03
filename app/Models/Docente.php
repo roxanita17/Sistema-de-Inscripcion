@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ConvierteAMayusculas;
 
-
 class Docente extends Model
 {
     use HasFactory;
     use ConvierteAMayusculas;
-
 
     protected $table = 'docentes';
 
