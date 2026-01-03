@@ -11,7 +11,7 @@ use App\Models\DocenteAreaGrado;
 use Illuminate\Support\Facades\Log;
 use App\Models\Grado;
 use \App\Models\Seccion;
-
+use \App\Models\AreaFormacion;
 
 
 class DocenteAreaGradoController extends Controller
@@ -102,7 +102,7 @@ class DocenteAreaGradoController extends Controller
             ->get();
 
 
-        $areasFormacion = \App\Models\AreaFormacion::where('status', true)
+        $areasFormacion = AreaFormacion::where('status', true)
             ->orderBy('nombre_area_formacion')
             ->get();
 
