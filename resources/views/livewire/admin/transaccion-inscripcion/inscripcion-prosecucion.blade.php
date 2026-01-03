@@ -403,7 +403,7 @@
                             <i class="fas fa-info-circle fa-2x"></i>
                             <div>
                                 <strong>Año cursado:</strong>
-                                {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado }} Año
+                                {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado ?? 'N/A' }} Año
                             </div>
                             <div>
                                 <strong>Sección:</strong>

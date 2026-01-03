@@ -5,7 +5,7 @@
 <div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content modal-modern shadow">
-            
+
             {{-- HEADER --}}
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
@@ -28,8 +28,8 @@
                         </span>
                     </div>
                 </div>
-                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
-                        data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                    data-bs-dismiss="modal"></button>
             </div>
 
             {{-- BODY --}}
@@ -54,7 +54,8 @@
                             <div class="data-item">
                                 <span class="data-label">Estado:</span>
                                 <span class="data-value">
-                                    <span class="badge-inline badge-{{ $datos->anioEscolar->status === 'Activo' ? 'success' : 'warning' }}">
+                                    <span
+                                        class="badge-inline badge-{{ $datos->anioEscolar->status === 'Activo' ? 'success' : 'warning' }}">
                                         {{ $datos->anioEscolar->status }}
                                     </span>
                                 </span>
@@ -92,7 +93,8 @@
                                 <span class="data-value">
                                     {{ \Carbon\Carbon::parse($datos->alumno->persona->fecha_nacimiento)->format('d/m/Y') }}
                                     <small class="text-muted">
-                                        ({{ \Carbon\Carbon::parse($datos->alumno->persona->fecha_nacimiento)->age }} años)
+                                        ({{ \Carbon\Carbon::parse($datos->alumno->persona->fecha_nacimiento)->age }}
+                                        años)
                                     </small>
                                 </span>
                             </div>
@@ -100,13 +102,13 @@
                                 <span class="data-label">Género:</span>
                                 <span class="data-value">{{ $datos->alumno->persona->genero->genero ?? 'N/A' }}</span>
                             </div>
-                            @if($datos->alumno->persona->lugar_nacimiento)
+                            @if ($datos->alumno->persona->lugar_nacimiento)
                                 <div class="data-item">
                                     <span class="data-label">Lugar de Nacimiento:</span>
                                     <span class="data-value">{{ $datos->alumno->persona->lugar_nacimiento }}</span>
                                 </div>
                             @endif
-                            @if($datos->alumno->persona->nacionalidad)
+                            @if ($datos->alumno->persona->nacionalidad)
                                 <div class="data-item">
                                     <span class="data-label">Nacionalidad:</span>
                                     <span class="data-value">{{ $datos->alumno->persona->nacionalidad }}</span>
@@ -119,25 +121,27 @@
                             <span>Datos Complementarios</span>
                         </div>
                         <div class="data-grid">
-                            @if($datos->alumno->lateralidad)
+                            @if ($datos->alumno->lateralidad)
                                 <div class="data-item">
                                     <span class="data-label">Lateralidad:</span>
-                                    <span class="data-value">{{ $datos->alumno->lateralidad->nombre ?? 'N/A' }}</span>
+                                    <span
+                                        class="data-value">{{ $datos->alumno->lateralidad->nombre_lateralidad ?? 'N/A' }}</span>
                                 </div>
                             @endif
-                            @if($datos->alumno->ordenNacimiento)
+                            @if ($datos->alumno->ordenNacimiento)
                                 <div class="data-item">
                                     <span class="data-label">Orden de Nacimiento:</span>
-                                    <span class="data-value">{{ $datos->alumno->ordenNacimiento->nombre ?? 'N/A' }}</span>
+                                    <span
+                                        class="data-value">{{ $datos->alumno->ordenNacimiento->nombre ?? 'N/A' }}</span>
                                 </div>
                             @endif
-                            @if($datos->alumno->talla_camisa)
+                            @if ($datos->alumno->talla_camisa)
                                 <div class="data-item">
                                     <span class="data-label">Talla de Camisa:</span>
                                     <span class="data-value">{{ $datos->alumno->talla_camisa }}</span>
                                 </div>
                             @endif
-                            @if($datos->alumno->talla_pantalon)
+                            @if ($datos->alumno->talla_pantalon)
                                 <div class="data-item">
                                     <span class="data-label">Talla de Pantalón:</span>
                                     <span class="data-value">{{ $datos->alumno->talla_pantalon }}</span>
@@ -180,14 +184,15 @@
                             <div class="data-item">
                                 <span class="data-label">Acepta Normas:</span>
                                 <span class="data-value">
-                                    <span class="badge-inline badge-{{ $datos->acepta_normas_contrato ? 'success' : 'danger' }}">
+                                    <span
+                                        class="badge-inline badge-{{ $datos->acepta_normas_contrato ? 'success' : 'danger' }}">
                                         {{ $datos->acepta_normas_contrato ? 'Sí' : 'No' }}
                                     </span>
                                 </span>
                             </div>
                         </div>
-                        
-                        @if($datos->observaciones)
+
+                        @if ($datos->observaciones)
                             <div class="subsection-divider">
                                 <span>Observaciones</span>
                             </div>
@@ -216,7 +221,7 @@
                                 <span class="data-label">Año de Egreso:</span>
                                 <span class="data-value">{{ $datos->nuevoIngreso->anio_egreso ?? 'N/A' }}</span>
                             </div>
-                            @if($datos->nuevoIngreso->expresionLiteraria)
+                            @if ($datos->nuevoIngreso->expresionLiteraria)
                                 <div class="data-item">
                                     <span class="data-label">Expresión Literaria:</span>
                                     <span class="data-value">
@@ -224,7 +229,7 @@
                                     </span>
                                 </div>
                             @endif
-                            @if($datos->nuevoIngreso->numero_zonificacion)
+                            @if ($datos->nuevoIngreso->numero_zonificacion)
                                 <div class="data-item">
                                     <span class="data-label">Número de Zonificación:</span>
                                     <span class="data-value">{{ $datos->nuevoIngreso->numero_zonificacion }}</span>
@@ -241,9 +246,9 @@
                         <span>Representantes</span>
                     </div>
                     <div class="section-card-body p-0">
-                        
+
                         {{-- PADRE --}}
-                        @if($datos->padre)
+                        @if ($datos->padre)
                             <div class="representante-item">
                                 <div class="representante-badge-container">
                                     <span class="representante-badge representante-padre">
@@ -270,11 +275,13 @@
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Teléfono:</span>
-                                            <span class="data-value-sm">{{ $datos->padre->persona->telefono ?? 'N/A' }}</span>
+                                            <span
+                                                class="data-value-sm">{{ $datos->padre->persona->telefono ?? 'N/A' }}</span>
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Ocupación:</span>
-                                            <span class="data-value-sm">{{ $datos->padre->ocupacion->nombre_ocupacion ?? 'N/A' }}</span>
+                                            <span
+                                                class="data-value-sm">{{ $datos->padre->ocupacion->nombre_ocupacion ?? 'N/A' }}</span>
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Dirección:</span>
@@ -286,7 +293,8 @@
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Convive:</span>
-                                            <span class="badge-inline badge-{{ $datos->padre->convivenciaestudiante_representante ? 'success' : 'danger' }}">
+                                            <span
+                                                class="badge-inline badge-{{ $datos->padre->convivenciaestudiante_representante ? 'success' : 'danger' }}">
                                                 {{ $datos->padre->convivenciaestudiante_representante ? 'Sí' : 'No' }}
                                             </span>
                                         </div>
@@ -296,7 +304,7 @@
                         @endif
 
                         {{-- MADRE --}}
-                        @if($datos->madre)
+                        @if ($datos->madre)
                             <div class="representante-item">
                                 <div class="representante-badge-container">
                                     <span class="representante-badge representante-madre">
@@ -323,11 +331,13 @@
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Teléfono:</span>
-                                            <span class="data-value-sm">{{ $datos->madre->persona->telefono ?? 'N/A' }}</span>
+                                            <span
+                                                class="data-value-sm">{{ $datos->madre->persona->telefono ?? 'N/A' }}</span>
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Ocupación:</span>
-                                            <span class="data-value-sm">{{ $datos->madre->ocupacion->nombre_ocupacion ?? 'N/A' }}</span>
+                                            <span
+                                                class="data-value-sm">{{ $datos->madre->ocupacion->nombre_ocupacion ?? 'N/A' }}</span>
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Dirección:</span>
@@ -339,7 +349,8 @@
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Convive:</span>
-                                            <span class="badge-inline badge-{{ $datos->madre->convivenciaestudiante_representante ? 'success' : 'danger' }}">
+                                            <span
+                                                class="badge-inline badge-{{ $datos->madre->convivenciaestudiante_representante ? 'success' : 'danger' }}">
                                                 {{ $datos->madre->convivenciaestudiante_representante ? 'Sí' : 'No' }}
                                             </span>
                                         </div>
@@ -349,7 +360,7 @@
                         @endif
 
                         {{-- REPRESENTANTE LEGAL --}}
-                        @if($datos->representanteLegal)
+                        @if ($datos->representanteLegal)
                             <div class="representante-item">
                                 <div class="representante-badge-container">
                                     <span class="representante-badge representante-legal">
@@ -376,19 +387,23 @@
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Parentesco:</span>
-                                            <span class="data-value-sm">{{ $datos->representanteLegal->parentesco ?? 'N/A' }}</span>
+                                            <span
+                                                class="data-value-sm">{{ $datos->representanteLegal->parentesco ?? 'N/A' }}</span>
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Correo:</span>
-                                            <span class="data-value-sm">{{ $datos->representanteLegal->correo_representante ?? 'N/A' }}</span>
+                                            <span
+                                                class="data-value-sm">{{ $datos->representanteLegal->correo_representante ?? 'N/A' }}</span>
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Teléfono:</span>
-                                            <span class="data-value-sm">{{ $datos->representanteLegal->representante->persona->telefono ?? 'N/A' }}</span>
+                                            <span
+                                                class="data-value-sm">{{ $datos->representanteLegal->representante->persona->telefono ?? 'N/A' }}</span>
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Ocupación:</span>
-                                            <span class="data-value-sm">{{ $datos->representanteLegal->representante->ocupacion->nombre_ocupacion ?? 'N/A' }}</span>
+                                            <span
+                                                class="data-value-sm">{{ $datos->representanteLegal->representante->ocupacion->nombre_ocupacion ?? 'N/A' }}</span>
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Dirección:</span>
@@ -400,20 +415,23 @@
                                         </div>
                                         <div class="data-item-compact">
                                             <span class="data-label-sm">Convive:</span>
-                                            <span class="badge-inline badge-{{ $datos->representanteLegal->representante->convivenciaestudiante_representante ? 'success' : 'danger' }}">
+                                            <span
+                                                class="badge-inline badge-{{ $datos->representanteLegal->representante->convivenciaestudiante_representante ? 'success' : 'danger' }}">
                                                 {{ $datos->representanteLegal->representante->convivenciaestudiante_representante ? 'Sí' : 'No' }}
                                             </span>
                                         </div>
-                                        @if($datos->representanteLegal->banco)
+                                        @if ($datos->representanteLegal->banco)
                                             <div class="data-item-compact">
                                                 <span class="data-label-sm">Banco:</span>
-                                                <span class="data-value-sm">{{ $datos->representanteLegal->banco->nombre_banco }}</span>
+                                                <span
+                                                    class="data-value-sm">{{ $datos->representanteLegal->banco->nombre_banco }}</span>
                                             </div>
                                         @endif
-                                        @if($datos->representanteLegal->tipo_cuenta)
+                                        @if ($datos->representanteLegal->tipo_cuenta)
                                             <div class="data-item-compact">
                                                 <span class="data-label-sm">Tipo Cuenta:</span>
-                                                <span class="data-value-sm">{{ $datos->representanteLegal->tipo_cuenta }}</span>
+                                                <span
+                                                    class="data-value-sm">{{ $datos->representanteLegal->tipo_cuenta }}</span>
                                             </div>
                                         @endif
                                     </div>
@@ -425,7 +443,7 @@
                 </div>
 
                 {{-- ========== DOCUMENTOS ========== --}}
-                @if($datos->documentos)
+                @if ($datos->documentos)
                     <div class="section-card mb-3">
                         <div class="section-card-header">
                             <i class="fas fa-file-alt"></i>
@@ -435,7 +453,8 @@
                             <div class="data-item">
                                 <span class="data-label">Estado de Documentos:</span>
                                 <span class="data-value">
-                                    <span class="badge-inline badge-{{ $datos->estado_documentos === 'Completo' ? 'success' : 'warning' }}">
+                                    <span
+                                        class="badge-inline badge-{{ $datos->estado_documentos === 'Completo' ? 'success' : 'warning' }}">
                                         {{ $datos->estado_documentos ?? 'Pendiente' }}
                                     </span>
                                 </span>
@@ -444,7 +463,7 @@
                                 <span>Archivos Adjuntos</span>
                             </div>
                             <ul class="documentos-list">
-                                @foreach($datos->documentos as $doc)
+                                @foreach ($datos->documentos as $doc)
                                     <li>
                                         <i class="fas fa-file-pdf text-danger"></i>
                                         {{ $doc }}
@@ -469,350 +488,350 @@
 </div>
 
 <style>
-/* ========== MODAL BASE ========== */
-.modal-modern .modal-content {
-    border: none;
-    border-radius: 12px;
-}
-
-.modal-header-view {
-    background: linear-gradient(135deg, #4f46e5, #4338ca);
-    color: white;
-    padding: 1.5rem;
-    border-radius: 12px 12px 0 0;
-    position: relative;
-}
-
-.modal-title-view {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.modal-body-view {
-    background: #f9fafb;
-    max-height: 70vh;
-    overflow-y: auto;
-}
-
-.modal-footer-view {
-    background: white;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e5e7eb;
-}
-
-/* ========== BADGES EN HEADER ========== */
-.badge-modal {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.85rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.badge-modal-success {
-    background: rgba(16, 185, 129, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.badge-modal-primary {
-    background: rgba(59, 130, 246, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.badge-modal-info {
-    background: rgba(236, 72, 153, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* ========== SECTION CARDS ========== */
-.section-card {
-    background: white;
-    border-radius: 10px;
-    border: 1px solid #e5e7eb;
-    overflow: hidden;
-}
-
-.section-card-header {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.85rem 1.25rem;
-    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-    border-bottom: 2px solid #4f46e5;
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #111827;
-}
-
-.section-card-header i {
-    color: #4f46e5;
-    font-size: 1.1rem;
-}
-
-.section-card-body {
-    padding: 1.25rem;
-}
-
-/* ========== DATA GRID ========== */
-.data-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-}
-
-.data-grid-2 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 0.75rem;
-}
-
-.data-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-}
-
-.data-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.data-value {
-    font-size: 0.9rem;
-    color: #111827;
-    font-weight: 500;
-    line-height: 1.4;
-}
-
-.data-value.highlight {
-    font-weight: 700;
-    color: #4f46e5;
-    font-size: 1rem;
-}
-
-/* ========== DATA ITEMS COMPACTOS ========== */
-.data-item-compact {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.data-label-sm {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: #6b7280;
-    text-transform: uppercase;
-}
-
-.data-value-sm {
-    font-size: 0.82rem;
-    color: #111827;
-    font-weight: 500;
-}
-
-/* ========== BADGES INLINE ========== */
-.badge-inline {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.7rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-success {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.badge-danger {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.badge-primary {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.badge-info {
-    background: #e0e7ff;
-    color: #4338ca;
-}
-
-.badge-warning {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-/* ========== SUBSECTION DIVIDER ========== */
-.subsection-divider {
-    display: flex;
-    align-items: center;
-    margin: 1.25rem 0 0.75rem 0;
-    padding-top: 1rem;
-    border-top: 1px dashed #d1d5db;
-}
-
-.subsection-divider span {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #4b5563;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* ========== OBSERVACIONES BOX ========== */
-.observaciones-box {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 1rem;
-    font-size: 0.85rem;
-    color: #374151;
-    line-height: 1.5;
-}
-
-/* ========== REPRESENTANTES ========== */
-.representante-item {
-    border-bottom: 1px solid #e5e7eb;
-    padding: 1rem 1.25rem;
-}
-
-.representante-item:last-child {
-    border-bottom: none;
-}
-
-.representante-badge-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem;
-}
-
-.representante-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.45rem 1rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.representante-padre {
-    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-    color: #1e40af;
-    border: 2px solid #93c5fd;
-}
-
-.representante-madre {
-    background: linear-gradient(135deg, #fce7f3, #fbcfe8);
-    color: #9f1239;
-    border: 2px solid #f9a8d4;
-}
-
-.representante-legal {
-    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-    color: #065f46;
-    border: 2px solid #6ee7b7;
-}
-
-.representante-content {
-    background: #f9fafb;
-    border-radius: 8px;
-    padding: 1rem;
-}
-
-/* ========== DOCUMENTOS LIST ========== */
-.documentos-list {
-    list-style: none;
-    padding: 0;
-    margin: 0.75rem 0 0 0;
-}
-
-.documentos-list li {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.6rem 0.85rem;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    margin-bottom: 0.5rem;
-    font-size: 0.82rem;
-    color: #374151;
-}
-
-.documentos-list li:last-child {
-    margin-bottom: 0;
-}
-
-.documentos-list li i {
-    font-size: 1rem;
-}
-
-/* ========== BOTONES ========== */
-.btn-modal-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.25rem;
-    background: #f3f4f6;
-    color: #374151;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-modal-secondary:hover {
-    background: #e5e7eb;
-    transform: translateY(-1px);
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
-    .modal-xl {
-        max-width: 95%;
+    /* ========== MODAL BASE ========== */
+    .modal-modern .modal-content {
+        border: none;
+        border-radius: 12px;
     }
-    
-    .data-grid,
-    .data-grid-2 {
-        grid-template-columns: 1fr;
+
+    .modal-header-view {
+        background: linear-gradient(135deg, #4f46e5, #4338ca);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px 12px 0 0;
+        position: relative;
     }
-    
+
+    .modal-title-view {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .modal-body-view {
+        background: #f9fafb;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .modal-footer-view {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    /* ========== BADGES EN HEADER ========== */
+    .badge-modal {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-modal-success {
+        background: rgba(16, 185, 129, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .badge-modal-primary {
+        background: rgba(59, 130, 246, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .badge-modal-info {
+        background: rgba(236, 72, 153, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* ========== SECTION CARDS ========== */
+    .section-card {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+
+    .section-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.85rem 1.25rem;
+        background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+        border-bottom: 2px solid #4f46e5;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #111827;
+    }
+
+    .section-card-header i {
+        color: #4f46e5;
+        font-size: 1.1rem;
+    }
+
     .section-card-body {
+        padding: 1.25rem;
+    }
+
+    /* ========== DATA GRID ========== */
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .data-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .data-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .data-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .data-value {
+        font-size: 0.9rem;
+        color: #111827;
+        font-weight: 500;
+        line-height: 1.4;
+    }
+
+    .data-value.highlight {
+        font-weight: 700;
+        color: #4f46e5;
+        font-size: 1rem;
+    }
+
+    /* ========== DATA ITEMS COMPACTOS ========== */
+    .data-item-compact {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .data-label-sm {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+    }
+
+    .data-value-sm {
+        font-size: 0.82rem;
+        color: #111827;
+        font-weight: 500;
+    }
+
+    /* ========== BADGES INLINE ========== */
+    .badge-inline {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.7rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-primary {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge-info {
+        background: #e0e7ff;
+        color: #4338ca;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    /* ========== SUBSECTION DIVIDER ========== */
+    .subsection-divider {
+        display: flex;
+        align-items: center;
+        margin: 1.25rem 0 0.75rem 0;
+        padding-top: 1rem;
+        border-top: 1px dashed #d1d5db;
+    }
+
+    .subsection-divider span {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #4b5563;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* ========== OBSERVACIONES BOX ========== */
+    .observaciones-box {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 1rem;
+        font-size: 0.85rem;
+        color: #374151;
+        line-height: 1.5;
+    }
+
+    /* ========== REPRESENTANTES ========== */
+    .representante-item {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem 1.25rem;
+    }
+
+    .representante-item:last-child {
+        border-bottom: none;
+    }
+
+    .representante-badge-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .representante-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .representante-padre {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        color: #1e40af;
+        border: 2px solid #93c5fd;
+    }
+
+    .representante-madre {
+        background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+        color: #9f1239;
+        border: 2px solid #f9a8d4;
+    }
+
+    .representante-legal {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+        border: 2px solid #6ee7b7;
+    }
+
+    .representante-content {
+        background: #f9fafb;
+        border-radius: 8px;
         padding: 1rem;
     }
-}
 
-/* ========== SCROLLBAR PERSONALIZADA ========== */
-.modal-body-view::-webkit-scrollbar {
-    width: 8px;
-}
+    /* ========== DOCUMENTOS LIST ========== */
+    .documentos-list {
+        list-style: none;
+        padding: 0;
+        margin: 0.75rem 0 0 0;
+    }
 
-.modal-body-view::-webkit-scrollbar-track {
-    background: #f3f4f6;
-}
+    .documentos-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem 0.85rem;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        font-size: 0.82rem;
+        color: #374151;
+    }
 
-.modal-body-view::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 4px;
-}
+    .documentos-list li:last-child {
+        margin-bottom: 0;
+    }
 
-.modal-body-view::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
-}
+    .documentos-list li i {
+        font-size: 1rem;
+    }
+
+    /* ========== BOTONES ========== */
+    .btn-modal-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.25rem;
+        background: #f3f4f6;
+        color: #374151;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-modal-secondary:hover {
+        background: #e5e7eb;
+        transform: translateY(-1px);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+        .modal-xl {
+            max-width: 95%;
+        }
+
+        .data-grid,
+        .data-grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .section-card-body {
+            padding: 1rem;
+        }
+    }
+
+    /* ========== SCROLLBAR PERSONALIZADA ========== */
+    .modal-body-view::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .modal-body-view::-webkit-scrollbar-track {
+        background: #f3f4f6;
+    }
+
+    .modal-body-view::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 4px;
+    }
+
+    .modal-body-view::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+    }
