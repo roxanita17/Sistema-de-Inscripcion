@@ -153,7 +153,7 @@
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-user-graduate"></i>
-                        <span>Datos Personales</span>
+                        <span>Datos Fisicos</span>
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
