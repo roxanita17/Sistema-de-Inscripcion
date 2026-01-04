@@ -17,15 +17,6 @@ class DocenteAreaGrado extends Model
         'status',
     ];
 
-// app/Models/Docente.php
-
-
-// ...
-
-    /**
-     * Scope para búsqueda general:
-     * busca por persona (nombre/numero_documento), por estudios realizados y por materias/áreas asignadas.
-     */
     public function scopeBuscar($query, $buscar)
     {
         if (empty($buscar)) {
@@ -35,7 +26,6 @@ class DocenteAreaGrado extends Model
         $buscar = trim($buscar);
 
         return $query->where(function ($q) use ($buscar) {
-            // 1) Persona: nombre completo o cédula
             $q->whereHas('persona', function ($p) use ($buscar) {
                 $p->where(DB::raw("CONCAT(primer_nombre, ' ', primer_apellido)"), 'LIKE', "%{$buscar}%")
                     ->orWhere('primer_nombre', 'LIKE', "%{$buscar}%")
@@ -43,7 +33,6 @@ class DocenteAreaGrado extends Model
                     ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
             });
 
-            // 2) Estudios realizados del docente (DetalleDocenteEstudio -> EstudiosRealizado.estudios)
             $q->orWhereHas('areaEstudios', function ($d) use ($buscar) {
                 $d->whereHas('areaFormacion', function ($e) use ($buscar) {
                     $e->where('nombre_area_formacion', 'LIKE', "%{$buscar}%");
@@ -51,8 +40,6 @@ class DocenteAreaGrado extends Model
             });
         });
     }
-
-    // RELACIONES
 
     public function detalleDocenteEstudio()
     {

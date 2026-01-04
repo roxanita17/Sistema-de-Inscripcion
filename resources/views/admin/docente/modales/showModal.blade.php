@@ -1,10 +1,7 @@
-<!-- Modal Ver Información de la Inscripción -->
 <div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content modal-modern shadow">
-
-            <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
                     <h5 class="modal-title-view mb-2">Información del Docente</h5>
@@ -12,13 +9,7 @@
                         data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
             </div>
-
-            <!-- BODY -->
             <div class="modal-body modal-body-view">
-
-                <!-- ======================
-                    SECCIÓN 1: DATOS DEL ESTUDIANTE
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-user-graduate"></i>
@@ -26,7 +17,6 @@
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -73,7 +63,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">Estudios</span>
@@ -88,7 +77,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="section-title">
                         <i class="fas fa-phone"></i>
                         <span>Informacion de Contacto</span>
@@ -137,7 +125,6 @@
                             @endif
                         </div>
                     </div>
-
                     <div class="section-title">
                         <i class="fas fa-building"></i>
                         <span>Informacion de dependencia</span>

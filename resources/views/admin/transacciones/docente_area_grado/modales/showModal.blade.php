@@ -1,10 +1,7 @@
-<!-- Modal Ver Información de la Inscripción -->
 <div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content modal-modern shadow">
-
-            <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
                     <h5 class="modal-title-view mb-2">Información del Docente</h5>
@@ -12,13 +9,7 @@
                         data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
             </div>
-
-            <!-- BODY -->
             <div class="modal-body modal-body-view">
-
-                <!-- ======================
-                    SECCIÓN 1: DATOS DEL ESTUDIANTE
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-user-graduate"></i>
@@ -26,7 +17,6 @@
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -73,7 +63,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">Estudios</span>
@@ -86,7 +75,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4 ">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -149,7 +137,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="section-title">
                         <i class="fas fa-book"></i>
                         <span>Areas de formación y grados asignados:</span>
@@ -157,10 +144,8 @@
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="card shadow-sm" >
                             <div class="card-body" style="background: white">
-
                                 @forelse ($datos->asignacionesAreasActivas as $asignacion)
                                     <div class="border-bottom pb-2 mb-3">
-
                                         <p class="mb-1">
                                             <strong>Area de Formacion:</strong>
                                             {{$asignacion->areaEstudios->areaFormacion->nombre_area_formacion ?? 'N/A' }}
@@ -171,7 +156,6 @@
                                             <strong>Seccion:</strong>
                                             {{$asignacion->seccion->nombre ?? 'N/A' }}
                                         </p>
-
                                         <p class="mb-2 text-muted" style="font-size:.85rem;">
                                             Asignado el: {{ $asignacion->created_at->format('d/m/Y h:i A') }}
                                         </p>
@@ -179,7 +163,6 @@
                                 @empty
                                     <p class="text-center text-muted">Este datos no tiene asignaciones activas.</p>
                                 @endforelse
-
                             </div>
                         </div>
                     </div>
@@ -194,29 +177,3 @@
         </div>
     </div>
 </div>
-
-{{-- 
-                <div class="card shadow-sm">
-                    <div class="card-body">
-
-                        @forelse ($datos->asignacionesAreasActivas as $asignacion)
-                            <div class="border-bottom pb-2 mb-3">
-
-                                <p class="mb-1">
-                                    <strong>Grado Área de Formación :</strong>
-                                    {{ $asignacion->grado->numero_grado ?? 'N/A' }}
-                                    {{ $asignacion->areaEstudios->areaFormacion->nombre_area_formacion ?? 'N/A' }}
-                                </p>
-
-                                <p class="mb-2 text-muted" style="font-size:.85rem;">
-                                    Asignado el: {{ $asignacion->created_at->format('d/m/Y h:i A') }}
-                                </p>
-                            </div>
-                        @empty
-                            <p class="text-center text-muted">Este datos no tiene asignaciones activas.</p>
-                        @endforelse
-
-                    </div>
-                </div>
-
-            </div> --}}
