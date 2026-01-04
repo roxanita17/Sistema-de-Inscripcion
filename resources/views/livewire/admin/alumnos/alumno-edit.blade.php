@@ -4,10 +4,10 @@
             <div class="header-right" style="margin-left: auto;">
                 @if (!$soloEdicion)
                     <button type="button" wire:click="habilitarEdicion" class="btn-primary-modern">
-                    <i class="fas fa-edit"></i> Editar Datos
-                </button>
+                        <i class="fas fa-edit"></i> Editar Datos
+                    </button>
                 @endif
-                
+
             </div>
         </div>
         {{-- Modo Vista --}}
@@ -260,7 +260,7 @@
     @endif
     @if ($enModoEdicion)
 
-        
+
         {{-- Modo Edición --}}
         <form wire:submit.prevent="guardar">
             <div class="card-header-modern">
@@ -477,16 +477,13 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            Altura (m)
+                            Estatura (m)
                             <span class="required-badge">*</span>
                         </label>
-                        <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
+                        <input wire:model.live="talla_estudiante" wire:blur="validarEstatura"
                             placeholder="Ej: 1.66 o 166"
                             class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
-                            placeholder="1.65"
-                            inputmode="numeric"
-                            pattern="^[0-9]*$"
-                            oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                            inputmode="decimal" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                         @error('talla_estudiante')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -681,8 +678,8 @@
                                             <td style="text-align: center; vertical-align: middle;">
                                                 <div style="display: flex; justify-content: center;">
                                                     <button type="button"
-                                                        wire:click="eliminarDiscapacidad({{ $loop->index }})"
-                                                        class="action-btn btn-delete" title="Eliminar">
+                                                        wire:click="eliminarDiscapacidad({{ $disc['id'] }})"
+                                                        class="action-btn btn-delete">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </div>
@@ -704,9 +701,9 @@
                     <div class="row mt-4">
                         <div class="col-md-8">
                             <label class="form-label-modern">
-                            ¿Presenta alguna discapacidad?
+                                ¿Presenta alguna discapacidad?
                             </label>
-                            <select wire:model.defer="discapacidadSeleccionada"
+                            <select wire:model.live="discapacidadSeleccionada"
                                 class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
                                 <option value="">Seleccione una discapacidad</option>
                                 @foreach ($discapacidades as $discapacidad)

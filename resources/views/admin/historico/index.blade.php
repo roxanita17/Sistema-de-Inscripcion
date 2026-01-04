@@ -4,6 +4,8 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
+
 @stop
 
 @section('title', 'Histórico Académico')
@@ -146,13 +148,16 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="#viewModal{{-- {{ $datos->id }} --}}" class="btn btn-info btn-sm"
-                                                    title="Ver detalles" data-bs-toggle="modal"
-                                                    data-bs-target="#viewModal{{-- {{ $datos->id }} --}}">
+                                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#showModalProsecucion-{{ $prosecucion->id }}"
+                                                    title="Ver historial de prosecución">
                                                     <i class="fas fa-eye"></i>
-                                                </a>
+                                                </button>
                                             </td>
                                         </tr>
+                                        @include('admin.historico.modales.showModalProsecucion', [
+                                            'datos' => $prosecucion,
+                                        ])
                                     @empty
                                         <tr>
                                             <td colspan="6">
@@ -194,13 +199,13 @@
                                             <td>
                                                 <button class="btn btn-info btn-sm" title="Ver detalles"
                                                     data-bs-toggle="modal"
-                                                    data-bs-target="#viewModal{{ $inscripcion->id }}">
+                                                    data-bs-target="#viewModalNuevoIngreso{{ $inscripcion->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </td>
                                         </tr>
-                                        
-                                        @include('admin.historico.modales.showModal', [
+
+                                        @include('admin.historico.modales.showModalNuevoIngreso', [
                                             'datos' => $inscripcion,
                                         ])
                                     @empty

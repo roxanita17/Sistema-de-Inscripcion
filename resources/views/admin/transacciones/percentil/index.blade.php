@@ -168,7 +168,7 @@
                             <th style="text-align: center">Estudiante</th>
                             <th style="text-align: center">Seccion</th>
                             <th style="text-align: center">Indice Peso</th>
-                            <th style="text-align: center">Indice Altura</th>
+                            <th style="text-align: center">Indice Estatura</th>
                             <th style="text-align: center">Indice Edad</th>
                             <th style="text-align: center">Indice total</th>
                         </tr>

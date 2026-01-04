@@ -5,6 +5,8 @@
 :root {
     --primary: #4f46e5;
     --primary-dark: #4338ca;
+    --purple-soft: #6366f1;
+    --purple-light: #818cf8;
     --warning: #f59e0b;
     --warning-dark: #d97706;
     --info: #3b82f6;
@@ -262,7 +264,8 @@
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    padding: 0.75rem 1rem;
+    padding: 0.3rem 0.6rem;
+    margin-bottom: 0.6rem;
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -327,20 +330,30 @@
 
 /* ===== HEADER PRIMARIO (AZUL SUAVE) ===== */
 .card-header.bg-primary {
-    background: linear-gradient(135deg, #60a5fa, #3b82f6) !important;
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    ) !important;
     color: #ffffff !important;
 }
 
-/* ===== HEADER PELIGRO (ROSADO / ROJO SUAVE) ===== */
-.card-header.bg-danger {
-    background: linear-gradient(135deg, #f472b6, #ec4899) !important;
-    color: #ffffff !important;
-}
-
-/* ===== HEADER ADVERTENCIA (AMARILLO CÁLIDO SUAVE) ===== */
 .card-header.bg-warning {
-    background: linear-gradient(135deg, #fde68a, #fbbf24) !important;
-    color: #92400e !important;
+    background: linear-gradient(
+        135deg,
+        var(--purple-soft),
+        var(--primary)
+    ) !important;
+    color: #ffffff !important;
+}
+
+.card-header.bg-danger {
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    ) !important;
+    color: #ffffff !important;
 }
 
 .card-body {
@@ -417,7 +430,12 @@
 
 .badge-sm {
     font-size: 0.7rem;
-    padding: 0.2rem 0.5rem;
+    padding: 0.2rem 0.6rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 12px;
 }
 
 .badge.bg-success {
@@ -1345,7 +1363,7 @@ input[type="date"].form-control-modern:focus {
 }
 
 .modal-body-view::-webkit-scrollbar-thumb {
-    background: var(--info);
+    background: var(--gray-300);
     border-radius: 3px;
 }
 
@@ -1395,7 +1413,6 @@ input[type="date"].form-control-modern:focus {
     }
 }
 
-
 .title-gradient {
     background: linear-gradient(135deg, #6f42c1 0%, #9c27b0 100%);
     -webkit-background-clip: text;
@@ -1436,8 +1453,6 @@ input[type="date"].form-control-modern:focus {
     line-height: 1;
 }
 
-
-
 .section-title {
     font-size: 1rem;
     font-weight: 600;
@@ -1448,7 +1463,6 @@ input[type="date"].form-control-modern:focus {
     display: inline-flex;
     align-items: center;
 }
-
 
 .contract-content {
     font-size: 0.95rem;

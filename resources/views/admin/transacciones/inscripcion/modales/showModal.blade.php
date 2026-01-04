@@ -1,10 +1,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 @php
     $esPrimerGrado = ((int) ($datos->grado->numero_grado ?? 0)) === 1;
-@endphp
-
-
-<!-- Modal Ver Información de la Inscripción -->
+@endphp 
 <div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
@@ -31,6 +28,11 @@
 
             <!-- BODY -->
             <div class="modal-body modal-body-view">
+
+                <div class="section-card-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Año Escolar</span>
+                    </div>
 
                 <!-- ======================
                     SECCIÓN 1: DATOS DEL ESTUDIANTE
@@ -110,7 +112,7 @@
                                         Estatura
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->alumno->estatura ?? 'N/A' }} cm
+                                        {{ $datos->alumno->estatura ?? 'N/A' }} m
                                     </span>
                                 </div>
                             </div>

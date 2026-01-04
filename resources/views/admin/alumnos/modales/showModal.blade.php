@@ -1,4 +1,3 @@
-<!-- Modal Ver Información de la Inscripción -->
 <div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
@@ -7,8 +6,6 @@
                 $alumno = $datos;
                 $persona = $alumno->persona;
             @endphp
-
-            <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
                     <h5 class="modal-title-view mb-2">Información del Alumno</h5>
@@ -16,13 +13,7 @@
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
                     data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-
-            <!-- BODY -->
             <div class="modal-body modal-body-view">
-
-                <!-- ======================
-                    SECCIÓN 1: DATOS DEL ESTUDIANTE
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-user-graduate"></i>
@@ -30,7 +21,6 @@
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -86,7 +76,6 @@
                                         {{ $alumno?->ordenNacimiento->orden_nacimiento ?? 'N/A' }}
                                     </span>
                                 </div>
-
                             </div>
                             <div class="col-md-4">
                                 <div class="detail-item">
@@ -146,10 +135,8 @@
                     </div>
                 </div>
 
-                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
 
-                {{-- Datos fisicos --}}
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-user-graduate"></i>

@@ -290,18 +290,20 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="talla_estudiante" class="form-label-modern">
-                                Altura (m)
-                                <span class="required-badge">*</span>
+                                Estatura (m)
+                                <span class="required-badge">*</span> 
                             </label>
                             <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
                                 placeholder="Ej: 1.66 o 166"
-                                class="form-control-modern @error('talla_estudiante') is-invalid @enderror">
+                                class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
+                                inputmode="numeric"
+                                pattern="^[0-9]*$"
+                                oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                             @error('talla_estudiante')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}

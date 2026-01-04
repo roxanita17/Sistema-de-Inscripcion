@@ -681,8 +681,6 @@
                         </div>
                     </div>
                     <div class="card-body-modern" style="padding: 2rem;">
-                        
-
                         <div class="row">
                             @if ($esPrimerGrado)
                                 <div class="col-md-3">

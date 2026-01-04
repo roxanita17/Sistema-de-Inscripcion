@@ -8,6 +8,9 @@ use App\Services\DocumentoService;
 use App\Repositories\InscripcionRepository;
 use App\Repositories\RepresentanteRepository;
 use App\DTOs\InscripcionData;
+use App\Exceptions\InscripcionException;
+use Illuminate\Database\QueryException;
+
 
 class Inscripcion extends Component
 {
@@ -108,7 +111,6 @@ class Inscripcion extends Component
                 'nullable',
                 'regex:/^\d+$/'
             ],
-
             'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'gradoId' => [
@@ -506,17 +508,27 @@ class Inscripcion extends Component
             $dto = $this->crearInscripcionDTO();
             $inscripcion = $this->inscripcionService->registrar($dto);
 
-            // Guardar discapacidades si hay alumno seleccionado
-            if ($this->alumnoId && !empty($this->discapacidadesAgregadas)) {
-                $this->guardarDiscapacidadesAlumno($this->alumnoId);
-            }
-
             session()->flash('success', 'Inscripción registrada exitosamente.');
-            session()->forget('inscripcion_temp');
-
             return redirect()->route('admin.transacciones.inscripcion.index');
-        } catch (\Exception $e) {
-            session()->flash('error', 'Error: ' . $e->getMessage());
+        } catch (InscripcionException $e) {
+
+            //  Error de negocio (bonito)
+            session()->flash('error', $e->getMessage());
+        } catch (QueryException $e) {
+
+            //  Error SQL controlado
+            session()->flash(
+                'error',
+                'No se pudo completar la inscripción. Verifique los datos ingresados.'
+            );
+        } catch (\Throwable $e) {
+
+            //  Error inesperado
+            report($e); // LOG, no pantalla
+            session()->flash(
+                'error',
+                'No se pudo completar la inscripción. Verifique los datos ingresados.'
+            );
         }
     }
 
@@ -543,18 +555,29 @@ class Inscripcion extends Component
 
         try {
             $dto = $this->crearInscripcionDTO();
+            $inscripcion = $this->inscripcionService->registrar($dto);
 
-            // Agregar discapacidades al DTO o pasarlas por separado
-            $inscripcion = $this->inscripcionService->registrarConAlumno(
-                $datos,
-                $dto,
-                $this->discapacidadesAgregadas
-            );
-
-            session()->flash('success', 'Inscripción guardada exitosamente.');
+            session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
-        } catch (\Exception $e) {
-            session()->flash('error', 'Error al registrar: ' . $e->getMessage());
+        } catch (InscripcionException $e) {
+
+            // Error de negocio (bonito)
+            session()->flash('error', $e->getMessage());
+        } catch (QueryException $e) {
+
+            // Error SQL controlado
+            session()->flash(
+                'error',
+                'No se pudo completar la inscripción. Verifique los datos ingresados.'
+            );
+        } catch (\Throwable $e) {
+
+            // Error inesperado
+            report($e); // LOG, no pantalla
+            session()->flash(
+                'error',
+                'No se pudo completar la inscripción. Verifique los datos ingresados.'
+            );
         }
     }
 

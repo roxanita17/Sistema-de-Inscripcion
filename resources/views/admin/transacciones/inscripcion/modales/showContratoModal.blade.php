@@ -1,19 +1,16 @@
 <div wire:ignore.self class="modal fade" id="modalContratoConvivencia" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="modalContratoConvivenciaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content modal-modern">
-            <div class="modal-header-create">
-                <div class="modal-icon-create" style="background: linear-gradient(135deg, var(--primary), #2563eb);">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content modal-modern shadow">
+            <div class="modal-header modal-header-view">
+                <div class="w-100 text-center">
                     <i class="fas fa-file-contract"></i>
+                    <h5 class="modal-title-view mb-2">Contrato de Convivencia</h5>
                 </div>
-                <h5 class="modal-title-create" id="modalContratoConvivenciaLabel">
-                    Contrato de Normas de Convivencia
-                </h5>
-                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                    data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <div class="modal-body-create" style="max-height: 70vh; overflow-y: auto;">
+            <div class="modal-body modal-body-view" style="max-height: 70vh; overflow-y: auto;">
                 <div class="alert alert-info mb-4"
                     style="border-left: 5px solid var(--primary); background: var(--primary-light);">
                     <i class="fas fa-info-circle me-2"></i>
@@ -166,7 +163,8 @@
                         </div>
                         <div class="details-card mb-2 ms-3 me-3">
                             <h6 class="section-title text-start">
-                                <i class="fas fa-comment-dots"></i> <span class="rule-number">12</span> Procedimiento de
+                                <i class="fas fa-comment-dots"></i> <span class="rule-number">12</span> Procedimiento
+                                de
                                 quejas
                             </h6>
                             <div class="detail-item">
