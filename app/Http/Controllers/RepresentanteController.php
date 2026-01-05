@@ -499,7 +499,9 @@ class RepresentanteController extends Controller
             'tipo-ci-representante' => 'required|exists:tipo_documentos,id',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
-            'parroquia_id' => 'required|exists:localidads,id',
+            'idparroquia-representante' => 'required_without_all:idparroquia-padre,idparroquia|exists:localidads,id',
+            'idparroquia-padre' => 'required_without_all:idparroquia-representante,idparroquia|exists:localidads,id',
+            'idparroquia' => 'required_without_all:idparroquia-representante,idparroquia-padre|exists:localidads,id',
         ];
 
         // Add validation rules for legal representative fields
@@ -517,6 +519,9 @@ class RepresentanteController extends Controller
             'numero_documento-representante.unique' => 'Este número de cédula ya está registrado',
             'numero_documento-representante.regex' => 'El número de cédula debe contener entre 6 y 8 dígitos',
             'fecha-nacimiento-representante' => 'Formato de fecha inválido',
+            'idparroquia-representante.required_without_all' => 'La parroquia es obligatoria',
+            'idparroquia-padre.required_without_all' => 'La parroquia es obligatoria',
+            'idparroquia.required_without_all' => 'La parroquia es obligatoria',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
@@ -595,14 +600,14 @@ class RepresentanteController extends Controller
                     : null,
                 'prefijo_dos_id' => $request->input('prefijo_dos') ?: null,
                 'email' => $request->input('correo-representante'),
-                'localidad_id' => $request->input('parroquia_id'),
+                'localidad_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia') ?: $request->input('parroquia_id'),
             ]);
 
             // Preparar datos de actualización del representante
             $representanteData = [
                 'estado_id' => $request->input('estado_id'),
                 'municipio_id' => $request->input('municipio_id'),
-                'parroquia_id' => $request->input('parroquia_id'),
+                'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia') ?: $request->input('parroquia_id'),
                 'ocupacion_representante' => $request->input('ocupacion_id'),
                 'convivenciaestudiante_representante' => $request->input('convive-representante', 'no'),
             ];
@@ -857,7 +862,8 @@ class RepresentanteController extends Controller
 
             // Mapeo de campos de carnet de la patria y banco desde el formulario
             'carnet_patria_afiliado'             => $request->input('carnet-patria-afiliado'),
-            'serial_carnet_patria_representante' => $request->input('serial'),
+            'serial_carnet_patria_representante' => $request->input('serial-patria') ?: $request->input('serial'),
+            'codigo_carnet_patria_representante' => $request->input('codigo-patria') ?: $request->input('codigo'),
             'banco_id'                           => $request->input('banco_id'),
             'direccion_representante'            => $request->input('direccion-habitacion'),
 
@@ -877,7 +883,7 @@ class RepresentanteController extends Controller
             $request->merge([
                 'estado_id' => (int) $request->input('estado_id'),
                 'municipio_id' => (int) $request->input('municipio_id'),
-                'parroquia_id' => (int) $request->input('parroquia_id'),
+                'parroquia_id' => (int) ($request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia') ?: $request->input('parroquia_id')),
             ]);
 
             // Debug: verificar si los IDs existen
@@ -926,14 +932,16 @@ class RepresentanteController extends Controller
                 'tipo-ci-representante' => 'required|exists:tipos_documentos,id',
                 'estado_id' => 'required|exists:estados,id',
                 'municipio_id' => 'required|exists:municipios,id',
-                'parroquia_id' => 'required|exists:parroquias,id',
+                'idparroquia-representante' => 'required_without_all:idparroquia-padre,idparroquia|exists:parroquias,id',
+                'idparroquia-padre' => 'required_without_all:idparroquia-representante,idparroquia|exists:parroquias,id',
+                'idparroquia' => 'required_without_all:idparroquia-representante,idparroquia-padre|exists:parroquias,id',
                 'direccion-habitacion' => 'required|string|max:255',
                 'convive-representante' => 'required|in:si,no',
                 'ocupacion-representante' => 'required|exists:ocupacions,id',
                 'correo-representante' => 'required|email|max:100',
-                'estado_id' => 'required|exists:estados,id',
-                'municipio_id' => 'required|exists:municipios,id',
-                'parroquia_id' => 'nullable|exists:localidads,id',
+                'carnet-patria-afiliado' => 'nullable',
+                'codigo-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
+                'serial-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
                 'sexo_representante' => 'required|exists:generos,id',
                 'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
             ];
@@ -949,12 +957,16 @@ class RepresentanteController extends Controller
                 'tipo-ci-representante.required' => 'El tipo de documento es obligatorio',
                 'estado_id.required' => 'El estado es obligatorio',
                 'municipio_id.required' => 'El municipio es obligatorio',
-                'parroquia_id.required' => 'La parroquia es obligatoria',
+                'idparroquia-representante.required_without_all' => 'La parroquia es obligatoria',
+                'idparroquia-padre.required_without_all' => 'La parroquia es obligatoria',
+                'idparroquia.required_without_all' => 'La parroquia es obligatoria',
                 'direccion-habitacion.required' => 'La dirección es obligatoria',
                 'convive-representante.required' => 'Debe indicar si convive con el estudiante',
                 'ocupacion-representante.required' => 'La ocupación es obligatoria',
                 'correo-representante.required' => 'El correo electrónico es obligatorio',
                 'correo-representante.email' => 'El correo electrónico no es válido',
+                'codigo-patria.required_unless' => 'El código es obligatorio cuando el carnet está afiliado',
+                'serial-patria.required_unless' => 'El serial es obligatorio cuando el carnet está afiliado',
                 'numero_numero_documento_persona.required' => 'El número de cédula es obligatorio',
                 'numero_numero_documento_persona.unique' => 'Este número de cédula ya está registrado',
                 'numero_numero_documento_persona.required' => 'El número de documento es obligatorio',
@@ -1196,8 +1208,8 @@ class RepresentanteController extends Controller
             "pertenece_a_organizacion_representante" => $perteneceOrganizacion,
             "cual_organizacion_representante" => $cualOrganizacion,
             "carnet_patria_afiliado" => $this->mapearCarnetPatriaAfiliado($request->carnet_patria_afiliado),
-            "serial_carnet_patria_representante" => !empty($request->input('serial-patria')) ? $request->input('serial-patria') : null,
-            "codigo_carnet_patria_representante" => !empty($request->input('codigo-patria')) ? $request->input('codigo-patria') : null,
+            "serial_carnet_patria_representante" => $request->input('serial-patria') ?: ($request->input('serial') ?: ''),
+            "codigo_carnet_patria_representante" => $request->input('codigo-patria') ?: ($request->input('codigo') ?: ''),
             "direccion_representante" => $request->direccion_representante ?: '',
             "estados_representante" => $request->estados_representante ?: '',
             "tipo_cuenta" => $this->obtenerTipoCuenta($request->input('tipo-cuenta', '')),
@@ -2172,6 +2184,14 @@ class RepresentanteController extends Controller
         }
 
         $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes'));
+        
+        // Configurar el papel y márgenes
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->setOption('margin-bottom', '25mm');
+
+        // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
+        $pdf->setOption('isPhpEnabled', true);
+        
         return $pdf->stream('representantes.pdf');
     }
 }
