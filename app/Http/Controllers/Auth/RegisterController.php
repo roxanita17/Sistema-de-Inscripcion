@@ -51,7 +51,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255', 'min:3'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'max:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8', 'max:16', 'confirmed'],
         ], [
             'name.required' => 'El campo nombre es obligatorio.',
             'name.string' => 'El nombre debe ser una cadena de texto.',
@@ -64,8 +64,8 @@ class RegisterController extends Controller
             'email.unique' => 'Este correo electrónico ya está registrado.',
             'password.required' => 'El campo contraseña es obligatorio.',
             'password.string' => 'La contraseña debe ser una cadena de texto.',
-            'password.min' => 'La contraseña debe tener exactamente 8 caracteres.',
-            'password.max' => 'La contraseña debe tener exactamente 8 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.max' => 'La contraseña no puede tener más de 16 caracteres.',
             'password.confirmed' => 'La confirmación de contraseña no coincide.',
         ]);
     }

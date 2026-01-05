@@ -87,7 +87,7 @@
                     <!-- Contraseña -->
                     <div class="input-group mb-3">
                         <input type="password" name="password" class="form-control" 
-                               placeholder="12345678" maxlength="8" required>
+                               placeholder="Contraseña (8-16 caracteres)" maxlength="16" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>

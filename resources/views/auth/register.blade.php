@@ -116,7 +116,7 @@
 
                     <div class="input-group mb-3">
                         <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" 
-                               placeholder="Contraseña" maxlength="8" required>
+                               placeholder="Contraseña (8-16 caracteres)" maxlength="16" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -131,7 +131,7 @@
 
                     <div class="input-group mb-3">
                         <input type="password" name="password_confirmation" class="form-control" 
-                               placeholder="Repetir contraseña" maxlength="8" required>
+                               placeholder="Repetir contraseña (8-16 caracteres)" maxlength="16" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -291,9 +291,14 @@
                 return;
             }
             
-            if (password.length !== 8) {
+            if (password.length < 8) {
                 $(this).addClass('is-invalid');
-                $inputGroup.append('<div class="validation-message invalid-feedback">La contraseña debe tener exactamente 8 caracteres.</div>');
+                $inputGroup.append('<div class="validation-message invalid-feedback">La contraseña debe tener al menos 8 caracteres.</div>');
+                validationResults.password = false;
+                scrollToBottomIfNeeded();
+            } else if (password.length > 16) {
+                $(this).addClass('is-invalid');
+                $inputGroup.append('<div class="validation-message invalid-feedback">La contraseña no puede tener más de 16 caracteres.</div>');
                 validationResults.password = false;
                 scrollToBottomIfNeeded();
             } else {
