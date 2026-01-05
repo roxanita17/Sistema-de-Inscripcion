@@ -1,8 +1,8 @@
 @php
     $esPrimerGrado = ((int) ($datos->grado->numero_grado ?? 0)) === 1;
 @endphp
-<div class="modal fade" id="viewModalNuevoIngreso{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalNuevoIngresoLabel{{ $datos->id }}"
-    aria-hidden="true">
+<div class="modal fade" id="showModalNuevoIngreso{{ $datos->id }}" tabindex="-1"
+    aria-labelledby="showModalNuevoIngresoLabel{{ $datos->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content modal-modern shadow">
 
@@ -151,227 +151,318 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {{-- Datos del estudiante --}}
-                    <div class="">
-                        <div class="section-title">
-                            <i class="fas fa-user-graduate"></i>
-                            <span>Datos del Estudiante</span>
+                {{-- Datos del estudiante --}}
+                <div class="mb-4">
+                    <div class="section-title">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Datos del Estudiante</span>
+                    </div>
+                    <div class="card mini-card shadow-sm border-0 p-2 mt-1">
+                        <div class="row">
+                            <!-- Información personal -->
+                            <div class="col-md-4 mb-1">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Cedula
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $datos->alumno->persona->numero_documento ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Fecha de Nacimiento
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ \Carbon\Carbon::parse($datos->alumno->persona->fecha_nacimiento)->format('d/m/Y') ?? 'N/A' }}
+                                        <small
+                                            class="text-muted">({{ \Carbon\Carbon::parse($datos->alumno->persona->fecha_nacimiento)->age }}
+                                            años)</small>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Nombre Completo
+                                    </span>
+                                    <span class="detail-value fw-bold">
+                                        {{ $datos->alumno->persona->primer_nombre ?? '' }}
+                                        {{ $datos->alumno->persona->segundo_nombre ?? '' }}
+                                        {{ $datos->alumno->persona->primer_apellido ?? '' }}
+                                        {{ $datos->alumno->persona->segundo_apellido ?? '' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Género
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->persona->genero->genero ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Peso
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->peso ?? 'N/A' }} kg
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Estatura
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->estatura ?? 'N/A' }} m
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Lateralidad
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->lateralidad->lateralidad ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Orden de Nacimiento
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->ordenNacimiento->orden_nacimiento ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Lugar de nacimiento
+                                    </span>
+                                    <span class="detail-value fw-bold">
+                                        {{ $datos->alumno->persona->localidad->municipio->estado->nombre_estado ?? 'N/A' }}
+                                        /
+                                        {{ $datos->alumno->persona->localidad->municipio->nombre_municipio ?? 'N/A' }}
+                                        /
+                                        {{ $datos->alumno->persona->localidad->nombre_localidad ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Talla Zapato
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->talla_zapato ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Talla Camisa
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->tallaCamisa->nombre ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Talla Pantalones
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $datos->alumno->tallaPantalon->nombre ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card mini-card shadow-sm border-0 p-2 mt-1">
-                            <div class="row">
-                                <!-- Información personal -->
-                                <div class="col-md-4 mb-1">
+                        <div class="row">
+                            @if ($datos->alumno->etniaIndigena)
+                                <div class="col-md-6 ">
                                     <div class="detail-item">
                                         <span class="detail-label">
-                                            Cedula
+                                            Etnia Indígena
                                         </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $datos->alumno->persona->numero_documento ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Fecha de Nacimiento
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ \Carbon\Carbon::parse($datos->alumno->persona->fecha_nacimiento)->format('d/m/Y') ?? 'N/A' }}
-                                            <small
-                                                class="text-muted">({{ \Carbon\Carbon::parse($datos->alumno->persona->fecha_nacimiento)->age }}
-                                                años)</small>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Nombre Completo
-                                        </span>
-                                        <span class="detail-value fw-bold">
-                                            {{ $datos->alumno->persona->primer_nombre ?? '' }}
-                                            {{ $datos->alumno->persona->segundo_nombre ?? '' }}
-                                            {{ $datos->alumno->persona->primer_apellido ?? '' }}
-                                            {{ $datos->alumno->persona->segundo_apellido ?? '' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 ">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Género
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->persona->genero->genero ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Peso
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->peso ?? 'N/A' }} kg
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Estatura
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->estatura ?? 'N/A' }} m
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Lateralidad
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->lateralidad->lateralidad ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Orden de Nacimiento
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->ordenNacimiento->orden_nacimiento ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Lugar de nacimiento
-                                        </span>
-                                        <span class="detail-value fw-bold">
-                                            {{ $datos->alumno->persona->localidad->municipio->estado->nombre_estado ?? 'N/A' }}
-                                            /
-                                            {{ $datos->alumno->persona->localidad->municipio->nombre_municipio ?? 'N/A' }}
-                                            /
-                                            {{ $datos->alumno->persona->localidad->nombre_localidad ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Talla Zapato
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->talla_zapato ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Talla Camisa
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->tallaCamisa->nombre ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            Talla Pantalones
-                                        </span>
-                                        <span class="detail-value">
-                                            {{ $datos->alumno->tallaPantalon->nombre ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                @if ($datos->alumno->etniaIndigena)
-                                    <div class="col-md-6 ">
-                                        <div class="detail-item">
-                                            <span class="detail-label">
-                                                Etnia Indígena
+                                        @if ($datos->alumno->etniaIndigena->count() > 0)
+                                            <div class="d-flex flex-wrap mt-1">
+                                                {{ $datos->alumno->etniaIndigena->nombre }}
+                                            </div>
+                                        @else
+                                            <span class="detail-value text-muted">
+                                                Ninguna registrada
                                             </span>
-                                            @if ($datos->alumno->etniaIndigena->count() > 0)
-                                                <div class="d-flex flex-wrap mt-1">
-                                                    {{ $datos->alumno->etniaIndigena->nombre }}
-                                                </div>
-                                            @else
-                                                <span class="detail-value text-muted">
-                                                    Ninguna registrada
-                                                </span>
-                                            @endif
-                                        </div>
+                                        @endif
                                     </div>
-                                @endif
-                                @if ($datos->alumno->discapacidades)
-                                    <div class="col-md-6 ">
-                                        <div class="detail-item">
-                                            <span class="detail-label">
-                                                Discapacidades
+                                </div>
+                            @endif
+                            @if ($datos->alumno->discapacidades)
+                                <div class="col-md-6 ">
+                                    <div class="detail-item">
+                                        <span class="detail-label">
+                                            Discapacidades
+                                        </span>
+                                        @if ($datos->alumno->discapacidades->count() > 0)
+                                            <div class="d-flex flex-wrap mt-1">
+                                                @foreach ($datos->alumno->discapacidades as $discapacidad)
+                                                    • {{ $discapacidad->nombre_discapacidad }} <br>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="detail-value text-muted">
+                                                Ninguna registrada
                                             </span>
-                                            @if ($datos->alumno->discapacidades->count() > 0)
-                                                <div class="d-flex flex-wrap mt-1">
-                                                    @foreach ($datos->alumno->discapacidades as $discapacidad)
-                                                        • {{ $discapacidad->nombre_discapacidad }} <br>
-                                                    @endforeach
-                                                </div>
-                                            @else
-                                                <span class="detail-value text-muted">
-                                                    Ninguna registrada
-                                                </span>
-                                            @endif
-                                        </div>
+                                        @endif
                                     </div>
-                                @endif
-                            </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
+                </div>
 
-                    {{-- Representantes --}}
+                {{-- Representantes --}}
+                <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-users"></i>
                         <span>Representantes</span>
                     </div>
+
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
-                        <div class="row mt-2">
+
+                        <div class="row mt-2 mb-4">
                             <!-- PADRE -->
                             @if ($datos->padre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100 ">
-                                        <div class="card-header bg-primary text-white ">
+                                        <div class="card-header bg-padre text-white">
                                             <h6 class="mb-0">
                                                 <i class="fas fa-male me-2"></i>Padre
                                             </h6>
                                         </div>
                                         <div class="card-body">
-                                            <div class="detail-item mb-2">
-                                                <span class="detail-label">Nombre</span>
-                                                <span class="detail-value">
-                                                    {{ $datos->padre->persona->primer_nombre ?? '' }}
-                                                    {{ $datos->padre->persona->segundo_nombre ?? '' }}
-                                                    {{ $datos->padre->persona->primer_apellido ?? '' }}
-                                                    {{ $datos->padre->persona->segundo_apellido ?? '' }}
-                                                </span>
-                                            </div>
-                                            <div class="detail-item mb-2">
-                                                <span class="detail-label">Cédula</span>
-                                                <span class="detail-value">
-                                                    {{ $datos->padre->persona->tipoDocumento->nombre ?? '' }}-{{ $datos->padre->persona->numero_documento ?? '' }}
-                                                </span>
-                                            </div>
-                                            <div class="detail-item">
-                                                <span class="detail-label">Numero Telefonico</span>
-                                                <span class="detail-value">
-                                                    {{ $datos->padre->persona->telefono_completo }}
-                                                </span>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="detail-item mb-2">
+                                                        <span class="detail-label">Nombre</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->padre->persona->primer_nombre ?? '' }}
+                                                            {{ $datos->padre->persona->segundo_nombre ?? '' }}
+                                                            {{ $datos->padre->persona->primer_apellido ?? '' }}
+                                                            {{ $datos->padre->persona->segundo_apellido ?? '' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item mb-2">
+                                                        <span class="detail-label">Cédula</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->padre->persona->tipoDocumento->nombre ?? '' }}-{{ $datos->padre->persona->numero_documento ?? '' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Telefono</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->padre->persona->telefono_completo }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                @if ($datos->padre->persona->telefono_dos_completo)
+                                                    <div class="col-md-6">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Teléfono Secundario</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->padre->persona->telefono_dos_completo }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if ($datos->padre->persona->email)
+                                                    <div class="col-md-12">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Correo Electrónico</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->padre->persona->email }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Género</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->padre->persona->genero->genero ?? 'No especificado' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Fecha de nacimiento</span>
+                                                        <span class="detail-value">
+                                                            {{ \Carbon\Carbon::parse($datos->padre->persona?->fecha_nacimiento)->format('d/m/Y') ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Lugar de nacimiento</span>
+                                                        <span class="detail-value fw-bold">
+                                                            {{ $datos->padre->persona->localidad->municipio->estado->nombre_estado ?? 'N/A' }}
+                                                            /
+                                                            {{ $datos->padre->persona->localidad->municipio->nombre_municipio ?? 'N/A' }}
+                                                            /
+                                                            {{ $datos->padre->persona->localidad->nombre_localidad ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Direccion</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->padre->persona->direccion ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Ocupacion</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->padre->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">¿Convive con el
+                                                            estudiante?</span>
+                                                        <span class="detail-value">
+                                                            <span>
+                                                                @if ($datos->padre->convive_estudiante === 'Si')
+                                                                    <span class="badge-sm badge-yes">Sí</span>
+                                                                @else
+                                                                    <span class="badge-sm badge-no">No</span>
+                                                                @endif
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -382,32 +473,119 @@
                             @if ($datos->madre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100">
-                                        <div class="card-header bg-danger text-white">
+                                        <div class="card-header bg-madre text-white">
                                             <h6 class="mb-0">
                                                 <i class="fas fa-female me-2"></i>Madre
                                             </h6>
                                         </div>
                                         <div class="card-body">
-                                            <div class="detail-item mb-2">
-                                                <span class="detail-label">Nombre</span>
-                                                <span class="detail-value">
-                                                    {{ $datos->madre->persona->primer_nombre ?? '' }}
-                                                    {{ $datos->madre->persona->segundo_nombre ?? '' }}
-                                                    {{ $datos->madre->persona->primer_apellido ?? '' }}
-                                                    {{ $datos->madre->persona->segundo_apellido ?? '' }}
-                                                </span>
-                                            </div>
-                                            <div class="detail-item mb-2">
-                                                <span class="detail-label">Cédula</span>
-                                                <span class="detail-value">
-                                                    {{ $datos->madre->persona->tipoDocumento->nombre ?? '' }}-{{ $datos->madre->persona->numero_documento ?? '' }}
-                                                </span>
-                                            </div>
-                                            <div class="detail-item">
-                                                <span class="detail-label">Numero Telefonico</span>
-                                                <span class="detail-value">
-                                                    {{ $datos->madre->persona->telefono_completo }}
-                                                </span>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="detail-item mb-2">
+                                                        <span class="detail-label">Nombre</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->madre->persona->primer_nombre ?? '' }}
+                                                            {{ $datos->madre->persona->segundo_nombre ?? '' }}
+                                                            {{ $datos->madre->persona->primer_apellido ?? '' }}
+                                                            {{ $datos->madre->persona->segundo_apellido ?? '' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item mb-2">
+                                                        <span class="detail-label">Cédula</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->madre->persona->tipoDocumento->nombre ?? '' }}-{{ $datos->madre->persona->numero_documento ?? '' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Telefono</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->madre->persona->telefono_completo }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                @if ($datos->madre->persona->telefono_dos_completo)
+                                                    <div class="col-md-6">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Teléfono Secundario</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->madre->persona->telefono_dos_completo }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if ($datos->madre->persona->email)
+                                                    <div class="col-md-12">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Correo Electrónico</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->madre->persona->email }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Género</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->madre->persona->genero->genero ?? 'No especificado' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Fecha de nacimiento</span>
+                                                        <span class="detail-value">
+                                                            {{ \Carbon\Carbon::parse($datos->madre->persona?->fecha_nacimiento)->format('d/m/Y') ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Lugar de nacimiento</span>
+                                                        <span class="detail-value fw-bold">
+                                                            {{ $datos->madre->persona->localidad->municipio->estado->nombre_estado ?? 'N/A' }}
+                                                            /
+                                                            {{ $datos->madre->persona->localidad->municipio->nombre_municipio ?? 'N/A' }}
+                                                            /
+                                                            {{ $datos->madre->persona->localidad->nombre_localidad ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Direccion</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->madre->persona->direccion ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Ocupacion</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->madre->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">¿Convive con el
+                                                            estudiante?</span>
+                                                        <span class="detail-value">
+                                                            <span>
+                                                                @if ($datos->madre->convive_estudiante === 'Si')
+                                                                    <span class="badge-sm badge-yes">Sí</span>
+                                                                @else
+                                                                    <span class="badge-sm badge-no">No</span>
+                                                                @endif
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -419,15 +597,15 @@
                             @if ($datos->representanteLegal)
                                 <div class="col-md-12">
                                     <div class="card shadow-sm border-0">
-                                        <div class="card-header bg-warning text-dark">
+                                        <div class="card-header bg-representante-legal text-white">
                                             <h6 class="mb-0">
                                                 <i class="fas fa-user-tie me-2"></i>Representante Legal
                                             </h6>
                                         </div>
                                         <div class="card-body">
-                                            <div class="row g-3">
+                                            <div class="row">
                                                 <div class="col-md-4">
-                                                    <div class="detail-item">
+                                                    <div class="detail-item mb-2">
                                                         <span class="detail-label">Nombre</span>
                                                         <span class="detail-value">
                                                             {{ $datos->representanteLegal->representante->persona->primer_nombre ?? '' }}
@@ -437,36 +615,199 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2">
-                                                    <div class="detail-item">
+                                                <div class="col-md-4">
+                                                    <div class="detail-item mb-2">
                                                         <span class="detail-label">Cédula</span>
                                                         <span class="detail-value">
                                                             {{ $datos->representanteLegal->representante->persona->tipoDocumento->nombre ?? '' }}-{{ $datos->representanteLegal->representante->persona->numero_documento ?? '' }}
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <div class="detail-item">
-                                                        <span class="detail-label">Parentesco</span>
-                                                        <span class="detail-value">
-                                                            {{ $datos->representanteLegal->parentesco ?? 'N/A' }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="detail-item">
-                                                        <span class="detail-label">Numero telefonico</span>
+                                                        <span class="detail-label">Telefono</span>
                                                         <span class="detail-value">
                                                             {{ $datos->representanteLegal->representante->persona->telefono_completo }}
                                                         </span>
                                                     </div>
                                                 </div>
+                                                @if ($datos->representanteLegal->representante->persona->telefono_dos_completo)
+                                                    <div class="col-md-4">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Teléfono Secundario</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->representanteLegal->representante->persona->telefono_dos_completo }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="col-md-4">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Género</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->representanteLegal->representante->persona->genero->genero ?? 'No especificado' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Fecha de nacimiento</span>
+                                                        <span class="detail-value">
+                                                            {{ \Carbon\Carbon::parse($datos->representanteLegal->representante->persona?->fecha_nacimiento)->format('d/m/Y') ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Lugar de nacimiento</span>
+                                                        <span class="detail-value fw-bold">
+                                                            {{ $datos->representanteLegal->representante->persona->localidad->municipio->estado->nombre_estado ?? 'N/A' }}
+                                                            /
+                                                            {{ $datos->representanteLegal->representante->persona->localidad->municipio->nombre_municipio ?? 'N/A' }}
+                                                            /
+                                                            {{ $datos->representanteLegal->representante->persona->localidad->nombre_localidad ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Direccion</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->representanteLegal->representante->persona->direccion ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Ocupacion</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->representanteLegal->representante->ocupacion->nombre_ocupacion ?? 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">¿Convive con el
+                                                            estudiante?</span>
+                                                        <span class="detail-value">
+                                                            <span>
+                                                                @if ($datos->representanteLegal->representante->convive_estudiante === 'Si')
+                                                                    <span class="badge-sm badge-yes">Sí</span>
+                                                                @else
+                                                                    <span class="badge-sm badge-no">No</span>
+                                                                @endif
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="my-2" style="border-top: 2px dashed #e5e7eb;">
+                                            <div class="row">
+                                                <h6 class="mb-3">
+                                                    Información Legal
+                                                </h6>
+                                                <hr class="mb-0">
+                                                <div class="col-md-4">
+                                                    <div class="detail-item mb-2">
+                                                        <span class="detail-label">Banco</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->representanteLegal->banco->codigo_banco ?? ' ' }}-{{ $datos->representanteLegal->banco->nombre_banco ?? 'No especificado' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="detail-item mb-2">
+                                                        <span class="detail-label">Tipo de cuenta</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->representanteLegal->tipo_cuenta ?? 'No especificado' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="detail-item mb-2">
+                                                        <span class="detail-label">Parentesco</span>
+                                                        <span class="detail-value">
 
+                                                            @if ($datos->representanteLegal->parentesco === 'Padre')
+                                                                <span class="badge-sm bg-info">
+                                                                    {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
+                                                                </span>
+                                                            @elseif ($datos->representanteLegal->parentesco === 'Madre')
+                                                                <span class="badge-sm bg-danger">
+                                                                    {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
+                                                                </span>
+                                                            @else
+                                                                <span class="badge-sm bg-grey">
+                                                                    {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
+                                                                </span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                @if ($datos->representanteLegal->correo_representante)
+                                                    <div class="col-md-4">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Correo Electrónico</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->representanteLegal->correo_representante }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if ($datos->representanteLegal->pertenece_a_organizacion_representante === 1)
+                                                    <div class="col-md-4">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Organización</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->representanteLegal->cual_organizacion_representante }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if ($datos->representanteLegal->serial_carnet_patria_representante)
+                                                    <div class="col-md-4">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Serial Carnet Patria</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->representanteLegal->serial_carnet_patria_representante }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if ($datos->representanteLegal->codigo_carnet_patria_representante)
+                                                    <div class="col-md-4">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Código Carnet Patria</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->representanteLegal->codigo_carnet_patria_representante }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if ($datos->representanteLegal->codigo_carnet_patria_representante)
+                                                    <div class="col-md-4">
+                                                        <div class="detail-item">
+                                                            <span class="detail-label">Código Carnet Patria</span>
+                                                            <span class="detail-value">
+                                                                {{ $datos->representanteLegal->codigo_carnet_patria_representante }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="col-md-4">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Dirección</span>
+                                                        <span class="detail-value">
+                                                            {{ $datos->representanteLegal->direccion_representante }}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             @endif
+                            <!-- Si no hay representantes -->
                             @if (!$datos->padre && !$datos->madre && !$datos->representanteLegal)
                                 <div class="col-12">
                                     <div class="alert alert-warning text-center">
@@ -476,6 +817,7 @@
                                 </div>
                             @endif
                         </div>
+
                     </div>
                 </div>
 

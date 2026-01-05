@@ -44,7 +44,7 @@ class HomeController extends Controller
         $totalEstudiantes = Alumno::where('status', 'Activo')->count();
 
         // Año escolar activo
-        $anioEscolar = AnioEscolar::where('status', 'Activo')
+        $anioEscolar = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
             ->orWhere('status', 'Extendido')
             ->first();
         

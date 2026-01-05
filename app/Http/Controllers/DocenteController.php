@@ -71,8 +71,7 @@ class DocenteController extends Controller
     public function obtenerAnioEscolarActivo()
     {
         $anioEscolar = \App\Models\AnioEscolar::activos()
-            ->where('status', 'Activo')
-            ->orWhere('status', 'Extendido')
+            ->whereIn('status',[ 'Activo', 'Extendido'])
             ->first();
 
         if (!$anioEscolar) {

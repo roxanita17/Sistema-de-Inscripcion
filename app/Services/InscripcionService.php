@@ -23,7 +23,7 @@ class InscripcionService
     public function obtenerAnioEscolarActivo()
     {
         $anioEscolar = \App\Models\AnioEscolar::activos()
-            ->where('status', 'Activo')
+            ->whereIn('status', ['Activo', 'Extendido'])
             ->first();
 
         if (!$anioEscolar) {

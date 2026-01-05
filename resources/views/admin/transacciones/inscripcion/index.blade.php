@@ -4,8 +4,8 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-@stop
-
+    <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
+    @stop
 @section('title', 'Gestión de inscripciones')
 
 @section('content_header')

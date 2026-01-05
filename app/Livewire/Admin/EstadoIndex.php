@@ -34,7 +34,7 @@ class EstadoIndex extends Component
      */
     private function verificarAnioEscolar()
     {
-        $this->anioEscolarActivo = AnioEscolar::where('status', 'Activo')
+        $this->anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
             ->orWhere('status', 'Extendido')
             ->exists();
     }

@@ -25,7 +25,7 @@ class SectionDistributorService
         return DB::transaction(function () use ($grado) {
 
             // Verificar año escolar activo
-            $anioEscolarActivo = AnioEscolar::where('status', 'Activo')
+            $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
                 ->orWhere('status', 'Extendido')
                 ->first();
 

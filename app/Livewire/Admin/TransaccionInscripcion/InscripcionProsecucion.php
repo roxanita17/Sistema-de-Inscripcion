@@ -135,7 +135,7 @@ class InscripcionProsecucion extends Component
      */
     public function cargarDatosIniciales()
     {
-        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        $anioActual = AnioEscolar::whereIn('status',[ 'Activo', 'Extendido'])->first();
 
         if (!$anioActual) {
             $this->alumnos = collect();
@@ -278,7 +278,7 @@ class InscripcionProsecucion extends Component
         // CARGAR DATOS DEL NUEVO ALUMNO
         $this->cargarGradoDesdeInscripcionAnterior();
 
-        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
         $this->inscripcionAnterior = $this->alumnoSeleccionado
             ->inscripcionAnterior($anioActual->id);
 
@@ -292,7 +292,7 @@ class InscripcionProsecucion extends Component
             return collect();
         }
 
-        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
         if (!$anioActual) {
             return collect();
         }
@@ -316,7 +316,7 @@ class InscripcionProsecucion extends Component
     {
         if (!$this->alumnoSeleccionado) return;
 
-        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
 
         if (!$anioActual) return;
 
@@ -629,7 +629,7 @@ class InscripcionProsecucion extends Component
         $this->validate();
 
         // Obtener año escolar activo (ANTES de usarlo)
-        $anioActual = AnioEscolar::where('status', 'Activo')->first();
+        $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
 
         if (!$anioActual) {
             $this->addError('general', 'No hay un año escolar activo.');
@@ -653,7 +653,7 @@ class InscripcionProsecucion extends Component
         DB::beginTransaction();
 
         try {
-            $anioActual = AnioEscolar::where('status', 'Activo')->firstOrFail();
+            $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->firstOrFail();
 
             $inscripcionAnterior = $this->alumnoSeleccionado
                 ->inscripcionAnterior($anioActual->id);

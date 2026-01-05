@@ -66,7 +66,7 @@
                         <option value="">Seleccione un estudiante</option>
                         @foreach ($alumnos as $alumno)
                             @php
-                                $anioActual = \App\Models\AnioEscolar::where('status', 'Activo')->first();
+                                $anioActual = \App\Models\AnioEscolar::whereIn('status',[ 'Activo', 'Extendido'])->first();
                                 $inscripcionAnterior = $alumno->ultimaInscripcionAntesDe($anioActual->id);
                                 $gradoAnterior = $inscripcionAnterior?->grado?->numero_grado;
                             @endphp
