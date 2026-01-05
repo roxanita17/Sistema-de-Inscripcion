@@ -262,50 +262,50 @@ class Inscripcion extends Model
      */
     public function obtenerDatosCompletos()
     {
-        // Cargar todas las relaciones necesarias
-        $this->load([
-            'alumno.persona',
-            'alumno.ordenNacimiento',
-            //'alumno.discapacidad',
-            //'alumno.etniaIndigena',
-            'alumno.lateralidad',
-            'grado',
-            'seccion',
-            'padre.persona',
-            'madre.persona',
-            'representanteLegal.representante.persona',
-            'representanteLegal.banco',
-            /*'institucionProcedencia',
-            'expresionLiteraria',
-            'seccionAsignada'*/
-        ]);
+        $alumno = $this->alumno;
 
-        // Construir el array con todos los datos
-        $datos = [
+        return [
             'inscripcion' => $this->toArray(),
-            'alumno' => $this->alumno ? $this->alumno->toArray() : null,
-            'persona_alumno' => $this->alumno && $this->alumno->persona ? $this->alumno->persona->toArray() : null,
-            'grado' => $this->grado ? $this->grado->toArray() : null,
-            'seccion' => $this->seccion ? $this->seccion->toArray() : null,
-            'padre' => $this->padre ? $this->padre->toArray() : null,
-            'persona_padre' => $this->padre && $this->padre->persona ? $this->padre->persona->toArray() : null,
-            'madre' => $this->madre ? $this->madre->toArray() : null,
-            'persona_madre' => $this->madre && $this->madre->persona ? $this->madre->persona->toArray() : null,
-            'representante_legal' => $this->representanteLegal ? $this->representanteLegal->toArray() : null,
-            'persona_representante_legal' => $this->representanteLegal && $this->representanteLegal->persona ? $this->representanteLegal->persona->toArray() : null,
-            'institucion_procedencia' => $this->institucionProcedencia ? $this->institucionProcedencia->toArray() : null,
-            'expresion_literaria' => $this->expresionLiteraria ? $this->expresionLiteraria->toArray() : null,
-            'seccion_asignada' => $this->seccionAsignada ? $this->seccionAsignada->toArray() : null,
+            'nuevo_ingreso' => $this->nuevoIngreso?->toArray(),
+            'persona_alumno' => $alumno?->persona?->toArray(),
+            'alumno' => $alumno?->toArray(),
             'datos_adicionales' => [
-                'orden_nacimiento' => $this->alumno && $this->alumno->ordenNacimiento ? $this->alumno->ordenNacimiento->toArray() : null,
-                'discapacidad' => $this->alumno && $this->alumno->discapacidad ? $this->alumno->discapacidad->toArray() : null,
-                'etnia_indigena' => $this->alumno && $this->alumno->etniaIndigena ? $this->alumno->etniaIndigena->toArray() : null,
-                'lateralidad' => $this->alumno && $this->alumno->lateralidad ? $this->alumno->lateralidad->toArray() : null,
-            ]
-        ];
+                'lateralidad' => $alumno?->lateralidad?->toArray(),
 
-        return $datos;
+                'orden_nacimiento' => $alumno?->ordenNacimiento?->toArray(),
+
+                'discapacidades' => $this->alumno
+                    ?->discapacidades
+                    ?->map(fn($d) => [
+                        'id' => $d->id,
+                        'nombre_discapacidad' => $d->nombre_discapacidad,
+                    ])
+                    ->toArray() ?? [],
+
+                'etnia_indigena' => $alumno?->etniaIndigena?->toArray(),
+            ],
+
+            'persona_madre' => $this->madre?->persona?->toArray(),
+            'madre' => $this->madre?->toArray(),
+
+            'persona_padre' => $this->padre?->persona?->toArray(),
+            'padre' => $this->padre?->toArray(),
+
+            'representante_legal' => $this->representanteLegal?->load([
+                'representante.persona',
+                'banco'
+            ])?->toArray(),
+
+            'institucion_procedencia' => $this->nuevoIngreso?->institucionProcedencia?->toArray(),
+
+            'expresion_literaria' => $this->nuevoIngreso?->expresionLiteraria?->toArray(),
+
+            'grado' => $this->grado?->toArray(),
+            'seccion' => $this->seccionAsignada?->toArray(),
+
+        ];
     }
+
 
     public static function inactivar($id)
     {
