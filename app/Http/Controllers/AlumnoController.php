@@ -160,15 +160,26 @@ class AlumnoController extends Controller
             ->with([
                 'persona.tipoDocumento',
                 'persona.genero',
-
-
+                'discapacidades',
                 'ordenNacimiento',
                 'lateralidad',
                 'etniaIndigena'
             ])
             ->firstOrFail();
 
+        // Cargar nombres de tallas directamente
+        if ($alumno->talla_camisa_id) {
+            $tallaCamisa = \App\Models\Talla::find($alumno->talla_camisa_id);
+            $alumno->talla_camisa_nombre = $tallaCamisa ? $tallaCamisa->nombre : null;
+        }
+
+        if ($alumno->talla_pantalon_id) {
+            $tallaPantalon = \App\Models\Talla::find($alumno->talla_pantalon_id);
+            $alumno->talla_pantalon_nombre = $tallaPantalon ? $tallaPantalon->nombre : null;
+        }
+
         $pdf = PDF::loadView('admin.alumnos.reportes.general_est', compact('alumno'));
+        $pdf->setOption('isPhpEnabled', true);
         return $pdf->stream('alumno_' . $alumno->persona->numero_documento . '.pdf');
     }
 
@@ -249,7 +260,9 @@ class AlumnoController extends Controller
             'alumnos' => $alumnos,
             'filtros' => $filtros
         ]);
-
+        
+        $pdf->setOption('isPhpEnabled', true);
+        
         return $pdf->stream('reporte_alumnos.pdf');
     }
 }

@@ -19,8 +19,8 @@
         }
         
         @page {
-            margin: 1cm;
-            size: landscape;
+            margin: 1cm 1cm 2.5cm 1cm;
+            size: portrait;
         }
         
         body {
@@ -329,11 +329,17 @@
             <table class="form-table">
                 <tr>
                     <td>Discapacidad</td>
-                    <td>{{ $alumno->discapacidad ? 'Sí' : 'No' }}</td>
+                    <td>
+                        @if ($alumno->discapacidades && $alumno->discapacidades->count() > 0)
+                            {{ $alumno->discapacidades->pluck('nombre_discapacidad')->implode(', ') }}
+                        @else
+                            Ninguna registrada
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>Etnia</td>
-                    <td>{{ $alumno->etnia->etnia ?? 'N/A' }}</td>
+                    <td>{{ $alumno->etniaIndigena->nombre ?? 'No pertenece a ninguna etnia indígena' }}</td>
                 </tr>
                 <tr>
                     <td>Orden de nacimiento</td>
@@ -353,11 +359,11 @@
                 </tr>
                 <tr>
                     <td>Talla camisa</td>
-                    <td>{{ $alumno->talla_camisa ?? 'N/A' }}</td>
+                    <td>{{ $alumno->talla_camisa_nombre ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <td>Talla pantalón</td>
-                    <td>{{ $alumno->talla_pantalon ?? 'N/A' }}</td>
+                    <td>{{ $alumno->talla_pantalon_nombre ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <td>Talla de zapatos</td>
@@ -366,8 +372,11 @@
             </table>
         </div>
     </div>  
-        <div class="footer">
-            <p>Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}</p>
-        </div>  
+        <script type="text/php">
+            if (isset($pdf)) {
+                $pdf->page_text(40, 800, "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}", null, 8, array(90, 90, 90));
+                $pdf->page_text(400, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10, array(0, 0, 0));
+            }
+        </script>  
 </body>
 </html>
