@@ -681,8 +681,6 @@
                         </div>
                     </div>
                     <div class="card-body-modern" style="padding: 2rem;">
-                        
-
                         <div class="row">
                             @if ($esPrimerGrado)
                                 <div class="col-md-3">
@@ -783,7 +781,6 @@
         </div>
     </div>
 
-    {{-- SECCIÓN: DISCAPACIDADES --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -924,19 +921,19 @@
                 </div>
 
                 @foreach ([
-        'partida_nacimiento' => 'Partida de Nacimiento',
-        'boletin_6to_grado' => 'Boletín de 6to Grado',
-        'notas_certificadas' => 'Notas Certificadas',
-        'liberacion_cupo' => 'Liberación de Cupo',
-        'certificado_calificaciones' => 'Certificado de Calificaciones',
-        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
-        'copia_cedula_representante' => 'Copia de Cédula del Representante',
-        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
-        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
-        'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
-        'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
-        'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
-    ] as $documento => $etiqueta)
+                        'partida_nacimiento' => 'Partida de Nacimiento',
+                        'boletin_6to_grado' => 'Boletín de 6to Grado',
+                        'notas_certificadas' => 'Notas Certificadas',
+                        'liberacion_cupo' => 'Liberación de Cupo',
+                        'certificado_calificaciones' => 'Certificado de Calificaciones',
+                        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
+                        'copia_cedula_representante' => 'Copia de Cédula del Representante',
+                        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
+                        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
+                        'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
+                        'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
+                        'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
+                    ] as $documento => $etiqueta)
                     @php
                         if ($esPrimerGrado && in_array($documento, ['notas_certificadas', 'liberacion_cupo'])) {
                             continue;
@@ -1031,11 +1028,11 @@
                         <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))
                         @disabled($gradoSinCupos)>
                             <i class="fas fa-save"></i>
-                            Guardar Inscripción
+                            Guardar
                         </span>
                         <span wire:loading wire:target="finalizar">
                             <i class="fas fa-spinner fa-spin"></i>
-                            Procesando...
+                            Guardando...
                         </span>
                     </button>
                 </div>
@@ -1047,41 +1044,33 @@
 @push('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar selectpickers
             $('.selectpicker').selectpicker();
 
-            // Sincronizar alumno con Livewire
             $('#alumno_select').on('changed.bs.select', function() {
                 @this.set('alumnoId', $(this).val());
             });
 
-            // Sincronizar padre con Livewire
             $('#padre_select').on('changed.bs.select', function() {
                 @this.set('padreId', $(this).val());
             });
 
-            // Sincronizar madre con Livewire
             $('#madre_select').on('changed.bs.select', function() {
                 @this.set('madreId', $(this).val());
             });
 
-            // Sincronizar representante legal con Livewire
             $('#representante_legal_select').on('changed.bs.select', function() {
                 @this.set('representanteLegalId', $(this).val());
             });
         });
 
-        // Refrescar selectpickers cuando Livewire actualiza
         document.addEventListener('livewire:updated', function() {
             $('.selectpicker').selectpicker('refresh');
         });
 
-        // Resetear selects cuando se limpia el formulario
         Livewire.on('resetSelects', () => {
             $('.selectpicker').val('').selectpicker('refresh');
         });
 
-        //Para mostrar los datos seleccionados de padre
         document.addEventListener('livewire:init', () => {
             $('#padre_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
                 let value = $(this).val();
@@ -1091,7 +1080,6 @@
             });
         });
 
-        //Para mostrar los datos seleccionados de madre
         document.addEventListener('livewire:init', () => {
             $('#madre_select').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
                 let value = $(this).val();
@@ -1101,7 +1089,6 @@
             });
         });
 
-        //Para mostrar los datos seleccionados de representante legal
         document.addEventListener('livewire:init', () => {
             $('#representante_legal_select').on('changed.bs.select', function(e, clickedIndex, isSelected,
                 previousValue) {

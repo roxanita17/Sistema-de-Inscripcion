@@ -66,7 +66,7 @@
                         <option value="">Seleccione un estudiante</option>
                         @foreach ($alumnos as $alumno)
                             @php
-                                $anioActual = \App\Models\AnioEscolar::where('status', 'Activo')->first();
+                                $anioActual = \App\Models\AnioEscolar::whereIn('status',[ 'Activo', 'Extendido'])->first();
                                 $inscripcionAnterior = $alumno->ultimaInscripcionAntesDe($anioActual->id);
                                 $gradoAnterior = $inscripcionAnterior?->grado?->numero_grado;
                             @endphp
@@ -398,6 +398,7 @@
                             </div>
                         </div>
                     @endif
+
                     <div class="alert alert-info mt-3">
                         <div class="d-flex align-items-center gap-2">
                             <i class="fas fa-info-circle fa-2x"></i>
@@ -407,7 +408,7 @@
                             </div>
                             <div>
                                 <strong>Sección:</strong>
-                                {{ $inscripcionAnterior->seccion->nombre_seccion  ?? 'N/A' }}
+                                {{ $inscripcionAnterior->seccion->nombre ?? 'N/A' }}
                             </div>
                         </div>
                     </div>
@@ -448,10 +449,20 @@
                                     El estudiante tiene areas de formacion reprobadas de años anteriores. Debe
                                     aprobarlas todas;
                                     de lo contrario, deberá repetir el año completo.
-                                    <b>MARQUE las areas de formacion que el estudiante APROBO</b>
+                                    <b>MARQUE</b> las áreas de formación que el estudiante <b>APROBÓ</b>
                                 </small>
                             </div>
                             <div class="row">
+                                <div class="col-12 mb-4">
+                                    <div class="checkbox-item-modern">
+                                        <input type="checkbox" id="select_all_arrastradas"
+                                            wire:model.live="seleccionarTodasArrastradas" class="checkbox-modern">
+                                        <label for="select_all_arrastradas" class="checkbox-label-modern">
+                                            Seleccionar todas como <span class="text-success">APROBADAS</span>
+                                        </label>
+                                    </div>
+                                </div>
+
                                 @foreach ($materiasArrastradas as $materia)
                                     <div class="col-md-6 mb-3">
                                         <div class="checkbox-item-modern border-warning bg-warning-light">
@@ -493,11 +504,19 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    <b>MARQUE</b> las materias del año cursado que quedaron <b>PENDIENTES</b> por
-                                    aprobar.
+                                    <b>MARQUE</b> las materias que el estudiante <b>APROBÓ</b>
                                 </small>
                             </div>
                             <div class="row">
+                                <div class="col-12 mb-4">
+                                    <div class="checkbox-item-modern">
+                                        <input type="checkbox" id="select_all_actuales"
+                                            wire:model.live="seleccionarTodasActuales" class="checkbox-modern">
+                                        <label for="select_all_actuales" class="checkbox-label-modern">
+                                            Seleccionar todas como <span class="text-success">APROBADAS</span>
+                                        </label>
+                                    </div>
+                                </div>
                                 @foreach ($materiasActuales as $materia)
                                     <div class="col-md-6 mb-3">
                                         <div class="checkbox-item-modern">
@@ -667,11 +686,11 @@
                         wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="finalizar">
                             <i class="fas fa-save"></i>
-                            Guardar Inscripción
+                            Guardar
                         </span>
                         <span wire:loading wire:target="finalizar">
                             <i class="fas fa-spinner fa-spin"></i>
-                            Procesando...
+                            Guardando...
                         </span>
                     </button>
                 </div>

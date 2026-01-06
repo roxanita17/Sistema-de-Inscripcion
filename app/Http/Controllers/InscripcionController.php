@@ -18,9 +18,7 @@ use App\Models\Seccion;
 
 class InscripcionController extends Controller
 {
-    /**
-     * Verifica si hay un año escolar activo
-     */
+
     private function verificarAnioEscolar()
     {
         return \App\Models\AnioEscolar::where('status', 'Activo')
@@ -30,12 +28,10 @@ class InscripcionController extends Controller
 
     public function index(Request $request)
     {
-        // Obtener el año escolar activo
         $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->first();
 
-        // Obtener todos los grados
         $grados = Grado::where('status', true)
             ->orderBy('numero_grado', 'asc')
             ->get();
@@ -63,7 +59,6 @@ class InscripcionController extends Controller
                     : 0
             ];
 
-            // Obtener entradas de percentil para estudiantes asignados a secciones
             $entradasPercentil = EntradasPercentil::with([
                 'inscripcion.alumno.persona.tipoDocumento',
                 'seccion'
@@ -77,7 +72,6 @@ class InscripcionController extends Controller
                 ->orderBy('seccion_id')
                 ->get();
 
-            // Obtener resumen de secciones
             $seccionesResumen = EntradasPercentil::select('seccion_id')
                 ->with('seccion')
                 ->whereHas('inscripcion', function ($q) use ($grado1, $anioEscolarActivo) {
@@ -91,13 +85,11 @@ class InscripcionController extends Controller
                 ->get();
         }
 
-        /* Filtros */
         $buscar = $request->get('buscar');
         $gradoId = $request->get('grado_id');
         $seccionId = $request->get('seccion_id');
         $tipoInscripcion = $request->get('tipo_inscripcion');
 
-        // Cargar secciones según el grado seleccionado
         $secciones = collect();
         if ($gradoId) {
             $secciones = Seccion::where('grado_id', $gradoId)
@@ -106,7 +98,6 @@ class InscripcionController extends Controller
                 ->get();
         }
 
-        // Query de inscripciones
         $inscripciones = Inscripcion::with([
             'alumno.persona',
             'alumno.discapacidades',
@@ -206,8 +197,6 @@ class InscripcionController extends Controller
     public function edit($id)
     {
         $inscripcion = Inscripcion::with(['nuevoIngreso', 'alumno'])->findOrFail($id);
-
-        // Verificar que sea nuevo ingreso
         if (!$inscripcion->nuevoIngreso) {
             return redirect()->route('admin.transacciones.inscripcion.index')
                 ->with('error', 'Esta inscripción no es de nuevo ingreso.');
@@ -215,7 +204,6 @@ class InscripcionController extends Controller
 
         return view('admin.transacciones.inscripcion.edit', compact('inscripcion'));
     }
-
 
     public function destroy($id)
     {
@@ -234,17 +222,25 @@ class InscripcionController extends Controller
         $inscripcion = Inscripcion::with([
             'alumno.persona',
             'alumno.ordenNacimiento',
-            //'alumno.discapacidades',
-            //'alumno.etniaIndigena',
             'alumno.lateralidad',
+            'alumno.discapacidades',
+            'alumno.etniaIndigena',
+
             'grado',
+            'seccionAsignada',
+
             'padre.persona',
             'madre.persona',
+
             'representanteLegal.representante.persona',
-            //'institucionProcedencia',
-            //'expresionLiteraria',
-            //'seccionAsignada'
+            'representanteLegal.banco',
+
+            'nuevoIngreso.institucionProcedencia',
+            'nuevoIngreso.expresionLiteraria',
+            
+
         ])->findOrFail($id);
+
 
         $datosCompletos = $inscripcion->obtenerDatosCompletos();
 
@@ -254,6 +250,10 @@ class InscripcionController extends Controller
             ->first();
 
         $pdf = PDF::loadview('admin.transacciones.inscripcion.reporte.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
+        
+        // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
+        $pdf->setOption('isPhpEnabled', true);
+        
         return $pdf->stream('ficha_inscripcion.pdf');
     }
 }

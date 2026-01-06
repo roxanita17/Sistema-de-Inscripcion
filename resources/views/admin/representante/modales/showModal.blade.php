@@ -6,9 +6,6 @@
 
             <!-- Cabecera del modal -->
             <div class="modal-header-view">
-                <div class="modal-icon-view">
-                    <i class="fas fa-user-circle"></i>
-                </div>
                 <div class="d-flex align-items-center justify-content-center gap-2 w-100">
                     <h5 class="modal-title-view text-white mb-0" id="modalVerDetalleRegistroLabel">
                         <i class="fas fa-user-tie me-2"></i>

@@ -4,10 +4,10 @@
             <div class="header-right" style="margin-left: auto;">
                 @if (!$soloEdicion)
                     <button type="button" wire:click="habilitarEdicion" class="btn-primary-modern">
-                    <i class="fas fa-edit"></i> Editar Datos
-                </button>
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
                 @endif
-                
+
             </div>
         </div>
         {{-- Modo Vista --}}
@@ -201,6 +201,13 @@
 
             {{-- Sección de Discapacidades --}}
             <div class="card-header-modern">
+                {{-- Alerta temporal de éxito --}}
+                @if (session()->has('success_temp'))
+                    <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle"></i> {{ session('success_temp') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
                         <i class="fas fa-wheelchair"></i>
@@ -260,7 +267,7 @@
     @endif
     @if ($enModoEdicion)
 
-        
+
         {{-- Modo Edición --}}
         <form wire:submit.prevent="guardar">
             <div class="card-header-modern">
@@ -477,16 +484,13 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            Altura (m)
+                            Estatura (m)
                             <span class="required-badge">*</span>
                         </label>
-                        <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
+                        <input wire:model.live="talla_estudiante" wire:blur="validarEstatura"
                             placeholder="Ej: 1.66 o 166"
                             class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
-                            placeholder="1.65"
-                            inputmode="numeric"
-                            pattern="^[0-9]*$"
-                            oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                            inputmode="decimal" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                         @error('talla_estudiante')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -632,8 +636,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Sección de Discapacidades en modo edición --}}
             <div class="card-modern mt-4">
                 <div class="card-header-modern">
                     <div class="header-left">
@@ -646,8 +648,13 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="card-body-modern" style="padding: 2rem;">
+                    @if (session()->has('success_temp'))
+                        <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> {{ session('success_temp') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
                     @if (!empty($discapacidadesAlumno))
                         <div class="table-wrapper">
                             <table class="table-modern">
@@ -681,8 +688,8 @@
                                             <td style="text-align: center; vertical-align: middle;">
                                                 <div style="display: flex; justify-content: center;">
                                                     <button type="button"
-                                                        wire:click="eliminarDiscapacidad({{ $loop->index }})"
-                                                        class="action-btn btn-delete" title="Eliminar">
+                                                        wire:click="eliminarDiscapacidad({{ $disc['id'] }})"
+                                                        class="action-btn btn-delete">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </div>
@@ -704,9 +711,9 @@
                     <div class="row mt-4">
                         <div class="col-md-8">
                             <label class="form-label-modern">
-                            ¿Presenta alguna discapacidad?
+                                ¿Presenta alguna discapacidad?
                             </label>
-                            <select wire:model.defer="discapacidadSeleccionada"
+                            <select wire:model.live="discapacidadSeleccionada"
                                 class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
                                 <option value="">Seleccione una discapacidad</option>
                                 @foreach ($discapacidades as $discapacidad)

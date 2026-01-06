@@ -23,7 +23,6 @@ class AlumnoEdit extends Component
     public $persona_id;
     public $alumnoSeleccionado;
 
-    // Datos personales
     public $tipo_documento_id;
     public $numero_documento;
     public $primer_nombre;
@@ -36,30 +35,25 @@ class AlumnoEdit extends Component
     public $edad = 0;
     public $meses = 0;
 
-    // UI dinámico para documento
     public $documento_maxlength = 8;
     public $documento_pattern = '[0-9]+';
     public $documento_placeholder = '12345678';
     public $documento_inputmode = 'numeric';
 
-    // Datos físicos
     public $talla_estudiante = '';
     public $peso_estudiante;
     public $talla_camisa_id;
     public $talla_zapato;
     public $talla_pantalon_id;
 
-    // Lugar de nacimiento
     public $estado_id;
     public $municipio_id;
     public $localidad_id;
 
-    // Otros
     public $lateralidad_id;
     public $orden_nacimiento_id;
     public $etnia_indigena_id;
 
-    // Listas para selects
     public $tipos_documentos = [];
     public $generos = [];
     public $estados = [];
@@ -70,7 +64,6 @@ class AlumnoEdit extends Component
     public $orden_nacimientos = [];
     public $etnia_indigenas = [];
 
-    // Para mostrar discapacidades
     public $discapacidadesAlumno = [];
     public $discapacidadesAgregadas = [];
     public $discapacidadSeleccionada;
@@ -79,20 +72,15 @@ class AlumnoEdit extends Component
     public $enModoEdicion = false;
     public bool $soloEdicion = false;
 
-    /* ============================================================
-       =====================   VALIDACIÓN   ========================
-       ============================================================ */
     protected function rules()
     {
         return [
-            // Persona
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => [
                 'required',
                 'unique:personas,numero_documento,' . $this->persona_id,
                 function ($attribute, $value, $fail) {
                     switch ((int) $this->tipo_documento_id) {
-                        // V - Venezolano (ID 1)
                         case 1:
                             if (!ctype_digit($value)) {
                                 $fail('La cédula debe contener solo números.');
@@ -102,7 +90,6 @@ class AlumnoEdit extends Component
                             }
                             break;
 
-                        // E - Extranjero (ID 2)
                         case 2:
                             if (!ctype_alnum($value)) {
                                 $fail('La cédula de extranjero debe ser alfanumérica.');
@@ -112,7 +99,6 @@ class AlumnoEdit extends Component
                             }
                             break;
 
-                        // CE - Cédula Especial (ID 3)
                         case 3:
                             if (!ctype_digit($value)) {
                                 $fail('La cédula especial debe contener solo números.');
@@ -132,36 +118,42 @@ class AlumnoEdit extends Component
             'segundo_apellido' => 'nullable|string|max:50',
             'genero_id' => 'required|exists:generos,id',
 
-            // Fecha nacimiento y edad
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                'before:today',
                 function ($attribute, $value, $fail) {
-                    $edad = Carbon::parse($value)->age;
+                    $fecha = Carbon::parse($value);
+                    $hoy = Carbon::today();
+
+                    if ($fecha->greaterThan($hoy)) {
+                        $fail('La fecha de nacimiento no puede ser futura.');
+                        return;
+                    }
+                    $edad = $fecha->age;
                     if ($edad < 10 || $edad > 18) {
                         $fail('La edad debe estar entre 10 y 18 años.');
                     }
                 }
             ],
 
-            // Datos físicos
             'talla_estudiante' => [
                 'required',
-                'numeric',
+                'regex:/^\d+([.,]\d+)?$/',
                 function ($attribute, $value, $fail) {
+
+                    // Normalizar coma a punto
                     $valor = (float) str_replace(',', '.', $value);
 
                     if ($valor <= 0) {
                         $fail('La estatura no es válida.');
                     }
 
-                    // Si parece cm
+                    // CM
                     if ($valor > 3 && ($valor < 50 || $valor > 250)) {
                         $fail('La estatura en cm debe estar entre 50 y 250.');
                     }
 
-                    // Si parece metros
+                    // METROS
                     if ($valor <= 3 && ($valor < 0.5 || $valor > 2.5)) {
                         $fail('La estatura en metros debe estar entre 0.50 y 2.50.');
                     }
@@ -172,12 +164,13 @@ class AlumnoEdit extends Component
             'talla_pantalon_id' => 'required|exists:tallas,id',
             'talla_zapato' => 'required|integer',
 
-            // Residencia
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
             'localidad_id' => 'required|exists:localidads,id',
 
-            // Otros
+            'lateralidad_id' => 'required|exists:lateralidads,id',
+            'orden_nacimiento_id' => 'required|exists:orden_nacimientos,id',
+            'etnia_indigena_id' => 'nullable|exists:etnia_indigenas,id',
             'lateralidad_id' => 'required|exists:lateralidads,id',
             'orden_nacimiento_id' => 'required|exists:orden_nacimientos,id',
             'etnia_indigena_id' => 'nullable|exists:etnia_indigenas,id',
@@ -185,47 +178,48 @@ class AlumnoEdit extends Component
     }
 
     protected $messages = [
-        'tipo_documento_id.required' => 'Debe seleccionar tipo de documento',
-        'numero_documento.required' => 'Debe ingresar la cédula',
+        'tipo_documento_id.required' => 'Este campo es requerido',
+        'numero_documento.required' => 'Este campo es requerido',
         'numero_documento.unique' => 'Esta cédula ya está registrada en el sistema',
-        'primer_nombre.required' => 'Debe ingresar el primer nombre',
+        'primer_nombre.required' => 'Este campo es requerido',
         'primer_nombre.max' => 'El nombre no puede exceder 50 caracteres',
-        'primer_apellido.required' => 'Debe ingresar el primer apellido',
+        'primer_apellido.required' => 'Este campo es requerido',
         'primer_apellido.max' => 'El apellido no puede exceder 50 caracteres',
-        'genero_id.required' => 'Debe seleccionar un género',
-        'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
-        'fecha_nacimiento.before' => 'La fecha debe ser anterior a hoy',
-        'talla_estudiante.required' => 'La estatura es requerida',
-        'talla_estudiante.numeric' => 'La estatura debe ser un número',
-        'talla_estudiante.between' => 'La estatura debe estar entre 0.50 y 3.00 metros',
-        'peso_estudiante.required' => 'El peso es requerido',
-        'peso_estudiante.numeric' => 'El peso debe ser un número',
-        'peso_estudiante.between' => 'El peso debe estar entre 2 y 300 kg',
-        'talla_camisa_id.required' => 'Debe seleccionar una talla de camisa',
-        'talla_zapato.required' => 'Debe seleccionar una talla de zapato',
+        'genero_id.required' => 'Este campo es requerido',
+        'fecha_nacimiento.required' => 'Este campo es requerido',
+        'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
+        'fecha_nacimiento.before:today' => 'La edad debe estar entre los 10 y 18 años',
+        'talla_estudiante.required' => 'Este campo es requerido',
+        'talla_estudiante.regex' => 'Ingrese una estatura válida (ej: 1.65 o 165)',
+        'talla_estudiante.between' => 'Este campo debe estar entre 0.50 y 3.00',
+        'peso_estudiante.required' => 'Este campo es requerido',
+        'peso_estudiante.numeric' => 'Este campo debe ser un número',
+        'peso_estudiante.between' => 'Este campo debe estar entre 2 y 300',
+        'talla_camisa_id.required' => 'Este campo es requerido',
+        'talla_zapato.required' => 'Este campo es requerido',
         'talla_zapato.integer' => 'La talla debe ser un número entero',
-        'talla_pantalon_id.required' => 'Debe seleccionar una talla de pantalón',
-        'estado_id.required' => 'Debe seleccionar un estado',
-        'municipio_id.required' => 'Debe seleccionar un municipio',
-        'localidad_id.required' => 'Debe seleccionar una localidad',
-        'lateralidad_id.required' => 'Debe seleccionar la lateralidad',
-        'orden_nacimiento_id.required' => 'Debe seleccionar el orden de nacimiento',
+        'talla_pantalon_id.required' => 'Este campo es requerido',
+        'estado_id.required' => 'Este campo es requerido',
+        'municipio_id.required' => 'Este campo es requerido',
+        'localidad_id.required' => 'Este campo es requerido',
+        'lateralidad_id.required' => 'Este campo es requerido',
+        'orden_nacimiento_id.required' => 'Este campo es requerido',
     ];
 
-    // Validación en tiempo real
     public function updated($propertyName)
     {
+        if (!$this->enModoEdicion) {
+            return;
+        }
         $this->validateOnly($propertyName);
     }
 
     public function updatedTipoDocumentoId($value)
     {
-        // Limpiar la cédula al cambiar tipo
         $this->numero_documento = null;
         $this->resetErrorBag('numero_documento');
 
         switch ((int) $value) {
-            // V
             case 1:
                 $this->documento_maxlength = 8;
                 $this->documento_pattern = '[0-9]+';
@@ -233,7 +227,6 @@ class AlumnoEdit extends Component
                 $this->documento_inputmode = 'numeric';
                 break;
 
-            // E
             case 2:
                 $this->documento_maxlength = 12;
                 $this->documento_pattern = '[A-Za-z0-9]+';
@@ -241,7 +234,6 @@ class AlumnoEdit extends Component
                 $this->documento_inputmode = 'text';
                 break;
 
-            // CE
             case 3:
                 $this->documento_maxlength = 12;
                 $this->documento_pattern = '[0-9]+';
@@ -287,7 +279,6 @@ class AlumnoEdit extends Component
 
     public function formatearEstatura()
     {
-        // Quita todo menos números
         $valor = preg_replace('/\D/', '', $this->talla_estudiante);
 
         if (strlen($valor) >= 2) {
@@ -299,7 +290,6 @@ class AlumnoEdit extends Component
     {
         $this->validateOnly('talla_estudiante');
     }
-
 
     public function mount($alumnoId,  $soloEdicion = false)
     {
@@ -314,7 +304,6 @@ class AlumnoEdit extends Component
         $this->cargarDiscapacidades();
     }
 
-
     private function cargarDatosIniciales()
     {
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
@@ -325,7 +314,6 @@ class AlumnoEdit extends Component
         $this->orden_nacimientos = OrdenNacimiento::where('status', true)->get();
         $this->etnia_indigenas = EtniaIndigena::where('status', true)->get();
 
-        // Cargar discapacidades disponibles
         $this->discapacidades = Discapacidad::where('status', true)
             ->orderBy('nombre_discapacidad', 'asc')
             ->get();
@@ -336,7 +324,6 @@ class AlumnoEdit extends Component
         $alumno = Alumno::with('persona.localidad.municipio.estado')->findOrFail($this->alumnoId);
         $persona = $alumno->persona;
 
-        // Datos de persona
         $this->persona_id = $persona->id;
         $this->tipo_documento_id = $persona->tipo_documento_id;
         $this->numero_documento = $persona->numero_documento;
@@ -348,14 +335,12 @@ class AlumnoEdit extends Component
         $this->genero_id = $persona->genero_id;
         $this->fecha_nacimiento = $persona->fecha_nacimiento->format('Y-m-d');
 
-        // Datos físicos
         $this->talla_estudiante = $alumno->estatura;
         $this->peso_estudiante = $alumno->peso;
         $this->talla_camisa_id = $alumno->talla_camisa_id;
         $this->talla_zapato = $alumno->talla_zapato;
         $this->talla_pantalon_id = $alumno->talla_pantalon_id;
 
-        // Ubicación (validar que exista localidad)
         if ($persona->localidad) {
             $this->localidad_id = $persona->localidad_id;
 
@@ -363,18 +348,15 @@ class AlumnoEdit extends Component
                 $this->municipio_id = $persona->localidad->municipio_id;
                 $this->estado_id = $persona->localidad->municipio->estado_id;
 
-                // Cargar municipios y localidades
                 $this->cargarMunicipios($this->estado_id);
                 $this->cargarLocalidades($this->municipio_id);
             }
         }
 
-        // Otros
         $this->lateralidad_id = $alumno->lateralidad_id;
         $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
         $this->etnia_indigena_id = $alumno->etnia_indigena_id;
 
-        // Calcular edad
         $this->calcularEdad($this->fecha_nacimiento);
     }
 
@@ -441,7 +423,6 @@ class AlumnoEdit extends Component
     public function habilitarEdicion()
     {
         $this->enModoEdicion = true;
-        // Copiar discapacidades actuales al array de edición
         $this->discapacidadesAgregadas = $this->discapacidadesAlumno;
     }
 
@@ -450,14 +431,10 @@ class AlumnoEdit extends Component
         $this->enModoEdicion = false;
         $this->cargarAlumno();
         $this->cargarDiscapacidades();
-        // Limpiar selección de discapacidad
         $this->discapacidadSeleccionada = null;
         $this->resetErrorBag();
     }
 
-    /**
-     * Agrega una discapacidad a la lista temporal
-     */
     public function agregarDiscapacidad()
     {
         $this->validate([
@@ -475,7 +452,6 @@ class AlumnoEdit extends Component
         $discapacidad = Discapacidad::find($this->discapacidadSeleccionada);
 
         if ($discapacidad) {
-            // Agregar a la lista temporal
             $nueva = [
                 'id' => $discapacidad->id,
                 'nombre' => $discapacidad->nombre_discapacidad
@@ -483,7 +459,6 @@ class AlumnoEdit extends Component
 
             $this->discapacidadesAgregadas[] = $nueva;
 
-            // Guardar en DB
             \App\Models\DiscapacidadEstudiante::updateOrCreate(
                 [
                     'alumno_id' => $this->alumnoId,
@@ -492,55 +467,43 @@ class AlumnoEdit extends Component
                 ['status' => true]
             );
 
-            // **Actualizar la lista que se muestra en la vista**
             $this->discapacidadesAlumno[] = $nueva;
 
-            // Limpiar selección
             $this->discapacidadSeleccionada = null;
             $this->resetErrorBag('discapacidadSeleccionada');
 
-            session()->flash('success_temp', 'Discapacidad agregada correctamente.');
+            session()->flash('success_temp', 'Discapacidad agregada exitosamente.');
         }
     }
 
-    /**
-     * Elimina una discapacidad de la lista temporal
-     */
-    public function eliminarDiscapacidad($index)
+    public function eliminarDiscapacidad($discapacidadId)
     {
-        if (isset($this->discapacidadesAgregadas[$index])) {
-            $discapacidad = $this->discapacidadesAgregadas[$index];
+        \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
+            ->where('discapacidad_id', $discapacidadId)
+            ->update(['status' => false]);
 
-            // Marcar como inactiva en DB
-            \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
-                ->where('discapacidad_id', $discapacidad['id'])
-                ->update(['status' => false]);
+        $this->discapacidadesAlumno = array_values(
+            array_filter(
+                $this->discapacidadesAlumno,
+                fn($d) => $d['id'] != $discapacidadId
+            )
+        );
 
-            // Quitar de las listas temporales y de la vista
-            unset($this->discapacidadesAgregadas[$index]);
+        $this->discapacidadesAgregadas = array_values(
+            array_filter(
+                $this->discapacidadesAgregadas,
+                fn($d) => $d['id'] != $discapacidadId
+            )
+        );
 
-            // También actualizar la lista mostrada
-            $this->discapacidadesAlumno = array_values(
-                array_filter($this->discapacidadesAlumno, fn($d) => $d['id'] != $discapacidad['id'])
-            );
-
-            // Reindexar
-            $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
-
-            session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
-        }
+        session()->flash('success_temp', 'Discapacidad eliminada exitosamente.');
     }
 
-    /**
-     * Guarda las discapacidades del alumno
-     */
     private function guardarDiscapacidades()
     {
-        // Primero, inactivar todas las discapacidades actuales
         \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
             ->update(['status' => false]);
 
-        // Luego, agregar o reactivar las discapacidades seleccionadas
         foreach ($this->discapacidadesAgregadas as $discapacidad) {
             \App\Models\DiscapacidadEstudiante::updateOrCreate(
                 [
@@ -556,7 +519,6 @@ class AlumnoEdit extends Component
 
     public function guardar()
     {
-        // Validación básica
         if (!$this->localidad_id) {
             session()->flash('error', 'Debe seleccionar una localidad.');
             return;
@@ -593,16 +555,14 @@ class AlumnoEdit extends Component
                 'etnia_indigena_id' => $this->etnia_indigena_id,
             ]);
 
-            // Guardar discapacidades
             $this->guardarDiscapacidades();
 
             DB::commit();
 
             $this->enModoEdicion = false;
-            $this->cargarDiscapacidades(); // Recargar para actualizar la vista
+            $this->cargarDiscapacidades();
             $this->dispatch('actualizarAlumno');
             session()->flash('success', 'Datos del alumno y discapacidades actualizados correctamente.');
-            // Redireccion condicionada
             if ($this->soloEdicion) {
                 return redirect()->route('admin.alumnos.index');
             }

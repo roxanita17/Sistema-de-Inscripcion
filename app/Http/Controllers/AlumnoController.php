@@ -207,13 +207,17 @@ class AlumnoController extends Controller
         $query->with([
             'persona.tipoDocumento:id,nombre',
             'persona.genero:id,genero',
-            'discapacidad:id,nombre_discapacidad'
+            'discapacidades:id,nombre_discapacidad',
+            'etniaIndigena:id,nombre'
         ]);
 
         // Obtener los alumnos con los filtros aplicados y formatear los datos
         $alumnos = $query->orderBy('created_at', 'desc')->get()->map(function ($alumno) {
             $tipoDocumento = optional($alumno->persona->tipoDocumento)->nombre;
-
+            
+            // Obtener nombres de discapacidades separados por comas
+            $discapacidades = $alumno->discapacidades->pluck('nombre_discapacidad')->implode(', ');
+            
             return [
                 'tipo_documento' => $tipoDocumento ?? 'N/A',
                 'numero_documento' => $alumno->persona->numero_documento ?? 'N/A',
@@ -225,7 +229,8 @@ class AlumnoController extends Controller
                 'fecha_nacimiento' => $alumno->persona->fecha_nacimiento ?? null,
                 'edad' => $alumno->persona->fecha_nacimiento ? \Carbon\Carbon::parse($alumno->persona->fecha_nacimiento)->age : 'N/A',
                 'genero' => $alumno->persona->genero->genero ?? 'N/A',
-                'discapacidad' => $alumno->discapacidad->nombre_discapacidad ?? 'Ninguna'
+                'discapacidad' => $discapacidades ?: 'Ninguna',
+                'etnia_indigena' => $alumno->etniaIndigena->nombre ?? 'No pertenece a ninguna etnia indígena'
             ];
         });
 

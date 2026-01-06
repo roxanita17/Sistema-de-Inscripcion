@@ -29,7 +29,7 @@ class VerificarAnioEscolarActivo
         }
 
         // Verificar si existe un año escolar activo
-        $anioEscolarActivo = AnioEscolar::where('status', 'Activo')
+        $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
             ->orWhere('status', 'Extendido')
             ->exists();
 
@@ -53,7 +53,7 @@ class VerificarAnioEscolarActivo
     public function store(Request $request)
     {
         // Verificación adicional (opcional, el middleware ya lo hace)
-        $anioEscolarActivo = AnioEscolar::where('status', 'Activo')
+        $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
             ->orWhere('status', 'Extendido')
             ->exists();
 

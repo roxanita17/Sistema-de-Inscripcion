@@ -116,9 +116,15 @@ class AlumnoCreate extends Component
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                'before:today',
                 function ($attribute, $value, $fail) {
-                    $edad = Carbon::parse($value)->age;
+                    $fecha = Carbon::parse($value);
+                    $hoy = Carbon::today();
+
+                    if ($fecha->greaterThan($hoy)) {
+                        $fail('La fecha de nacimiento no puede ser futura.');
+                        return;
+                    }
+                    $edad = $fecha->age;
                     if ($edad < 10 || $edad > 18) {
                         $fail('La edad debe estar entre 10 y 18 años.');
                     }
@@ -127,8 +133,10 @@ class AlumnoCreate extends Component
 
             'talla_estudiante' => [
                 'required',
-                'numeric',
+                'regex:/^\d+([.,]\d+)?$/',
                 function ($attribute, $value, $fail) {
+
+                    // Normalizar coma a punto
                     $valor = (float) str_replace(',', '.', $value);
 
                     if ($valor <= 0) {
@@ -144,8 +152,6 @@ class AlumnoCreate extends Component
                     }
                 }
             ],
-
-
             'peso_estudiante' => 'required|numeric|between:2,300',
             'talla_camisa_id' => 'required|exists:tallas,id',
             'talla_pantalon_id' => 'required|exists:tallas,id',
@@ -160,17 +166,18 @@ class AlumnoCreate extends Component
     }
 
     protected $messages = [
-        'tipo_documento_id.required' => 'Debe seleccionar tipo de documento',
-        'numero_documento.required' => 'Debe ingresar la cédula',
+        'tipo_documento_id.required' => 'Este campo es requerido',
+        'numero_documento.required' => 'Este campo es requerido',
         'numero_documento.digits_between' => 'La cédula debe tener entre 6 y 8 dígitos',
         'numero_documento.unique' => 'Esta cédula ya está registrada en el sistema',
-        'primer_nombre.required' => 'Debe ingresar un nombre',
-        'primer_apellido.required' => 'Debe ingresar un apellido',
-        'genero_id.required' => 'Debe seleccionar un genero',
-        'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
+        'primer_nombre.required' => 'Este campo es requerido',
+        'primer_apellido.required' => 'Este campo es requerido',
+        'genero_id.required' => 'Este campo es requerido',
+        'fecha_nacimiento.required' => 'Este campo es requerido',
+        'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
         'fecha_nacimiento.before:today' => 'La edad debe estar entre los 10 y 18 años',
         'talla_estudiante.required' => 'Este campo es requerido',
-        'talla_estudiante.numeric' => 'Este campo debe ser un número',
+        'talla_estudiante.regex' => 'Ingrese una estatura válida (ej: 1.65 o 165)',
         'talla_estudiante.between' => 'Este campo debe estar entre 0.50 y 3.00',
         'peso_estudiante.required' => 'Este campo es requerido',
         'peso_estudiante.numeric' => 'Este campo debe ser un número',
@@ -344,11 +351,7 @@ class AlumnoCreate extends Component
 
     public function save()
     {
-
-        if (!$this->etnia_indigena_id) {
-            $this->addError('etnia_indigena_id', 'Debe seleccionar una etnia indígena.');
-            return;
-        }
+        $this->talla_estudiante = (float) str_replace(',', '.', $this->talla_estudiante);
         $this->validate();
 
         try {
@@ -384,7 +387,7 @@ class AlumnoCreate extends Component
                     'orden_nacimiento_id' => $this->orden_nacimiento_id,
                     'etnia_indigena_id' => $this->etnia_indigena_id,
                     'status' => 'Activo',
-                ]); 
+                ]);
             } else {
 
                 Alumno::create([

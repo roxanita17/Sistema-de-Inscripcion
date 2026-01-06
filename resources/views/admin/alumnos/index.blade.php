@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
@@ -10,7 +9,6 @@
 @section('title', 'Gestión de alumnos')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -28,8 +26,6 @@
 
 @section('content')
     <div class="main-container">
-
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -45,8 +41,6 @@
                 </div>
             </div>
         @endif
-
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -63,7 +57,6 @@
                         </button>
                     </div>
                 @endif
-
                 @if (session('error'))
                     <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
                         <div class="alert-icon">
@@ -81,7 +74,6 @@
             </div>
         @endif
 
-        {{-- Contenedor principal de la tabla de alumnos --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -93,7 +85,6 @@
                         <p>{{ $alumnos->total() }} registros encontrados</p>
                     </div>
                 </div>
-                {{-- Buscador --}}
                 <form action="{{ route('admin.alumnos.index') }}">
                     <div class="form-group-modern mb-2">
                         <div class="search-modern">
@@ -114,7 +105,6 @@
                             Filtros
                         </button>
                     </div>
-                    <!-- Botón que genera el PDF con los filtros actuales -->
                     <div>
                         <a href="{{ route('admin.alumnos.reporteGeneralPDF', [
                             'genero' => request('genero'),
@@ -125,10 +115,6 @@
                             style="background-color: #dc3545; border-color: #dc3545;">
                             <i class="fas fa-file-pdf"></i> PDF General
                         </a>
-                    </div>
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
                     </div>
                 </div>
                 <div class="header-right">
@@ -143,22 +129,17 @@
                             <div class="d-flex align-items-center">
                                 <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
                                     <i class="fas fa-calendar-check me-1"></i>
-
                                     Año Escolar
                                 </span>
-
                                 <div class="d-flex align-items-center" style="font-size: 0.8rem;">
                                     <span class="text-muted me-2">
                                         <i class="fas fa-play-circle text-primary me-1"></i>
                                         {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
                                     </span>
-
                                     <span class="text-muted me-2">
                                         <i class="fas fa-flag-checkered text-danger me-1"></i>
                                         {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
                                     </span>
-
-
                                 </div>
                             </div>
                         </div>
@@ -174,7 +155,6 @@
                 </div>
             </div>
 
-            {{-- Cuerpo de la tarjeta con la tabla --}}
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern overflow-hidden hidden">
@@ -190,7 +170,6 @@
                             </tr>
                         </thead>
                         <tbody style="text-align: center">
-                            {{-- Si no hay alumnos, se muestra mensaje vacío --}}
                             @if ($alumnos->isEmpty())
                                 <tr>
                                     <td colspan="7">
@@ -204,16 +183,14 @@
                                     </td>
                                 </tr>
                             @else
-                                {{-- Se recorren los alumnos existentes --}}
                                 @foreach ($alumnos as $index => $datos)
                                     <tr class="  row-12" style="text-align: center">
-
                                         <td class="tittle-main" style="font-weight: 700">
                                             {{ $datos->persona->tipoDocumento->nombre }}-{{ $datos->persona->numero_documento }}
                                         </td>
                                         <td style="text-align: center">
                                             {{ $datos->persona->primer_nombre }} {{ $datos->persona->primer_apellido }}
-                                        </td style="text-align: center">
+                                        </td>
                                         <td style="text-align: center">
                                             {{ $datos->persona->fecha_nacimiento->age }}
                                         </td>
@@ -244,9 +221,7 @@
                                                         type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
-
                                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                                        {{-- Ver más --}}
                                                         <li>
                                                             <button
                                                                 class="dropdown-item d-flex align-items-center text-primary"
@@ -257,8 +232,6 @@
                                                                 Ver más
                                                             </button>
                                                         </li>
-
-                                                        {{-- Editar --}}
                                                         <li>
                                                             <a
                                                                 href="{{ route('admin.alumnos.edit', $datos->id) }}"
@@ -268,8 +241,6 @@
                                                                 Editar
                                                             </a>
                                                         </li>
-
-                                                        {{-- Inactivar --}}
                                                         <li>
                                                             <button
                                                                 class="dropdown-item d-flex align-items-center text-danger"
@@ -280,10 +251,7 @@
                                                                 Inactivar
                                                             </button>
                                                         </li>
-
-                                                        {{-- Reporte PDF --}}
                                                         <li>
-                                                            {{-- Botón de reporte individual --}}
                                                             <a href="{{ route('admin.alumnos.reporte.individual', ['id' => $datos->id]) }}"
                                                                 class="dropdown-item d-flex align-items-center text-danger"
                                                                 title="Generar reporte PDF" target="_blank">
@@ -297,10 +265,8 @@
                                         </td>
                                     </tr>
 
-                                    {{-- Modal de ver más --}}
                                     @include('admin.alumnos.modales.showModal')
 
-                                    {{-- Modal de confirmación para eliminar --}}
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
                                         aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -343,12 +309,10 @@
                     </table>
                 </div>
             </div>
-            {{-- Paginación moderna --}}
             <div class="mt-3">
                 <x-pagination :paginator="$alumnos" />
             </div>
         </div>
     </div>
-
 @endsection
 @include('admin.alumnos.modales.filtroModal')

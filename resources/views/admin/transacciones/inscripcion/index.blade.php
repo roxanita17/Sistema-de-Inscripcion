@@ -4,8 +4,8 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-@stop
-
+    <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
+    @stop
 @section('title', 'Gestión de inscripciones')
 
 @section('content_header')
@@ -28,7 +28,7 @@
                         @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
-                        <span>Inscripcion Nuevo Ingreso</span>
+                        <span>Registrar</span>
                     </a>
                 </div>
             </div>

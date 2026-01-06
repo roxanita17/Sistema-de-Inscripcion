@@ -19,22 +19,17 @@
                     <p class="title-subtitle">Información registrada en el sistema</p>
                 </div>
             </div>
-
-            <a href="{{ route('admin.docente.index') }}" class="btn-create" style="background: var(--gray-700);">
+            <a href="{{ route('admin.docente.index') }}" class="btn-create" style="background: var(--gray-500);">
                 <i class="fas fa-arrow-left"></i>
-                <span>Volver al Listado</span>
+                <span>Volver</span>
             </a>
         </div>
     </div>
 @stop
 
 @section('content')
-
     <div class="main-container">
-
-        {{-- CARD PRINCIPAL --}}
         <div class="card-modern">
-
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon">
@@ -48,35 +43,20 @@
             </div>
 
             <div class="card-body-modern" style="padding: 2rem 2rem 1rem;">
-
-                {{-- ============================= --}}
-                {{-- SECCIÓN: IDENTIFICACIÓN --}}
-                {{-- ============================= --}}
-
                 <h5 class="section-title">Identificación</h5>
-
                 <div class="info-grid">
-
                     <div class="info-item">
                         <span class="info-label"><i class="fas fa-id-card"></i> Cédula:</span>
                         <span
                             class="info-value">{{ $docentes->persona->tipoDocumento->nombre }}-{{ $docentes->persona->numero_documento }}</span>
                     </div>
-
                     <div class="info-item">
                         <span class="info-label"><i class="fas fa-barcode"></i> Código:</span>
                         <span class="info-value">{{ $docentes->codigo ?? 'No asignado' }}</span>
                     </div>
-
                 </div>
-
-                {{-- ============================= --}}
-                {{-- SECCIÓN: DATOS PERSONALES --}}
-                {{-- ============================= --}}
                 <h5 class="section-title mt-3">Datos Personales</h5>
-
                 <div class="info-grid">
-
                     <div class="info-item">
                         <span class="info-label">Primer nombre:</span>
                         <span class="info-value">{{ $docentes->persona->primer_nombre }}</span>
@@ -111,12 +91,7 @@
                         <span class="info-label">Fecha nacimiento:</span>
                         <span class="info-value">{{ $docentes->persona->fecha_nacimiento }}</span>
                     </div>
-
                 </div>
-
-                {{-- ============================= --}}
-                {{-- SECCIÓN: CONTACTO --}}
-                {{-- ============================= --}}
                 <h5 class="section-title mt-3">Contacto</h5>
 
                 <div class="info-grid">
@@ -140,9 +115,6 @@
                             Sin registrar
                         @endif
                     </div>
-
-
-
                     <div class="info-item">
                         <span class="info-label"><i class="fas fa-building"></i> Dependencia:</span>
                         <span class="info-value">{{ $docentes->dependencia ?? '—' }}</span>
@@ -152,28 +124,14 @@
                         <span class="info-label"><i class="fas fa-map-marker-alt"></i> Dirección:</span>
                         <span class="info-value">{{ $docentes->persona->direccion ?? '—' }}</span>
                     </div>
-
                 </div>
-
             </div>
         </div>
-
-
-
-
-        {{-- Registro de los estudios --}}
         <div class="">
-            {{-- Llamamos el componente de livewire que va a agregar el estudio --}}
             <livewire:admin.docente.docente-estudio-realizado :docente="$docentes" />
         </div>
     </div>
-
 @endsection
-
-<style>
-
-</style>
-
 @livewireStyles
 @stack('css')
 

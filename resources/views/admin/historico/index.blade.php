@@ -4,6 +4,8 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
+
 @stop
 
 @section('title', 'Histórico Académico')
@@ -98,11 +100,12 @@
                                 <th class="text-center">Tipo de Inscripción</th>
                                 <th class="text-center">Acciones</th>
                             @elseif($tipo === 'docentes')
-                                <th>Año Escolar</th>
-                                <th>Docente</th>
-                                <th>Año</th>
-                                <th>Área</th>
-                                <th>Sección</th>
+                                <th class="text-center">Año Escolar</th>
+                                <th class="text-center">Docente</th>
+                                <th class="text-center">Año</th>
+                                <th class="text-center">Área</th>
+                                <th class="text-center">Sección</th>
+                                <th class="text-center">Acciones</th>
                             @endif
                         </thead>
                         <tbody class="text-center">
@@ -119,17 +122,17 @@
                                                     ? \Carbon\Carbon::parse($prosecucion->anioEscolar->cierre_anio_escolar)->format('d/m/Y')
                                                     : '—' }}
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 {{ $prosecucion->inscripcion->alumno->persona->primer_apellido }}
                                                 {{ $prosecucion->inscripcion->alumno->persona->primer_nombre }}
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <div class="d-flex flex-column align-items-center">
-                                                    <span class="badge bg-success mb-1">
+                                                    <span class="badge bg-info mb-1">
                                                         {{ $prosecucion->grado->numero_grado }}° Grado
                                                     </span>
                                                     @if ($prosecucion->repite_grado)
-                                                        <small class="text-danger">
+                                                        <small class="text-warning">
                                                             <i class="fas fa-redo"></i> Repite
                                                         </small>
                                                     @else
@@ -139,20 +142,25 @@
                                                     @endif
                                                 </div>
                                             </td>
-                                            <td>{{ $prosecucion->seccion->nombre ?? '—' }}</td>
-                                            <td>
-                                                <span class="badge bg-primary">
+                                            <td class="text-center">
+                                                {{ $prosecucion->seccion->nombre ?? '—' }}
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-info">
                                                     <i class="fas fa-arrows-alt-v"></i> Prosecución
                                                 </span>
                                             </td>
-                                            <td>
-                                                <a href="#viewModal{{-- {{ $datos->id }} --}}" class="btn btn-info btn-sm"
-                                                    title="Ver detalles" data-bs-toggle="modal"
-                                                    data-bs-target="#viewModal{{-- {{ $datos->id }} --}}">
+                                            <td class="d-flex justify-content-center">
+                                                <button class="action-btn btn-view" data-bs-toggle="modal"
+                                                    data-bs-target="#showModalProsecucion-{{ $prosecucion->id }}"
+                                                    title="Ver">
                                                     <i class="fas fa-eye"></i>
-                                                </a>
+                                                </button>
                                             </td>
                                         </tr>
+                                        @include('admin.historico.modales.showModalProsecucion', [
+                                            'datos' => $prosecucion,
+                                        ])
                                     @empty
                                         <tr>
                                             <td colspan="6">
@@ -181,7 +189,7 @@
                                                 {{ $inscripcion->alumno->persona->primer_nombre }}
                                             </td>
                                             <td>
-                                                <span class="badge bg-info">
+                                                <span class="badge bg-success">
                                                     {{ $inscripcion->grado->numero_grado }}° Año
                                                 </span>
                                             </td>
@@ -191,16 +199,15 @@
                                                     <i class="fas fa-star"></i> Nuevo Ingreso
                                                 </span>
                                             </td>
-                                            <td>
-                                                <button class="btn btn-info btn-sm" title="Ver detalles"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#viewModal{{ $inscripcion->id }}">
+                                            <td class="d-flex justify-content-center">
+                                                <button class="action-btn btn-view" data-bs-toggle="modal"
+                                                    data-bs-target="#showModalNuevoIngreso{{ $inscripcion->id }}"
+                                                    title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </td>
                                         </tr>
-                                        
-                                        @include('admin.historico.modales.showModal', [
+                                        @include('admin.historico.modales.showModalNuevoIngreso', [
                                             'datos' => $inscripcion,
                                         ])
                                     @empty
@@ -232,11 +239,11 @@
                                             </td>
                                             <td>
                                                 @if ($inscripcion->prosecucion)
-                                                    <span class="badge bg-primary">
+                                                    <span class="badge bg-info">
                                                         {{ $inscripcion->prosecucion->grado->numero_grado }}° Año
                                                     </span>
                                                 @else
-                                                    <span class="badge bg-info">
+                                                    <span class="badge bg-success">
                                                         {{ $inscripcion->grado->numero_grado }}° Año
                                                     </span>
                                                 @endif
@@ -250,7 +257,7 @@
                                             </td>
                                             <td>
                                                 @if ($inscripcion->prosecucion)
-                                                    <span class="badge bg-primary">
+                                                    <span class="badge bg-info">
                                                         <i class="fas fa-arrows-alt-v"></i> Prosecución
                                                     </span>
                                                 @elseif ($inscripcion->nuevoIngreso)
@@ -261,14 +268,36 @@
                                                     <span class="badge bg-secondary">—</span>
                                                 @endif
                                             </td>
-                                            <td>
-                                                <a href="#viewModal{{-- {{ $datos->id }} --}}" class="btn btn-info btn-sm"
-                                                    title="Ver detalles" data-bs-toggle="modal"
-                                                    data-bs-target="#viewModal{{-- {{ $datos->id }} --}}">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
+                                            <td class="d-flex justify-content-center">
+                                                @if ($inscripcion->prosecucion)
+                                                    <button class="action-btn btn-view" data-bs-toggle="modal"
+                                                        data-bs-target="#showModalProsecucion-{{ $inscripcion->prosecucion->id }}"
+                                                        title="Ver historial de prosecución">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                @elseif($inscripcion->nuevoIngreso)
+                                                    <button class="action-btn btn-view" title="Ver detalles"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#showModalNuevoIngreso{{ $inscripcion->id }}">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                @else
+                                                @endif
+
                                             </td>
                                         </tr>
+                                        @if ($inscripcion->prosecucion)
+                                            @include('admin.historico.modales.showModalProsecucion', [
+                                                'datos' => $inscripcion->prosecucion,
+                                            ])
+                                        @endif
+
+                                        @if ($inscripcion->nuevoIngreso)
+                                            @include('admin.historico.modales.showModalNuevoIngreso', [
+                                                'datos' => $inscripcion,
+                                            ])
+                                        @endif
+
                                     @empty
                                         <tr>
                                             <td colspan="6">
@@ -286,20 +315,9 @@
                             @if ($tipo === 'docentes')
                                 @forelse ($docentes as $docente)
                                     @php
-                                        $grados = $docente->asignacionesAreas
-                                            ->pluck('grado.numero_grado')
-                                            ->filter()
-                                            ->unique()
-                                            ->implode(', ');
-
-                                        $areas = $docente->asignacionesAreas
-                                            ->pluck('areaEstudios.areaFormacion.nombre_area_formacion')
-                                            ->filter()
-                                            ->unique()
-                                            ->implode(', ');
-                                        // Si luego agregas sección:
-                                        // ->pluck('seccion.nombre_seccion')
+                                        $asignaciones = $docente->asignacionesAreas->where('status', true);
                                     @endphp
+
                                     <tr>
                                         <td>
                                             {{ optional($docente->anioEscolar)->inicio_anio_escolar
@@ -314,34 +332,50 @@
                                             {{ $docente->persona->primer_apellido }}
                                             {{ $docente->persona->primer_nombre }}
                                         </td>
-                                        <td>
-                                            <ul class="list-unstyled mb-0">
-                                                @foreach ($docente->asignacionesAreas->pluck('grado.numero_grado')->unique() as $grado)
-                                                    <li>• {{ $grado }}</li>
-                                                @endforeach
-                                            </ul>
+                                        <td class="text-center">
+                                            @forelse ($asignaciones as $asignacion)
+                                                <div>
+                                                    <i class="fas fa-book-open me-1 text-muted"></i>
+                                                    {{ optional($asignacion->areaEstudios->areaFormacion)->nombre_area_formacion ?? '—' }}
+                                                </div>
+                                            @empty
+                                                <span class="text-muted">Sin áreas</span>
+                                            @endforelse
                                         </td>
-                                        <td>
-                                            <ul class="list-unstyled mb-0">
-                                                @foreach ($docente->asignacionesAreas->pluck('areaEstudios.areaFormacion.nombre_area_formacion')->unique() as $area)
-                                                    <li>• {{ $area }}</li>
-                                                @endforeach
-                                            </ul>
+
+                                        <td class="text-center">
+                                            @forelse ($asignaciones as $asignacion)
+                                                <div>
+                                                    {{ $asignacion->grado->numero_grado ?? '—' }}°
+                                                </div>
+                                            @empty
+                                                <span class="text-muted">Sin grados</span>
+                                            @endforelse
                                         </td>
-                                        <td>
-                                            —
+
+                                        <td class="text-center">
+                                            @forelse ($asignaciones as $asignacion)
+                                                <div>
+                                                    {{ $asignacion->seccion->nombre ?? '—' }}
+                                                </div>
+                                            @empty
+                                                <span class="text-muted">Sin secciones</span>
+                                            @endforelse
                                         </td>
-                                        <td>
-                                            <a href="#viewModal{{-- {{ $datos->id }} --}}" class="btn btn-info btn-sm"
-                                                title="Ver detalles" data-bs-toggle="modal"
-                                                data-bs-target="#viewModal{{-- {{ $datos->id }} --}}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
+                                        <td class="d-flex justify-content-center">
+                                            <button class="action-btn btn-view" title="Ver detalles"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#showModalDocente{{ $docente->id }}">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
                                         </td>
                                     </tr>
+                                    @include('admin.historico.modales.showModalDocente', [
+                                        'datos' => $docente,
+                                    ])
                                 @empty
                                     <tr>
-                                        <td colspan="5">
+                                        <td colspan="6">
                                             <div class="empty-state">
                                                 <i class="fas fa-inbox fa-2x"></i>
                                                 <h4>No hay docentes</h4>

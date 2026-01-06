@@ -21,9 +21,9 @@
                 </div>
             </div>
 
-            <a href="{{ route('admin.docente.index') }}" class="btn-create" style="background: var(--gray-700);">
+            <a href="{{ route('admin.docente.index') }}" class="btn-create" style="background: var(--gray-500);">
                 <i class="fas fa-arrow-left"></i>
-                <span>Volver al Listado</span>
+                <span>Volver</span>
             </a>
         </div>
     </div>
@@ -416,7 +416,7 @@
                     </div> 
                     <div class="form-actions-modern">
                         <a href="{{ route('admin.docente.index') }}" class="btn-secondary-modern">
-                            <i class="fas fa-arrow-left"></i> Regresar
+                            <i class="fas fa-arrow-left"></i> Cancelar
                         </a>
                         <button type="submit" class="btn-primary-modern">
                             <i class="fas fa-save"></i> Siguiente

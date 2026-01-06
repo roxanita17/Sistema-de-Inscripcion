@@ -43,10 +43,21 @@
             box-shadow: var(--shadow-xl);
         }
 
-        .stat-card.primary::before { background: linear-gradient(180deg, var(--primary), var(--primary-dark)); }
-        .stat-card.success::before { background: linear-gradient(180deg, var(--success), #059669); }
-        .stat-card.warning::before { background: linear-gradient(180deg, var(--warning), #d97706); }
-        .stat-card.info::before { background: linear-gradient(180deg, var(--info), #2563eb); }
+        .stat-card.primary::before {
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+        }
+
+        .stat-card.success::before {
+            background: linear-gradient(180deg, var(--success), #059669);
+        }
+
+        .stat-card.warning::before {
+            background: linear-gradient(180deg, var(--warning), #d97706);
+        }
+
+        .stat-card.info::before {
+            background: linear-gradient(180deg, var(--info), #2563eb);
+        }
 
         .stat-card-header {
             display: flex;
@@ -66,10 +77,21 @@
             color: white;
         }
 
-        .stat-icon.primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
-        .stat-icon.success { background: linear-gradient(135deg, var(--success), #059669); }
-        .stat-icon.warning { background: linear-gradient(135deg, var(--warning), #d97706); }
-        .stat-icon.info { background: linear-gradient(135deg, var(--info), #2563eb); }
+        .stat-icon.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .stat-icon.warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+
+        .stat-icon.info {
+            background: linear-gradient(135deg, var(--info), #2563eb);
+        }
 
         .stat-number {
             font-size: 2.5rem;
@@ -259,6 +281,7 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+
             .stats-grid,
             .charts-grid {
                 grid-template-columns: 1fr;
@@ -282,269 +305,218 @@
 @stop
 
 @section('content')
-<div class="dashboard-container">
+    <div class="dashboard-container">
 
-    {{-- Welcome Banner --}}
-    <div class="welcome-banner">
-        <div class="welcome-content">
-            <h1 class="welcome-title">
-                ¡Bienvenido, {{ Auth::user()->name }}! 👋
-            </h1>
-            <p class="welcome-subtitle">
-                Sistema de Gestión Escolar - {{ now()->translatedFormat('l, d \d\e F \d\e Y') }}
-            </p>
-        </div>
-    </div>
-
-    {{-- Estadísticas Principales --}}
-    <div class="stats-grid">
-        {{-- Total Inscripciones --}}
-        <div class="stat-card primary">
-            <div class="stat-card-header">
-                <div>
-                    <div class="stat-number">{{ $totalInscripciones ?? 0 }}</div>
-                    <div class="stat-label">Total Inscripciones</div>
-                </div>
-                <div class="stat-icon primary">
-                    <i class="fas fa-book"></i>
-                </div>
+        {{-- Welcome Banner --}}
+        <div class="welcome-banner">
+            <div class="welcome-content">
+                <h1 class="welcome-title">
+                    ¡Bienvenido, {{ Auth::user()->name }}! 👋
+                </h1>
+                <p class="welcome-subtitle">
+                    Sistema de Gestión Escolar - {{ now()->translatedFormat('l, d \d\e F \d\e Y') }}
+                </p>
             </div>
         </div>
-        {{-- Total Estudiantes --}}
-        <div class="stat-card primary">
-            <div class="stat-card-header">
-                <div>
-                    <div class="stat-number">{{ $totalEstudiantes ?? 0 }}</div>
-                    <div class="stat-label">Total Estudiantes</div>
-                    {{-- 
-                    <div class="stat-trend up">
-                        <i class="fas fa-arrow-up"></i>
-                        +12% este mes
+
+        {{-- Estadísticas Principales --}}
+        <div class="stats-grid">
+            {{-- Total Inscripciones --}}
+            <div class="stat-card primary">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-number">{{ $totalNuevoIngreso ?? 0 }}</div>
+                        <div class="stat-label">Nuevos Ingresos</div>
                     </div>
-                    --}}
-                </div>
-                <div class="stat-icon primary">
-                    <i class="fas fa-user-graduate"></i>
-                </div>
-            </div>
-        </div>
-
-        {{-- Total Docentes --}}
-        <div class="stat-card success">
-            <div class="stat-card-header">
-                <div>
-                    <div class="stat-number">{{ $totalDocentes ?? 0 }}</div>
-                    <div class="stat-label">Total Docentes</div>
-                </div>
-                <div class="stat-icon success">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                </div>
-            </div>
-        </div>
-
-        {{-- Total Grados --}}
-        <div class="stat-card warning">
-            <div class="stat-card-header">
-                <div>
-                    <div class="stat-number">{{ $totalGrados ?? 0 }}</div>
-                    <div class="stat-label">Años Activos</div>
-                </div>
-                <div class="stat-icon warning">
-                    <i class="fas fa-school"></i>
-                </div>
-            </div>
-        </div>
-
-        {{-- Año Escolar Activo --}}
-        <div class="stat-card info">
-            <div class="stat-card-header">
-                <div>
-                    <div class="stat-number" style="font-size: 1.5rem;">
-                        {{ $anioEscolarActivo ?? 'N/A' }}
-                    </div>
-                    <div class="stat-label">Año Escolar</div>
-                </div>
-                <div class="stat-icon info">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Acciones Rápidas --}}
-    <div class="card-modern">
-        <div class="card-header-modern">
-            <div class="header-left">
-                <div class="header-icon">
-                    <i class="fas fa-bolt"></i>
-                </div>
-                <div>
-                    <h3>Acciones Rápidas</h3>
-                    <p>Accesos directos a funciones principales</p>
-                </div>
-            </div>
-        </div>
-        <div class="card-body-modern" style="padding: 2rem;">
-            <div class="quick-actions">
-                <a href="{{url('admin/transacciones/inscripcion') }}" class="action-card">
-                    <div class="action-icon">
+                    <div class="stat-icon primary">
                         <i class="fas fa-user-plus"></i>
                     </div>
-                    <p class="action-title">Nueva Inscripcion</p>
-                </a>
-                <a href="{{url('admin/alumnos') }}" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <p class="action-title">Nuevo Estudiante</p>
-                </a>
+                </div>
+            </div>
 
-                <a href="{{url('representante') }}" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-user-tie"></i>
+            <div class="stat-card info">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-number">{{ $totalProsecucion ?? 0 }}</div>
+                        <div class="stat-label">Prosecuciones</div>
                     </div>
-                    <p class="action-title">Nuevo Representante</p>
-                </a>
+                    <div class="stat-icon info">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                </div>
+            </div>
 
-                <a href="{{ route('admin.docente.create') }}" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
-                    <p class="action-title">Nuevo Docente</p>
-                </a>
 
-                <a href="{{ route('admin.anio_escolar.index') }}" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <p class="action-title">Año Escolar</p>
-                </a>
 
-                <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-clipboard-list"></i>
+            {{-- Total Docentes --}}
+            <div class="stat-card success">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-number">{{ $totalDocentes ?? 0 }}</div>
+                        <div class="stat-label">Total Docentes</div>
                     </div>
-                    <p class="action-title">Inscripciones</p>
-                </a>
+                    <div class="stat-icon success">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                </div>
+            </div>
 
-                <a href="{{ route('admin.grado.index') }}" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-layer-group"></i>
+            {{-- Total Grados --}}
+            <div class="stat-card warning">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-number">{{ $totalGrados ?? 0 }}</div>
+                        <div class="stat-label">Años Activos</div>
                     </div>
-                    <p class="action-title">Grados</p>
-                </a>
+                    <div class="stat-icon warning">
+                        <i class="fas fa-school"></i>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Año Escolar Activo --}}
+            <div class="stat-card info">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-number" style="font-size: 1.5rem;">
+                            {{ $anioEscolarActivo ?? 'N/A' }}
+                        </div>
+                        <div class="stat-label">Año Escolar</div>
+                    </div>
+                    <div class="stat-icon info">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
             </div>
         </div>
+
+        {{-- Acciones Rápidas --}}
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h3>Acciones Rápidas</h3>
+                        <p>Accesos directos a funciones principales</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body-modern" style="padding: 2rem;">
+                <div class="quick-actions">
+                    <a href="{{ url('admin/transacciones/inscripcion') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <p class="action-title">Nuevo Ingreso</p>
+                    </a>
+                    <a href="{{ url('admin/transacciones/inscripcion_prosecucion') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <p class="action-title">Nueva Prosecucion</p>
+                    </a>
+                    <a href="{{ url('representante') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <p class="action-title">Nuevo Representante</p>
+                    </a>
+
+                    <a href="{{ route('admin.docente.create') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <p class="action-title">Nuevo Docente</p>
+                    </a>
+
+                    <a href="{{ route('admin.anio_escolar.index') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <p class="action-title">Año Escolar</p>
+                    </a>
+
+                    <a href="{{ route('admin.historico.index') }}" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <p class="action-title">Historico</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            {{-- Información del Sistema --}}
+            <div class="col-md-6">
+                <div class="card-modern">
+                    <div class="card-header-modern">
+                        <div class="header-left">
+                            <div class="header-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div>
+                                <h3>Información del Sistema</h3>
+                                <p>Estado actual del sistema</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body-modern" style="padding: 1.5rem;">
+                        <div class="info-group">
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <i class="fas fa-server"></i>
+                                    Versión del Sistema
+                                </span>
+                                <span class="info-value">
+                                    v1.0.0
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <i class="fas fa-database"></i>
+                                    Base de Datos
+                                </span>
+                                <span class="info-value">
+                                    MySQL {{ DB::connection()->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION) }}
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <i class="fas fa-users"></i>
+                                    Usuarios Registrados
+                                </span>
+                                <span class="info-value">
+                                    {{ $totalUsuarios ?? 0 }}
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <i class="fas fa-clock"></i>
+                                    Última Actualización
+                                </span>
+                                <span class="info-value">
+                                    {{ now()->format('d/m/Y H:i') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-
-    <div class="row mt-4">
-        {{-- Actividad Reciente --}}
-        <div class="col-md-6">
-            <div class="card-modern">
-                <div class="card-header-modern">
-                    <div class="header-left">
-                        <div class="header-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div>
-                            <h3>Actividad Reciente</h3>
-                            <p>Últimas acciones del sistema</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body-modern" style="padding: 1.5rem;">
-                    {{-- Aquí puedes agregar un foreach con actividades reales --}}
-                    @forelse($actividadesRecientes ?? [] as $actividad)
-                    <div class="activity-item">
-                        <div class="activity-icon">
-                            <i class="{{ $actividad->icono ?? 'fas fa-circle' }}"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">{{ $actividad->titulo }}</div>
-                            <div class="activity-time">{{ $actividad->created_at->diffForHumans() }}</div>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="empty-state" style="padding: 2rem;">
-                        <div class="empty-icon">
-                            <i class="fas fa-history"></i>
-                        </div>
-                        <h4>Sin actividad reciente</h4>
-                        <p>Las acciones del sistema aparecerán aquí</p>
-                    </div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-
-        {{-- Información del Sistema --}}
-        <div class="col-md-6">
-            <div class="card-modern">
-                <div class="card-header-modern">
-                    <div class="header-left">
-                        <div class="header-icon">
-                            <i class="fas fa-info-circle"></i>
-                        </div>
-                        <div>
-                            <h3>Información del Sistema</h3>
-                            <p>Estado actual del sistema</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body-modern" style="padding: 1.5rem;">
-                    <div class="info-group">
-                        <div class="info-item">
-                            <span class="info-label">
-                                <i class="fas fa-server"></i>
-                                Versión del Sistema
-                            </span>
-                            <span class="info-value">
-                                v1.0.0
-                            </span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">
-                                <i class="fas fa-database"></i>
-                                Base de Datos
-                            </span>
-                            <span class="info-value">
-                                MySQL {{ DB::connection()->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION) }}
-                            </span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">
-                                <i class="fas fa-users"></i>
-                                Usuarios Registrados
-                            </span>
-                            <span class="info-value">
-                                {{ $totalUsuarios ?? 0 }}
-                            </span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">
-                                <i class="fas fa-clock"></i>
-                                Última Actualización
-                            </span>
-                            <span class="info-value">
-                                {{ now()->format('d/m/Y H:i') }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
 @stop
 
 @section('js')
-<script>
-    console.log("Dashboard cargado correctamente");
-    
-    // Auto-cerrar alertas después de 5 segundos
-    setTimeout(function() {
-        $('.alert').fadeOut('slow');
-    }, 5000);
-</script>
+    <script>
+        console.log("Dashboard cargado correctamente");
+
+        // Auto-cerrar alertas después de 5 segundos
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+    </script>
 @stop

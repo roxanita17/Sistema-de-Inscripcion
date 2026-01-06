@@ -19,7 +19,8 @@
         }
         
         @page {
-            margin: 1.5cm;
+            margin: 1cm;
+            size: landscape;
         }
         
         body {
@@ -34,15 +35,15 @@
         
         .container {
             max-width: 100%;
-            margin: 0 auto;
-            padding: 0 15px;
+            margin: 0;
+            padding: 0;
         }
         
         .institution-header {
             background-color: var(--color-primario);
             color: white;
-            padding: 10px 15px;
-            margin: 0 auto 15px auto;
+            padding: 8px 15px;
+            margin: 0 auto 0 auto;
             border-radius: 6px;
             box-shadow: 0 2px 6px rgba(67, 97, 238, 0.15);
             display: flex;
@@ -50,6 +51,8 @@
             justify-content: center;
             position: relative;
             border-bottom: 2px solid var(--color-acento);
+            page-break-after: avoid;
+            page-break-inside: avoid;
         }
         
         .institution-header img {
@@ -89,12 +92,14 @@
         
         .header {
             text-align: center;
-            margin-bottom: 15px;
-            padding: 15px 20px;
+            margin-bottom: 0;
+            padding: 8px 15px;
             border-bottom: 2px solid var(--color-primario);
             background: var(--color-primario-pastel);
             border-radius: 6px;
             box-shadow: 0 1px 4px rgba(67, 97, 238, 0.08);
+            page-break-after: avoid;
+            page-break-inside: avoid;
         }
         
         .header h1 {

@@ -9,6 +9,8 @@ use App\Models\Persona;
 use App\DTOs\InscripcionData;
 use App\Models\InscripcionNuevoIngreso;
 use App\Models\InscripcionProsecucion;
+use App\Exceptions\InscripcionException;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -21,7 +23,7 @@ class InscripcionService
     public function obtenerAnioEscolarActivo()
     {
         $anioEscolar = \App\Models\AnioEscolar::activos()
-            ->where('status', 'Activo')
+            ->whereIn('status', ['Activo', 'Extendido'])
             ->first();
 
         if (!$anioEscolar) {
@@ -56,20 +58,19 @@ class InscripcionService
                             $n->where('anio_escolar_id', $anioEscolarActivo->id);
                         })
 
-                        // Repitientes NO promovidos del mismo año
-                        ->orWhereHas('prosecucion', function ($p) use ($anioEscolarActivo) {
-                            $p->where('anio_escolar_id', $anioEscolarActivo->id)
-                            ->where('status', 'Activo')
-                            ->where('promovido', 0);
-                        });
+                            // Repitientes NO promovidos del mismo año
+                            ->orWhereHas('prosecucion', function ($p) use ($anioEscolarActivo) {
+                                $p->where('anio_escolar_id', $anioEscolarActivo->id)
+                                    ->where('status', 'Activo')
+                                    ->where('promovido', 0);
+                            });
                     });
-
                 } else {
 
                     // OTROS GRADOS → solo promovidos del año activo
                     $q->whereHas('prosecucion', function ($p) use ($anioEscolarActivo) {
                         $p->where('anio_escolar_id', $anioEscolarActivo->id)
-                        ->where('promovido', 1);
+                            ->where('promovido', 1);
                     });
                 }
             })
@@ -134,7 +135,7 @@ class InscripcionService
 
 
             if (!$evaluacion['puede_guardar']) {
-                throw new \Exception('Faltan documentos obligatorios.');
+                throw new InscripcionException('Faltan documentos obligatorios.');
             }
 
             // Obtener el año escolar activo
@@ -157,7 +158,7 @@ class InscripcionService
                 'status' => $evaluacion['status_inscripcion'],
             ]);
 
-            $tipo = $data->tipo_inscripcion; // 'nuevo_ingreso' | 'prosecucion'
+            $tipo = $data->tipo_inscripcion;
 
             if ($tipo === 'nuevo_ingreso') {
                 InscripcionNuevoIngreso::create([
@@ -176,10 +177,7 @@ class InscripcionService
                     'repite_grado' => $data->repite_grado,
                 ]);
             }
-
-
             DB::commit();
-
             return $inscripcion;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -242,9 +240,12 @@ class InscripcionService
             DB::commit();
 
             return $inscripcion;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
+        } catch (InscripcionException $e) {
+            throw $e; // se maneja arriba
+        } catch (QueryException $e) {
+            throw new InscripcionException(
+                'Error al guardar los datos del alumno.'
+            );
         }
     }
 }

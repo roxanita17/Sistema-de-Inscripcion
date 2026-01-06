@@ -221,9 +221,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
             </div>
         </div>
         <br>
@@ -236,34 +233,27 @@
             </div>
         </div>
         <br>
-
     </div>
-
-
 </div>
 
 
 @push('scripts')
     <script>
-        // Inicializar selectpicker
         document.addEventListener('DOMContentLoaded', function() {
             $('.selectpicker').selectpicker();
 
-            // Actualizar selectpicker cuando cambie el wire:model
             $('#estudios_realizados_id').on('changed.bs.select', function(e, clickedIndex, isSelected,
                 previousValue) {
                 @this.set('estudiosId', $(this).val());
             });
         });
 
-        // Escuchar evento para resetear el select
         document.addEventListener('livewire:load', function() {
             Livewire.on('resetSelect', () => {
                 $('#estudios_realizados_id').val('').selectpicker('refresh');
             });
         });
 
-        // Auto-cerrar alertas después de 5 segundos
         setTimeout(function() {
             $('.alert-modern').fadeOut('slow', function() {
                 $(this).remove();

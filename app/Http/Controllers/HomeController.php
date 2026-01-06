@@ -29,31 +29,35 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $anioEscolar = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
+
         $totalGrados = Grado::where('status', true)->count();
 
         $totalUsuarios = User::count();
 
-        $totalDocentes = Docente::whereHas('persona', function($query) {
+        $totalDocentes = Docente::whereHas('persona', function ($query) {
             $query->where('status', true);
         })
-        ->where('status', true)
-        ->count();
+            ->where('status', true)
+            ->count();
 
-        $totalInscripciones = Inscripcion::where('status', 'Activo')->count();
+        $totalNuevoIngreso = Inscripcion::whereIn('status', ['Activo', 'Pendiente'])
+            ->where('anio_escolar_id', $anioEscolar?->id)
+            ->whereHas('nuevoIngreso')
+            ->count();
 
-        $totalEstudiantes = Alumno::where('status', 'Activo')->count();
+        $totalProsecucion = Inscripcion::whereIn('status', ['Activo', 'Pendiente'])
+            ->where('anio_escolar_id', $anioEscolar?->id)
+            ->whereHas('prosecucion')
+            ->count();
 
-        // Año escolar activo
-        $anioEscolar = AnioEscolar::where('status', 'Activo')
-            ->orWhere('status', 'Extendido')
-            ->first();
-        
-        $anioEscolarActivo = $anioEscolar 
+
+        $anioEscolarActivo = $anioEscolar
             ? $anioEscolar->inicio_anio_escolar->format('Y') . '-' . $anioEscolar->cierre_anio_escolar->format('Y')
             : 'No definido';
 
 
 
-        return view('home', compact('totalUsuarios', 'totalGrados', 'totalDocentes', 'totalEstudiantes', 'anioEscolarActivo', 'totalInscripciones'));
+        return view('home', compact('totalUsuarios', 'totalGrados', 'totalDocentes', 'totalNuevoIngreso', 'totalProsecucion', 'anioEscolarActivo'));
     }
 }

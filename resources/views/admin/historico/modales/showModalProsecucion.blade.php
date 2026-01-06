@@ -1,25 +1,33 @@
-<!-- Modal Ver Información de la Inscripción por Prosecución -->
-<div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
-    aria-hidden="true">
+<!-- Modal Ver Información de Prosecución - Histórico -->
+<div class="modal fade" id="showModalProsecucion-{{ $datos->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content modal-modern shadow">
 
             <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
-                    <h5 class="modal-title-view mb-2">Información de Inscripción por Prosecución</h5>
-                    {{ \Carbon\Carbon::parse($datos->anioEscolar->inicio_anio_escolar)->year }}
-                    -
-                    {{ \Carbon\Carbon::parse($datos->anioEscolar->cierre_anio_escolar)->year }}
-                    <div class="d-flex justify-content-center gap-2">
+                    <h5 class="modal-title-view mb-2">
+                        <i class="fas fa-arrow-circle-up me-2"></i>
+                        Inscripción por Prosecución
+                    </h5>
+                    <p class="mb-2" style="font-size: 0.95rem; opacity: 0.95;">
+                        Año Escolar:
+                        {{ \Carbon\Carbon::parse($datos->anioEscolar->inicio_anio_escolar)->format('Y') }}
+                        -
+                        {{ \Carbon\Carbon::parse($datos->anioEscolar->cierre_anio_escolar)->format('Y') }}
+                    </p>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
                         <span class="badge badge-status badge-{{ strtolower($datos->status) }}">
+                            <i class="fas fa-circle-dot"></i>
                             {{ $datos->status }}
                         </span>
                         <span class="badge bg-white text-primary">
+                            <i class="fas fa-graduation-cap"></i>
                             {{ $datos->grado->numero_grado ?? 'N/A' }}° Año
                         </span>
                         @if ($datos->seccion)
-                            <span class="badge bg-white text-primary">
+                            <span class="badge bg-white text-info">
+                                <i class="fas fa-users"></i>
                                 Sección {{ $datos->seccion->nombre }}
                             </span>
                         @endif
@@ -35,24 +43,21 @@
                     </div>
                 </div>
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
-                    data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    data-bs-dismiss="modal"></button>
             </div>
 
             <!-- BODY -->
             <div class="modal-body modal-body-view">
-
-                <!-- ======================
-                    SECCIÓN 1: DATOS DEL ESTUDIANTE
-                ======================= -->
+                {{-- ========== DATOS DEL ESTUDIANTE ========== --}}
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-user-graduate"></i>
                         <span>Datos del Estudiante</span>
                     </div>
-                    <div class="card mini-card shadow-sm border-0 p-3 mt-2">
+                    <div class="card mini-card shadow-sm border-0 p-2 mt-1">
                         <div class="row">
                             <!-- Información personal -->
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-4 mb-1">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Cedula
@@ -62,7 +67,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -76,7 +80,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -90,8 +93,7 @@
                                     </span>
                                 </div>
                             </div>
-
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-4 ">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Género
@@ -101,7 +103,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -112,19 +113,17 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Estatura
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->inscripcion->alumno->estatura ?? 'N/A' }} cm
+                                        {{ $datos->inscripcion->alumno->estatura ?? 'N/A' }} m
                                     </span>
                                 </div>
                             </div>
-
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
                                         Lateralidad
@@ -134,7 +133,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -144,7 +142,6 @@
                                         {{ $datos->inscripcion->alumno->ordenNacimiento->orden_nacimiento ?? 'N/A' }}
                                     </span>
                                 </div>
-
                             </div>
                             <div class="col-md-4">
                                 <div class="detail-item">
@@ -170,7 +167,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -181,7 +177,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -195,13 +190,11 @@
                         </div>
                         <div class="row">
                             @if ($datos->inscripcion->alumno->etniaIndigena)
-
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-6 ">
                                     <div class="detail-item">
                                         <span class="detail-label">
                                             Etnia Indígena
                                         </span>
-
                                         @if ($datos->inscripcion->alumno->etniaIndigena->count() > 0)
                                             <div class="d-flex flex-wrap mt-1">
                                                 {{ $datos->inscripcion->alumno->etniaIndigena->nombre }}
@@ -214,14 +207,12 @@
                                     </div>
                                 </div>
                             @endif
-
                             @if ($datos->inscripcion->alumno->discapacidades)
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-6 ">
                                     <div class="detail-item">
                                         <span class="detail-label">
                                             Discapacidades
                                         </span>
-
                                         @if ($datos->inscripcion->alumno->discapacidades->count() > 0)
                                             <div class="d-flex flex-wrap mt-1">
                                                 @foreach ($datos->inscripcion->alumno->discapacidades as $discapacidad)
@@ -243,93 +234,104 @@
                 <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
 
-                <!-- ======================
-                    SECCIÓN 2: DATOS DE PROSECUCIÓN
-                ======================= -->
+                {{-- ========== DATOS DE PROSECUCIÓN ========== --}}
                 <div class="mb-4">
                     <div class="section-title">
-                        <i class="fas fa-arrow-circle-up"></i>
+                        <i class="fas fa-arrow-circle-up text-success"></i>
                         <span>Información de Prosecución</span>
                     </div>
 
-                    <div class="row justify-content-center g-3 mt-2">
-                        <div class="col-md-3">
-                            <div class="card shadow-sm border-0 ">
-                                <div class="card-body bg-blue">
+                    <div class="card mini-card shadow-sm border-0 p-2 mt-1">
+                        <div class="row mt-2">
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 ">
+                                    <div class="card-body bg-blue">
+                                        <div class="detail-item">
+                                            <span class="detail-label">
+                                                <i class="fas fa-layer-group"></i> Año Anterior
+                                            </span>
+                                            <span class="detail-value fw-bold text-center">
+                                                {{ $datos->inscripcion->grado->numero_grado ?? 'N/A' }} Año
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-body bg-success">
+                                        <div class="detail-item">
+                                            <span class="detail-label ">
+                                                <i class="fas fa-arrow-right "></i> Año de Promoción
+                                            </span>
+                                            <span class="detail-value fw-bold text-center">
+                                                {{ $datos->grado->numero_grado ?? 'N/A' }} Año
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 ">
+                                    <div class="card-body {{ $datos->repite_grado ? 'bg-warning' : 'bg-success' }}">
+                                        <div class="detail-item">
+                                            <span class="detail-label text-dark">
+                                                <i
+                                                    class="fas {{ $datos->repite_grado ? 'fa-redo' : 'fa-check-circle' }}"></i>
+                                                Estado
+                                            </span>
+                                            <span class="detail-value fw-bold text-center">
+                                                {{ $datos->repite_grado ? 'Repite Grado' : 'Promovido' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if ($datos->seccion)
+                                <div class="col-md-3">
+                                    <div class="card shadow-sm border-0">
+                                        <div class="card-body bg-purple">
+                                            <div class="detail-item">
+                                                <span class="detail-label ">
+                                                    <i class="fas fa-th-large"></i> Seccion Asignada
+                                                </span>
+                                                <span class="detail-value fw-bold text-center">
+                                                    {{ $datos->seccion->nombre ?? 'N/A' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="row mt-3 justify-content-center">
+                                <div class="col-md-4">
                                     <div class="detail-item">
                                         <span class="detail-label">
-                                            <i class="fas fa-layer-group"></i> Año Anterior
+                                            <i class="fas fa-calendar"></i> Fecha de Inscripción
                                         </span>
-                                        <span class="detail-value fw-bold">
-                                            {{ $datos->inscripcion->grado->numero_grado ?? 'N/A' }} Año
+                                        <span class="detail-value">
+                                            {{ \Carbon\Carbon::parse($datos->created_at)->format('d/m/Y H:i') }}
                                         </span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="col-md-3">
-                            <div class="card shadow-sm border-0">
-                                <div class="card-body bg-success">
+                                <div class="col-md-4">
                                     <div class="detail-item">
-                                        <span class="detail-label ">
-                                            <i class="fas fa-arrow-right"></i> Año de Promoción
+                                        <span class="detail-label">
+                                            <i class="fas fa-file-contract"></i> Aceptó Normas
                                         </span>
-                                        <span class="detail-value fw-bold ">
-                                            {{ $datos->grado->numero_grado ?? 'N/A' }} Año
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="card shadow-sm border-0 ">
-                                <div class="card-body {{ $datos->repite_grado ? 'bg-warning' : 'bg-success' }}">
-                                    <div class="detail-item">
-                                        <span class="detail-label text-dark">
-                                            <i
-                                                class="fas {{ $datos->repite_grado ? 'fa-redo' : 'fa-check-circle' }}"></i>
-                                            Estado
-                                        </span>
-                                        <span class="detail-value fw-bold text-dark">
-                                            {{ $datos->repite_grado ? 'Repite Grado' : 'Promovido' }}
+                                        <span class="detail-value">
+                                            @if ($datos->acepta_normas_contrato === 'Sí')
+                                                <span class="badge-sm badge-yes">Sí</span>
+                                            @else
+                                                <span class="badge-sm badge-no">No</span>
+                                            @endif
                                         </span>
                                     </div>
                                 </div>
-                            </div>
-
-                        </div>
-
-                        @if ($datos->seccion)
-                            <div class="col-md-3">
-                                <div class="detail-item">
-                                    <span class="detail-label">
-                                        <i class="fas fa-th-large"></i> Sección Asignada
-                                    </span>
-                                    <span class="detail-value">
-                                        Sección {{ $datos->seccion->nombre }}
-                                    </span>
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="col-md-3">
-                            <div class="detail-item">
-                                <span class="detail-label">
-                                    <i class="fas fa-file-contract"></i> Aceptó Normas
-                                </span>
-                                <span class="detail-value">
-                                    @if ($datos->acepta_normas_contrato)
-                                        <span class="badge bg-success">
-                                            Sí
-                                        </span>
-                                    @else
-                                        <span class="badge bg-danger">
-                                            No
-                                        </span>
-                                    @endif
-                                </span>
                             </div>
                         </div>
                     </div>
@@ -338,10 +340,10 @@
                 <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
 
-                <!-- ======================
-                    SECCIÓN 3: MATERIAS
-                ======================= -->
+                {{-- ========== ESTADO DE MATERIAS ========== --}}
                 <div class="mb-4">
+
+                    
                     <div class="section-title">
                         <i class="fas fa-book "></i>
                         <span>Estado de Materias</span>
@@ -434,11 +436,10 @@
                     </div>
                 </div>
 
+                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
 
-                <!-- ======================
-                    SECCIÓN 2: REPRESENTANTES
-                ======================= -->
+                {{-- ========== REPRESENTANTES ========== --}}
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-users"></i>
@@ -919,12 +920,14 @@
 
                     </div>
                 </div>
+
+
+
+
                 <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
 
-                <!-- ======================
-                    SECCIÓN 5: OBSERVACIONES
-                ======================= -->
+                {{-- ========== OBSERVACIONES ========== --}}
                 <div class="mb-3">
                     <div class="section-title">
                         <i class="fas fa-comment-dots text-secondary"></i>
@@ -943,7 +946,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- FOOTER -->

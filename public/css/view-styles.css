@@ -1216,13 +1216,6 @@ button:disabled {
     padding: 1.5rem;
 }
 
-.status-badge {
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-radius: 20px;
-    background: var(--primary-light);
-    color: var(--primary);
-}
 
 .details-grid {
     display: grid;

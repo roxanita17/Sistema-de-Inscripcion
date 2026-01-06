@@ -39,6 +39,12 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/check-email', function (Illuminate\Http\Request $request) {
+    $email = $request->get('email');
+    $exists = \App\Models\User::where('email', $email)->exists();
+    return response()->json(['exists' => $exists]);
+});
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 //HomePage!!

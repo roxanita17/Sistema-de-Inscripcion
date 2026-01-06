@@ -53,39 +53,46 @@
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Inicia sesión para acceder al sistema</p>
 
+                <!-- Mensaje de error general -->
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" style="font-size: 0.875rem; padding: 0.75rem 1rem;">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="font-size: 1rem;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle mr-2" style="font-size: 1rem;"></i>
+                            <div>
+                                @foreach ($errors->all() as $error)
+                                    <span class="mb-0">{{ $error }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <form action="{{ route('login') }}" method="post">
                     @csrf
                     
                     <!-- Email -->
                     <div class="input-group mb-3">
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" 
-                               placeholder="Correo electrónico" value="{{ old('email') }}" required autofocus>
+                        <input type="email" name="email" class="form-control" 
+                               placeholder="correo123@gmail.com" value="{{ old('email') }}" required autofocus>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
                             </div>
                         </div>
-                        @error('email')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
                     </div>
                     
                     <!-- Contraseña -->
                     <div class="input-group mb-3">
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" 
-                               placeholder="Contraseña" required>
+                        <input type="password" name="password" class="form-control" 
+                               placeholder="Contraseña (8-16 caracteres)" maxlength="16" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
                             </div>
                         </div>
-                        @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
                     </div>
                     
                     <!-- Recordar sesión -->
