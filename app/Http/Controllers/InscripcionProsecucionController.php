@@ -209,12 +209,32 @@ class InscripcionProsecucionController extends Controller
             return response('No se encontraron inscripciones de prosecución', 404);
         }
 
+        // Preparar filtros para mostrar en la vista
         $filtrosVista = [
             'anio_escolar' => $anioEscolarActivo ? ($anioEscolarActivo->nombre ?? $anioEscolarActivo->anio ?? null) : null,
         ];
 
+        // Agregar información de filtros aplicados
+        if (isset($filtro['grado_id']) && $filtro['grado_id']) {
+            $grado = \App\Models\Grado::find($filtro['grado_id']);
+            $filtrosVista['grado'] = $grado ? $grado->numero_grado : null;
+        }
+
+        if (isset($filtro['seccion_id']) && $filtro['seccion_id']) {
+            $seccion = \App\Models\Seccion::find($filtro['seccion_id']);
+            $filtrosVista['seccion'] = $seccion ? $seccion->nombre : null;
+        }
+
+        if (isset($filtro['status']) && $filtro['status'] !== '') {
+            $filtrosVista['estatus'] = $filtro['status'] == '1' ? 'Activo' : 'Inactivo';
+        }
+
+        if (isset($filtro['buscar']) && $filtro['buscar']) {
+            $filtrosVista['buscar'] = $filtro['buscar'];
+        }
+
         $pdf = Pdf::loadView(
-            'admin.transacciones.inscripcion_prosecucion.reporte.reporte_general_prosecucion',
+            'admin.transacciones.inscripcion_prosecucion.reportes.reporte_general_prosecucion',
             [
                 'prosecuciones' => $prosecuciones,
                 'filtros' => $filtrosVista,
