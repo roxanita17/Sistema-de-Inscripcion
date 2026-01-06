@@ -25,6 +25,8 @@ class InscripcionProsecucionController extends Controller
         $buscar    = $request->buscar;
         $gradoId   = $request->grado_id;
         $seccionId = $request->seccion_id;
+        $status    = $request->status;
+        $materiasPendientes = $request->materias_pendientes;
 
         $grados = Grado::where('status', true)
             ->orderBy('numero_grado')
@@ -73,6 +75,20 @@ class InscripcionProsecucionController extends Controller
                         ->orWhere('numero_documento', 'like', "%$buscar%");
                 });
             })
+            ->when($status !== null && $status !== '', function ($q) use ($status) {
+                $q->where('status', $status);
+            })
+            ->when($materiasPendientes, function ($q) use ($materiasPendientes) {
+                if ($materiasPendientes === 'con_pendientes') {
+                    $q->whereHas('prosecucionAreas', function ($subQ) {
+                        $subQ->where('status', 'pendiente');
+                    });
+                } elseif ($materiasPendientes === 'sin_pendientes') {
+                    $q->whereDoesntHave('prosecucionAreas', function ($subQ) {
+                        $subQ->where('status', 'pendiente');
+                    });
+                }
+            })
             ->orderByDesc('created_at')
             ->paginate(10)
             ->withQueryString();
@@ -86,6 +102,8 @@ class InscripcionProsecucionController extends Controller
             'buscar' => $buscar,
             'gradoId' => $gradoId,
             'seccionId' => $seccionId,
+            'status' => $status,
+            'materiasPendientes' => $materiasPendientes,
         ]);
     }
 
@@ -231,6 +249,14 @@ class InscripcionProsecucionController extends Controller
 
         if (isset($filtro['buscar']) && $filtro['buscar']) {
             $filtrosVista['buscar'] = $filtro['buscar'];
+        }
+
+        if (isset($filtro['materias_pendientes']) && $filtro['materias_pendientes']) {
+            if ($filtro['materias_pendientes'] === 'con_pendientes') {
+                $filtrosVista['materias_pendientes'] = 'Con materias pendientes';
+            } elseif ($filtro['materias_pendientes'] === 'sin_pendientes') {
+                $filtrosVista['materias_pendientes'] = 'Sin materias pendientes';
+            }
         }
 
         $pdf = Pdf::loadView(

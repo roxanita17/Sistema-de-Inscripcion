@@ -191,6 +191,9 @@
                     @if(isset($filtros['buscar']))
                         • Búsqueda: "{{ $filtros['buscar'] }}"<br>
                     @endif
+                    @if(isset($filtros['materias_pendientes']))
+                        • Materias: {{ $filtros['materias_pendientes'] }}<br>
+                    @endif
                 </div>
             @endif
         </div>
