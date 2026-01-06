@@ -591,8 +591,8 @@
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <div>
-                    <h3>Seleccionar Año</h3>
-                    <p>Seleccione el año al que desea inscribir al estudiante</p>
+                    <h3>Seleccionar el Nivel Academico</h3>
+                    <p>Seleccione el nivel academico al que desea inscribir al estudiante</p>
                 </div>
             </div>
         </div>
@@ -601,14 +601,14 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="grado_id" class="form-label-modern">
-                            Año
+                            Nivel Academico
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="gradoId" id="grado_id"
                             class="form-control-modern @error('gradoId') is-invalid @enderror">
-                            <option value="">Seleccione un año</option>
+                            <option value="">Seleccione un nivel academico</option>
                             @foreach ($grados as $grado)
-                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }} Año</option>
+                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }}°</option>
                             @endforeach
                         </select>
                         @error('gradoId')
@@ -680,7 +680,17 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="card-body-modern" style="padding: 2rem;">
+                        @if (!$esPrimerGrado)
+                            <div class="alert alert-info mb-4 align-items-start p-3 shadow-sm">
+                                <i class="fas fa-info-circle"></i> Seleccione el <b>Liceo</b> del que proviene el estudiante
+                            </div>
+                        @else
+                            <div class="alert alert-info mb-4 align-items-start p-3 shadow-sm">
+                                <i class="fas fa-info-circle"></i> Seleccione la <b>Escuela</b> de la que proviene el estudiante
+                            </div>
+                        @endif
                         <div class="row">
                             @if ($esPrimerGrado)
                                 <div class="col-md-3">
@@ -695,42 +705,90 @@
                                     </div>
                                 </div>
                             @endif
-                            
-                            <div class="col-md-4">
-                                <select wire:model.live="estado_id">
-                                    <option value="">Seleccione estado</option>
-                                    @foreach($estados as $estado)
-                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                                    @endforeach
-                                </select>
 
-                                <select wire:model.live="municipio_id" @disabled(!$estado_id)>
-                                    <option value="">Seleccione municipio</option>
-                                    @foreach($municipios as $municipio)
-                                        <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
-                                    @endforeach
-                                </select>
-
-                                <select wire:model.live="localidad_id" @disabled(!$municipio_id)>
-                                    <option value="">Seleccione localidad</option>
-                                    @foreach($localidades as $localidad)
-                                        <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="institucion_procedencia_id" class="form-label-modern">
-                                        Institución de procedencia
+                                    <label for="estado_id" class="form-label-modern">
+                                        Estado
                                         <span class="required-badge">*</span>
                                     </label>
-                                    <select wire:model.live="institucion_procedencia_id">
-                                        <option value="">Seleccione una institución</option>
-                                        @foreach ($instituciones as $inst)
-                                            <option value="{{ $inst->id }}">
-                                                {{ $inst->nombre_institucion }}
+                                    <select wire:model.live="estado_id" id="estado_id"
+                                        class="form-control-modern @error('estado_id') is-invalid @enderror">
+                                        <option value="">Seleccione un estado</option>
+                                        @foreach ($estados as $estado)
+                                            <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('estado_id')
+                                        <div class="invalid-feedback-modern">
+                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="municipio_id" class="form-label-modern">
+                                        Municipio
+                                        <span class="required-badge">*</span>
+                                    </label>
+                                    <select wire:model.live="municipio_id" id="municipio_id"
+                                        @disabled(!$estado_id)
+                                        class="form-control-modern @error('municipio_id') is-invalid @enderror">
+                                        <option value="">Seleccione un municipio</option>
+                                        @foreach ($municipios as $municipio)
+                                            <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('municipio_id')
+                                        <div class="invalid-feedback-modern">
+                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
 
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="localidad_id" class="form-label-modern">
+                                        Localidad
+                                        <span class="required-badge">*</span>
+                                    </label>
+                                    <select wire:model.live="localidad_id" id="localidad_id"
+                                        @disabled(!$municipio_id)
+                                        class="form-control-modern @error('localidad_id') is-invalid @enderror">
+                                        <option value="">Seleccione una localidad</option>
+                                        @foreach ($localidades as $localidad)
+                                            <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('localidad_id')
+                                        <div class="invalid-feedback-modern">
+                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="institucion_procedencia_id" class="form-label-modern">
+                                        Institucion de procedencia
+                                        <span class="required-badge">*</span>
+                                    </label>
+                                    <select wire:model.live="institucion_procedencia_id"
+                                        id="institucion_procedencia_id" @disabled(!$localidad_id)
+                                        class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
+                                        <option value="">Seleccione una institucion</option>
+                                        @foreach ($instituciones as $institucion)
+                                            <option value="{{ $institucion->id }}">
+                                                {{ $institucion->nombre_institucion }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                     @error('institucion_procedencia_id')
                                         <div class="invalid-feedback-modern">
                                             <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -738,7 +796,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="expresion_literaria" class="form-label-modern">
                                         Literal
@@ -760,7 +818,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="anio_egreso" class="form-label-modern">
                                         Egreso
@@ -921,19 +979,19 @@
                 </div>
 
                 @foreach ([
-                        'partida_nacimiento' => 'Partida de Nacimiento',
-                        'boletin_6to_grado' => 'Boletín de 6to Grado',
-                        'notas_certificadas' => 'Notas Certificadas',
-                        'liberacion_cupo' => 'Liberación de Cupo',
-                        'certificado_calificaciones' => 'Certificado de Calificaciones',
-                        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
-                        'copia_cedula_representante' => 'Copia de Cédula del Representante',
-                        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
-                        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
-                        'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
-                        'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
-                        'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
-                    ] as $documento => $etiqueta)
+        'partida_nacimiento' => 'Partida de Nacimiento',
+        'boletin_6to_grado' => 'Boletín de 6to Grado',
+        'notas_certificadas' => 'Notas Certificadas',
+        'liberacion_cupo' => 'Liberación de Cupo',
+        'certificado_calificaciones' => 'Certificado de Calificaciones',
+        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
+        'copia_cedula_representante' => 'Copia de Cédula del Representante',
+        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
+        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
+        'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
+        'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
+        'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
+    ] as $documento => $etiqueta)
                     @php
                         if ($esPrimerGrado && in_array($documento, ['notas_certificadas', 'liberacion_cupo'])) {
                             continue;
@@ -1026,7 +1084,7 @@
                     <button type="button" wire:click="finalizar" class="btn-create" wire:loading.attr="disabled"
                         @if (!$acepta_normas_contrato) disabled @endif>
                         <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))
-                        @disabled($gradoSinCupos)>
+                            @disabled($gradoSinCupos)>
                             <i class="fas fa-save"></i>
                             Guardar
                         </span>
