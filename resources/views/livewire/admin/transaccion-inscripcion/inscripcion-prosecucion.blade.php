@@ -686,11 +686,11 @@
                         wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="finalizar">
                             <i class="fas fa-save"></i>
-                            Guardar Inscripción
+                            Guardar
                         </span>
                         <span wire:loading wire:target="finalizar">
                             <i class="fas fa-spinner fa-spin"></i>
-                            Procesando...
+                            Guardando...
                         </span>
                     </button>
                 </div>

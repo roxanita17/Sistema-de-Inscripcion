@@ -28,7 +28,7 @@
                         @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
-                        <span>Inscripcion Nuevo Ingreso</span>
+                        <span>Registrar</span>
                     </a>
                 </div>
             </div>
