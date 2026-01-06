@@ -19,7 +19,7 @@
         }
         
         @page {
-            margin: 1cm;
+            margin: 1cm 1cm 2.5cm 1cm;
             size: landscape;
         }
         
@@ -399,91 +399,102 @@
         <div class="section">
             <h2>DATOS DE LOS PROGENITORES</h2>
             
-            <!-- Sección de la Madre -->
-            <div class="parent-section">
-                <h3>MADRE</h3>
-                <table class="parent-info">
-                    <tr>
-                        <td><strong>Nombres y Apellidos:</strong></td>
-                        <td>{{ $datosCompletos['persona_madre']['primer_nombre'] ?? 'N/A' }} 
-                            {{ $datosCompletos['persona_madre']['segundo_nombre'] ?? '' }} 
-                            {{ $datosCompletos['persona_madre']['primer_apellido'] ?? '' }} 
-                            {{ $datosCompletos['persona_madre']['segundo_apellido'] ?? '' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Cédula de Identidad:</strong></td>
-                        <td>{{ $datosCompletos['persona_madre']['tipo_documento_id'] == 1 ? 'V-' : 'E-' }}{{ $datosCompletos['persona_madre']['numero_documento'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Fecha de Nacimiento:</strong></td>
-                        <td>{{ isset($datosCompletos['persona_madre']['fecha_nacimiento']) ? \Carbon\Carbon::parse($datosCompletos['persona_madre']['fecha_nacimiento'])->format('d/m/Y') : 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Ocupación:</strong></td>
-                        <td>{{ $datosCompletos['madre']['ocupacion_representante'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Dirección:</strong></td>
-                        <td>{{ $datosCompletos['persona_madre']['direccion'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Teléfono:</strong></td>
-                        <td>{{ $datosCompletos['persona_madre']['telefono'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Correo Electrónico:</strong></td>
-                        <td>{{ $datosCompletos['persona_madre']['email'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Conviven con el estudiante:</strong></td>
-                        <td>{{ $datosCompletos['madre']['convivenciaestudiante_representante'] ?? 'N/A' }}</td>
-                    </tr>
-                </table>
-            </div>
+            @if($datosCompletos['persona_madre'] || $datosCompletos['persona_padre'])
+                <!-- Sección de la Madre -->
+                @if($datosCompletos['persona_madre'])
+                    <div class="parent-section">
+                        <h3>MADRE</h3>
+                        <table class="parent-info">
+                            <tr>
+                                <td><strong>Nombres y Apellidos:</strong></td>
+                                <td>{{ $datosCompletos['persona_madre']['primer_nombre'] ?? 'N/A' }} 
+                                    {{ $datosCompletos['persona_madre']['segundo_nombre'] ?? '' }} 
+                                    {{ $datosCompletos['persona_madre']['primer_apellido'] ?? '' }} 
+                                    {{ $datosCompletos['persona_madre']['segundo_apellido'] ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cédula de Identidad:</strong></td>
+                                <td>{{ $datosCompletos['persona_madre']['tipo_documento_id'] == 1 ? 'V-' : 'E-' }}{{ $datosCompletos['persona_madre']['numero_documento'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha de Nacimiento:</strong></td>
+                                <td>{{ isset($datosCompletos['persona_madre']['fecha_nacimiento']) ? \Carbon\Carbon::parse($datosCompletos['persona_madre']['fecha_nacimiento'])->format('d/m/Y') : 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ocupación:</strong></td>
+                                <td>{{ $datosCompletos['madre']['ocupacion_representante'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dirección:</strong></td>
+                                <td>{{ $datosCompletos['persona_madre']['direccion'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Teléfono:</strong></td>
+                                <td>{{ $datosCompletos['persona_madre']['telefono'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Correo Electrónico:</strong></td>
+                                <td>{{ $datosCompletos['persona_madre']['email'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Conviven con el estudiante:</strong></td>
+                                <td>{{ $datosCompletos['madre']['convivenciaestudiante_representante'] ?? 'N/A' }}</td>
+                            </tr>
+                        </table>
+                    </div>
 
-            <!-- Sección del Padre -->
-            <div class="parent-section" style="margin-top: 20px;">
-                <h3>PADRE</h3>
-                <table class="parent-info">
-                    <tr>
-                        <td><strong>Nombres y Apellidos:</strong></td>
-                        <td>{{ $datosCompletos['persona_padre']['primer_nombre'] ?? 'N/A' }} 
-                            {{ $datosCompletos['persona_padre']['segundo_nombre'] ?? '' }} 
-                            {{ $datosCompletos['persona_padre']['primer_apellido'] ?? '' }} 
-                            {{ $datosCompletos['persona_padre']['segundo_apellido'] ?? '' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Cédula de Identidad:</strong></td>
-                        <td>{{ $datosCompletos['persona_padre']['tipo_documento_id'] == 1 ? 'V-' : 'E-' }}{{ $datosCompletos['persona_padre']['numero_documento'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Fecha de Nacimiento:</strong></td>
-                        <td>{{ isset($datosCompletos['persona_padre']['fecha_nacimiento']) ? \Carbon\Carbon::parse($datosCompletos['persona_padre']['fecha_nacimiento'])->format('d/m/Y') : 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Ocupación:</strong></td>
-                        <td>{{ $datosCompletos['padre']['ocupacion_representante'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Dirección:</strong></td>
-                        <td>{{ $datosCompletos['persona_padre']['direccion'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Teléfono:</strong></td>
-                        <td>{{ $datosCompletos['persona_padre']['telefono'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Correo Electrónico:</strong></td>
-                        <td>{{ $datosCompletos['persona_padre']['email'] ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Conviven con el estudiante:</strong></td>
-                        <td>{{ $datosCompletos['padre']['convivenciaestudiante_representante'] ?? 'N/A' }}</td>
-                    </tr>
-                </table>
-            </div>
+                @endif
+
+                <!-- Sección del Padre -->
+                @if($datosCompletos['persona_padre'])
+                    <div class="parent-section" style="margin-top: 20px;">
+                        <h3>PADRE</h3>
+                        <table class="parent-info">
+                            <tr>
+                                <td><strong>Nombres y Apellidos:</strong></td>
+                                <td>{{ $datosCompletos['persona_padre']['primer_nombre'] ?? 'N/A' }} 
+                                    {{ $datosCompletos['persona_padre']['segundo_nombre'] ?? '' }} 
+                                    {{ $datosCompletos['persona_padre']['primer_apellido'] ?? '' }} 
+                                    {{ $datosCompletos['persona_padre']['segundo_apellido'] ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cédula de Identidad:</strong></td>
+                                <td>{{ isset($datosCompletos['persona_padre']['tipo_documento_id']) ? ($datosCompletos['persona_padre']['tipo_documento_id'] == 1 ? 'V-' : 'E-') : '' }}{{ $datosCompletos['persona_padre']['numero_documento'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha de Nacimiento:</strong></td>
+                                <td>{{ isset($datosCompletos['persona_padre']['fecha_nacimiento']) ? \Carbon\Carbon::parse($datosCompletos['persona_padre']['fecha_nacimiento'])->format('d/m/Y') : 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ocupación:</strong></td>
+                                <td>{{ $datosCompletos['padre']['ocupacion_representante'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dirección:</strong></td>
+                                <td>{{ $datosCompletos['persona_padre']['direccion'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Teléfono:</strong></td>
+                                <td>{{ $datosCompletos['persona_padre']['telefono'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Correo Electrónico:</strong></td>
+                                <td>{{ $datosCompletos['persona_padre']['email'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Conviven con el estudiante:</strong></td>
+                                <td>{{ $datosCompletos['padre']['convivenciaestudiante_representante'] ?? 'N/A' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                @endif
+            @else
+                <p style="text-align: center; font-style: italic; color: #666; margin: 20px 0;">
+                    El estudiante no tiene información de progenitores registrada en el sistema.
+                </p>
+            @endif
         </div>
 
         <!-- Sección del Representante Legal -->
@@ -759,6 +770,12 @@
     </div>  
         <div class="footer">
             <p>Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}</p>
+            <script type="text/php">
+                if (isset($pdf)) {
+                    $pdf->page_text(40, 570, "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}", null, 8, array(90, 90, 90));
+                    $pdf->page_text(400, 570, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10, array(0, 0, 0));
+                }
+            </script>
         </div>  
 </body>
 </html>

@@ -254,6 +254,10 @@ class InscripcionController extends Controller
             ->first();
 
         $pdf = PDF::loadview('admin.transacciones.inscripcion.reporte.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
+        
+        // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
+        $pdf->setOption('isPhpEnabled', true);
+        
         return $pdf->stream('ficha_inscripcion.pdf');
     }
 }
