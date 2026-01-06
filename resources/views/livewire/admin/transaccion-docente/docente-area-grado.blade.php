@@ -1,7 +1,4 @@
 <div>
-    {{-- TODO EL CONTENIDO DEBE ESTAR DENTRO DE UN SOLO DIV --}}
-
-    {{-- Alertas --}}
     @if (session()->has('success') || session()->has('error'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
@@ -35,7 +32,6 @@
             @endif
         </div>
     @endif
-    {{-- Card: Búsqueda de Docente --}}
     @if (!$modoEditar)
         <div class="card-modern mb-4">
             <div class="card-header-modern">
@@ -45,7 +41,7 @@
                     </div>
                     <div>
                         <h3>Buscar Docente</h3>
-                        <p>Seleccione el docente para asignar materias</p>
+                        <p>Seleccione el docente para asignarle areas de formacion</p>
                     </div>
                 </div>
             </div>
@@ -91,7 +87,6 @@
         </div>
     @endif
 
-    {{-- Card: Información del Docente Seleccionado --}}
     @if ($docenteSeleccionado)
         <div class="card-modern mb-4">
             <div class="card-header-modern">
@@ -107,9 +102,7 @@
             </div>
             <div class="card-body-modern" style="padding: 0;">
                 <div class="details-grid">
-                    {{-- COLUMNA IZQUIERDA --}}
                     <div class="details-section">
-                        {{-- Sección: Identificación --}}
                         <div class="info-section">
                             <div class="section-header">
                                 <i class="fas fa-id-badge"></i>
@@ -138,8 +131,6 @@
                                 @endif
                             </div>
                         </div>
-
-                        {{-- Sección: Datos Personales --}}
                         <div class="info-section">
                             <div class="section-header">
                                 <i class="fas fa-user"></i>
@@ -182,9 +173,7 @@
                         </div>
                     </div>
 
-                    {{-- COLUMNA DERECHA --}}
                     <div class="details-section">
-                        {{-- Sección: Contacto --}}
                         <div class="info-section">
                             <div class="section-header">
                                 <i class="fas fa-address-book"></i>
@@ -202,8 +191,6 @@
                                         </span>
                                     </div>
                                 @endif
-
-
                                 @if ($docenteSeleccionado->persona->telefono_dos_completo)
                                     <div class="info-item">
                                         <span class="info-label">
@@ -215,8 +202,6 @@
                                         </span>
                                     </div>
                                 @endif
-
-
                                 @if ($docenteSeleccionado->dependencia)
                                     <div class="info-item">
                                         <span class="info-label">
@@ -230,8 +215,6 @@
                                 @endif
                             </div>
                         </div>
-
-                        {{-- Sección: Estudios Realizados --}}
                         <div class="info-section">
                             <div class="section-header">
                                 <i class="fas fa-graduation-cap"></i>
@@ -266,8 +249,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- Formulario para agregar asignación --}}
         <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -276,24 +257,23 @@
                     </div>
                     <div>
                         <h3>Agregar Nueva Asignación</h3>
-                        <p>Asigne materias, grados y secciones al docente</p>
+                        <p>Asigne areas de formacion, niveles academicos y secciones al docente</p>
                     </div>
                 </div>
             </div>
 
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
-                    {{-- Materias --}}
                     <div class="col-md-4">
                         <label for="materia_select" class="form-label-modern">
                             <i class="fas fa-book"></i>
-                            Materia
+                            Area de Formacion
                             <span class="required-badge">*</span>
                         </label>
 
                         <select wire:model.live="materiaId" id="materia_select"
                             class="form-control-modern @error('materiaId') is-invalid @enderror">
-                            <option value="">Seleccione una materia</option>
+                            <option value="">Seleccione un area de formacion</option>
                             @foreach ($materias as $materia)
                                 <option value="{{ $materia->id }}">
                                     {{ $materia->areaFormacion->nombre_area_formacion }}
@@ -307,31 +287,27 @@
                                 {{ $message }}
                             </div>
                         @enderror
-
                         <small class="form-text-modern">
                             <i class="fas fa-info-circle"></i>
-                            Seleccione la materia
+                            Seleccione el area de formacion
                         </small>
                     </div>
-
-                    {{-- Grados --}}
                     <div class="col-md-3">
                         <label for="grado_select" class="form-label-modern">
                             <i class="fas fa-layer-group"></i>
-                            Año
+                            Nivel Academico
                             <span class="required-badge">*</span>
                         </label>
-
                         <select wire:model.live="gradoId" id="grado_select"
                             class="form-control-modern @error('gradoId') is-invalid @enderror"
                             {{ !$materiaId ? 'disabled' : '' }}>
                             <option value="">
                                 @if (!$materiaId)
-                                    Primero seleccione una materia
+                                    Primero seleccione un area de formacion
                                 @elseif($grados->isEmpty())
-                                    No hay años disponibles
+                                    No hay niveles academicos disponibles
                                 @else
-                                    Seleccione un año
+                                    Seleccione un nivel academico
                                 @endif
                             </option>
                             @foreach ($grados as $grado)
@@ -350,7 +326,7 @@
 
                         <small class="form-text-modern">
                             <i class="fas fa-info-circle"></i>
-                            Seleccione el año
+                            Seleccione el nivel academico
                         </small>
                     </div>
 
@@ -367,7 +343,7 @@
                             {{ !$gradoId ? 'disabled' : '' }}>
                             <option value="">
                                 @if (!$gradoId)
-                                    Primero seleccione un año
+                                    Primero seleccione un nivel academico
                                 @elseif($secciones->isEmpty())
                                     No hay secciones disponibles
                                 @else
@@ -387,7 +363,6 @@
                                 {{ $message }}
                             </div>
                         @enderror
-
                         <small class="form-text-modern">
                             <i class="fas fa-info-circle"></i>
                             Seleccione la sección
@@ -396,12 +371,9 @@
 
                     {{-- Botón Agregar --}}
                     <div class="col-md-2 d-flex align-items-end">
-                        <button class="btn-primary-modern w-100"
-                            wire:click="agregarAsignacion"
-                            wire:loading.attr="disabled"
-                            style="margin-bottom: 1.5rem;"
-                            @disabled(! $this->puedeAgregarAsignacion)
-                            title="{{ ! $this->puedeAgregarAsignacion ? 'Seleccione materia, año y sección' : '' }}">
+                        <button class="btn-primary-modern w-100" wire:click="agregarAsignacion"
+                            wire:loading.attr="disabled" style="margin-bottom: 1.5rem;" @disabled(!$this->puedeAgregarAsignacion)
+                            title="{{ !$this->puedeAgregarAsignacion ? 'Seleccione materia, año y sección' : '' }}">
                             <span wire:loading.remove wire:target="agregarAsignacion">
                                 <i class="fas fa-plus"></i> Agregar
                             </span>
@@ -414,7 +386,6 @@
             </div>
         </div>
 
-        {{-- Tabla de materias y grados asignados --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -422,7 +393,7 @@
                         <i class="fas fa-list-check"></i>
                     </div>
                     <div>
-                        <h3>Materias y Grados Asignados</h3>
+                        <h3>Areas de Formacion y Niveles Academicos Asignados</h3>
                         <p>{{ $asignaciones->count() }} asignaciones registradas</p>
                     </div>
                 </div>
@@ -440,8 +411,8 @@
                         <thead>
                             <tr>
                                 <th style="text-align: center; vertical-align: middle;">#</th>
-                                <th style="text-align: center; vertical-align: middle;">Materia</th>
-                                <th style="text-align: center; vertical-align: middle;">Año</th>
+                                <th style="text-align: center; vertical-align: middle;">Area de formacion</th>
+                                <th style="text-align: center; vertical-align: middle;">Nivel academico</th>
                                 <th style="text-align: center; vertical-align: middle;">Sección</th>
                                 <th style="text-align: center; vertical-align: middle;">Fecha de Registro</th>
                                 <th style="text-align: center; vertical-align: middle;">Acciones</th>
@@ -514,8 +485,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- MODAL ELIMINAR ASIGNACIÓN --}}
         <div wire:ignore.self class="modal fade" id="modalEliminarAsignacion" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-modern">
@@ -533,13 +502,11 @@
                         <p>¿Deseas eliminar esta asignación?</p>
                         <p class="delete-warning">Esta acción es irreversible.</p>
                     </div>
-
                     <div class="modal-footer-delete">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
                                 Cancelar
                             </button>
-
                             <button class="btn-modal-delete"
                                 wire:click="eliminarAsignacion({{ $asignacionAEliminar }})"
                                 wire:loading.attr="disabled" data-bs-dismiss="modal">
@@ -561,11 +528,8 @@
     @section('js')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-
-                // Inicializar selectpicker
                 $('.selectpicker').selectpicker();
 
-                // Enviar cambios a Livewire
                 $('#docente_select').on('changed.bs.select', function() {
                     @this.set('docenteId', $(this).val());
                 });
@@ -584,7 +548,6 @@
                 $('.selectpicker').val('').selectpicker('refresh');
             });
 
-            // Auto-cerrar alertas
             setTimeout(function() {
                 $('.alert-modern').fadeOut('slow', function() {
                     $(this).remove();
@@ -592,6 +555,4 @@
             }, 5000);
         </script>
     @endsection
-
-
 </div>

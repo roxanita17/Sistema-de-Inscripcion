@@ -82,7 +82,7 @@ class InscripcionEdit extends Component
                 'exists:grados,id',
                 function ($attribute, $value, $fail) {
                     if (!$this->inscripcionService->verificarCuposDisponibles($value)) {
-                        $fail('El grado seleccionado ha alcanzado el límite de cupos disponibles.');
+                        $fail('El nivel academico seleccionado ha alcanzado el límite de cupos disponibles.');
                     }
                 }
             ],
@@ -99,7 +99,7 @@ class InscripcionEdit extends Component
                             ->exists();
 
                         if (!$existe) {
-                            $fail('La sección seleccionada no pertenece al grado.');
+                            $fail('La sección seleccionada no pertenece al nivel academico.');
                         }
                     }
                 }
@@ -134,8 +134,8 @@ class InscripcionEdit extends Component
     }
 
     protected $messages = [
-        'gradoId.required' => 'Debe seleccionar un grado.',
-        'gradoId.exists' => 'El grado seleccionado no es válido.',
+        'gradoId.required' => 'Este campo es requerido.',
+        'gradoId.exists' => 'El nivel academico seleccionado no es válido.',
 
         'documentos.array' => 'Formato inválido de documentos.',
         'documentos.*.in' => 'Uno o más documentos no son válidos.',
@@ -149,11 +149,11 @@ class InscripcionEdit extends Component
         'expresion_literaria_id.exists' =>
         'La expresión literaria seleccionada no es válida.',
 
-        'anio_egreso.required' => 'Debe indicar el año de egreso.',
+        'anio_egreso.required' => 'Este campo es requerido.',
         'anio_egreso.date' => 'El año de egreso debe ser 7 años antes del actual.',
 
         'representanteLegalId.required' =>
-        'Debe seleccionar un representante legal obligatoriamente.',
+        'Este campo es requerido.',
 
         'representanteLegalId.exists' =>
         'El representante legal seleccionado no es válido.',
@@ -396,7 +396,7 @@ class InscripcionEdit extends Component
         }
 
         if (!$this->gradoId) {
-            session()->flash('error', 'Debe seleccionar un grado.');
+            session()->flash('error', 'Debe seleccionar un nivel academico.');
             return;
         }
 

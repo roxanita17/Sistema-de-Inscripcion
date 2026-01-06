@@ -340,7 +340,7 @@ return [
                 ['header' => 'GESTIÓN ACADÉMICA'],
 
                 [
-                    'text' => 'Años',
+                    'text' => 'Niveles Academicos',
                     'url' => 'admin/grado',
                     'icon' => 'fas fa-fw fa-layer-group',
                     'active' => ['admin/grado', 'admin/grado/*'],
@@ -359,12 +359,12 @@ return [
                             'icon' => 'fas fa-book-open',
                         ],
                         [
-                            'text' => 'Años → Área Académica',
+                            'text' => 'Niveles Academicos → Área de Formacion',
                             'url'  => 'admin/transacciones/grado_area_formacion',
                             'icon' => 'fas fa-link',
                         ],
                         [
-                            'text' => 'Área → Estudios Realizados',
+                            'text' => 'Área de Formacion → Estudios Realizados',
                             'url'  => 'admin/transacciones/area_estudio_realizado',
                             'icon' => 'fas fa-arrow-right',
                         ],

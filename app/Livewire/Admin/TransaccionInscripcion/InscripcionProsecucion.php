@@ -14,31 +14,23 @@ use Illuminate\Support\Facades\DB;
 
 class InscripcionProsecucion extends Component
 {
-    /* ============================================================
-       PROPIEDADES
-       ============================================================ */
-
-    // Alumno
     public $alumnoId;
     public $alumnoSeleccionado;
     public $alumnos = [];
 
     public $inscripcionAnterior;
 
-    // Grados y Secciones
     public $grados = [];
     public $secciones = [];
-    public $gradoAnteriorId = null;   // Grado que cursó el alumno
-    public $gradoPromocionId = null;  // Grado al que será promovido
+    public $gradoAnteriorId = null;
+    public $gradoPromocionId = null;
     public $seccion_id = null;
     public $esPrimerGrado = false;
     public $gradosPermitidos = [];
 
-    // Materias
     public $materias = [];
     public $materiasSeleccionadas = [];
 
-    // Otros datos
     public $repite_grado = false;
     public $acepta_normas_contrato = true;
     public $observaciones;
@@ -46,24 +38,13 @@ class InscripcionProsecucion extends Component
     public ?int $gradoSugeridoId = null;
     public ?int $seccionSugeridaId = null;
     public ?string $mensajeSugerencia = null;
-
-    // Select all
     public bool $seleccionarTodasArrastradas = false;
     public bool $seleccionarTodasActuales = false;
-
-
-    /* ============================================================
-       LISTENERS
-       ============================================================ */
 
     protected $listeners = [
         'seleccionarAlumno' => 'seleccionarAlumno',
         'actualizarAlumno' => 'manejarActualizacionAlumno'
     ];
-
-    /* ============================================================
-       VALIDACIÓN
-       ============================================================ */
 
     protected function rules()
     {
@@ -74,7 +55,7 @@ class InscripcionProsecucion extends Component
                 'exists:grados,id',
                 function ($attribute, $value, $fail) {
                     if (!$this->validarGradoPermitido($value)) {
-                        $fail('El grado seleccionado no es válido para este estudiante.');
+                        $fail('El nivel academico seleccionado no es válido para este estudiante.');
                     }
                 }
             ],
@@ -88,7 +69,7 @@ class InscripcionProsecucion extends Component
                     $pendientesActuales = count($this->materiasPendientesActuales());
 
                     if ($pendientesActuales >= 4 && !$this->repite_grado) {
-                        $fail('Con 4 o más materias pendientes del grado actual el estudiante debe repetir grado.');
+                        $fail('Con 4 o más materias pendientes del nivel academico actual el estudiante debe repetir nivel academico.');
                     }
                 }
 
@@ -102,8 +83,8 @@ class InscripcionProsecucion extends Component
     protected $messages = [
         'alumnoId.required' => 'Debe seleccionar un estudiante.',
         'alumnoId.exists' => 'El estudiante seleccionado no es válido.',
-        'gradoPromocionId.required' => 'Debe seleccionar el grado de promoción.',
-        'gradoPromocionId.exists' => 'El grado seleccionado no existe.',
+        'gradoPromocionId.required' => 'Este campo es requerido.',
+        'gradoPromocionId.exists' => 'El nivel academico seleccionado no existe.',
         'seccion_id.required' => 'Debe seleccionar una sección.',
         'seccion_id.exists' => 'La sección seleccionada no es válida.',
         'acepta_normas_contrato.accepted' => 'Debe aceptar las normas de convivencia para continuar.',
@@ -115,27 +96,15 @@ class InscripcionProsecucion extends Component
         $this->validateOnly($propertyName);
     }
 
-    /* ============================================================
-       MOUNT - INICIALIZACIÓN
-       ============================================================ */
-
     public function mount()
     {
         $this->cargarDatosIniciales();
         $this->cargarGrados();
     }
 
-    /* ============================================================
-       CARGAS INICIALES
-       ============================================================ */
-
-    /**
-     * Carga los alumnos elegibles para prosecución
-     * Solo alumnos que cursaron el año anterior y no están inscritos en el actual
-     */
     public function cargarDatosIniciales()
     {
-        $anioActual = AnioEscolar::whereIn('status',[ 'Activo', 'Extendido'])->first();
+        $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
 
         if (!$anioActual) {
             $this->alumnos = collect();
@@ -152,26 +121,20 @@ class InscripcionProsecucion extends Component
             session()->flash('warning', 'No se encontró el año escolar anterior.');
             return;
         }
-
         $this->alumnos = Alumno::where(function ($q) use ($anioAnterior) {
-
-            // Inscripción normal en el año anterior
             $q->whereHas('inscripciones', function ($q) use ($anioAnterior) {
                 $q->where('inscripcions.anio_escolar_id', $anioAnterior->id);
             })
 
-                // Prosecución en el año anterior
                 ->orWhereHas('inscripcionProsecucions', function ($q) use ($anioAnterior) {
                     $q->where('inscripcion_prosecucions.anio_escolar_id', $anioAnterior->id);
                 });
         })
 
-            // No debe tener inscripción normal en el año actual
             ->whereDoesntHave('inscripciones', function ($q) use ($anioActual) {
                 $q->where('inscripcions.anio_escolar_id', $anioActual->id);
             })
 
-            // No debe tener prosecución en el año actual
             ->whereDoesntHave('inscripcionProsecucions', function ($q) use ($anioActual) {
                 $q->where('inscripcion_prosecucions.anio_escolar_id', $anioActual->id);
             })
@@ -185,21 +148,12 @@ class InscripcionProsecucion extends Component
             ->get();
     }
 
-
-
-    /**
-     * Carga todos los grados disponibles
-     */
     public function cargarGrados()
     {
         $this->grados = Grado::where('status', true)
             ->orderBy('numero_grado', 'asc')
             ->get();
     }
-
-    /**
-     * Carga los grados permitidos según si repite o promueve
-     */
 
     private function cargarGradosPermitidos()
     {
@@ -217,13 +171,11 @@ class InscripcionProsecucion extends Component
             return;
         }
 
-        // Si repite: solo el mismo grado
         if ($this->repite_grado) {
             $this->gradosPermitidos = collect([$gradoAnterior]);
             return;
         }
 
-        // Si promueve: grado actual + siguiente
         $this->gradosPermitidos = Grado::where('status', true)
             ->whereIn('numero_grado', [
                 $gradoAnterior->numero_grado,
@@ -233,17 +185,8 @@ class InscripcionProsecucion extends Component
             ->get();
     }
 
-
-    /* ============================================================
-       SELECCIÓN DE ALUMNO
-       ============================================================ */
-
-    /**
-     * Maneja la selección de un alumno
-     */
     public function seleccionarAlumno($alumnoId)
     {
-        // LIMPIAR ESTADO ANTERIOR
         $this->reset([
             'alumnoSeleccionado',
             'gradoAnteriorId',
@@ -260,10 +203,7 @@ class InscripcionProsecucion extends Component
         ]);
 
         $this->resetErrorBag();
-
-        // ASIGNAR NUEVO ALUMNO
         $this->alumnoId = $alumnoId;
-
         $this->alumnoSeleccionado = Alumno::with([
             'persona.tipoDocumento',
             'inscripciones.grado',
@@ -275,9 +215,7 @@ class InscripcionProsecucion extends Component
             return;
         }
 
-        // CARGAR DATOS DEL NUEVO ALUMNO
         $this->cargarGradoDesdeInscripcionAnterior();
-
         $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
         $this->inscripcionAnterior = $this->alumnoSeleccionado
             ->inscripcionAnterior($anioActual->id);
@@ -307,11 +245,6 @@ class InscripcionProsecucion extends Component
         return collect($inscripcionAnterior->representanteLegal ?? []);
     }
 
-
-
-    /**
-     * Obtiene el último grado cursado por el alumno
-     */
     private function cargarGradoDesdeInscripcionAnterior()
     {
         if (!$this->alumnoSeleccionado) return;
@@ -324,27 +257,15 @@ class InscripcionProsecucion extends Component
 
         if ($inscripcionAnterior && $inscripcionAnterior->grado) {
             $this->gradoAnteriorId = $inscripcionAnterior->grado->id;
-
-            // Cargar grados permitidos
             $this->cargarGradosPermitidos();
-
-            // Cargar materias del grado anterior
             $this->cargarMateriasParaProsecucion($this->gradoAnteriorId);
         }
     }
 
-    /* ============================================================
-       MANEJO DE MATERIAS
-       ============================================================ */
-
-    /**
-     * Carga las materias del grado anterior + materias pendientes históricas
-     */
     private function cargarMateriasParaProsecucion($gradoId)
     {
         $this->materias = [];
 
-        // 1. Materias del grado anterior
         $grado = Grado::with('gradoAreaFormacion.area_formacion')
             ->find($gradoId);
 
@@ -359,8 +280,6 @@ class InscripcionProsecucion extends Component
                 ];
             }
         }
-
-        // 2. Materias pendientes de años anteriores
         $pendientes = $this->alumnoSeleccionado->materiasPendientesHistoricas();
 
         foreach ($pendientes as $pendiente) {
@@ -373,7 +292,6 @@ class InscripcionProsecucion extends Component
             ];
         }
 
-        // Eliminar duplicados por ID
         $this->materias = collect($this->materias)
             ->unique('id')
             ->sortBy('nombre')
@@ -381,18 +299,11 @@ class InscripcionProsecucion extends Component
             ->toArray();
     }
 
-    /**
-     * Se ejecuta cuando cambian las materias seleccionadas
-     */
     public function updatedMateriasSeleccionadas()
     {
-
         $this->recalcularPorCambioDeMaterias();
     }
 
-    /**
-     * Valida la cantidad de materias pendientes
-     */
     private function validarMateriasPendientes()
     {
         $this->resetErrorBag('materiasSeleccionadas');
@@ -404,25 +315,19 @@ class InscripcionProsecucion extends Component
             $this->repite_grado = true;
             $this->addError(
                 'materiasSeleccionadas',
-                'Con 4 o más materias pendientes del grado actual el estudiante debe repetir grado.'
+                'Con 4 o más materias pendientes del nivel academico actual el estudiante debe repetir nivel academico.'
             );
         } else {
             $this->repite_grado = false;
         }
     }
 
-    /**
-     * Verifica si tiene Materias reprobadas sin aprobar
-     */
     private function tieneMateriasArrastradasNoAprobadas(): bool
     {
         $idsArrastradas = collect($this->materias)
             ->where('origen', 'pendiente_anterior')
             ->pluck('id');
-
-        // Arrastradas que NO están aprobadas
         $noAprobadas = $idsArrastradas->diff($this->materiasSeleccionadas);
-
         return $noAprobadas->count() > 0;
     }
 
@@ -453,28 +358,15 @@ class InscripcionProsecucion extends Component
             ->toArray();
     }
 
-
-
-    /* ============================================================
-       MANEJO DE GRADOS Y SECCIONES
-       ============================================================ */
-
-    /**
-     * Se ejecuta cuando cambia el grado de promoción
-     */
     public function updatedGradoPromocionId($value)
     {
         $this->seccion_id = null;
         $this->secciones = collect();
-
         if (!$value) return;
-
         $grado = Grado::find($value);
         if (!$grado) return;
-
         $this->esPrimerGrado = ((int) $grado->numero_grado === 1);
 
-        // Cargar secciones si no es primer grado
         if (!$this->esPrimerGrado) {
             $this->secciones = Seccion::where('grado_id', $value)
                 ->where('status', true)
@@ -485,9 +377,6 @@ class InscripcionProsecucion extends Component
         $this->validarMateriasPendientes();
     }
 
-    /**
-     * Valida si el grado seleccionado está permitido
-     */
     private function validarGradoPermitido($gradoId): bool
     {
         if ($this->gradosPermitidos->isEmpty()) {
@@ -525,7 +414,6 @@ class InscripcionProsecucion extends Component
             return;
         }
 
-        // GRADO SUGERIDO
         if ($this->repite_grado) {
             $gradoSugerido = $gradoAnterior;
         } else {
@@ -540,14 +428,12 @@ class InscripcionProsecucion extends Component
 
         $this->gradoSugeridoId = $gradoSugerido->id;
 
-        //  SECCIÓN SUGERIDA (MISMA QUE EL AÑO ANTERIOR)
         if ($this->inscripcionAnterior->seccion_id) {
             $this->seccionSugeridaId = $this->inscripcionAnterior->seccion_id;
         }
 
-        // MENSAJE
         $this->mensajeSugerencia = sprintf(
-            'Sugerencia: inscribir en %s° Año%s.',
+            'Sugerencia: inscribir en %s° Nivel Académico%s.',
             $gradoSugerido->numero_grado,
             $this->seccionSugeridaId
                 ? ' – Sección ' . optional(Seccion::find($this->seccionSugeridaId))->nombre
@@ -565,7 +451,6 @@ class InscripcionProsecucion extends Component
             ? collect($this->materiasSeleccionadas)->merge($ids)->unique()->values()->toArray()
             : collect($this->materiasSeleccionadas)->diff($ids)->values()->toArray();
 
-        // FORZAR VALIDACIONES
         $this->recalcularPorCambioDeMaterias();
     }
 
@@ -580,7 +465,6 @@ class InscripcionProsecucion extends Component
             ? collect($this->materiasSeleccionadas)->merge($ids)->unique()->values()->toArray()
             : collect($this->materiasSeleccionadas)->diff($ids)->values()->toArray();
 
-        // FORZAR VALIDACIONES
         $this->recalcularPorCambioDeMaterias();
     }
 
@@ -610,25 +494,13 @@ class InscripcionProsecucion extends Component
         $this->cargarGradosPermitidos();
         $this->calcularSugerenciaInscripcion();
         $this->sincronizarSelectAll();
-
-        // limpiar errores de grado para que se vuelvan a evaluar
         $this->resetErrorBag('gradoPromocionId');
     }
 
-    /* ============================================================
-       GUARDAR INSCRIPCIÓN
-       ============================================================ */
-
-    /**
-     * Finaliza y guarda la inscripción de prosecución
-     */
     public function finalizar()
     {
-
-        // Validar formulario
         $this->validate();
 
-        // Obtener año escolar activo (ANTES de usarlo)
         $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
 
         if (!$anioActual) {
@@ -636,12 +508,10 @@ class InscripcionProsecucion extends Component
             return;
         }
 
-        // Validaciones adicionales
         if (!$this->validarAntesDeGuardar()) {
             return;
         }
 
-        // Evitar duplicados
         if ($this->alumnoYaPromovido($this->alumnoId, $anioActual->id)) {
             $this->addError(
                 'alumnoId',
@@ -662,7 +532,6 @@ class InscripcionProsecucion extends Component
                 throw new \Exception('No se encontró la inscripción anterior del alumno.');
             }
 
-            // Crear inscripción de prosecución
             $prosecucion = ModeloInscripcionProsecucion::create([
                 'inscripcion_id' => $inscripcionAnterior->id,
                 'anio_escolar_id' => $anioActual->id,
@@ -685,7 +554,6 @@ class InscripcionProsecucion extends Component
                     throw new \Exception('La sección seleccionada no existe.');
                 }
 
-                // Capacidad máxima (del grado)
                 $grado = Grado::findOrFail($this->gradoPromocionId);
                 $capacidadMax = $grado->max_seccion ?? 35;
 
@@ -695,11 +563,9 @@ class InscripcionProsecucion extends Component
                     );
                 }
 
-                // SUMAR ESTUDIANTE
                 $seccion->increment('cantidad_actual');
             }
 
-            // Guardar estado de cada materia
             $this->guardarMateriasEstado($prosecucion->id);
 
             DB::commit();
@@ -713,25 +579,20 @@ class InscripcionProsecucion extends Component
         }
     }
 
-    /**
-     * Valida condiciones antes de guardar
-     */
     private function validarAntesDeGuardar(): bool
     {
-        // Arrastre BLOQUEA todo
         if ($this->tieneMateriasArrastradasNoAprobadas()) {
             $this->repite_grado = true;
 
             if ($this->gradoPromocionId != $this->gradoAnteriorId) {
                 $this->addError(
                     'gradoPromocionId',
-                    'El estudiante tiene materias reprobadas sin aprobar. Debe repetir el grado.'
+                    'El estudiante tiene materias reprobadas sin aprobar. Debe repetir el nivel academico.'
                 );
                 return false;
             }
         }
 
-        // Luego pendientes del grado actual
         $cantidadPendientes = count($this->materiasPendientesActuales());
 
         if ($cantidadPendientes >= 4) {
@@ -740,20 +601,19 @@ class InscripcionProsecucion extends Component
             if ($this->gradoPromocionId != $this->gradoAnteriorId) {
                 $this->addError(
                     'gradoPromocionId',
-                    'Con 4 o más materias pendientes debe repetir el grado.'
+                    'Con 4 o más materias pendientes debe repetir el nivel academico.'
                 );
                 return false;
             }
         }
 
-        // Validar: Materias reprobadas sin aprobar → debe repetir
         if ($this->tieneMateriasArrastradasNoAprobadas()) {
             $this->repite_grado = true;
 
             if ($this->gradoPromocionId != $this->gradoAnteriorId) {
                 $this->addError(
                     'gradoPromocionId',
-                    'El estudiante tiene Materias reprobadas sin aprobar. Debe recursar el grado.'
+                    'El estudiante tiene Materias reprobadas sin aprobar. Debe recursar el nivel academico.'
                 );
                 return false;
             }
@@ -762,9 +622,6 @@ class InscripcionProsecucion extends Component
         return true;
     }
 
-    /**
-     * Guarda el estado de cada materia (aprobada o pendiente)
-     */
     private function guardarMateriasEstado($prosecucionId)
     {
         $materiasSeleccionadas = collect($this->materiasSeleccionadas);
@@ -792,10 +649,8 @@ class InscripcionProsecucion extends Component
             'inscripcionProsecucions.grado'
         ])->find($this->alumnoId);
 
-        //  RECARGA LISTA
         $this->cargarDatosIniciales();
 
-        // AVISA A JS
         $this->dispatch('refreshSelectAlumno');
 
         session()->flash(

@@ -139,7 +139,7 @@
                     </div>
                     <div class="section-title">
                         <i class="fas fa-book"></i>
-                        <span>Areas de formación y grados asignados:</span>
+                        <span>Areas de formación y niveles academicos asignados:</span>
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="card shadow-sm" >
@@ -150,7 +150,7 @@
                                             <strong>Area de Formacion:</strong>
                                             {{$asignacion->areaEstudios->areaFormacion->nombre_area_formacion ?? 'N/A' }}
                                             | 
-                                            <strong>Grado:</strong>
+                                            <strong>Nivel Academico:</strong>
                                             {{$asignacion->grado->numero_grado ?? 'N/A' }}
                                             | 
                                             <strong>Seccion:</strong>

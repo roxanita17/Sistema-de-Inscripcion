@@ -166,7 +166,6 @@ class DocenteAreaGrado extends Component
             return;
         }
 
-        // 1️⃣ Cargar docente
         $this->docenteSeleccionado = Docente::with([
             'persona.tipoDocumento',
             'persona.genero',
@@ -175,7 +174,6 @@ class DocenteAreaGrado extends Component
             'detalleDocenteEstudio.estudiosRealizado'
         ])->find($value);
 
-        // 2️⃣ Resetear selects dependientes
         $this->reset([
             'materiaId',
             'gradoId',
@@ -184,13 +182,10 @@ class DocenteAreaGrado extends Component
             'secciones',
         ]);
 
-        // 3️⃣ Cargar materias del nuevo docente
         $this->cargarMateriasPorEstudios();
 
-        // 4️⃣ Cargar asignaciones
         $this->cargarAsignaciones();
 
-        // 5️⃣ Avisar al frontend
         $this->dispatch('resetSelects');
 
         session()->flash('success', 'Docente seleccionado correctamente.');
@@ -314,10 +309,6 @@ class DocenteAreaGrado extends Component
         $this->cargarSecciones();
     }
 
-
-    /**
-     * CARGA LISTA DE SECCIONES
-     */
     public function cargarSecciones()
     {
         if (!$this->gradoId) {
@@ -330,9 +321,6 @@ class DocenteAreaGrado extends Component
             ->orderBy('nombre', 'asc')
             ->get();
     }
-
-
-
 
     /**
      * REGISTRA UNA NUEVA ASIGNACIÓN
@@ -358,7 +346,7 @@ class DocenteAreaGrado extends Component
 
             if (!$gradoTieneMateria) {
                 throw ValidationException::withMessages([
-                    'gradoId' => 'El grado seleccionado no tiene asignada esta materia en el sistema. Debe asignarla primero en Grado-Área de Formación.'
+                    'gradoId' => 'El nivel academico seleccionado no tiene asignada esta area de formacion en el sistema. Debe asignarla primero en Niveles Academicos - Areas de Formacion.'
                 ]);
             }
 
@@ -385,7 +373,7 @@ class DocenteAreaGrado extends Component
 
             if ($existe) {
                 throw ValidationException::withMessages([
-                    'materiaId' => 'Esta materia ya está asignada a este grado y sección para este docente.'
+                    'materiaId' => 'Esta area de formacion ya está asignada a este nivel academico y sección para este docente.'
                 ]);
             }
 
@@ -416,14 +404,14 @@ class DocenteAreaGrado extends Component
                 // Si es el mismo docente, mensaje específico
                 if ($docenteExistente->id == $this->docenteSeleccionado->id) {
                     throw ValidationException::withMessages([
-                        'materiaId' => 'Ya tienes esta materia asignada a este grado y sección.'
+                        'materiaId' => 'Ya tienes esta area de formacion asignada a este nivel academico y sección.'
                     ]);
                 }
 
                 // Si es otro docente, indicar quién la tiene
                 $nombreDocente = $docenteExistente->persona->primer_nombre . ' ' . $docenteExistente->persona->primer_apellido;
                 throw ValidationException::withMessages([
-                    'materiaId' => "Esta materia ya está asignada a este grado y sección por el docente: {$nombreDocente}"
+                    'materiaId' => "Esta area de formacion ya está asignada a este nivel academico y sección por el docente: {$nombreDocente}"
                 ]);
             }
 

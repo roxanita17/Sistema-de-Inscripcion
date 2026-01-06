@@ -684,11 +684,13 @@
                     <div class="card-body-modern" style="padding: 2rem;">
                         @if (!$esPrimerGrado)
                             <div class="alert alert-info mb-4 align-items-start p-3 shadow-sm">
-                                <i class="fas fa-info-circle"></i> Seleccione el <b>Liceo</b> del que proviene el estudiante
+                                <i class="fas fa-info-circle"></i> Seleccione el <b>Liceo</b> del que proviene el
+                                estudiante
                             </div>
                         @else
                             <div class="alert alert-info mb-4 align-items-start p-3 shadow-sm">
-                                <i class="fas fa-info-circle"></i> Seleccione la <b>Escuela</b> de la que proviene el estudiante
+                                <i class="fas fa-info-circle"></i> Seleccione la <b>Escuela</b> de la que proviene el
+                                estudiante
                             </div>
                         @endif
                         <div class="row">
@@ -821,7 +823,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="anio_egreso" class="form-label-modern">
-                                        Egreso
+                                        Año de Egreso
                                         <span class="required-badge">*</span>
                                     </label>
                                     <input type="date" wire:model.live="anio_egreso"

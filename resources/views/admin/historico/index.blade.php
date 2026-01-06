@@ -95,14 +95,14 @@
                             @if ($tipo === 'inscripciones')
                                 <th>Año Escolar</th>
                                 <th class="text-center">Alumno</th>
-                                <th class="text-center">Año</th>
+                                <th class="text-center">Nivel Academico</th>
                                 <th class="text-center">Sección</th>
                                 <th class="text-center">Tipo de Inscripción</th>
                                 <th class="text-center">Acciones</th>
                             @elseif($tipo === 'docentes')
                                 <th class="text-center">Año Escolar</th>
                                 <th class="text-center">Docente</th>
-                                <th class="text-center">Año</th>
+                                <th class="text-center">Nivel Academico</th>
                                 <th class="text-center">Área</th>
                                 <th class="text-center">Sección</th>
                                 <th class="text-center">Acciones</th>
@@ -190,7 +190,7 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-success">
-                                                    {{ $inscripcion->grado->numero_grado }}° Año
+                                                    {{ $inscripcion->grado->numero_grado }}° 
                                                 </span>
                                             </td>
                                             <td>{{ $inscripcion->seccionAsignada->nombre ?? '—' }}</td>
@@ -240,11 +240,11 @@
                                             <td>
                                                 @if ($inscripcion->prosecucion)
                                                     <span class="badge bg-info">
-                                                        {{ $inscripcion->prosecucion->grado->numero_grado }}° Año
+                                                        {{ $inscripcion->prosecucion->grado->numero_grado }}°
                                                     </span>
                                                 @else
                                                     <span class="badge bg-success">
-                                                        {{ $inscripcion->grado->numero_grado }}° Año
+                                                        {{ $inscripcion->grado->numero_grado }}°
                                                     </span>
                                                 @endif
                                             </td>

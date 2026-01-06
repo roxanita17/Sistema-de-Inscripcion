@@ -29,46 +29,6 @@
         </div>
     @endif
 
-    <div class="card-modern mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <div class="card-body-modern" style="padding: 1.5rem;">
-            <div class="row text-white">
-                <div class="col-md-4">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <i class="fas fa-file-alt fa-3x"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-1 text-white">Estado Documentos</h6>
-                            <h4 class="mb-0 fw-bold">{{ $estadoDocumentos ?: 'Pendiente' }}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <i class="fas fa-user-graduate fa-3x"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-1 text-white">Estado Inscripción</h6>
-                            <h4 class="mb-0 fw-bold">{{ $statusInscripcion ?: 'Pendiente' }}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <i class="fas fa-clipboard-check fa-3x"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-1 text-white">Documentos Entregados</h6>
-                            <h4 class="mb-0 fw-bold">{{ count($documentos) }} / {{ count($documentosDisponibles) }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -639,8 +599,8 @@
                     <i class="fas fa-school"></i>
                 </div>
                 <div>
-                    <h3>Grado y Procedencia</h3>
-                    <p>Información del grado e institución de procedencia</p>
+                    <h3>Nivel Academico y Procedencia</h3>
+                    <p>Información del nivel academico e institución de procedencia</p>
                 </div>
             </div>
         </div>
@@ -648,13 +608,13 @@
             <div class="row">
                 <div class="col-md-4">
                     <label for="grado_id" class="form-label-modern">
-                         Año
+                         Nivel Academico
                     </label>
                     <select wire:model.live="gradoId"
                         class="form-control-modern @error('gradoId') is-invalid @enderror">
-                        <option value="">Seleccione un año</option>
+                        <option value="">Seleccione un nivel academico</option>
                         @foreach ($grados as $grado)
-                            <option value="{{ $grado->id }}">{{ $grado->numero_grado }} Año
+                            <option value="{{ $grado->id }}">{{ $grado->numero_grado }} °
                             </option>
                         @endforeach
                     </select>

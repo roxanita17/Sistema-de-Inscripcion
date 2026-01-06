@@ -158,7 +158,7 @@ class Inscripcion extends Component
         'expresion_literaria_id.exists' => 'La expresión literaria seleccionada no es válida.',
 
         'gradoId.required' => 'Este campo es requerido.',
-        'gradoId.exists' => 'El grado seleccionado no es válido.',
+        'gradoId.exists' => 'El nivel academico seleccionado no es válido.',
 
         'seccion_id.required' => 'Este campo es requerido.',
         'seccion_id.exists' => 'La sección seleccionada no es válida.',

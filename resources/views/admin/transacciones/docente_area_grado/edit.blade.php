@@ -1,25 +1,20 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
-
-    {{-- Bootstrap Select --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 @stop
 
 @section('js')
-    {{-- Bootstrap Select JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/i18n/defaults-es_ES.min.js"></script>
 @stop
 
-@section('title', 'Asignar Docente')
+@section('title', 'Editar Asignaciones a Docentes')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -27,15 +22,13 @@
                     <i class="fas fa-user-plus"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Editar Asignación de Docente</h1>
+                    <h1 class="title-main">Editar Asignaciones a Docentes</h1>
                     <p class="title-subtitle">Gestión de asignaciones académicas</p>
                 </div>
             </div>
-
-            {{-- Botón para volver al listado --}}
             <a href="{{ route('admin.transacciones.docente_area_grado.index') }}" class="btn-create" style="background: var(--gray-700);">
                 <i class="fas fa-arrow-left"></i>
-                <span>Volver al Listado</span>
+                <span>Volver</span>
             </a>
         </div>
     </div>
@@ -43,8 +36,6 @@
 
 @section('content')
 <div class="main-container">
-
-    {{-- Sección de alertas de error de validación --}}
     @if ($errors->any())
         <div class="alerts-container">
             <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
@@ -65,15 +56,11 @@
             </div>
         </div>
     @endif
-
-    {{-- Componente Livewire para búsqueda de docente --}}
     <livewire:admin.transaccion-docente.docente-area-grado :docenteId="$docenteId"/>
-
     <div class="form-actions-modern">
                     <a href="{{ route('admin.transacciones.docente_area_grado.index') }}" type="button" class="btn-secondary-modern">
                         <i class="fas fa-arrow-left"></i> Cancelar
                     </a>
-
                     <a href="{{ route('admin.transacciones.docente_area_grado.index') }}" type="button" class="btn-create">
                         <i class="fas fa-save"></i> Editar Asignación
                     </a>
@@ -81,8 +68,6 @@
             </div>
         </div>
     </form>
-    
-
 </div>
 
 @endsection

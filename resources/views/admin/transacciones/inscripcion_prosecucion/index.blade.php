@@ -186,8 +186,7 @@
                                 <th style="font-weight: bold">Cedula</th>
                                 <th class="text-center">Estudiante</th>
                                 <th class="text-center">Representante Legal</th>
-                                <th class="text-center">Parentesco</th>
-                                <th class="text-center">Año</th>
+                                <th class="text-center">Nivel Academico</th>
                                 <th class="text-center">Sección</th>
                                 <th class="text-center">Estado</th>
                                 <th class="text-center">Acciones</th>
@@ -229,9 +228,6 @@
                                         <td class="text-center">
                                             {{ $datos->inscripcion->representanteLegal->representante->persona->primer_nombre }}
                                             {{ $datos->inscripcion->representanteLegal->representante->persona->primer_apellido }}
-                                        </td>
-                                        <td class="text-center">
-                                            {{ $datos->inscripcion->representanteLegal->parentesco ?? 'No especificado' }}
                                         </td>
                                         <td class="text-center">
                                             {{ $datos->grado?->numero_grado ?? 'N/A' }}
