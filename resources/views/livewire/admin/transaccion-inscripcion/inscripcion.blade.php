@@ -697,20 +697,42 @@
                                     </div>
                                 </div>
                             @endif
+                            
                             <div class="col-md-4">
+                                <select wire:model.live="estado_id">
+                                    <option value="">Seleccione estado</option>
+                                    @foreach($estados as $estado)
+                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                                    @endforeach
+                                </select>
+
+                                <select wire:model.live="municipio_id" @disabled(!$estado_id)>
+                                    <option value="">Seleccione municipio</option>
+                                    @foreach($municipios as $municipio)
+                                        <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
+                                    @endforeach
+                                </select>
+
+                                <select wire:model.live="localidad_id" @disabled(!$municipio_id)>
+                                    <option value="">Seleccione localidad</option>
+                                    @foreach($localidades as $localidad)
+                                        <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}</option>
+                                    @endforeach
+                                </select>
                                 <div class="form-group">
                                     <label for="institucion_procedencia_id" class="form-label-modern">
                                         Institución de procedencia
                                         <span class="required-badge">*</span>
                                     </label>
-                                    <select wire:model.live="institucion_procedencia_id"
-                                        class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
+                                    <select wire:model.live="institucion_procedencia_id">
                                         <option value="">Seleccione una institución</option>
                                         @foreach ($instituciones as $inst)
-                                            <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}
+                                            <option value="{{ $inst->id }}">
+                                                {{ $inst->nombre_institucion }}
                                             </option>
                                         @endforeach
                                     </select>
+
                                     @error('institucion_procedencia_id')
                                         <div class="invalid-feedback-modern">
                                             <i class="fas fa-exclamation-circle"></i> {{ $message }}

@@ -32,6 +32,14 @@ class Inscripcion extends Component
     public $madreSeleccionado = null;
     public $representanteLegalSeleccionado = null;
 
+    public $estado_id = null;
+    public $municipio_id = null;
+    public $localidad_id = null;
+
+    public $estados = [];
+    public $municipios = [];
+    public $localidades = [];
+
     public $padres = [];
     public $madres = [];
     public $representantes = [];
@@ -96,14 +104,18 @@ class Inscripcion extends Component
         $this->documentosEtiquetas = $this->documentoService->obtenerEtiquetas();
         $this->tipo_inscripcion = 'nuevo_ingreso';
         $this->cargarDatosIniciales();
+        $this->estados = \App\Models\Estado::where('status', true)
+            ->orderBy('nombre_estado', 'asc')
+            ->get();
     }
 
-    /* ============================================================
-       VALIDACIÓN 
-       ============================================================ */
     public function rules()
     {
         return [
+            'estado_id' => 'required|exists:estados,id',
+            'municipio_id' => 'required|exists:municipios,id',
+            'localidad_id' => 'required|exists:localidades,id',
+
             'numero_zonificacion' => [
                 'nullable',
                 'regex:/^\d+$/'
@@ -171,20 +183,23 @@ class Inscripcion extends Component
 
     public function updated($propertyName)
     {
+        if (in_array($propertyName, [
+            'estado_id',
+            'municipio_id',
+            'localidad_id'
+        ])) {
+            return;
+        }
+
         if ($propertyName !== 'gradoId') {
             $this->validateOnly($propertyName);
         }
     }
 
 
-    /* ============================================================
-       CARGAS DE DATOS
-       ============================================================ */
     public function cargarDatosIniciales()
     {
         $datos = $this->inscripcionRepository->obtenerDatosIniciales();
-
-        $this->instituciones = $datos['instituciones'];
         $this->expresiones_literarias = $datos['expresiones_literarias'];
         $this->grados = $datos['grados'];
         $this->padres = $this->representanteRepository->obtenerPorGenero('Masculino');
@@ -196,13 +211,6 @@ class Inscripcion extends Component
             ->get();
     }
 
-    /* ============================================================
-       MÉTODOS UPDATED PARA CARGAR DETALLES 
-       ============================================================ */
-
-    /**
-     * Se ejecuta cuando cambia el padreId en el select
-     */
     public function updatedPadreId($value)
     {
         $this->padreSeleccionado = $value
@@ -210,9 +218,6 @@ class Inscripcion extends Component
             : null;
     }
 
-    /**
-     * Se ejecuta cuando cambia el madreId en el select
-     */
     public function updatedMadreId($value)
     {
         $this->madreSeleccionado = $value
@@ -220,9 +225,6 @@ class Inscripcion extends Component
             : null;
     }
 
-    /**
-     * Se ejecuta cuando cambia el representanteLegalId en el select
-     */
     public function updatedRepresentanteLegalId($value)
     {
         $this->representanteLegalSeleccionado = $value
@@ -231,9 +233,6 @@ class Inscripcion extends Component
         $this->evaluarDocumentosVisual();
     }
 
-    /* ============================================================
-       ACTUALIZACIÓN DE SELECTS (PARA EVENTOS PERSONALIZADOS)
-       ============================================================ */
     public function actualizarPadreSelect($data = null)
     {
         $id = $data['value'] ?? null;
@@ -261,9 +260,6 @@ class Inscripcion extends Component
             : null;
     }
 
-    /* ============================================================
-       MANEJO DE DOCUMENTOS
-       ============================================================ */
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
@@ -347,7 +343,6 @@ class Inscripcion extends Component
     {
         $nombres = [];
 
-        // Discapacidades ya guardadas (si existe alumno)
         if ($this->alumnoId) {
             $alumno = \App\Models\Alumno::with('discapacidades')->find($this->alumnoId);
 
@@ -358,7 +353,6 @@ class Inscripcion extends Component
             }
         }
 
-        // Discapacidades agregadas en esta inscripción
         foreach ($this->discapacidadesAgregadas as $discapacidad) {
             $nombres[] = $discapacidad['nombre'];
         }
@@ -373,9 +367,63 @@ class Inscripcion extends Component
             implode(PHP_EOL, $nombres);
     }
 
-    /* ============================================================
-       INFORMACIÓN DE CUPOS
-       ============================================================ */
+    public function updatedEstadoId($value)
+    {
+        $this->municipio_id = null;
+        $this->localidad_id = null;
+        $this->institucion_procedencia_id = null;
+
+        $this->localidades = [];
+        $this->instituciones = [];
+
+        if (!$value) {
+            $this->municipios = [];
+            return;
+        }
+
+        $this->municipios = \App\Models\Municipio::where('estado_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_municipio')
+            ->get();
+    }
+
+
+    public function updatedMunicipioId($value)
+    {
+        $this->localidad_id = null;
+        $this->institucion_procedencia_id = null;
+        $this->instituciones = [];
+
+        if (!$value) {
+            $this->localidades = [];
+            return;
+        }
+
+        $this->localidades = \App\Models\Localidad::where('municipio_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_localidad')
+            ->get();
+    }
+
+
+    public function updatedLocalidadId($value)
+    {
+        $this->institucion_procedencia_id = null;
+        $this->resetErrorBag('institucion_procedencia_id');
+
+        if (!$value) {
+            $this->instituciones = [];
+            return;
+        }
+
+        $this->instituciones = \App\Models\InstitucionProcedencia::where('localidad_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_institucion')
+            ->get();
+    }
+
+
+
     public function updatedGradoId($value)
     {
         $this->resetErrorBag('gradoId');
@@ -416,14 +464,6 @@ class Inscripcion extends Component
         $this->recalcularObservaciones();
     }
 
-
-    /* ============================================================
-       REGISTRO DE DISCAPACIDADES
-       ============================================================ */
-
-    /**
-     * Agrega una discapacidad a la lista temporal
-     */
     public function agregarDiscapacidad()
     {
         $this->validate([
@@ -433,13 +473,11 @@ class Inscripcion extends Component
             'discapacidadSeleccionada.exists' => 'La discapacidad seleccionada no es válida.'
         ]);
 
-        // Verificar si ya está agregada
         if (collect($this->discapacidadesAgregadas)->contains('id', $this->discapacidadSeleccionada)) {
             $this->addError('discapacidadSeleccionada', 'Esta discapacidad ya ha sido agregada.');
             return;
         }
 
-        // Buscar la discapacidad y agregarla
         $discapacidad = \App\Models\Discapacidad::find($this->discapacidadSeleccionada);
 
         if ($discapacidad) {
@@ -448,7 +486,6 @@ class Inscripcion extends Component
                 'nombre' => $discapacidad->nombre_discapacidad
             ];
 
-            // Limpiar selección
             $this->discapacidadSeleccionada = null;
             $this->resetErrorBag('discapacidadSeleccionada');
 
@@ -458,16 +495,12 @@ class Inscripcion extends Component
         }
     }
 
-    /**
-     * Elimina una discapacidad de la lista temporal
-     */
     public function eliminarDiscapacidad($index)
     {
         if (isset($this->discapacidadesAgregadas[$index])) {
             $discapacidad = $this->discapacidadesAgregadas[$index];
             unset($this->discapacidadesAgregadas[$index]);
 
-            // Reindexar el array
             $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
 
             $this->recalcularObservaciones();
@@ -476,9 +509,6 @@ class Inscripcion extends Component
         }
     }
 
-    /**
-     * Guarda las discapacidades del alumno en la tabla intermedia
-     */
     private function guardarDiscapacidadesAlumno($alumnoId)
     {
         foreach ($this->discapacidadesAgregadas as $discapacidad) {
@@ -490,10 +520,6 @@ class Inscripcion extends Component
         }
     }
 
-
-    /* ============================================================
-       REGISTRO DE INSCRIPCIÓN
-       ============================================================ */
     public function registrar()
     {
         if (!$this->validarRepresentantes()) {
@@ -506,7 +532,6 @@ class Inscripcion extends Component
             $dto = $this->crearInscripcionDTO();
             $inscripcion = $this->inscripcionService->registrar($dto);
 
-            // Guardar discapacidades si hay alumno seleccionado
             if ($this->alumnoId && !empty($this->discapacidadesAgregadas)) {
                 $this->guardarDiscapacidadesAlumno($this->alumnoId);
             }
@@ -544,7 +569,6 @@ class Inscripcion extends Component
         try {
             $dto = $this->crearInscripcionDTO();
 
-            // Agregar discapacidades al DTO o pasarlas por separado
             $inscripcion = $this->inscripcionService->registrarConAlumno(
                 $datos,
                 $dto,
@@ -558,9 +582,6 @@ class Inscripcion extends Component
         }
     }
 
-    /* ============================================================
-       HELPERS PRIVADOS
-       ============================================================ */
     private function validarRepresentantes(): bool
     {
         if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
@@ -591,9 +612,6 @@ class Inscripcion extends Component
         ]);
     }
 
-    /* ============================================================
-       LISTENERS
-       ============================================================ */
     protected $listeners = [
         'recibirDatosAlumno' => 'guardarTodo',
         'padreSeleccionadoEvento' => 'actualizarPadreSelect',
@@ -606,9 +624,6 @@ class Inscripcion extends Component
         $this->validateOnly('acepta_normas_contrato');
     }
 
-    /* ============================================================
-       NAVEGACIÓN
-       ============================================================ */
     public function irACrearRepresentante()
     {
         session()->put('inscripcion_temp', [
@@ -623,8 +638,6 @@ class Inscripcion extends Component
 
         return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
     }
-
-
 
     public function render()
     {
