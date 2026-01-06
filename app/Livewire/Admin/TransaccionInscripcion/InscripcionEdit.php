@@ -19,24 +19,23 @@ class InscripcionEdit extends Component
     protected RepresentanteRepository $representanteRepository;
     protected DocumentoService $documentoService;
 
-    // ID de la inscripción
     public $inscripcionId;
-
-    // IDs de relaciones
     public $alumnoId;
     public $padreId;
     public $madreId;
     public $representanteLegalId;
     public $gradoId;
     public $seccionId;
-
-    // Datos seleccionados para mostrar
     public $alumnoSeleccionado = null;
     public $padreSeleccionado = null;
     public $madreSeleccionado = null;
     public $representanteLegalSeleccionado = null;
-
-    // Listas para selects
+    public $estado_id = null;
+    public $municipio_id = null;
+    public $localidad_id = null;
+    public $estados = [];
+    public $municipios = [];
+    public $localidades = [];
     public $padres = [];
     public $madres = [];
     public $representantes = [];
@@ -44,8 +43,6 @@ class InscripcionEdit extends Component
     public $secciones = [];
     public $instituciones = [];
     public $expresiones_literarias = [];
-
-    // Datos de la inscripción
     public $numero_zonificacion;
     public $institucion_procedencia_id;
     public $expresion_literaria_id;
@@ -53,10 +50,7 @@ class InscripcionEdit extends Component
     public $documentos = [];
     public $observaciones;
     public $acepta_normas_contrato = false;
-
     public $esPrimerGrado = true;
-
-    // Para manejo de documentos
     public $documentosDisponibles = [];
     public $documentosEtiquetas = [];
     public $documentosFaltantes = [];
@@ -164,19 +158,29 @@ class InscripcionEdit extends Component
 
     public function updated($propertyName)
     {
-        $this->validateOnly($propertyName);
+        if (in_array($propertyName, [
+            'estado_id',
+            'municipio_id',
+            'localidad_id'
+        ])) {
+            return;
+        }
+
+        if ($propertyName !== 'gradoId') {
+            $this->validateOnly($propertyName);
+        }
     }
 
     public function mount($inscripcionId)
     {
         $this->inscripcionId = $inscripcionId;
-
-        // Cargar documentos disponibles
         $this->documentosDisponibles = $this->documentoService->obtenerDocumentosDisponibles();
         $this->documentosEtiquetas = $this->documentoService->obtenerEtiquetas();
-
         $this->cargarDatosIniciales();
         $this->cargarInscripcion();
+        $this->estados = \App\Models\Estado::where('status', true)
+            ->orderBy('nombre_estado', 'asc')
+            ->get();
     }
 
     private function cargarDatosIniciales()
@@ -184,8 +188,6 @@ class InscripcionEdit extends Component
         $this->grados = Grado::where('status', true)
             ->orderBy('numero_grado', 'asc')
             ->get();
-
-        $this->instituciones = InstitucionProcedencia::where('status', true)->get();
         $this->expresiones_literarias = ExpresionLiteraria::where('status', true)->get();
 
         $this->padres = $this->representanteRepository->obtenerPorGenero('Masculino');
@@ -205,7 +207,6 @@ class InscripcionEdit extends Component
             'nuevoIngreso'
         ])->findOrFail($this->inscripcionId);
 
-        // Datos básicos
         $this->alumnoId = $inscripcion->alumno_id;
         $this->gradoId = $inscripcion->grado_id;
         $this->seccionId = $inscripcion->seccion_id;
@@ -216,28 +217,47 @@ class InscripcionEdit extends Component
         $this->observaciones = $inscripcion->observaciones;
         $this->acepta_normas_contrato = $inscripcion->acepta_normas_contrato;
 
-        // Datos de nuevo ingreso
         if ($inscripcion->nuevoIngreso) {
             $this->numero_zonificacion = $inscripcion->nuevoIngreso->numero_zonificacion;
             $this->institucion_procedencia_id = $inscripcion->nuevoIngreso->institucion_procedencia_id;
+            if ($this->institucion_procedencia_id) {
+                $institucion = InstitucionProcedencia::with(
+                    'localidad.municipio.estado'
+                )->find($this->institucion_procedencia_id);
+
+                if ($institucion && $institucion->localidad) {
+                    $this->localidad_id = $institucion->localidad->id;
+                    $this->municipio_id = $institucion->localidad->municipio->id;
+                    $this->estado_id = $institucion->localidad->municipio->estado->id;
+                }
+            }
+
+            $this->municipios = \App\Models\Municipio::where('estado_id', $this->estado_id)
+                ->where('status', true)
+                ->orderBy('nombre_municipio')
+                ->get();
+
+            $this->localidades = \App\Models\Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+
+            $this->instituciones = \App\Models\InstitucionProcedencia::where('localidad_id', $this->localidad_id)
+                ->where('status', true)
+                ->orderBy('nombre_institucion')
+                ->get();
+
             $this->expresion_literaria_id = $inscripcion->nuevoIngreso->expresion_literaria_id;
             $this->anio_egreso = $inscripcion->nuevoIngreso->anio_egreso;
         }
 
-        // Cargar datos seleccionados
         $this->alumnoSeleccionado = $inscripcion->alumno;
         $this->padreSeleccionado = $inscripcion->padre;
         $this->madreSeleccionado = $inscripcion->madre;
         $this->representanteLegalSeleccionado = $inscripcion->representanteLegal;
-
-        // Verificar si es primer grado
         $grado = Grado::find($this->gradoId);
         $this->esPrimerGrado = ((int) $grado->numero_grado === 1);
-
-        // Cargar secciones del grado
         $this->cargarSecciones($this->gradoId);
-
-        // Evaluar estado de documentos
         $this->evaluarDocumentosVisual();
         $this->actualizarObservacionesPorDocumentos();
     }
@@ -258,6 +278,60 @@ class InscripcionEdit extends Component
             count($this->documentos) === count($this->documentosDisponibles);
     }
 
+    public function updatedEstadoId($value)
+    {
+        $this->municipio_id = null;
+        $this->localidad_id = null;
+        $this->institucion_procedencia_id = null;
+
+        $this->localidades = [];
+        $this->instituciones = [];
+
+        if (!$value) {
+            $this->municipios = [];
+            return;
+        }
+
+        $this->municipios = \App\Models\Municipio::where('estado_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_municipio')
+            ->get();
+    }
+
+
+    public function updatedMunicipioId($value)
+    {
+        $this->localidad_id = null;
+        $this->institucion_procedencia_id = null;
+        $this->instituciones = [];
+
+        if (!$value) {
+            $this->localidades = [];
+            return;
+        }
+
+        $this->localidades = \App\Models\Localidad::where('municipio_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_localidad')
+            ->get();
+    }
+
+
+    public function updatedLocalidadId($value)
+    {
+        $this->institucion_procedencia_id = null;
+        $this->resetErrorBag('institucion_procedencia_id');
+
+        if (!$value) {
+            $this->instituciones = [];
+            return;
+        }
+
+        $this->instituciones = \App\Models\InstitucionProcedencia::where('localidad_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_institucion')
+            ->get();
+    }
 
     public function updatedGradoId($value)
     {
@@ -305,8 +379,6 @@ class InscripcionEdit extends Component
         $this->representanteLegalSeleccionado = $value
             ? $this->representanteRepository->obtenerRepresentanteLegalConRelaciones($value)
             : null;
-
-        // Re-evaluar documentos cuando cambian los representantes
         $this->evaluarDocumentosVisual();
     }
 
@@ -346,8 +418,6 @@ class InscripcionEdit extends Component
             $this->esPrimerGrado,
             $this->alumnoId
         );
-
-        // NO marcar automáticamente, solo recalcular faltantes
         $this->documentosFaltantes = $evaluacion['faltantes'];
     }
 
@@ -387,7 +457,6 @@ class InscripcionEdit extends Component
 
     public function actualizar()
     {
-        // Validación básica
         try {
             $this->validate();
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -419,12 +488,8 @@ class InscripcionEdit extends Component
             return;
         }
 
-
-
         try {
             DB::beginTransaction();
-
-            // Re-evaluar documentos antes de guardar
             $requiereAutorizacion = !$this->padreId && !$this->madreId;
 
             $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
@@ -445,7 +510,7 @@ class InscripcionEdit extends Component
             if (!$this->validarNuevoIngreso($inscripcion)) {
                 return;
             }
-            // Actualizar inscripción
+
             $inscripcion->update([
                 'grado_id' => $this->gradoId,
                 'seccion_id' => $this->seccionId,
@@ -461,7 +526,6 @@ class InscripcionEdit extends Component
                 'acepta_normas_contrato' => $this->acepta_normas_contrato,
             ]);
 
-            // Actualizar nuevo ingreso
             if ($inscripcion->nuevoIngreso) {
                 $inscripcion->nuevoIngreso->update([
                     'numero_zonificacion' => $this->numero_zonificacion,
@@ -470,7 +534,6 @@ class InscripcionEdit extends Component
                     'anio_egreso' => $this->anio_egreso,
                 ]);
             }
-
             DB::commit();
 
             session()->flash('success', 'Inscripción actualizada exitosamente. Estado de documentos: ' . $evaluacion['estado_documentos']);
@@ -487,12 +550,9 @@ class InscripcionEdit extends Component
 
     public function manejarActualizacionAlumno()
     {
-        // Recargar datos del alumno después de actualizar
         $inscripcion = Inscripcion::with('alumno.persona')->find($this->inscripcionId);
         $this->alumnoSeleccionado = $inscripcion->alumno;
-
         $this->actualizarObservacionesPorDocumentos();
-
         session()->flash('success', 'Datos del alumno actualizados correctamente.');
     }
 
