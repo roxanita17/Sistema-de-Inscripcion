@@ -262,13 +262,19 @@ class Inscripcion extends Model
      */
     public function obtenerDatosCompletos()
     {
-        $alumno = $this->alumno;
+        $alumno = $this->alumno?->load([
+            'tallaCamisa',
+            'tallaPantalon'
+        ]);
 
         return [
             'inscripcion' => $this->toArray(),
             'nuevo_ingreso' => $this->nuevoIngreso?->toArray(),
             'persona_alumno' => $alumno?->persona?->toArray(),
-            'alumno' => $alumno?->toArray(),
+            'alumno' => array_merge($alumno?->toArray() ?? [], [
+                'talla_camisa' => $alumno?->tallaCamisa?->nombre,
+                'talla_pantalon' => $alumno?->tallaPantalon?->nombre,
+            ]),
             'datos_adicionales' => [
                 'lateralidad' => $alumno?->lateralidad?->toArray(),
 

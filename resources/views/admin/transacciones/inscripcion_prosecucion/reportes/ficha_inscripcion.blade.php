@@ -335,29 +335,172 @@
             <p>FECHA DE GENERACIÓN: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
+               <!-- DATOS ACADÉMICOS DE PROSECUCIÓN -->
         <div class="section">
-            <h2>PLANTEL DE PROCEDENCIA</h2>
+            <h2>DATOS ACADÉMICOS DE PROSECUCIÓN</h2>
             <table>
                 <tr>
-                    <td><strong>Institución de Procedencia:</strong></td>
-                    <td>{{ $datosCompletos['institucion_procedencia']['nombre'] ?? ($datosCompletos['institucion_procedencia']['nombre_institucion'] ?? 'N/A') }}
+                    <td><strong>Año anterior cursado:</strong></td>
+                    <td>{{ $datosCompletos['prosecucion']['grado_anterior'] ?? 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Año de promoción:</strong></td>
+                    <td>{{ $datosCompletos['prosecucion']['grado_actual'] ?? 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado de promoción:</strong></td>
+                    <td>
+                        @if($datosCompletos['prosecucion']['repite_grado'] == 'Sí')
+                            <span style="color: #e74c3c; font-weight: bold;">Repite Grado</span>
+                        @else
+                            <span style="color: #27ae60; font-weight: bold;">Promovido</span>
+                        @endif
                     </td>
                 </tr>
                 <tr>
-                    <td><strong>Año de Egreso:</strong></td>
-                    <td>{{ $datosCompletos['nuevo_ingreso']['anio_egreso'] ?? 'N/A' }}</td>
+                    <td><strong>Sección asignada:</strong></td>
+                    <td>{{ $datosCompletos['prosecucion']['seccion'] ?? 'N/A' }}</td>
                 </tr>
                 <tr>
-                    <td><strong>Expresión Literaria:</strong></td>
-                    <td>{{ $datosCompletos['expresion_literaria']['letra_expresion_literaria'] ?? 'N/A' }}</td>
+                    <td><strong>Año escolar de referencia:</strong></td>
+                    <td>
+                        @if ($anioEscolarActivo)
+                            {{ $anioEscolarActivo->inicio_anio_escolar->format('Y') }} -
+                            {{ $anioEscolarActivo->cierre_anio_escolar->format('Y') }}
+                        @else
+                            N/A
+                        @endif
+                    </td>
                 </tr>
                 <tr>
-                    <td><strong>Número de Zonificado:</strong></td>
-                    <td>{{ $datosCompletos['nuevo_ingreso']['numero_zonificacion'] ?? 'N/A' }}</td>
+                    <td><strong>Aceptación de normas:</strong></td>
+                    <td>
+                        @if($datosCompletos['prosecucion']['acepta_normas_contrato'] == 'Sí')
+                            <span style="color: #27ae60; font-weight: bold;">Sí</span>
+                        @else
+                            <span style="color: #e74c3c; font-weight: bold;">No</span>
+                        @endif
+                    </td>
                 </tr>
+                @if($datosCompletos['prosecucion']['observaciones'])
+                    <tr>
+                        <td><strong>Observaciones:</strong></td>
+                        <td>{{ $datosCompletos['prosecucion']['observaciones'] }}</td>
+                    </tr>
+                @endif
             </table>
         </div>
 
+        <!-- ESTADO DE MATERIAS POR ÁREA DE FORMACIÓN -->
+        <div class="section">
+            <h2>ESTADO DE MATERIAS POR ÁREA DE FORMACIÓN</h2>
+            
+            @if(isset($datosCompletos['prosecucion']['materias_aprobadas']) && $datosCompletos['prosecucion']['materias_aprobadas']->count() > 0)
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">
+                        <i class="fas fa-check-circle"></i> MATERIAS APROBADAS ({{ $datosCompletos['prosecucion']['materias_aprobadas']->count() }})
+                    </h3>
+                    <table>
+                        <thead>
+                            <tr style="background-color: #2c3e50; color: white;">
+                                <th style="width: 10%;">#</th>
+                                <th style="width: 60%;">Materia</th>
+                                <th style="width: 20%;">Código</th>
+                                <th style="width: 20%;">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($datosCompletos['prosecucion']['materias_aprobadas'] as $index => $materia)
+                                <tr>
+                                    <td style="text-align: center; font-weight: bold;">{{ $index + 1 }}</td>
+                                    <td>{{ $materia->gradoAreaFormacion->area_formacion->nombre_area_formacion ?? 'N/A' }}</td>
+                                    <td style="text-align: center;">{{ $materia->gradoAreaFormacion->codigo ?? 'N/A' }}</td>
+                                    <td style="text-align: center;">
+                                        <span style="background: #27ae60; color: white; padding: 4px 8px; border-radius: 4px; font-size: 9pt; font-weight: bold;">
+                                            APROBADO
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
+            @if(isset($datosCompletos['prosecucion']['materias_pendientes']) && $datosCompletos['prosecucion']['materias_pendientes']->count() > 0)
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #f39c12; border-bottom: 2px solid #f39c12; padding-bottom: 5px;">
+                        <i class="fas fa-exclamation-triangle"></i> MATERIAS PENDIENTES ({{ $datosCompletos['prosecucion']['materias_pendientes']->count() }})
+                    </h3>
+                    <table>
+                        <thead>
+                            <tr style="background-color: #2c3e50; color: white;">
+                                <th style="width: 10%;">#</th>
+                                <th style="width: 60%;">Materia</th>
+                                <th style="width: 20%;">Código</th>
+                                <th style="width: 20%;">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($datosCompletos['prosecucion']['materias_pendientes'] as $index => $materia)
+                                <tr>
+                                    <td style="text-align: center; font-weight: bold;">{{ $index + 1 }}</td>
+                                    <td>{{ $materia->gradoAreaFormacion->area_formacion->nombre_area_formacion ?? 'N/A' }}</td>
+                                    <td style="text-align: center;">{{ $materia->gradoAreaFormacion->codigo ?? 'N/A' }}</td>
+                                    <td style="text-align: center;">
+                                        <span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 4px; font-size: 9pt; font-weight: bold;">
+                                            PENDIENTE
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
+            @if(isset($datosCompletos['prosecucion']['materias_reprobadas']) && $datosCompletos['prosecucion']['materias_reprobadas']->count() > 0)
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 5px;">
+                        <i class="fas fa-times-circle"></i> MATERIAS REPROBADAS ({{ $datosCompletos['prosecucion']['materias_reprobadas']->count() }})
+                    </h3>
+                    <table>
+                        <thead>
+                            <tr style="background-color: #2c3e50; color: white;">
+                                <th style="width: 10%;">#</th>
+                                <th style="width: 60%;">Materia</th>
+                                <th style="width: 20%;">Código</th>
+                                <th style="width: 20%;">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($datosCompletos['prosecucion']['materias_reprobadas'] as $index => $materia)
+                                <tr>
+                                    <td style="text-align: center; font-weight: bold;">{{ $index + 1 }}</td>
+                                    <td>{{ $materia->gradoAreaFormacion->area_formacion->nombre_area_formacion ?? 'N/A' }}</td>
+                                    <td style="text-align: center;">{{ $materia->gradoAreaFormacion->codigo ?? 'N/A' }}</td>
+                                    <td style="text-align: center;">
+                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 9pt; font-weight: bold;">
+                                            REPROBADO
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
+            @if((!isset($datosCompletos['prosecucion']['materias_aprobadas']) || $datosCompletos['prosecucion']['materias_aprobadas']->count() == 0) && 
+               (!isset($datosCompletos['prosecucion']['materias_pendientes']) || $datosCompletos['prosecucion']['materias_pendientes']->count() == 0) &&
+               (!isset($datosCompletos['prosecucion']['materias_reprobadas']) || $datosCompletos['prosecucion']['materias_reprobadas']->count() == 0))
+                <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 5px; border: 1px solid #dee2e6;">
+                    <p style="margin: 0; color: #6c757d; font-style: italic;">
+                        <i class="fas fa-info-circle"></i> No hay información de materias registradas para esta inscripción de prosecución.
+                    </p>
+                </div>
+            @endif
+        </div>
         <div class="section">
             <h2>DATOS DEL ESTUDIANTE</h2>
             <table class="student-info">
@@ -524,6 +667,8 @@
                 </p>
             @endif
         </div>
+
+
 
         <!-- Sección del Representante Legal -->
         <div class="section">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Inscripcion;
 use App\Models\Persona;
 use App\Models\Genero;
@@ -12,6 +13,7 @@ use App\Models\InscripcionProsecucion;
 use App\Models\Grado;
 use App\Models\InstitucionProcedencia;
 use App\Models\Seccion;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class InscripcionProsecucionController extends Controller
@@ -130,5 +132,98 @@ class InscripcionProsecucionController extends Controller
     {
         InscripcionProsecucion::restaurar($id);
         return redirect()->route('admin.transacciones.inscripcion_prosecucion.index')->with('success', 'Inscripción por prosecución restaurada correctamente');
+    }
+
+    public function reporte($id)
+    {
+        $prosecucion = InscripcionProsecucion::with([
+            'inscripcion.alumno.persona',
+            'inscripcion.alumno.ordenNacimiento',
+            'inscripcion.alumno.lateralidad',
+            'inscripcion.alumno.discapacidades',
+            'inscripcion.alumno.etniaIndigena',
+            'inscripcion.alumno.tallaCamisa',
+            'inscripcion.alumno.tallaPantalon',
+            'inscripcion.grado',
+            'inscripcion.seccionAsignada',
+            'inscripcion.padre.persona',
+            'inscripcion.madre.persona',
+            'inscripcion.representanteLegal.representante.persona',
+            'inscripcion.representanteLegal.banco',
+            'grado',
+            'seccion',
+            'anioEscolar',
+            'prosecucionAreas.gradoAreaFormacion.area_formacion',
+        ])->findOrFail($id);
+
+        $datosCompletos = $prosecucion->inscripcion->obtenerDatosCompletos();
+
+        // Agregar datos específicos de prosecución
+        $datosCompletos['prosecucion'] = [
+            'grado_anterior' => $prosecucion->inscripcion->grado->numero_grado ?? 'N/A',
+            'grado_actual' => $prosecucion->grado->numero_grado ?? 'N/A',
+            'seccion' => $prosecucion->seccion->nombre ?? 'N/A',
+            'promovido' => $prosecucion->promovido ? 'Sí' : 'No',
+            'repite_grado' => $prosecucion->repite_grado ? 'Sí' : 'No',
+            'observaciones' => $prosecucion->observaciones,
+            'acepta_normas_contrato' => $prosecucion->acepta_normas_contrato ? 'Sí' : 'No',
+            'materias_aprobadas' => $prosecucion->prosecucionAreas->where('status', 'aprobada'),
+            'materias_pendientes' => $prosecucion->prosecucionAreas->where('status', 'pendiente'),
+            'materias_reprobadas' => $prosecucion->prosecucionAreas->where('status', 'reprobada'),
+        ];
+
+        // Obtener el año escolar activo
+        $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->first();
+
+        $pdf = PDF::loadview('admin.transacciones.inscripcion_prosecucion.reportes.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
+        
+        // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
+        $pdf->setOption('isPhpEnabled', true);
+        
+        return $pdf->stream('ficha_inscripcion_prosecucion.pdf');
+    }
+
+    public function reporteGeneralProsecucionPDF(Request $request)
+    {
+        $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->first();
+
+        $filtro = $request->all();
+
+        if (!isset($filtro['anio_escolar_id']) && $anioEscolarActivo) {
+            $filtro['anio_escolar_id'] = $anioEscolarActivo->id;
+        }
+
+        $prosecuciones = InscripcionProsecucion::reporteGeneralPDF($filtro);
+
+        // Ordenamos por la primera letra del primer apellido
+        $prosecuciones = $prosecuciones->sortBy(function ($item) {
+            $primerApellido = $item->inscripcion->alumno->persona->primer_apellido ?? '';
+            return strtoupper(substr($primerApellido, 0, 1));
+        });
+
+        if ($prosecuciones->isEmpty()) {
+            return response('No se encontraron inscripciones de prosecución', 404);
+        }
+
+        $filtrosVista = [
+            'anio_escolar' => $anioEscolarActivo ? ($anioEscolarActivo->nombre ?? $anioEscolarActivo->anio ?? null) : null,
+        ];
+
+        $pdf = Pdf::loadView(
+            'admin.transacciones.inscripcion_prosecucion.reporte.reporte_general_prosecucion',
+            [
+                'prosecuciones' => $prosecuciones,
+                'filtros' => $filtrosVista,
+            ]
+        );
+
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->setOption('isPhpEnabled', true);
+
+        return $pdf->stream('reporte_general_prosecucion.pdf');
     }
 }

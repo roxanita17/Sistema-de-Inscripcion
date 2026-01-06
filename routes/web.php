@@ -359,6 +359,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('inscripcion-prosecucion/{id}/restore', [InscripcionProsecucionController::class, 'restore'])
             ->name('inscripcion_prosecucion.restore');
 
+        // ========= REPORTES PROSECUCIÓN =========
+        Route::get('inscripcion-prosecucion/{id}/reporte', [InscripcionProsecucionController::class, 'reporte'])
+            ->name('inscripcion_prosecucion.reporte');
+
+        Route::get('inscripcion_prosecucion/reportes/general', [InscripcionProsecucionController::class, 'reporteGeneralProsecucionPDF'])
+            ->name('inscripcion_prosecucion.reporteGeneralProsecucionPDF');
+
         // ========= AJAX =========
         Route::get(
             'secciones-por-grado/{grado}',

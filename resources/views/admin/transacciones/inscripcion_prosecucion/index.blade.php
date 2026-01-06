@@ -141,12 +141,18 @@
                         @endif
                     </button>
                 </div>
+                <div>
+                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.reporteGeneralProsecucionPDF') }}" class="btn-pdf" id="generarPdfBtn" target="_blank">
+                        <i class="fas fa-file-pdf me-2"></i>Reporte General
+                    </a>
+                </div>
                 <div class="header-right">
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                         $mostrarAnio = $anioActivo ?? $anioExtendido;
                     @endphp
+
                     @if ($mostrarAnio)
                         <div
                             class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1 mb-2 border">
@@ -160,6 +166,7 @@
                                         <i class="fas fa-play-circle text-primary me-1"></i>
                                         {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
                                     </span>
+
                                     <span class="text-muted me-2">
                                         <i class="fas fa-flag-checkered text-danger me-1"></i>
                                         {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
@@ -293,6 +300,14 @@
                                                                 </button>
                                                             @endif
                                                         </li>
+                                                        <li>
+                                                            <a href="{{ route('admin.transacciones.inscripcion_prosecucion.reporte', $datos->id) }}"
+                                                                class="dropdown-item d-flex align-items-center text-danger"
+                                                                title="Generar Reporte PDF" target="_blank">
+                                                                <i class="fas fa-file-pdf me-2"></i>
+                                                                PDF
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -323,4 +338,49 @@
             'datos' => $datos,
         ])
     @endforeach
+
+    <script>
+        // Actualizar el enlace de generación de PDF con los filtros actuales
+        function actualizarEnlacePDF() {
+            const generarPdfBtn = document.getElementById('generarPdfBtn');
+            if (generarPdfBtn) {
+                // Obtener todos los parámetros de la URL actual
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Construir la URL base del reporte
+                let reportUrl = generarPdfBtn.getAttribute('href').split('?')[0];
+                const params = new URLSearchParams();
+                
+                // Agregar todos los parámetros de filtro actuales
+                for (const [key, value] of urlParams.entries()) {
+                    if (value) {
+                        params.append(key, value);
+                    }
+                }
+                
+                // Construir URL final
+                if (params.toString()) {
+                    reportUrl += '?' + params.toString();
+                }
+                
+                // Actualizar el atributo href del botón
+                generarPdfBtn.setAttribute('href', reportUrl);
+            }
+        }
+        
+        // Inicializar el enlace de PDF cuando el documento esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Actualizar el enlace de PDF al cargar la página
+            actualizarEnlacePDF();
+            
+            // Actualizar el enlace cuando cambie la URL (navegación con filtros)
+            window.addEventListener('popstate', actualizarEnlacePDF);
+            
+            // Actualizar el enlace cuando se muestre el modal de filtros
+            const filtroModal = document.getElementById('modalFiltros');
+            if (filtroModal) {
+                filtroModal.addEventListener('shown.bs.modal', actualizarEnlacePDF);
+            }
+        });
+    </script>
 @endsection
