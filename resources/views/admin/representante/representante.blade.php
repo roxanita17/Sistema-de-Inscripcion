@@ -13,47 +13,52 @@
             padding: 0.35em 0.65em;
             font-size: 0.8em;
         }
+
         .action-buttons .dropdown-menu {
             min-width: 10rem;
         }
+
         .table-modern {
             width: 100%;
             margin-bottom: 1rem;
             color: #212529;
             border-collapse: collapse;
         }
+
         .table-modern th,
         .table-modern td {
             padding: 0.75rem;
             vertical-align: middle;
             border-top: 1px solid #dee2e6;
         }
+
         .table-modern thead th {
             vertical-align: bottom;
             border-bottom: 2px solid #dee2e6;
             background-color: #f8f9fa;
         }
+
         .table-modern tbody tr:hover {
             background-color: rgba(0, 0, 0, 0.02);
         }
-        
+
         /* Estilos personalizados para los badges de tipo de representante */
         .status-legal {
             background: rgba(79, 70, 229, 0.1);
             color: #4f46e5;
             border: 1px solid rgba(79, 70, 229, 0.2);
         }
-        
+
         .status-progenitor {
             background: rgba(59, 130, 246, 0.1);
             color: #1d4ed8;
             border: 1px solid rgba(59, 130, 246, 0.2);
         }
-        
+
         .status-legal .status-dot {
             background: #4f46e5;
         }
-        
+
         .status-progenitor .status-dot {
             background: #1d4ed8;
         }
@@ -129,40 +134,40 @@
                 max-width: 95%;
                 margin: 1rem;
             }
-            
+
             .detail-item {
                 flex-direction: column;
                 align-items: flex-start;
                 padding: 1rem 0;
             }
-            
+
             .detail-label {
                 min-width: auto;
                 margin-bottom: 0.5rem;
                 font-size: 0.9rem;
             }
-            
+
             .detail-value {
                 text-align: left;
                 margin-left: 0;
                 font-size: 0.95rem;
             }
-            
+
             .card-header-custom {
                 margin: -1.5rem -1.5rem 1rem -1.5rem;
                 padding: 1rem 1.5rem;
             }
-            
+
             .details-card {
                 padding: 1.5rem;
                 margin-bottom: 1rem;
             }
-            
+
             .modal-body-view {
                 padding: 1rem !important;
             }
-            
-            .row.g-4 > div {
+
+            .row.g-4>div {
                 margin-bottom: 1rem;
             }
         }
@@ -172,20 +177,20 @@
                 margin: 0.5rem;
                 max-width: calc(100% - 1rem);
             }
-            
+
             .modal-header-view {
                 padding: 1rem;
             }
-            
+
             .modal-title-view {
                 font-size: 1.1rem !important;
             }
-            
+
             .detail-label i {
                 width: 18px;
                 font-size: 0.9rem;
             }
-            
+
             .badge.fs-6 {
                 font-size: 0.7rem !important;
             }
@@ -201,6 +206,7 @@
                 transform: translateY(100px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -252,9 +258,9 @@
             <button type="button" class="btn-create"
                 onclick="window.location.href='{{ route('representante.formulario') }}'"
                 @if (!$anioEscolarActivo) disabled @endif
-                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo Representante' }}">
+                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Registrar Representante' }}">
                 <i class="fas fa-plus"></i>
-                <span>Nuevo Representante</span>
+                <span>Registrar</span>
             </button>
 
         </div>
@@ -273,7 +279,8 @@
                     <div>
                         <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
                         <p class="mb-0">
-                            Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> representantes hasta
+                            Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong>
+                            representantes hasta
                             que se registre un año escolar activo.
                             <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
                         </p>
@@ -299,18 +306,9 @@
                     <div class="form-group-modern mb-0">
                         <div class="search-modern">
                             <i class="fas fa-search"></i>
-                            <input type="text" 
-                                   name="buscar" 
-                                   id="buscador" 
-                                   class="form-control-modern"
-                                   placeholder="Buscar..." 
-                                   value="{{ request('buscar') }}"
-                                   autocomplete="off">
+                            <input type="text" name="buscar" id="buscador" class="form-control-modern"
+                                placeholder="Buscar..." value="{{ request('buscar') }}" autocomplete="off">
                         </div>
-                        <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);">
-                            <i class="fas fa-info-circle"></i>
-                            Buscar por cédula, nombre o apellido
-                        </small>
                     </div>
                 </form>
                 <div class="header-right" style="display: flex; gap: 5px;">
@@ -329,50 +327,50 @@
                         <span>{{ now()->translatedFormat('d M Y') }}</span>
                     </div>
 
-                                                                           <div class="header-right">
-                <!-- --------------------------- -->
+                    <div class="header-right">
 
-@php
-    $anioActivo = \App\Models\AnioEscolar::activos()->first();
-    $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-    $mostrarAnio = $anioActivo ?? $anioExtendido;
-@endphp
+                        @php
+                            $anioActivo = \App\Models\AnioEscolar::activos()->first();
+                            $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
+                            $mostrarAnio = $anioActivo ?? $anioExtendido;
+                        @endphp
 
-@if($mostrarAnio)
-    <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
-        <div class="d-flex align-items-center">
-            <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                <i class="fas fa-calendar-check me-1"></i>
-                
-                Año Escolar
-            </span>
-            
-            <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                <span class="text-muted me-2">
-                    <i class="fas fa-play-circle text-primary me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                <span class="text-muted me-2">
-                    <i class="fas fa-flag-checkered text-danger me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                
-            </div>
-        </div>
-    </div>
-@else
-    <div class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-        </div>
-    </div>
-@endif
-<!-- --------------------------- -->
+                        @if ($mostrarAnio)
+                            <div
+                                class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
+                                        <i class="fas fa-calendar-check me-1"></i>
 
-            </div>
+                                        Año Escolar
+                                    </span>
+
+                                    <div class="d-flex align-items-center" style="font-size: 0.8rem;">
+                                        <span class="text-muted me-2">
+                                            <i class="fas fa-play-circle text-primary me-1"></i>
+                                            {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                                        </span>
+
+                                        <span class="text-muted me-2">
+                                            <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                            {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                                        </span>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div
+                                class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
+                                    <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
+                                </div>
+                            </div>
+                        @endif
+
+                    </div>
 
                 </div>
             </div>
@@ -399,7 +397,8 @@
                                         @php
                                             $tipoRepresentante = $rep->legal ? 'Representante Legal' : 'Progenitor';
                                         @endphp
-                                        <span class="status-badge {{ $tipoRepresentante === 'Representante Legal' ? 'status-legal' : 'status-progenitor' }}">
+                                        <span
+                                            class="status-badge {{ $tipoRepresentante === 'Representante Legal' ? 'status-legal' : 'status-progenitor' }}">
                                             <span class="status-dot"></span>
                                             {{ $tipoRepresentante }}
                                         </span>
@@ -407,8 +406,7 @@
                                     <td>
                                         <div class="action-buttons">
                                             <div class="dropdown dropstart text-center">
-                                                <button
-                                                    class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
+                                                <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
                                                     type="button" data-bs-toggle="dropdown" aria-expanded="false"
                                                     title="Acciones">
                                                     <i class="fas fa-ellipsis-v"></i>
@@ -424,8 +422,7 @@
                                                             data-persona='@json($rep->persona)'
                                                             data-representante='@json($rep->toArray())'
                                                             data-legal='@json($rep->legal)'
-                                                            data-banco='@json($rep->legal ? $rep->legal->banco : null)'
-                                                            title="Ver detalle">
+                                                            data-banco='@json($rep->legal ? $rep->legal->banco : null)' title="Ver detalle">
                                                             <i class="fas fa-eye me-2"></i>
                                                             Ver
                                                         </button>
@@ -433,10 +430,10 @@
 
                                                     {{-- Editar --}}
                                                     <li>
-                                                        <a href="{{ route('representante.editar', $rep->id) }}" 
-                                                           class="dropdown-item d-flex align-items-center text-warning"
-                                                           @if (!$anioEscolarActivo) disabled @endif
-                                                           title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
+                                                        <a href="{{ route('representante.editar', $rep->id) }}"
+                                                            class="dropdown-item d-flex align-items-center text-warning"
+                                                            @if (!$anioEscolarActivo) disabled @endif
+                                                            title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
                                                             <i class="fas fa-pen me-2"></i>
                                                             Editar
                                                         </a>
@@ -444,8 +441,7 @@
 
                                                     {{-- Inactivar --}}
                                                     <li>
-                                                        <button
-                                                            class="dropdown-item d-flex align-items-center text-danger"
+                                                        <button class="dropdown-item d-flex align-items-center text-danger"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#confirmarEliminarRepresentante{{ $rep->id }}"
                                                             @disabled(!$anioEscolarActivo)
@@ -502,28 +498,28 @@
                                         </div>
 
                                     @empty
-                                        <tr>
-                                            <td colspan="5" class="text-center py-3">No hay representantes registrados.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card-footer clearfix">
-                        <div class="d-flex justify-content-end">
-                            {{ $representantes->links() }}
-                        </div>
-                    </div>
+                                <tr>
+                                    <td colspan="5" class="text-center py-3">No hay representantes registrados.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
+            </div>
 
-                {{-- Modal de detalles del representante --}}
-                @include('admin.representante.modales.showModal')
-
+            <div class="card-footer clearfix">
+                <div class="d-flex justify-content-end">
+                    {{ $representantes->links() }}
+                </div>
             </div>
         </div>
+
+        {{-- Modal de detalles del representante --}}
+        @include('admin.representante.modales.showModal')
+
+    </div>
+    </div>
     </div>
 @endsection
 
@@ -539,11 +535,11 @@
         const municipios = @json(\App\Models\Municipio::all());
         const parroquias = @json(\App\Models\Localidad::all());
         const bancos = @json(\App\Models\Banco::all());
-        
+
         // Inicialización cuando el documento esté listo
         document.addEventListener('DOMContentLoaded', function() {
             console.log('JavaScript cargado y DOM listo');
-            
+
             // Manejar clic en botones de ver detalles
             document.addEventListener('click', function(e) {
                 console.log('Click detectado en:', e.target);
@@ -551,20 +547,23 @@
                 if (btn) {
                     console.log('Botón Ver encontrado');
                     e.preventDefault();
-                    
+
                     // Obtener los datos de los atributos data
                     const personaData = btn.dataset.persona ? JSON.parse(btn.dataset.persona) : null;
-                    const representanteData = btn.dataset.representante ? JSON.parse(btn.dataset.representante) : null;
-                    const legalData = btn.dataset.legal && btn.dataset.legal !== 'null' ? JSON.parse(btn.dataset.legal) : null;
-                    const bancoData = btn.dataset.banco && btn.dataset.banco !== 'null' ? JSON.parse(btn.dataset.banco) : null;
-                    
+                    const representanteData = btn.dataset.representante ? JSON.parse(btn.dataset
+                        .representante) : null;
+                    const legalData = btn.dataset.legal && btn.dataset.legal !== 'null' ? JSON.parse(btn
+                        .dataset.legal) : null;
+                    const bancoData = btn.dataset.banco && btn.dataset.banco !== 'null' ? JSON.parse(btn
+                        .dataset.banco) : null;
+
                     // Debug detallado
                     console.log('=== DATOS RECIBIDOS EN EL CLIENTE ===');
                     console.log('personaData:', personaData);
                     console.log('representanteData:', representanteData);
                     console.log('legalData:', legalData);
                     console.log('bancoData:', bancoData);
-                    
+
                     if (personaData) {
                         console.log('Campos de persona:', {
                             primer_nombre: personaData.primer_nombre,
@@ -579,7 +578,7 @@
                             direccion: personaData.direccion
                         });
                     }
-                    
+
                     if (representanteData) {
                         console.log('Campos de representante:', {
                             estado: representanteData.estado,
@@ -587,45 +586,46 @@
                             localidads: representanteData.localidads,
                             ocupacion: representanteData.ocupacion,
                             ocupacion_representante: representanteData.ocupacion_representante,
-                            convivenciaestudiante_representante: representanteData.convivenciaestudiante_representante
+                            convivenciaestudiante_representante: representanteData
+                                .convivenciaestudiante_representante
                         });
                     }
-                    
+
                     // Llenar el modal con los datos
                     llenarModalRepresentante(personaData, representanteData, legalData, bancoData);
-                    
+
                     // Mostrar el modal usando Bootstrap 5
                     const modal = new bootstrap.Modal(document.getElementById('modalVerDetalleRegistro'));
                     modal.show();
                 }
             });
-            
+
             // Corregir problema del backdrop que no se cierra
             const modalElement = document.getElementById('modalVerDetalleRegistro');
             if (modalElement) {
-                modalElement.addEventListener('hidden.bs.modal', function () {
+                modalElement.addEventListener('hidden.bs.modal', function() {
                     // Eliminar cualquier backdrop residual
                     const backdrops = document.querySelectorAll('.modal-backdrop');
                     backdrops.forEach(backdrop => backdrop.remove());
-                    
+
                     // Restaurar el scroll del body
                     document.body.classList.remove('modal-open');
                     document.body.style.overflow = '';
                     document.body.style.paddingRight = '';
-                    
+
                     // Eliminar cualquier clase modal-open del body
                     document.body.classList.remove('modal-open');
                 });
-                
+
                 // También manejar el evento show para asegurar que se limpie antes de abrir
-                modalElement.addEventListener('show.bs.modal', function () {
+                modalElement.addEventListener('show.bs.modal', function() {
                     // Limpiar cualquier backdrop residual antes de mostrar
                     const backdrops = document.querySelectorAll('.modal-backdrop');
                     backdrops.forEach(backdrop => backdrop.remove());
                 });
             }
         });
-        
+
         // Configuración de fechas por defecto
         document.addEventListener('DOMContentLoaded', function() {
             // Establecer rango de fechas por defecto (mes actual)
@@ -679,7 +679,7 @@
                 console.log('representante:', representante);
                 console.log('legal:', legal);
                 console.log('banco:', banco);
-                
+
                 // Debug: verificar estructura de datos
                 console.log('Estructura de persona:', {
                     tiene_tipo_documento: !!persona.tipo_documento,
@@ -687,7 +687,7 @@
                     tiene_prefijo: !!persona.prefijo,
                     tiene_prefijo_dos: !!persona.prefijo_dos
                 });
-                
+
                 console.log('Estructura de representante:', {
                     tiene_estado: !!representante.estado,
                     tiene_municipios: !!representante.municipios,
@@ -704,7 +704,7 @@
                 // Actualizar el título con el tipo de representante
                 const tipoBadge = document.getElementById('tipo-representante-badge');
                 const isLegal = legal && (legal.id || (typeof legal === 'object' && Object.keys(legal).length > 0));
-                
+
                 if (isLegal) {
                     // Es representante legal
                     tipoBadge.textContent = 'Representante Legal';
@@ -716,7 +716,7 @@
                 }
 
                 // === DATOS PERSONALES ===
-                
+
                 // Tipo de documento
                 let tipoDocumento = '';
                 if (persona.tipo_documento && persona.tipo_documento.nombre) {
@@ -733,23 +733,27 @@
                 document.getElementById('modal-tipo-documento').textContent = tipoDocumento || 'No especificado';
 
                 // Número de cédula
-                document.getElementById('modal-numero_documento').textContent = persona.numero_documento || 'No especificado';
-                
+                document.getElementById('modal-numero_documento').textContent = persona.numero_documento ||
+                    'No especificado';
+
                 // Nombres completos
                 const nombres = [persona.primer_nombre, persona.segundo_nombre, persona.tercer_nombre]
                     .filter(n => n && n.trim())
                     .join(' ');
                 document.getElementById('modal-primer-nombre').textContent = persona.primer_nombre || '';
-                document.getElementById('modal-segundo-nombre').textContent = persona.segundo_nombre ? ' ' + persona.segundo_nombre : '';
-                document.getElementById('modal-tercer-nombre').textContent = persona.tercer_nombre ? ' ' + persona.tercer_nombre : '';
-                
+                document.getElementById('modal-segundo-nombre').textContent = persona.segundo_nombre ? ' ' + persona
+                    .segundo_nombre : '';
+                document.getElementById('modal-tercer-nombre').textContent = persona.tercer_nombre ? ' ' + persona
+                    .tercer_nombre : '';
+
                 // Apellidos completos
                 const apellidos = [persona.primer_apellido, persona.segundo_apellido]
                     .filter(a => a && a.trim())
                     .join(' ');
                 document.getElementById('modal-primer-apellido').textContent = persona.primer_apellido || '';
-                document.getElementById('modal-segundo-apellido').textContent = persona.segundo_apellido ? ' ' + persona.segundo_apellido : '';
-                
+                document.getElementById('modal-segundo-apellido').textContent = persona.segundo_apellido ? ' ' + persona
+                    .segundo_apellido : '';
+
                 // Fecha de nacimiento
                 let fechaNacimiento = persona.fecha_nacimiento ? new Date(persona.fecha_nacimiento) : null;
                 if (fechaNacimiento && !isNaN(fechaNacimiento)) {
@@ -777,7 +781,7 @@
                 document.getElementById('modal-genero').textContent = genero || 'No especificado';
 
                 // === CONTACTO Y UBICACIÓN ===
-                
+
                 // Teléfono principal
                 let telefonoCompleto = '';
                 if (persona.prefijo && persona.prefijo.prefijo) {
@@ -786,7 +790,7 @@
                     telefonoCompleto = persona.telefono;
                 }
                 document.getElementById('modal-telefono').textContent = telefonoCompleto || 'No especificado';
-                
+
                 // Teléfono secundario
                 let telefonoDosCompleto = '';
                 if (persona.prefijo_dos && persona.prefijo_dos.prefijo) {
@@ -795,7 +799,7 @@
                     telefonoDosCompleto = persona.telefono_dos;
                 }
                 document.getElementById('modal-telefono-dos').textContent = telefonoDosCompleto || 'No especificado';
-                
+
                 // Correo electrónico (solo para representantes legales)
                 if (document.getElementById('modal-correo')) {
                     const correoItem = document.getElementById('correo-detail-item');
@@ -857,14 +861,16 @@
                 document.getElementById('modal-direccion').textContent = persona.direccion || 'No especificada';
 
                 // === INFORMACIÓN LABORAL ===
-                
+
                 // Ocupación
                 let ocupacionNombre = '';
                 if (representante.ocupacion && representante.ocupacion.nombre_ocupacion) {
                     ocupacionNombre = representante.ocupacion.nombre_ocupacion;
-                } else if (typeof ocupaciones !== 'undefined' && ocupaciones.length > 0 && representante.ocupacion_representante) {
+                } else if (typeof ocupaciones !== 'undefined' && ocupaciones.length > 0 && representante
+                    .ocupacion_representante) {
                     const ocupacion = ocupaciones.find(oc => oc.id == representante.ocupacion_representante);
-                    ocupacionNombre = ocupacion ? ocupacion.nombre_ocupacion : `ID: ${representante.ocupacion_representante}`;
+                    ocupacionNombre = ocupacion ? ocupacion.nombre_ocupacion :
+                        `ID: ${representante.ocupacion_representante}`;
                 } else if (representante.ocupacion_representante) {
                     ocupacionNombre = `ID: ${representante.ocupacion_representante}`;
                 }
@@ -908,10 +914,12 @@
 
                     // Código y serial de carnet
                     if (document.getElementById('modal-codigo')) {
-                        document.getElementById('modal-codigo').textContent = legal.codigo_carnet_patria_representante || 'No especificado';
+                        document.getElementById('modal-codigo').textContent = legal.codigo_carnet_patria_representante ||
+                            'No especificado';
                     }
                     if (document.getElementById('modal-serial')) {
-                        document.getElementById('modal-serial').textContent = legal.serial_carnet_patria_representante || 'No especificado';
+                        document.getElementById('modal-serial').textContent = legal.serial_carnet_patria_representante ||
+                            'No especificado';
                     }
 
                     // Pertenece a organización
@@ -923,7 +931,8 @@
                             perteneceOrgEl.textContent = 'Sí';
                             perteneceOrgEl.className = 'badge bg-success';
                             if (campoOrg) campoOrg.style.display = '';
-                            document.getElementById('modal-org-pertenece').textContent = legal.cual_organizacion_representante || 'No especificada';
+                            document.getElementById('modal-org-pertenece').textContent = legal
+                                .cual_organizacion_representante || 'No especificada';
                         } else {
                             perteneceOrgEl.textContent = 'No';
                             perteneceOrgEl.className = 'badge bg-secondary';
@@ -970,70 +979,70 @@
             if (generarPdfBtn) {
                 // Obtener todos los parámetros de la URL actual
                 const urlParams = new URLSearchParams(window.location.search);
-                
+
                 // Construir la URL base del reporte
                 let reportUrl = generarPdfBtn.getAttribute('href').split('?')[0];
                 const params = new URLSearchParams();
-                
+
                 // Agregar todos los parámetros de filtro actuales
                 for (const [key, value] of urlParams.entries()) {
                     if (key === 'page') continue; // No incluir la paginación en el reporte
                     params.append(key, value);
                 }
-                
+
                 // Si hay parámetros, agregarlos a la URL
                 if (params.toString()) {
                     reportUrl += '?' + params.toString();
                 }
-                
+
                 // Actualizar el atributo href del botón
                 generarPdfBtn.setAttribute('href', reportUrl);
-                
+
                 console.log('Enlace de PDF actualizado:', reportUrl);
             }
         }
-        
+
         // Manejar el envío del formulario de filtros
         const filtroForm = document.getElementById('filtroForm');
         if (filtroForm) {
             filtroForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 // Obtener el valor seleccionado
                 const tipoRepresentante = document.getElementById('tipo_representante').value;
-                
+
                 // Construir la URL con los parámetros de filtro
                 const url = new URL(window.location.href.split('?')[0]);
-                
+
                 // Solo agregar el parámetro si hay un valor seleccionado
                 if (tipoRepresentante !== '') {
                     url.searchParams.set('es_legal', tipoRepresentante);
                 } else {
                     url.searchParams.delete('es_legal');
                 }
-                
+
                 // Cerrar el modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('modalFiltros'));
                 if (modal) {
                     modal.hide();
                 }
-                
+
                 // Actualizar el enlace del PDF antes de redirigir
                 actualizarEnlacePDF();
-                
+
                 // Redirigir a la URL con los filtros aplicados
                 window.location.href = url.toString();
             });
         }
-        
+
         // Inicializar el enlace de PDF cuando el documento esté listo
         document.addEventListener('DOMContentLoaded', function() {
             // Actualizar el enlace de PDF al cargar la página
             actualizarEnlacePDF();
-            
+
             // Actualizar el enlace de PDF cuando cambie la URL (navegación con filtros)
             window.addEventListener('popstate', actualizarEnlacePDF);
-            
+
             // Actualizar el enlace cuando se muestre el modal de filtros
             const filtroModal = document.getElementById('modalFiltros');
             if (filtroModal) {

@@ -49,12 +49,6 @@ class AreaEstudioRealizadoController extends Controller
         );
     }
 
-
-
-
-    /**
-     * Crea una nueva asignación entre grado y área de formación.
-     */
     public function store(Request $request)
     {
         // Validación de datos

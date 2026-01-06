@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
@@ -10,7 +9,6 @@
 @section('title', 'Historial del Percentil')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -27,7 +25,6 @@
 
 @section('content')
     <div class="main-container">
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -44,8 +41,6 @@
                 </div>
             </div>
         @endif
-
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -79,11 +74,8 @@
                 @endif
             </div>
         @endif
-
-        {{-- Contenedor principal de la tabla de entradasPercentil --}}
         <div class="card-modern">
             <div class="card-header-modern d-flex justify-content-between align-items-center">
-                {{-- Lado izquierdo --}}
                 <div class="header-left d-flex align-items-center">
                     <div class="header-icon">
                         <i class="fas fa-list-ul"></i>
@@ -92,74 +84,56 @@
                         <h3>Listado del percentil</h3>
                     </div>
                 </div>
-
-                {{-- Lado derecho --}}
                 <div class="header-right d-flex align-items-center gap-2">
-                    <button @if (!$anioEscolarActivo) disabled @endif type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#viewModal"
-                        title="Ver Detalles">
+                    <button @if (!$anioEscolarActivo) disabled @endif type="button" class="btn-create"
+                        data-bs-toggle="modal" data-bs-target="#viewModal" title="Ver Detalles">
                         <i class="fas fa-eye"></i> Resumen de secciones
                     </button>
-
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ now()->translatedFormat('d M Y') }}</span>
                     </div>
+                    @php
+                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
+                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
+                        $mostrarAnio = $anioActivo ?? $anioExtendido;
+                    @endphp
 
-                                                                            
-                <!-- --------------------------- -->
+                    @if ($mostrarAnio)
+                        <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
+                                    <i class="fas fa-calendar-check me-1"></i>
+                                    Año Escolar
+                                </span>
 
-@php
-    $anioActivo = \App\Models\AnioEscolar::activos()->first();
-    $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-    $mostrarAnio = $anioActivo ?? $anioExtendido;
-@endphp
+                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-play-circle text-primary me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                                    </span>
 
-@if($mostrarAnio)
-    <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
-        <div class="d-flex align-items-center">
-            <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                <i class="fas fa-calendar-check me-1"></i>
-                
-                Año Escolar
-            </span>
-            
-            <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                <span class="text-muted me-2">
-                    <i class="fas fa-play-circle text-primary me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                <span class="text-muted me-2">
-                    <i class="fas fa-flag-checkered text-danger me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                
-            </div>
-        </div>
-    </div>
-@else
-    <div class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1 border border-warning">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-        </div>
-        
-    </div>
-@endif
-<!-- --------------------------- -->
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1 border border-warning">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
+                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
+                            </div>
 
-
-                    
+                        </div>
+                    @endif
                 </div>
-
-                
-                
             </div>
         </div>
 
-
-        {{-- Cuerpo de la tarjeta con la tabla --}}
         <div class="card-body-modern">
             <div class="table-wrapper">
                 <table class="table-modern overflow-hidden hidden">
@@ -174,7 +148,6 @@
                         </tr>
                     </thead>
                     <tbody style="text-align: center">
-                        {{-- Si no hay entradasPercentil, se muestra mensaje vacío --}}
                         @if ($entradasPercentil->isEmpty())
                             <tr>
                                 <td colspan="8">
@@ -183,33 +156,29 @@
                                             <i class="fas fa-inbox"></i>
                                         </div>
                                         <h4>No hay estudiantes asignados a secciones en el año escolar activo</h4>
-                                        <p>Asigna estudiantes a secciones y calcula los índices para ver los resultados aquí</p>
+                                        <p>Asigna estudiantes a secciones y calcula los índices para ver los resultados aquí
+                                        </p>
                                     </div>
                                 </td>
                             </tr>
                         @else
-                            {{-- Se recorren los entradasPercentil existentes --}}
                             @foreach ($entradasPercentil as $index => $datos)
                                 <tr class="  row-12" style="text-align: center">
-
                                     <td>
                                         <div class="student-info">
                                             <div class="student-name">
-
                                                 {{ $datos->inscripcion->alumno->persona->primer_nombre ?? '' }}
                                                 {{ $datos->inscripcion->alumno->persona->segundo_nombre ?? '' }}
                                                 {{ $datos->inscripcion->alumno->persona->tercer_nombre ?? '' }}
                                                 {{ $datos->inscripcion->alumno->persona->primer_apellido ?? '' }}
                                                 {{ $datos->inscripcion->alumno->persona->segundo_apellido ?? '' }}
                                             </div>
-
                                             <div class="student-details">
                                                 <span>
 
                                                     {{ $datos->inscripcion->alumno->persona->tipoDocumento->nombre }}-
                                                     {{ $datos->inscripcion->alumno->persona->numero_documento }}
                                                 </span>
-
                                             </div>
                                         </div>
                                     </td>
@@ -255,8 +224,6 @@
 
             </div>
         </div>
-
-        {{-- Paginación moderna --}}
         <div class="mt-3">
             <x-pagination :paginator="$entradasPercentil" />
         </div>

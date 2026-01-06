@@ -73,7 +73,7 @@
                             <option value="{{ $alumno->id }}"
                                 data-subtext="{{ $alumno->persona->tipoDocumento->nombre ?? '' }}
                                 -{{ $alumno->persona->numero_documento }} 
-                                {{ $gradoAnterior ? ' | ' . $gradoAnterior . ' Año' : '' }}">
+                                {{ $gradoAnterior ? ' | ' . $gradoAnterior . ' ° nivel academico' : '' }}">
                                 {{ $alumno->persona->primer_nombre }} {{ $alumno->persona->primer_apellido }}
                             </option>
                         @endforeach
@@ -403,8 +403,8 @@
                         <div class="d-flex align-items-center gap-2">
                             <i class="fas fa-info-circle fa-2x"></i>
                             <div>
-                                <strong>Año cursado:</strong>
-                                {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado ?? 'N/A' }} Año
+                                <strong>NIvel academico cursado:</strong>
+                                {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado ?? 'N/A' }} °
                             </div>
                             <div>
                                 <strong>Sección:</strong>
@@ -446,9 +446,9 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    El estudiante tiene areas de formacion reprobadas de años anteriores. Debe
+                                    El estudiante tiene areas de formacion reprobadas de niveles academicos anteriores. Debe
                                     aprobarlas todas;
-                                    de lo contrario, deberá repetir el año completo.
+                                    de lo contrario, deberá repetir el nivel academico completo.
                                     <b>MARQUE</b> las áreas de formación que el estudiante <b>APROBÓ</b>
                                 </small>
                             </div>
@@ -480,7 +480,7 @@
                                                             <i class="fas fa-tag"></i> Código:
                                                             {{ $materia['codigo'] }}
                                                             |
-                                                            <i class="fas fa-layer-group"></i> Año:
+                                                            <i class="fas fa-layer-group"></i> Nivel academico:
                                                             {{ $materia['grado'] }}°
                                                         </small>
                                                     </div>
@@ -500,7 +500,7 @@
                             <div class="section-header-primary mb-3">
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="fas fa-book-open"></i>
-                                    <h5 class="mb-0">Materias del Año Actual</h5>
+                                    <h5 class="mb-0">Materias del Nivel Academico Actual</h5>
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
@@ -532,7 +532,7 @@
                                                         <small class="text-muted">
                                                             <i class="fas fa-tag"></i> Código:
                                                             {{ $materia['codigo'] }} |
-                                                            <i class="fas fa-layer-group"></i> Año:
+                                                            <i class="fas fa-layer-group"></i> Nivel academico:
                                                             {{ $materia['grado'] }}°
                                                         </small>
                                                     </div>
@@ -559,8 +559,8 @@
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <div>
-                        <h3>Paso 3: Año y Sección</h3>
-                        <p>Seleccione el año al que será promovido el estudiante</p>
+                        <h3>Paso 3: Nivel Academico y Sección</h3>
+                        <p>Seleccione el nivel academico al que será promovido el estudiante</p>
                     </div>
                 </div>
             </div>
@@ -575,15 +575,15 @@
                     <div class="col-md-4">
                         <label for="grado_promocion" class="form-label-modern">
                             <i class="fas fa-layer-group"></i>
-                            Año de Promoción
+                            Nivel Academico de Promoción
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="gradoPromocionId" id="grado_promocion"
                             class="form-control-modern @error('gradoPromocionId') is-invalid @enderror">
-                            <option value="">Seleccione un año</option>
+                            <option value="">Seleccione un nivel academico</option>
                             @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}">
-                                    {{ $grado->numero_grado }}° Año
+                                    {{ $grado->numero_grado }}°
                                 </option>
                             @endforeach
                         </select>
@@ -595,7 +595,7 @@
                         @if ($repite_grado)
                             <small class="form-text text-danger">
                                 <i class="fas fa-info-circle"></i>
-                                El estudiante debe repetir el mismo año
+                                El estudiante debe repetir el mismo nivel academico
                             </small>
                         @endif
                     </div>
@@ -686,11 +686,11 @@
                         wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="finalizar">
                             <i class="fas fa-save"></i>
-                            Guardar Inscripción
+                            Guardar
                         </span>
                         <span wire:loading wire:target="finalizar">
                             <i class="fas fa-spinner fa-spin"></i>
-                            Procesando...
+                            Guardando...
                         </span>
                     </button>
                 </div>

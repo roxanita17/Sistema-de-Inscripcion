@@ -48,10 +48,10 @@
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
-                                        Año Inscrito
+                                        Nivel Academico Inscrito
                                     </span>
                                     <span class="detail-value">
-                                        {{ $datos->grado->numero_grado }}° Año
+                                        {{ $datos->grado->numero_grado }}° 
                                     </span>
                                 </div>
                             </div>

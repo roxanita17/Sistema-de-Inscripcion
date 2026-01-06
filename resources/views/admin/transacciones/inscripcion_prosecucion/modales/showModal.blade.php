@@ -16,7 +16,7 @@
                             {{ $datos->status }}
                         </span>
                         <span class="badge bg-white text-primary">
-                            {{ $datos->grado->numero_grado ?? 'N/A' }}° Año
+                            {{ $datos->grado->numero_grado ?? 'N/A' }}° Nivel Academico
                         </span>
                         @if ($datos->seccion)
                             <span class="badge bg-white text-primary">
@@ -25,7 +25,7 @@
                         @endif
                         @if ($datos->repite_grado)
                             <span class="badge bg-warning text-dark">
-                                <i class="fas fa-redo"></i> Repite Grado
+                                <i class="fas fa-redo"></i> Repite Nivel Academico
                             </span>
                         @else
                             <span class="badge bg-success">
@@ -258,10 +258,10 @@
                                 <div class="card-body bg-blue">
                                     <div class="detail-item">
                                         <span class="detail-label">
-                                            <i class="fas fa-layer-group"></i> Año Anterior
+                                            <i class="fas fa-layer-group"></i> Nivel Académico Anterior
                                         </span>
                                         <span class="detail-value fw-bold">
-                                            {{ $datos->inscripcion->grado->numero_grado ?? 'N/A' }} Año
+                                            {{ $datos->inscripcion->grado->numero_grado ?? 'N/A' }}° Nivel
                                         </span>
                                     </div>
                                 </div>
@@ -273,10 +273,10 @@
                                 <div class="card-body bg-success">
                                     <div class="detail-item">
                                         <span class="detail-label ">
-                                            <i class="fas fa-arrow-right"></i> Año de Promoción
+                                            <i class="fas fa-arrow-right"></i> Nivel Académico de Promoción
                                         </span>
                                         <span class="detail-value fw-bold ">
-                                            {{ $datos->grado->numero_grado ?? 'N/A' }} Año
+                                            {{ $datos->grado->numero_grado ?? 'N/A' }}° Nivel
                                         </span>
                                     </div>
                                 </div>

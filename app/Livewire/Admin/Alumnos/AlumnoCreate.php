@@ -9,8 +9,6 @@ use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
-
-// Modelos
 use App\Models\Persona;
 use App\Models\Alumno;
 use App\Models\Estado;
@@ -26,15 +24,8 @@ class AlumnoCreate extends Component
 {
     use WithFileUploads;
 
-    /* ============================================================
-       ===============   PROPIEDADES DEL COMPONENTE  ===============
-       ============================================================ */
-
-    // IDs
     public $alumno_id;
     public $persona_id;
-
-    // Datos personales
     public $tipo_documento_id;
     public $numero_documento;
     public $primer_nombre;
@@ -46,27 +37,19 @@ class AlumnoCreate extends Component
     public $fecha_nacimiento;
     public $edad = 0;
     public $meses = 0;
-
-    // UI dinámico para documento
     public $documento_maxlength = 8;
     public $documento_pattern = '[0-9]+';
     public $documento_placeholder = '12345678';
     public $documento_inputmode = 'numeric';
-
-    // Datos físicos
     public $talla_estudiante = '';
     public $peso_estudiante;
     public $talla_camisa_id;
     public $tallas = [];
     public $talla_zapato;
     public $talla_pantalon_id;
-
-    // Lugar de nacimiento
     public $estado_id;
     public $municipio_id;
     public $localidad_id;
-
-    // Listas para selects
     public $instituciones;
     public $tipos_documentos = [];
     public $generos = [];
@@ -79,19 +62,12 @@ class AlumnoCreate extends Component
     public $localidades = [];
     public $etnia_indigenas = [];
     public $etnia_indigena_id;
-
-    // Año escolar
     public $anioEscolarActivo = false;
 
-
-    /* ============================================================
-       =====================   VALIDACIÓN   ========================
-       ============================================================ */
     protected function rules()
     {
         return [
 
-            // Persona
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => [
                 'required',
@@ -100,7 +76,6 @@ class AlumnoCreate extends Component
 
                     switch ((int) $this->tipo_documento_id) {
 
-                        // V - Venezolano (ID 1)
                         case 1:
                             if (!ctype_digit($value)) {
                                 $fail('La cédula debe contener solo números.');
@@ -110,7 +85,6 @@ class AlumnoCreate extends Component
                             }
                             break;
 
-                        // E - Extranjero (ID 2)
                         case 2:
                             if (!ctype_alnum($value)) {
                                 $fail('La cédula de extranjero debe ser alfanumérica.');
@@ -120,7 +94,6 @@ class AlumnoCreate extends Component
                             }
                             break;
 
-                        // CE - Cédula Especial (ID 3)
                         case 3:
                             if (!ctype_digit($value)) {
                                 $fail('La cédula especial debe contener solo números.');
@@ -140,7 +113,6 @@ class AlumnoCreate extends Component
             'segundo_apellido' => 'nullable|string|max:50',
             'genero_id' => 'required|exists:generos,id',
 
-            // Fecha nacimiento y edad
             'fecha_nacimiento' => [
                 'required',
                 'date',
@@ -158,7 +130,7 @@ class AlumnoCreate extends Component
                     }
                 }
             ],
-            // Datos físicos
+
             'talla_estudiante' => [
                 'required',
                 'regex:/^\d+([.,]\d+)?$/',
@@ -171,12 +143,10 @@ class AlumnoCreate extends Component
                         $fail('La estatura no es válida.');
                     }
 
-                    // CM
                     if ($valor > 3 && ($valor < 50 || $valor > 250)) {
                         $fail('La estatura en cm debe estar entre 50 y 250.');
                     }
 
-                    // METROS
                     if ($valor <= 3 && ($valor < 0.5 || $valor > 2.5)) {
                         $fail('La estatura en metros debe estar entre 0.50 y 2.50.');
                     }
@@ -186,13 +156,9 @@ class AlumnoCreate extends Component
             'talla_camisa_id' => 'required|exists:tallas,id',
             'talla_pantalon_id' => 'required|exists:tallas,id',
             'talla_zapato' => 'required|integer',
-
-            // Residencia
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
             'localidad_id' => 'required|exists:localidads,id',
-
-            // Otros
             'lateralidad_id' => 'required|exists:lateralidads,id',
             'orden_nacimiento_id' => 'required|exists:orden_nacimientos,id',
             'etnia_indigena_id' => 'nullable|exists:etnia_indigenas,id',
@@ -234,12 +200,10 @@ class AlumnoCreate extends Component
 
     public function updatedTipoDocumentoId($value)
     {
-        // Limpiar la cédula al cambiar tipo
         $this->numero_documento = null;
 
         switch ((int) $value) {
 
-            // V
             case 1:
                 $this->documento_maxlength = 8;
                 $this->documento_pattern = '[0-9]+';
@@ -247,7 +211,6 @@ class AlumnoCreate extends Component
                 $this->documento_inputmode = 'numeric';
                 break;
 
-            // E
             case 2:
                 $this->documento_maxlength = 12;
                 $this->documento_pattern = '[A-Za-z0-9]+';
@@ -255,7 +218,6 @@ class AlumnoCreate extends Component
                 $this->documento_inputmode = 'text';
                 break;
 
-            // CE
             case 3:
                 $this->documento_maxlength = 12;
                 $this->documento_pattern = '[0-9]+';
@@ -276,10 +238,6 @@ class AlumnoCreate extends Component
         $this->validateOnly('talla_estudiante');
     }
 
-
-    /* ============================================================
-       ========================   MOUNT   ==========================
-       ============================================================ */
     public function mount($alumno_id = null)
     {
         $this->verificarAnioEscolar();
@@ -292,19 +250,13 @@ class AlumnoCreate extends Component
         }
     }
 
-
-    /* ============================================================
-       ===================   CARGAS INICIALES   ===================
-       ============================================================ */
     private function verificarAnioEscolar()
     {
-        // Verifica si hay un año escolar activo o extendido
         $this->anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->exists();
     }
 
     public function cargarDatosIniciales()
     {
-        // Listas para selects
         $this->estados = Estado::where('status', true)->get();
 
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
@@ -315,10 +267,6 @@ class AlumnoCreate extends Component
         $this->tallas = Talla::all();
     }
 
-
-    /* ============================================================
-       ======================   CARGA ALUMNO   =====================
-       ============================================================ */
     public function cargarAlumno($id)
     {
         $alumno = Alumno::with(
@@ -327,7 +275,6 @@ class AlumnoCreate extends Component
         )->findOrFail($id);
         $persona = $alumno->persona;
 
-        // Datos personales
         $this->persona_id = $persona->id;
         $this->tipo_documento_id = $persona->tipo_documento_id;
         $this->numero_documento = $persona->numero_documento;
@@ -338,11 +285,8 @@ class AlumnoCreate extends Component
         $this->primer_apellido = $persona->primer_apellido;
         $this->segundo_apellido = $persona->segundo_apellido;
         $this->genero_id = $persona->genero_id;
-
-        // Procedencia y datos físicos
         $this->talla_camisa_id = $alumno->talla_camisa_id;
         $this->talla_pantalon_id = $alumno->talla_pantalon_id;
-
         $this->talla_zapato = $alumno->talla_zapato;
         $this->peso_estudiante = $alumno->peso;
         $this->talla_estudiante = $alumno->estatura;
@@ -350,18 +294,11 @@ class AlumnoCreate extends Component
         $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
         $this->etnia_indigena_id = $alumno->etnia_indigena_id;
 
-        // Actualiza selects dependientes
         $this->updatedEstadoId($persona->localidad->municipio->estado_id);
         $this->updatedMunicipioId($persona->localidad->municipio_id);
-
-        // Calcula edad
         $this->updatedFechaNacimiento($this->fecha_nacimiento);
     }
 
-
-    /* ============================================================
-       ===============   SELECTS DEPENDIENTES (AJAX)   =============
-       ============================================================ */
     public function updatedEstadoId($estadoId)
     {
         $this->municipios = Municipio::where('estado_id', $estadoId)
@@ -384,10 +321,6 @@ class AlumnoCreate extends Component
         $this->localidad_id = null;
     }
 
-
-    /* ============================================================
-       =====================   CALCULAR EDAD   =====================
-       ============================================================ */
     public function updatedFechaNacimiento($value)
     {
         if (!$value) return;
@@ -416,11 +349,6 @@ class AlumnoCreate extends Component
             ->first();
     }
 
-
-
-    /* ============================================================
-       ========================   GUARDAR   ========================
-       ============================================================ */
     public function save()
     {
         $this->talla_estudiante = (float) str_replace(',', '.', $this->talla_estudiante);
@@ -429,8 +357,6 @@ class AlumnoCreate extends Component
         try {
             DB::beginTransaction();
 
-
-            // Guardar persona
             $persona = Persona::updateOrCreate(
                 ['id' => $this->persona_id],
                 [
@@ -447,8 +373,6 @@ class AlumnoCreate extends Component
                     'status' => true,
                 ]
             );
-
-            // Guardar alumno
             if ($this->alumno_id) {
 
                 $alumno = Alumno::findOrFail($this->alumno_id);
@@ -491,27 +415,17 @@ class AlumnoCreate extends Component
         }
     }
 
-
-    /* ============================================================
-       =========   COMUNICACIÓN CON COMPONENTE PADRE   ============
-       ============================================================ */
     protected $listeners = [
         'solicitarDatosAlumno' => 'enviarDatosAlumno'
     ];
 
     public function enviarDatosAlumno()
     {
-        // Validar sin guardar en BD
         $datos = $this->validate();
 
-        // Enviar datos al componente padre (Inscripción)
         $this->dispatch('recibirDatosAlumno', datos: $datos);
     }
 
-
-    /* ============================================================
-       =========================   VISTA   =========================
-       ============================================================ */
     public function render()
     {
         return view('livewire.admin.alumnos.alumno-create');

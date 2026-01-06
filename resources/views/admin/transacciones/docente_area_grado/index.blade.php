@@ -186,10 +186,10 @@
                         <tr>
                             <th>Cédula</th>
                             <th>Docente</th>
-                            <th style="text-align: center;">Estudios Realizados</th>
-                            <th style="text-align: center;">Áreas de Formación</th>
-                            <th style="text-align: center;">Años</th>
-                            <th style="text-align: center;">Secciones</th>
+                            <th style="text-align: center;">Estudios</th>
+                            <th style="text-align: center;">Áreas</th>
+                            <th style="text-align: center;">Nivel Académico</th>
+                            <th style="text-align: center;">Sección</th>
                             <th style="text-align: center; width: 120px;">Estado</th>
                             <th style="text-align: center; width: 150px;">Acciones</th>
                         </tr>

@@ -19,9 +19,6 @@ class Inscripcion extends Component
     protected InscripcionRepository $inscripcionRepository;
     protected RepresentanteRepository $representanteRepository;
 
-    /* ============================================================
-       PROPIEDADES
-       ============================================================ */
     public $alumnoId;
     public $padreId;
     public $madreId;
@@ -34,6 +31,14 @@ class Inscripcion extends Component
     public $padreSeleccionado = null;
     public $madreSeleccionado = null;
     public $representanteLegalSeleccionado = null;
+
+    public $estado_id = null;
+    public $municipio_id = null;
+    public $localidad_id = null;
+
+    public $estados = [];
+    public $municipios = [];
+    public $localidades = [];
 
     public $padres = [];
     public $madres = [];
@@ -54,7 +59,6 @@ class Inscripcion extends Component
     public $acepta_normas_contrato = false;
     public $seleccionarTodos = false;
 
-    // Discapacidades
     public $discapacidades = [];
     public $discapacidadSeleccionada = null;
     public $discapacidadesAgregadas = [];
@@ -72,10 +76,6 @@ class Inscripcion extends Component
     public bool $gradoSinCupos = false;
     public string $mensajeCupos = '';
 
-
-    /* ============================================================
-       BOOT & MOUNT
-       ============================================================ */
     public function boot(
         InscripcionService $inscripcionService,
         DocumentoService $documentoService,
@@ -99,14 +99,18 @@ class Inscripcion extends Component
         $this->documentosEtiquetas = $this->documentoService->obtenerEtiquetas();
         $this->tipo_inscripcion = 'nuevo_ingreso';
         $this->cargarDatosIniciales();
+        $this->estados = \App\Models\Estado::where('status', true)
+            ->orderBy('nombre_estado', 'asc')
+            ->get();
     }
 
-    /* ============================================================
-       VALIDACIÓN 
-       ============================================================ */
     public function rules()
     {
         return [
+            'estado_id' => 'required|exists:estados,id',
+            'municipio_id' => 'required|exists:municipios,id',
+            'localidad_id' => 'required|exists:localidades,id',
+
             'numero_zonificacion' => [
                 'nullable',
                 'regex:/^\d+$/'
@@ -118,7 +122,7 @@ class Inscripcion extends Component
                 'exists:grados,id',
                 function ($attribute, $value, $fail) {
                     if (!$this->inscripcionService->verificarCuposDisponibles($value)) {
-                        $fail('El grado seleccionado ha alcanzado el límite de cupos disponibles.');
+                        $fail('El nivel academico seleccionado ha alcanzado el límite de cupos disponibles.');
                     }
                 }
             ],
@@ -147,16 +151,16 @@ class Inscripcion extends Component
 
         'numero_zonificacion.regex' => 'El número de zonificación solo puede contener números.',
 
-        'institucion_procedencia_id.required' => 'Debe seleccionar una institución de procedencia.',
+        'institucion_procedencia_id.required' => 'Este campo es requerido.',
         'institucion_procedencia_id.exists' => 'La institución de procedencia seleccionada no es válida.',
 
-        'expresion_literaria_id.required' => 'Debe seleccionar una expresión literaria.',
+        'expresion_literaria_id.required' => 'Este campo es requerido.',
         'expresion_literaria_id.exists' => 'La expresión literaria seleccionada no es válida.',
 
-        'gradoId.required' => 'Debe seleccionar un grado.',
-        'gradoId.exists' => 'El grado seleccionado no es válido.',
+        'gradoId.required' => 'Este campo es requerido.',
+        'gradoId.exists' => 'El nivel academico seleccionado no es válido.',
 
-        'seccion_id.required' => 'Debe seleccionar una sección.',
+        'seccion_id.required' => 'Este campo es requerido.',
         'seccion_id.exists' => 'La sección seleccionada no es válida.',
 
         'documentos.array' => 'El formato de los documentos seleccionados no es válido.',
@@ -165,28 +169,29 @@ class Inscripcion extends Component
         'acepta_normas_contrato.accepted' =>
         'Debe aceptar las normas del contrato para continuar.',
 
-        'anio_egreso.required' => 'Debe indicar el año de egreso.',
+        'anio_egreso.required' => 'Este campo es requerido.',
         'anio_egreso.date' => 'El año de egreso debe ser 7 años antes del actual.',
-
     ];
-
 
     public function updated($propertyName)
     {
+        if (in_array($propertyName, [
+            'estado_id',
+            'municipio_id',
+            'localidad_id'
+        ])) {
+            return;
+        }
+
         if ($propertyName !== 'gradoId') {
             $this->validateOnly($propertyName);
         }
     }
 
 
-    /* ============================================================
-       CARGAS DE DATOS
-       ============================================================ */
     public function cargarDatosIniciales()
     {
         $datos = $this->inscripcionRepository->obtenerDatosIniciales();
-
-        $this->instituciones = $datos['instituciones'];
         $this->expresiones_literarias = $datos['expresiones_literarias'];
         $this->grados = $datos['grados'];
         $this->padres = $this->representanteRepository->obtenerPorGenero('Masculino');
@@ -198,13 +203,6 @@ class Inscripcion extends Component
             ->get();
     }
 
-    /* ============================================================
-       MÉTODOS UPDATED PARA CARGAR DETALLES 
-       ============================================================ */
-
-    /**
-     * Se ejecuta cuando cambia el padreId en el select
-     */
     public function updatedPadreId($value)
     {
         $this->padreSeleccionado = $value
@@ -212,9 +210,6 @@ class Inscripcion extends Component
             : null;
     }
 
-    /**
-     * Se ejecuta cuando cambia el madreId en el select
-     */
     public function updatedMadreId($value)
     {
         $this->madreSeleccionado = $value
@@ -222,9 +217,6 @@ class Inscripcion extends Component
             : null;
     }
 
-    /**
-     * Se ejecuta cuando cambia el representanteLegalId en el select
-     */
     public function updatedRepresentanteLegalId($value)
     {
         $this->representanteLegalSeleccionado = $value
@@ -233,9 +225,6 @@ class Inscripcion extends Component
         $this->evaluarDocumentosVisual();
     }
 
-    /* ============================================================
-       ACTUALIZACIÓN DE SELECTS (PARA EVENTOS PERSONALIZADOS)
-       ============================================================ */
     public function actualizarPadreSelect($data = null)
     {
         $id = $data['value'] ?? null;
@@ -263,9 +252,6 @@ class Inscripcion extends Component
             : null;
     }
 
-    /* ============================================================
-       MANEJO DE DOCUMENTOS
-       ============================================================ */
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
@@ -293,12 +279,6 @@ class Inscripcion extends Component
         $this->documentosFaltantes = $evaluacion['faltantes'];
     }
 
-    private function actualizarObservacionesPorDocumentos()
-    {
-        $this->recalcularObservaciones();
-    }
-
-
     private function requiereAutorizacion(): bool
     {
         return !$this->padreId && !$this->madreId;
@@ -323,8 +303,6 @@ class Inscripcion extends Component
     private function recalcularObservaciones(): void
     {
         $observaciones = [];
-
-        // Observaciones por documentos
         $obsDocumentos = $this->documentoService->generarObservaciones(
             $this->documentos,
             !$this->padreId && !$this->madreId,
@@ -335,13 +313,11 @@ class Inscripcion extends Component
             $observaciones[] = $obsDocumentos;
         }
 
-        // Observaciones por discapacidades
         $obsDiscapacidades = $this->generarObservacionesDiscapacidades();
         if ($obsDiscapacidades) {
             $observaciones[] = $obsDiscapacidades;
         }
 
-        // Unir todo
         $this->observaciones = implode(PHP_EOL . PHP_EOL, $observaciones);
     }
 
@@ -349,7 +325,6 @@ class Inscripcion extends Component
     {
         $nombres = [];
 
-        // Discapacidades ya guardadas (si existe alumno)
         if ($this->alumnoId) {
             $alumno = \App\Models\Alumno::with('discapacidades')->find($this->alumnoId);
 
@@ -360,7 +335,6 @@ class Inscripcion extends Component
             }
         }
 
-        // Discapacidades agregadas en esta inscripción
         foreach ($this->discapacidadesAgregadas as $discapacidad) {
             $nombres[] = $discapacidad['nombre'];
         }
@@ -375,9 +349,63 @@ class Inscripcion extends Component
             implode(PHP_EOL, $nombres);
     }
 
-    /* ============================================================
-       INFORMACIÓN DE CUPOS
-       ============================================================ */
+    public function updatedEstadoId($value)
+    {
+        $this->municipio_id = null;
+        $this->localidad_id = null;
+        $this->institucion_procedencia_id = null;
+
+        $this->localidades = [];
+        $this->instituciones = [];
+
+        if (!$value) {
+            $this->municipios = [];
+            return;
+        }
+
+        $this->municipios = \App\Models\Municipio::where('estado_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_municipio')
+            ->get();
+    }
+
+
+    public function updatedMunicipioId($value)
+    {
+        $this->localidad_id = null;
+        $this->institucion_procedencia_id = null;
+        $this->instituciones = [];
+
+        if (!$value) {
+            $this->localidades = [];
+            return;
+        }
+
+        $this->localidades = \App\Models\Localidad::where('municipio_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_localidad')
+            ->get();
+    }
+
+
+    public function updatedLocalidadId($value)
+    {
+        $this->institucion_procedencia_id = null;
+        $this->resetErrorBag('institucion_procedencia_id');
+
+        if (!$value) {
+            $this->instituciones = [];
+            return;
+        }
+
+        $this->instituciones = \App\Models\InstitucionProcedencia::where('localidad_id', $value)
+            ->where('status', true)
+            ->orderBy('nombre_institucion')
+            ->get();
+    }
+
+
+
     public function updatedGradoId($value)
     {
         $this->resetErrorBag('gradoId');
@@ -395,7 +423,7 @@ class Inscripcion extends Component
 
         if ($this->infoCupos['cupos_disponibles'] <= 0) {
             $this->gradoSinCupos = true;
-            $this->mensajeCupos = 'Este grado ha alcanzado el máximo de cupos disponibles.';
+            $this->mensajeCupos = 'Este nivel academico ha alcanzado el máximo de cupos disponibles.';
             $this->addError('gradoId', $this->mensajeCupos);
             return;
         }
@@ -418,14 +446,6 @@ class Inscripcion extends Component
         $this->recalcularObservaciones();
     }
 
-
-    /* ============================================================
-       REGISTRO DE DISCAPACIDADES
-       ============================================================ */
-
-    /**
-     * Agrega una discapacidad a la lista temporal
-     */
     public function agregarDiscapacidad()
     {
         $this->validate([
@@ -435,13 +455,11 @@ class Inscripcion extends Component
             'discapacidadSeleccionada.exists' => 'La discapacidad seleccionada no es válida.'
         ]);
 
-        // Verificar si ya está agregada
         if (collect($this->discapacidadesAgregadas)->contains('id', $this->discapacidadSeleccionada)) {
             $this->addError('discapacidadSeleccionada', 'Esta discapacidad ya ha sido agregada.');
             return;
         }
 
-        // Buscar la discapacidad y agregarla
         $discapacidad = \App\Models\Discapacidad::find($this->discapacidadSeleccionada);
 
         if ($discapacidad) {
@@ -450,26 +468,21 @@ class Inscripcion extends Component
                 'nombre' => $discapacidad->nombre_discapacidad
             ];
 
-            // Limpiar selección
             $this->discapacidadSeleccionada = null;
             $this->resetErrorBag('discapacidadSeleccionada');
 
             $this->recalcularObservaciones();
 
-            session()->flash('success_temp', 'Discapacidad agregada correctamente.');
+            session()->flash('success_temp', 'Discapacidad agregada exitosamente.');
         }
     }
 
-    /**
-     * Elimina una discapacidad de la lista temporal
-     */
     public function eliminarDiscapacidad($index)
     {
         if (isset($this->discapacidadesAgregadas[$index])) {
             $discapacidad = $this->discapacidadesAgregadas[$index];
             unset($this->discapacidadesAgregadas[$index]);
 
-            // Reindexar el array
             $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
 
             $this->recalcularObservaciones();
@@ -478,9 +491,6 @@ class Inscripcion extends Component
         }
     }
 
-    /**
-     * Guarda las discapacidades del alumno en la tabla intermedia
-     */
     private function guardarDiscapacidadesAlumno($alumnoId)
     {
         foreach ($this->discapacidadesAgregadas as $discapacidad) {
@@ -492,10 +502,6 @@ class Inscripcion extends Component
         }
     }
 
-
-    /* ============================================================
-       REGISTRO DE INSCRIPCIÓN
-       ============================================================ */
     public function registrar()
     {
         if (!$this->validarRepresentantes()) {
@@ -508,30 +514,30 @@ class Inscripcion extends Component
             $dto = $this->crearInscripcionDTO();
             $inscripcion = $this->inscripcionService->registrar($dto);
 
+            if ($this->alumnoId && !empty($this->discapacidadesAgregadas)) {
+                $this->guardarDiscapacidadesAlumno($this->alumnoId);
+            }
+
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
         } catch (InscripcionException $e) {
 
-            //  Error de negocio (bonito)
             session()->flash('error', $e->getMessage());
         } catch (QueryException $e) {
 
-            //  Error SQL controlado
             session()->flash(
                 'error',
                 'No se pudo completar la inscripción. Verifique los datos ingresados.'
             );
         } catch (\Throwable $e) {
 
-            //  Error inesperado
-            report($e); // LOG, no pantalla
+            report($e);
             session()->flash(
                 'error',
                 'No se pudo completar la inscripción. Verifique los datos ingresados.'
             );
         }
     }
-
 
     public function finalizar()
     {
@@ -555,35 +561,20 @@ class Inscripcion extends Component
 
         try {
             $dto = $this->crearInscripcionDTO();
-            $inscripcion = $this->inscripcionService->registrar($dto);
+
+            $inscripcion = $this->inscripcionService->registrarConAlumno(
+                $datos,
+                $dto,
+                $this->discapacidadesAgregadas
+            );
 
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
-        } catch (InscripcionException $e) {
-
-            // Error de negocio (bonito)
-            session()->flash('error', $e->getMessage());
-        } catch (QueryException $e) {
-
-            // Error SQL controlado
-            session()->flash(
-                'error',
-                'No se pudo completar la inscripción. Verifique los datos ingresados.'
-            );
-        } catch (\Throwable $e) {
-
-            // Error inesperado
-            report($e); // LOG, no pantalla
-            session()->flash(
-                'error',
-                'No se pudo completar la inscripción. Verifique los datos ingresados.'
-            );
+        } catch (\Exception $e) {
+            session()->flash('error', 'Error al registrar: ' . $e->getMessage());
         }
     }
 
-    /* ============================================================
-       HELPERS PRIVADOS
-       ============================================================ */
     private function validarRepresentantes(): bool
     {
         if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
@@ -614,9 +605,6 @@ class Inscripcion extends Component
         ]);
     }
 
-    /* ============================================================
-       LISTENERS
-       ============================================================ */
     protected $listeners = [
         'recibirDatosAlumno' => 'guardarTodo',
         'padreSeleccionadoEvento' => 'actualizarPadreSelect',
@@ -629,9 +617,6 @@ class Inscripcion extends Component
         $this->validateOnly('acepta_normas_contrato');
     }
 
-    /* ============================================================
-       NAVEGACIÓN
-       ============================================================ */
     public function irACrearRepresentante()
     {
         session()->put('inscripcion_temp', [
@@ -646,8 +631,6 @@ class Inscripcion extends Component
 
         return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
     }
-
-
 
     public function render()
     {

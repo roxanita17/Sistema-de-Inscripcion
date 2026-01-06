@@ -19,7 +19,7 @@
                             {{ $datos->status }}
                         </span>
                         <span class="badge bg-white text-primary">
-                            {{ $datos->grado->numero_grado ?? 'N/A' }}° Año
+                            {{ $datos->grado->numero_grado ?? 'N/A' }}° Nivel Académico
                         </span>
                         @if ($datos->seccion)
                             <span class="badge bg-white text-primary">

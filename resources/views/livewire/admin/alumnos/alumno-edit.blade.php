@@ -4,7 +4,7 @@
             <div class="header-right" style="margin-left: auto;">
                 @if (!$soloEdicion)
                     <button type="button" wire:click="habilitarEdicion" class="btn-primary-modern">
-                        <i class="fas fa-edit"></i> Editar Datos
+                        <i class="fas fa-edit"></i> Editar
                     </button>
                 @endif
 
@@ -201,6 +201,13 @@
 
             {{-- Sección de Discapacidades --}}
             <div class="card-header-modern">
+                {{-- Alerta temporal de éxito --}}
+                @if (session()->has('success_temp'))
+                    <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle"></i> {{ session('success_temp') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
                         <i class="fas fa-wheelchair"></i>
@@ -629,8 +636,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Sección de Discapacidades en modo edición --}}
             <div class="card-modern mt-4">
                 <div class="card-header-modern">
                     <div class="header-left">
@@ -643,8 +648,13 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="card-body-modern" style="padding: 2rem;">
+                    @if (session()->has('success_temp'))
+                        <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> {{ session('success_temp') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
                     @if (!empty($discapacidadesAlumno))
                         <div class="table-wrapper">
                             <table class="table-modern">

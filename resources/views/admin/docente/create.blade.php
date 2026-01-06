@@ -20,9 +20,9 @@
                     <p class="title-subtitle">Registra la información del docente</p>
                 </div>
             </div>
-            <a href="{{ route('admin.docente.index') }}" class="btn-create" style="background: var(--gray-700);">
+            <a href="{{ route('admin.docente.index') }}" class="btn-create" style="background: var(--gray-500);">
                 <i class="fas fa-arrow-left"></i>
-                <span>Volver al Listado</span>
+                <span>Volver</span>
             </a>
         </div>
     </div>
@@ -64,12 +64,6 @@
                     <div>
                         <h3>Formulario de Registro</h3>
                         <p>Complete todos los campos requeridos</p>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
                     </div>
                 </div>
             </div>
@@ -407,7 +401,7 @@
                     </div> 
                     <div class="form-actions-modern">
                         <a href="{{ route('admin.docente.index') }}" class="btn-secondary-modern">
-                            <i class="fas fa-arrow-left"></i> Regresar
+                            <i class="fas fa-arrow-left"></i> Cancelar
                         </a>
                         <button type="submit" class="btn-primary-modern">
                             <i class="fas fa-save"></i> Siguiente

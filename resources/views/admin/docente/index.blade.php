@@ -23,12 +23,11 @@
                     <p class="title-subtitle">Administración de los docentes</p>
                 </div>
             </div>
-            {{-- Botón que abre la ventana modal para crear una nueva docente --}}
             <a type="button" class="btn-create" href="{{ route('admin.docente.create') }}"
                 @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nuevo registro' }}">
                 <i class="fas fa-plus"></i>
-                <span>Nuevo Docente</span>
+                <span>Registrar</span>
             </a>
         </div>
     </div>
@@ -36,11 +35,6 @@
 
 @section('content')
     <div class="main-container">
-
-        {{-- Modal para crear una nueva docente --}}
-        {{--     @include('admin.docente.modales.createModal')
- --}}
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -110,7 +104,7 @@
                         <div class="search-modern">
                             <i class="fas fa-search"></i>
                             <input type="text" name="buscar" id="buscar" class="form-control-modern"
-                                placeholder="Buscar..." value="{{ request('buscar') }}">
+                                placeholder="Buscar por cedula, codigo o apellido" value="{{ request('buscar') }}">
                         </div>
                         <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
                             <i class="fas fa-info-circle"></i>
@@ -119,11 +113,7 @@
                     </div>
                 </form>
                 <div class="header-right">
-
-
                 </div>
-
-
                 <div class="header-right" style="display: flex; gap: 5px;">
 
                     <a href="{{ route('admin.docente.reporteGeneralPDF') }}" type="button" class="btn-pdf"
@@ -136,55 +126,50 @@
                     </div>
                 </div>
 
-                
-                                                       <div class="header-right">
-                <!-- --------------------------- -->
 
-@php
-    $anioActivo = \App\Models\AnioEscolar::activos()->first();
-    $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-    $mostrarAnio = $anioActivo ?? $anioExtendido;
-@endphp
+                <div class="header-right">
 
-@if($mostrarAnio)
-    <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
-        <div class="d-flex align-items-center">
-            <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                <i class="fas fa-calendar-check me-1"></i>
-                
-                Año Escolar
-            </span>
-            
-            <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                <span class="text-muted me-2">
-                    <i class="fas fa-play-circle text-primary me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                <span class="text-muted me-2">
-                    <i class="fas fa-flag-checkered text-danger me-1"></i>
-                    {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                </span>
-                
-                
+                    @php
+                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
+                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
+                        $mostrarAnio = $anioActivo ?? $anioExtendido;
+                    @endphp
+
+                    @if ($mostrarAnio)
+                        <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
+                                    <i class="fas fa-calendar-check me-1"></i>
+
+                                    Año Escolar
+                                </span>
+
+                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-play-circle text-primary me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                                    </span>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div
+                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
+                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
+                            </div>
+                        </div>
+                    @endif
+                </div>
             </div>
-        </div>
-    </div>
-@else
-    <div class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-        </div>
-    </div>
-@endif
-<!-- --------------------------- -->
-
-            </div>
-
-            </div>
-
-            {{-- Cuerpo de la tarjeta con la tabla --}}
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern overflow-hidden hidden">
@@ -200,7 +185,6 @@
                             </tr>
                         </thead>
                         <tbody style="text-align: center">
-                            {{-- Si no hay docentes, se muestra mensaje vacío --}}
                             @if ($docentes->isEmpty())
                                 <tr>
                                     <td colspan="7">
@@ -214,7 +198,6 @@
                                     </td>
                                 </tr>
                             @else
-                                {{-- Se recorren las docentes existentes --}}
                                 @foreach ($docentes as $datos)
                                     <tr class="  row-12" style="text-align: center">
                                         <td class="title-main">{{ $datos->persona->numero_documento }}</td>
@@ -243,9 +226,7 @@
                                                         type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
-
                                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                                        {{-- Ver mas --}}
                                                         <li>
                                                             <button
                                                                 class="dropdown-item d-flex align-items-center text-primary"
@@ -256,8 +237,6 @@
                                                                 Ver más
                                                             </button>
                                                         </li>
-
-                                                        {{-- Editar --}}
                                                         <a class="dropdown-item d-flex align-items-center text-warning"
                                                             type="button"
                                                             href="{{ route('admin.docente.edit', $datos->id) }}"
@@ -267,8 +246,6 @@
                                                             <i class="fas fa-pen me-2"></i>
                                                             Editar
                                                         </a>
-
-                                                        {{-- Inactivar --}}
                                                         <li>
                                                             <button
                                                                 class="dropdown-item d-flex align-items-center text-danger"
@@ -279,8 +256,6 @@
                                                                 Inactivar
                                                             </button>
                                                         </li>
-
-                                                        {{-- Reporte PDF --}}
                                                         <li>
                                                             <a class="dropdown-item d-flex align-items-center text-danger"
                                                                 type="button"
@@ -293,13 +268,9 @@
                                                     </ul>
                                                 </div>
                                             </div>
-
                                         </td>
                                     </tr>
-                                    {{-- Modal de ver --}}
                                     @include('admin.docente.modales.showModal')
-
-                                    {{-- Modal de confirmación para eliminar --}}
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
                                         aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -336,14 +307,13 @@
                                             </div>
                                         </div>
                                     </div>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
-                @endforeach
-                @endif
-                </tbody>
-                </table>
             </div>
         </div>
-    </div>
     </div>
 
     {{-- Paginación moderna --}}

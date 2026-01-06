@@ -28,7 +28,7 @@
                         @if (!$anioEscolarActivo) disabled @endif
                         title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
-                        <span>Inscripcion Nuevo Ingreso</span>
+                        <span>Registrar</span>
                     </a>
                 </div>
             </div>
@@ -205,8 +205,7 @@
                                 <th style="font-weight: bold">Cedula</th>
                                 <th class="text-center">Estudiante</th>
                                 <th class="text-center">Representante Legal</th>
-                                <th class="text-center">Parentesco</th>
-                                <th class="text-center">Año</th>
+                                <th class="text-center">Nivel Académico</th>
                                 <th class="text-center">Sección</th>
                                 <th class="text-center">Estado</th>
                                 <th class="text-center">Acciones</th>
@@ -252,9 +251,6 @@
                                             @else
                                                 No especificado
                                             @endif
-                                        </td>
-                                        <td class="text-center">
-                                            {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
                                         </td>
                                         <td class="text-center">
                                             {{ $datos->grado_actual?->numero_grado ?? 'N/A' }}

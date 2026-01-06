@@ -23,7 +23,7 @@
                         </span>
                         <span class="badge bg-white text-primary">
                             <i class="fas fa-graduation-cap"></i>
-                            {{ $datos->grado->numero_grado ?? 'N/A' }}° Año
+                            {{ $datos->grado->numero_grado ?? 'N/A' }}° 
                         </span>
                         @if ($datos->seccion)
                             <span class="badge bg-white text-info">
@@ -248,10 +248,10 @@
                                     <div class="card-body bg-blue">
                                         <div class="detail-item">
                                             <span class="detail-label">
-                                                <i class="fas fa-layer-group"></i> Año Anterior
+                                                <i class="fas fa-layer-group"></i>Nivel Academico Anterior
                                             </span>
                                             <span class="detail-value fw-bold text-center">
-                                                {{ $datos->inscripcion->grado->numero_grado ?? 'N/A' }} Año
+                                                {{ $datos->inscripcion->grado->numero_grado ?? 'N/A' }}°
                                             </span>
                                         </div>
                                     </div>
@@ -263,10 +263,10 @@
                                     <div class="card-body bg-success">
                                         <div class="detail-item">
                                             <span class="detail-label ">
-                                                <i class="fas fa-arrow-right "></i> Año de Promoción
+                                                <i class="fas fa-arrow-right "></i> Nivel Academico de Promoción
                                             </span>
                                             <span class="detail-value fw-bold text-center">
-                                                {{ $datos->grado->numero_grado ?? 'N/A' }} Año
+                                                {{ $datos->grado->numero_grado ?? 'N/A' }}°
                                             </span>
                                         </div>
                                     </div>
