@@ -60,7 +60,7 @@
                         <select id="docente_select"
                             class="form-control-modern selectpicker @error('docenteId') is-invalid @enderror"
                             data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
-                            wire:model.defer="docenteId">
+                            wire:model.live="docenteId">
                             <option value="" selected disabled>Seleccione un docente</option>
                             @foreach ($docentes as $docente)
                                 @if ($docente->detalleEstudios->count() > 0)
@@ -85,26 +85,15 @@
                             Busque por nombre, apellido o cédula del docente
                         </small>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button class="btn-primary-modern w-100" wire:click="seleccionarDocente"
-                            wire:loading.attr="disabled" style="margin-bottom: 1.5rem;">
-                            <span wire:loading.remove wire:target="seleccionarDocente">
-                                <i class="fas fa-check"></i> Seleccionar
-                            </span>
-                            <span wire:loading wire:target="seleccionarDocente">
-                                <i class="fas fa-spinner fa-spin"></i> Cargando...
-                            </span>
-                        </button>
-                    </div>
+
                 </div>
             </div>
         </div>
     @endif
 
-    {{-- Card: Información del Docente Seleccionado --}} 
-    @if ($docenteId)
-        <div class="card-modern" wire:transition 
-            wire:key="docente-info-{{ $docenteId }}">
+    {{-- Card: Información del Docente Seleccionado --}}
+    @if ($docenteSeleccionado)
+        <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon" style="background: linear-gradient(135deg, var(--success), #059669);">
@@ -139,8 +128,8 @@
                                 @if ($docenteSeleccionado->codigo)
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-id-card"></i>
-                                            Codigo
+                                            <i class="fas fa-barcode"></i>
+                                            Código
                                         </span>
                                         <span class="info-value">
                                             {{ $docenteSeleccionado->codigo }}
@@ -182,7 +171,7 @@
                                     <div class="info-item">
                                         <span class="info-label">
                                             <i class="fas fa-venus-mars"></i>
-                                            Genero
+                                            Género
                                         </span>
                                         <span class="info-value">
                                             {{ $docenteSeleccionado->persona->genero->genero }}
@@ -191,11 +180,10 @@
                                 @endif
                             </div>
                         </div>
-
                     </div>
+
                     {{-- COLUMNA DERECHA --}}
                     <div class="details-section">
-
                         {{-- Sección: Contacto --}}
                         <div class="info-section">
                             <div class="section-header">
@@ -203,26 +191,32 @@
                                 <h4>Información de Contacto</h4>
                             </div>
                             <div class="info-group">
-                                @if ($docenteSeleccionado->persona->prefijoTelefono)
-
+                                @if (!empty($docenteSeleccionado->persona->telefono_completo))
                                     <div class="info-item">
                                         <span class="info-label">
                                             <i class="fas fa-phone"></i>
                                             Teléfono
                                         </span>
                                         <span class="info-value">
-                                            @if ($docenteSeleccionado->primer_telefono)
-                                                {{ $docenteSeleccionado->persona->prefijoTelefono->prefijo }} -
-                                                {{ $docenteSeleccionado->primer_telefono }}
-                                            @else
-                                                N/A
-                                            @endif
+                                            {{ $docenteSeleccionado->persona->telefono_completo }}
                                         </span>
                                     </div>
                                 @endif
-                            </div>
 
-                            <div class="info-group" style="margin-top:1rem">
+
+                                @if ($docenteSeleccionado->persona->telefono_dos_completo)
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-phone"></i>
+                                            Teléfono 2
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $docenteSeleccionado->persona->telefono_dos_completo }}
+                                        </span>
+                                    </div>
+                                @endif
+
+
                                 @if ($docenteSeleccionado->dependencia)
                                     <div class="info-item">
                                         <span class="info-label">
@@ -230,7 +224,7 @@
                                             Dependencia
                                         </span>
                                         <span class="info-value">
-                                            {{ $docenteSeleccionado->dependencia ?? 'No asignada' }}
+                                            {{ $docenteSeleccionado->dependencia }}
                                         </span>
                                     </div>
                                 @endif
@@ -271,39 +265,34 @@
                     </div>
                 </div>
             </div>
-            <br>
-            <br>
-
         </div>
-        {{-- Formulario para agregar  --}}
-        <div class="card-modern mb-4" wire:key="form-asignacion">
+
+        {{-- Formulario para agregar asignación --}}
+        <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon">
-                        <i class="fas fa-graduation-cap"></i>
+                        <i class="fas fa-plus-circle"></i>
                     </div>
                     <div>
-                        <h3>Agregar Estudios Realizados</h3>
-                        <p>Seleccione los estudios del docente</p>
+                        <h3>Agregar Nueva Asignación</h3>
+                        <p>Asigne materias, grados y secciones al docente</p>
                     </div>
                 </div>
             </div>
 
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
+                    {{-- Materias --}}
                     <div class="col-md-4">
-                        <label for="estudios_realizados_id" class="form-label-modern">
-                            <i class="fas fa-graduation-cap"></i>
-                            Materias
+                        <label for="materia_select" class="form-label-modern">
+                            <i class="fas fa-book"></i>
+                            Materia
                             <span class="required-badge">*</span>
                         </label>
 
-                        {{-- Materias --}}
-
-
-                        <select wire:model.live="materiaId"
-                            class="form-control-modern  @error('materiaId') is-invalid @enderror"
-                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%">
+                        <select wire:model.live="materiaId" id="materia_select"
+                            class="form-control-modern @error('materiaId') is-invalid @enderror">
                             <option value="">Seleccione una materia</option>
                             @foreach ($materias as $materia)
                                 <option value="{{ $materia->id }}">
@@ -327,20 +316,20 @@
 
                     {{-- Grados --}}
                     <div class="col-md-3">
-                        <label for="grados_id" class="form-label-modern">
-                            <i class="fas fa-graduation-cap"></i>
-                            Años
+                        <label for="grado_select" class="form-label-modern">
+                            <i class="fas fa-layer-group"></i>
+                            Año
                             <span class="required-badge">*</span>
                         </label>
-                        <select wire:model.live="gradoId"
-                            class="form-control-modern  @error('gradoId') is-invalid @enderror"
-                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
+
+                        <select wire:model.live="gradoId" id="grado_select"
+                            class="form-control-modern @error('gradoId') is-invalid @enderror"
                             {{ !$materiaId ? 'disabled' : '' }}>
                             <option value="">
                                 @if (!$materiaId)
                                     Primero seleccione una materia
                                 @elseif($grados->isEmpty())
-                                    No hay años disponibles para esta materia
+                                    No hay años disponibles
                                 @else
                                     Seleccione un año
                                 @endif
@@ -367,17 +356,24 @@
 
                     {{-- Secciones --}}
                     <div class="col-md-3">
-                        <label for="grados_id" class="form-label-modern">
-                            <i class="fas fa-graduation-cap"></i>
-                            Secciones
+                        <label for="seccion_select" class="form-label-modern">
+                            <i class="fas fa-users"></i>
+                            Sección
                             <span class="required-badge">*</span>
                         </label>
 
-                        <select wire:model.live="seccionId"
-                            class="form-control-modern  @error('seccionId') is-invalid @enderror"
-                            data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
+                        <select wire:model.live="seccionId" id="seccion_select"
+                            class="form-control-modern @error('seccionId') is-invalid @enderror"
                             {{ !$gradoId ? 'disabled' : '' }}>
-                            <option value="">Seleccione una sección</option>
+                            <option value="">
+                                @if (!$gradoId)
+                                    Primero seleccione un año
+                                @elseif($secciones->isEmpty())
+                                    No hay secciones disponibles
+                                @else
+                                    Seleccione una sección
+                                @endif
+                            </option>
                             @foreach ($secciones as $seccion)
                                 <option value="{{ $seccion->id }}">
                                     Sección {{ $seccion->nombre }}
@@ -394,13 +390,18 @@
 
                         <small class="form-text-modern">
                             <i class="fas fa-info-circle"></i>
-                            Seleccione la seccion
+                            Seleccione la sección
                         </small>
                     </div>
 
+                    {{-- Botón Agregar --}}
                     <div class="col-md-2 d-flex align-items-end">
-                        <button class="btn-primary-modern w-100" wire:click="agregarAsignacion"
-                            wire:loading.attr="disabled" style="margin-bottom: 1.5rem;">
+                        <button class="btn-primary-modern w-100"
+                            wire:click="agregarAsignacion"
+                            wire:loading.attr="disabled"
+                            style="margin-bottom: 1.5rem;"
+                            @disabled(! $this->puedeAgregarAsignacion)
+                            title="{{ ! $this->puedeAgregarAsignacion ? 'Seleccione materia, año y sección' : '' }}">
                             <span wire:loading.remove wire:target="agregarAsignacion">
                                 <i class="fas fa-plus"></i> Agregar
                             </span>
@@ -414,15 +415,15 @@
         </div>
 
         {{-- Tabla de materias y grados asignados --}}
-        <div class="card-modern" wire:key="tabla-asignaciones">
+        <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-list-check"></i>
                     </div>
                     <div>
                         <h3>Materias y Grados Asignados</h3>
-                        <p>{{ $asignaciones->count() }} materias y grados registrados</p>
+                        <p>{{ $asignaciones->count() }} asignaciones registradas</p>
                     </div>
                 </div>
                 <div class="header-right">
@@ -448,20 +449,18 @@
                         </thead>
 
                         <tbody>
-                            @foreach ($asignaciones as $index => $detalle)
+                            @forelse ($asignaciones as $index => $detalle)
                                 <tr>
-                                    {{-- Numeracion --}}
                                     <td style="text-align: center; vertical-align: middle;">
                                         <span class="number-badge">{{ $index + 1 }}</span>
                                     </td>
 
-                                    {{-- Materia --}}
                                     <td style="text-align: center; vertical-align: middle;">
                                         <div
                                             style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
                                             <div
-                                                style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; flex-shrink: 0;">
-                                                <i class="fas fa-graduation-cap"></i>
+                                                style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem;">
+                                                <i class="fas fa-book"></i>
                                             </div>
                                             <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
                                                 {{ $detalle->areaEstudios->areaFormacion->nombre_area_formacion ?? 'N/A' }}
@@ -469,21 +468,18 @@
                                         </div>
                                     </td>
 
-                                    {{-- Año --}}
                                     <td style="text-align: center; vertical-align: middle;">
                                         <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
                                             {{ $detalle->grado->numero_grado ?? 'N/A' }}
                                         </div>
                                     </td>
 
-                                    {{-- Seccion --}}
                                     <td style="text-align: center; vertical-align: middle;">
                                         <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
                                             {{ $detalle->seccion->nombre ?? 'N/A' }}
                                         </div>
                                     </td>
 
-                                    {{-- Fecha de registro --}}
                                     <td style="text-align: center; vertical-align: middle;">
                                         <span style="color: var(--gray-600); font-size: 0.85rem;">
                                             <i class="fas fa-calendar-alt text-primary me-1"></i>
@@ -491,7 +487,6 @@
                                         </span>
                                     </td>
 
-                                    {{-- Acciones --}}
                                     <td style="text-align: center; vertical-align: middle;">
                                         <div style="display: flex; justify-content: center;">
                                             <button class="action-btn btn-delete"
@@ -503,67 +498,65 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 3rem;">
+                                        <i class="fas fa-inbox"
+                                            style="font-size: 3rem; color: var(--gray-400); margin-bottom: 1rem;"></i>
+                                        <p style="color: var(--gray-600); font-size: 1.1rem; margin: 0;">
+                                            No hay asignaciones registradas
+                                        </p>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
-
-                    <!-- MODAL ELIMINAR ASIGNACIÓN -->
-                    <div wire:ignore.self class="modal fade" id="modalEliminarAsignacion" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content modal-modern">
-
-                                <div class="modal-header-delete">
-                                    <div class="modal-icon-delete">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </div>
-                                    <h5 class="modal-title-delete">Confirmar Eliminación</h5>
-                                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-
-                                <div class="modal-body-delete">
-                                    <p>¿Deseas eliminar esta asignación?</p>
-
-                                    <p class="delete-warning">
-                                        Esta acción es irreversible.
-                                    </p>
-                                </div>
-
-                                <div class="modal-footer-delete">
-                                    <div class="footer-buttons">
-                                        <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
-                                            Cancelar
-                                        </button>
-
-                                        <button class="btn-modal-delete"
-                                            wire:click="eliminarAsignacion({{ $asignacionAEliminar }})"
-                                            wire:loading.attr="disabled" data-bs-dismiss="modal">
-                                            <span wire:loading.remove wire:target="eliminarAsignacion">
-                                                Eliminar
-                                            </span>
-                                            <span wire:loading wire:target="eliminarAsignacion">
-                                                <i class="fas fa-spinner fa-spin"></i>
-                                                Eliminando...
-                                            </span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-
-
                 </div>
             </div>
-            <br>
+        </div>
 
+        {{-- MODAL ELIMINAR ASIGNACIÓN --}}
+        <div wire:ignore.self class="modal fade" id="modalEliminarAsignacion" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-modern">
+                    <div class="modal-header-delete">
+                        <div class="modal-icon-delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <h5 class="modal-title-delete">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="modal-body-delete">
+                        <p>¿Deseas eliminar esta asignación?</p>
+                        <p class="delete-warning">Esta acción es irreversible.</p>
+                    </div>
+
+                    <div class="modal-footer-delete">
+                        <div class="footer-buttons">
+                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+
+                            <button class="btn-modal-delete"
+                                wire:click="eliminarAsignacion({{ $asignacionAEliminar }})"
+                                wire:loading.attr="disabled" data-bs-dismiss="modal">
+                                <span wire:loading.remove wire:target="eliminarAsignacion">
+                                    Eliminar
+                                </span>
+                                <span wire:loading wire:target="eliminarAsignacion">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Eliminando...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
-
-
 
     @section('js')
         <script>
@@ -583,14 +576,12 @@
 
             });
 
-            // Refrescar selectpicker cuando Livewire actualice el DOM
             document.addEventListener('livewire:updated', () => {
                 $('.selectpicker').selectpicker('refresh');
             });
 
-            // Reset select desde Livewire
-            Livewire.on('resetSelect', () => {
-                $('#docente_select').val('').selectpicker('refresh');
+            Livewire.on('resetSelects', () => {
+                $('.selectpicker').val('').selectpicker('refresh');
             });
 
             // Auto-cerrar alertas

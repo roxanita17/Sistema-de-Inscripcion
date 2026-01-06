@@ -4,10 +4,10 @@
             <div class="header-right" style="margin-left: auto;">
                 @if (!$soloEdicion)
                     <button type="button" wire:click="habilitarEdicion" class="btn-primary-modern">
-                    <i class="fas fa-edit"></i> Editar Datos
-                </button>
+                        <i class="fas fa-edit"></i> Editar Datos
+                    </button>
                 @endif
-                
+
             </div>
         </div>
         {{-- Modo Vista --}}
@@ -25,7 +25,6 @@
                         <div class="info-group">
                             <div class="info-item">
                                 <span class="info-label">
-                                    <i class="fas fa-id-card"></i>
                                     Número de Cédula
                                 </span>
                                 <span class="info-value">
@@ -44,7 +43,6 @@
                         <div class="info-group">
                             <div class="info-item">
                                 <span class="info-label">
-                                    <i class="fas fa-user"></i>
                                     Nombre Completo
                                 </span>
                                 <span class="info-value">
@@ -59,7 +57,6 @@
                             <div class="info-group pt-3" style="display: flex; flex-direction: row; ">
                                 <div class="info-item" style="width: 15rem">
                                     <span class="info-label">
-                                        <i class="fas fa-calendar"></i>
                                         Fecha de Nacimiento
                                     </span>
                                     <span class="info-value">
@@ -68,7 +65,6 @@
                                 </div>
                                 <div class="info-item" style="width: 15rem">
                                     <span class="info-label">
-                                        <i class="fas fa-venus-mars"></i>
                                         Género
                                     </span>
                                     <span class="info-value">
@@ -92,7 +88,6 @@
                         <div class="info-group">
                             <div class="info-item">
                                 <span class="info-label">
-                                    <i class="fas fa-map"></i>
                                     Estado, Municipio, Localidad
                                 </span>
                                 @if ($localidad_id)
@@ -121,7 +116,6 @@
                             <div class="info-group" style="display: flex; flex-direction: row; ">
                                 <div class="info-item" style="width: 10rem;">
                                     <span class="info-label">
-                                        <i class="fas fa-ruler-vertical"></i>
                                         Estatura
                                     </span>
                                     <span class="info-value">
@@ -131,7 +125,6 @@
                                 </div>
                                 <div class="info-item" style="width: 10rem;">
                                     <span class="info-label">
-                                        <i class="fas fa-weight"></i>
                                         Peso
                                     </span>
                                     <span class="info-value">
@@ -140,7 +133,6 @@
                                 </div>
                                 <div class="info-item" style="width: 10rem;">
                                     <span class="info-label">
-                                        <i class="fas fa-tshirt"></i>
                                         Talla Camisa
                                     </span>
                                     <span class="info-value">
@@ -151,7 +143,6 @@
                             <div class="info-group pt-3" style="display: flex; flex-direction: row;">
                                 <div class="info-item" style="width: 15rem;">
                                     <span class="info-label">
-                                        <i class="fas fa-socks"></i>
                                         Talla Pantalón
                                     </span>
                                     <span class="info-value">
@@ -160,7 +151,6 @@
                                 </div>
                                 <div class="info-item" style="width: 15rem;">
                                     <span class="info-label">
-                                        <i class="fas fa-shoe-prints"></i>
                                         Talla Zapato
                                     </span>
                                     <span class="info-value">
@@ -183,7 +173,6 @@
                     <div class="info-group" style="display: flex; flex-direction: row;">
                         <div class="info-item" style="width: 19rem;">
                             <span class="info-label">
-                                <i class="fas fa-hand-paper"></i>
                                 Lateralidad
                             </span>
                             <span class="info-value">
@@ -192,7 +181,6 @@
                         </div>
                         <div class="info-item" style="width: 19rem;">
                             <span class="info-label">
-                                <i class="fas fa-sort-numeric-up"></i>
                                 Orden de Nacimiento
                             </span>
                             <span class="info-value">
@@ -201,7 +189,6 @@
                         </div>
                         <div class="info-item" style="width: 19rem;">
                             <span class="info-label">
-                                <i class="fas fa-users"></i>
                                 Etnia Indígena
                             </span>
                             <span class="info-value">
@@ -273,7 +260,7 @@
     @endif
     @if ($enModoEdicion)
 
-        
+
         {{-- Modo Edición --}}
         <form wire:submit.prevent="guardar">
             <div class="card-header-modern">
@@ -299,7 +286,7 @@
                     </div>
                     <div class="col-md-2">
                         <label class="form-label-modern">
-                            <i class="fas fa-id-card"></i> Tipo Doc.
+                            Tipo Doc.
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="tipo_documento_id"
@@ -319,7 +306,7 @@
 
                     <div class="col-md-2">
                         <label class="form-label-modern">
-                            <i class="fas fa-id-card"></i> Cédula
+                            Cédula
                             <span class="required-badge">*</span>
                         </label>
                         <input type="text" wire:model.live="numero_documento"
@@ -341,7 +328,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            <i class="fas fa-birthday-cake"></i> Fecha Nacimiento
+                            Fecha Nacimiento
                             <span class="required-badge">*</span>
                         </label>
                         <input type="date" wire:model.live="fecha_nacimiento"
@@ -356,7 +343,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            <i class="fas fa-venus-mars"></i> Género
+                            Género
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="genero_id"
@@ -379,12 +366,12 @@
                     <div class="col-12 mb-3">
                         <h5
                             style="color: var(--gray-700); font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
-                            <i class="fas fa-user"></i> Datos Personales
+                            Datos Personales
                         </h5>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label-modern ">
-                            <i class="fas fa-user"></i> Primer Nombre
+                            Primer Nombre
                             <span class="required-badge">*</span>
                         </label>
                         <input type="text" wire:model.live="primer_nombre"
@@ -409,7 +396,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            <i class="fas fa-user"></i> Primer Apellido
+                            Primer Apellido
                             <span class="required-badge">*</span>
                         </label>
                         <input type="text" wire:model.live="primer_apellido"
@@ -431,7 +418,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            <i class="fas fa-hand-paper"></i> Lateralidad
+                            Lateralidad
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="lateralidad_id"
@@ -450,7 +437,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            <i class="fas fa-sort-numeric-up"></i> Orden Nacimiento
+                            Orden Nacimiento
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="orden_nacimiento_id"
@@ -469,7 +456,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            <i class="fas fa-users"></i> Etnia Indígena
+                            Etnia Indígena
                         </label>
                         <select wire:model="etnia_indigena_id" class="form-control-modern">
                             <option value="">Seleccione</option>
@@ -485,18 +472,18 @@
                     <div class="col-12 mb-3">
                         <h5
                             style="color: var(--gray-700); font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
-                            <i class="fas fa-ruler-combined"></i> Datos Físicos
+                            Datos Físicos
                         </h5>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            <i class="fas fa-ruler-vertical"></i> Altura (m)
+                            Estatura (m)
                             <span class="required-badge">*</span>
                         </label>
-                        <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
-                            wire:keyup='formatearEstatura'
+                        <input wire:model.live="talla_estudiante" wire:blur="validarEstatura"
+                            placeholder="Ej: 1.66 o 166"
                             class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
-                            placeholder="1.65">
+                            inputmode="decimal" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                         @error('talla_estudiante')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -506,7 +493,7 @@
 
                     <div class="col-md-2">
                         <label class="form-label-modern">
-                            <i class="fas fa-weight"></i> Peso (kg)
+                            Peso (kg)
                             <span class="required-badge">*</span>
                         </label>
                         <input type="number" wire:model.live="peso_estudiante"
@@ -520,7 +507,7 @@
 
                     <div class="col-md-2">
                         <label class="form-label-modern">
-                            <i class="fas fa-tshirt"></i> Talla Camisa
+                            Talla Camisa
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="talla_camisa_id"
@@ -539,7 +526,7 @@
 
                     <div class="col-md-2">
                         <label class="form-label-modern">
-                            <i class="fas fa-socks"></i> Talla Pantalón
+                            Talla Pantalón
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="talla_pantalon_id"
@@ -558,7 +545,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label-modern">
-                            <i class="fas fa-shoe-prints"></i> Talla Zapato
+                            Talla Zapato
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="talla_zapato"
@@ -581,12 +568,12 @@
                     <div class="col-12 mb-3">
                         <h5
                             style="color: var(--gray-700); font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
-                            <i class="fas fa-map-marker-alt"></i> Lugar de Nacimiento
+                            Lugar de Nacimiento
                         </h5>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label-modern">
-                            <i class="fas fa-map"></i> Estado
+                            Estado
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="estado_id"
@@ -605,7 +592,7 @@
 
                     <div class="col-md-4">
                         <label class="form-label-modern">
-                            <i class="fas fa-map-marked-alt"></i> Municipio
+                            Municipio
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="municipio_id"
@@ -624,7 +611,7 @@
 
                     <div class="col-md-4">
                         <label class="form-label-modern">
-                            <i class="fas fa-map-pin"></i> Localidad
+                            Localidad
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="localidad_id"
@@ -691,8 +678,8 @@
                                             <td style="text-align: center; vertical-align: middle;">
                                                 <div style="display: flex; justify-content: center;">
                                                     <button type="button"
-                                                        wire:click="eliminarDiscapacidad({{ $loop->index }})"
-                                                        class="action-btn btn-delete" title="Eliminar">
+                                                        wire:click="eliminarDiscapacidad({{ $disc['id'] }})"
+                                                        class="action-btn btn-delete">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </div>
@@ -714,9 +701,9 @@
                     <div class="row mt-4">
                         <div class="col-md-8">
                             <label class="form-label-modern">
-                                <i class="fas fa-wheelchair"></i> Discapacidad
+                                ¿Presenta alguna discapacidad?
                             </label>
-                            <select wire:model.defer="discapacidadSeleccionada"
+                            <select wire:model.live="discapacidadSeleccionada"
                                 class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
                                 <option value="">Seleccione una discapacidad</option>
                                 @foreach ($discapacidades as $discapacidad)

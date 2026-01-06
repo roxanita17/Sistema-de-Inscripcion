@@ -47,8 +47,10 @@
                             id="codigo_area" 
                             class="form-control-modern" 
                             placeholder="Ingrese el código del area de formación"
-                            required>
-                        
+                            required
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         @error('codigo_area')
                             <div class="error-message">
                                 Este campo es obligatorio.

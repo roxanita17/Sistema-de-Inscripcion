@@ -1,5 +1,6 @@
 <!-- Modal Editar Area de Formación -->
-<div class="modal fade" id="viewModalEditar{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalEditarLabel{{ $datos->id }}" aria-hidden="true">
+<div class="modal fade" id="viewModalEditar{{ $datos->id }}" tabindex="-1"
+    aria-labelledby="viewModalEditarLabel{{ $datos->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
 
@@ -27,12 +28,8 @@
                         <label for="nombre_area_formacion_{{ $datos->id }}" class="form-label-modern">
                             Nombre del Area de Formación
                         </label>
-                        <input type="text" 
-                               class="form-control-modern" 
-                               id="nombre_area_formacion_{{ $datos->id }}" 
-                               name="nombre_area_formacion" 
-                               value="{{ $datos->nombre_area_formacion }}" 
-                               required>
+                        <input type="text" class="form-control-modern" id="nombre_area_formacion_{{ $datos->id }}"
+                            name="nombre_area_formacion" value="{{ $datos->nombre_area_formacion }}" required>
                         @error('nombre_area_formacion')
                             <div class="error-message">
                                 Este campo es obligatorio.
@@ -45,12 +42,9 @@
                         <label for="codigo_area_{{ $datos->id }}" class="form-label-modern">
                             Codigo del Area de Formación
                         </label>
-                        <input type="text" 
-                               class="form-control-modern" 
-                               id="codigo_area_{{ $datos->id }}" 
-                               name="codigo_area" 
-                               value="{{ $datos->codigo_area }}" 
-                               required>
+                        <input type="text" class="form-control-modern" id="codigo_area_{{ $datos->id }}"
+                            name="codigo_area" value="{{ $datos->codigo_area }}" required inputmode="numeric"
+                            pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         @error('codigo_area')
                             <div class="error-message">
                                 Este campo es obligatorio.
@@ -63,22 +57,14 @@
                         <label for="siglas_{{ $datos->id }}" class="form-label-modern">
                             Siglas del Area de Formación
                         </label>
-                        <input type="text" 
-                               class="form-control-modern" 
-                               id="siglas_{{ $datos->id }}" 
-                               name="siglas" 
-                               value="{{ $datos->siglas }}" 
-                               required>
+                        <input type="text" class="form-control-modern" id="siglas_{{ $datos->id }}"
+                            name="siglas" value="{{ $datos->siglas }}" required>
                         @error('siglas')
                             <div class="error-message">
                                 Este campo es obligatorio.
                             </div>
                         @enderror
                     </div>
-
-
-
-                    
 
                     {{-- Botones --}}
                     <div class="modal-footer-edit">
@@ -94,7 +80,6 @@
 
                 </form>
             </div>
-
         </div>
     </div>
 </div>

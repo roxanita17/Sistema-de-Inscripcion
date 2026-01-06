@@ -9,8 +9,9 @@ use App\Models\Docente;
 use App\Models\AreaEstudioRealizado;
 use App\Models\DocenteAreaGrado;
 use Illuminate\Support\Facades\Log;
-
-
+use App\Models\Grado;
+use \App\Models\Seccion;
+use \App\Models\AreaFormacion;
 
 
 class DocenteAreaGradoController extends Controller
@@ -25,47 +26,87 @@ class DocenteAreaGradoController extends Controller
             ->exists();
     }
 
-    private function verificarPercentilEjecutado()
-    {
-        return \App\Models\EjecucionesPercentil::where('status', true)->exists();
-    }
-
     /**
      * Muestra el listado de docentes
      */
-    public function index()
+    public function index(Request $request)
     {
-        $buscar = request('buscar');
+        $gradosEscolares = collect();
+        $secciones = collect();
+        $areasFormacion = collect();
 
+        $gradoId = $request->grado_id;
+        $seccionNombre = $request->seccion_id;
+        $areaFormacionId = $request->area_formacion_id;
+
+
+        $buscar = request('buscar');
         $docentes = Docente::with([
             'persona',
             'asignacionesAreas.areaEstudios.areaFormacion',
+            'asignacionesAreas.grado',
+            'asignacionesAreas.seccion',
         ])
-            ->whereHas('asignacionesAreasActivas')
-            ->whereHas('persona', fn($q) => $q->where('status', true))
-            ->where('status', true)
-            ->buscar($buscar)
-            ->paginate(10);
+        ->whereHas('asignacionesAreasActivas')
+        ->whereHas('persona', fn($q) => $q->where('status', true))
+        ->where('status', true)
+
+        ->when($gradoId, function ($q) use ($gradoId) {
+            $q->whereHas('asignacionesAreas', function ($sub) use ($gradoId) {
+                $sub->where('docente_area_grados.grado_id', $gradoId)
+                    ->where('docente_area_grados.status', true);
+            });
+        })
+
+
+        ->when($seccionNombre, function ($q) use ($seccionNombre) {
+            $q->whereHas('asignacionesAreas.seccion', function ($sub) use ($seccionNombre) {
+                $sub->where('seccions.nombre', $seccionNombre)
+                    ->where('seccions.status', true);
+            });
+        })
+
+        ->when($areaFormacionId, function ($q) use ($areaFormacionId) {
+            $q->whereHas('asignacionesAreas.areaEstudios', function ($sub) use ($areaFormacionId) {
+                $sub->where('area_formacion_id', $areaFormacionId);
+            });
+        })
+
+        ->buscar($buscar)
+        ->paginate(10)
+        ->withQueryString();
+
 
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        $percentilEjecutado = $this->verificarPercentilEjecutado();
 
 
-        if (!$percentilEjecutado) {
-            return view('admin.transacciones.docente_area_grado.index', compact(
-                'docentes',
-                'anioEscolarActivo',
-                'buscar',
-                'percentilEjecutado'
-            ));
-        }
+
+
+        $gradosEscolares = Grado::where('status', true)
+            ->orderBy('numero_grado')
+            ->get();
+
+        $secciones = Seccion::where('status', true)
+            ->select('nombre')
+            ->distinct()
+            ->orderBy('nombre')
+            ->get();
+
+        $areasFormacion = AreaFormacion::where('status', true)
+            ->orderBy('nombre_area_formacion')
+            ->get();
+
 
         return view('admin.transacciones.docente_area_grado.index', compact(
             'docentes',
             'anioEscolarActivo',
             'buscar',
-            'percentilEjecutado'
+            'gradosEscolares',
+            'secciones',
+            'areasFormacion'
         ));
+
+
     }
 
 

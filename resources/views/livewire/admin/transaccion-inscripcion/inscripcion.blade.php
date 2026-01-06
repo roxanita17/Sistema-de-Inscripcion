@@ -1,5 +1,4 @@
 <div>
-    {{-- Alertas --}}
     @if (session()->has('success') || session()->has('error') || session()->has('warning'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
@@ -42,7 +41,6 @@
         </div>
     @endif
 
-    {{-- Seleccionar Representantes --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -55,9 +53,8 @@
                 </div>
             </div>
         </div>
-        <div class="card-body-modern" style="padding: 2rem;">
 
-            {{-- Padre --}}
+        <div class="card-body-modern" style="padding: 2rem;">
             <div class="row mb-3">
                 <div class="col-md-12" wire:ignore>
                     <label for="padre_select" class="form-label-modern">
@@ -73,16 +70,13 @@
                                 {{ $padre['nombre_completo'] }}
                             </option>
                         @endforeach
-
                     </select>
                 </div>
             </div>
             @if ($padreSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
                     <div class="details-grid">
-                        {{-- COLUMNA IZQUIERDA --}}
                         <div class="details-section">
-                            {{-- Identificación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-id-badge"></i>
@@ -91,7 +85,6 @@
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-id-card"></i>
                                             Documento
                                         </span>
                                         <span class="info-value">
@@ -102,17 +95,14 @@
                                 </div>
                             </div>
 
-                            {{-- Información Personal --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-user"></i>
                                     <h4>Información Personal</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user"></i>
                                             Nombre Completo
                                         </span>
                                         <span class="info-value">
@@ -124,49 +114,49 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div
                                     style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
                                     <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-venus-mars"></i>
                                                 Género
                                             </span>
                                             <span class="info-value">
                                                 {{ $padreSeleccionado->persona->genero->genero ?? 'N/A' }}
                                             </span>
                                         </div>
-
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-phone"></i>
                                                 Teléfono
                                             </span>
                                             <span class="info-value">
-                                                {{ $padreSeleccionado->persona->telefono ?? 'N/A' }}
+                                                {{ $padreSeleccionado->persona->telefono_completo ?? 'N/A' }}
                                             </span>
                                         </div>
+                                        @if ($padreSeleccionado->persona->telefono_dos_completo)
+                                            <div class="info-item" style="width: 15rem;">
+                                                <span class="info-label">
+                                                    Segundo Teléfono
+                                                </span>
+                                                <span class="info-value">
+                                                    {{ $padreSeleccionado->persona->telefono_dos_completo ?? 'N/A' }}
+                                                </span>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
-                        {{-- COLUMNA DERECHA --}}
                         <div class="details-section">
-
-                            {{-- Ubicación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <h4>Ubicación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-map"></i>
                                             Estado / Municipio / Localidad
                                         </span>
                                         <span class="info-value">
@@ -177,18 +167,14 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Datos Laborales --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-briefcase"></i>
                                     <h4>Información Laboral</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user-tie"></i>
                                             Ocupación
                                         </span>
                                         <span class="info-value">
@@ -196,11 +182,9 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div class="info-group pt-3">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-home"></i>
                                             Convive con el Estudiante
                                         </span>
                                         <span class="info-value">
@@ -209,21 +193,17 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             @endif
 
-            {{-- Madre --}}
             <div class="row mb-3">
                 <div class="col-md-12" wire:ignore>
                     <label for="madre_select" class="form-label-modern">
                         <i class="fas fa-female"></i>
                         Madre
                     </label>
-
                     <select id="madre_select" class="form-control-modern selectpicker" data-live-search="true"
                         data-size="8" data-width="100%">
                         <option value="">Seleccione a la madre (opcional)</option>
@@ -239,23 +219,16 @@
             </div>
             @if ($madreSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
-
                     <div class="details-grid">
-
-                        {{-- COLUMNA IZQUIERDA --}}
                         <div class="details-section">
-
-                            {{-- Identificación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-id-badge"></i>
                                     <h4>Datos de Identificación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-id-card"></i>
                                             Documento
                                         </span>
                                         <span class="info-value">
@@ -265,18 +238,14 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Información Personal --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-user"></i>
                                     <h4>Información Personal</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user"></i>
                                             Nombre Completo
                                         </span>
                                         <span class="info-value">
@@ -288,23 +257,19 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div
                                     style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
                                     <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-venus-mars"></i>
                                                 Género
                                             </span>
                                             <span class="info-value">
                                                 {{ $madreSeleccionado->persona->genero->genero ?? 'N/A' }}
                                             </span>
                                         </div>
-
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-phone"></i>
                                                 Teléfono
                                             </span>
                                             <span class="info-value">
@@ -314,23 +279,17 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
-                        {{-- COLUMNA DERECHA --}}
                         <div class="details-section">
-
-                            {{-- Ubicación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <h4>Ubicación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-map"></i>
                                             Estado / Municipio / Localidad
                                         </span>
                                         <span class="info-value">
@@ -341,18 +300,14 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Datos Laborales --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-briefcase"></i>
                                     <h4>Información Laboral</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user-tie"></i>
                                             Ocupación
                                         </span>
                                         <span class="info-value">
@@ -360,11 +315,9 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div class="info-group pt-3">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-home"></i>
                                             Convive con el Estudiante
                                         </span>
                                         <span class="info-value">
@@ -373,21 +326,17 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             @endif
 
-            {{-- Representante Legal --}}
             <div class="row">
                 <div class="col-md-12" wire:ignore>
                     <label for="representante_legal_select" class="form-label-modern">
                         <i class="fas fa-gavel"></i>
                         Representante Legal
                     </label>
-
                     <select id="representante_legal_select" class="form-control-modern selectpicker"
                         data-live-search="true" data-size="8" data-width="100%">
                         <option value="">Seleccione un representante legal</option>
@@ -403,21 +352,15 @@
             @if ($representanteLegalSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
                     <div class="details-grid">
-
-                        {{-- COLUMNA IZQUIERDA --}}
                         <div class="details-section">
-
-                            {{-- Identificación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-id-badge"></i>
                                     <h4>Datos de Identificación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-id-card"></i>
                                             Documento
                                         </span>
                                         <span class="info-value">
@@ -429,17 +372,14 @@
                                 </div>
                             </div>
 
-                            {{-- Información Personal --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-user"></i>
                                     <h4>Información Personal</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user"></i>
                                             Nombre Completo
                                         </span>
                                         <span class="info-value">
@@ -451,13 +391,11 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div
                                     style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
                                     <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-venus-mars"></i>
                                                 Género
                                             </span>
                                             <span class="info-value">
@@ -467,7 +405,6 @@
 
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
-                                                <i class="fas fa-phone"></i>
                                                 Teléfono
                                             </span>
                                             <span class="info-value">
@@ -477,13 +414,8 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
-                        {{-- COLUMNA DERECHA --}}
                         <div class="details-section">
-
-                            {{-- Ubicación --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -493,7 +425,6 @@
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-map"></i>
                                             Estado / Municipio / Localidad
                                         </span>
                                         <span class="info-value">
@@ -504,18 +435,14 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Datos Laborales --}}
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-briefcase"></i>
                                     <h4>Información Laboral</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-user-tie"></i>
                                             Ocupación
                                         </span>
                                         <span class="info-value">
@@ -527,7 +454,6 @@
                                 <div class="info-group pt-3">
                                     <div class="info-item">
                                         <span class="info-label">
-                                            <i class="fas fa-home"></i>
                                             Convive con el Estudiante
                                         </span>
                                         <span class="info-value">
@@ -536,37 +462,28 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
-
-
                 </div>
-                {{-- Datos Legales --}}
+
                 <div class="info-section mt-4">
                     <div class="section-header">
                         <i class="fas fa-gavel"></i>
                         <h4>Información Legal</h4>
                     </div>
-
                     <div style="display:flex; justify-content:center; align-items:center;">
                         <div class="info-group pt-3"
                             style="display:flex; gap:2rem; flex-wrap:wrap; justify-content:center; flex-direction:row;">
-
                             <div class="info-item" style="width: 15rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-users"></i>
                                     Parentesco
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->parentesco ?? 'N/A' }}
                                 </span>
                             </div>
-
                             <div class="info-item" style="width: 18rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-envelope"></i>
                                     Correo del Representante
                                 </span>
                                 <span class="info-value">
@@ -576,7 +493,6 @@
                             @if ($representanteLegalSeleccionado->pertenece_a_organizacion_representante)
                                 <div class="info-item" style="width: 18rem;">
                                     <span class="info-label">
-                                        <i class="fas fa-id-card-alt"></i>
                                         Organizacion
                                     </span>
                                     <span class="info-value">
@@ -584,22 +500,16 @@
                                     </span>
                                 </div>
                             @endif
-
-
                             <div class="info-item" style="width: 12rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-id-card-alt"></i>
                                     Carnet de la Patria
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->carnet_patria_afiliado ? 'Sí' : 'No' }}
                                 </span>
                             </div>
-
-
                             <div class="info-item" style="width: 14rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-barcode"></i>
                                     Serial Carnet Patria
                                 </span>
                                 <span class="info-value">
@@ -608,45 +518,33 @@
                             </div>
                             <div class="info-item" style="width: 14rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-key"></i>
                                     Código Carnet Patria
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->codigo_carnet_patria_representante ?? 'N/A' }}
                                 </span>
                             </div>
-
                             <div class="info-item" style="width: 18rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-university"></i>
                                     Banco
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->banco->codigo_banco ?? 'N/A' }}-{{ $representanteLegalSeleccionado->banco->nombre_banco ?? 'N/A' }}
                                 </span>
                             </div>
-
                             <div class="info-item" style="width: 18rem;">
                                 <span class="info-label">
-                                    <i class="fas fa-credit-card"></i>
                                     Tipo de Cuenta
                                 </span>
                                 <span class="info-value">
                                     {{ $representanteLegalSeleccionado->tipo_cuenta ?? 'N/A' }}
                                 </span>
                             </div>
-
-
-
                         </div>
                     </div>
                 </div>
-
-
-
             @endif
 
-            {{-- Boton de crear representante --}}
             <div class="row align-items-center mb-4 mt-4">
                 <div class="col-md-9">
                     <div class="alert alert-info d-flex align-items-start p-3 mb-0 shadow-sm" role="alert"
@@ -658,8 +556,6 @@
                         </div>
                     </div>
                 </div>
-
-                {{-- Alerta de sweetalert --}}
                 <div class="col-md-3 text-md-end mt-3 mt-md-0">
                     <button type="button" onclick="confirmarEnvio()" class="btn-create">
                         <i class="fas fa-plus"></i> Crear Representante
@@ -688,8 +584,6 @@
         </div>
     </div>
 
-
-
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -697,8 +591,8 @@
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <div>
-                    <h3>Seleccionar Grado</h3>
-                    <p>Seleccione el grado al que desea inscribir al estudiante</p>
+                    <h3>Seleccionar Año</h3>
+                    <p>Seleccione el año al que desea inscribir al estudiante</p>
                 </div>
             </div>
         </div>
@@ -707,15 +601,14 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="grado_id" class="form-label-modern">
-                            <i class="fas fa-layer-group"></i>
-                            Grado
+                            Año
                             <span class="required-badge">*</span>
                         </label>
                         <select wire:model.live="gradoId" id="grado_id"
                             class="form-control-modern @error('gradoId') is-invalid @enderror">
-                            <option value="">Seleccione un grado</option>
+                            <option value="">Seleccione un año</option>
                             @foreach ($grados as $grado)
-                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }}° Grado</option>
+                                <option value="{{ $grado->id }}">{{ $grado->numero_grado }} Año</option>
                             @endforeach
                         </select>
                         @error('gradoId')
@@ -729,7 +622,7 @@
                 @if (!$esPrimerGrado)
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="seccion_id" class="form-label-modern"><i class="fas fa-th-large"></i>
+                            <label for="seccion_id" class="form-label-modern">
                                 Sección
                                 <span class="required-badge">*</span>
                             </label>
@@ -749,7 +642,6 @@
                     </div>
                 @endif
 
-
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="fecha" class="form-label-modern">
@@ -766,122 +658,107 @@
                         @enderror
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
-
-    {{-- Formulario de datos de procedencia --}}
     <div class="card-modern mb-4">
         <div class="card-body-modern">
-            <div class="card-modern mb-4">
-                <div class="card-header-modern">
-                    <div class="header-left">
-                        <div class="header-icon">
-                            <i class="fas fa-school"></i>
-                        </div>
-                        <div>
-                            <h3>Plantel de Procedencia</h3>
-                            <p>Información de la institución de origen</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body-modern" style="padding: 2rem;">
-                    <div class="alert alert-info mb-4 align-items-start p-3 shadow-sm">
-                        <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
-                            style="font-weight: 700;">(*)</span> son obligatorios
-                    </div>
-
-                    <div class="row">
-                        {{-- Numero de zonificacion --}}
-                        @if ($esPrimerGrado)
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label-modern">
-                                        <i class="fas fa-hashtag"></i>
-                                        Número de Zonificación
-                                    </label>
-                                    <input type="text" wire:model.live="numero_zonificacion"
-                                        class="form-control-modern" maxlength="3" inputmode="numeric"
-                                        oninput="this.value = this.value.replace(/[^0-9]/g,'')"
-                                        placeholder="Ingrese número de zonificación">
-                                </div>
-                            </div>
-                        @endif
-
-
-                        {{-- Institucion de procedencia --}}
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="institucion_procedencia_id" class="form-label-modern">
-                                    <i class="fas fa-building"></i>
-                                    Institución de procedencia
-                                    <span class="required-badge">*</span>
-                                </label>
-                                <select wire:model.live="institucion_procedencia_id"
-                                    class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
-                                    <option value="">Seleccione una institución</option>
-                                    @foreach ($instituciones as $inst)
-                                        <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}</option>
-                                    @endforeach
-                                </select>
-                                @error('institucion_procedencia_id')
-                                    <div class="invalid-feedback-modern">
-                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        {{-- Expresion literaria --}}
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="expresion_literaria" class="form-label-modern">
-                                    <i class="fas fa-font"></i>
-                                    Literal
-                                    <span class="required-badge">*</span>
-                                </label>
-                                <select wire:model.live="expresion_literaria_id"
-                                    class="form-control-modern @error('expresion_literaria_id') is-invalid @enderror">
-                                    <option value="">Seleccione</option>
-                                    @foreach ($expresiones_literarias as $item)
-                                        <option value="{{ $item->id }}">{{ $item->letra_expresion_literaria }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                @error('expresion_literaria_id')
-                                    <div class="invalid-feedback-modern">
-                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        {{-- fecha de egreso --}}
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="anio_egreso" class="form-label-modern">
-                                    <i class="fas fa-calendar"></i>
-                                    Egreso
-                                    <span class="required-badge">*</span>
-                                </label>
-                                <input type="date" wire:model.live="anio_egreso"
-                                    class="form-control-modern @error('anio_egreso') is-invalid @enderror">
-                                @error('anio_egreso')
-                                    <div class="invalid-feedback-modern">
-                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="alert alert-info mb-4 align-items-start p-3 shadow-sm">
+                <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
+                    style="font-weight: 700;">(*)</span> son obligatorios
             </div>
             <livewire:admin.alumnos.alumno-create>
+                <div class="card-modern mb-4">
+                    <div class="card-header-modern">
+                        <div class="header-left">
+                            <div class="header-icon">
+                                <i class="fas fa-school"></i>
+                            </div>
+                            <div>
+                                <h3>Plantel de Procedencia</h3>
+                                <p>Información de la institución de origen</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body-modern" style="padding: 2rem;">
+                        <div class="row">
+                            @if ($esPrimerGrado)
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="form-label-modern">
+                                            Número de Zonificación
+                                        </label>
+                                        <input type="text" wire:model.live="numero_zonificacion"
+                                            class="form-control-modern" maxlength="3" inputmode="numeric"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g,'')"
+                                            placeholder="Ingrese número de zonificación">
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="institucion_procedencia_id" class="form-label-modern">
+                                        Institución de procedencia
+                                        <span class="required-badge">*</span>
+                                    </label>
+                                    <select wire:model.live="institucion_procedencia_id"
+                                        class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
+                                        <option value="">Seleccione una institución</option>
+                                        @foreach ($instituciones as $inst)
+                                            <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('institucion_procedencia_id')
+                                        <div class="invalid-feedback-modern">
+                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="expresion_literaria" class="form-label-modern">
+                                        Literal
+                                        <span class="required-badge">*</span>
+                                    </label>
+                                    <select wire:model.live="expresion_literaria_id"
+                                        class="form-control-modern @error('expresion_literaria_id') is-invalid @enderror">
+                                        <option value="">Seleccione</option>
+                                        @foreach ($expresiones_literarias as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->letra_expresion_literaria }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('expresion_literaria_id')
+                                        <div class="invalid-feedback-modern">
+                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="anio_egreso" class="form-label-modern">
+                                        Egreso
+                                        <span class="required-badge">*</span>
+                                    </label>
+                                    <input type="date" wire:model.live="anio_egreso"
+                                        class="form-control-modern @error('anio_egreso') is-invalid @enderror">
+                                    @error('anio_egreso')
+                                        <div class="invalid-feedback-modern">
+                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
+
     {{-- SECCIÓN: DISCAPACIDADES --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
@@ -894,17 +771,9 @@
                     <p>Agregue las discapacidades que presente el estudiante (opcional)</p>
                 </div>
             </div>
-            @if (!empty($discapacidadesAgregadas))
-                <div class="header-right">
-                    <span class="badge bg-info">
-                        {{ count($discapacidadesAgregadas) }} agregada(s)
-                    </span>
-                </div>
-            @endif
         </div>
 
         <div class="card-body-modern" style="padding: 2rem;">
-
             {{-- Alerta temporal de éxito --}}
             @if (session()->has('success_temp'))
                 <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
@@ -918,7 +787,7 @@
                 <div class="col-md-10">
                     <label for="discapacidad_select" class="form-label-modern">
                         <i class="fas fa-list"></i>
-                        Seleccionar Discapacidad
+                        ¿Presenta alguna discapacidad?
                     </label>
                     <select wire:model.defer="discapacidadSeleccionada" id="discapacidad_select"
                         class="form-control-modern @error('discapacidadSeleccionada') is-invalid @enderror">
@@ -963,7 +832,7 @@
                             @foreach ($discapacidadesAgregadas as $index => $discapacidad)
                                 <tr>
                                     <td style="text-align: center; vertical-align: middle;">
-                                        <span class="badge bg-primary">{{ $index + 1 }}</span>
+                                        <span class="badge number-badge">{{ $index + 1 }}</span>
                                     </td>
                                     <td style="vertical-align: middle;">
                                         <div class="d-flex align-items-center gap-2">
@@ -983,20 +852,10 @@
                         </tbody>
                     </table>
                 </div>
-            @else
-                <div class="alert alert-info align-items-start p-3 mb-0 shadow-sm">
-                    <i class="fas fa-info-circle"></i>
-                    No se han agregado discapacidades. Si el estudiante no presenta ninguna discapacidad, puede
-                    continuar sin agregar.
-                </div>
             @endif
         </div>
     </div>
 
-
-
-
-    {{-- Documentos Entregados --}}
     <div class="card-modern mb-4" id="bloque-documentos">
         <div class="card-header-modern">
             <div class="header-left">
@@ -1023,21 +882,9 @@
                     </span>
                 @endif
             </div>
-
         </div>
 
-
-
         <div class="card-body-modern" style="padding: 2rem;">
-            @if (!empty($documentosFaltantes))
-                <div class="alert alert-warning mt-3">
-                    <i class="fas fa-exclamation-triangle fa-1x me-2"></i>
-                    La inscripción se guardará con estado
-                    <strong>{{ $statusInscripcion }}</strong>
-                    y documentos
-                    <strong>{{ $estadoDocumentos }}</strong>
-                </div>
-            @endif
             <div class="row">
                 @php
                     $colCounter = 0;
@@ -1155,9 +1002,10 @@
                         <i class="fas fa-arrow-left"></i>
                         Cancelar
                     </a>
-                    <button type="button" wire:click="finalizar" class="btn-primary-modern"
-                        wire:loading.attr="disabled" @if (!$acepta_normas_contrato) disabled @endif>
-                        <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))>
+                    <button type="button" wire:click="finalizar" class="btn-create" wire:loading.attr="disabled"
+                        @if (!$acepta_normas_contrato) disabled @endif>
+                        <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))
+                        @disabled($gradoSinCupos)>
                             <i class="fas fa-save"></i>
                             Guardar Inscripción
                         </span>
@@ -1170,15 +1018,6 @@
             </div>
         </div>
     </div>
-</div>
-
-
-
-
-
-
-
-</div>
 </div>
 
 @push('js')
@@ -1261,93 +1100,4 @@
             });
         });
     </script>
-
-    <style>
-        .radio-item-modern {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1.25rem;
-            background: var(--gray-50);
-            border-radius: var(--radius);
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-            cursor: pointer;
-        }
-
-        .radio-item-modern:hover {
-            background: var(--primary-light);
-            border-color: var(--primary);
-        }
-
-        .radio-modern {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .radio-label-modern {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            margin: 0 0 0 0.75rem;
-            font-size: 0.9rem;
-            color: var(--gray-700);
-            font-weight: 500;
-            user-select: none;
-        }
-
-        .radio-label-modern i {
-            color: var(--primary);
-        }
-
-        .checkbox-item-modern {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            background: var(--gray-50);
-            border-radius: var(--radius);
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-        }
-
-        .checkbox-item-modern:hover {
-            background: var(--primary-light);
-            border-color: var(--primary);
-        }
-
-        .checkbox-item-modern.checkbox-warning {
-            background: #fef3c7;
-            border-color: #fbbf24;
-        }
-
-        .checkbox-item-modern.checkbox-warning:hover {
-            background: #fde68a;
-        }
-
-        .checkbox-modern {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .checkbox-label-modern {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            margin: 0 0 0 0.75rem;
-            font-size: 0.9rem;
-            color: var(--gray-700);
-            font-weight: 500;
-            user-select: none;
-            flex: 1;
-        }
-
-        .checkbox-label-modern.text-warning {
-            color: #d97706;
-        }
-    </style>
 @endpush

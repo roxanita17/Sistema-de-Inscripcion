@@ -25,7 +25,7 @@ class SectionDistributorService
         return DB::transaction(function () use ($grado) {
 
             // Verificar año escolar activo
-            $anioEscolarActivo = AnioEscolar::where('status', 'Activo')
+            $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
                 ->orWhere('status', 'Extendido')
                 ->first();
 
@@ -120,10 +120,11 @@ class SectionDistributorService
 
 
             // 5. Calcular secciones
-            $min = $grado->min_por_seccion ?? 20;
-            $max = $grado->max_por_seccion ?? 30;
+            $min = $grado->min_seccion ?? 20;
+            $max = $grado->max_seccion ?? 30;
             $total = $ordenados->count();
 
+            
             $numSecciones = (int) ceil($total / $max);
 
             if (($total / $numSecciones) < $min && $numSecciones > 1) {
@@ -190,12 +191,12 @@ class SectionDistributorService
 
 
                     if ($prosecucion) {
-                        // 👉 Asignar sección en PROSECUCIÓN
+                        //  Asignar sección en PROSECUCIÓN
                         $prosecucion->update([
                             'seccion_id' => $seccion->id
                         ]);
                     } else {
-                        // 👉 Solo si NO hay prosecución (nuevo ingreso real)
+                        // Solo si NO hay prosecución (nuevo ingreso real)
                         $inscripcion->update([
                             'seccion_id' => $seccion->id
                         ]);

@@ -42,8 +42,8 @@ class InscripcionData
         $this->representante_legal_id = $data['representante_legal_id'] ?? null;
         $this->documentos = $data['documentos'] ?? [];
         $this->fecha_inscripcion = $data['fecha_inscripcion'] ?? null;
-        $this->observaciones = $data['observaciones'] ?? null;
-        $this->acepta_normas_contrato = $data['acepta_normas_contrato'] ?? false;
+        $this->observaciones = $data['observaciones'] ?: 'Sin observaciones';
+        $this->acepta_normas_contrato = $data['acepta_normas_contrato'] ?? true;
         $this->anio_escolar_id = $data['anio_escolar_id'] ?? null;
     }
 }

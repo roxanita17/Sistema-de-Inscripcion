@@ -313,6 +313,8 @@ class InscripcionEdit extends Component
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
+
+        $this->actualizarObservacionesPorDocumentos();
         $this->evaluarDocumentosVisual();
     }
 
@@ -328,7 +330,8 @@ class InscripcionEdit extends Component
         $this->observaciones = $this->documentoService->generarObservaciones(
             $this->documentos,
             !$this->padreId && !$this->madreId,
-            $this->esPrimerGrado
+            $this->esPrimerGrado,
+            $this->alumnoId
         );
     }
 
@@ -340,7 +343,8 @@ class InscripcionEdit extends Component
         $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
             $this->documentos,
             $requiereAutorizacion,
-            $this->esPrimerGrado
+            $this->esPrimerGrado,
+            $this->alumnoId
         );
 
         // NO marcar automáticamente, solo recalcular faltantes
@@ -451,7 +455,9 @@ class InscripcionEdit extends Component
                 'documentos' => $this->documentos,
                 'estado_documentos' => $evaluacion['estado_documentos'],
                 'status' => $evaluacion['status_inscripcion'],
-                'observaciones' => $this->observaciones,
+                'observaciones' => filled($this->observaciones)
+                    ? $this->observaciones
+                    : 'Sin observaciones',
                 'acepta_normas_contrato' => $this->acepta_normas_contrato,
             ]);
 
@@ -485,6 +491,8 @@ class InscripcionEdit extends Component
         $inscripcion = Inscripcion::with('alumno.persona')->find($this->inscripcionId);
         $this->alumnoSeleccionado = $inscripcion->alumno;
 
+        $this->actualizarObservacionesPorDocumentos();
+
         session()->flash('success', 'Datos del alumno actualizados correctamente.');
     }
 
@@ -496,7 +504,9 @@ class InscripcionEdit extends Component
             'madreId' => $this->madreId,
             'representanteLegalId' => $this->representanteLegalId,
             'gradoId' => $this->gradoId,
-            'observaciones' => $this->observaciones,
+            'observaciones' => filled($this->observaciones)
+                ? $this->observaciones
+                : 'Sin observaciones',
             'documentos' => $this->documentos,
         ]);
 

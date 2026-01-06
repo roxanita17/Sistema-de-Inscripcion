@@ -136,9 +136,15 @@ class AlumnoEdit extends Component
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                'before:today',
                 function ($attribute, $value, $fail) {
-                    $edad = Carbon::parse($value)->age;
+                    $fecha = Carbon::parse($value);
+                    $hoy = Carbon::today();
+
+                    if ($fecha->greaterThan($hoy)) {
+                        $fail('La fecha de nacimiento no puede ser futura.');
+                        return;
+                    }
+                    $edad = $fecha->age;
                     if ($edad < 10 || $edad > 18) {
                         $fail('La edad debe estar entre 10 y 18 años.');
                     }
@@ -146,7 +152,29 @@ class AlumnoEdit extends Component
             ],
 
             // Datos físicos
-            'talla_estudiante' => 'required|numeric|between:0.50,3.00',
+            'talla_estudiante' => [
+                'required',
+                'regex:/^\d+([.,]\d+)?$/',
+                function ($attribute, $value, $fail) {
+
+                    // Normalizar coma a punto
+                    $valor = (float) str_replace(',', '.', $value);
+
+                    if ($valor <= 0) {
+                        $fail('La estatura no es válida.');
+                    }
+
+                    // CM
+                    if ($valor > 3 && ($valor < 50 || $valor > 250)) {
+                        $fail('La estatura en cm debe estar entre 50 y 250.');
+                    }
+
+                    // METROS
+                    if ($valor <= 3 && ($valor < 0.5 || $valor > 2.5)) {
+                        $fail('La estatura en metros debe estar entre 0.50 y 2.50.');
+                    }
+                }
+            ],
             'peso_estudiante' => 'required|numeric|between:2,300',
             'talla_camisa_id' => 'required|exists:tallas,id',
             'talla_pantalon_id' => 'required|exists:tallas,id',
@@ -165,36 +193,40 @@ class AlumnoEdit extends Component
     }
 
     protected $messages = [
-        'tipo_documento_id.required' => 'Debe seleccionar tipo de documento',
-        'numero_documento.required' => 'Debe ingresar la cédula',
+        'tipo_documento_id.required' => 'Este campo es requerido',
+        'numero_documento.required' => 'Este campo es requerido',
         'numero_documento.unique' => 'Esta cédula ya está registrada en el sistema',
-        'primer_nombre.required' => 'Debe ingresar el primer nombre',
+        'primer_nombre.required' => 'Este campo es requerido',
         'primer_nombre.max' => 'El nombre no puede exceder 50 caracteres',
-        'primer_apellido.required' => 'Debe ingresar el primer apellido',
+        'primer_apellido.required' => 'Este campo es requerido',
         'primer_apellido.max' => 'El apellido no puede exceder 50 caracteres',
-        'genero_id.required' => 'Debe seleccionar un género',
-        'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
-        'fecha_nacimiento.before' => 'La fecha debe ser anterior a hoy',
-        'talla_estudiante.required' => 'La estatura es requerida',
-        'talla_estudiante.numeric' => 'La estatura debe ser un número',
-        'talla_estudiante.between' => 'La estatura debe estar entre 0.50 y 3.00 metros',
-        'peso_estudiante.required' => 'El peso es requerido',
-        'peso_estudiante.numeric' => 'El peso debe ser un número',
-        'peso_estudiante.between' => 'El peso debe estar entre 2 y 300 kg',
-        'talla_camisa_id.required' => 'Debe seleccionar una talla de camisa',
-        'talla_zapato.required' => 'Debe seleccionar una talla de zapato',
+        'genero_id.required' => 'Este campo es requerido',
+        'fecha_nacimiento.required' => 'Este campo es requerido',
+        'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
+        'fecha_nacimiento.before:today' => 'La edad debe estar entre los 10 y 18 años',
+        'talla_estudiante.required' => 'Este campo es requerido',
+        'talla_estudiante.regex' => 'Ingrese una estatura válida (ej: 1.65 o 165)',
+        'talla_estudiante.between' => 'Este campo debe estar entre 0.50 y 3.00',
+        'peso_estudiante.required' => 'Este campo es requerido',
+        'peso_estudiante.numeric' => 'Este campo debe ser un número',
+        'peso_estudiante.between' => 'Este campo debe estar entre 2 y 300',
+        'talla_camisa_id.required' => 'Este campo es requerido',
+        'talla_zapato.required' => 'Este campo es requerido',
         'talla_zapato.integer' => 'La talla debe ser un número entero',
-        'talla_pantalon_id.required' => 'Debe seleccionar una talla de pantalón',
-        'estado_id.required' => 'Debe seleccionar un estado',
-        'municipio_id.required' => 'Debe seleccionar un municipio',
-        'localidad_id.required' => 'Debe seleccionar una localidad',
-        'lateralidad_id.required' => 'Debe seleccionar la lateralidad',
-        'orden_nacimiento_id.required' => 'Debe seleccionar el orden de nacimiento',
+        'talla_pantalon_id.required' => 'Este campo es requerido',
+        'estado_id.required' => 'Este campo es requerido',
+        'municipio_id.required' => 'Este campo es requerido',
+        'localidad_id.required' => 'Este campo es requerido',
+        'lateralidad_id.required' => 'Este campo es requerido',
+        'orden_nacimiento_id.required' => 'Este campo es requerido',
     ];
 
     // Validación en tiempo real
     public function updated($propertyName)
     {
+        if (!$this->enModoEdicion) {
+            return;
+        }
         $this->validateOnly($propertyName);
     }
 
@@ -486,30 +518,32 @@ class AlumnoEdit extends Component
     /**
      * Elimina una discapacidad de la lista temporal
      */
-    public function eliminarDiscapacidad($index)
+    public function eliminarDiscapacidad($discapacidadId)
     {
-        if (isset($this->discapacidadesAgregadas[$index])) {
-            $discapacidad = $this->discapacidadesAgregadas[$index];
+        // BD
+        \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
+            ->where('discapacidad_id', $discapacidadId)
+            ->update(['status' => false]);
 
-            // Marcar como inactiva en DB
-            \App\Models\DiscapacidadEstudiante::where('alumno_id', $this->alumnoId)
-                ->where('discapacidad_id', $discapacidad['id'])
-                ->update(['status' => false]);
+        // Vista
+        $this->discapacidadesAlumno = array_values(
+            array_filter(
+                $this->discapacidadesAlumno,
+                fn($d) => $d['id'] != $discapacidadId
+            )
+        );
 
-            // Quitar de las listas temporales y de la vista
-            unset($this->discapacidadesAgregadas[$index]);
+        // Lógica interna
+        $this->discapacidadesAgregadas = array_values(
+            array_filter(
+                $this->discapacidadesAgregadas,
+                fn($d) => $d['id'] != $discapacidadId
+            )
+        );
 
-            // También actualizar la lista mostrada
-            $this->discapacidadesAlumno = array_values(
-                array_filter($this->discapacidadesAlumno, fn($d) => $d['id'] != $discapacidad['id'])
-            );
-
-            // Reindexar
-            $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
-
-            session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
-        }
+        session()->flash('success_temp', 'Discapacidad eliminada correctamente.');
     }
+
 
     /**
      * Guarda las discapacidades del alumno
@@ -567,7 +601,7 @@ class AlumnoEdit extends Component
                 'talla_pantalon_id' => $this->talla_pantalon_id,
                 'talla_zapato' => $this->talla_zapato,
                 'peso' => $this->peso_estudiante,
-                'estatura' => (float)$this->talla_estudiante,
+                'estatura' =>  $this->talla_estudiante,
                 'lateralidad_id' => $this->lateralidad_id,
                 'orden_nacimiento_id' => $this->orden_nacimiento_id,
                 'etnia_indigena_id' => $this->etnia_indigena_id,

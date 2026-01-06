@@ -98,7 +98,7 @@ class AreaFormacionController extends Controller
                 ->route('admin.area_formacion.index')
                 ->with('error', 'Ya existe un área de formación activa con este nombre.');
         }
-
+ 
         try {
             $areaFormacion = new AreaFormacion();
             $areaFormacion->nombre_area_formacion = $validated['nombre_area_formacion'];

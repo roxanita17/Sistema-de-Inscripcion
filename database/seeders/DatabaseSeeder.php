@@ -22,12 +22,7 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // User::factory(10)->create();
-
-
-
         $this->command->info('Iniciando seeders...');
-
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
@@ -35,6 +30,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            PaisSeeder::class,
             AnioEscolarSeeder::class,
             GradoSeeder::class,
             AreaFormacionSeeder::class,
@@ -68,17 +64,10 @@ class DatabaseSeeder extends Seeder
             DetalleDocenteEstudioSeeder::class,
             RepresentanteSeeder::class,
             RepresentanteLegalSeeder::class,
-            InscripcionSeeder::class, 
+            InscripcionSeeder::class,
             ProsecucionAreaSeeder::class,
             /*  DocenteAreaGrado::class, */
         ]);
-
-
-
-
-
-
-
         $this->command->info('¡Base de datos poblada con éxito!');
     }
 }

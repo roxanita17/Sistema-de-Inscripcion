@@ -310,24 +310,6 @@
                 </div>
             </div>
         </div>
-        {{-- Total Estudiantes --}}
-        <div class="stat-card primary">
-            <div class="stat-card-header">
-                <div>
-                    <div class="stat-number">{{ $totalEstudiantes ?? 0 }}</div>
-                    <div class="stat-label">Total Estudiantes</div>
-                    {{-- 
-                    <div class="stat-trend up">
-                        <i class="fas fa-arrow-up"></i>
-                        +12% este mes
-                    </div>
-                    --}}
-                </div>
-                <div class="stat-icon primary">
-                    <i class="fas fa-user-graduate"></i>
-                </div>
-            </div>
-        </div>
 
         {{-- Total Docentes --}}
         <div class="stat-card success">
@@ -392,13 +374,6 @@
                     </div>
                     <p class="action-title">Nueva Inscripcion</p>
                 </a>
-                <a href="{{url('admin/alumnos') }}" class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <p class="action-title">Nuevo Estudiante</p>
-                </a>
-
                 <a href="{{url('representante') }}" class="action-card">
                     <div class="action-icon">
                         <i class="fas fa-user-tie"></i>

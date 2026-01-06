@@ -105,27 +105,40 @@ class EntradasPercentilController extends Controller
             'grado_id' => 'required|exists:grados,id'
         ]);
 
-        // 1. Verificar año escolar activo
         if (!$this->verificarAnioEscolar()) {
             return back()->with('error', 'No existe un año escolar activo.');
         }
 
         $grado = Grado::findOrFail($request->grado_id);
+        $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
+
+        $totalEstudiantes = Inscripcion::where('grado_id', $grado->id)
+            ->whereIn('status', ['Activo', 'Pendiente'])
+            ->where('anio_escolar_id', $anioEscolarActivo->id)
+            ->count();
+
+        // 🚫 Validación crítica
+        if ($totalEstudiantes < $grado->min_seccion) {
+            return back()->with(
+                'error',
+                "No se puede ejecutar el percentil. 
+                Mínimo por sección: {$grado->min_seccion}. 
+                Estudiantes actuales: {$totalEstudiantes}."
+            );
+        }
 
         try {
-
-
-            // 3. Ejecutar percentil + distribución
             $resultado = $distributor->procesarGrado($grado);
 
             return back()->with(
                 'success',
-                "Percentil ejecutado correctamente. 
-             Estudiantes procesados: {$resultado['estudiantes_procesados']}, 
-             Secciones creadas: {$resultado['total_secciones']}"
+                "Percentil ejecutado correctamente.
+                Estudiantes procesados: {$resultado['estudiantes_procesados']},
+                Secciones creadas: {$resultado['total_secciones']}"
             );
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
+
 }

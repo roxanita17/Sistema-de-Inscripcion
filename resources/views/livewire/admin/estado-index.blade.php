@@ -1,11 +1,7 @@
 <div class="main-container">
-
-    {{-- Modales incluidos DENTRO del componente Livewire --}}
     @include('admin.estado.modales.createModal')
     @include('admin.estado.modales.editModal')
 
-    {{-- Alertas --}}
-    {{-- Alerta si NO hay año escolar activo --}}
     @if (!$anioEscolarActivo)
         <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
             <div class="d-flex align-items-center">

@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/materias-styles.css') }}">
 
 @stop
 
@@ -69,7 +70,6 @@
 
 @section('content')
     <div class="main-container">
-        {{-- AÑO ESCOLAR --}}
         @php
             $anoActivo = App\Models\AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
         @endphp
@@ -80,8 +80,6 @@
                 <a href="{{ route('admin.anio_escolar.index') }}">Ir a Año Escolar</a>
             </div>
         @endif
-
-        {{-- COMPOSICIÓN PRINCIPAL LIVEWIRE --}}
         <livewire:admin.transaccion-inscripcion.inscripcion />
     </div>
 @stop
