@@ -152,6 +152,11 @@
                         @endif
                     </button>
                 </div>
+                <div>
+                    <a href="{{ route('admin.transacciones.inscripcion.reporteGeneralNuevoIngresoPDF') }}" class="btn-pdf" id="generarPdfBtn" target="_blank">
+                        <i class="fas fa-file-pdf me-2"></i>Reporte General
+                    </a>
+                </div>
                 <div class="header-right">
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
@@ -364,4 +369,49 @@
             'datos' => $datos,
         ])
     @endforeach
+
+    <script>
+        // Actualizar el enlace de generación de PDF con los filtros actuales
+        function actualizarEnlacePDF() {
+            const generarPdfBtn = document.getElementById('generarPdfBtn');
+            if (generarPdfBtn) {
+                // Obtener todos los parámetros de la URL actual
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Construir la URL base del reporte
+                let reportUrl = generarPdfBtn.getAttribute('href').split('?')[0];
+                const params = new URLSearchParams();
+                
+                // Agregar todos los parámetros de filtro actuales
+                for (const [key, value] of urlParams.entries()) {
+                    if (value) {
+                        params.append(key, value);
+                    }
+                }
+                
+                // Construir URL final
+                if (params.toString()) {
+                    reportUrl += '?' + params.toString();
+                }
+                
+                // Actualizar el atributo href del botón
+                generarPdfBtn.setAttribute('href', reportUrl);
+            }
+        }
+        
+        // Inicializar el enlace de PDF cuando el documento esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Actualizar el enlace de PDF al cargar la página
+            actualizarEnlacePDF();
+            
+            // Actualizar el enlace cuando cambie la URL (navegación con filtros)
+            window.addEventListener('popstate', actualizarEnlacePDF);
+            
+            // Actualizar el enlace cuando se muestre el modal de filtros
+            const filtroModal = document.getElementById('modalFiltros');
+            if (filtroModal) {
+                filtroModal.addEventListener('shown.bs.modal', actualizarEnlacePDF);
+            }
+        });
+    </script>
 @endsection

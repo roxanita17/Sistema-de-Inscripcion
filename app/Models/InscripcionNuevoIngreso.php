@@ -34,4 +34,58 @@ class InscripcionNuevoIngreso extends Model
     {
         return $this->belongsTo(InstitucionProcedencia::class, 'institucion_procedencia_id', 'id');
     }
+
+
+    public static function reporteGeneralPDF(array $filtros = [])
+    {
+        $anioEscolarId = $filtros['anio_escolar_id'] ?? null;
+        $gradoId = $filtros['grado_id'] ?? null;
+        $seccionId = $filtros['seccion_id'] ?? null;
+        $estatusInscripcion = $filtros['status'] ?? null;
+        $buscar = $filtros['buscar'] ?? null;
+
+        return self::query()
+            ->with([
+                'inscripcion.alumno.persona.tipoDocumento',
+                'inscripcion.alumno.persona.genero',
+                'inscripcion.alumno.discapacidades',
+                'inscripcion.alumno.etniaIndigena',
+                'inscripcion.grado',
+                'inscripcion.seccionAsignada',
+                'inscripcion.representanteLegal.representante.persona',
+                'institucionProcedencia',
+                'expresionLiteraria',
+            ])
+            ->whereHas('inscripcion', function ($q) use ($anioEscolarId, $gradoId, $seccionId, $estatusInscripcion) {
+                if ($anioEscolarId) {
+                    $q->where('anio_escolar_id', $anioEscolarId);
+                }
+
+                if ($gradoId) {
+                    $q->where('grado_id', $gradoId);
+                }
+
+                if ($seccionId) {
+                    $q->where('seccion_id', $seccionId);
+                }
+
+                if ($estatusInscripcion) {
+                    $q->where('status', $estatusInscripcion);
+                }
+            })
+            ->when($buscar, function ($query, $buscar) {
+                $query->whereHas('inscripcion.alumno.persona', function ($q) use ($buscar) {
+                    $q->where(function ($subQuery) use ($buscar) {
+                        $subQuery->where('primer_nombre', 'LIKE', "%{$buscar}%")
+                              ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
+                              ->orWhere('tercer_nombre', 'LIKE', "%{$buscar}%")
+                              ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                              ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%")
+                              ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
+                    });
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
 }

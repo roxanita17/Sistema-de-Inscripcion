@@ -15,6 +15,7 @@ use App\Models\ExpresionLiteraria;
 use App\Models\InstitucionProcedencia;
 use App\Models\EntradasPercentil;
 use App\Models\Seccion;
+use App\Models\InscripcionNuevoIngreso;
 
 class InscripcionController extends Controller
 {
@@ -255,5 +256,47 @@ class InscripcionController extends Controller
         $pdf->setOption('isPhpEnabled', true);
         
         return $pdf->stream('ficha_inscripcion.pdf');
+    }
+
+    public function reporteGeneralNuevoIngresoPDF(Request $request)
+    {
+        $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->first();
+
+        $filtro = $request->all();
+
+        if (!isset($filtro['anio_escolar_id']) && $anioEscolarActivo) {
+            $filtro['anio_escolar_id'] = $anioEscolarActivo->id;
+        }
+
+        $nuevoIngresos = InscripcionNuevoIngreso::reporteGeneralPDF($filtro);
+
+        // Ordenamos por la primera letra del primer apellido
+        $nuevoIngresos = $nuevoIngresos->sortBy(function ($item) {
+            $primerApellido = $item->inscripcion->alumno->persona->primer_apellido ?? '';
+            return strtoupper(substr($primerApellido, 0, 1));
+        });
+
+        if ($nuevoIngresos->isEmpty()) {
+            return response('No se encontraron inscripciones de nuevo ingreso', 404);
+        }
+
+        $filtrosVista = [
+            'anio_escolar' => $anioEscolarActivo ? ($anioEscolarActivo->nombre ?? $anioEscolarActivo->anio ?? null) : null,
+        ];
+
+        $pdf = Pdf::loadView(
+            'admin.transacciones.inscripcion.reporte.reporte_general_nuevo_ingreso',
+            [
+                'nuevoIngresos' => $nuevoIngresos,
+                'filtros' => $filtrosVista,
+            ]
+        );
+
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->setOption('isPhpEnabled', true);
+
+        return $pdf->stream('reporte_general_nuevo_ingreso.pdf');
     }
 }

@@ -337,6 +337,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('inscripcion/reporte/{id}', [InscripcionController::class, 'reporte'])
             ->name('inscripcion.reporte');
 
+        Route::get('inscripcion/reportes/nuevo-ingreso', [InscripcionController::class, 'reporteGeneralNuevoIngresoPDF'])
+            ->name('inscripcion.reporteGeneralNuevoIngresoPDF');
+
         // ========= INSCRIPCIÓN PROSECUCIÓN (LISTADO) =========
         Route::get('inscripcion_prosecucion', [InscripcionProsecucionController::class, 'index'])
             ->name('inscripcion_prosecucion.index');
