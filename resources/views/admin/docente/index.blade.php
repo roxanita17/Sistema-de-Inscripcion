@@ -114,8 +114,8 @@
                 </form>
                 <div class="header-right">
                 </div>
-                <div class="header-right" style="display: flex; gap: 5px;">
 
+                <div class="header-right" style="display: flex; gap: 5px;">
                     <a href="{{ route('admin.docente.reporteGeneralPDF') }}" type="button" class="btn-pdf"
                         target="_blank">
                         <i class="fas fa-file-pdf"></i> PDF General

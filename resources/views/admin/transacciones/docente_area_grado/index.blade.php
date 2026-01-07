@@ -116,6 +116,10 @@
                 </form>
 
                 <div class="header-right">
+                    <a href="{{ route('admin.transacciones.docente_area_grado.reportePDFGeneral', request()->query()) }}" type="button" class="btn-pdf"
+                        target="_blank">
+                        <i class="fas fa-file-pdf"></i> PDF General
+                    </a>
                     <div class="date-badge">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ now()->translatedFormat('d M Y') }}</span>
@@ -346,17 +350,6 @@
                                                         <i class="fas fa-ban me-2"></i>
                                                         Inactivar
                                                     </button>
-                                                </li>
-
-                                                {{-- Reporte PDF --}}
-                                                <li>
-                                                    {{-- <a class="dropdown-item d-flex align-items-center text-danger"
-                                                            type="button"
-                                                            href="{{ route('admin.docente.reportePDF', $datos->id) }}"
-                                                            target="_blank" title="Generar reporte PDF">
-                                                            <i class="fas fa-file-pdf me-2"></i>
-                                                            PDF
-                                                        </a> --}}
                                                 </li>
                                             </ul>
                                         </div>
