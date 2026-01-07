@@ -514,6 +514,31 @@ class Inscripcion extends Component
             ]);
         }
     }
+    private function crearInstitucionSiNoEsVenezolano(): ?int
+    {
+        if ($this->esVenezolano) {
+            return $this->institucion_procedencia_id; // ya seleccionó
+        }
+
+        if (trim($this->otroPaisNombre) === '') {
+            return null; // no escribió nada
+        }
+
+        // Opcional: revisar si ya existe la institución con ese nombre
+        $institucion = \App\Models\InstitucionProcedencia::firstOrCreate(
+            [
+                'nombre_institucion' => $this->otroPaisNombre,
+                'status' => true,
+            ],
+            [
+                // Si quieres, puedes dejar null en localidad o crear un valor por defecto
+                'localidad_id' => null,
+            ]
+        );
+
+        return $institucion->id;
+    }
+
 
     public function registrar()
     {
@@ -596,12 +621,13 @@ class Inscripcion extends Component
 
     private function crearInscripcionDTO(): InscripcionData
     {
+        $institucionId = $this->crearInstitucionSiNoEsVenezolano();
         return new InscripcionData([
             'tipo_inscripcion' => $this->tipo_inscripcion,
             'anio_escolar_id' => $this->anio_escolar_id,
             'alumno_id' => $this->alumnoId,
             'numero_zonificacion' => $this->numero_zonificacion,
-            'institucion_procedencia_id' => $this->institucion_procedencia_id,
+            'institucion_procedencia_id' => $institucionId,
             'anio_egreso' => $this->anio_egreso,
             'expresion_literaria_id' => $this->expresion_literaria_id,
             'grado_id' => $this->gradoId,

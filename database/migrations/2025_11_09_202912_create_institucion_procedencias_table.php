@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre_institucion');
             $table->boolean('status')->default(true);
-            $table->foreignId('localidad_id')->constrained('localidads')->cascadeOnDelete();
+            $table->foreignId('localidad_id')->nullable()->constrained('localidads')->cascadeOnDelete();
             $table->timestamps();
         });
     }
