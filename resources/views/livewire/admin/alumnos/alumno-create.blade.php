@@ -214,12 +214,6 @@
                 </div>
             </div>
             <div class="card-body-modern" style="padding: 2rem;">
-                @if (session()->has('success'))
-                <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">

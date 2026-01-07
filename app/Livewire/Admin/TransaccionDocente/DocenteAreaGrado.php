@@ -18,7 +18,7 @@ class DocenteAreaGrado extends Component
      * PROPIEDADES PRINCIPALES
      */
 
-    
+
     public $docenteId;
     public $docentes = [];
     public $docenteSeleccionado = null;
@@ -45,7 +45,24 @@ class DocenteAreaGrado extends Component
     /**
      * LISTENERS PARA EVENTOS
      */
-    protected $listeners = ['materiaSeleccionada' => 'actualizarGrados'];
+    protected $listeners = [
+        'materiaSeleccionada' => 'actualizarGrados',
+        'asignacionCreada' => 'manejarAsignacionCreada',
+    ];
+
+    /**
+     * Maneja la creación de una nueva asignación área-estudio
+     */
+    public function manejarAsignacionCreada($data)
+    {
+
+        // Recargar las materias del docente para incluir la nueva asignación
+        if ($this->docenteSeleccionado) {
+            $this->cargarMateriasPorEstudios();
+
+            session()->flash('success_temp', 'Nueva área-estudio disponible para asignar.');
+        }
+    }
 
 
     /**
@@ -457,10 +474,6 @@ class DocenteAreaGrado extends Component
         }
     }
 
-
-    /**
-     * LIMPIAR TODO EL FORMULARIO
-     */
     public function limpiarSeleccion()
     {
         $this->reset([

@@ -140,7 +140,6 @@
                 }
             });
 
-            // ✅ AGREGAR ESTO
             Livewire.on('cerrarModalDespuesDe', (data) => {
                 setTimeout(() => {
                     const modalEl = document.getElementById('modalCrearInstitucionInscripcion');

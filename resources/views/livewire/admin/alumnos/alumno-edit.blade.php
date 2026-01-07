@@ -7,16 +7,12 @@
                         <i class="fas fa-edit"></i> Editar
                     </button>
                 @endif
-
             </div>
         </div>
-        {{-- Modo Vista --}}
-        <div class="card-body-modern" style="padding: 0;">
 
+        <div class="card-body-modern" style="padding: 0;">
             <div class="details-grid">
-                {{-- COLUMNA IZQUIERDA --}}
                 <div class="details-section">
-                    {{-- Sección: Identificación --}}
                     <div class="info-section">
                         <div class="section-header">
                             <i class="fas fa-id-badge"></i>
@@ -33,8 +29,6 @@
                             </div>
                         </div>
                     </div>
-
-                    {{-- Sección: Datos Personales --}}
                     <div class="info-section">
                         <div class="section-header">
                             <i class="fas fa-user"></i>
@@ -52,8 +46,6 @@
                             </div>
                         </div>
                         <div style="align-items: center; display:flex; flex-direction: column;">
-
-
                             <div class="info-group pt-3" style="display: flex; flex-direction: row; ">
                                 <div class="info-item" style="width: 15rem">
                                     <span class="info-label">
@@ -74,12 +66,9 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                {{-- COLUMNA DERECHA --}}
                 <div class="details-section">
-                    {{-- Sección: Lugar de Nacimiento --}}
                     <div class="info-section">
                         <div class="section-header">
                             <i class="fas fa-map-marker-alt"></i>
@@ -105,8 +94,6 @@
                             </div>
                         </div>
                     </div>
-
-                    {{-- Sección: Datos Físicos --}}
                     <div class="info-section">
                         <div class="section-header">
                             <i class="fas fa-ruler-combined"></i>
@@ -163,7 +150,6 @@
                 </div>
             </div>
 
-            {{-- Sección: Características Adicionales --}}
             <div class="info-section">
                 <div class="section-header">
                     <i class="fas fa-info-circle"></i>
@@ -198,10 +184,7 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Sección de Discapacidades --}}
             <div class="card-header-modern">
-                {{-- Alerta temporal de éxito --}}
                 @if (session()->has('success_temp'))
                     <div class="alert alert-success alert-success alert-dismissible fade show" role="alert">
                         <i class="fas fa-check-circle"></i> {{ session('success_temp') }}
@@ -266,9 +249,6 @@
         </div>
     @endif
     @if ($enModoEdicion)
-
-
-        {{-- Modo Edición --}}
         <form wire:submit.prevent="guardar">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -283,7 +263,6 @@
             </div>
 
             <div class="card-body-modern" style="padding: 2rem;">
-                {{-- Datos de Identificación --}}
                 <div class="row">
                     <div class="col-12 mb-3">
                         <h5
@@ -367,8 +346,6 @@
                         @enderror
                     </div>
                 </div>
-
-                {{-- Datos Personales --}}
                 <div class="row mt-4">
                     <div class="col-12 mb-3">
                         <h5
@@ -474,7 +451,6 @@
                     </div>
                 </div>
 
-                {{-- Datos Físicos --}}
                 <div class="row mt-4">
                     <div class="col-12 mb-3">
                         <h5
@@ -569,8 +545,6 @@
                         @enderror
                     </div>
                 </div>
-
-                {{-- Lugar de Nacimiento --}}
                 <div class="row mt-4">
                     <div class="col-12 mb-3">
                         <h5
@@ -633,6 +607,12 @@
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
                             </div>
                         @enderror
+                        <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
+                            <i class="fas fa-info-circle"></i>
+                            Si no hay localidades registradas agrega una
+                            <a class="text-primary" data-bs-toggle="modal"
+                                data-bs-target="#modalCrearLocalidad">"aquí"</a>
+                        </small>
                     </div>
                 </div>
             </div>
@@ -706,8 +686,6 @@
                             <p style="font-size: 1rem; margin: 0;">No hay discapacidades registradas.</p>
                         </div>
                     @endif
-
-                    {{-- Agregar discapacidad --}}
                     <div class="row mt-4">
                         <div class="col-md-8">
                             <label class="form-label-modern">
@@ -739,7 +717,6 @@
                     </div>
                 </div>
             </div>
-            {{-- Botones --}}
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="d-flex justify-content-end gap-3">
                     @if ($soloEdicion)
@@ -757,8 +734,7 @@
                     </button>
                 </div>
             </div>
-
         </form>
-
     @endif
+    @livewire('admin.modales.localidad-create')
 </div>

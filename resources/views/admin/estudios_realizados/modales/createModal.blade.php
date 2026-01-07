@@ -18,6 +18,8 @@
             <div class="modal-body-create">
                 <form action="{{ route('admin.estudios_realizados.modales.store') }}" method="POST" id="formCrearEstudiosRealizados">
                     @csrf
+                    <input type="hidden" name="redirect_to" value="{{ url()->current() }}">
+
 
                     {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>

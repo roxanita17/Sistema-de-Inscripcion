@@ -670,7 +670,7 @@
 
             <livewire:admin.alumnos.alumno-create>
 
-            <div class="card-modern mb-4">
+                <div class="card-modern mb-4">
                     <div class="card-header-modern">
                         <div class="header-left">
                             <div class="header-icon">
@@ -804,7 +804,7 @@
                                     <i class="fas fa-info-circle"></i>
                                     Si no hay instituciones registradas agrega una
                                     <a class="text-primary" data-bs-toggle="modal"
-                                       data-bs-target="#modalCrearInstitucionInscripcion">"aquí"</a>
+                                        data-bs-target="#modalCrearInstitucionInscripcion">"aquí"</a>
                                 </small>
                             </div>
 
@@ -1105,11 +1105,8 @@
             </div>
         </div>
     </div>
-
     @livewire('admin.modales.institucion-procedencia-create')
-            @livewire('admin.modales.localidad-create')
-
-
+    @livewire('admin.modales.localidad-create')
 </div>
 
 @push('js')
@@ -1167,18 +1164,6 @@
                 Livewire.dispatch('representanteLegalSeleccionadoEvento', {
                     value: value
                 });
-            });
-        });
-
-        document.addEventListener('livewire:initialized', () => {
-            Livewire.on('scrollTo', (id) => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
             });
         });
     </script>

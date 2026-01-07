@@ -287,10 +287,6 @@
                                 {{ $message }}
                             </div>
                         @enderror
-                        <small class="form-text-modern">
-                            <i class="fas fa-info-circle"></i>
-                            Seleccione el area de formacion
-                        </small>
                     </div>
                     <div class="col-md-3">
                         <label for="grado_select" class="form-label-modern">
@@ -323,11 +319,6 @@
                                 {{ $message }}
                             </div>
                         @enderror
-
-                        <small class="form-text-modern">
-                            <i class="fas fa-info-circle"></i>
-                            Seleccione el nivel academico
-                        </small>
                     </div>
 
                     {{-- Secciones --}}
@@ -363,16 +354,12 @@
                                 {{ $message }}
                             </div>
                         @enderror
-                        <small class="form-text-modern">
-                            <i class="fas fa-info-circle"></i>
-                            Seleccione la sección
-                        </small>
                     </div>
 
                     {{-- Botón Agregar --}}
                     <div class="col-md-2 d-flex align-items-end">
                         <button class="btn-primary-modern w-100" wire:click="agregarAsignacion"
-                            wire:loading.attr="disabled" style="margin-bottom: 1.5rem;" @disabled(!$this->puedeAgregarAsignacion)
+                            wire:loading.attr="disabled" style="margin-bottom: 0rem;" @disabled(!$this->puedeAgregarAsignacion)
                             title="{{ !$this->puedeAgregarAsignacion ? 'Seleccione materia, año y sección' : '' }}">
                             <span wire:loading.remove wire:target="agregarAsignacion">
                                 <i class="fas fa-plus"></i> Agregar
@@ -382,7 +369,14 @@
                             </span>
                         </button>
                     </div>
+                    
                 </div>
+                <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
+                    <i class="fas fa-info-circle"></i>
+                    Si no hay asignaciones de areas de formacion y estudios para el docente puede agregar una
+                    <a class="text-primary" data-bs-toggle="modal"
+                        data-bs-target="#modalCrearAsignacion">"aquí"</a>
+                </small>
             </div>
         </div>
 
@@ -523,6 +517,8 @@
                 </div>
             </div>
         </div>
+        @livewire('admin.modales.area-estudio-create')
+
     @endif
 
     @section('js')

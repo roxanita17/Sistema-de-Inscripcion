@@ -90,7 +90,7 @@ class InstitucionProcedenciaCreate extends Component
             'nombre_institucion' => $this->nombre_institucion,
             'localidad_id' => $this->localidad_id,
             'status' => true,
-        ]);
+        ]); 
 
         session()->flash('success', 'Institución creada exitosamente.');
 

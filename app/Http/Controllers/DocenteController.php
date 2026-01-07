@@ -80,7 +80,7 @@ class DocenteController extends Controller
 
         return $anioEscolar;
     }
-
+ 
     /**
      * Guarda un nuevo docente
      */
@@ -158,7 +158,7 @@ class DocenteController extends Controller
             DB::commit();
 
             return redirect()->route('admin.docente.estudios', $docente->id)
-                ->with('success', '<span style="font-size: 1.5rem;">Docente registrado correctamente, ahora puede agregar sus estudios.</span>');
+                ->with('success', 'Docente registrado correctamente, ahora puede agregar sus estudios.');
         } catch (\Exception $e) {
             DB::rollBack();
 

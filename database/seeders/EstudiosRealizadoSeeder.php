@@ -74,6 +74,50 @@ class EstudiosRealizadoSeeder extends Seeder
             ['estudios' => 'Técnico Superior Universitario en Construcción Civil', 'status' => true,],/* 44 */
             ['estudios' => 'Técnico Superior Universitario en Turismo y Hotelería', 'status' => true,],/* 45 */
             ['estudios' => 'Técnico Superior Universitario en Mecánica Industrial', 'status' => true,],/* 46 */
+            ['estudios' => 'Profesor en Educación Integral', 'status' => true], /* 47 */
+            ['estudios' => 'Licenciado en Educación Integral', 'status' => true], /* 48 */
+            ['estudios' => 'Licenciado en Educación', 'status' => true], /* 49 */
+            ['estudios' => 'Profesor en Educación Inicial', 'status' => true], /* 50 */
+            ['estudios' => 'Licenciado en Educación Inicial', 'status' => true], /* 51 */
+            ['estudios' => 'Profesor en Educación Especial', 'status' => true], /* 52 */
+            ['estudios' => 'Licenciado en Educación Especial', 'status' => true], /* 53 */
+            ['estudios' => 'Educación Especial mención Dificultades de Aprendizaje', 'status' => true], /* 54 */
+            ['estudios' => 'Educación Especial mención Retardo Mental', 'status' => true], /* 55 */
+            ['estudios' => 'Educación Especial mención Deficiencias Auditivas', 'status' => true], /* 56 */
+            ['estudios' => 'Educación Especial mención Deficiencias Visuales', 'status' => true], /* 57 */
+            ['estudios' => 'Profesor en Educación mención Matemática', 'status' => true], /* 58 */
+            ['estudios' => 'Profesor en Educación mención Física', 'status' => true], /* 59 */
+            ['estudios' => 'Profesor en Educación mención Química', 'status' => true], /* 60 */
+            ['estudios' => 'Profesor en Educación mención Biología', 'status' => true], /* 61 */
+            ['estudios' => 'Profesor en Educación mención Ciencias de la Tierra', 'status' => true], /* 62 */
+            ['estudios' => 'Profesor en Educación mención Ciencias Sociales', 'status' => true], /* 63 */
+            ['estudios' => 'Profesor en Educación mención Historia', 'status' => true], /* 64 */
+            ['estudios' => 'Profesor en Educación mención Geografía', 'status' => true], /* 65 */
+            ['estudios' => 'Profesor en Educación mención Castellano y Literatura', 'status' => true], /* 66 */
+            ['estudios' => 'Profesor en Educación mención Lengua y Literatura', 'status' => true], /* 67 */
+            ['estudios' => 'Profesor en Educación mención Inglés', 'status' => true], /* 68 */
+            ['estudios' => 'Profesor en Educación mención Francés', 'status' => true], /* 69 */
+            ['estudios' => 'Profesor en Educación mención Italiano', 'status' => true], /* 70 */
+            ['estudios' => 'Profesor en Educación mención Lenguas Extranjeras', 'status' => true], /* 71 */
+            ['estudios' => 'Profesor en Educación mención Educación para el Trabajo', 'status' => true], /* 72 */
+            ['estudios' => 'Profesor en Educación mención Educación Comercial', 'status' => true], /* 73 */
+            ['estudios' => 'Profesor en Educación mención Administración', 'status' => true], /* 74 */
+            ['estudios' => 'Profesor en Educación mención Contabilidad', 'status' => true], /* 75 */
+            ['estudios' => 'Profesor en Educación mención Informática', 'status' => true], /* 76 */
+            ['estudios' => 'Profesor en Educación Física', 'status' => true], /* 77 */
+            ['estudios' => 'Licenciado en Educación Física', 'status' => true], /* 78 */
+            ['estudios' => 'Profesor en Educación mención Educación Musical', 'status' => true], /* 79 */
+            ['estudios' => 'Profesor en Educación mención Artes Plásticas', 'status' => true], /* 80 */
+            ['estudios' => 'Profesor en Educación mención Artes Escénicas', 'status' => true], /* 81 */
+            ['estudios' => 'Licenciado en Educación mención Orientación', 'status' => true], /* 82 */
+            ['estudios' => 'Profesor en Educación mención Orientación', 'status' => true], /* 83 */
+            ['estudios' => 'Licenciado en Educación mención Gerencia Educativa', 'status' => true], /* 84 */
+            ['estudios' => 'Licenciado en Educación mención Supervisión Educativa', 'status' => true], /* 85 */
+            ['estudios' => 'Licenciado en Educación mención Planificación Educativa', 'status' => true], /* 86 */
+            ['estudios' => 'Profesor en Educación Rural', 'status' => true], /* 87 */
+            ['estudios' => 'Profesor en Educación de Adultos', 'status' => true], /* 88 */
+            ['estudios' => 'Licenciado en Educación de Adultos', 'status' => true], /* 89 */
+
         ];
 
         foreach ($titulos as $titulo) {

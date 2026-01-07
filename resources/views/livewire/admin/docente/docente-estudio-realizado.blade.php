@@ -1,17 +1,16 @@
 <div>
     {{-- Alertas de anio escolar --}}
+
     @if (session()->has('success') || session()->has('error'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
                 <div class="alert-modern alert-success alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
+                    <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
                     <div class="alert-content">
                         <h4>Éxito</h4>
-                        <p>{!! session('success') !!}</p>
+                        <p>{{ session('success') }}</p>
                     </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert" aria-label="Cerrar">
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -60,7 +59,7 @@
                     <select id="estudios_realizados_id"
                         class="form-control-modern selectpicker @error('estudiosId') is-invalid @enderror"
                         data-live-search="true" data-size="8" data-style="btn-default" data-width="100%"
-                        wire:model="estudiosId">
+                        wire:model.live="estudiosId">
                         <option value="">Seleccione un estudio</option>
                         @foreach ($estudios as $titulo)
                             <option value="{{ $titulo->id }}">{{ $titulo->estudios }}</option>
@@ -73,16 +72,18 @@
                             {{ $message }}
                         </div>
                     @enderror
-
-                    <small class="form-text-modern">
+                    <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
                         <i class="fas fa-info-circle"></i>
-                        Seleccione el título académico del docente
+                        Si no hay estudios registrados agrega uno
+                        <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearEstudio">"aquí"</a>
                     </small>
                 </div>
 
+
+
                 <div class="col-md-4 d-flex align-items-end">
                     <button class="btn-primary-modern w-100" wire:click="agregarEstudio" wire:loading.attr="disabled"
-                        style="margin-bottom: 1.5rem;">
+                        style="margin-bottom: 2.4rem;">
                         <span wire:loading.remove wire:target="agregarEstudio">
                             <i class="fas fa-plus"></i> Agregar Estudio
                         </span>
@@ -234,8 +235,11 @@
         </div>
         <br>
     </div>
+    @include('admin.estudios_realizados.modales.createModal')
 </div>
-
+@push('css')
+    <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
+@endpush
 
 @push('scripts')
     <script>

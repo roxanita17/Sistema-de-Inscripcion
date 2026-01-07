@@ -572,6 +572,37 @@ class AlumnoEdit extends Component
         }
     }
 
+    protected $listeners = [
+        'localidadCreada' => 'manejarLocalidadCreada',
+        'localidadCreada' => 'refrescarLocalidades',
+    ];
+
+    public function manejarLocalidadCreada($id, $municipio_id)
+    {
+        if ($this->municipio_id == $municipio_id) {
+            $this->localidades = \App\Models\Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+
+            $this->localidad_id = $id;
+            $this->dispatch('localidadSeleccionada');
+            session()->flash('success', 'Localidad creada y seleccionada correctamente.');
+        }
+    }
+
+    public function refrescarLocalidades($data)
+    {
+        if ($this->municipio_id == $data['municipio_id']) {
+
+            $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+            $this->localidad_id = $data['id'];
+        }
+    }
+
     public function render()
     {
         return view('livewire.admin.alumnos.alumno-edit');

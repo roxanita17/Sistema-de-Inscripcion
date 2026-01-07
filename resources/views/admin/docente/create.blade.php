@@ -66,7 +66,7 @@
                         <p>Complete todos los campos requeridos</p>
                     </div>
                 </div>
-            </div>
+            </div> 
             <div class="card-body-modern" style="padding: 2rem;">
                 <form id="docenteForm" action="{{ route('admin.docente.store') }}" method="POST" class="form-modern">
                     @csrf
