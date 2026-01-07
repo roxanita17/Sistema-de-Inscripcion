@@ -9,6 +9,7 @@ use App\Repositories\InscripcionRepository;
 use App\Repositories\RepresentanteRepository;
 use App\DTOs\InscripcionData;
 use App\Exceptions\InscripcionException;
+use App\Models\Localidad;
 use Illuminate\Database\QueryException;
 
 
@@ -88,8 +89,6 @@ class Inscripcion extends Component
         $this->representanteRepository = $representanteRepository;
     }
 
-
-
     public function mount()
     {
         $this->acepta_normas_contrato = true;
@@ -110,7 +109,6 @@ class Inscripcion extends Component
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
             'localidad_id' => 'required|exists:localidades,id',
-
             'numero_zonificacion' => [
                 'nullable',
                 'regex:/^\d+$/'
@@ -129,7 +127,6 @@ class Inscripcion extends Component
             'seccion_id' => $this->esPrimerGrado
                 ? 'nullable'
                 : 'required|exists:seccions,id',
-
             'documentos' => 'array',
             'documentos.*' => 'string',
             'acepta_normas_contrato' => 'accepted',
@@ -148,27 +145,19 @@ class Inscripcion extends Component
     protected $messages = [
         'tipo_inscripcion.required' => 'Debe seleccionar el tipo de inscripción.',
         'tipo_inscripcion.in' => 'El tipo de inscripción no es válido.',
-
         'numero_zonificacion.regex' => 'El número de zonificación solo puede contener números.',
-
         'institucion_procedencia_id.required' => 'Este campo es requerido.',
         'institucion_procedencia_id.exists' => 'La institución de procedencia seleccionada no es válida.',
-
         'expresion_literaria_id.required' => 'Este campo es requerido.',
         'expresion_literaria_id.exists' => 'La expresión literaria seleccionada no es válida.',
-
         'gradoId.required' => 'Este campo es requerido.',
         'gradoId.exists' => 'El nivel academico seleccionado no es válido.',
-
         'seccion_id.required' => 'Este campo es requerido.',
         'seccion_id.exists' => 'La sección seleccionada no es válida.',
-
         'documentos.array' => 'El formato de los documentos seleccionados no es válido.',
         'documentos.*.string' => 'Uno o más documentos seleccionados no son válidos.',
-
         'acepta_normas_contrato.accepted' =>
         'Debe aceptar las normas del contrato para continuar.',
-
         'anio_egreso.required' => 'Este campo es requerido.',
         'anio_egreso.date' => 'El año de egreso debe ser 7 años antes del actual.',
     ];
@@ -182,12 +171,10 @@ class Inscripcion extends Component
         ])) {
             return;
         }
-
         if ($propertyName !== 'gradoId') {
             $this->validateOnly($propertyName);
         }
     }
-
 
     public function cargarDatosIniciales()
     {
@@ -197,7 +184,6 @@ class Inscripcion extends Component
         $this->padres = $this->representanteRepository->obtenerPorGenero('Masculino');
         $this->madres = $this->representanteRepository->obtenerPorGenero('Femenino');
         $this->representantes = $this->representanteRepository->obtenerRepresentantesLegales();
-
         $this->discapacidades = \App\Models\Discapacidad::where('status', true)
             ->orderBy('nombre_discapacidad', 'asc')
             ->get();
@@ -255,7 +241,6 @@ class Inscripcion extends Component
     public function updatedSeleccionarTodos($value)
     {
         $this->documentos = $value ? $this->documentosDisponibles : [];
-
         $this->evaluarDocumentosVisual();
         $this->recalcularObservaciones();
     }
@@ -269,13 +254,11 @@ class Inscripcion extends Component
     private function validarDocumentosEnTiempoReal(): void
     {
         $this->resetErrorBag('documentos');
-
         $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
             $this->documentos,
             $this->requiereAutorizacion(),
             $this->esPrimerGrado
         );
-
         $this->documentosFaltantes = $evaluacion['faltantes'];
     }
 
@@ -295,9 +278,7 @@ class Inscripcion extends Component
         $this->documentosFaltantes = $evaluacion['faltantes'];
         $this->estadoDocumentos = $evaluacion['estado_documentos'];
         $this->statusInscripcion = $evaluacion['status_inscripcion'];
-
-        $this->seleccionarTodos =
-            count($this->documentos) === count($this->documentosDisponibles);
+        $this->seleccionarTodos = count($this->documentos) === count($this->documentosDisponibles);
     }
 
     private function recalcularObservaciones(): void
@@ -317,14 +298,12 @@ class Inscripcion extends Component
         if ($obsDiscapacidades) {
             $observaciones[] = $obsDiscapacidades;
         }
-
         $this->observaciones = implode(PHP_EOL . PHP_EOL, $observaciones);
     }
 
     private function generarObservacionesDiscapacidades(): ?string
     {
         $nombres = [];
-
         if ($this->alumnoId) {
             $alumno = \App\Models\Alumno::with('discapacidades')->find($this->alumnoId);
 
@@ -344,7 +323,6 @@ class Inscripcion extends Component
         if (empty($nombres)) {
             return null;
         }
-
         return 'Discapacidades registradas:' . PHP_EOL .
             implode(PHP_EOL, $nombres);
     }
@@ -354,7 +332,6 @@ class Inscripcion extends Component
         $this->municipio_id = null;
         $this->localidad_id = null;
         $this->institucion_procedencia_id = null;
-
         $this->localidades = [];
         $this->instituciones = [];
 
@@ -368,7 +345,6 @@ class Inscripcion extends Component
             ->orderBy('nombre_municipio')
             ->get();
     }
-
 
     public function updatedMunicipioId($value)
     {
@@ -387,17 +363,14 @@ class Inscripcion extends Component
             ->get();
     }
 
-
     public function updatedLocalidadId($value)
     {
         $this->institucion_procedencia_id = null;
         $this->resetErrorBag('institucion_procedencia_id');
-
         if (!$value) {
             $this->instituciones = [];
             return;
         }
-
         $this->instituciones = \App\Models\InstitucionProcedencia::where('localidad_id', $value)
             ->where('status', true)
             ->orderBy('nombre_institucion')
@@ -461,18 +434,14 @@ class Inscripcion extends Component
         }
 
         $discapacidad = \App\Models\Discapacidad::find($this->discapacidadSeleccionada);
-
         if ($discapacidad) {
             $this->discapacidadesAgregadas[] = [
                 'id' => $discapacidad->id,
                 'nombre' => $discapacidad->nombre_discapacidad
             ];
-
             $this->discapacidadSeleccionada = null;
             $this->resetErrorBag('discapacidadSeleccionada');
-
             $this->recalcularObservaciones();
-
             session()->flash('success_temp', 'Discapacidad agregada exitosamente.');
         }
     }
@@ -482,11 +451,8 @@ class Inscripcion extends Component
         if (isset($this->discapacidadesAgregadas[$index])) {
             $discapacidad = $this->discapacidadesAgregadas[$index];
             unset($this->discapacidadesAgregadas[$index]);
-
             $this->discapacidadesAgregadas = array_values($this->discapacidadesAgregadas);
-
             $this->recalcularObservaciones();
-
             session()->flash('success_temp', "Discapacidad '{$discapacidad['nombre']}' eliminada.");
         }
     }
@@ -513,7 +479,6 @@ class Inscripcion extends Component
         try {
             $dto = $this->crearInscripcionDTO();
             $inscripcion = $this->inscripcionService->registrar($dto);
-
             if ($this->alumnoId && !empty($this->discapacidadesAgregadas)) {
                 $this->guardarDiscapacidadesAlumno($this->alumnoId);
             }
@@ -549,7 +514,6 @@ class Inscripcion extends Component
         if (!$this->validarRepresentantes()) {
             return;
         }
-
         $this->dispatch('solicitarDatosAlumno');
     }
 
@@ -561,7 +525,6 @@ class Inscripcion extends Component
 
         try {
             $dto = $this->crearInscripcionDTO();
-
             $inscripcion = $this->inscripcionService->registrarConAlumno(
                 $datos,
                 $dto,
@@ -608,8 +571,32 @@ class Inscripcion extends Component
     protected $listeners = [
         'recibirDatosAlumno' => 'guardarTodo',
         'padreSeleccionadoEvento' => 'actualizarPadreSelect',
-        'acepta_normas_contrato' => 'actualizarEstadoBoton'
+        'acepta_normas_contrato' => 'actualizarEstadoBoton',
+        'institucionCreada' => 'manejarInstitucionCreada',
+        'localidadCreada' => 'refrescarLocalidades',
     ];
+
+    public function manejarInstitucionCreada($data)
+    {
+        if ($this->localidad_id) {
+            $this->instituciones = \App\Models\InstitucionProcedencia::where('localidad_id', $this->localidad_id)
+                ->where('status', true)
+                ->orderBy('nombre_institucion')
+                ->get();
+        }
+        $this->institucion_procedencia_id = $data['id'];
+    }
+
+    public function refrescarLocalidades($data)
+    {
+        if ($this->municipio_id == $data['municipio_id']) {
+            $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+            $this->localidad_id = $data['id']; 
+        }
+    }
 
     public function actualizarEstadoBoton($value)
     {

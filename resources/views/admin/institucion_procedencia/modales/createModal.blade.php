@@ -125,3 +125,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('cerrarModal', () => {
+            const modalEl = document.getElementById('modalCrear');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) {
+                modal.hide();
+            }
+        });
+    });
+</script>

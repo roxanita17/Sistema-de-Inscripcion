@@ -1,4 +1,3 @@
-<!-- Modal Crear Asignación -->
 <div class="modal fade" id="modalCrearAsignacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearAsignacionLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
@@ -9,14 +8,12 @@
                 <h5 class="modal-title-create" id="modalCrearAsignacionLabel">Registrar Asignación</h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
-                </button>
+                </button> 
             </div>
 
             <div class="modal-body-create">
                 <form id="formAsignacion" action="{{ route('admin.transacciones.grado_area_formacion.modales.store') }}" method="POST">
                     @csrf
-
-                    <!-- Select Grado -->
                     <div class="form-group-modern">
                         <label for="grado_id" class="form-label-modern">
                             <i class="fas fa-graduation-cap me-2"></i>
@@ -32,8 +29,6 @@
                             @endforeach
                         </select>
                     </div>
-
-                    <!-- Select Área de Formación -->
                     <div class="form-group-modern">
                         <label for="area_formacion_id" class="form-label-modern">
                             <i class="fas fa-bookmark me-2"></i>
@@ -50,7 +45,6 @@
                         </select>
                     </div>
 
-                    <!-- Botones -->
                     <div class="modal-footer-create">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
