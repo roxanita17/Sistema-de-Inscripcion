@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class EstudiosRealizadoController extends Controller
 {
-    
+
     /**
      * Verifica si hay un año escolar activo
      */
@@ -17,7 +17,7 @@ class EstudiosRealizadoController extends Controller
             ->orWhere('status', 'Extendido')
             ->exists();
     }
-    
+
     /**
      * Verifica si ya existe un estudio realizado con el nombre proporcionado
      *
@@ -30,7 +30,7 @@ class EstudiosRealizadoController extends Controller
             $request->validate([
                 'estudios' => 'required|string|max:255',
             ]);
-            
+
             // Verificar si ya existe un estudio realizado activo con este nombre
             $existe = EstudiosRealizado::where('estudios', $request->estudios)
                 ->where('status', true)
@@ -40,9 +40,7 @@ class EstudiosRealizadoController extends Controller
                 'success' => true,
                 'existe' => $existe
             ]);
-
         } catch (\Exception $e) {
-            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al verificar el estudio realizado',
@@ -58,28 +56,28 @@ class EstudiosRealizadoController extends Controller
     public function index()
     {
         $buscar = request('buscar');
-        
+
         // Construir la consulta base
         $query = EstudiosRealizado::query();
-        
+
         // Aplicar búsqueda
         if (!empty($buscar)) {
-            $query->where(function($q) use ($buscar) {
+            $query->where(function ($q) use ($buscar) {
                 $q->where('estudios', 'LIKE', "%{$buscar}%")
-                  ->orWhere('id', 'LIKE', "%{$buscar}%");
+                    ->orWhere('id', 'LIKE', "%{$buscar}%");
             });
         }
-        
+
         // Ordenar y paginar
         $estudiosRealizados = $query->orderBy('estudios', 'asc')
-                                  ->paginate(10)
-                                  ->appends(request()->query());
+            ->paginate(10)
+            ->appends(request()->query());
 
         // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        
+
         return view('admin.estudios_realizados.index', compact(
-            'estudiosRealizados', 
+            'estudiosRealizados',
             'anioEscolarActivo',
             'buscar'
         ));
@@ -111,8 +109,7 @@ class EstudiosRealizadoController extends Controller
             $estudiosRealizados->status = true;
             $estudiosRealizados->save();
 
-            return redirect()
-                ->route('admin.estudios_realizados.index')
+            return redirect($request->redirect_to ?? route('admin.estudios_realizados.index'))
                 ->with('success', 'Estudio realizado creado exitosamente.');
         } catch (\Exception $e) {
             return redirect()

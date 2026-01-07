@@ -23,8 +23,9 @@ class InstitucionProcedenciaIndex extends Component
     public $updateMode = false;
 
     public $anioEscolarActivo = false;
-    public $municipios = []; // Municipios dinámicos filtrados por estado
-    public $localidades = []; // Localidades dinámicas filtradas por municipio
+    public $municipios = [];
+    public $localidades = [];
+    public $modoModal = false;
 
     protected $rules = [
         'nombre_institucion' => 'required|string|max:255',
@@ -33,12 +34,9 @@ class InstitucionProcedenciaIndex extends Component
         'localidad_id' => 'required|integer|exists:localidads,id',
     ];
 
-    // ========================================
-    // INICIALIZACIÓN
-    // ========================================
-
-    public function mount()
+    public function mount($modoModal = false)
     {
+        $this->modoModal = $modoModal;
         $this->verificarAnioEscolar();
     }
 
@@ -156,6 +154,7 @@ class InstitucionProcedenciaIndex extends Component
         $this->updateMode = false;
     }
 
+
     public function store()
     {
         if (!$this->verificarAccion()) {
@@ -168,13 +167,13 @@ class InstitucionProcedenciaIndex extends Component
         if (InstitucionProcedencia::where('nombre_institucion', $this->nombre_institucion)
             ->where('localidad_id', $this->localidad_id)
             ->where('status', true)
-            ->exists()) 
-        {
+            ->exists()
+        ) {
             session()->flash('error', 'Ya existe una institución con ese nombre en esta localidad.');
             return;
         }
 
-        InstitucionProcedencia::create([
+        $institucion = InstitucionProcedencia::create([
             'nombre_institucion' => $this->nombre_institucion,
             'localidad_id' => $this->localidad_id,
             'status' => true,
@@ -183,6 +182,14 @@ class InstitucionProcedenciaIndex extends Component
         session()->flash('success', 'Institución creada correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetInputFields();
+
+        // NUEVO: Si está en modo modal, notificar al componente padre
+        if ($this->modoModal) {
+            $this->dispatch('institucionCreada', [
+                'id' => $institucion->id,
+                'nombre' => $institucion->nombre_institucion
+            ]);
+        }
     }
 
     public function edit($id)

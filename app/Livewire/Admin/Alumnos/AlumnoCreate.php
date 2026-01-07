@@ -3,8 +3,6 @@
 namespace App\Livewire\Admin\Alumnos;
 
 use Illuminate\Support\Collection;
-
-
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -105,7 +103,6 @@ class AlumnoCreate extends Component
                     }
                 }
             ],
-
             'primer_nombre' => 'required|string|max:50',
             'primer_apellido' => 'required|string|max:50',
             'segundo_nombre' => 'nullable|string|max:50',
@@ -130,7 +127,6 @@ class AlumnoCreate extends Component
                     }
                 }
             ],
-
             'talla_estudiante' => [
                 'required',
                 'regex:/^\d+([.,]\d+)?$/',
@@ -201,30 +197,25 @@ class AlumnoCreate extends Component
     public function updatedTipoDocumentoId($value)
     {
         $this->numero_documento = null;
-
         switch ((int) $value) {
-
             case 1:
                 $this->documento_maxlength = 8;
                 $this->documento_pattern = '[0-9]+';
                 $this->documento_placeholder = '12345678';
                 $this->documento_inputmode = 'numeric';
                 break;
-
             case 2:
                 $this->documento_maxlength = 12;
                 $this->documento_pattern = '[A-Za-z0-9]+';
                 $this->documento_placeholder = 'AB1234567890';
                 $this->documento_inputmode = 'text';
                 break;
-
             case 3:
                 $this->documento_maxlength = 12;
                 $this->documento_pattern = '[0-9]+';
                 $this->documento_placeholder = '123456789012';
                 $this->documento_inputmode = 'numeric';
                 break;
-
             default:
                 $this->documento_maxlength = 8;
                 $this->documento_pattern = '[0-9]+';
@@ -242,7 +233,6 @@ class AlumnoCreate extends Component
     {
         $this->verificarAnioEscolar();
         $this->alumno_id = $alumno_id;
-
         $this->cargarDatosIniciales();
 
         if ($alumno_id) {
@@ -258,7 +248,6 @@ class AlumnoCreate extends Component
     public function cargarDatosIniciales()
     {
         $this->estados = Estado::where('status', true)->get();
-
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
         $this->generos = \App\Models\Genero::where('status', true)->get();
         $this->lateralidades = Lateralidad::where('status', true)->get();
@@ -274,7 +263,6 @@ class AlumnoCreate extends Component
 
         )->findOrFail($id);
         $persona = $alumno->persona;
-
         $this->persona_id = $persona->id;
         $this->tipo_documento_id = $persona->tipo_documento_id;
         $this->numero_documento = $persona->numero_documento;
@@ -293,7 +281,6 @@ class AlumnoCreate extends Component
         $this->lateralidad_id = $alumno->lateralidad_id;
         $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
         $this->etnia_indigena_id = $alumno->etnia_indigena_id;
-
         $this->updatedEstadoId($persona->localidad->municipio->estado_id);
         $this->updatedMunicipioId($persona->localidad->municipio_id);
         $this->updatedFechaNacimiento($this->fecha_nacimiento);
@@ -305,7 +292,6 @@ class AlumnoCreate extends Component
             ->where('status', true)
             ->orderBy('nombre_municipio')
             ->get();
-
         $this->municipio_id = null;
         $this->localidad_id = null;
         $this->localidades = [];
@@ -317,18 +303,15 @@ class AlumnoCreate extends Component
             ->where('status', true)
             ->orderBy('nombre_localidad')
             ->get();
-
         $this->localidad_id = null;
     }
 
     public function updatedFechaNacimiento($value)
     {
         if (!$value) return;
-
         try {
             $fecha = Carbon::parse($value);
             $hoy = Carbon::now();
-
             $this->edad = $fecha->diffInYears($hoy);
             $this->meses = $fecha->diffInMonths($hoy) % 12;
         } catch (\Exception $e) {
@@ -356,7 +339,6 @@ class AlumnoCreate extends Component
 
         try {
             DB::beginTransaction();
-
             $persona = Persona::updateOrCreate(
                 ['id' => $this->persona_id],
                 [
@@ -374,7 +356,6 @@ class AlumnoCreate extends Component
                 ]
             );
             if ($this->alumno_id) {
-
                 $alumno = Alumno::findOrFail($this->alumno_id);
                 $alumno->update([
                     'persona_id' => $persona->id,
@@ -389,7 +370,6 @@ class AlumnoCreate extends Component
                     'status' => 'Activo',
                 ]);
             } else {
-
                 Alumno::create([
                     'persona_id' => $persona->id,
                     'talla_camisa_id' => $this->talla_camisa_id,
@@ -403,9 +383,7 @@ class AlumnoCreate extends Component
                     'status' => 'Activo',
                 ]);
             }
-
             DB::commit();
-
             session()->flash('success', 'Alumno guardado exitosamente');
             return redirect()->route('admin.alumnos.index');
         } catch (\Exception $e) {
@@ -416,13 +394,40 @@ class AlumnoCreate extends Component
     }
 
     protected $listeners = [
-        'solicitarDatosAlumno' => 'enviarDatosAlumno'
+        'solicitarDatosAlumno' => 'enviarDatosAlumno',
+        'localidadCreada' => 'manejarLocalidadCreada',
+        'localidadCreada' => 'refrescarLocalidades',
     ];
+
+    public function manejarLocalidadCreada($id, $municipio_id)
+    {
+        if ($this->municipio_id == $municipio_id) {
+            $this->localidades = \App\Models\Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+
+            $this->localidad_id = $id;
+            $this->dispatch('localidadSeleccionada');
+            session()->flash('success', 'Localidad creada y seleccionada correctamente.');
+        }
+    }
+
+    public function refrescarLocalidades($data)
+    {
+        if ($this->municipio_id == $data['municipio_id']) {
+
+            $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+            $this->localidad_id = $data['id'];
+        }
+    }
 
     public function enviarDatosAlumno()
     {
         $datos = $this->validate();
-
         $this->dispatch('recibirDatosAlumno', datos: $datos);
     }
 

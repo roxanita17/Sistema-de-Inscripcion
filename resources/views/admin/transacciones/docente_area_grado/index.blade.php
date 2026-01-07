@@ -127,8 +127,6 @@
                 </div>
 
                 <div class="header-right">
-                    <!-- --------------------------- -->
-
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();

@@ -608,7 +608,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <label for="grado_id" class="form-label-modern">
-                         Nivel Academico
+                        Nivel Academico
                     </label>
                     <select wire:model.live="gradoId"
                         class="form-control-modern @error('gradoId') is-invalid @enderror">
@@ -655,7 +655,7 @@
                     </div>
                 @endif
             </div>
-            
+
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
@@ -684,8 +684,7 @@
                             Municipio
                             <span class="required-badge">*</span>
                         </label>
-                        <select wire:model.live="municipio_id" id="municipio_id"
-                            @disabled(!$estado_id)
+                        <select wire:model.live="municipio_id" id="municipio_id" @disabled(!$estado_id)
                             class="form-control-modern @error('municipio_id') is-invalid @enderror">
                             <option value="">Seleccione un municipio</option>
                             @foreach ($municipios as $municipio)
@@ -707,8 +706,7 @@
                             Localidad
                             <span class="required-badge">*</span>
                         </label>
-                        <select wire:model.live="localidad_id" id="localidad_id"
-                            @disabled(!$municipio_id)
+                        <select wire:model.live="localidad_id" id="localidad_id" @disabled(!$municipio_id)
                             class="form-control-modern @error('localidad_id') is-invalid @enderror">
                             <option value="">Seleccione una localidad</option>
                             @foreach ($localidades as $localidad)
@@ -742,7 +740,7 @@
                         </div>
                     @enderror
                 </div>
-                    
+
                 <div class="col-md-4">
                     <label class="form-label-modern">
                         Literal
@@ -891,6 +889,8 @@
             </div>
         </div>
     </div>
+    @livewire('admin.modales.institucion-procedencia-create')
+    @livewire('admin.modales.localidad-create')
 </div>
 
 @push('js')

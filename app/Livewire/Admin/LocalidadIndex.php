@@ -20,9 +20,9 @@ class LocalidadIndex extends Component
     public $updateMode = false;
     public $search = '';
 
-    public $anioEscolarActivo = false; // Nueva propiedad pública
+    public $anioEscolarActivo = false; 
 
-    public $municipios = []; //municipios dinámicos filtrados
+    public $municipios = [];
 
     protected $rules = [
         'nombre_localidad' => 'required|string|max:255',

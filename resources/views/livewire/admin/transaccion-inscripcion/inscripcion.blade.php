@@ -667,7 +667,9 @@
                 <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger"
                     style="font-weight: 700;">(*)</span> son obligatorios
             </div>
+
             <livewire:admin.alumnos.alumno-create>
+
                 <div class="card-modern mb-4">
                     <div class="card-header-modern">
                         <div class="header-left">
@@ -775,7 +777,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="institucion_procedencia_id" class="form-label-modern">
                                         Institucion de procedencia
@@ -785,6 +787,7 @@
                                         id="institucion_procedencia_id" @disabled(!$localidad_id)
                                         class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
                                         <option value="">Seleccione una institucion</option>
+                                        <i class="fas fa-plus"></i>
                                         @foreach ($instituciones as $institucion)
                                             <option value="{{ $institucion->id }}">
                                                 {{ $institucion->nombre_institucion }}
@@ -797,7 +800,14 @@
                                         </div>
                                     @enderror
                                 </div>
+                                <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
+                                    <i class="fas fa-info-circle"></i>
+                                    Si no hay instituciones registradas agrega una
+                                    <a class="text-primary" data-bs-toggle="modal"
+                                        data-bs-target="#modalCrearInstitucionInscripcion">"aquí"</a>
+                                </small>
                             </div>
+
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="expresion_literaria" class="form-label-modern">
@@ -897,7 +907,6 @@
                     </button>
                 </div>
             </div>
-
             {{-- Tabla de discapacidades agregadas --}}
             @if (!empty($discapacidadesAgregadas))
                 <div class="table-responsive">
@@ -1049,15 +1058,13 @@
             </div>
             <div class="row">
                 <div class="col-md-6 ms-auto d-flex flex-column align-items-end gap-2">
-
                     <div class="checkbox-item-modern">
                         <input type="checkbox" id="acepta_normas_contrato" wire:model.live="acepta_normas_contrato"
                             class="checkbox-modern">
-
                         <label for="acepta_normas_contrato" class="checkbox-label-modern"
                             style="margin-left: 2px; gap: 0">
                             He leído y acepto
-                            <a class="text-primary " style="margin-left: 5px; padding: 0; text-decoration: none;"
+                            <a class="text-primary" style="margin-left: 5px; padding: 0; text-decoration: none;"
                                 data-bs-toggle="modal" data-bs-target="#modalContratoConvivencia"
                                 title="Ver Detalles">
                                 las normas de convivencia
@@ -1074,7 +1081,6 @@
         </div>
         @include('admin.transacciones.inscripcion.modales.showContratoModal')
 
-        {{-- Botones de Acción --}}
         <div class="card-modern">
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="d-flex justify-content-end gap-3">
@@ -1099,6 +1105,8 @@
             </div>
         </div>
     </div>
+    @livewire('admin.modales.institucion-procedencia-create')
+    @livewire('admin.modales.localidad-create')
 </div>
 
 @push('js')
@@ -1156,18 +1164,6 @@
                 Livewire.dispatch('representanteLegalSeleccionadoEvento', {
                     value: value
                 });
-            });
-        });
-
-        document.addEventListener('livewire:initialized', () => {
-            Livewire.on('scrollTo', (id) => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
             });
         });
     </script>

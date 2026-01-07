@@ -241,7 +241,7 @@
                                 Municipio
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live.live="municipio_id"
+                            <select @disabled(!$estado_id) wire:model.live.live="municipio_id"
                                 class="form-control-modern @error('municipio_id') is-invalid @enderror">
                                 <option value="">Seleccione un municipio</option>
                                 @foreach ($municipios as $municipio)
@@ -261,7 +261,7 @@
                                 Localidad
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.live.live="localidad_id"
+                            <select @disabled(!$municipio_id) wire:model.live.live="localidad_id"
                                 class="form-control-modern @error('localidad_id') is-invalid @enderror">
                                 <option value="">Seleccione una localidad</option>
                                 @foreach ($localidades as $localidad)
@@ -274,6 +274,12 @@
                                 </div>
                             @enderror
                         </div>
+                        <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
+                            <i class="fas fa-info-circle"></i>
+                            Si no hay localidades registradas agrega una
+                            <a class="text-primary" data-bs-toggle="modal"
+                                data-bs-target="#modalCrearLocalidad">"aquí"</a>
+                        </small>
                     </div>
                 </div>
             </div>
@@ -296,13 +302,12 @@
                         <div class="form-group">
                             <label for="talla_estudiante" class="form-label-modern">
                                 Estatura (m)
-                                <span class="required-badge">*</span> 
+                                <span class="required-badge">*</span>
                             </label>
                             <input type="text" wire:model.defer="talla_estudiante" wire:blur="validarEstatura"
                                 placeholder="Ej: 1.66 o 166"
                                 class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
-                                inputmode="numeric"
-                                pattern="^[0-9]*$"
+                                inputmode="numeric" pattern="^[0-9]*$"
                                 oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                             @error('talla_estudiante')
                                 <div class="invalid-feedback-modern">
