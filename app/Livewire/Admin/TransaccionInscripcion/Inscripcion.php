@@ -33,10 +33,15 @@ class Inscripcion extends Component
     public $madreSeleccionado = null;
     public $representanteLegalSeleccionado = null;
 
+    public $paisId = null;
+    public bool $esVenezolano = true;
     public $estado_id = null;
     public $municipio_id = null;
     public $localidad_id = null;
+    
+    public $otroPaisNombre = '';
 
+    public $paises = [];
     public $estados = [];
     public $municipios = [];
     public $localidades = [];
@@ -101,6 +106,9 @@ class Inscripcion extends Component
         $this->estados = \App\Models\Estado::where('status', true)
             ->orderBy('nombre_estado', 'asc')
             ->get();
+        $this->paises = \App\Models\Pais::where('status', true)
+        ->orderBy('nameES', 'asc')
+        ->get();
     }
 
     public function rules()
@@ -113,7 +121,12 @@ class Inscripcion extends Component
                 'nullable',
                 'regex:/^\d+$/'
             ],
-            'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
+            'institucion_procedencia_id' => $this->esVenezolano
+                ? 'required|exists:institucion_procedencias,id'
+                : 'nullable|string',
+            'otroPaisNombre' => $this->esVenezolano ? '' : 'required|string|max:255',
+
+
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'gradoId' => [
                 'required',
@@ -326,6 +339,40 @@ class Inscripcion extends Component
         return 'Discapacidades registradas:' . PHP_EOL .
             implode(PHP_EOL, $nombres);
     }
+
+    public function updatedPaisId($value)
+    {
+        if (!$value) {
+            $this->esVenezolano = true;
+            return;
+        }
+
+        $pais = \App\Models\Pais::find($value);
+        $this->esVenezolano = $pais->nameES === 'Venezuela';
+
+        // Resetear datos cuando no es Venezuela
+        if ($this->esVenezolano) {
+            $this->otroPaisNombre = '';
+            $this->institucion_procedencia_id = null;
+
+            // 🔹 Recargar los estados de Venezuela
+            $this->estados = \App\Models\Estado::where('status', true)
+                ->orderBy('nombre_estado', 'asc')
+                ->get();
+        } else {
+            $this->estado_id = null;
+            $this->municipio_id = null;
+            $this->localidad_id = null;
+            $this->institucion_procedencia_id = null;
+            $this->estados = [];
+            $this->municipios = [];
+            $this->localidades = [];
+            $this->instituciones = [];
+        }
+    }
+
+
+
 
     public function updatedEstadoId($value)
     {

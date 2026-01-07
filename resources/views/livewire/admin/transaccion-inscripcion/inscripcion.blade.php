@@ -712,100 +712,84 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="estado_id" class="form-label-modern">
-                                        Estado
-                                        <span class="required-badge">*</span>
-                                    </label>
-                                    <select wire:model.live="estado_id" id="estado_id"
-                                        class="form-control-modern @error('estado_id') is-invalid @enderror">
-                                        <option value="">Seleccione un estado</option>
-                                        @foreach ($estados as $estado)
-                                            <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}
-                                            </option>
+                                    <label for="paisId" class="form-label-modern">Pais<span class="required-badge">*</span></label>
+                                    <select wire:model.live="paisId" class="form-control-modern @error('paisId') is-invalid @enderror">
+                                        <option value="">Seleccione un país</option>
+                                        @foreach($paises as $pais)
+                                            <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
                                         @endforeach
                                     </select>
-                                    @error('estado_id')
-                                        <div class="invalid-feedback-modern">
-                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="municipio_id" class="form-label-modern">
-                                        Municipio
-                                        <span class="required-badge">*</span>
-                                    </label>
-                                    <select wire:model.live="municipio_id" id="municipio_id"
-                                        @disabled(!$estado_id)
-                                        class="form-control-modern @error('municipio_id') is-invalid @enderror">
-                                        <option value="">Seleccione un municipio</option>
-                                        @foreach ($municipios as $municipio)
-                                            <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('municipio_id')
-                                        <div class="invalid-feedback-modern">
-                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                        </div>
-                                    @enderror
+                                    @error('paisId') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
                                 </div>
                             </div>
 
+
+                            @if($esVenezolano)
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="estado_id" class="form-label-modern">Estado <span class="required-badge">*</span></label>
+                                        <select wire:model.live="estado_id" id="estado_id" class="form-control-modern @error('estado_id') is-invalid @enderror">
+                                            <option value="">Seleccione un estado</option>
+                                            @foreach ($estados as $estado)
+                                                <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('estado_id') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="municipio_id" class="form-label-modern">Municipio <span class="required-badge">*</span></label>
+                                        <select wire:model.live="municipio_id" id="municipio_id" @disabled(!$estado_id) class="form-control-modern @error('municipio_id') is-invalid @enderror">
+                                            <option value="">Seleccione un municipio</option>
+                                            @foreach ($municipios as $municipio)
+                                                <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('municipio_id') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="localidad_id" class="form-label-modern">Localidad <span class="required-badge">*</span></label>
+                                        <select wire:model.live="localidad_id" id="localidad_id" @disabled(!$municipio_id) class="form-control-modern @error('localidad_id') is-invalid @enderror">
+                                            <option value="">Seleccione una localidad</option>
+                                            @foreach ($localidades as $localidad)
+                                                <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('localidad_id') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                            @endif
+                            
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="localidad_id" class="form-label-modern">
-                                        Localidad
-                                        <span class="required-badge">*</span>
-                                    </label>
-                                    <select wire:model.live="localidad_id" id="localidad_id"
-                                        @disabled(!$municipio_id)
-                                        class="form-control-modern @error('localidad_id') is-invalid @enderror">
-                                        <option value="">Seleccione una localidad</option>
-                                        @foreach ($localidades as $localidad)
-                                            <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('localidad_id')
-                                        <div class="invalid-feedback-modern">
-                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                        </div>
-                                    @enderror
+                                    <label for="institucion_procedencia_id" class="form-label-modern">Institución de procedencia<span class="required-badge">*</span></label>
+                                    @if($esVenezolano)
+                                        <select wire:model.live="institucion_procedencia_id" class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
+                                            <option value="">Seleccione</option>
+                                            @foreach($instituciones as $inst)
+                                                <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('institucion_procedencia_id')
+                                            <div class="invalid-feedback-modern">
+                                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                            </div>
+                                        @enderror
+                                        <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
+                                            <i class="fas fa-info-circle"></i>
+                                            Si no hay instituciones registradas agrega una
+                                            <a class="text-primary" data-bs-toggle="modal"
+                                                data-bs-target="#modalCrearInstitucionInscripcion">"aquí"</a>
+                                        </small>
+                                    @else
+                                        <input type="text"  class="form-control-modern" wire:model.live="otroPaisNombre" placeholder="Escriba el nombre de la institución">
+                                    @endif
                                 </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="institucion_procedencia_id" class="form-label-modern">
-                                        Institucion de procedencia
-                                        <span class="required-badge">*</span>
-                                    </label>
-                                    <select wire:model.live="institucion_procedencia_id"
-                                        id="institucion_procedencia_id" @disabled(!$localidad_id)
-                                        class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
-                                        <option value="">Seleccione una institucion</option>
-                                        <i class="fas fa-plus"></i>
-                                        @foreach ($instituciones as $institucion)
-                                            <option value="{{ $institucion->id }}">
-                                                {{ $institucion->nombre_institucion }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('institucion_procedencia_id')
-                                        <div class="invalid-feedback-modern">
-                                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
-                                <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
-                                    <i class="fas fa-info-circle"></i>
-                                    Si no hay instituciones registradas agrega una
-                                    <a class="text-primary" data-bs-toggle="modal"
-                                        data-bs-target="#modalCrearInstitucionInscripcion">"aquí"</a>
-                                </small>
                             </div>
 
                             <div class="col-md-3">
