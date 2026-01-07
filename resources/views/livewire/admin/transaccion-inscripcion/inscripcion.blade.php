@@ -1,45 +1,20 @@
 <div>
-    @if (session()->has('success') || session()->has('error') || session()->has('warning'))
-        <div class="alerts-container mb-3">
-            @if (session()->has('success'))
-                <div class="alert-modern alert-success alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Éxito</h4>
-                        <p>{{ session('success') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            @if (session()->has('error'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Error</h4>
-                        <p>{{ session('error') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('swal', (payload) => {
+                const data = payload[0];
 
-            @if (session()->has('warning'))
-                <div class="alert alert-warning alert-dismissible fade show">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    {{ session('warning') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-        </div>
-    @endif
+                Swal.fire({
+                    icon: data.icon,
+                    title: data.title,
+                    text: data.message,
+                    confirmButtonText: 'Aceptar'
+                });
+            });
+        });
+    </script>
 
     <div class="card-modern mb-4">
         <div class="card-header-modern">

@@ -14,22 +14,16 @@
                     <p class="title-subtitle">Administración de los estados del sistema</p>
                 </div>
             </div>
-
-            {{-- Botón crear --}}
-            <button type="button"
-                    class="btn-create"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalCrear"
-                    @if(!$anioEscolarActivo) disabled @endif
-                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo Estado' }}">
+            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
+                @if (!$anioEscolarActivo) disabled @endif
+                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo Estado' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Estado</span>
             </button>
-        </div> 
+        </div>
     </div>
 @stop
 
-{{-- Estilos --}}
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
@@ -41,9 +35,8 @@
 @endsection
 
 @section('js')
-    <!-- Incluir el archivo de validaciones -->
     <script src="{{ asset('js/validations/estado.js') }}"></script>
-    
+
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('cerrarModal', () => {

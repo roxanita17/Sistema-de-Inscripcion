@@ -1,17 +1,14 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-
 @stop
 
 @section('title', 'Gestión de Prefijos de Telefono')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -24,7 +21,6 @@
                 </div>
             </div>
 
-            {{-- Botón que abre la ventana modal para crear un nuevo prefijo --}}
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
                 @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nuevo Prefijo' }}">
@@ -39,7 +35,6 @@
     <div class="main-container">
         @include('admin.prefijo_telefono.modales.createModal')
 
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -56,7 +51,6 @@
             </div>
         @endif
 
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -91,7 +85,6 @@
             </div>
         @endif
 
-        {{-- Contenedor principal de la tabla de prefijo --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -101,12 +94,6 @@
                     <div>
                         <h3>Listado de Prefijos</h3>
                         <p>{{ $prefijos->total() }} registros encontrados</p>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
                     </div>
                 </div>
 
@@ -250,7 +237,6 @@
             </div>
         </div>
     </div>
-
     <x-pagination :paginator="$prefijos" />
 @endsection
 

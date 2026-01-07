@@ -559,20 +559,25 @@ class Inscripcion extends Component
             return redirect()->route('admin.transacciones.inscripcion.index');
         } catch (InscripcionException $e) {
 
-            session()->flash('error', $e->getMessage());
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => $e->getMessage()
+            ]);
         } catch (QueryException $e) {
 
-            session()->flash(
-                'error',
-                'No se pudo completar la inscripción. Verifique los datos ingresados.'
-            );
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Verifique los datos ingresados'
+            ]);
         } catch (\Throwable $e) {
-
             report($e);
-            session()->flash(
-                'error',
-                'No se pudo completar la inscripción. Verifique los datos ingresados.'
-            );
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Error',
+                'message' => 'Ocurrió un error inesperado. Verifique los datos.'
+            ]);
         }
     }
 
@@ -592,7 +597,12 @@ class Inscripcion extends Component
     public function guardarTodo($datos = [])
     {
         if (empty($datos)) {
-            return session()->flash('error', 'No se recibieron datos del alumno.');
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'No se recibieron datos del alumno.'
+            ]);
+            return;
         }
 
         try {
@@ -605,15 +615,31 @@ class Inscripcion extends Component
 
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
-        } catch (\Exception $e) {
-            session()->flash('error', 'Error al registrar: ' . $e->getMessage());
+        } catch (InscripcionException $e) {
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => $e->getMessage()
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Ocurrió un error inesperado. Verifique los datos e intente nuevamente.'
+            ]);
         }
     }
 
     private function validarRepresentantes(): bool
     {
         if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
-            session()->flash('error', 'Debe seleccionar al menos un representante.');
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Debe seleccionar al menos un representante.'
+            ]);
+
             return false;
         }
         return true;
@@ -667,7 +693,7 @@ class Inscripcion extends Component
                 ->where('status', true)
                 ->orderBy('nombre_localidad')
                 ->get();
-            $this->localidad_id = $data['id']; 
+            $this->localidad_id = $data['id'];
         }
     }
 

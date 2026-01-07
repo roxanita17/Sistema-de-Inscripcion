@@ -11,7 +11,7 @@
                 </div>
                 <div>
                     <h1 class="title-main">Gestión de Paises</h1>
-                    <p class="title-subtitle">Administración de los estados del sistema</p>
+                    <p class="title-subtitle">Administración de los paises del sistema</p>
                 </div>
             </div>
 
@@ -21,7 +21,7 @@
                     data-bs-toggle="modal"
                     data-bs-target="#modalCrear"
                     @if(!$anioEscolarActivo) disabled @endif
-                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo Estado' }}">
+                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo pais' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Pais</span>
             </button>
@@ -40,10 +40,7 @@
     @livewire('admin.pais-index')
 @endsection
 
-@section('js')
-    <!-- Incluir el archivo de validaciones -->
-    <script src="{{ asset('js/validations/estado.js') }}"></script>
-    
+@section('js')    
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('cerrarModal', () => {
