@@ -324,7 +324,7 @@
                                             <i class="fas fa-file-contract"></i> Aceptó Normas
                                         </span>
                                         <span class="detail-value">
-                                            @if ($datos->acepta_normas_contrato === 'Sí')
+                                            @if ($datos->acepta_normas_contrato === 1)
                                                 <span class="badge-sm badge-yes">Sí</span>
                                             @else
                                                 <span class="badge-sm badge-no">No</span>
@@ -556,7 +556,7 @@
                                                         <span class="detail-label">¿Convive con el estudiante?</span>
                                                         <span class="detail-value">
                                                             <span>
-                                                                @if ($datos->inscripcion->padre->convive_estudiante === 'Si')
+                                                                @if ($datos->inscripcion->padre->convivenciaestudiante_representante === 'si')
                                                                     <span class="badge-sm badge-yes">Sí</span>
                                                                 @else
                                                                     <span class="badge-sm badge-no">No</span>
@@ -678,7 +678,7 @@
                                                         <span class="detail-label">¿Convive con el estudiante?</span>
                                                         <span class="detail-value">
                                                             <span>
-                                                                @if ($datos->inscripcion->madre->convive_estudiante === 'Si')
+                                                                @if ($datos->inscripcion->madre->convivenciaestudiante_representante === 'si')
                                                                     <span class="badge-sm badge-yes">Sí</span>
                                                                 @else
                                                                     <span class="badge-sm badge-no">No</span>
@@ -791,7 +791,7 @@
                                                         <span class="detail-label">¿Convive con el estudiante?</span>
                                                         <span class="detail-value">
                                                             <span>
-                                                                @if ($datos->inscripcion->representanteLegal->representante->convive_estudiante === 'Si')
+                                                                @if ($datos->inscripcion->representanteLegal->representante->convivenciaestudiante_representante === 'si')
                                                                     <span class="badge-sm badge-yes">Sí</span>
                                                                 @else
                                                                     <span class="badge-sm badge-no">No</span>

@@ -28,6 +28,7 @@ class Inscripcion extends Model
         'estado_documentos',
         'observaciones',
         'acepta_normas_contrato',
+        'tipo_inscripcion',
         'status',
     ];
 

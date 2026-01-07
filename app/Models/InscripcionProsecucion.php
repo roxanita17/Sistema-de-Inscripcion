@@ -14,6 +14,7 @@ class InscripcionProsecucion extends Model
 
     protected $fillable = [
         'inscripcion_id',
+        'inscripcion_anterior_id',
         'anio_escolar_id',
         'grado_id',
         'seccion_id',
@@ -34,6 +35,11 @@ class InscripcionProsecucion extends Model
         return $this->belongsTo(Inscripcion::class, 'inscripcion_id', 'id');
     }
 
+    public function inscripcionAnterior()
+    {
+        return $this->belongsTo(Inscripcion::class, 'inscripcion_anterior_id', 'id');
+    }
+    
     public function grado()
     {
         return $this->belongsTo(Grado::class, 'grado_id', 'id');
@@ -116,7 +122,7 @@ class InscripcionProsecucion extends Model
         });
     }
 
-        public static function reporteGeneralPDF(array $filtros = [])
+    public static function reporteGeneralPDF(array $filtros = [])
     {
         $anioEscolarId = $filtros['anio_escolar_id'] ?? null;
         $gradoId = $filtros['grado_id'] ?? null;
@@ -155,11 +161,11 @@ class InscripcionProsecucion extends Model
                 $query->whereHas('inscripcion.alumno.persona', function ($q) use ($buscar) {
                     $q->where(function ($subQuery) use ($buscar) {
                         $subQuery->where('primer_nombre', 'LIKE', "%{$buscar}%")
-                              ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
-                              ->orWhere('tercer_nombre', 'LIKE', "%{$buscar}%")
-                              ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
-                              ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%")
-                              ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
+                            ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
+                            ->orWhere('tercer_nombre', 'LIKE', "%{$buscar}%")
+                            ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                            ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%")
+                            ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
                     });
                 });
             })

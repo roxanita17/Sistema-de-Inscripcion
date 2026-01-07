@@ -43,7 +43,7 @@ class InscripcionProsecucionController extends Controller
         $prosecuciones = InscripcionProsecucion::with([
             'prosecucionAreas',
             'inscripcion.alumno.persona',
-            
+
             // inscripción base
             'inscripcion.alumno.persona.tipoDocumento',
             'inscripcion.representanteLegal.representante.persona',
@@ -196,10 +196,10 @@ class InscripcionProsecucionController extends Controller
             ->first();
 
         $pdf = PDF::loadview('admin.transacciones.inscripcion_prosecucion.reportes.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
-        
+
         // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
         $pdf->setOption('isPhpEnabled', true);
-        
+
         return $pdf->stream('ficha_inscripcion_prosecucion.pdf');
     }
 

@@ -416,7 +416,6 @@
                         <div class="form-group">
                             <label for="etnia_indigena_id" class="form-label-modern">
                                 Etnia Indigena
-                                <span class="required-badge">*</span>
                             </label>
                             <select wire:model.live="etnia_indigena_id"
                                 class="form-control-modern @error('etnia_indigena_id') is-invalid @enderror">

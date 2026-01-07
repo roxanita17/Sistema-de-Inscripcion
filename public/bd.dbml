@@ -1,5 +1,3 @@
-
-
 Table pais {
   id integer [primary key]
   nombre_pais varchar
@@ -44,16 +42,12 @@ Table personas {
   genero_id integer
   fecha_nacimiento date
   localidad_id integer
+  prefijo_id integer
+  primer_telefono varchar
+  segundo_prefijo_id integer
+  segundo_telefono varchar
   status boolean
   created_at timestamp
-}
-
-Table telefono_persona{
-    id integer [primary key]
-    prefijo_id integer
-    numero_telefono varchar
-    persona_id integer
-    status boolean
 }
 
 Table prefijo_telefono{
@@ -61,9 +55,6 @@ Table prefijo_telefono{
     prefijo integer
     status boolean
 }
-
-
-
 
 Table docentes {
   id integer [primary key]
@@ -494,11 +485,19 @@ Ref: "entradas_percentil"."id" < "historico"."entradas_percentil_id"
 
 Ref: "docente_area_grado"."id" < "historico"."docente_area_grado_id"
 
-Ref: "prefijo_telefono"."id" < "telefono_persona"."prefijo_id"
 
-Ref: "anio_escolar"."id" < "inscripcion"."anio_escolar_id" 
+
+
+
+
+
+Ref: "anio_escolar"."id" < "inscripcion"."anio_escolar_id"
 
 Ref: "anio_escolar"."id" < "docente_area_grado"."anio_escolar_id"
+
+
+
+
 
 Ref: "secciones"."id" < "inscripcion"."seccion_id"
 
@@ -518,8 +517,11 @@ Ref: "tallas"."id" < "estudiantes"."talla_camisa_id"
 
 Ref: "tallas"."id" < "estudiantes"."talla_pantalon_id"
 
-Ref: "personas"."id" < "telefono_persona"."persona_id"
 
 Ref: "grados"."numero_grado" < "grados"."cantidad_max"
 
 Ref: "anio_escolar"."id" < "secciones"."anio_escolar_id"
+
+Ref: "prefijo_telefono"."id" < "personas"."prefijo_id"
+
+Ref: "prefijo_telefono"."id" < "personas"."segundo_prefijo_id"

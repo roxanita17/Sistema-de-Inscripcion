@@ -307,7 +307,7 @@
                                                             </li>
                                                         @endif
                                                         <li>
-                                                            @if ($datos->status === 'Activo')
+                                                            @if ($datos->status === 'Activo' || $datos->status === 'Pendiente')
                                                                 <button
                                                                     class="dropdown-item d-flex align-items-center text-danger"
                                                                     data-bs-toggle="modal"
@@ -367,6 +367,7 @@
     @endforeach
 
     <script>
+        
         // Actualizar el enlace de generación de PDF con los filtros actuales
         function actualizarEnlacePDF() {
             const generarPdfBtn = document.getElementById('generarPdfBtn');

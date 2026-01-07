@@ -532,8 +532,26 @@ class InscripcionProsecucion extends Component
                 throw new \Exception('No se encontró la inscripción anterior del alumno.');
             }
 
+            $nuevaInscripcion = Inscripcion::create([
+                'tipo_inscripcion' => 'prosecucion',
+                'anio_escolar_id' => $anioActual->id,
+                'alumno_id' => $this->alumnoId,
+                'grado_id' => $this->gradoPromocionId,
+                'seccion_id' => $this->seccion_id,
+                'status' => 'Activo',
+                'documentos' => $inscripcionAnterior->documentos ?? null,
+                'observaciones' => filled($this->observaciones)
+                    ? $this->observaciones
+                    : 'Promoción por prosecución',
+                'acepta_normas_contrato' => $this->acepta_normas_contrato,
+                'padre_id' => $inscripcionAnterior->padre_id,
+                'madre_id' => $inscripcionAnterior->madre_id,
+                'representante_legal_id' => $inscripcionAnterior->representante_legal_id,
+            ]);
+
             $prosecucion = ModeloInscripcionProsecucion::create([
-                'inscripcion_id' => $inscripcionAnterior->id,
+                'inscripcion_id' => $nuevaInscripcion->id,
+                'inscripcion_anterior_id' => $inscripcionAnterior->id,
                 'anio_escolar_id' => $anioActual->id,
                 'grado_id' => $this->gradoPromocionId,
                 'seccion_id' => $this->seccion_id,
@@ -547,7 +565,6 @@ class InscripcionProsecucion extends Component
             ]);
 
             if ($this->seccion_id) {
-
                 $seccion = Seccion::lockForUpdate()->find($this->seccion_id);
 
                 if (!$seccion) {
@@ -578,6 +595,8 @@ class InscripcionProsecucion extends Component
             session()->flash('error', 'Error al guardar la inscripción: ' . $e->getMessage());
         }
     }
+
+
 
     private function validarAntesDeGuardar(): bool
     {

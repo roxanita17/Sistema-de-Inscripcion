@@ -96,5 +96,6 @@
             $('.alert-modern').fadeOut('slow');
         }, 5000);
     });
+    
 </script>
 @stop
