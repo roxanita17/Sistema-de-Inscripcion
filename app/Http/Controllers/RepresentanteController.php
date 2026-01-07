@@ -986,7 +986,7 @@ class RepresentanteController extends Controller
                 ],
                 'fecha_nacimiento' => 'required|date',
                 'telefono-representante' => 'required|string|max:20',
-                'sexo-representante' => 'required|in:M,F,O',
+                'sexo-representante' => 'required|exists:generos,id',
                 'tipo-ci-representante' => 'required|exists:tipos_documentos,id',
                 'estado_id' => 'required|exists:estados,id',
                 'municipio_id' => 'required|exists:municipios,id',
@@ -1000,7 +1000,6 @@ class RepresentanteController extends Controller
                 'carnet-patria-afiliado' => 'nullable',
                 'codigo-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
                 'serial-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
-                'sexo_representante' => 'required|exists:generos,id',
                 'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
             ];
 
@@ -1037,7 +1036,6 @@ class RepresentanteController extends Controller
                 'correo-representante.email' => 'El correo electrónico debe ser una dirección válida',
                 'estado_id.required' => 'El estado es obligatorio',
                 'municipio_id.required' => 'El municipio es obligatorio',
-                'sexo_representante.required' => 'El género es obligatorio',
                 'tipo_numero_documento_persona.required' => 'El tipo de documento es obligatorio',
             ];
 
