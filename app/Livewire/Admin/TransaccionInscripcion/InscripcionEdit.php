@@ -426,7 +426,11 @@ class InscripcionEdit extends Component
     private function validarRepresentantes(): bool
     {
         if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
-            session()->flash('error', 'Debe seleccionar al menos un representante.');
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Debe seleccionar un representante legal'
+            ]);
             return false;
         }
         return true;
@@ -443,10 +447,11 @@ class InscripcionEdit extends Component
             !$this->expresion_literaria_id ||
             !$this->anio_egreso
         ) {
-            session()->flash(
-                'error',
-                'Debe completar todos los datos de nuevo ingreso.'
-            );
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Debe completar todos los datos de nuevo ingreso.'
+            ]);
             return false;
         }
 
@@ -460,27 +465,47 @@ class InscripcionEdit extends Component
         try {
             $this->validate();
         } catch (\Illuminate\Validation\ValidationException $e) {
-            session()->flash('error', 'No se pudo guardar la inscripción. Revise los campos obligatorios.');
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Verifique los datos ingresados.'
+            ]);
             throw $e;
         }
 
         if (!$this->gradoId) {
-            session()->flash('error', 'Debe seleccionar un nivel academico.');
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Debe seleccionar un nivel academico'
+            ]);
             return;
         }
 
         if (!$this->esPrimerGrado && !$this->seccionId) {
-            session()->flash('error', 'Debe seleccionar una sección.');
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Debe seleccionar una seccion'
+            ]);
             return;
         }
 
         if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
-            session()->flash('error', 'Debe seleccionar al menos un representante.');
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Debe seleccionar un representante legal'
+            ]);
             return;
         }
 
         if (!$this->acepta_normas_contrato) {
-            session()->flash('error', 'Debe aceptar las normas del contrato.');
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'No se puede completar la inscripción',
+                'message' => 'Debe aceptar las normas del contrato'
+            ]);
             return;
         }
 
@@ -501,10 +526,11 @@ class InscripcionEdit extends Component
             $inscripcion = Inscripcion::findOrFail($this->inscripcionId);
             if (!$evaluacion['puede_guardar']) {
                 DB::rollBack();
-                session()->flash(
-                    'error',
-                    'No se puede guardar la inscripción. Faltan documentos obligatorios.'
-                );
+                $this->dispatch('swal', [
+                    'icon' => 'error',
+                    'title' => 'No se puede completar la inscripción',
+                    'message' => 'No se puede guardar la inscripción. Faltan documentos obligatorios.'
+                ]);
                 return;
             }
             if (!$this->validarNuevoIngreso($inscripcion)) {
@@ -536,11 +562,19 @@ class InscripcionEdit extends Component
             }
             DB::commit();
 
-            session()->flash('success', 'Inscripción actualizada exitosamente. Estado de documentos: ' . $evaluacion['estado_documentos']);
+            $this->dispatch('swal', [
+                'icon' => 'success',
+                'title' => 'Inscripción actualizada exitosamente',
+                'message' => 'Estado de documentos: ' . $evaluacion['estado_documentos']
+            ]);
             return redirect()->route('admin.transacciones.inscripcion.index');
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Error al actualizar: ' . $e->getMessage());
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Error al actualizar',
+                'message' => 'Error al actualizar: ' . $e->getMessage()
+            ]);
         }
     }
 
@@ -553,7 +587,10 @@ class InscripcionEdit extends Component
         $inscripcion = Inscripcion::with('alumno.persona')->find($this->inscripcionId);
         $this->alumnoSeleccionado = $inscripcion->alumno;
         $this->actualizarObservacionesPorDocumentos();
-        session()->flash('success', 'Datos del alumno actualizados correctamente.');
+        $this->dispatch('swal', [
+            'icon' => 'success',
+            'title' => 'Datos del alumno actualizados correctamente'
+        ]);
     }
 
     public function irACrearRepresentante()

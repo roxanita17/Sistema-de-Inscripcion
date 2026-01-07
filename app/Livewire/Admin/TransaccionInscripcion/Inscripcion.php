@@ -118,11 +118,6 @@ class Inscripcion extends Component
             'gradoId' => [
                 'required',
                 'exists:grados,id',
-                function ($attribute, $value, $fail) {
-                    if (!$this->inscripcionService->verificarCuposDisponibles($value)) {
-                        $fail('El nivel academico seleccionado ha alcanzado el límite de cupos disponibles.');
-                    }
-                }
             ],
             'seccion_id' => $this->esPrimerGrado
                 ? 'nullable'
@@ -473,6 +468,30 @@ class Inscripcion extends Component
         if (!$this->validarRepresentantes()) {
             return;
         }
+        if (!empty($this->documentosFaltantes)) {
+            $mensaje = collect($this->documentosFaltantes)
+                ->map(fn($doc) => $this->documentosEtiquetas[$doc] ?? $doc)
+                ->implode('<br>');
+
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Documentos incompletos',
+                'html' => $mensaje
+            ]);
+
+            return;
+        }
+
+        if (!$this->inscripcionService->verificarCuposDisponibles($this->gradoId)) {
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Cupos agotados',
+                'html' => 'Este grado ha alcanzado el máximo de cupos disponibles.'
+            ]);
+            return;
+        }
+
+
 
         $this->validate();
 
@@ -565,7 +584,7 @@ class Inscripcion extends Component
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'No se puede completar la inscripción',
-                'message' => 'Debe seleccionar al menos un representante.'
+                'message' => 'Debe seleccionar un representante legal.'
             ]);
 
             return false;

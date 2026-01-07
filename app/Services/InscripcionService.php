@@ -120,9 +120,10 @@ class InscripcionService
 
         try {
             if (!$this->verificarCuposDisponibles($data->grado_id)) {
-                throw new \Exception('El grado ha alcanzado el límite de cupos.');
+                throw new InscripcionException(
+                    'El grado ha alcanzado el límite de cupos disponibles.'
+                );
             }
-
             $grado = Grado::findOrFail($data->grado_id);
             $esPrimerGrado = ((int) $grado->numero_grado === 1);
 
@@ -133,10 +134,21 @@ class InscripcionService
                 $esPrimerGrado
             );
 
+            if (!empty($evaluacion['faltantes'])) {
 
-            if (!$evaluacion['puede_guardar']) {
-                throw new InscripcionException('Faltan documentos obligatorios.');
+                $etiquetas = $this->documentoService->obtenerEtiquetas();
+
+                $lista = collect($evaluacion['faltantes'])
+                    ->map(fn($doc) => $etiquetas[$doc] ?? ucfirst(str_replace('_', ' ', $doc)))
+                    ->implode('<br>');
+
+                throw new InscripcionException(
+                    "Faltan los siguientes documentos obligatorios:<br><br>{$lista}"
+                );
             }
+
+
+
 
             // Obtener el año escolar activo
             $anioEscolar = $this->obtenerAnioEscolarActivo();

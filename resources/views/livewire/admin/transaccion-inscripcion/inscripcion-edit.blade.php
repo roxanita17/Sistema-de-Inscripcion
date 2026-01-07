@@ -1,33 +1,19 @@
 <div>
-    @if (session()->has('success') || session()->has('error'))
-        <div class="alerts-container mb-3">
-            @if (session()->has('success'))
-                <div class="alert-modern alert-success alert alert-dismissible fade show">
-                    <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="alert-content">
-                        <h4>Éxito</h4>
-                        <p>{{ session('success') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('swal', (payload) => {
+                const data = payload[0];
 
-            @if (session()->has('error'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show">
-                    <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
-                    <div class="alert-content">
-                        <h4>Error</h4>
-                        <p>{{ session('error') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
-        </div>
-    @endif
+                Swal.fire({
+                    icon: data.icon,
+                    title: data.title,
+                    text: data.message,
+                    confirmButtonText: 'Aceptar'
+                });
+            });
+        });
+    </script>
 
     <div class="card-modern mb-4">
         <div class="card-header-modern">
@@ -636,12 +622,13 @@
                                 <option value="{{ $seccion->id }}">{{ $seccion->nombre }}</option>
                             @endforeach
                         </select>
+                        @error('seccionId')
+                            <div class="invalid-feedback-modern">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
-                    @error('seccionId')
-                        <div class="invalid-feedback-modern">
-                            {{ $message }}
-                        </div>
-                    @enderror
+
                 @endif
                 @if ($esPrimerGrado)
                     <div class="col-md-4">
@@ -656,7 +643,7 @@
                 @endif
             </div>
 
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="estado_id" class="form-label-modern">
@@ -728,7 +715,7 @@
                         Institución de Procedencia
                     </label>
                     <select wire:model.live="institucion_procedencia_id"
-                        class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror">
+                        class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror" @disabled(!$localidad_id)>
                         <option value="">Seleccione</option>
                         @foreach ($instituciones as $inst)
                             <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}</option>

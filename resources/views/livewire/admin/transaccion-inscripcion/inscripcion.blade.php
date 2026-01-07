@@ -1,6 +1,5 @@
 <div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         document.addEventListener('livewire:init', () => {
             Livewire.on('swal', (payload) => {
@@ -15,7 +14,6 @@
             });
         });
     </script>
-
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
