@@ -318,7 +318,7 @@
                             Filtros
                         </button>
                     </div>
-                    <a href="{{ route('representante.reporte_pdf') }}" class="btn-pdf" id="generarPdfBtn" target="_blank">
+                    <a href="{{ route('representante.reporte_pdf', request()->query()) }}" class="btn-pdf" id="generarPdfBtn" target="_blank">
                         <i class="fas fa-file-pdf me-2"></i>Generar PDF
                     </a>
 

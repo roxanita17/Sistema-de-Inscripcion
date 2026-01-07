@@ -183,7 +183,7 @@
                     <th>Apellidos</th>
                     <th>Nombres</th>
                     <th class="text-center">Género</th>
-                    <th class="text-center">Grado</th>
+                    <th class="text-center">Nivel academico</th>
                     <th class="text-center">Sección</th>
                     <th>Discapacidad</th>
                     <th>Etnia</th>

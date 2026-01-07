@@ -110,9 +110,6 @@
             padding: 6px 8px;
             vertical-align: middle;
             word-break: break-word;
-            white-space: normal;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         th {
@@ -145,16 +142,16 @@
         }
 
         th:nth-child(1), td:nth-child(1) { width: 3%; }
-        th:nth-child(2), td:nth-child(2) { width: 9%; }
-        th:nth-child(3), td:nth-child(3) { width: 10%; }
-        th:nth-child(4), td:nth-child(4) { width: 10%; }
+        th:nth-child(2), td:nth-child(2) { width: 8%; }
+        th:nth-child(3), td:nth-child(3) { width: 12%; }
+        th:nth-child(4), td:nth-child(4) { width: 12%; }
         th:nth-child(5), td:nth-child(5) { width: 8%; }
-        th:nth-child(6), td:nth-child(6) { width: 12%; }
-        th:nth-child(7), td:nth-child(7) { width: 11%; }
-        th:nth-child(8), td:nth-child(8) { width: 14%; }
-        th:nth-child(9), td:nth-child(9) { width: 9%; }
-        th:nth-child(10), td:nth-child(10) { width: 9%; }
-        th:nth-child(11), td:nth-child(11) { width: 12%; }
+        th:nth-child(6), td:nth-child(6) { width: 8%; }
+        th:nth-child(7), td:nth-child(7) { width: 6%; }
+        th:nth-child(8), td:nth-child(8) { width: 11%; }
+        th:nth-child(9), td:nth-child(9) { width: 10%; }
+        th:nth-child(10), td:nth-child(10) { width: 12%; }
+        th:nth-child(11), td:nth-child(11) { width: 10%; }
     </style>
 </head>
 
@@ -169,33 +166,13 @@
         </div>
 
         <div class="header">
-            <h2>REPORTE GENERAL - PROSECUCIÓN</h2>
+            <h2>REPORTE GENERAL - NUEVO INGRESO</h2>
             <p>
                 Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}
                 @if(!empty($filtros['anio_escolar']))
                     | Año escolar: {{ $filtros['anio_escolar'] }}
                 @endif
             </p>
-            @if(!empty($filtros) && count(array_filter($filtros)) > 1)
-                <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 10px; font-size: 8pt;">
-                    <strong>Filtros aplicados:</strong><br>
-                    @if(isset($filtros['grado']))
-                        • Grado: {{ $filtros['grado'] }}<br>
-                    @endif
-                    @if(isset($filtros['seccion']))
-                        • Sección: {{ $filtros['seccion'] }}<br>
-                    @endif
-                    @if(isset($filtros['estatus']))
-                        • Estatus: {{ $filtros['estatus'] }}<br>
-                    @endif
-                    @if(isset($filtros['buscar']))
-                        • Búsqueda: "{{ $filtros['buscar'] }}"<br>
-                    @endif
-                    @if(isset($filtros['materias_pendientes']))
-                        • Materias: {{ $filtros['materias_pendientes'] }}<br>
-                    @endif
-                </div>
-            @endif
         </div>
 
         <table>
@@ -205,19 +182,18 @@
                     <th class="text-center">Cédula</th>
                     <th>Apellidos</th>
                     <th>Nombres</th>
-                    <th class="text-center">Género</th> 
-                    <th>Discapacidad</th>
-                    <th>Etnia</th>
-                    <th>Áreas de formación pendiente</th>
+                    <th class="text-center">Género</th>
                     <th class="text-center">Grado</th>
                     <th class="text-center">Sección</th>
+                    <th>Discapacidad</th>
+                    <th>Etnia</th>
                     <th>Representante Legal</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($prosecuciones as $index => $prosecucion)
+                @forelse($nuevoIngresos as $index => $ni)
                     @php
-                        $ins = $prosecucion->inscripcion;
+                        $ins = $ni->inscripcion;
                         $al = $ins?->alumno;
                         $per = $al?->persona;
                         $tipoDoc = $per?->tipoDocumento?->abreviacion ?? $per?->tipoDocumento?->nombre ?? '';
@@ -225,9 +201,8 @@
                         $apellidos = trim(($per?->primer_apellido ?? '') . ' ' . ($per?->segundo_apellido ?? ''));
                         $nombres = trim(($per?->primer_nombre ?? '') . ' ' . ($per?->segundo_nombre ?? '') . ' ' . ($per?->tercer_nombre ?? ''));
                         $genero = $per?->genero?->genero ?? 'N/A';
-                        $gradoAnterior = $ins?->grado?->numero_grado ?? 'N/A';
-                        $gradoActual = $prosecucion->grado?->numero_grado ?? 'N/A';
-                        $seccion = $prosecucion->seccion?->nombre ?? 'N/A';
+                        $grado = $ins?->grado?->numero_grado ?? 'N/A';
+                        $seccion = $ins?->seccionAsignada?->nombre ?? 'N/A';
                         
                         // Discapacidades
                         $discapacidades = '';
@@ -249,20 +224,7 @@
                             $repLegal = 'No especificado';
                         }
                         
-                        // Áreas de formación pendiente
-                        $areasPendientes = '';
-                        if ($prosecucion && $prosecucion->prosecucionAreas) {
-                            $pendientes = $prosecucion->prosecucionAreas->where('status', 'pendiente');
-                            if ($pendientes->count() > 0) {
-                                $areasPendientes = $pendientes->map(function($area) {
-                                    return $area->gradoAreaFormacion->area_formacion->nombre_area_formacion ?? 'N/A';
-                                })->implode(', ');
-                            } else {
-                                $areasPendientes = 'Ninguna';
-                            }
-                        } else {
-                            $areasPendientes = 'Ninguna';
-                        }
+                       
                     @endphp
                     <tr>
                         <td class="text-center">{{ $index + 1 }}</td>
@@ -270,23 +232,22 @@
                         <td>{{ $apellidos ?: 'N/A' }}</td>
                         <td>{{ $nombres ?: 'N/A' }}</td>
                         <td class="text-center">{{ $genero }}</td>
+                        <td class="text-center">{{ $grado }}</td>
+                        <td class="text-center">{{ $seccion }}</td>
                         <td>{{ $discapacidades }}</td>
                         <td>{{ $etnia }}</td>
-                        <td>{{ $areasPendientes }}</td>
-                        <td class="text-center">{{ $gradoActual }}</td>
-                        <td class="text-center">{{ $seccion }}</td>
                         <td>{{ $repLegal }}</td>
+                        
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="11" class="text-center">No se encontraron inscripciones de nuevo ingreso con los criterios seleccionados</td>
+                    </tr>
+                @endforelse
             </tbody>
-            @empty($prosecuciones)
-                <tr>
-                    <td colspan="11" class="text-center">No se encontraron inscripciones de prosecución con los criterios seleccionados</td>
-                </tr>
-            @endempty
             <tfoot>
                 <tr>
-                    <td colspan="11" class="text-right"><strong>Total: {{ $prosecuciones->count() }}</strong></td>
+                    <td colspan="11" class="text-right"><strong>Total: {{ $nuevoIngresos->count() }}</strong></td>
                 </tr>
             </tfoot>
         </table>

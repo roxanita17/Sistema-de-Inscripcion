@@ -286,6 +286,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('transacciones/docente_area_grado/{id}/destroy-asignacion', [DocenteAreaGradoController::class, 'destroyAsignacion'])->name('transacciones.docente_area_grado.destroyAsignacion');
     });
 
+    //===== RUTA REPORTES DOCENTE_AREA_GRADO ======
+    Route::get('transacciones/docente_area_grado/reporte-general', [DocenteAreaGradoController::class, 'reportePDFGeneral'])->name('transacciones.docente_area_grado.reportePDFGeneral');
+
     //===== RUTA REPORTES DOCENTE ======
     Route::get('docente/reporte/{id}', [DocenteController::class, 'reportePDF'])->name('docente.reportePDF');
     Route::get('docente/reporte-general', [DocenteController::class, 'reporteGeneralPDF'])->name('docente.reporteGeneralPDF');
