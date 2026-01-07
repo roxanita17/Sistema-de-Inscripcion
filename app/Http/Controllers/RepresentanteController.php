@@ -915,8 +915,8 @@ class RepresentanteController extends Controller
 
             // Correo y organización (representante legal)
             'correo_representante'                    => $request->input('correo-representante'),
-            'pertenece_a_organizacion_representante' => $request->input('pertenece-organizacion') === 'si' ? 1 : 0,
-            'cual_organizacion_representante'        => $request->input('cual-organizacion'),
+            'pertenece_a_organizacion_representante' => $request->input('organizacion-representante') === 'si' ? 1 : 0,
+            'cual_organizacion_representante'        => $request->input('especifique-organizacion'),
 
             // Mapeo de campos de carnet de la patria y banco desde el formulario
             'carnet_patria_afiliado'             => $request->input('carnet-patria-afiliado'),
