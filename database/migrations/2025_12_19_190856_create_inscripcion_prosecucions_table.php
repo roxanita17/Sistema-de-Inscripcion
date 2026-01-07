@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('inscripcion_prosecucions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('inscripcion_id')->constrained('inscripcions')->cascadeOnDelete();
+            $table->foreignId('inscripcion_anterior_id')->nullable()->constrained('inscripcions')->nullOnDelete();
             $table->boolean('promovido')->default(false);
             $table->foreignId('grado_id')->nullable()->constrained('grados')->nullOnDelete();
             $table->foreignId('seccion_id')->nullable()->constrained('seccions')->nullOnDelete();
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->string('observaciones')->nullable();
             $table->boolean('acepta_normas_contrato')->default(false);
             $table->foreignId('anio_escolar_id')->nullable()->constrained('anio_escolars')->nullOnDelete();
-            $table->string('status')->default('Activo'); 
+            $table->string('status')->default('Activo');
             $table->timestamps();
         });
     }

@@ -307,7 +307,7 @@
                                                             </li>
                                                         @endif
                                                         <li>
-                                                            @if ($datos->status === 'Activo')
+                                                            @if ($datos->status === 'Activo' || $datos->status === 'Pendiente')
                                                                 <button
                                                                     class="dropdown-item d-flex align-items-center text-danger"
                                                                     data-bs-toggle="modal"

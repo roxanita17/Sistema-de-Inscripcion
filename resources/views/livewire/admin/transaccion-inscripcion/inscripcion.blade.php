@@ -428,9 +428,9 @@
                                             Estado / Municipio / Localidad
                                         </span>
                                         <span class="info-value">
-                                            {{ $representanteLegalSeleccionado->representante->persona->estado->nombre_estado ?? 'N/A' }},
-                                            {{ $representanteLegalSeleccionado->representante->persona->municipios->nombre_municipio ?? 'N/A' }},
-                                            {{ $representanteLegalSeleccionado->representante->persona->localidads->nombre_localidad ?? 'N/A' }}
+                                            {{ $representanteLegalSeleccionado->representante->estado->nombre_estado ?? 'N/A' }},
+                                            {{ $representanteLegalSeleccionado->representante->municipios->nombre_municipio ?? 'N/A' }},
+                                            {{ $representanteLegalSeleccionado->representante->localidads->nombre_localidad ?? 'N/A' }}
                                         </span>
                                     </div>
                                 </div>
