@@ -119,13 +119,54 @@ class RepresentanteController extends Controller
         }
 
         // Aplicar filtros
-        if (request()->has('es_legal') && request('es_legal') !== '') {
+        \Log::info('Filtros recibidos:', [
+            'es_legal' => request('es_legal'),
+            'grado_id' => request('grado_id'), 
+            'seccion_id' => request('seccion_id'),
+            'todos_los_params' => request()->all()
+        ]);
+
+        if (request()->has('es_legal') && request('es_legal') !== '' && request('es_legal') !== null) {
             $esLegal = request('es_legal') == '1';
             if ($esLegal) {
                 $query->whereHas('legal');
             } else {
                 $query->whereDoesntHave('legal');
             }
+            \Log::info('Aplicando filtro es_legal: ' . $esLegal);
+        }
+
+        // Aplicar filtro por grado (nivel académico) - usando consulta directa
+        if (request()->has('grado_id') && request('grado_id') !== '' && request('grado_id') !== null) {
+            $gradoId = request('grado_id');
+            \Log::info('Aplicando filtro grado_id: ' . $gradoId);
+            $query->whereExists(function ($subquery) use ($gradoId) {
+                $subquery->select(DB::raw(1))
+                    ->from('inscripcions')
+                    ->where(function ($q) use ($gradoId) {
+                        $q->where('inscripcions.padre_id', DB::raw('representantes.id'))
+                          ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
+                          ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
+                    })
+                    ->where('inscripcions.grado_id', $gradoId);
+            });
+        }
+
+        // Aplicar filtro por sección - solo si se selecciona explícitamente una sección
+        if (request()->has('seccion_id') && request('seccion_id') !== '' && request('seccion_id') !== null && request('seccion_id') != '0') {
+            $seccionNombre = request('seccion_id');
+            \Log::info('Aplicando filtro seccion_id: ' . $seccionNombre);
+            $query->whereExists(function ($subquery) use ($seccionNombre) {
+                $subquery->select(DB::raw(1))
+                    ->from('inscripcions')
+                    ->join('seccions', 'seccions.id', '=', 'inscripcions.seccion_id')
+                    ->where(function ($q) use ($seccionNombre) {
+                        $q->where('inscripcions.padre_id', DB::raw('representantes.id'))
+                          ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
+                          ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
+                    })
+                    ->where('seccions.nombre', $seccionNombre);
+            });
         }
 
         // Solo mostrar representantes activos (status != 0) y no eliminados con soft delete
@@ -138,6 +179,23 @@ class RepresentanteController extends Controller
         // Ejecutar la consulta con paginación
         $representantes = $query->paginate(10)
             ->appends(request()->query());
+
+        \Log::info('Resultados después de filtros:', [
+            'total_encontrados' => $representantes->total(),
+            'pagina_actual' => $representantes->currentPage(),
+            'sql_query' => $query->toSql()
+        ]);
+
+        // Obtener datos para los filtros
+        $grados = \App\Models\Grado::where('status', true)
+            ->orderBy('numero_grado')
+            ->get();
+            
+        $secciones = \App\Models\Seccion::where('status', true)
+            ->select('nombre')
+            ->distinct()
+            ->orderBy('nombre')
+            ->get();
 
         // Debug: verificar datos cargados
         if ($representantes->count() > 0) {
@@ -158,7 +216,7 @@ class RepresentanteController extends Controller
             ]);
         }
 
-        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
+        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo', 'grados', 'secciones'));
     }
 
     /**
@@ -2168,9 +2226,9 @@ class RepresentanteController extends Controller
     public function reportePDF(Request $request)
     {
         $filtro = $request->all();
-
+        
         $representantes = Representante::reportePDF($filtro);
-
+        
         // Ordenamos por la primera letra del primer apellido
         $representantes = $representantes->sortBy(function ($item) {
             // Accedemos directamente a la propiedad si existe
@@ -2183,7 +2241,7 @@ class RepresentanteController extends Controller
             return response()->json('No se encontraron representantes', 404);
         }
 
-        $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes'));
+        $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes', 'filtro'));
         
         // Configurar el papel y márgenes
         $pdf->setPaper('A4', 'landscape');

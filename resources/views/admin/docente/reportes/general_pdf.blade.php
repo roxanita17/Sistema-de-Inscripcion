@@ -281,6 +281,13 @@
             <p>Total de docentes: <strong>{{ $docentes->count() }}</strong></p>
             <p>Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}</p>
         </div>
+        
+        <script type="text/php">
+            if (isset($pdf)) {
+                $pdf->page_text(40, 570, "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}", null, 8, array(90, 90, 90));
+                $pdf->page_text(400, 570, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10, array(0, 0, 0));
+            }
+        </script>
     </div>
 </body>
 </html>

@@ -201,6 +201,9 @@ class DocenteAreaGradoController extends Controller
             'docentes' => $docentes
         ]);
 
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->setOption('isPhpEnabled', true);
+
         return $pdf->stream('reporte_general_docentes_asignaciones.pdf');
     }
 }

@@ -110,6 +110,16 @@
             font-family: 'Segoe UI', 'Roboto', sans-serif;
         }
         
+        .header h2.filtros {
+            color: var(--color-primario);
+            margin: 10px 0 5px 0;
+            font-size: 12pt;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
         .header p {
             color: var(--color-texto-suave);
             margin: 10px 0 0 0;
@@ -196,18 +206,21 @@
         }
         
         /* Ajuste de columnas específicas */
-        th:nth-child(1), td:nth-child(1) { width: 8%; }  /* Cédula */
-        th:nth-child(2), td:nth-child(2) { width: 18%; } /* Nombres */
-        th:nth-child(3), td:nth-child(3) { width: 8%; }  /* Teléfono */
-        th:nth-child(4), td:nth-child(4) { width: 12%; } /* Correo */
-        th:nth-child(5), td:nth-child(5) { width: 8%; }  /* Estado */
-        th:nth-child(6), td:nth-child(6) { width: 8%; }  /* Municipio */
-        th:nth-child(7), td:nth-child(7) { width: 10%; } /* Parroquia */
-        th:nth-child(8), td:nth-child(8) { width: 10%; } /* Ocupación */
-        th:nth-child(9), td:nth-child(9) { width: 8%; }  /* Tipo */
-        th:nth-child(10), td:nth-child(10) { width: 8%; } /* Banco */
-        th:nth-child(11), td:nth-child(11) { width: 10%; } /* N° Cuenta */
-        th:nth-child(12), td:nth-child(12) { width: 10%; } /* Parentesco */
+        th:nth-child(1), td:nth-child(1) { width: 6%; }  /* Cédula Representante */
+        th:nth-child(2), td:nth-child(2) { width: 12%; } /* Nombre Representante */
+        th:nth-child(3), td:nth-child(3) { width: 12%; } /* Apellido Representante */
+        th:nth-child(4), td:nth-child(4) { width: 20%; } /* Estudiante (Cédula y Nombre) */
+        th:nth-child(5), td:nth-child(5) { width: 8%; }  /* Teléfono */
+        th:nth-child(6), td:nth-child(6) { width: 10%; } /* Correo */
+        th:nth-child(7), td:nth-child(7) { width: 8%; }  /* Ocupación */
+        th:nth-child(8), td:nth-child(8) { width: 6%; } /* Tipo */
+        th:nth-child(9), td:nth-child(9) { width: 6%; } /* Sección */
+        th:nth-child(10), td:nth-child(10) { width: 6%; } /* Grado */
+        @if(isset($filtros['es_legal']) && $filtros['es_legal'])
+            th:nth-child(11), td:nth-child(11) { width: 8%; } /* Banco */
+            th:nth-child(12), td:nth-child(12) { width: 8%; } /* N° Cuenta */
+            th:nth-child(13), td:nth-child(13) { width: 6%; } /* Parentesco */
+        @endif
         
         /* Alineación de celdas */
         td { font-size: 8.5pt; }
@@ -226,6 +239,26 @@
 
         <div class="header">
             <h2>REPORTE DE REPRESENTANTES</h2>
+            
+            
+            
+            @if(isset($filtro))
+            <STRONG>
+                <H3 style="margin-top: 10px; font-size: 12pt; font-weight: 600; text-transform: none; letter-spacing: normal; font-family: 'Segoe UI', 'Roboto', sans-serif; color: var(--color-primario);">
+                    @if($filtro['grado_id'] ?? false)
+                        <strong>NIVEL ACADÉMICO: {{ App\Models\Grado::find($filtro['grado_id'])->numero_grado ?? '' }}°</strong>
+                    @endif
+                    
+                    @if($filtro['seccion_id'] ?? false)
+                        <strong>SECCIÓN: {{ $filtro['seccion_id'] }}</strong>
+                    @endif
+                    
+                    @if($filtro['es_legal'] ?? false)
+                        <strong>TIPO: {{ $filtro['es_legal'] == '1' ? 'REPRESENTANTES LEGALES' : 'PROGENITORES' }}</strong>
+                    @endif
+                </H3>
+            </STRONG>
+            @endif
             <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
@@ -235,10 +268,13 @@
                     <th>Cédula</th>
                     <th>Nombre</th>
                     <th>Apellido</th>
+                    <th>Estudiante</th>
                     <th>Teléfono</th>
                     <th>Correo</th>
                     <th>Ocupación</th>
                     <th>Tipo</th>
+                    <th>Sección</th>
+                    <th>Grado</th>
                     @if(isset($filtros['es_legal']) && $filtros['es_legal'])
                         <th>Banco</th>
                         <th>N° Cuenta</th>
@@ -255,11 +291,23 @@
                         {{ $representante->segundo_nombre ?? '' }}
                     </td>
                     <td>{{ $representante->primer_apellido ?? 'N/A' }} {{ $representante->segundo_apellido ?? '' }}</td>
+                    <td class="long-text">
+                        @if($representante->alumno_cedula && $representante->alumno_primer_nombre)
+                            <strong>{{ $representante->alumno_cedula }}</strong><br>
+                            {{ $representante->alumno_primer_nombre ?? '' }} 
+                            {{ $representante->alumno_segundo_nombre ?? '' }}
+                            {{ $representante->alumno_primer_apellido ?? '' }} 
+                            {{ $representante->alumno_segundo_apellido ?? '' }}
+                        @else
+                            N/A
+                        @endif
+                    </td>
                     <td class="text-center">{{ $representante->telefono ?? 'N/A' }}</td>
                     <td class="long-text">{{ $representante->email ?? 'N/A' }}</td>
-    
                     <td class="long-text">{{ $representante->ocupacion_nombre ?? 'N/A' }}</td>
                     <td class="text-center">{{ $representante->parentesco ? 'Representante Legal' : 'Progenitor' }}</td>
+                    <td class="text-center">{{ $representante->seccion_nombre ?? 'N/A' }}</td>
+                    <td class="text-center">{{ $representante->numero_grado ?? 'N/A' }}°</td>
                     @if(isset($filtros['es_legal']) && $filtros['es_legal'])
                         <td class="text-center">{{ $representante->banco_nombre ?? 'N/A' }}</td>
                         <td class="text-center">{{ $representante->codigo_carnet_patria_representante ?? 'N/A' }}</td>
@@ -268,7 +316,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ isset($filtros['es_legal']) && $filtros['es_legal'] ? 14 : 11 }}" class="text-center">
+                    <td colspan="{{ isset($filtros['es_legal']) && $filtros['es_legal'] ? 13 : 10 }}" class="text-center">
                         No se encontraron representantes con los criterios seleccionados
                     </td>
                 </tr>
@@ -276,7 +324,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="{{ isset($filtros['es_legal']) && $filtros['es_legal'] ? 14 : 11 }}" class="text-right">
+                <td colspan="{{ isset($filtros['es_legal']) && $filtros['es_legal'] ? 13 : 10 }}" class="text-right">
                     <strong>Total de representantes: {{ $representantes->count() }}</strong>
                 </td>
             </tr>

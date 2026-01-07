@@ -379,6 +379,8 @@ class DocenteController extends Controller
                 'docente' => $docente
             ]);
 
+            $pdf->setOption('isPhpEnabled', true);
+
             return $pdf->stream('docente_' . ($docente->numero_documento ?? $docente->id) . '.pdf');
         } catch (\Exception $e) {
             return response('Error al generar el PDF: ' . $e->getMessage(), 500);
@@ -422,6 +424,9 @@ class DocenteController extends Controller
             $pdf = PDF::loadView('admin.docente.reportes.general_pdf', [
                 'docentes' => $docentes
             ]);
+
+            $pdf->setPaper('A4', 'landscape');
+            $pdf->setOption('isPhpEnabled', true);
 
             return $pdf->stream('docentes_general.pdf');
         } catch (\Exception $e) {
