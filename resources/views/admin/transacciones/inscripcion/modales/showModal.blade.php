@@ -760,7 +760,7 @@
                                         Año Egreso
                                     </span>
                                     <span class="detail-value">
-                                        {{ \Carbon\Carbon::parse($datos->nuevoIngreso->anio_egreso)->format('Y') ?? 'N/A' }}
+                                       {{ optional($datos->nuevoIngreso)->anio_egreso ? \Carbon\Carbon::parse($datos->nuevoIngreso->anio_egreso)->format('Y') : 'N/A' }}
                                     </span>
                                 </div>
                             </div>

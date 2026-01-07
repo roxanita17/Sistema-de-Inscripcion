@@ -14,22 +14,16 @@
                     <p class="title-subtitle">Administración de los municipios del sistema</p>
                 </div>
             </div>
-
-            {{-- Botón crear --}} 
-            <button type="button" 
-                    class="btn-create" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#modalCrear"
-                    @if(!$anioEscolarActivo) disabled @endif
-                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo Municipio' }}">
+            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
+                @if (!$anioEscolarActivo) disabled @endif
+                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo Municipio' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Municipio</span>
             </button>
-        </div> 
+        </div>
     </div>
 @stop
 
-{{-- Estilos --}}
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
@@ -41,9 +35,8 @@
 @endsection
 
 @section('js')
-    <!-- Incluir el archivo de validaciones -->
     <script src="{{ asset('js/validations/municipio.js') }}"></script>
-    
+
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('cerrarModal', () => {
@@ -51,17 +44,17 @@
                 modales.forEach(modal => {
                     const modalInstance = bootstrap.Modal.getInstance(modal);
                     if (modalInstance) {
-                    modalInstance.hide();
-                }
+                        modalInstance.hide();
+                    }
+                });
+
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
             });
-
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(backdrop => backdrop.remove());
-
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
         });
-    });
-</script>
+    </script>
 @stop

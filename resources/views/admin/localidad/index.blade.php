@@ -13,23 +13,17 @@
                     <h1 class="title-main">Gestión de Localidades</h1>
                     <p class="title-subtitle">Administración de las localidades del sistema</p>
                 </div>
-            </div> 
-
-            {{-- Botón crear --}}
-            <button type="button"
-             class="btn-create"
-              data-bs-toggle="modal"
-               data-bs-target="#modalCrear"
-               @if (!$anioEscolarActivo) disabled @endif
-               title="{{ $anioEscolarActivo ? 'Crear Localidad' : 'Debe registrar un año escolar activo para realizar esta acción.' }}">
+            </div>
+            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
+                @if (!$anioEscolarActivo) disabled @endif
+                title="{{ $anioEscolarActivo ? 'Crear Localidad' : 'Debe registrar un año escolar activo para realizar esta acción.' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nueva Localidad</span>
             </button>
-        </div> 
+        </div>
     </div>
 @stop
 
-{{-- Estilos --}}
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
@@ -41,9 +35,8 @@
 @endsection
 
 @section('js')
-    <!-- Incluir el archivo de validaciones -->
     <script src="{{ asset('js/validations/localidad.js') }}"></script>
-    
+
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('cerrarModal', () => {
@@ -51,17 +44,17 @@
                 modales.forEach(modal => {
                     const modalInstance = bootstrap.Modal.getInstance(modal);
                     if (modalInstance) {
-                    modalInstance.hide();
-                }
+                        modalInstance.hide();
+                    }
+                });
+
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
             });
-
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(backdrop => backdrop.remove());
-
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
         });
-    });
-</script>
+    </script>
 @stop

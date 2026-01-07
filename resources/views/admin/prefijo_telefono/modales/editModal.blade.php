@@ -1,9 +1,7 @@
-<!-- Modal Editar prefijo -->
 <div class="modal fade" id="viewModalEditar{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalEditarLabel{{ $datos->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
 
-            {{-- Cabecera del modal --}}
             <div class="modal-header-edit">
                 <div class="modal-icon-edit">
                     <i class="fas fa-pen"></i>
@@ -16,13 +14,11 @@
                 </button>
             </div>
 
-            {{-- Cuerpo del modal con formulario --}}
             <div class="modal-body-edit">
                 <form action="{{ route('admin.prefijo_telefono.modales.update', $datos->id) }}" method="POST">
                     @csrf
                     <input type="hidden" name="id" value="{{ $datos->id }}">
 
-                    {{-- Numero de prefijo --}}
                     <div class="form-group-modern">
                         <label for="prefijo_{{ $datos->id }}" class="form-label-modern">
                             Número de prefijo
@@ -43,7 +39,6 @@
                             </div>
                         @enderror
                     </div>
-                    {{-- Botones --}}
                     <div class="modal-footer-edit">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
@@ -54,10 +49,8 @@
                             </button>
                         </div>
                     </div>
-
                 </form>
             </div>
-
         </div>
     </div>
 </div>

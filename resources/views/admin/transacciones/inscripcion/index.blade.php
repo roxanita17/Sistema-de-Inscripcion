@@ -367,6 +367,7 @@
     @endforeach
 
     <script>
+        
         // Actualizar el enlace de generación de PDF con los filtros actuales
         function actualizarEnlacePDF() {
             const generarPdfBtn = document.getElementById('generarPdfBtn');
