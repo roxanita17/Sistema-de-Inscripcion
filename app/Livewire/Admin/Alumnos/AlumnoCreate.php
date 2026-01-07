@@ -45,10 +45,14 @@ class AlumnoCreate extends Component
     public $tallas = [];
     public $talla_zapato;
     public $talla_pantalon_id;
+    public $paisId = null;
+    public $paises = [];
+
     public $estado_id;
     public $municipio_id;
     public $localidad_id;
     public $instituciones;
+
     public $tipos_documentos = [];
     public $generos = [];
     public $lateralidades = [];
@@ -247,7 +251,7 @@ class AlumnoCreate extends Component
 
     public function cargarDatosIniciales()
     {
-        $this->estados = Estado::where('status', true)->get();
+        $this->paises = \App\Models\Pais::where('status', true)->orderBy('nameES')->get();
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
         $this->generos = \App\Models\Genero::where('status', true)->get();
         $this->lateralidades = Lateralidad::where('status', true)->get();
@@ -286,16 +290,42 @@ class AlumnoCreate extends Component
         $this->updatedFechaNacimiento($this->fecha_nacimiento);
     }
 
+    public function updatedPaisId($paisId)
+    {
+        $this->estados = Estado::where('pais_id', $paisId)
+            ->where('status', true)
+            ->orderBy('nombre_estado')
+            ->get();
+
+        $this->estado_id = null;
+        $this->municipio_id = null;
+        $this->localidad_id = null;
+
+        $this->municipios = [];
+        $this->localidades = [];
+    }
+
+
     public function updatedEstadoId($estadoId)
     {
+        if (!$estadoId) {
+            $this->municipios = [];
+            $this->municipio_id = null;
+            $this->localidades = [];
+            $this->localidad_id = null;
+            return;
+        }
+
         $this->municipios = Municipio::where('estado_id', $estadoId)
             ->where('status', true)
             ->orderBy('nombre_municipio')
             ->get();
+
         $this->municipio_id = null;
         $this->localidad_id = null;
         $this->localidades = [];
     }
+
 
     public function updatedMunicipioId($municipioId)
     {

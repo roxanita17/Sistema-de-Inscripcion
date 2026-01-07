@@ -114,6 +114,7 @@
                     <thead>
                         <tr class="text-center">
                             <th>#</th>
+                            <th class="text-center">Pais</th>
                             <th class="text-center">Estado</th>
                             <th class="text-center">Estado</th>
                             <th class="text-center">Acciones</th>
@@ -137,6 +138,7 @@
                         @foreach ($estados as $index => $datos)
                             <tr class="row-12">
                                 <td>{{ $estados->firstItem() + $index }}</td>
+                                <td class="title-main">{{ $datos->nameES }}</td>
                                 <td class="title-main">{{ $datos->nombre_estado }}</td>
                                 <td>
                                     @if ($datos->status)

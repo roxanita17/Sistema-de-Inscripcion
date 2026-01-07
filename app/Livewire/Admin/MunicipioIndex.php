@@ -18,19 +18,13 @@ class MunicipioIndex extends Component
     public $updateMode = false;
     public $search = '';
 
-    public $anioEscolarActivo = false; // Nueva propiedad pública
+    public $anioEscolarActivo = false;
 
-    /**
-     * Se ejecuta al montar el componente
-     */
     public function mount()
     {
         $this->verificarAnioEscolar();
     }
 
-    /**
-     * Verifica si hay un año escolar activo
-     */
     private function verificarAnioEscolar()
     {
         $this->anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
