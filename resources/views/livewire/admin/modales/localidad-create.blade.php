@@ -1,12 +1,8 @@
 <div>
-
-    <!-- Modal Crear Localidad -->
     <div wire:ignore.self class="modal fade" id="modalCrearLocalidad" data-bs-backdrop="static" data-bs-keyboard="false"
         tabindex="-1" aria-labelledby="modalCrearLocalidadLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content modal-modern">
-
-                {{-- Cabecera del modal --}}
                 <div class="modal-header-create">
                     <div class="modal-icon-create">
                         <i class="fas fa-plus-circle"></i>
@@ -17,8 +13,6 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-
-                {{-- Cuerpo del modal --}}
                 <div class="modal-body-create">
                     @if (session()->has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -35,15 +29,34 @@
                     @endif
 
                     <form wire:submit.prevent="store" id="formCrearLocalidad">
+                        <div class="form-group-modern">
+                            <label for="pais_id_localidad" class="form-label-modern">
+                                <i class="fas fa-globe"></i>
+                                País
+                            </label>
+                            <select wire:model.live="pais_id" id="pais_id_localidad"
+                                class="form-control-modern @error('pais_id') is-invalid @enderror" required>
+                                <option value="">Seleccione un país</option>
+                                @foreach ($paises as $pais)
+                                    <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
+                                @endforeach
+                            </select>
+                            @error('pais_id')
+                                <div class="invalid-feedback-modern" style="display:block;">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
 
-                        {{-- Select del estado --}}
                         <div class="form-group-modern">
                             <label for="estado_id_localidad" class="form-label-modern">
                                 <i class="fas fa-tags"></i>
                                 Estado
                             </label>
                             <select wire:model.live="estado_id" id="estado_id_localidad"
-                                class="form-control-modern @error('estado_id') is-invalid @enderror" required>
+                                class="form-control-modern @error('estado_id') is-invalid @enderror"
+                                @disabled(!$pais_id) required>
+
                                 <option value="">Seleccione un estado</option>
                                 @foreach ($estados as $estado)
                                     <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
@@ -56,7 +69,6 @@
                             @enderror
                         </div>
 
-                        {{-- Select del municipio --}}
                         <div class="form-group-modern">
                             <label for="municipio_id_localidad" class="form-label-modern">
                                 <i class="fas fa-tags"></i>
@@ -77,7 +89,6 @@
                             @enderror
                         </div>
 
-                        {{-- Nombre de la Localidad --}}
                         <div class="form-group-modern">
                             <label for="nombre_localidad_crear" class="form-label-modern">
                                 <i class="fas fa-map-marker-alt"></i>
@@ -93,8 +104,6 @@
                                 </div>
                             @enderror
                         </div>
-
-                        {{-- Botones --}}
                         <div class="modal-footer-create">
                             <div class="footer-buttons">
                                 <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
@@ -117,26 +126,25 @@
     </div>
 </div>
 @push('js')
-<script>
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('cerrarModalCrearLocalidad', () => {
-            const modalEl = document.getElementById('modalCrearLocalidad');
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            if (modal) {
-                modal.hide();
-            }
-        });
-
-        //  AGREGAR ESTO
-        Livewire.on('cerrarModalDespuesDe', (data) => {
-            setTimeout(() => {
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('cerrarModalCrearLocalidad', () => {
                 const modalEl = document.getElementById('modalCrearLocalidad');
                 const modal = bootstrap.Modal.getInstance(modalEl);
                 if (modal) {
                     modal.hide();
                 }
-            }, data[0].delay || 1500);
+            });
+
+            Livewire.on('cerrarModalDespuesDe', (data) => {
+                setTimeout(() => {
+                    const modalEl = document.getElementById('modalCrearLocalidad');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) {
+                        modal.hide();
+                    }
+                }, data[0].delay || 1500);
+            });
         });
-    });
-</script>
+    </script>
 @endpush

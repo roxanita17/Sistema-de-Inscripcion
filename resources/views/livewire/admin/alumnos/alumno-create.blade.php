@@ -246,6 +246,11 @@
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
+                            <small class="form-text-modern">
+                                <i class="fas fa-info-circle"></i>
+                                Si no hay estados registrados agrega uno
+                                <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearEstado">"aquí"</a>
+                            </small>
                         </div>
                     </div>
 
@@ -266,6 +271,11 @@
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
+                            <small class="form-text-modern">
+                                <i class="fas fa-info-circle"></i>
+                                Si no hay municipios registrados agrega uno
+                                <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearMunicipio">"aquí"</a>
+                            </small>
                         </div>
                     </div>
 

@@ -1064,6 +1064,8 @@
     </div>
     @livewire('admin.modales.institucion-procedencia-create')
     @livewire('admin.modales.localidad-create')
+    @livewire('admin.modales.municipio-create')
+    @livewire('admin.modales.estado-create')
 </div>
 
 @push('js')

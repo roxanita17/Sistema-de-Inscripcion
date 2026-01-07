@@ -20,3 +20,4 @@ class Pais extends Model
         'status',
     ];
 }
+ 

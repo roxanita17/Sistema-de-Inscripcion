@@ -3,39 +3,31 @@
 namespace App\Livewire\Admin\Modales;
 
 use Livewire\Component;
+use App\Models\Pais;
 use App\Models\Estado;
 use App\Models\Municipio;
-use App\Models\Localidad;
 use App\Models\AnioEscolar;
-use App\Models\Pais;
 
-
-class LocalidadCreate extends Component
+class MunicipioCreate extends Component
 {
-    public $nombre_localidad;
+    public $nombre_municipio;
     public $pais_id;
     public $estado_id;
-    public $municipio_id;
 
-    public $estados = [];
-    public $municipios = [];
     public $paises = [];
+    public $estados = [];
 
     protected $rules = [
-        'nombre_localidad' => 'required|string|max:255',
+        'nombre_municipio' => 'required|string|max:255',
         'pais_id' => 'required|integer|exists:pais,id',
         'estado_id' => 'required|integer|exists:estados,id',
-        'municipio_id' => 'required|integer|exists:municipios,id',
     ];
-
 
     protected $messages = [
-        'nombre_localidad.required' => 'El nombre de la localidad es requerido',
+        'nombre_municipio.required' => 'El nombre del municipio es requerido',
         'pais_id.required' => 'Debe seleccionar un país',
         'estado_id.required' => 'Debe seleccionar un estado',
-        'municipio_id.required' => 'Debe seleccionar un municipio',
     ];
-
 
     public function mount()
     {
@@ -56,25 +48,7 @@ class LocalidadCreate extends Component
         }
 
         $this->estado_id = null;
-        $this->municipio_id = null;
-        $this->municipios = [];
     }
-
-
-    public function updatedEstadoId($estadoId)
-    {
-        if ($estadoId) {
-            $this->municipios = Municipio::where('estado_id', $estadoId)
-                ->where('status', true)
-                ->orderBy('nombre_municipio', 'asc')
-                ->get();
-        } else {
-            $this->municipios = [];
-        }
-
-        $this->municipio_id = null;
-    }
-
 
     public function store()
     {
@@ -93,55 +67,51 @@ class LocalidadCreate extends Component
             return;
         }
 
-        $existe = Localidad::where('nombre_localidad', $this->nombre_localidad)
-            ->where('municipio_id', $this->municipio_id)
+        $existe = Municipio::where('nombre_municipio', $this->nombre_municipio)
+            ->where('estado_id', $this->estado_id)
             ->where('status', true)
             ->exists();
 
         if ($existe) {
-            $this->addError('nombre_localidad', 'Ya existe una localidad con ese nombre en este municipio.');
+            $this->addError('nombre_municipio', 'Ya existe un municipio con ese nombre en este estado.');
             return;
         }
 
         try {
-            $localidad = Localidad::create([
-                'nombre_localidad' => $this->nombre_localidad,
-                'municipio_id' => $this->municipio_id,
+            $municipio = Municipio::create([
+                'nombre_municipio' => $this->nombre_municipio,
+                'estado_id' => $this->estado_id,
                 'status' => true,
             ]);
 
-            session()->flash('success', 'Localidad creada exitosamente.');
+            session()->flash('success', 'Municipio creado exitosamente.');
 
-            $this->dispatch('localidadCreada', [
-                'id' => $localidad->id,
-                'municipio_id' => $localidad->municipio_id,
+            $this->dispatch('municipioCreado', [
+                'id' => $municipio->id,
+                'estado_id' => $municipio->estado_id,
             ]);
 
             $this->dispatch('cerrarModalDespuesDe', ['delay' => 1500]);
 
             $this->resetInputFields();
         } catch (\Exception $e) {
-            session()->flash('error', 'Error al crear la localidad: ' . $e->getMessage());
+            session()->flash('error', 'Error al crear el municipio: ' . $e->getMessage());
         }
     }
 
     public function resetInputFields()
     {
-        $this->nombre_localidad = '';
+        $this->nombre_municipio = '';
         $this->pais_id = null;
         $this->estado_id = null;
-        $this->municipio_id = null;
-
         $this->estados = [];
-        $this->municipios = [];
 
         $this->resetErrorBag();
         $this->resetValidation();
     }
 
-
     public function render()
     {
-        return view('livewire.admin.modales.localidad-create');
+        return view('livewire.admin.modales.municipio-create');
     }
 }
