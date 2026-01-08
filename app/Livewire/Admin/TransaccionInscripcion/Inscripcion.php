@@ -123,8 +123,10 @@ class Inscripcion extends Component
             ],
             'institucion_procedencia_id' => $this->esVenezolano
                 ? 'required|exists:institucion_procedencias,id'
-                : 'nullable|string',
-            'otroPaisNombre' => $this->esVenezolano ? '' : 'required|string|max:255',
+                : 'nullable',
+            'otroPaisNombre' => !$this->esVenezolano && !$this->institucion_procedencia_id
+                ? 'required|string|max:255'
+                : 'nullable',
 
 
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
@@ -507,21 +509,20 @@ class Inscripcion extends Component
     private function crearInstitucionSiNoEsVenezolano(): ?int
     {
         if ($this->esVenezolano) {
-            return $this->institucion_procedencia_id; // ya seleccionó
+            return $this->institucion_procedencia_id;
         }
 
         if (trim($this->otroPaisNombre) === '') {
-            return null; // no escribió nada
+            return null;
         }
 
-        // Opcional: revisar si ya existe la institución con ese nombre
         $institucion = \App\Models\InstitucionProcedencia::firstOrCreate(
             [
+                'pais_id' => $this->paisId,
                 'nombre_institucion' => $this->otroPaisNombre,
                 'status' => true,
             ],
             [
-                // Si quieres, puedes dejar null en localidad o crear un valor por defecto
                 'localidad_id' => null,
             ]
         );
@@ -578,21 +579,7 @@ class Inscripcion extends Component
                 'title' => 'No se puede completar la inscripción',
                 'message' => $e->getMessage()
             ]);
-        } catch (QueryException $e) {
-
-            $this->dispatch('swal', [
-                'icon' => 'error',
-                'title' => 'No se puede completar la inscripción',
-                'message' => 'Verifique los datos ingresados'
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-            $this->dispatch('swal', [
-                'icon' => 'error',
-                'title' => 'Error',
-                'message' => 'Ocurrió un error inesperado. Verifique los datos.'
-            ]);
-        }
+        } 
     }
 
     public function finalizar()
@@ -619,6 +606,8 @@ class Inscripcion extends Component
             return;
         }
 
+        $this->validate();
+
         try {
             $dto = $this->crearInscripcionDTO();
             $inscripcion = $this->inscripcionService->registrarConAlumno(
@@ -635,14 +624,7 @@ class Inscripcion extends Component
                 'title' => 'No se puede completar la inscripción',
                 'message' => $e->getMessage()
             ]);
-        } catch (\Throwable $e) {
-            report($e);
-            $this->dispatch('swal', [
-                'icon' => 'error',
-                'title' => 'No se puede completar la inscripción',
-                'message' => 'Ocurrió un error inesperado. Verifique los datos e intente nuevamente.'
-            ]);
-        }
+        } 
     }
 
     private function validarRepresentantes(): bool
