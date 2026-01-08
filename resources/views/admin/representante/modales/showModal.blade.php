@@ -125,6 +125,13 @@
 
                             <div class="detail-item">
                                 <span class="detail-label">
+                                    <i class="fas fa-map-marker-alt"></i> Pais
+                                </span>
+                                <span class="detail-value" id="modal-estado">N/A</span>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="detail-label">
                                     <i class="fas fa-map-marker-alt"></i> Estado
                                 </span>
                                 <span class="detail-value" id="modal-estado">N/A</span>

@@ -22,6 +22,7 @@ class Representante extends Model
         "convivenciaestudiante_representante",
         "municipio_id",
         "parroquia_id",
+        "pais_id",
         "status"
     ];
     protected $attributes = [
@@ -29,6 +30,11 @@ class Representante extends Model
     ];
     
     protected $dates = ['deleted_at']; 
+
+        public function pais()
+    {
+        return $this->belongsTo(Pais::class, "pais_id", "id");
+    }
 
     public function estado()
     {
@@ -132,18 +138,6 @@ class Representante extends Model
         });
     }
     
-    // Obtener los IDs que cumplen los filtros
-    \Log::info('Consulta SQL para IDs:', ['sql' => $queryIds->toSql(), 'bindings' => $queryIds->getBindings()]);
-    $representantesIds = $queryIds->pluck('representantes.id');
-    
-    \Log::info('IDs de representantes filtrados:', ['ids' => $representantesIds->toArray()]);
-    \Log::info('Cantidad de IDs encontrados:', ['cantidad' => $representantesIds->count()]);
-    
-    // Si no hay IDs, devolver colección vacía
-    if ($representantesIds->isEmpty()) {
-        \Log::info('No se encontraron representantes con los filtros especificados');
-        return collect([]);
-    }
     
     // Ahora construir la consulta principal con todos los datos usando esos IDs
     $query = DB::table("representantes")

@@ -6,130 +6,11 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-    <!-- Bootstrap Select CSS -->
+    <link rel="stylesheet" href="{{ asset('css/representante.css') }}">
+   
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
-    <style>
-        /* Progress Steps Enhancement */
-        .progress-steps {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow);
-        }
 
-        .step-circle {
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-        }
-
-        .step-text {
-            color: var(--gray-600);
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-
-        /* Arreglos para Selectpicker */
-        .bootstrap-select .dropdown-menu {
-            z-index: 9999 !important;
-        }
-
-        .bootstrap-select .dropdown-menu.show {
-            z-index: 9999 !important;
-        }
-
-        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item.disabled {
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            cursor: not-allowed !important;
-            pointer-events: none !important;
-        }
-
-        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item[disabled] {
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            cursor: not-allowed !important;
-            pointer-events: none !important;
-        }
-
-        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item[data-tokens="loading"] {
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            cursor: not-allowed !important;
-            pointer-events: none !important;
-            font-style: italic;
-        }
-
-        .step-indicator .step-text {
-            color: var(--gray-600);
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-
-        /* Enhanced Card Animations */
-        .card-modern {
-            border: 1px solid var(--gray-200);
-        }
-
-        .card-header-modern {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-header-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
-
-        /* Enhanced Form Controls */
-        .form-control-modern {
-            position: relative;
-        }
-
-        .form-control-modern:focus {
-            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
-        }
-
-        .form-check-input:checked {
-            background-color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .form-check-input:focus {
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        /* Alert Enhancement */
-        .alert-modern {
-            border-left: 4px solid var(--info);
-            background: linear-gradient(135deg, var(--info-lighter), white);
-        }
-
-        /* Button Styles */
-        .btn-primary-modern {
-            background: linear-gradient(135deg, var(--primary), #4f46e5);
-        }
-
-        /* Card Separation Fix */
-        .card-modern {
-            margin-bottom: 2rem !important;
-        }
-
-        .card-modern+.card-modern {
-            margin-top: 1.5rem !important;
-        }
-
-        /* Nested cards spacing */
-        .card-modern .card-modern {
-            margin-bottom: 1.5rem !important;
-            margin-top: 1rem !important;
-        }
-    </style>
     @livewireStyles
 @stop
 
@@ -453,6 +334,34 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <div class="form-group">
+                                            <label for="idPais" class="form-label-modern">
+                                                <i class="fas fa-map"></i>
+                                                Pais
+                                                <span class="required-badge">*</span>
+                                            </label>
+                                            <select class="form-control-modern selectpicker" id="idPais"
+                                                name="idPais" data-live-search="true" title="Seleccione un pais"
+                                                aria-label="Seleccione un pais">
+                                                <option value="">Seleccione un pais</option>
+                                                @foreach ($paises as $pais)
+                                                    <option value="{{ $pais->id }}"
+                                                        @if (old('idPais') == $pais->id) selected @endif>
+                                                        {{ $pais->nameES }}
+                                                    </option>
+                                                @endforeach
+                                                {{--
+                                                @foreach ($estados as $estado)
+                                                    <option value="{{ $estado->id }}"
+                                                        @if (old('idEstado') == $estado->id) selected @endif>
+                                                        {{ $estado->nombre_estado }}
+                                                    </option>
+                                                @endforeach--}}
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un pais.
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <label for="idEstado" class="form-label-modern">
                                                 <i class="fas fa-map"></i>
                                                 Estado
@@ -462,12 +371,6 @@
                                                 name="idEstado" data-live-search="true" title="Seleccione un estado"
                                                 aria-label="Seleccione un estado">
                                                 <option value="">Seleccione un estado</option>
-                                                @foreach ($estados as $estado)
-                                                    <option value="{{ $estado->id }}"
-                                                        @if (old('idEstado') == $estado->id) selected @endif>
-                                                        {{ $estado->nombre_estado }}
-                                                    </option>
-                                                @endforeach
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un estado.
@@ -936,6 +839,34 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label for="idPais-padre" class="form-label-modern">
+                                                <i class="fas fa-map"></i>
+                                                Pais
+                                                <span class="required-badge">*</span>
+                                            </label>
+                                            <select class="form-control-modern selectpicker" id="idPais-padre"
+                                                name="idPais-padre" data-live-search="true" title="Seleccione un pais"
+                                                aria-label="Seleccione un pais">
+                                                <option value="">Seleccione un pais</option>
+                                                @foreach ($paises as $pais)
+                                                    <option value="{{ $pais->id }}"
+                                                        @if (old('idPais-padre') == $pais->id) selected @endif>
+                                                        {{ $pais->nameES }}
+                                                    </option>
+                                                @endforeach
+                                                {{--
+                                                @foreach ($estados as $estado)
+                                                    <option value="{{ $estado->id }}"
+                                                        @if (old('idEstado') == $estado->id) selected @endif>
+                                                        {{ $estado->nombre_estado }}
+                                                    </option>
+                                                @endforeach--}}
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un pais.
+                                            </div>
+                                        </div>                       
                             <div class="form-group">
                                 <label for="idEstado-padre" class="form-label-modern">
                                     <i class="fas fa-map"></i>
@@ -945,9 +876,6 @@
                                 <select class="form-control-modern selectpicker" id="idEstado-padre"
                                     name="idEstado-padre" data-live-search="true" title="Seleccione un estado" required>
                                     <option value="" disabled selected>Seleccione un estado</option>
-                                    @foreach ($estados as $estado)
-                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                                    @endforeach
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione un estado.
@@ -1446,6 +1374,34 @@
                         </div>
                     </div>
                     <div class="row">
+                                        <div class="form-group">
+                                            <label for="idPais-representante" class="form-label-modern">
+                                                <i class="fas fa-map"></i>
+                                                Pais
+                                                <span class="required-badge">*</span>
+                                            </label>
+                                            <select class="form-control-modern selectpicker" id="idPais-representante"
+                                                name="idPais-representante" data-live-search="true" title="Seleccione un pais"
+                                                aria-label="Seleccione un pais">
+                                                <option value="">Seleccione un pais</option>
+                                                @foreach ($paises as $pais)
+                                                    <option value="{{ $pais->id }}"
+                                                        @if (old('idPais-representante') == $pais->id) selected @endif>
+                                                        {{ $pais->nameES }}
+                                                    </option>
+                                                @endforeach
+                                                {{--
+                                                @foreach ($estados as $estado)
+                                                    <option value="{{ $estado->id }}"
+                                                        @if (old('idEstado') == $estado->id) selected @endif>
+                                                        {{ $estado->nombre_estado }}
+                                                    </option>
+                                                @endforeach--}}
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un pais.
+                                            </div>
+                                        </div>
                         <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <label for="idEstado-representante" class="form-label-modern">
@@ -1456,9 +1412,7 @@
                                 <select class="form-control-modern selectpicker" id="idEstado-representante"
                                     name="idEstado-representante" data-live-search="true" title="Seleccione un estado"
                                     required>
-                                    @foreach ($estados as $estado)
-                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                                    @endforeach
+                                    <option value="" disabled selected>Seleccione un estado</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione un estado.
@@ -2366,6 +2320,7 @@
                     }, 50);
                 } catch (e) {
                     console.error('Error al refrescar selectpicker:', e);
+                    inicializarSelectPickerConBuscador($select);
                 }
             }
         }
@@ -2577,6 +2532,63 @@
         };
 
         // Funciones para cargar ubicaciones
+        function cargarEstados(paisId, estadoSelectId, municipioSelectId, localidadSelectId) {
+            const estadoSelect = document.getElementById(estadoSelectId);
+            const municipioSelect = municipioSelectId ? document.getElementById(municipioSelectId) : null;
+            const localidadSelect = localidadSelectId ? document.getElementById(localidadSelectId) : null;
+
+            if (!estadoSelect) {
+                return;
+            }
+
+            limpiarSelectCompleto(estadoSelect);
+            if (municipioSelect) {
+                limpiarSelectCompleto(municipioSelect);
+            }
+            if (localidadSelect) {
+                limpiarSelectCompleto(localidadSelect);
+            }
+
+            if (!paisId || paisId === '') {
+                return;
+            }
+
+            const estadosFiltrados = (ubicacionesData || []).filter(e => String(e.pais_id) === String(paisId));
+            let options = '<option value="">Seleccione un estado</option>';
+
+            estadosFiltrados.forEach((estado) => {
+                const id = estado.id || '';
+                const nombre = estado.nombre_estado || 'Sin nombre';
+                options += `<option value="${id}">${nombre}</option>`;
+            });
+
+            estadoSelect.innerHTML = options;
+
+            const $estadoSelect = $(estadoSelect);
+            try {
+                $estadoSelect.selectpicker('destroy');
+                $estadoSelect.selectpicker({
+                    liveSearch: true,
+                    size: 8,
+                    noneResultsText: 'No hay resultados para {0}',
+                    selectOnTab: false,
+                    showSubtext: false,
+                    showIcon: true,
+                    width: 'auto'
+                });
+            } catch (e) {
+                $estadoSelect.selectpicker({
+                    liveSearch: true,
+                    size: 8,
+                    noneResultsText: 'No hay resultados para {0}',
+                    selectOnTab: false,
+                    showSubtext: false,
+                    showIcon: true,
+                    width: 'auto'
+                });
+            }
+        }
+
         function cargarMunicipios(estadoId, municipioSelectId, localidadSelectId) {
 
             const municipioSelect = document.getElementById(municipioSelectId);
@@ -2769,6 +2781,12 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // Eventos para MADRE
+            document.getElementById('idPais').addEventListener('change', function() {
+                const paisId = this.value;
+                cargarEstados(paisId, 'idEstado', 'idMunicipio', 'idparroquia');
+                inicializarSelectPickerConBuscador($(this));
+            });
+
             document.getElementById('idEstado').addEventListener('change', function() {
                 const estadoId = this.value;
 
@@ -2792,6 +2810,12 @@
             });
 
             // Eventos para PADRE
+            document.getElementById('idPais-padre').addEventListener('change', function() {
+                const paisId = this.value;
+                cargarEstados(paisId, 'idEstado-padre', 'idMunicipio-padre', 'idparroquia-padre');
+                inicializarSelectPickerConBuscador($(this));
+            });
+
             document.getElementById('idEstado-padre').addEventListener('change', function() {
                 const estadoId = this.value;
 
@@ -2805,6 +2829,17 @@
             });
 
             // Eventos para REPRESENTANTE
+            document.getElementById('idPais-representante').addEventListener('change', function() {
+                const paisId = this.value;
+                cargarEstados(paisId, 'idEstado-representante', 'idMunicipio-representante', 'idparroquia-representante');
+                inicializarSelectPickerConBuscador($(this));
+            });
+
+            // Asegurar reconstrucción inicial de los selects de país con la misma configuración que el resto
+            refrescarSelectPickerConBuscador(document.getElementById('idPais'));
+            refrescarSelectPickerConBuscador(document.getElementById('idPais-padre'));
+            refrescarSelectPickerConBuscador(document.getElementById('idPais-representante'));
+
             document.getElementById('idEstado-representante').addEventListener('change', function() {
                 // Obtener el valor correctamente del selectpicker
                 const estadoId = $(this).val() || this.value;
@@ -3943,12 +3978,15 @@
                     'sexo-representante',
                     'fecha-nacimiento-representante',
                     'lugar-nacimiento-representante',
+                    'idPais-representante',
                     'idEstado-representante',
                     'idMunicipio-representante',
                     'idparroquia-representante',
                     'direccion-representante',
                     'telefono-representante',
                     'email-representante',
+                    'prefijo_dos-representante',
+                    'telefono_dos-representante',
                     'ocupacion-representante',
                     'otra-ocupacion-representante',
                     'parentesco'
@@ -3980,9 +4018,8 @@
                         // Manejar selectpicker si está presente
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
                             $(campo).prop('disabled', deshabilitar);
-                            // Forzar reconstrucción completa del selectpicker
-                            $(campo).selectpicker('destroy');
-                            $(campo).selectpicker();
+                            // Forzar reconstrucción completa del selectpicker con buscador
+                            inicializarSelectPickerConBuscador($(campo));
                         }
                     }
                 });
@@ -4396,14 +4433,18 @@
                     'sexo-representante',
                     'fecha-nacimiento-representante',
                     'lugar-nacimiento-representante',
+                    'idPais-representante',
                     'idEstado-representante',
                     'idMunicipio-representante',
                     'idparroquia-representante',
                     'direccion-representante',
                     'telefono-representante',
+                    'prefijo_dos-representante',
+                    'telefono_dos-representante',
                     'email-representante',
                     'ocupacion-representante',
-                    'otra-ocupacion-representante'
+                    'otra-ocupacion-representante',
+                    'parentesco'
                 ];
 
                 // Limpiar campos

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("persona_id");
             $table->foreign("persona_id")->references("id")->on("personas")->onDelete("cascade")->onUpdate("cascade");
+            $table->unsignedBigInteger("pais_id");
+            $table->foreign("pais_id")->references("id")->on("pais")->onDelete("cascade")->onUpdate("cascade");
             $table->unsignedBigInteger("estado_id");
             $table->foreign("estado_id")->references("id")->on("estados")->onDelete("cascade")->onUpdate("cascade");
             $table->unsignedBigInteger("municipio_id");
