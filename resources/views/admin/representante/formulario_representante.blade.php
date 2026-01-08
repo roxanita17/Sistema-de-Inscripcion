@@ -2239,15 +2239,39 @@
             // Obtener todos los formularios que necesitan validación
             var forms = document.querySelectorAll('.needs-validation')
 
-            // Bucle sobre los formularios y evitar el envío - TEMPORALMENTE DESACTIVADO
+            // Bucle sobre los formularios y evitar el envío
             Array.prototype.slice.call(forms).forEach(function(form) {
                 form.addEventListener('submit', function(event) {
-                    // Temporalmente desactivado para permitir envío
-                    // if (!form.checkValidity()) {
-                    //     event.preventDefault()
-                    //     event.stopPropagation()
-                    // }
-                    console.log('Validación de Bootstrap desactivada - formulario permitido');
+                    // Habilitar temporalmente todos los campos readOnly para que se envíen
+                    const readonlyFields = form.querySelectorAll('[readonly]');
+                    readonlyFields.forEach(field => {
+                        field.readOnly = false;
+                    });
+                    
+                    // Ejecutar validación personalizada primero
+                    if (!validarFormularioCompleto()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        
+                        // Restaurar readonly después de validación fallida
+                        readonlyFields.forEach(field => {
+                            field.readOnly = true;
+                        });
+                        
+                        return false;
+                    }
+                    
+                    // Luego ejecutar validación de Bootstrap para campos requeridos
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        
+                        // Restaurar readonly después de validación fallida
+                        readonlyFields.forEach(field => {
+                            field.readOnly = true;
+                        });
+                    }
+                    form.classList.add('was-validated');
                 });
             });
         })()
@@ -2920,42 +2944,6 @@
             // Funciones globales para compatibilidad
             window.cargarMunicipiosInputFormulario = cargarMunicipios;
             window.cargarParroquiasInputFormulario = cargarLocalidades;
-
-            // Validación de formulario (solo marca visualmente, no bloquea el envío)
-            (function() {
-                'use strict';
-                window.addEventListener('load', function() {
-                    const forms = document.getElementsByClassName('needs-validation');
-                    Array.prototype.forEach.call(forms, function(form) {
-                        form.addEventListener('submit', function() {
-                            // Antes de validar, si madre/padre no están presentes, quitar required de sus campos
-                            const estadoMadre = document.querySelector(
-                                'input[name="estado_madre"]:checked');
-                            if (estadoMadre && estadoMadre.value !== 'Presente') {
-                                const cardMadreBody = document.getElementById(
-                                        'Presente_madre').closest('.card')
-                                    .querySelector('.card-body');
-                                const inputs = cardMadreBody.querySelectorAll(
-                                    'input, select, textarea');
-                                inputs.forEach(input => input.required = false);
-                            }
-
-                            const estadoPadre = document.querySelector(
-                                'input[name="estado_padre"]:checked');
-                            if (estadoPadre && estadoPadre.value !== 'Presente') {
-                                const cardPadreBody = document.getElementById(
-                                        'Presente_padre').closest('.card')
-                                    .querySelector('.card-body');
-                                const inputs = cardPadreBody.querySelectorAll(
-                                    'input, select, textarea');
-                                inputs.forEach(input => input.required = false);
-                            }
-
-                            form.classList.add('was-validated');
-                        }, false);
-                    });
-                }, false);
-            })();
 
             // Bandera para evitar múltiples ejecuciones
             let actualizandoParentesco = false;
@@ -5090,84 +5078,6 @@
             configurarValidacionesMadre();
             configurarValidacionesPadre();
             configurarValidacionesRepresentante();
-
-            // Validar formulario antes de enviar
-            const formulario = document.querySelector('form');
-            if (formulario) {
-                // Guardar el manejador original si existe
-                const originalSubmit = formulario.onsubmit;
-
-                // Agregar nuestro manejador
-                formulario.addEventListener('submit', function(e) {
-                    // Habilitar temporalmente todos los campos readOnly para que se envíen
-                    const readonlyFields = formulario.querySelectorAll('[readonly]');
-                    readonlyFields.forEach(field => {
-                        field.readOnly = false;
-                    });
-
-                    let valido = true;
-
-                    // Limpiar errores previos
-                    const erroresPrevios = formulario.querySelectorAll('.is-invalid');
-                    erroresPrevios.forEach(el => el.classList.remove('is-invalid'));
-
-                    const mensajesError = formulario.querySelectorAll('.invalid-feedback');
-                    mensajesError.forEach(el => el.remove());
-
-                    // Validar todos los campos requeridos
-                    const requiredInputs = formulario.querySelectorAll('[required]');
-                    requiredInputs.forEach(input => {
-                        if (input.offsetParent !== null) { // Solo validar campos visibles
-                            if (input.type === 'radio' || input.type === 'checkbox') {
-                                const name = input.name;
-                                const radioGroup = Array.from(document.querySelectorAll(
-                                    `input[name="${name}"]`));
-                                const isRequired = radioGroup.some(radio => radio.required);
-
-                                if (isRequired) {
-                                    const checked = formulario.querySelector(
-                                        `input[name="${name}"]:checked`);
-                                    if (!checked) {
-                                        const firstRadio = radioGroup[0];
-                                        mostrarError(firstRadio, 'Debe seleccionar una opción');
-                                        valido = false;
-                                    }
-                                }
-                            } else if (input.required && !input.value.trim()) {
-                                mostrarError(input, 'Este campo es obligatorio');
-                                valido = false;
-                            }
-                        }
-                    });
-
-                    if (!valido) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-
-                        // Desplazarse al primer error
-                        const primerError = formulario.querySelector('.is-invalid');
-                        if (primerError) {
-                            primerError.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center'
-                            });
-                            primerError.focus();
-                        }
-                        return false;
-                    }
-
-                    // Si hay un manejador original, ejecutarlo
-                    if (originalSubmit) {
-                        const result = originalSubmit.call(formulario, e);
-                        if (result === false) {
-                            e.preventDefault();
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }, true); // Usar captura para asegurarnos de ejecutarnos primero
-            }
         }
 
         // Función para validar un campo individual con validaciones específicas
@@ -5756,15 +5666,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Configurar validación en tiempo real
             agregarValidacionEnTiempoReal();
-
-            // Configurar el evento de envío del formulario
-            const formulario = document.getElementById('representante-form');
-            if (formulario) {
-                formulario.addEventListener('submit', function(e) {
-                    console.log('Formulario enviado correctamente');
-                    return true;
-                });
-            }
+            
+            // Inicializar validaciones específicas
+            inicializarValidaciones();
         });
 
         // ================= VALIDACIÓN DE FECHAS DE NACIMIENTO =================
