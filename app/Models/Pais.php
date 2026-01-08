@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pais extends Model
 {
-    /** @use HasFactory<\Database\Factories\PaisFactory> */
     use HasFactory;
 
     protected $table = 'pais';
@@ -21,3 +20,4 @@ class Pais extends Model
         'status',
     ];
 }
+ 

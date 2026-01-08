@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Estado;
 use App\Models\AnioEscolar;
+use App\Models\Pais;
 
 class EstadoIndex extends Component
 {
@@ -15,23 +16,19 @@ class EstadoIndex extends Component
     public $estado_id;
     public $updateMode = false;
     public $search = '';
-    public $anioEscolarActivo = false; // Nueva propiedad pública
+    public $pais_id;
+    public $anioEscolarActivo = false;
 
     protected $rules = [
         'nombre_estado' => 'required|string|max:255',
+        'pais_id' => 'required|integer|exists:pais,id',
     ];
 
-    /**
-     * Se ejecuta al montar el componente
-     */
     public function mount()
     {
         $this->verificarAnioEscolar();
     }
 
-    /**
-     * Verifica si hay un año escolar activo
-     */
     private function verificarAnioEscolar()
     {
         $this->anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
@@ -39,9 +36,6 @@ class EstadoIndex extends Component
             ->exists();
     }
 
-    /**
-     * Verifica antes de ejecutar acciones
-     */
     private function verificarAccion()
     {
         if (!$this->anioEscolarActivo) {
@@ -53,15 +47,20 @@ class EstadoIndex extends Component
 
     public function render()
     {
-        $estados = Estado::where('status', true)
+        $paises = Pais::where('status', true)
+            ->get();
+        $estados = Estado::where('estados.status', true)
+            ->join('pais', 'estados.pais_id', '=', 'pais.id')
             ->when($this->search, function ($query) {
-                $query->where('nombre_estado', 'like', '%' . $this->search . '%');
+                $query->where('estados.nombre_estado', 'like', '%' . $this->search . '%');
             })
-            ->orderBy('nombre_estado', 'asc')
+            ->select('estados.*', 'pais.nameES')
+            ->orderBy('estados.nombre_estado', 'asc')
             ->paginate(10);
 
-        return view('livewire.admin.estado-index', compact('estados'));
+        return view('livewire.admin.estado-index', compact('estados', 'paises'));
     }
+
 
     public function paginationView()
     {
@@ -77,25 +76,24 @@ class EstadoIndex extends Component
     {
         $this->nombre_estado = '';
         $this->estado_id = null;
+        $this->pais_id = null;
         $this->updateMode = false;
     }
 
     public function store()
     {
-        // Verificar año escolar antes de crear
         if (!$this->verificarAccion()) {
             return;
         }
 
         $this->validate();
-
-        // Evitar duplicados
         if (Estado::where('nombre_estado', $this->nombre_estado)->where('status', true)->exists()) {
             session()->flash('error', 'Ya existe un estado con ese nombre.');
             return;
         }
 
         Estado::create([
+            'pais_id' => $this->pais_id,
             'nombre_estado' => $this->nombre_estado,
             'status' => true,
         ]);
@@ -115,12 +113,12 @@ class EstadoIndex extends Component
         $estado = Estado::findOrFail($id);
         $this->estado_id = $id;
         $this->nombre_estado = $estado->nombre_estado;
+        $this->pais_id = $estado->pais_id;
         $this->updateMode = true;
     }
 
     public function update()
     {
-        // Verificar año escolar antes de actualizar
         if (!$this->verificarAccion()) {
             return;
         }
@@ -128,7 +126,11 @@ class EstadoIndex extends Component
         $this->validate();
 
         $estado = Estado::find($this->estado_id);
-        $estado->update(['nombre_estado' => $this->nombre_estado]);
+        $estado->update([
+            'nombre_estado' => $this->nombre_estado,
+            'pais_id' => $this->pais_id,
+        ]);
+
 
         session()->flash('success', 'Estado actualizado correctamente.');
         $this->dispatch('cerrarModal');
@@ -137,7 +139,6 @@ class EstadoIndex extends Component
 
     public function destroy($id)
     {
-        // Verificar año escolar antes de eliminar
         if (!$this->verificarAccion()) {
             return;
         }

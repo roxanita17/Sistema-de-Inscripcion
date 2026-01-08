@@ -21,6 +21,25 @@
                     {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
 
+                    <div class="form-group-modern">
+                        <label for="pais_id" class="form-label-modern">
+                            <i class="fas fa-tags"></i>
+                            Pais
+                        </label>
+                        <select name="pais_id" 
+                            wire:model.defer="pais_id"
+                            id="pais_id" 
+                            class="form-control-modern " 
+                            data-live-search="true"
+                            title="Seleccione un pais"
+                            required>
+                            <option value="">Seleccione un pais</option>
+                            @foreach ($paises as $pais)
+                                <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     {{-- Nombre del Estado --}}
                     <div class="form-group-modern">
                         <label for="nombre_estado_crear" class="form-label-modern">

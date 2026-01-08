@@ -33,10 +33,15 @@ class Inscripcion extends Component
     public $madreSeleccionado = null;
     public $representanteLegalSeleccionado = null;
 
+    public $paisId = null;
+    public bool $esVenezolano = true;
     public $estado_id = null;
     public $municipio_id = null;
     public $localidad_id = null;
+    
+    public $otroPaisNombre = '';
 
+    public $paises = [];
     public $estados = [];
     public $municipios = [];
     public $localidades = [];
@@ -101,6 +106,9 @@ class Inscripcion extends Component
         $this->estados = \App\Models\Estado::where('status', true)
             ->orderBy('nombre_estado', 'asc')
             ->get();
+        $this->paises = \App\Models\Pais::where('status', true)
+        ->orderBy('nameES', 'asc')
+        ->get();
     }
 
     public function rules()
@@ -113,16 +121,16 @@ class Inscripcion extends Component
                 'nullable',
                 'regex:/^\d+$/'
             ],
-            'institucion_procedencia_id' => 'required|exists:institucion_procedencias,id',
+            'institucion_procedencia_id' => $this->esVenezolano
+                ? 'required|exists:institucion_procedencias,id'
+                : 'nullable|string',
+            'otroPaisNombre' => $this->esVenezolano ? '' : 'required|string|max:255',
+
+
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'gradoId' => [
                 'required',
                 'exists:grados,id',
-                function ($attribute, $value, $fail) {
-                    if (!$this->inscripcionService->verificarCuposDisponibles($value)) {
-                        $fail('El nivel academico seleccionado ha alcanzado el límite de cupos disponibles.');
-                    }
-                }
             ],
             'seccion_id' => $this->esPrimerGrado
                 ? 'nullable'
@@ -327,6 +335,40 @@ class Inscripcion extends Component
             implode(PHP_EOL, $nombres);
     }
 
+    public function updatedPaisId($value)
+    {
+        if (!$value) {
+            $this->esVenezolano = true;
+            return;
+        }
+
+        $pais = \App\Models\Pais::find($value);
+        $this->esVenezolano = $pais->nameES === 'Venezuela';
+
+        // Resetear datos cuando no es Venezuela
+        if ($this->esVenezolano) {
+            $this->otroPaisNombre = '';
+            $this->institucion_procedencia_id = null;
+
+            // 🔹 Recargar los estados de Venezuela
+            $this->estados = \App\Models\Estado::where('status', true)
+                ->orderBy('nombre_estado', 'asc')
+                ->get();
+        } else {
+            $this->estado_id = null;
+            $this->municipio_id = null;
+            $this->localidad_id = null;
+            $this->institucion_procedencia_id = null;
+            $this->estados = [];
+            $this->municipios = [];
+            $this->localidades = [];
+            $this->instituciones = [];
+        }
+    }
+
+
+
+
     public function updatedEstadoId($value)
     {
         $this->municipio_id = null;
@@ -467,12 +509,61 @@ class Inscripcion extends Component
             ]);
         }
     }
+    private function crearInstitucionSiNoEsVenezolano(): ?int
+    {
+        if ($this->esVenezolano) {
+            return $this->institucion_procedencia_id; // ya seleccionó
+        }
+
+        if (trim($this->otroPaisNombre) === '') {
+            return null; // no escribió nada
+        }
+
+        // Opcional: revisar si ya existe la institución con ese nombre
+        $institucion = \App\Models\InstitucionProcedencia::firstOrCreate(
+            [
+                'nombre_institucion' => $this->otroPaisNombre,
+                'status' => true,
+            ],
+            [
+                // Si quieres, puedes dejar null en localidad o crear un valor por defecto
+                'localidad_id' => null,
+            ]
+        );
+
+        return $institucion->id;
+    }
+
 
     public function registrar()
     {
         if (!$this->validarRepresentantes()) {
             return;
         }
+        if (!empty($this->documentosFaltantes)) {
+            $mensaje = collect($this->documentosFaltantes)
+                ->map(fn($doc) => $this->documentosEtiquetas[$doc] ?? $doc)
+                ->implode('<br>');
+
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Documentos incompletos',
+                'html' => $mensaje
+            ]);
+
+            return;
+        }
+
+        if (!$this->inscripcionService->verificarCuposDisponibles($this->gradoId)) {
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Cupos agotados',
+                'html' => 'Este grado ha alcanzado el máximo de cupos disponibles.'
+            ]);
+            return;
+        }
+
+
 
         $this->validate();
 
@@ -565,7 +656,7 @@ class Inscripcion extends Component
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'No se puede completar la inscripción',
-                'message' => 'Debe seleccionar al menos un representante.'
+                'message' => 'Debe seleccionar un representante legal.'
             ]);
 
             return false;
@@ -575,12 +666,13 @@ class Inscripcion extends Component
 
     private function crearInscripcionDTO(): InscripcionData
     {
+        $institucionId = $this->crearInstitucionSiNoEsVenezolano();
         return new InscripcionData([
             'tipo_inscripcion' => $this->tipo_inscripcion,
             'anio_escolar_id' => $this->anio_escolar_id,
             'alumno_id' => $this->alumnoId,
             'numero_zonificacion' => $this->numero_zonificacion,
-            'institucion_procedencia_id' => $this->institucion_procedencia_id,
+            'institucion_procedencia_id' => $institucionId,
             'anio_egreso' => $this->anio_egreso,
             'expresion_literaria_id' => $this->expresion_literaria_id,
             'grado_id' => $this->gradoId,
