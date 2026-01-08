@@ -1769,12 +1769,16 @@
                                 <div class="d-flex mt-2">
                                     <div class="form-check me-3">
                                         <input class="form-check-input" type="radio" id="organizacion-si"
-                                            name="organizacion-representante" value="si">
+                                            name="organizacion-representante" value="si"
+                                            {{ isset($representante->legal->pertenece_a_organizacion_representante) && $representante->legal->pertenece_a_organizacion_representante ? 'checked' : '' }}
+                                            required>
                                         <label class="form-check-label" for="organizacion-si">Sí</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" id="organizacion-no"
-                                            name="organizacion-representante" value="no">
+                                            name="organizacion-representante" value="no"
+                                            {{ isset($representante->legal->pertenece_a_organizacion_representante) && !$representante->legal->pertenece_a_organizacion_representante ? 'checked' : (!isset($representante->legal->pertenece_a_organizacion_representante) ? 'checked' : '') }}
+                                            required>
                                         <label class="form-check-label" for="organizacion-no">No</label>
                                     </div>
                                 </div>

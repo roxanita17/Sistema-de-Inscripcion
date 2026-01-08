@@ -515,7 +515,12 @@ class RepresentanteController extends Controller
         $persona = $representante->persona;
 
         // Determine if this is a legal representative or progenitor
-        $isLegalRepresentative = $request->input('tipo_representante') === 'legal';
+        $isLegalRepresentative = in_array($request->input('tipo_representante'), [
+            'legal',
+            'solo_representante', 
+            'progenitor_padre_representante', 
+            'progenitor_madre_representante'
+        ]);
 
 
         // Log the update attempt
@@ -557,9 +562,7 @@ class RepresentanteController extends Controller
             'tipo-ci-representante' => 'required|exists:tipo_documentos,id',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
-            'idparroquia-representante' => 'required_without_all:idparroquia-padre,idparroquia|exists:localidads,id',
-            'idparroquia-padre' => 'required_without_all:idparroquia-representante,idparroquia|exists:localidads,id',
-            'idparroquia' => 'required_without_all:idparroquia-representante,idparroquia-padre|exists:localidads,id',
+            'parroquia_id' => 'required|exists:localidads,id',
         ];
 
         // Add validation rules for legal representative fields
@@ -567,7 +570,7 @@ class RepresentanteController extends Controller
             $rules = array_merge($rules, [
                 'correo-representante' => 'required|email|max:100',
                 'banco_id' => 'required|exists:bancos,id',
-                'pertenece_organizacion' => 'sometimes|boolean',
+                'pertenece_organizacion' => 'required|boolean',
                 'cual_organizacion_representante' => 'required_if:pertenece_organizacion,1|nullable|string|max:255',
             ]);
         }
@@ -577,14 +580,22 @@ class RepresentanteController extends Controller
             'numero_documento-representante.unique' => 'Este número de cédula ya está registrado',
             'numero_documento-representante.regex' => 'El número de cédula debe contener entre 6 y 8 dígitos',
             'fecha-nacimiento-representante' => 'Formato de fecha inválido',
-            'idparroquia-representante.required_without_all' => 'La parroquia es obligatoria',
-            'idparroquia-padre.required_without_all' => 'La parroquia es obligatoria',
-            'idparroquia.required_without_all' => 'La parroquia es obligatoria',
+            'parroquia_id.required' => 'La parroquia es obligatoria',
+            'parroquia_id.exists' => 'La parroquia seleccionada no es válida',
+            'pertenece_organizacion.required' => 'Debe seleccionar si pertenece a una organización',
+            'pertenece_organizacion.boolean' => 'El valor seleccionado no es válido',
+            'cual_organizacion_representante.required_if' => 'Debe especificar la organización cuando selecciona que pertenece',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
+            Log::error('=== ERRORES DE VALIDACIÓN ===', [
+                'errors' => $validator->errors()->toArray(),
+                'rules' => $rules,
+                'request_all' => $request->all()
+            ]);
+            
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error de validación',
