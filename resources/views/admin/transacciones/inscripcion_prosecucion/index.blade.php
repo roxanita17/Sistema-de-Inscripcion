@@ -225,8 +225,8 @@
                                             </small>
                                         </td>
                                         <td class="text-center">
-                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_nombre }}
-                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_apellido }}
+                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_nombre ?? ''}}
+                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_apellido  ?? ''}}
                                         </td>
                                         <td class="text-center">
                                             {{ $datos->grado?->numero_grado ?? 'N/A' }}
