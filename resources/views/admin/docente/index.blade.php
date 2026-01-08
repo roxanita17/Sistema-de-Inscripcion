@@ -112,29 +112,19 @@
                         </small>
                     </div>
                 </form>
-                <div class="header-right">
-                </div>
 
                 <div class="header-right" style="display: flex; gap: 5px;">
                     <a href="{{ route('admin.docente.reporteGeneralPDF') }}" type="button" class="btn-pdf"
                         target="_blank">
                         <i class="fas fa-file-pdf"></i> PDF General
                     </a>
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
-                    </div>
                 </div>
-
-
                 <div class="header-right">
-
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                         $mostrarAnio = $anioActivo ?? $anioExtendido;
                     @endphp
-
                     @if ($mostrarAnio)
                         <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
                             <div class="d-flex align-items-center">
