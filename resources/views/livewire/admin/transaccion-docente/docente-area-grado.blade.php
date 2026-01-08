@@ -289,31 +289,31 @@
                         @enderror
                     </div>
                     <div class="col-md-3">
-                        <label for="grado_select" class="form-label-modern">
+                        <label for="grado_area_select" class="form-label-modern">
                             <i class="fas fa-layer-group"></i>
                             Nivel Academico
                             <span class="required-badge">*</span>
                         </label>
-                        <select wire:model.live="gradoId" id="grado_select"
-                            class="form-control-modern @error('gradoId') is-invalid @enderror"
+                        <select wire:model.live="gradoAreaId" id="grado_area_select"
+                            class="form-control-modern @error('gradoAreaId') is-invalid @enderror"
                             {{ !$materiaId ? 'disabled' : '' }}>
                             <option value="">
                                 @if (!$materiaId)
                                     Primero seleccione un area de formacion
-                                @elseif($grados->isEmpty())
+                                @elseif($gradosArea->isEmpty())
                                     No hay niveles academicos disponibles
                                 @else
                                     Seleccione un nivel academico
                                 @endif
                             </option>
-                            @foreach ($grados as $grado)
+                            @foreach ($gradosArea as $grado)
                                 <option value="{{ $grado->id }}">
                                     {{ $grado->numero_grado }}
                                 </option>
                             @endforeach
                         </select>
 
-                        @error('gradoId')
+                        @error('gradoAreaId')
                             <div class="invalid-feedback-modern" style="display: block;">
                                 <i class="fas fa-exclamation-circle"></i>
                                 {{ $message }}
@@ -321,34 +321,34 @@
                         @enderror
                     </div>
 
-                    {{-- Secciones --}}
+                    {{-- Secciones ÁREA --}}
                     <div class="col-md-3">
-                        <label for="seccion_select" class="form-label-modern">
+                        <label for="seccion_area_select" class="form-label-modern">
                             <i class="fas fa-users"></i>
                             Sección
                             <span class="required-badge">*</span>
                         </label>
 
-                        <select wire:model.live="seccionId" id="seccion_select"
-                            class="form-control-modern @error('seccionId') is-invalid @enderror"
-                            {{ !$gradoId ? 'disabled' : '' }}>
+                        <select wire:model.live="seccionAreaId" id="seccion_area_select"
+                            class="form-control-modern @error('seccionAreaId') is-invalid @enderror"
+                            {{ !$gradoAreaId ? 'disabled' : '' }}>
                             <option value="">
-                                @if (!$gradoId)
+                                @if (!$gradoAreaId)
                                     Primero seleccione un nivel academico
-                                @elseif($secciones->isEmpty())
+                                @elseif($seccionesArea->isEmpty())
                                     No hay secciones disponibles
                                 @else
                                     Seleccione una sección
                                 @endif
                             </option>
-                            @foreach ($secciones as $seccion)
+                            @foreach ($seccionesArea as $seccion)
                                 <option value="{{ $seccion->id }}">
                                     Sección {{ $seccion->nombre }}
                                 </option>
                             @endforeach
                         </select>
 
-                        @error('seccionId')
+                        @error('seccionAreaId')
                             <div class="invalid-feedback-modern" style="display: block;">
                                 <i class="fas fa-exclamation-circle"></i>
                                 {{ $message }}
@@ -356,43 +356,30 @@
                         @enderror
                     </div>
 
-                    {{-- Botón Agregar --}}
+                    {{-- Botón Agregar ÁREA --}}
                     <div class="col-md-2 d-flex align-items-end">
-                        <button class="btn-primary-modern w-100" wire:click="agregarAsignacion"
-                            wire:loading.attr="disabled" style="margin-bottom: 0rem;" @disabled(!$this->puedeAgregarAsignacion)
-                            title="{{ !$this->puedeAgregarAsignacion ? 'Seleccione materia, año y sección' : '' }}">
-                            <span wire:loading.remove wire:target="agregarAsignacion">
+                        <button class="btn-primary-modern w-100" wire:click="agregarAsignacionArea"
+                            wire:loading.attr="disabled" style="margin-bottom: 0rem;" @disabled(!$this->puedeAgregarArea)
+                            title="{{ !$this->puedeAgregarArea ? 'Seleccione materia, año y sección' : '' }}">
+                            <span wire:loading.remove wire:target="agregarAsignacionArea">
                                 <i class="fas fa-plus"></i> Agregar
                             </span>
-                            <span wire:loading wire:target="agregarAsignacion">
+                            <span wire:loading wire:target="agregarAsignacionArea">
                                 <i class="fas fa-spinner fa-spin"></i> Agregando...
                             </span>
                         </button>
                     </div>
-                    
+
                 </div>
                 <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
                     <i class="fas fa-info-circle"></i>
                     Si no hay asignaciones de areas de formacion y estudios para el docente puede agregar una
-                    <a class="text-primary" data-bs-toggle="modal"
-                        data-bs-target="#modalCrearAsignacion">"aquí"</a>
+                    <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">"aquí"</a>
                 </small>
             </div>
         </div>
 
         <div class="card-modern">
-            <div class="card-header-modern">
-                <div class="header-left">
-                    <div class="header-icon">
-                        <i class="fas fa-list-check"></i>
-                    </div>
-                    <div>
-                        <h3>Areas de Formacion y Niveles Academicos Asignados</h3>
-                        <p>{{ $asignaciones->count() }} asignaciones registradas</p>
-                    </div>
-                </div>
-            </div>
-
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern">
@@ -408,7 +395,7 @@
                         </thead>
 
                         <tbody>
-                            @forelse ($asignaciones as $index => $detalle)
+                            @forelse ($asignaciones->where('tipo_asignacion', 'area') as $index => $detalle)
                                 <tr>
                                     <td style="text-align: center; vertical-align: middle;">
                                         <span class="number-badge">{{ $index + 1 }}</span>
@@ -511,6 +498,153 @@
                 </div>
             </div>
         </div>
+
+        <div class="card-modern mb-4">
+            <div class="card-header-modern">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fas fa-users-class"></i>
+                    </div>
+                    <div>
+                        <h3>Agregar Grupo Estable</h3>
+                        <p>Asigne un grupo estable y su nivel académico </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body-modern" style="padding: 2rem;">
+                <div class="row">
+                    {{-- Grupo Estable --}}
+                    <div class="col-md-4">
+                        <label class="form-label-modern">
+                            <i class="fas fa-users"></i>
+                            Grupo Estable
+                            <span class="required-badge">*</span>
+                        </label>
+
+                        <select wire:model.live="grupoEstableId"
+                            class="form-control-modern @error('grupoEstableId') is-invalid @enderror">
+                            <option value="">Seleccione un grupo estable</option>
+                            @foreach ($gruposEstables as $grupo)
+                                <option value="{{ $grupo->id }}">
+                                    {{ $grupo->nombre_grupo_estable }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        @error('grupoEstableId')
+                            <div class="invalid-feedback-modern" style="display:block">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Grado GRUPO --}}
+                    <div class="col-md-3">
+                        <label class="form-label-modern">
+                            <i class="fas fa-layer-group"></i>
+                            Nivel Académico
+                            <span class="required-badge">*</span>
+                        </label>
+
+                        <select wire:model.live="gradoGrupoId"
+                            class="form-control-modern @error('gradoGrupoId') is-invalid @enderror"
+                            {{ !$grupoEstableId ? 'disabled' : '' }}>
+                            <option value="">
+                                @if (!$grupoEstableId)
+                                    Primero seleccione un grupo estable
+                                @elseif($gradosGrupo->isEmpty())
+                                    No hay niveles académicos disponibles
+                                @else
+                                    Seleccione un nivel académico
+                                @endif
+                            </option>
+
+                            @foreach ($gradosGrupo as $grado)
+                                <option value="{{ $grado->id }}">
+                                    {{ $grado->numero_grado }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        @error('gradoGrupoId')
+                            <div class="invalid-feedback-modern" style="display:block">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Botón Agregar GRUPO --}}
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn-primary-modern w-100" wire:click="agregarAsignacionGrupo"
+                            wire:loading.attr="disabled" style="margin-bottom: 0rem;" @disabled(!$this->puedeAgregarGrupo)
+                            title="{{ !$this->puedeAgregarGrupo ? 'Complete todos los campos' : '' }}">
+                            <span wire:loading.remove wire:target="agregarAsignacionGrupo">
+                                <i class="fas fa-plus"></i> Agregar
+                            </span>
+                            <span wire:loading wire:target="agregarAsignacionGrupo">
+                                <i class="fas fa-spinner fa-spin"></i> Agregando...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-modern">
+        
+            <div class="card-body-modern">
+                <div class="table-wrapper">
+                    <table class="table-modern">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Grupo Estable</th>
+                                <th>Nivel Académico</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @forelse ($asignaciones->where('tipo_asignacion','grupo_estable') as $i => $detalle)
+                                <tr>
+                                    <td><span class="number-badge">{{ $i + 1 }}</span></td>
+
+                                    <td>
+                                        <strong>{{ $detalle->grupoEstable->nombre_grupo_estable ?? 'N/A' }}</strong>
+                                    </td>
+
+                                    <td>{{ $detalle->gradoGrupoEstable->numero_grado ?? 'N/A' }}</td>
+
+                                    <td>
+                                        <i class="fas fa-calendar-alt text-primary"></i>
+                                        {{ $detalle->created_at->format('d/m/Y') }}
+                                    </td>
+
+                                    <td>
+                                        <button class="action-btn btn-delete"
+                                            wire:click="$set('asignacionAEliminar', {{ $detalle->id }})"
+                                            data-bs-toggle="modal" data-bs-target="#modalEliminarAsignacion">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <i class="fas fa-inbox fa-3x text-muted"></i>
+                                        <p class="mt-2">No hay grupos estables asignados</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
         @livewire('admin.modales.area-estudio-create')
 
     @endif
