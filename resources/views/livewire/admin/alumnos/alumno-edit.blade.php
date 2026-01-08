@@ -554,6 +554,24 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label-modern">
+                            Pais
+                            <span class="required-badge">*</span>
+                        </label>
+                        <select wire:model.live="pais_id"
+                            class="form-control-modern @error('pais_id') is-invalid @enderror">
+                            <option value="">Seleccione</option>
+                            @foreach ($paises as $pais)
+                                <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
+                            @endforeach
+                        </select>
+                        @error('pais_id')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label-modern">
                             Estado
                             <span class="required-badge">*</span>
                         </label>

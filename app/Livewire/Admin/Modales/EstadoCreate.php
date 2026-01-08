@@ -31,7 +31,7 @@ class EstadoCreate extends Component
             ->get();
     }
 
-        public function store()
+    public function store()
     {
         $anioEscolarActivo = AnioEscolar::activos()
             ->where('cierre_anio_escolar', '>=', now())
