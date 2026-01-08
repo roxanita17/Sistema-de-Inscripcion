@@ -2419,6 +2419,19 @@
                             width: 'auto'
                         });
                         console.log('Municipios cargados y re-inicializado con buscador para:', municipioSelect.id);
+                        
+                        // Pequeño retraso para asegurar que el valor se muestre visualmente
+                        setTimeout(() => {
+                            // Si es el municipio del representante legal, asegurar que el valor se mantenga
+                            if (municipioSelect.id === 'idMunicipio-representante') {
+                                const valorGuardado = municipioSelect.getAttribute('data-valor-guardado');
+                                if (valorGuardado) {
+                                    $municipioSelect.selectpicker('val', valorGuardado);
+                                    console.log('Restaurando valor del municipio del representante:', valorGuardado);
+                                }
+                            }
+                        }, 100);
+                        
                     } catch (e) {
                         console.error('Error al re-inicializar municipios:', e);
                         // Intentar inicializar directamente si destroy falla
@@ -2563,7 +2576,9 @@
             });
 
             estadoSelect.innerHTML = options;
+            estadoSelect.value = ''; // Establecer el valor del select en vacío
 
+            // Limpiar y re-inicializar el selectpicker del estado antes de cargar municipios
             const $estadoSelect = $(estadoSelect);
             try {
                 $estadoSelect.selectpicker('destroy');
@@ -2576,7 +2591,24 @@
                     showIcon: true,
                     width: 'auto'
                 });
+                
+                // Pequeño retraso para asegurar que el valor se muestre visualmente
+                setTimeout(() => {
+                    console.log('Estados cargados y re-inicializado con buscador para:', estadoSelect.id);
+                    
+                    // Si es el estado del representante legal, asegurar que el valor se mantenga
+                    if (estadoSelect.id === 'idEstado-representante') {
+                        const valorGuardado = estadoSelect.getAttribute('data-valor-guardado');
+                        if (valorGuardado) {
+                            $estadoSelect.selectpicker('val', valorGuardado);
+                            console.log('Restaurando valor del estado del representante:', valorGuardado);
+                        }
+                    }
+                }, 100);
+                
             } catch (e) {
+                console.error('Error al re-inicializar estados:', e);
+                // Intentar inicializar directamente si destroy falla
                 $estadoSelect.selectpicker({
                     liveSearch: true,
                     size: 8,
@@ -2586,6 +2618,7 @@
                     showIcon: true,
                     width: 'auto'
                 });
+                console.log('Estados inicializados directamente con buscador para:', estadoSelect.id);
             }
         }
 
@@ -2658,6 +2691,19 @@
                             width: 'auto'
                         });
                         console.log('Municipios cargados y re-inicializado con buscador para:', municipioSelect.id);
+                        
+                        // Pequeño retraso para asegurar que el valor se muestre visualmente
+                        setTimeout(() => {
+                            // Si es el municipio del representante legal, asegurar que el valor se mantenga
+                            if (municipioSelect.id === 'idMunicipio-representante') {
+                                const valorGuardado = municipioSelect.getAttribute('data-valor-guardado');
+                                if (valorGuardado) {
+                                    $municipioSelect.selectpicker('val', valorGuardado);
+                                    console.log('Restaurando valor del municipio del representante:', valorGuardado);
+                                }
+                            }
+                        }, 100);
+                        
                     } catch (e) {
                         console.error('Error al re-inicializar municipios:', e);
                         // Intentar inicializar directamente si destroy falla
@@ -2831,6 +2877,23 @@
             // Eventos para REPRESENTANTE
             document.getElementById('idPais-representante').addEventListener('change', function() {
                 const paisId = this.value;
+                
+                // Limpiar y re-inicializar el selectpicker del país antes de cargar estados
+                const $paisSelect = $(this);
+                try {
+                    $paisSelect.selectpicker('destroy');
+                    $paisSelect.selectpicker({
+                        liveSearch: true,
+                        size: 8,
+                        noneResultsText: 'No hay resultados para {0}',
+                        title: 'Seleccione un país',
+                        showIcon: true,
+                        width: 'auto'
+                    });
+                } catch (e) {
+                    console.error('Error al re-inicializar selectpicker del país:', e);
+                }
+                
                 cargarEstados(paisId, 'idEstado-representante', 'idMunicipio-representante', 'idparroquia-representante');
                 inicializarSelectPickerConBuscador($(this));
             });
@@ -4140,12 +4203,61 @@
                         origen: `lugar-nacimiento${prefijo}`,
                         destino: 'lugar-nacimiento-representante'
                     },
+                    // Campos de ubicación
+                    {
+                        origen: `idPais${prefijo}`,
+                        destino: 'idPais-representante',
+                        esSelect: true,
+                        callback: function() {
+                            // Cargar estados cuando se copia el país
+                            console.log('=== COPIANDO PAÍS ===');
+                            const paisSelect = document.getElementById('idPais-representante');
+                            console.log('Pais select encontrado:', paisSelect);
+                            console.log('Valor del país:', paisSelect ? paisSelect.value : 'no encontrado');
+                            
+                            if (paisSelect && paisSelect.value) {
+                                // Guardar el valor actual del estado antes de cargar nuevos estados
+                                const estadoSelect = document.getElementById('idEstado-representante');
+                                if (estadoSelect && estadoSelect.value) {
+                                    estadoSelect.setAttribute('data-valor-guardado', estadoSelect.value);
+                                    console.log('Guardando valor del estado:', estadoSelect.value);
+                                }
+                                
+                                console.log('Llamando a cargarEstados con país:', paisSelect.value);
+                                cargarEstados(paisSelect.value, 'idEstado-representante', 'idMunicipio-representante', 'idparroquia-representante');
+                            } else {
+                                console.log('No se puede cargar estados - país select no encontrado o sin valor');
+                            }
+                        }
+                    },
                     {
                         origen: `idEstado${prefijo}`,
                         destino: 'idEstado-representante',
                         esSelect: true,
                         callback: function() {
-                            // Este callback se ejecutará después de copiar todos los valores
+                            // Cargar municipios cuando se copia el estado
+                            console.log('=== COPIANDO ESTADO ===');
+                            const estadoSelect = document.getElementById('idEstado-representante');
+                            console.log('Estado select encontrado:', estadoSelect);
+                            console.log('Valor del estado:', estadoSelect ? estadoSelect.value : 'no encontrado');
+                            
+                            if (estadoSelect && estadoSelect.value) {
+                                // Guardar el valor actual del municipio antes de cargar nuevos municipios
+                                const municipioSelect = document.getElementById('idMunicipio-representante');
+                                if (municipioSelect && municipioSelect.value) {
+                                    municipioSelect.setAttribute('data-valor-guardado', municipioSelect.value);
+                                    console.log('Guardando valor del municipio:', municipioSelect.value);
+                                }
+                                
+                                console.log('Llamando a cargarMunicipiosRepresentante con estado:', estadoSelect.value);
+                                if (typeof cargarMunicipiosRepresentante === 'function') {
+                                    cargarMunicipiosRepresentante(estadoSelect.value);
+                                } else {
+                                    console.log('Función cargarMunicipiosRepresentante no encontrada');
+                                }
+                            } else {
+                                console.log('No se pueden cargar municipios - estado select no encontrado o sin valor');
+                            }
                         }
                     },
                     {
@@ -4153,7 +4265,13 @@
                         destino: 'idMunicipio-representante',
                         esSelect: true,
                         callback: function() {
-                            // Este callback se ejecutará después de copiar todos los valores
+                            // Cargar parroquias cuando se copia el municipio
+                            const municipioSelect = document.getElementById('idMunicipio-representante');
+                            if (municipioSelect && municipioSelect.value) {
+                                if (typeof cargarParroquiasRepresentante === 'function') {
+                                    cargarParroquiasRepresentante(municipioSelect.value);
+                                }
+                            }
                         }
                     },
                     {
@@ -4240,17 +4358,62 @@
                 ];
 
                 // Copiar cada campo
-                campos.forEach(campo => {
+                campos.forEach((campo, index) => {
                     const origen = document.getElementById(campo.origen);
                     const destino = document.getElementById(campo.destino);
 
                     if (origen && destino) {
                         if (campo.esSelect) {
                             // Para selects, copiar el valor seleccionado
-                            destino.value = origen.value;
-                            // Disparar evento change si existe un callback
-                            if (campo.callback && typeof campo.callback === 'function') {
-                                campo.callback();
+                            const valorOrigen = origen.value;
+                            
+                            // Para selects con selectpicker, necesitas usar el método val() de jQuery
+                            if (typeof $ !== 'undefined' && ($(origen).hasClass('selectpicker') || $(origen).hasClass('form-select'))) {
+                                try {
+                                    // Destruir selectpicker existente antes de establecer nuevo valor
+                                    $(destino).selectpicker('destroy');
+                                    
+                                    // Establecer el valor directamente
+                                    destino.value = valorOrigen;
+                                    
+                                    // Re-inicializar selectpicker con el nuevo valor
+                                    setTimeout(() => {
+                                        $(destino).selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            title: 'Seleccione una opción',
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                        $(destino).selectpicker('val', valorOrigen);
+                                        $(destino).selectpicker('refresh');
+                                        
+                                        // Disparar evento change para actualizar la interfaz
+                                        destino.dispatchEvent(new Event('change'));
+                                        
+                                        // Ejecutar callback después de un pequeño retraso
+                                        if (campo.callback && typeof campo.callback === 'function') {
+                                            setTimeout(() => {
+                                                campo.callback();
+                                            }, 200 + (100 * index));
+                                        }
+                                    }, 50);
+                                } catch (error) {
+                                    console.error('Error al manejar selectpicker:', error);
+                                    // Fallback a método simple
+                                    destino.value = valorOrigen;
+                                    destino.dispatchEvent(new Event('change'));
+                                    if (campo.callback && typeof campo.callback === 'function') {
+                                        campo.callback();
+                                    }
+                                }
+                            } else {
+                                destino.value = valorOrigen;
+                                destino.dispatchEvent(new Event('change'));
+                                if (campo.callback && typeof campo.callback === 'function') {
+                                    campo.callback();
+                                }
                             }
                         } else {
                             // Para inputs normales, copiar el valor
@@ -4262,12 +4425,11 @@
                             }
                         }
 
-                        // Disparar evento change para actualizar la interfaz
-                        destino.dispatchEvent(new Event('change'));
-
-                        // Aplicar estilos de solo lectura
-                        destino.classList.add('bg-light', 'text-muted');
-                        destino.readOnly = true;
+                        // Aplicar estilos de solo lectura SOLO si el elemento no está deshabilitado
+                        if (!destino.disabled) {
+                            destino.classList.add('bg-light', 'text-muted');
+                            destino.readOnly = true;
+                        }
                     }
                 });
 
