@@ -115,6 +115,7 @@
 .modal-body-create {
     padding: 2rem;
     max-height: 70vh;
+    overflow: auto;
 }
 
 .modal-footer-create {

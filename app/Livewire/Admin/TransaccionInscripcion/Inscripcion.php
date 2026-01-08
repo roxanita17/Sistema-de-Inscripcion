@@ -32,7 +32,7 @@ class Inscripcion extends Component
     public $padreSeleccionado = null;
     public $madreSeleccionado = null;
     public $representanteLegalSeleccionado = null;
-
+ 
     public $paisId = null;
     public bool $esVenezolano = true;
     public $estado_id = null;
@@ -345,12 +345,10 @@ class Inscripcion extends Component
         $pais = \App\Models\Pais::find($value);
         $this->esVenezolano = $pais->nameES === 'Venezuela';
 
-        // Resetear datos cuando no es Venezuela
         if ($this->esVenezolano) {
             $this->otroPaisNombre = '';
             $this->institucion_procedencia_id = null;
 
-            // 🔹 Recargar los estados de Venezuela
             $this->estados = \App\Models\Estado::where('status', true)
                 ->orderBy('nombre_estado', 'asc')
                 ->get();
@@ -365,9 +363,6 @@ class Inscripcion extends Component
             $this->instituciones = [];
         }
     }
-
-
-
 
     public function updatedEstadoId($value)
     {

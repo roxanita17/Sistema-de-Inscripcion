@@ -60,19 +60,102 @@ class Representante extends Model
         return $this->hasOne(RepresentanteLegal::class, 'representante_id', 'id');
     }
 
+    public function inscripciones()
+    {
+        return Inscripcion::where(function($query) {
+            $query->where('padre_id', $this->id)
+                  ->orWhere('madre_id', $this->id)
+                  ->orWhere('representante_legal_id', $this->id);
+        });
+    }
+
     //--- REPORTES ---//
 
     public static function reportePDF($filtro=null){
-    $query=DB::table("representantes")
-    ->where('representantes.status', 1) // Solo registros activos
-    ->where('personas.status', 1)       // Solo personas activas
-    ->select(
-        // Datos del representante
+    \Log::info('=== MODELO REPRESENTANTE - REPORTE PDF ===');
+    \Log::info('Filtros recibidos en modelo:', ['filtros' => $filtro]);
+    
+    // Primero obtener los IDs de representantes que cumplen con los filtros
+    $queryIds = DB::table("representantes")
+        ->where('representantes.status', 1)
+        ->join("personas", "personas.id", "=", "representantes.persona_id")
+        ->where('personas.status', 1);
+    
+    // Filtro por tipo (representante legal o no)
+    if (isset($filtro['es_legal'])) {
+        \Log::info('Aplicando filtro es_legal en reporte:', ['es_legal' => $filtro['es_legal']]);
+        if ($filtro['es_legal']) {
+            $queryIds->whereExists(function ($subquery) {
+                $subquery->select(DB::raw(1))
+                    ->from('representante_legal')
+                    ->where('representante_legal.representante_id', DB::raw('representantes.id'));
+            });
+        } else {
+            $queryIds->whereNotExists(function ($subquery) {
+                $subquery->select(DB::raw(1))
+                    ->from('representante_legal')
+                    ->where('representante_legal.representante_id', DB::raw('representantes.id'));
+            });
+        }
+    }
+
+    // Filtro por grado (nivel académico)
+    if (isset($filtro['grado_id']) && $filtro['grado_id'] !== '' && $filtro['grado_id'] !== null) {
+        $gradoId = $filtro['grado_id'];
+        \Log::info('Aplicando filtro grado_id en reporte:', ['grado_id' => $gradoId]);
+        $queryIds->whereExists(function ($subquery) use ($gradoId) {
+            $subquery->select(DB::raw(1))
+                ->from('inscripcions')
+                ->where(function ($q) use ($gradoId) {
+                    $q->where('inscripcions.padre_id', DB::raw('representantes.id'))
+                      ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
+                      ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
+                })
+                ->where('inscripcions.grado_id', $gradoId);
+        });
+    }
+
+    // Filtro por sección
+    if (isset($filtro['seccion_id']) && $filtro['seccion_id'] !== '' && $filtro['seccion_id'] !== null && $filtro['seccion_id'] != '0') {
+        $seccionNombre = $filtro['seccion_id'];
+        \Log::info('Aplicando filtro seccion_id en reporte:', ['seccion_id' => $seccionNombre]);
+        $queryIds->whereExists(function ($subquery) use ($seccionNombre) {
+            $subquery->select(DB::raw(1))
+                ->from('inscripcions')
+                ->join('seccions', 'seccions.id', '=', 'inscripcions.seccion_id')
+                ->where(function ($q) use ($seccionNombre) {
+                    $q->where('inscripcions.padre_id', DB::raw('representantes.id'))
+                      ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
+                      ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
+                })
+                ->where('seccions.nombre', $seccionNombre);
+        });
+    }
+    
+    // Obtener los IDs que cumplen los filtros
+    \Log::info('Consulta SQL para IDs:', ['sql' => $queryIds->toSql(), 'bindings' => $queryIds->getBindings()]);
+    $representantesIds = $queryIds->pluck('representantes.id');
+    
+    \Log::info('IDs de representantes filtrados:', ['ids' => $representantesIds->toArray()]);
+    \Log::info('Cantidad de IDs encontrados:', ['cantidad' => $representantesIds->count()]);
+    
+    // Si no hay IDs, devolver colección vacía
+    if ($representantesIds->isEmpty()) {
+        \Log::info('No se encontraron representantes con los filtros especificados');
+        return collect([]);
+    }
+    
+    // Ahora construir la consulta principal con todos los datos usando esos IDs
+    $query = DB::table("representantes")
+        ->where('representantes.status', 1)
+        ->where('personas.status', 1)
+        ->select(
+            // Datos del representante
             'representantes.id as representante_id',
             'representantes.ocupacion_representante',
             'representantes.status as representante_status',
             
-            // Datos de persona
+            // Datos de persona del representante
             'personas.primer_nombre',
             'personas.segundo_nombre',
             'personas.tercer_nombre',
@@ -80,7 +163,6 @@ class Representante extends Model
             'personas.segundo_apellido',
             'personas.numero_documento',
             'personas.telefono',
-            //'personas.telefono_dos',
             'personas.email',
             'personas.status',
             'personas.tipo_documento_id',
@@ -103,7 +185,21 @@ class Representante extends Model
             'representante_legal.serial_carnet_patria_representante',
             'representante_legal.tipo_cuenta',
             'representante_legal.codigo_carnet_patria_representante',
-            'bancos.nombre_banco as banco_nombre' // Si necesitas el nombre del banco
+            'bancos.nombre_banco as banco_nombre',
+
+            // Datos del estudiante relacionado (primera inscripción)
+            'personas_alumno.primer_nombre as alumno_primer_nombre',
+            'personas_alumno.segundo_nombre as alumno_segundo_nombre',
+            'personas_alumno.tercer_nombre as alumno_tercer_nombre',
+            'personas_alumno.primer_apellido as alumno_primer_apellido',
+            'personas_alumno.segundo_apellido as alumno_segundo_apellido',
+            'personas_alumno.numero_documento as alumno_cedula',
+
+            // Datos de año escolar y sección
+            'anio_escolars.inicio_anio_escolar',
+            'anio_escolars.cierre_anio_escolar',
+            'seccions.nombre as seccion_nombre',
+            'grados.numero_grado'
         )
         ->join("personas", "personas.id", "=", "representantes.persona_id")
         ->leftJoin("estados", "estados.id", "=", "representantes.estado_id")
@@ -111,17 +207,30 @@ class Representante extends Model
         ->leftJoin("localidads", "localidads.id", "=", "representantes.parroquia_id")
         ->leftJoin("ocupacions", "ocupacions.id", "=", "representantes.ocupacion_representante")
         ->leftJoin("representante_legal", "representante_legal.representante_id", "=", "representantes.id")
-        ->leftJoin("bancos", "bancos.id", "=", "representante_legal.banco_id");
-        
-        // Filtro por tipo (representante legal o no)
-    if (isset($filtro['es_legal'])) {
-        if ($filtro['es_legal']) {
-            $query->whereNotNull('representante_legal.id');
-        } else {
-            $query->whereNull('representante_legal.id');
-        }
-    }
+        ->leftJoin("bancos", "bancos.id", "=", "representante_legal.banco_id")
+        // Subconsulta para obtener solo la primera inscripción de cada representante
+        ->leftJoin(DB::raw("(SELECT i.* FROM inscripcions i 
+                   WHERE i.id = (
+                       SELECT MIN(i2.id) 
+                       FROM inscripcions i2 
+                       WHERE i2.padre_id = i.padre_id 
+                          OR i2.madre_id = i.madre_id 
+                          OR i2.representante_legal_id = i.representante_legal_id
+                   )
+               ) inscripciones_filtradas"), function($join) {
+            $join->on("inscripciones_filtradas.padre_id", "=", "representantes.id")
+                 ->orOn("inscripciones_filtradas.madre_id", "=", "representantes.id")
+                 ->orOn("inscripciones_filtradas.representante_legal_id", "=", "representantes.id");
+        })
+        ->leftJoin("alumnos", "alumnos.id", "=", "inscripciones_filtradas.alumno_id")
+        ->leftJoin("personas as personas_alumno", "personas_alumno.id", "=", "alumnos.persona_id")
+        ->leftJoin("anio_escolars", "anio_escolars.id", "=", "inscripciones_filtradas.anio_escolar_id")
+        ->leftJoin("seccions", "seccions.id", "=", "inscripciones_filtradas.seccion_id")
+        ->leftJoin("grados", "grados.id", "=", "inscripciones_filtradas.grado_id")
+        ->whereIn('representantes.id', $representantesIds);
     
-    return $query->get();
+    $resultados = $query->get();
+    
+    return $resultados;
     }
 }

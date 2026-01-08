@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Grado;
 use \App\Models\Seccion;
 use \App\Models\AreaFormacion;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class DocenteAreaGradoController extends Controller
@@ -149,5 +150,60 @@ class DocenteAreaGradoController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'No se pudo eliminar la asignación: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Generar reporte PDF general de docentes con asignaciones
+     */
+    public function reportePDFGeneral(Request $request)
+    {
+        $gradoId = $request->grado_id;
+        $seccionNombre = $request->seccion_id;
+        $areaFormacionId = $request->area_formacion_id;
+        $buscar = $request->buscar;
+
+        $docentes = Docente::with([
+            'persona',
+            'persona.genero',
+            'persona.tipoDocumento',
+            'asignacionesAreas.areaEstudios.areaFormacion',
+            'asignacionesAreas.grado',
+            'asignacionesAreas.seccion',
+        ])
+        ->whereHas('asignacionesAreasActivas')
+        ->whereHas('persona', fn($q) => $q->where('status', true))
+        ->where('status', true)
+
+        ->when($gradoId, function ($q) use ($gradoId) {
+            $q->whereHas('asignacionesAreas', function ($sub) use ($gradoId) {
+                $sub->where('docente_area_grados.grado_id', $gradoId)
+                    ->where('docente_area_grados.status', true);
+            });
+        })
+
+        ->when($seccionNombre, function ($q) use ($seccionNombre) {
+            $q->whereHas('asignacionesAreas.seccion', function ($sub) use ($seccionNombre) {
+                $sub->where('seccions.nombre', $seccionNombre)
+                    ->where('seccions.status', true);
+            });
+        })
+
+        ->when($areaFormacionId, function ($q) use ($areaFormacionId) {
+            $q->whereHas('asignacionesAreas.areaEstudios', function ($sub) use ($areaFormacionId) {
+                $sub->where('area_formacion_id', $areaFormacionId);
+            });
+        })
+
+        ->buscar($buscar)
+        ->get();
+
+        $pdf = Pdf::loadView('admin.transacciones.docente_area_grado.reportes.general_pdf', [
+            'docentes' => $docentes
+        ]);
+
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->setOption('isPhpEnabled', true);
+
+        return $pdf->stream('reporte_general_docentes_asignaciones.pdf');
     }
 }

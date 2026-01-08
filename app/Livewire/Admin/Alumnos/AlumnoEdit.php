@@ -49,6 +49,8 @@ class AlumnoEdit extends Component
     public $estado_id;
     public $municipio_id;
     public $localidad_id;
+    public $pais_id = null;
+    public $paises = [];
 
     public $lateralidad_id;
     public $orden_nacimiento_id;
@@ -306,6 +308,7 @@ class AlumnoEdit extends Component
 
     private function cargarDatosIniciales()
     {
+        $this->paises = \App\Models\Pais::where('status', true)->orderBy('nameES')->get();
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
         $this->generos = \App\Models\Genero::where('status', true)->get();
         $this->estados = Estado::where('status', true)->get();
@@ -341,17 +344,46 @@ class AlumnoEdit extends Component
         $this->talla_zapato = $alumno->talla_zapato;
         $this->talla_pantalon_id = $alumno->talla_pantalon_id;
 
-        if ($persona->localidad) {
-            $this->localidad_id = $persona->localidad_id;
+        if (
+            $persona->localidad &&
+            $persona->localidad->municipio &&
+            $persona->localidad->municipio->estado
+        ) {
+            $estado = $persona->localidad->municipio->estado;
+            $municipio = $persona->localidad->municipio;
+            $localidad = $persona->localidad;
 
-            if ($persona->localidad->municipio) {
-                $this->municipio_id = $persona->localidad->municipio_id;
-                $this->estado_id = $persona->localidad->municipio->estado_id;
+            // 1️⃣ País
+            $this->pais_id = $estado->pais_id;
 
-                $this->cargarMunicipios($this->estado_id);
-                $this->cargarLocalidades($this->municipio_id);
-            }
+            // 2️⃣ Estados del país
+            $this->estados = Estado::where('pais_id', $this->pais_id)
+                ->where('status', true)
+                ->orderBy('nombre_estado')
+                ->get();
+
+            // 3️⃣ Estado seleccionado
+            $this->estado_id = $estado->id;
+
+            // 4️⃣ Municipios del estado
+            $this->municipios = Municipio::where('estado_id', $this->estado_id)
+                ->where('status', true)
+                ->orderBy('nombre_municipio')
+                ->get();
+
+            // 5️⃣ Municipio seleccionado
+            $this->municipio_id = $municipio->id;
+
+            // 6️⃣ Localidades del municipio
+            $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+
+            // 7️⃣ Localidad seleccionada
+            $this->localidad_id = $localidad->id;
         }
+
 
         $this->lateralidad_id = $alumno->lateralidad_id;
         $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
@@ -373,6 +405,22 @@ class AlumnoEdit extends Component
             })->toArray();
         }
     }
+
+    public function updatedPaisId($paisId)
+    {
+        $this->estados = Estado::where('pais_id', $paisId)
+            ->where('status', true)
+            ->orderBy('nombre_estado')
+            ->get();
+
+        $this->estado_id = null;
+        $this->municipio_id = null;
+        $this->localidad_id = null;
+
+        $this->municipios = [];
+        $this->localidades = [];
+    }
+
 
     public function updatedEstadoId($value)
     {

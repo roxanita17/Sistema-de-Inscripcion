@@ -129,6 +129,7 @@ class InscripcionProsecucion extends Model
         $seccionId = $filtros['seccion_id'] ?? null;
         $estatusInscripcion = $filtros['status'] ?? null;
         $buscar = $filtros['buscar'] ?? null;
+        $materiasPendientes = $filtros['materias_pendientes'] ?? null;
 
         return self::query()
             ->with([
@@ -167,6 +168,17 @@ class InscripcionProsecucion extends Model
                             ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
                     });
                 });
+            })
+            ->when($materiasPendientes, function ($query, $materiasPendientes) {
+                if ($materiasPendientes === 'con_pendientes') {
+                    $query->whereHas('prosecucionAreas', function ($q) {
+                        $q->where('status', 'pendiente');
+                    });
+                } elseif ($materiasPendientes === 'sin_pendientes') {
+                    $query->whereDoesntHave('prosecucionAreas', function ($q) {
+                        $q->where('status', 'pendiente');
+                    });
+                }
             })
             ->with([
                 'prosecucionAreas.gradoAreaFormacion.area_formacion',

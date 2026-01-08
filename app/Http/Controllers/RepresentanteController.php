@@ -119,13 +119,54 @@ class RepresentanteController extends Controller
         }
 
         // Aplicar filtros
-        if (request()->has('es_legal') && request('es_legal') !== '') {
+        \Log::info('Filtros recibidos:', [
+            'es_legal' => request('es_legal'),
+            'grado_id' => request('grado_id'), 
+            'seccion_id' => request('seccion_id'),
+            'todos_los_params' => request()->all()
+        ]);
+
+        if (request()->has('es_legal') && request('es_legal') !== '' && request('es_legal') !== null) {
             $esLegal = request('es_legal') == '1';
             if ($esLegal) {
                 $query->whereHas('legal');
             } else {
                 $query->whereDoesntHave('legal');
             }
+            \Log::info('Aplicando filtro es_legal: ' . $esLegal);
+        }
+
+        // Aplicar filtro por grado (nivel académico) - usando consulta directa
+        if (request()->has('grado_id') && request('grado_id') !== '' && request('grado_id') !== null) {
+            $gradoId = request('grado_id');
+            \Log::info('Aplicando filtro grado_id: ' . $gradoId);
+            $query->whereExists(function ($subquery) use ($gradoId) {
+                $subquery->select(DB::raw(1))
+                    ->from('inscripcions')
+                    ->where(function ($q) use ($gradoId) {
+                        $q->where('inscripcions.padre_id', DB::raw('representantes.id'))
+                          ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
+                          ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
+                    })
+                    ->where('inscripcions.grado_id', $gradoId);
+            });
+        }
+
+        // Aplicar filtro por sección - solo si se selecciona explícitamente una sección
+        if (request()->has('seccion_id') && request('seccion_id') !== '' && request('seccion_id') !== null && request('seccion_id') != '0') {
+            $seccionNombre = request('seccion_id');
+            \Log::info('Aplicando filtro seccion_id: ' . $seccionNombre);
+            $query->whereExists(function ($subquery) use ($seccionNombre) {
+                $subquery->select(DB::raw(1))
+                    ->from('inscripcions')
+                    ->join('seccions', 'seccions.id', '=', 'inscripcions.seccion_id')
+                    ->where(function ($q) use ($seccionNombre) {
+                        $q->where('inscripcions.padre_id', DB::raw('representantes.id'))
+                          ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
+                          ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
+                    })
+                    ->where('seccions.nombre', $seccionNombre);
+            });
         }
 
         // Solo mostrar representantes activos (status != 0) y no eliminados con soft delete
@@ -138,6 +179,23 @@ class RepresentanteController extends Controller
         // Ejecutar la consulta con paginación
         $representantes = $query->paginate(10)
             ->appends(request()->query());
+
+        \Log::info('Resultados después de filtros:', [
+            'total_encontrados' => $representantes->total(),
+            'pagina_actual' => $representantes->currentPage(),
+            'sql_query' => $query->toSql()
+        ]);
+
+        // Obtener datos para los filtros
+        $grados = \App\Models\Grado::where('status', true)
+            ->orderBy('numero_grado')
+            ->get();
+            
+        $secciones = \App\Models\Seccion::where('status', true)
+            ->select('nombre')
+            ->distinct()
+            ->orderBy('nombre')
+            ->get();
 
         // Debug: verificar datos cargados
         if ($representantes->count() > 0) {
@@ -158,7 +216,7 @@ class RepresentanteController extends Controller
             ]);
         }
 
-        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo'));
+        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo', 'grados', 'secciones'));
     }
 
     /**
@@ -457,7 +515,12 @@ class RepresentanteController extends Controller
         $persona = $representante->persona;
 
         // Determine if this is a legal representative or progenitor
-        $isLegalRepresentative = $request->input('tipo_representante') === 'legal';
+        $isLegalRepresentative = in_array($request->input('tipo_representante'), [
+            'legal',
+            'solo_representante', 
+            'progenitor_padre_representante', 
+            'progenitor_madre_representante'
+        ]);
 
 
         // Log the update attempt
@@ -499,9 +562,7 @@ class RepresentanteController extends Controller
             'tipo-ci-representante' => 'required|exists:tipo_documentos,id',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
-            'idparroquia-representante' => 'required_without_all:idparroquia-padre,idparroquia|exists:localidads,id',
-            'idparroquia-padre' => 'required_without_all:idparroquia-representante,idparroquia|exists:localidads,id',
-            'idparroquia' => 'required_without_all:idparroquia-representante,idparroquia-padre|exists:localidads,id',
+            'parroquia_id' => 'required|exists:localidads,id',
         ];
 
         // Add validation rules for legal representative fields
@@ -509,7 +570,7 @@ class RepresentanteController extends Controller
             $rules = array_merge($rules, [
                 'correo-representante' => 'required|email|max:100',
                 'banco_id' => 'required|exists:bancos,id',
-                'pertenece_organizacion' => 'sometimes|boolean',
+                'pertenece_organizacion' => 'required|boolean',
                 'cual_organizacion_representante' => 'required_if:pertenece_organizacion,1|nullable|string|max:255',
             ]);
         }
@@ -519,14 +580,22 @@ class RepresentanteController extends Controller
             'numero_documento-representante.unique' => 'Este número de cédula ya está registrado',
             'numero_documento-representante.regex' => 'El número de cédula debe contener entre 6 y 8 dígitos',
             'fecha-nacimiento-representante' => 'Formato de fecha inválido',
-            'idparroquia-representante.required_without_all' => 'La parroquia es obligatoria',
-            'idparroquia-padre.required_without_all' => 'La parroquia es obligatoria',
-            'idparroquia.required_without_all' => 'La parroquia es obligatoria',
+            'parroquia_id.required' => 'La parroquia es obligatoria',
+            'parroquia_id.exists' => 'La parroquia seleccionada no es válida',
+            'pertenece_organizacion.required' => 'Debe seleccionar si pertenece a una organización',
+            'pertenece_organizacion.boolean' => 'El valor seleccionado no es válido',
+            'cual_organizacion_representante.required_if' => 'Debe especificar la organización cuando selecciona que pertenece',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
+            Log::error('=== ERRORES DE VALIDACIÓN ===', [
+                'errors' => $validator->errors()->toArray(),
+                'rules' => $rules,
+                'request_all' => $request->all()
+            ]);
+            
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error de validación',
@@ -857,8 +926,8 @@ class RepresentanteController extends Controller
 
             // Correo y organización (representante legal)
             'correo_representante'                    => $request->input('correo-representante'),
-            'pertenece_a_organizacion_representante' => $request->input('pertenece-organizacion') === 'si' ? 1 : 0,
-            'cual_organizacion_representante'        => $request->input('cual-organizacion'),
+            'pertenece_a_organizacion_representante' => $request->input('organizacion-representante') === 'si' ? 1 : 0,
+            'cual_organizacion_representante'        => $request->input('especifique-organizacion'),
 
             // Mapeo de campos de carnet de la patria y banco desde el formulario
             'carnet_patria_afiliado'             => $request->input('carnet-patria-afiliado'),
@@ -928,7 +997,7 @@ class RepresentanteController extends Controller
                 ],
                 'fecha_nacimiento' => 'required|date',
                 'telefono-representante' => 'required|string|max:20',
-                'sexo-representante' => 'required|in:M,F,O',
+                'sexo-representante' => 'required|exists:generos,id',
                 'tipo-ci-representante' => 'required|exists:tipos_documentos,id',
                 'estado_id' => 'required|exists:estados,id',
                 'municipio_id' => 'required|exists:municipios,id',
@@ -942,7 +1011,6 @@ class RepresentanteController extends Controller
                 'carnet-patria-afiliado' => 'nullable',
                 'codigo-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
                 'serial-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
-                'sexo_representante' => 'required|exists:generos,id',
                 'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
             ];
 
@@ -979,7 +1047,6 @@ class RepresentanteController extends Controller
                 'correo-representante.email' => 'El correo electrónico debe ser una dirección válida',
                 'estado_id.required' => 'El estado es obligatorio',
                 'municipio_id.required' => 'El municipio es obligatorio',
-                'sexo_representante.required' => 'El género es obligatorio',
                 'tipo_numero_documento_persona.required' => 'El tipo de documento es obligatorio',
             ];
 
@@ -2168,9 +2235,9 @@ class RepresentanteController extends Controller
     public function reportePDF(Request $request)
     {
         $filtro = $request->all();
-
+        
         $representantes = Representante::reportePDF($filtro);
-
+        
         // Ordenamos por la primera letra del primer apellido
         $representantes = $representantes->sortBy(function ($item) {
             // Accedemos directamente a la propiedad si existe
@@ -2183,7 +2250,7 @@ class RepresentanteController extends Controller
             return response()->json('No se encontraron representantes', 404);
         }
 
-        $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes'));
+        $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes', 'filtro'));
         
         // Configurar el papel y márgenes
         $pdf->setPaper('A4', 'landscape');

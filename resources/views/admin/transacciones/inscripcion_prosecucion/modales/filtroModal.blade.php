@@ -55,6 +55,25 @@
                             </option>
                         @endforeach
                     </select>
+                    <br>
+
+                    {{-- MATERIAS PENDIENTES --}}
+                    <label class="form-label-modern">
+                        <i class="fas fa-book" style="color: var(--primary);"></i>
+                        Materias Pendientes
+                    </label>
+                    <select name="materias_pendientes" class="form-select form-control-modern">
+                        <option value="">Todos los estudiantes</option>
+                        <option value="con_pendientes" {{ request('materias_pendientes') == 'con_pendientes' ? 'selected' : '' }}>
+                            Con materias pendientes
+                        </option>
+                        <option value="sin_pendientes" {{ request('materias_pendientes') == 'sin_pendientes' ? 'selected' : '' }}>
+                            Sin materias pendientes
+                        </option>
+                    </select>
+                    <br>
+
+                
 
                     <button type="submit" class="btn-modal-create mt-4 w-100">
                         <i class="fas fa-check"></i>

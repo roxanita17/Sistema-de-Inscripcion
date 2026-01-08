@@ -169,10 +169,12 @@
         }
         
         /* Ajuste de columnas específicas */
-        th:nth-child(1), td:nth-child(1) { width: 15%; }  /* Cédula */
-        th:nth-child(2), td:nth-child(2) { width: 30%; } /* Nombres */
-        th:nth-child(3), td:nth-child(3) { width: 15%; }  /* Género */
-        th:nth-child(4), td:nth-child(4) { width: 40%; } /* Estudios */
+        th:nth-child(1), td:nth-child(1) { width: 12%; }  /* Cédula */
+        th:nth-child(2), td:nth-child(2) { width: 25%; } /* Nombres */
+        th:nth-child(3), td:nth-child(3) { width: 10%; }  /* Género */
+        th:nth-child(4), td:nth-child(4) { width: 20%; } /* Estudios */
+        th:nth-child(5), td:nth-child(5) { width: 15%; } /* Sección */
+        th:nth-child(6), td:nth-child(6) { width: 18%; } /* Área de formación */
         
         /* Alineación de celdas */
         td { 
@@ -232,7 +234,7 @@
 
         <!-- Encabezado del documento -->
         <div class="header">
-            <h2>REPORTE GENERAL DE DOCENTES</h2>
+            <h2>REPORTE GENERAL DE DOCENTES CON AREAS DE FORMACION ASIGNADAS</h2>
             <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
@@ -243,23 +245,25 @@
                     <th>Cédula</th>
                     <th>Nombres y Apellidos</th>
                     <th>Género</th>
-                    <th>Estudios Realizados</th>
+                    <th>Nivel academico</th>
+                    <th>Seccion</th>
+                    <th>Area de formacion</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($docentes as $docente)
                 <tr>
-                    <td class="text-center">{{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</td>
+                    <td class="text-center">{{ $docente->persona->tipoDocumento->abreviatura ?? 'N/A' }}-{{ $docente->persona->numero_documento ?? 'N/A' }}</td>
                     <td class="long-text">
-                        {{ $docente->primer_nombre ?? '' }}
-                        {{ $docente->segundo_nombre ?? '' }}
-                        {{ $docente->primer_apellido ?? '' }}
-                        {{ $docente->segundo_apellido ?? '' }}
+                        {{ $docente->persona->primer_nombre ?? '' }}
+                        {{ $docente->persona->segundo_nombre ?? '' }}
+                        {{ $docente->persona->primer_apellido ?? '' }}
+                        {{ $docente->persona->segundo_apellido ?? '' }}
                     </td>
-                    <td class="text-center">{{ $docente->genero ?? 'N/A' }}</td>
+                    <td class="text-center">{{ $docente->persona->genero->genero ?? 'N/A' }}</td>
                     <td class="long-text">
                         @if(isset($docente->detalleDocenteEstudio) && $docente->detalleDocenteEstudio->count() > 0)
-                            @foreach($docente->detalleDocenteEstudio as $key => $detalle)
+                            @foreach($docente->detalleDocenteEstudio->where('status', true) as $detalle)
                                 • {{ $detalle->estudiosRealizado->estudios ?? 'N/A' }}
                                 @if(!$loop->last)<br>@endif
                             @endforeach
@@ -267,10 +271,28 @@
                             Sin estudios registrados
                         @endif
                     </td>
+                    <td class="long-text">
+                        @php $asigs = $docente->asignacionesAreas->where('status', true); @endphp
+                        @forelse($asigs as $asign)
+                            {{ $asign->seccion->nombre ?? 'N/A' }}
+                            @if(!$loop->last)<br>@endif
+                        @empty
+                            Sin secciones asignadas
+                        @endforelse
+                    </td>
+                    <td class="long-text">
+                        @php $asigs = $docente->asignacionesAreas->where('status', true); @endphp
+                        @forelse($asigs as $asign)
+                            {{ optional($asign->areaEstudios->areaFormacion)->nombre_area_formacion ?? 'N/A' }}
+                            @if(!$loop->last)<br>@endif
+                        @empty
+                            Sin áreas asignadas
+                        @endforelse
+                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center">No hay docentes registrados</td>
+                    <td colspan="6" class="text-center">No hay docentes registrados</td>
                 </tr>
                 @endforelse
             </tbody>

@@ -20,13 +20,7 @@
         }
 
         .step-circle {
-            transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-        }
-
-        .step-circle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
         }
 
         .step-text {
@@ -66,20 +60,15 @@
             font-style: italic;
         }
 
-        .step-indicator:hover .step-text {
-            color: var(--primary);
+        .step-indicator .step-text {
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.875rem;
         }
 
         /* Enhanced Card Animations */
         .card-modern {
-            transition: all 0.3s ease;
             border: 1px solid var(--gray-200);
-        }
-
-        .card-modern:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
         }
 
         .card-header-modern {
@@ -95,11 +84,6 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .card-modern:hover .card-header-modern::before {
-            left: 100%;
         }
 
         /* Enhanced Form Controls */
@@ -108,10 +92,9 @@
         }
 
         .form-control-modern:focus {
-            transform: translateY(-1px);
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
         }
 
-        /* Radio Button Enhancement */
         .form-check-input:checked {
             background-color: var(--primary);
             border-color: var(--primary);
@@ -127,14 +110,9 @@
             background: linear-gradient(135deg, var(--info-lighter), white);
         }
 
-        /* Button Hover Effects */
-        .btn-primary-modern:hover:not(:disabled) {
-            background: linear-gradient(135deg, var(--primary-dark), #4338ca);
-        }
-
-        /* Smooth Transitions */
-        * {
-            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        /* Button Styles */
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
         }
 
         /* Card Separation Fix */
@@ -1791,12 +1769,16 @@
                                 <div class="d-flex mt-2">
                                     <div class="form-check me-3">
                                         <input class="form-check-input" type="radio" id="organizacion-si"
-                                            name="organizacion-representante" value="si">
+                                            name="organizacion-representante" value="si"
+                                            {{ isset($representante->legal->pertenece_a_organizacion_representante) && $representante->legal->pertenece_a_organizacion_representante ? 'checked' : '' }}
+                                            required>
                                         <label class="form-check-label" for="organizacion-si">Sí</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" id="organizacion-no"
-                                            name="organizacion-representante" value="no">
+                                            name="organizacion-representante" value="no"
+                                            {{ isset($representante->legal->pertenece_a_organizacion_representante) && !$representante->legal->pertenece_a_organizacion_representante ? 'checked' : (!isset($representante->legal->pertenece_a_organizacion_representante) ? 'checked' : '') }}
+                                            required>
                                         <label class="form-check-label" for="organizacion-no">No</label>
                                     </div>
                                 </div>
@@ -2259,7 +2241,6 @@
                         }
                     }
                 });
-                console.log('Verificación de buscador completada');
             }, 500);
         });
 
@@ -2318,9 +2299,6 @@
         })()
         // Datos de estados, municipios y localidades cargados desde Blade
         const ubicacionesData = @json($estados);
-
-        console.log('=== ESTRUCTURA COMPLETA DE DATOS ===');
-        console.log('Estados cargados:', ubicacionesData);
 
         if (ubicacionesData.length > 0) {
             const primerEstado = ubicacionesData[0];
@@ -2397,7 +2375,6 @@
             if (!selectElement) return;
 
             const $select = $(selectElement);
-            console.log('Limpiando select:', selectElement.id);
 
             // Si tiene selectpicker, destruirlo completamente
             if ($select.hasClass('selectpicker') && $select.data('selectpicker')) {
@@ -2429,9 +2406,6 @@
 
         // Función para cargar municipios del representante
         window.cargarMunicipiosRepresentante = function(estadoId) {
-            console.log('=== INICIO cargarMunicipiosRepresentante ===');
-            console.log('Estado ID recibido:', estadoId);
-
             const municipioSelect = document.getElementById('idMunicipio-representante');
             const parroquiaSelect = document.getElementById('idparroquia-representante');
 
@@ -2511,15 +2485,10 @@
                 console.error('Error al cargar municipios:', error);
                 limpiarSelectCompleto(municipioSelect);
             }
-
-            console.log('=== FIN cargarMunicipiosRepresentante ===');
         };
 
         // Función para cargar parroquias del representante
         window.cargarParroquiasRepresentante = function(municipioId) {
-            console.log('=== INICIO cargarParroquiasRepresentante ===');
-            console.log('Municipio ID:', municipioId);
-
             const selectParroquia = document.getElementById('idparroquia-representante');
             if (!selectParroquia) {
                 console.error('No se encontró el select de parroquia del representante');
@@ -2605,15 +2574,10 @@
                 console.log('No se encontraron parroquias para el municipio', municipioId);
                 limpiarSelectCompleto(selectParroquia);
             }
-
-            console.log('=== FIN cargarParroquiasRepresentante ===');
         };
 
         // Funciones para cargar ubicaciones
         function cargarMunicipios(estadoId, municipioSelectId, localidadSelectId) {
-            console.log('=== INICIO cargarMunicipios ===');
-            console.log('Estado ID recibido:', estadoId);
-            console.log('Municipio Select ID:', municipioSelectId);
 
             const municipioSelect = document.getElementById(municipioSelectId);
             const localidadSelect = localidadSelectId ? document.getElementById(localidadSelectId) : null;
@@ -2625,7 +2589,6 @@
             }
 
             if (!estadoId || estadoId === '') {
-                console.log('Estado ID vacío, limpiando selects');
                 limpiarSelectCompleto(municipioSelect);
                 return;
             }
@@ -2710,9 +2673,6 @@
         }
 
         function cargarLocalidades(municipioId, localidadSelectId) {
-            console.log('=== INICIO cargarLocalidades ===');
-            console.log('Municipio ID:', municipioId);
-            console.log('Localidad Select ID:', localidadSelectId);
 
             const localidadSelect = document.getElementById(localidadSelectId);
             // Limpiar completamente usando la nueva función
@@ -2808,12 +2768,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Eventos para MADRE - con más debug
+            // Eventos para MADRE
             document.getElementById('idEstado').addEventListener('change', function() {
                 const estadoId = this.value;
-                console.log('=== CAMBIO DE ESTADO (madre) ===');
-                console.log('Estado seleccionado VALUE:', estadoId);
-                console.log('Texto seleccionado:', this.options[this.selectedIndex].text);
 
                 if (!estadoId) {
                     console.log('❌ Estado ID está vacío');
@@ -2830,9 +2787,6 @@
 
             document.getElementById('idMunicipio').addEventListener('change', function() {
                 const municipioId = this.value;
-                console.log('=== CAMBIO DE MUNICIPIO (madre) ===');
-                console.log('Municipio seleccionado:', municipioId);
-                console.log('Texto seleccionado:', this.options[this.selectedIndex].text);
 
                 cargarLocalidades(municipioId, 'idparroquia');
             });
@@ -2840,33 +2794,27 @@
             // Eventos para PADRE
             document.getElementById('idEstado-padre').addEventListener('change', function() {
                 const estadoId = this.value;
-                console.log('=== CAMBIO DE ESTADO (padre) ===');
-                console.log('Estado seleccionado:', estadoId);
 
                 cargarMunicipios(estadoId, 'idMunicipio-padre', 'idparroquia-padre');
             });
 
             document.getElementById('idMunicipio-padre').addEventListener('change', function() {
                 const municipioId = this.value;
-                console.log('=== CAMBIO DE MUNICIPIO (padre) ===');
-                console.log('Municipio seleccionado:', municipioId);
 
                 cargarLocalidades(municipioId, 'idparroquia-padre');
             });
 
             // Eventos para REPRESENTANTE
             document.getElementById('idEstado-representante').addEventListener('change', function() {
-                const estadoId = this.value;
-                console.log('=== CAMBIO DE ESTADO (representante) ===');
-                console.log('Estado seleccionado:', estadoId);
+                // Obtener el valor correctamente del selectpicker
+                const estadoId = $(this).val() || this.value;
 
                 window.cargarMunicipiosRepresentante(estadoId);
             });
 
             document.getElementById('idMunicipio-representante').addEventListener('change', function() {
-                const municipioId = this.value;
-                console.log('=== CAMBIO DE MUNICIPIO (representante) ===');
-                console.log('Municipio seleccionado:', municipioId);
+                // Obtener el valor correctamente del selectpicker
+                const municipioId = $(this).val() || this.value;
 
                 window.cargarParroquiasRepresentante(municipioId);
             });
@@ -2911,53 +2859,109 @@
                 }, false);
             })();
 
+            // Bandera para evitar múltiples ejecuciones
+            let actualizandoParentesco = false;
+
             // Función para actualizar las opciones de parentesco según el estado de los progenitores
             function actualizarOpcionesParentesco() {
-                const parentescoSelect = document.getElementById('parentesco');
-                if (!parentescoSelect) return;
-
-                const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
-                const estadoPadre = document.querySelector('input[name="estado_padre"]:checked')?.value;
-                const tipoRepresentante = document.querySelector('input[name="tipo_representante"]:checked')?.value;
-
-                // Obtener todas las opciones del select
-                const opciones = parentescoSelect.options;
-
-                // Recorrer las opciones y habilitar/deshabilitar según corresponda
-                for (let i = 0; i < opciones.length; i++) {
-                    const opcion = opciones[i];
-
-                    if (opcion.value === 'Mamá') {
-                        // Deshabilitar opción "Mamá" si la madre está ausente o si se seleccionó "Solo Representante Legal"
-                        opcion.disabled = (estadoMadre !== 'Presente' || tipoRepresentante ===
-                            'solo_representante');
-
-                        // Si la opción está seleccionada y se deshabilita, limpiar la selección
-                        if (opcion.selected && opcion.disabled) {
-                            parentescoSelect.value = '';
-                            // Disparar evento change para actualizar validaciones
-                            const event = new Event('change');
-                            parentescoSelect.dispatchEvent(event);
-                        }
-                    } else if (opcion.value === 'Papá') {
-                        // Deshabilitar opción "Papá" si el padre está ausente o si se seleccionó "Solo Representante Legal"
-                        opcion.disabled = (estadoPadre !== 'Presente' || tipoRepresentante ===
-                            'solo_representante');
-
-                        // Si la opción está seleccionada y se deshabilita, limpiar la selección
-                        if (opcion.selected && opcion.disabled) {
-                            parentescoSelect.value = '';
-                            // Disparar evento change para actualizar validaciones
-                            const event = new Event('change');
-                            parentescoSelect.dispatchEvent(event);
-                        }
-                    }
+                // Evitar ejecuciones múltiples
+                if (actualizandoParentesco) {
+                    return;
                 }
 
-                // Actualizar Select2 si está en uso
-                if (typeof $.fn.select2 === 'function' && $(parentescoSelect).hasClass(
-                        'select2-hidden-accessible')) {
-                    $(parentescoSelect).trigger('change.select2');
+                actualizandoParentesco = true;
+                
+                try {
+                    const parentescoSelect = document.getElementById('parentesco');
+                    if (!parentescoSelect) return;
+
+                    const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
+                    const estadoPadre = document.querySelector('input[name="estado_padre"]:checked')?.value;
+                    const tipoRepresentante = document.querySelector('input[name="tipo_representante"]:checked')?.value;
+
+                    // Obtener todas las opciones del select
+                    const opciones = parentescoSelect.options;
+
+                    // Recorrer las opciones y habilitar/deshabilitar según corresponda
+                    for (let i = 0; i < opciones.length; i++) {
+                        const opcion = opciones[i];
+
+                        if (opcion.value === 'Mamá') {
+                            // Deshabilitar opción "Mamá" si la madre está ausente o si se seleccionó "Solo Representante Legal"
+                            const debeDeshabilitar = (estadoMadre !== 'Presente' || tipoRepresentante === 'solo_representante');
+                            opcion.disabled = debeDeshabilitar;
+
+                            // Si la opción está seleccionada y se deshabilita, limpiar la selección
+                            if (opcion.selected && debeDeshabilitar) {
+                                parentescoSelect.value = '';
+                                const event = new Event('change');
+                                parentescoSelect.dispatchEvent(event);
+                            }
+                        } else if (opcion.value === 'Papá') {
+                            // Deshabilitar opción "Papá" si el padre está ausente o si se seleccionó "Solo Representante Legal"
+                            const debeDeshabilitar = (estadoPadre !== 'Presente' || tipoRepresentante === 'solo_representante');
+                            opcion.disabled = debeDeshabilitar;
+
+                            // Si la opción está seleccionada y se deshabilita, limpiar la selección
+                            if (opcion.selected && debeDeshabilitar) {
+                                parentescoSelect.value = '';
+                                const event = new Event('change');
+                                parentescoSelect.dispatchEvent(event);
+                            }
+                        }
+                    }
+
+                    // Actualizar selectpicker si está en uso
+                    if (typeof $ !== 'undefined' && $.fn.selectpicker) {
+                        const $parentescoSelect = $(parentescoSelect);
+                        
+                        // Guardar las opciones originales
+                        const opcionesOriginales = [];
+                        Array.from(parentescoSelect.options).forEach(option => {
+                            opcionesOriginales.push({
+                                value: option.value,
+                                text: option.text,
+                                disabled: option.disabled,
+                                selected: option.selected
+                            });
+                        });
+                        
+                        // Destruir el selectpicker
+                        $parentescoSelect.selectpicker('destroy');
+                        
+                        // Limpiar completamente el select
+                        $parentescoSelect.empty();
+                        
+                        // Restaurar las opciones sin duplicación
+                        const valoresVistos = new Set();
+                        opcionesOriginales.forEach(opcion => {
+                            if (!valoresVistos.has(opcion.value)) {
+                                const $newOption = $('<option>', {
+                                    value: opcion.value,
+                                    text: opcion.text,
+                                    disabled: opcion.disabled,
+                                    selected: opcion.selected
+                                });
+                                $parentescoSelect.append($newOption);
+                                valoresVistos.add(opcion.value);
+                            }
+                        });
+                        
+                        // Reconstruir el selectpicker
+                        $parentescoSelect.selectpicker();
+                    }
+
+                    // Actualizar Select2 si está en uso
+                    if (typeof $.fn.select2 === 'function' && $(parentescoSelect).hasClass(
+                            'select2-hidden-accessible')) {
+                        $(parentescoSelect).trigger('change.select2');
+                    }
+                
+                } catch (error) {
+                    console.error('Error en actualizarOpcionesParentesco:', error);
+                } finally {
+                    // Resetear la bandera después de completar
+                    actualizandoParentesco = false;
                 }
             }
 
@@ -3047,6 +3051,12 @@
                     }
                 }
 
+                // Actualizar selectpicker si está en uso
+                if (typeof $ !== 'undefined' && $.fn.selectpicker) {
+                    $(carnetPatriaSelect).selectpicker('destroy');
+                    $(carnetPatriaSelect).selectpicker();
+                }
+
                 // Actualizar Select2 si está en uso
                 if (typeof $.fn.select2 === 'function' && $(carnetPatriaSelect).hasClass(
                         'select2-hidden-accessible')) {
@@ -3093,21 +3103,6 @@
                 actualizarOpcionesCarnetPatria();
             }
 
-            // Agregar eventos para actualizar los radios cuando cambie el estado de los padres
-            document.querySelectorAll('input[name="estado_madre"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    actualizarRadiosRepresentante();
-                    actualizarOpcionesCarnetPatria(); // Actualizar opciones del Carnet de la Patria
-                });
-            });
-
-            document.querySelectorAll('input[name="estado_padre"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    actualizarRadiosRepresentante();
-                    actualizarOpcionesCarnetPatria(); // Actualizar opciones del Carnet de la Patria
-                });
-            });
-
             // Configurar validación en tiempo real para el código del carnet
             document.addEventListener('DOMContentLoaded', function() {
                 const codigoInput = document.getElementById('codigo');
@@ -3142,9 +3137,28 @@
                 });
             });
 
+            // Actualizar cuando cambie el estado de la madre
+            document.querySelectorAll('input[name="estado_madre"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    actualizarOpcionesParentesco();
+                    actualizarRadiosRepresentante();
+                    actualizarOpcionesCarnetPatria();
+                });
+            });
+
+            // Actualizar cuando cambie el estado del padre
+            document.querySelectorAll('input[name="estado_padre"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    actualizarOpcionesParentesco();
+                    actualizarRadiosRepresentante();
+                    actualizarOpcionesCarnetPatria();
+                });
+            });
+
             // Ejecutar al cargar la página
             document.addEventListener('DOMContentLoaded', function() {
                 actualizarRadiosRepresentante();
+                actualizarOpcionesParentesco();
                 actualizarOpcionesCarnetPatria
                     (); // Asegurarse de que las opciones del Carnet de la Patria estén actualizadas
             });
@@ -3962,6 +3976,14 @@
                             $(campo).prop('disabled', deshabilitar);
                             $(campo).trigger('change.select2');
                         }
+
+                        // Manejar selectpicker si está presente
+                        if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
+                            $(campo).prop('disabled', deshabilitar);
+                            // Forzar reconstrucción completa del selectpicker
+                            $(campo).selectpicker('destroy');
+                            $(campo).selectpicker();
+                        }
                     }
                 });
 
@@ -4155,7 +4177,11 @@
                                 otraOcupacionContainer.classList.remove('d-block');
                             }
 
-                            // Forzar la actualización del select2 si está presente
+                            // Forzar la actualización del selectpicker y select2 si están presentes
+                            if (typeof $ !== 'undefined' && $.fn.selectpicker) {
+                                $('#ocupacion-representante').selectpicker('destroy');
+                                $('#ocupacion-representante').selectpicker();
+                            }
                             if (typeof $.fn.select2 === 'function') {
                                 $('#ocupacion-representante').trigger('change.select2');
                             }
@@ -4393,6 +4419,12 @@
                         const event = new Event('change');
                         campo.dispatchEvent(event);
 
+                        // Manejar selectpicker si está presente
+                        if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
+                            $(campo).val(null).selectpicker('destroy');
+                            $(campo).selectpicker();
+                        }
+
                         // Manejar select2 si está presente
                         if (typeof $.fn.select2 === 'function' && $(campo).hasClass(
                                 'select2-hidden-accessible')) {
@@ -4421,7 +4453,6 @@
                         // Para "Solo Representante Legal", primero resetear y luego habilitar todos los campos
                         resetearCamposRepresentante();
                         toggleCamposRepresentante(false);
-                        console.log('Solo Representante Legal seleccionado - campos habilitados');
                     }
                     // Si se selecciona "Padre como Representante legal"
                     else if (tipo === 'progenitor_padre_representante') {
@@ -4468,13 +4499,8 @@
                         }
                     }
 
-                    // Si es 'solo_representante', asegurarse de que todos los campos estén habilitados (redundancia de seguridad)
-                    if (tipo === 'solo_representante') {
-                        toggleCamposRepresentante(false);
-                        console.log(
-                            'Verificación final: campos habilitados para Solo Representante Legal'
-                        );
-                    }
+                    // NOTA: No se necesita la verificación final redundante
+                    // ya que cada caso maneja sus campos correctamente
                 });
             });
 
@@ -4954,6 +4980,7 @@
 
             // Campos que siempre son obligatorios independientemente del atributo required
             const camposObligatorios = [
+                'sexo-representante',
                 'lugar-nacimiento-representante',
                 'carnet-patria',
                 'codigo-carnet',
@@ -5076,6 +5103,16 @@
                             esValido = false;
                             mensaje = `El valor máximo permitido es ${max}`;
                         }
+                    }
+                }
+                // Validar campos select (sexo, tipo documento, bancos, etc.)
+                else if (campo.tagName === 'SELECT' && (campo.id.includes('sexo') || 
+                    campo.id.includes('tipo-ci') || campo.id.includes('banco') || 
+                    campo.id.includes('ocupacion') || campo.id.includes('parentesco') ||
+                    campo.id.includes('convive') || campo.id.includes('tipo-cuenta'))) {
+                    if (valor === '' || valor === null || valor === 'Seleccione') {
+                        esValido = false;
+                        mensaje = 'Debe seleccionar una opción';
                     }
                 }
                 // Validar teléfono
@@ -5643,6 +5680,18 @@
                 campo.disabled = !esPresente;
                 if (campo.required) {
                     campo.required = esPresente;
+                }
+
+                // Manejar selectpicker si está presente
+                if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
+                    $(campo).prop('disabled', !esPresente);
+                    $(campo).selectpicker('destroy');
+                    $(campo).selectpicker();
+                }
+
+                // Manejar select2 si está presente
+                if (typeof $.fn.select2 === 'function' && $(campo).hasClass('select2-hidden-accessible')) {
+                    $(campo).prop('disabled', !esPresente).trigger('change.select2');
                 }
             });
         }
