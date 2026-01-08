@@ -105,12 +105,6 @@
                         <p>{{ $expresionLiteraria->total() }} registros encontrados</p>
                     </div>
                 </div>
-                <div class="header-right">
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
-                    </div>
-                </div>
 
                 <div class="header-right">
 

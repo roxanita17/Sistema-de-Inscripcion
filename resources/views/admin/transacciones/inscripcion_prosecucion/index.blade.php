@@ -110,43 +110,43 @@
         @endif
 
         <div class="card-modern">
-            <div class="card-header-modern">
-                <div class="header-left">
-                    <div class="header-icon"><i class="fas fa-list-ul"></i></div>
+            <div class="card-header-modern d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div class="header-left d-flex align-items-center gap-3">
+                    <div class="header-icon">
+                        <i class="fas fa-list-ul"></i>
+                    </div>
                     <div>
-                        <h3>Listado de inscripciones</h3>
+                        <h3 class="mb-0">Listado de inscripciones</h3>
                     </div>
                 </div>
-                <form action="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}">
-                    <input type="hidden" name="grado_id" value="{{ request('grado_id') }}">
-                    <input type="hidden" name="seccion_id" value="{{ request('seccion_id') }}">
-                    <input type="hidden" name="tipo_inscripcion" value="{{ request('tipo_inscripcion') }}">
 
-                    <div class="form-group-modern mb-2">
+                <div class="header-right d-flex align-items-center gap-2 flex-wrap">
+                    <form action="{{ route('admin.transacciones.inscripcion.index') }}" class="mb-0 search-sm">
+                        <input type="hidden" name="grado_id" value="{{ request('grado_id') }}">
+                        <input type="hidden" name="seccion_id" value="{{ request('seccion_id') }}">
+                        <input type="hidden" name="tipo_inscripcion" value="{{ request('tipo_inscripcion') }}">
+
                         <div class="search-modern">
                             <i class="fas fa-search"></i>
-                            <input type="text" name="buscar" id="buscar" class="form-control-modern"
-                                placeholder="Buscar..." value="{{ request('buscar') }}">
+                            <input type="text" name="buscar" title="Buscar por nombre, apellido o cedula" id="buscar"
+                                class="form-control-modern" placeholder="Buscar..." value="{{ request('buscar') }}">
                         </div>
-                    </div>
-                </form>
-                <div>
-                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                    </form>
+
+                    <button class="btn-filtro" data-bs-toggle="modal" data-bs-target="#modalFiltros">
                         <i class="fas fa-filter"></i>
-                        Filtros
                         @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion'))
                             <span class="badge bg-danger ms-1">
                                 {{ collect([request('grado_id'), request('seccion_id'), request('tipo_inscripcion')])->filter()->count() }}
                             </span>
                         @endif
                     </button>
-                </div>
-                <div>
-                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.reporteGeneralProsecucionPDF') }}" class="btn-pdf" id="generarPdfBtn" target="_blank">
-                        <i class="fas fa-file-pdf me-2"></i>Reporte General
+
+                    <a href="{{ route('admin.transacciones.inscripcion_prosecucion.reporteGeneralProsecucionPDF') }}"
+                        target="_blank" class="btn-pdf" id="generarPdfBtn"> 
+                        <i class="fas fa-file-pdf"></i> PDF General
                     </a>
-                </div>
-                <div class="header-right">
+
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
@@ -154,37 +154,29 @@
                     @endphp
 
                     @if ($mostrarAnio)
-                        <div
-                            class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1 mb-2 border">
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                                    <i class="fas fa-calendar-check me-1"></i>
-                                    Año Escolar
-                                </span>
-                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-play-circle text-primary me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="d-flex align-items-center bg-light rounded px-2 py-1 border">
+                            <span class="badge bg-primary me-2" style="font-size: 0.7rem;">
+                                <i class="fas fa-calendar-check me-1"></i> Año Escolar
+                            </span>
+                            <span class="text-muted me-2" style="font-size: 0.8rem;">
+                                <i class="fas fa-play-circle text-primary me-1"></i>
+                                {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                            </span>
+                            <span class="text-muted" style="font-size: 0.8rem;">
+                                <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                            </span>
                         </div>
                     @else
                         <div
-                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1 mb-2 border border-warning">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-                            </div>
+                            class="d-flex align-items-center bg-warning bg-opacity-10 rounded px-2 py-1 border border-warning">
+                            <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
                         </div>
                     @endif
                 </div>
             </div>
+            
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern ">
