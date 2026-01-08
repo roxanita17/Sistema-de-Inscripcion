@@ -21,24 +21,40 @@
                     {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
 
+                    <div class="form-group-modern">
+                        <label for="pais_id" class="form-label-modern">
+                            <i class="fas fa-tags"></i>
+                            Pais
+                        </label>
+                        <select name="pais_id" 
+                            wire:model.live="pais_id"
+                            id="pais_id" 
+                            class="form-control-modern " 
+                            data-live-search="true"
+                            title="Seleccione un pais"
+                            required>
+                            <option value="">Seleccione un pais</option>
+                            @foreach ($paises as $pais)
+                                <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     {{-- Select del estado --}}
                     <div class="form-group-modern">
                         <label for="estado_id" class="form-label-modern">
                             <i class="fas fa-tags"></i>
                             Estado
                         </label>
-                        <select name="estado_id" 
-                            wire:model.defer="estado_id"
-                            id="estado_id" 
-                            class="form-control-modern " 
-                            data-live-search="true"
-                            title="Seleccione un estado"
-                            required>
+                        <select wire:model.live="estado_id" @disabled(!$pais_id) class="form-control-modern" required>
                             <option value="">Seleccione un estado</option>
                             @foreach ($estados as $estado)
-                                <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                                <option value="{{ $estado->id }}">
+                                    {{ $estado->nombre_estado }}
+                                </option>
                             @endforeach
                         </select>
+
                     </div>
 
                     {{-- Nombre del Municipio --}}
@@ -49,7 +65,7 @@
                         <input type="text" 
                                class="form-control-modern" 
                                id="nombre_municipio_crear" 
-                               wire:model.defer="nombre_municipio"
+                               wire:model.live="nombre_municipio"
                                inputmode="text"
                                maxlength="100"
                                placeholder="Ingrese el nombre del municipio"

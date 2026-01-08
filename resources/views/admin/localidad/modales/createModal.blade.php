@@ -21,6 +21,26 @@
                     {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
 
+                    
+                    <div class="form-group-modern">
+                        <label for="pais_id" class="form-label-modern">
+                            <i class="fas fa-tags"></i>
+                            Pais
+                        </label>
+                        <select name="pais_id" 
+                            wire:model.live="pais_id"
+                            id="pais_id" 
+                            class="form-control-modern " 
+                            data-live-search="true"
+                            title="Seleccione un pais"
+                            required>
+                            <option value="">Seleccione un pais</option>
+                            @foreach ($paises as $pais)
+                                <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     {{-- Select del estado --}}
                     <div class="form-group-modern">
                         <label for="estado_id" class="form-label-modern">
@@ -30,6 +50,7 @@
                         <select name="estado_id" 
                             wire:model.live="estado_id"
                             id="estado_id" 
+                            @disabled(!$pais_id)
                             class="form-control-modern " 
                             data-live-search="true"
                             title="Seleccione un estado"
@@ -55,6 +76,7 @@
                         <select name="municipio_id" 
                             wire:model.live="municipio_id"
                             id="municipio_id" 
+                            @disabled(!$estado_id)
                             class="form-control-modern " 
                             data-live-search="true"
                             title="Seleccione un municipio"
