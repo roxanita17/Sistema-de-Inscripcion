@@ -701,7 +701,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="estado_id" class="form-label-modern">Estado <span class="required-badge">*</span></label>
-                                        <select wire:model.live="estado_id" id="estado_id" class="form-control-modern @error('estado_id') is-invalid @enderror">
+                                        <select wire:model.live="estado_id" id="estado_id" @disabled(!$paisId) class="form-control-modern @error('estado_id') is-invalid @enderror">
                                             <option value="">Seleccione un estado</option>
                                             @foreach ($estados as $estado)
                                                 <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
