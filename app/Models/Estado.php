@@ -14,7 +14,7 @@ class Estado extends Model
     ];
 
     public function pais(){
-        return $this->hasMany(Pais::class,"pais_id","id");
+        return $this->belongsTo(Pais::class,"pais_id","id");
     }
 
     public function municipio(){

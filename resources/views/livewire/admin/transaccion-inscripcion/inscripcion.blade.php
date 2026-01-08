@@ -687,7 +687,7 @@
                                 <div class="form-group">
                                     <label for="paisId" class="form-label-modern">Pais<span class="required-badge">*</span></label>
                                     <select wire:model.live="paisId" class="form-control-modern @error('paisId') is-invalid @enderror">
-                                        <option value="">Seleccione un país</option>
+                                       <option value="">Seleccione un país</option>
                                         @foreach($paises as $pais)
                                             <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
                                         @endforeach
