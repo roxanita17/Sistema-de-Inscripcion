@@ -103,6 +103,11 @@
                                 Sección {{ $secciones->find(request('seccion_id'))->nombre ?? 'N/A' }}
                             </span>
                         @endif
+                        @if (request('status'))
+                            <span class="badge-filtros-small">
+                                {{ request('status') }}
+                            </span>
+                        @endif
                     </div>
                     <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="btn-clear-simple">
                         <i class="fas fa-times"></i>
@@ -147,9 +152,9 @@
 
                     <button class="btn-filtro" data-bs-toggle="modal" data-bs-target="#modalFiltros">
                         <i class="fas fa-filter"></i>
-                        @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion'))
-                            <span class="badge bg-danger ms-1">
-                                {{ collect([request('grado_id'), request('seccion_id'), request('tipo_inscripcion')])->filter()->count() }}
+                        @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion') || request('status'))
+                            <span class="badge-sm bg-danger">
+                                {{ collect([request('grado_id'), request('seccion_id'), request('tipo_inscripcion'), request('status')])->filter()->count() }}
                             </span>
                         @endif
                     </button>

@@ -80,7 +80,11 @@
                 @endif
             </div>
         @endif
-        @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion'))
+        @if (request('grado_id') ||
+                request('seccion_id') ||
+                request('tipo_inscripcion') ||
+                request('materias_pendientes') ||
+                request('status'))
             <div class="card-modern filtros-simple mb-3">
                 <div class="filtros-simple-content">
                     <div class="filtros-text">
@@ -101,7 +105,27 @@
                                 Sección {{ $secciones->find(request('seccion_id'))->nombre ?? 'N/A' }}
                             </span>
                         @endif
+                        @if ($materiasPendientes)
+                            @if (request('materias_pendientes'))
+                                <span class="badge-filtros-small">
+                                    @if (request('materias_pendientes') === 'con_pendientes')
+                                        Con materias pendientes
+                                    @elseif (request('materias_pendientes') === 'sin_pendientes')
+                                        Sin materias pendientes
+                                    @endif
+                                </span>
+                            @endif
+                        @endif
+
+
+                        @if (request('status'))
+                            <span class="badge-filtros-small">
+                                {{ request('status') }}
+                            </span>
+                        @endif
+
                     </div>
+
                     <a href="{{ route('admin.transacciones.inscripcion_prosecucion.index') }}" class="btn-clear-simple">
                         <i class="fas fa-times"></i>
                     </a>
@@ -135,15 +159,19 @@
 
                     <button class="btn-filtro" data-bs-toggle="modal" data-bs-target="#modalFiltros">
                         <i class="fas fa-filter"></i>
-                        @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion'))
-                            <span class="badge bg-danger ms-1">
-                                {{ collect([request('grado_id'), request('seccion_id'), request('tipo_inscripcion')])->filter()->count() }}
+                        @if (request('grado_id') ||
+                                request('seccion_id') ||
+                                request('tipo_inscripcion') ||
+                                request('status') ||
+                                request('materias_pendientes'))
+                            <span class="badge-sm bg-danger ms-1">
+                                {{ collect([request('grado_id'), request('seccion_id'), request('tipo_inscripcion'), request('status'), request('materias_pendientes')])->filter()->count() }}
                             </span>
                         @endif
                     </button>
 
                     <a href="{{ route('admin.transacciones.inscripcion_prosecucion.reporteGeneralProsecucionPDF') }}"
-                        target="_blank" class="btn-pdf" id="generarPdfBtn"> 
+                        target="_blank" class="btn-pdf" id="generarPdfBtn">
                         <i class="fas fa-file-pdf"></i> PDF General
                     </a>
 
@@ -176,7 +204,7 @@
                     @endif
                 </div>
             </div>
-            
+
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern ">
@@ -225,8 +253,8 @@
                                             </small>
                                         </td>
                                         <td class="text-center">
-                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_nombre ?? ''}}
-                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_apellido  ?? ''}}
+                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_nombre ?? '' }}
+                                            {{ $datos->inscripcion->representanteLegal->representante->persona->primer_apellido ?? '' }}
                                         </td>
                                         <td class="text-center">
                                             {{ $datos->grado?->numero_grado ?? 'N/A' }}
@@ -334,36 +362,36 @@
             if (generarPdfBtn) {
                 // Obtener todos los parámetros de la URL actual
                 const urlParams = new URLSearchParams(window.location.search);
-                
+
                 // Construir la URL base del reporte
                 let reportUrl = generarPdfBtn.getAttribute('href').split('?')[0];
                 const params = new URLSearchParams();
-                
+
                 // Agregar todos los parámetros de filtro actuales
                 for (const [key, value] of urlParams.entries()) {
                     if (value) {
                         params.append(key, value);
                     }
                 }
-                
+
                 // Construir URL final
                 if (params.toString()) {
                     reportUrl += '?' + params.toString();
                 }
-                
+
                 // Actualizar el atributo href del botón
                 generarPdfBtn.setAttribute('href', reportUrl);
             }
         }
-        
+
         // Inicializar el enlace de PDF cuando el documento esté listo
         document.addEventListener('DOMContentLoaded', function() {
             // Actualizar el enlace de PDF al cargar la página
             actualizarEnlacePDF();
-            
+
             // Actualizar el enlace cuando cambie la URL (navegación con filtros)
             window.addEventListener('popstate', actualizarEnlacePDF);
-            
+
             // Actualizar el enlace cuando se muestre el modal de filtros
             const filtroModal = document.getElementById('modalFiltros');
             if (filtroModal) {

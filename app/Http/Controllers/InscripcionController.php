@@ -90,6 +90,7 @@ class InscripcionController extends Controller
         $gradoId = $request->get('grado_id');
         $seccionId = $request->get('seccion_id');
         $tipoInscripcion = $request->get('tipo_inscripcion');
+        $status = $request->get('status', 'Activo');
 
         $secciones = collect();
         if ($gradoId) {
@@ -132,6 +133,11 @@ class InscripcionController extends Controller
                         ->orWhere('numero_documento', 'like', "%$buscar%");
                 });
             })
+            // Filtro por status de inscripción
+            ->when($status, function ($q) use ($status) {
+                $q->where('status', $status);
+            })
+
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
@@ -146,6 +152,7 @@ class InscripcionController extends Controller
             'gradoId' => $gradoId,
             'seccionId' => $seccionId,
             'tipoInscripcion' => $tipoInscripcion,
+            'status' => $status,
             'infoCupos' => $infoCupos,
             'entradasPercentil' => $entradasPercentil,
             'seccionesResumen' => $seccionesResumen
@@ -238,7 +245,7 @@ class InscripcionController extends Controller
 
             'nuevoIngreso.institucionProcedencia',
             'nuevoIngreso.expresionLiteraria',
-            
+
 
         ])->findOrFail($id);
 
@@ -251,10 +258,10 @@ class InscripcionController extends Controller
             ->first();
 
         $pdf = PDF::loadview('admin.transacciones.inscripcion.reporte.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
-        
+
         // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
         $pdf->setOption('isPhpEnabled', true);
-        
+
         return $pdf->stream('ficha_inscripcion.pdf');
     }
 

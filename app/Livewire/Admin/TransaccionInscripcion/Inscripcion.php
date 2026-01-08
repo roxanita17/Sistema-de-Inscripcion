@@ -116,7 +116,7 @@ class Inscripcion extends Component
         return [
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
-            'localidad_id' => 'required|exists:localidades,id',
+            'localidad_id' => 'required|exists:localidads,id',
             'numero_zonificacion' => [
                 'nullable',
                 'regex:/^\d+$/'

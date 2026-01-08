@@ -123,7 +123,7 @@ class InscripcionEdit extends Component
             'paisId' => 'required|exists:pais,id',
             'estado_id' => $this->esVenezolano ? 'required|exists:estados,id' : 'nullable',
             'municipio_id' => $this->esVenezolano ? 'required|exists:municipios,id' : 'nullable',
-            'localidad_id' => $this->esVenezolano ? 'required|exists:localidades,id' : 'nullable',
+            'localidad_id' => $this->esVenezolano ? 'required|exists:localidads,id' : 'nullable',
             'institucion_procedencia_id' => $this->esVenezolano
                 ? 'required|exists:institucion_procedencias,id'
                 : 'nullable',
