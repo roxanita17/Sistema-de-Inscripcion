@@ -15,7 +15,6 @@ use App\Models\OrdenNacimiento;
 use App\Models\EtniaIndigena;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Validate;
 
 class AlumnoEdit extends Component
 {
@@ -143,19 +142,16 @@ class AlumnoEdit extends Component
                 'regex:/^\d+([.,]\d+)?$/',
                 function ($attribute, $value, $fail) {
 
-                    // Normalizar coma a punto
                     $valor = (float) str_replace(',', '.', $value);
 
                     if ($valor <= 0) {
                         $fail('La estatura no es válida.');
                     }
 
-                    // CM
                     if ($valor > 3 && ($valor < 50 || $valor > 250)) {
                         $fail('La estatura en cm debe estar entre 50 y 250.');
                     }
 
-                    // METROS
                     if ($valor <= 3 && ($valor < 0.5 || $valor > 2.5)) {
                         $fail('La estatura en metros debe estar entre 0.50 y 2.50.');
                     }
@@ -352,35 +348,26 @@ class AlumnoEdit extends Component
             $estado = $persona->localidad->municipio->estado;
             $municipio = $persona->localidad->municipio;
             $localidad = $persona->localidad;
-
-            // 1️⃣ País
             $this->pais_id = $estado->pais_id;
-
-            // 2️⃣ Estados del país
             $this->estados = Estado::where('pais_id', $this->pais_id)
                 ->where('status', true)
                 ->orderBy('nombre_estado')
                 ->get();
 
-            // 3️⃣ Estado seleccionado
             $this->estado_id = $estado->id;
 
-            // 4️⃣ Municipios del estado
             $this->municipios = Municipio::where('estado_id', $this->estado_id)
                 ->where('status', true)
                 ->orderBy('nombre_municipio')
                 ->get();
 
-            // 5️⃣ Municipio seleccionado
             $this->municipio_id = $municipio->id;
 
-            // 6️⃣ Localidades del municipio
             $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
                 ->where('status', true)
                 ->orderBy('nombre_localidad')
                 ->get();
 
-            // 7️⃣ Localidad seleccionada
             $this->localidad_id = $localidad->id;
         }
 

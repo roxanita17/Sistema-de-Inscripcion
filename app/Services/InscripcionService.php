@@ -49,16 +49,10 @@ class InscripcionService
             ->where(function ($q) use ($grado, $anioEscolarActivo) {
 
                 if ((int) $grado->numero_grado === 1) {
-
-                    // PRIMER GRADO
                     $q->where(function ($qq) use ($anioEscolarActivo) {
-
-                        // Nuevo ingreso del año activo
                         $qq->whereHas('nuevoIngreso', function ($n) use ($anioEscolarActivo) {
                             $n->where('anio_escolar_id', $anioEscolarActivo->id);
                         })
-
-                            // Repitientes NO promovidos del mismo año
                             ->orWhereHas('prosecucion', function ($p) use ($anioEscolarActivo) {
                                 $p->where('anio_escolar_id', $anioEscolarActivo->id)
                                     ->where('status', 'Activo')
@@ -66,8 +60,6 @@ class InscripcionService
                             });
                     });
                 } else {
-
-                    // OTROS GRADOS → solo promovidos del año activo
                     $q->whereHas('prosecucion', function ($p) use ($anioEscolarActivo) {
                         $p->where('anio_escolar_id', $anioEscolarActivo->id)
                             ->where('promovido', 1);
@@ -106,13 +98,14 @@ class InscripcionService
     }
 
 
-    public function validarAnioEgreso($anioEgreso): bool
+    public function validarAnioEgreso(string $fecha): bool
     {
-        $anio = Carbon::parse($anioEgreso)->year;
-        $actual = Carbon::now()->year;
-
-        return $anio <= $actual && $anio >= $actual - 7;
+        $anioEgreso = Carbon::parse($fecha)->year;
+        $anioActual = now()->year;
+        return $anioEgreso >= ($anioActual - 7)
+            && $anioEgreso <= $anioActual;
     }
+
 
     public function registrar(InscripcionData $data): Inscripcion
     {
@@ -147,10 +140,6 @@ class InscripcionService
                 );
             }
 
-
-
-
-            // Obtener el año escolar activo
             $anioEscolar = $this->obtenerAnioEscolarActivo();
 
             $inscripcion = Inscripcion::create([
@@ -197,9 +186,6 @@ class InscripcionService
         }
     }
 
-    /**
-     * Registra inscripción con alumno nuevo
-     */
     public function registrarConAlumno(
         array $datosAlumno,
         InscripcionData $datosInscripcion,
@@ -235,7 +221,6 @@ class InscripcionService
                 'status' => 'Activo',
             ]);
 
-            // Guardar discapacidades del alumno
             if (!empty($discapacidades)) {
                 foreach ($discapacidades as $discapacidad) {
                     \App\Models\DiscapacidadEstudiante::create([
@@ -253,7 +238,7 @@ class InscripcionService
 
             return $inscripcion;
         } catch (InscripcionException $e) {
-            throw $e; // se maneja arriba
+            throw $e; 
         } catch (QueryException $e) {
             throw new InscripcionException(
                 'Error al guardar los datos del alumno.'

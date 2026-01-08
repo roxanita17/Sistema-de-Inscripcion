@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\Alumnos;
 
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
