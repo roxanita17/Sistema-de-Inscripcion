@@ -41,7 +41,7 @@
                 <div class="mb-4">
                     @php
                         $dato = $datos->alumno->persona;
-                        $alumno = $datos->alumno
+                        $alumno = $datos->alumno;
                     @endphp
                     <div class="section-title">
                         <i class="fas fa-user-graduate"></i>
@@ -105,9 +105,15 @@
                                         Lugar de nacimiento
                                     </span>
                                     <span class="detail-value fw-bold">
-                                        @if (!$dato?->localidad?->municipio?->estado?->pais?->nameES === 'Venezuela')
-                                            {{ $dato?->localidad?->municipio?->estado?->pais?->nameES ?? 'N/A' }}/
+                                        @php
+                                            $pais = $dato?->localidad?->municipio?->estado?->pais?->nameES;
+                                        @endphp
+
+                                        {{-- Mostrar país SOLO si NO es Venezuela --}}
+                                        @if ($pais && strtolower($pais) !== 'venezuela')
+                                            {{ $pais }} /
                                         @endif
+
                                         {{ $dato?->localidad?->municipio?->estado?->nombre_estado ?? 'N/A' }}
                                         /
                                         {{ $dato?->localidad?->municipio?->nombre_municipio ?? 'N/A' }}
@@ -778,8 +784,8 @@
                                         Institución Procedencia
                                     </span>
                                     <span class="detail-value">
-                                        @if (! $dato->localidad->municipio->estado->pais->nameES === 'Venezuela')
-                                            {{ $dato->localidad->municipio->estado->pais->nameES }} / 
+                                        @if (!$dato->localidad->municipio->estado->pais->nameES === 'Venezuela')
+                                            {{ $dato->localidad->municipio->estado->pais->nameES }} /
                                         @endif
                                         {{ $datos->nuevoIngreso->institucionProcedencia->nombre_institucion ?? 'N/A' }}
                                     </span>

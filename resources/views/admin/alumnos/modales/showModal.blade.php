@@ -31,19 +31,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="detail-item">
-                                    <span class="detail-label">
-                                        Nombre Completo
-                                    </span>
-                                    <span class="detail-value fw-bold">
-                                        {{ $persona?->primer_nombre ?? '' }}
-                                        {{ $persona?->segundo_nombre ?? '' }}
-                                        {{ $persona?->primer_apellido ?? '' }}
-                                        {{ $persona?->segundo_apellido ?? '' }}
-                                    </span>
-                                </div>
-                            </div>
+
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -70,10 +58,14 @@
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
-                                        Orden de Nacimiento
+                                        Nombre Completo
                                     </span>
-                                    <span class="detail-value">
-                                        {{ $alumno?->ordenNacimiento->orden_nacimiento ?? 'N/A' }}
+                                    <span class="detail-value fw-bold">
+                                        {{ $persona?->primer_nombre ?? '' }}
+                                        {{ $persona?->segundo_nombre ?? '' }}
+                                        {{ $persona?->tercer_nombre ?? '' }}
+                                        {{ $persona?->primer_apellido ?? '' }}
+                                        {{ $persona?->segundo_apellido ?? '' }}
                                     </span>
                                 </div>
                             </div>
@@ -82,15 +74,38 @@
                                     <span class="detail-label">
                                         Lugar de nacimiento
                                     </span>
+
                                     <span class="detail-value fw-bold">
-                                        {{ $persona?->localidad->municipio->estado->nombre_estado ?? 'N/A' }}
+                                        @php
+                                            $pais = $persona?->localidad?->municipio?->estado?->pais?->nameES;
+                                        @endphp
+
+                                        {{-- Mostrar país SOLO si NO es Venezuela --}}
+                                        @if ($pais && strtolower($pais) !== 'venezuela')
+                                            {{ $pais }} /
+                                        @endif
+
+                                        {{ $persona?->localidad?->municipio?->estado?->nombre_estado ?? 'N/A' }}
                                         /
-                                        {{ $persona?->localidad->municipio->nombre_municipio ?? 'N/A' }}
+                                        {{ $persona?->localidad?->municipio?->nombre_municipio ?? 'N/A' }}
                                         /
-                                        {{ $persona?->localidad->nombre_localidad ?? 'N/A' }}
+                                        {{ $persona?->localidad?->nombre_localidad ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
+
+
+                            <div class="col-md-4">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        Orden de Nacimiento
+                                    </span>
+                                    <span class="detail-value">
+                                        {{ $alumno?->ordenNacimiento->orden_nacimiento ?? 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="row">
                             @if ($alumno?->etniaIndigena)

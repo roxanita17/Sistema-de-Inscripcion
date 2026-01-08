@@ -107,8 +107,11 @@
                                         Lugar de nacimiento
                                     </span>
                                     <span class="detail-value fw-bold">
-                                        @if (!$dato?->localidad?->municipio?->estado?->pais?->nameES === 'Venezuela')
-                                            {{ $dato?->localidad?->municipio?->estado?->pais?->nameES ?? 'N/A' }}/
+                                        @php
+                                            $pais = $dato?->localidad?->municipio?->estado?->pais?->nameES;
+                                        @endphp
+                                        @if ($pais && strtolower($pais) !== 'venezuela')
+                                            {{ $pais }} /
                                         @endif
                                         {{ $dato?->localidad?->municipio?->estado?->nombre_estado ?? 'N/A' }}
                                         /
