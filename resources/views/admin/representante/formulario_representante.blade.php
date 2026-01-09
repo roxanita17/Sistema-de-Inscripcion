@@ -1081,14 +1081,14 @@
                                 <div class="d-flex align-items-center">
                                     <div class="form-check me-4">
                                         <input class="form-check-input" type="radio" name="convive-padre"
-                                            id="convive-si-padre" value="1" required>
+                                            id="convive-si-padre" value="si" required>
                                         <label class="form-check-label" for="convive-si-padre">
                                             <i class="fas fa-check-circle me-1"></i> Sí
                                         </label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="convive-padre"
-                                            id="convive-no-padre" value="0">
+                                            id="convive-no-padre" value="no">
                                         <label class="form-check-label" for="convive-no-padre">
                                             <i class="fas fa-times-circle me-1"></i> No
                                         </label>
@@ -2888,6 +2888,14 @@
                 });
             }
 
+            // Evento para convivencia de la madre
+            document.querySelectorAll('input[name="convive"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Limpiar validación al cambiar la selección
+                    limpiarError(this);
+                });
+            });
+
             // Eventos para PADRE
             document.getElementById('idPais-padre').addEventListener('change', function() {
                 const paisId = this.value;
@@ -2915,6 +2923,14 @@
                     limpiarError(this);
                 });
             }
+
+            // Evento para convivencia del padre
+            document.querySelectorAll('input[name="convive-padre"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Limpiar validación al cambiar la selección
+                    limpiarError(this);
+                });
+            });
 
             // Eventos para REPRESENTANTE
             document.getElementById('idPais-representante').addEventListener('change', function() {
@@ -3678,18 +3694,32 @@
                 // Función para copiar convivencia
                 const copiarConvivencia = (prefijoOrigen) => {
                     try {
-                        const convive = document.querySelector(`input[name="convive${prefijoOrigen}"]:checked`);
+                        // Construir el nombre del campo correctamente
+                        const nombreCampo = prefijoOrigen ? `convive${prefijoOrigen}` : 'convive';
+                        const convive = document.querySelector(`input[name="${nombreCampo}"]:checked`);
                         const conviveSiRepresentante = document.querySelector(
                             'input[name="convive-representante"][value="si"]');
                         const conviveNoRepresentante = document.querySelector(
                             'input[name="convive-representante"][value="no"]');
 
+                        console.log('=== DEPURACIÓN COPIAR CONVIVENCIA ===');
+                        console.log('Prefijo origen:', prefijoOrigen);
+                        console.log('Nombre campo:', nombreCampo);
+                        console.log('Elemento convivencia encontrado:', convive);
+                        console.log('Valor de convivencia:', convive ? convive.value : 'null');
+                        console.log('Radio Sí representante:', conviveSiRepresentante);
+                        console.log('Radio No representante:', conviveNoRepresentante);
+
                         if (convive && conviveSiRepresentante && conviveNoRepresentante) {
-                            if (convive.value === 'si' || convive.value === '1') {
+                            if (convive.value === 'si') {
                                 conviveSiRepresentante.checked = true;
-                            } else if (convive.value === 'no' || convive.value === '0') {
+                                console.log('Marcando Sí en representante');
+                            } else if (convive.value === 'no') {
                                 conviveNoRepresentante.checked = true;
+                                console.log('Marcando No en representante');
                             }
+                        } else {
+                            console.log('No se encontraron todos los elementos necesarios');
                         }
                     } catch (error) {
                         console.error('Error al copiar convivencia:', error);
@@ -4450,9 +4480,9 @@
                     'No encontrado');
 
                 if (convive) {
-                    // Convertir el valor: 1 -> "si", 0 -> "no"
-                    const valorConvivencia = convive.value === '1' ? 'si' : 'no';
-                    console.log('Valor de convivencia convertido:', convive.value, '->', valorConvivencia);
+                    // Usar el valor directamente ya que ahora usamos 'si'/'no' consistentemente
+                    const valorConvivencia = convive.value;
+                    console.log('Valor de convivencia:', convive.value, '->', valorConvivencia);
 
                     const conviveRepresentante = document.querySelector(
                         `input[name="convive-representante"][value="${valorConvivencia}"]`);
