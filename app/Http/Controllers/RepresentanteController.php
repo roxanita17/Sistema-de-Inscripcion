@@ -102,7 +102,8 @@ class RepresentanteController extends Controller
             'estado',
             'municipios',
             'localidads',
-            'ocupacion'
+            'ocupacion',
+            'pais'  // Agregar relación de país
         ]);
 
         // Aplicar búsqueda
@@ -198,6 +199,11 @@ class RepresentanteController extends Controller
             ->orderBy('nombre')
             ->get();
 
+        // Obtener países para el JavaScript
+        $paises = \App\Models\Pais::where('status', true)
+            ->orderBy('nameES', 'ASC')
+            ->get();
+
         // Debug: verificar datos cargados
         if ($representantes->count() > 0) {
             $primerRep = $representantes->first();
@@ -217,7 +223,7 @@ class RepresentanteController extends Controller
             ]);
         }
 
-        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo', 'grados', 'secciones'));
+        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo', 'grados', 'secciones', 'paises'));
     }
 
     /**
@@ -2040,7 +2046,7 @@ class RepresentanteController extends Controller
             ], 404);
         }
 
-        $representante->load(['persona', 'legal']);
+        $representante->load(['persona', 'legal', 'pais', 'estado', 'municipios', 'localidads']);
 
         return response()->json([
             'status' => 'success',

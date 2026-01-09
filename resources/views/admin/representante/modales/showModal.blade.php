@@ -125,9 +125,9 @@
 
                             <div class="detail-item">
                                 <span class="detail-label">
-                                    <i class="fas fa-map-marker-alt"></i> Pais
+                                    <i class="fas fa-globe"></i> País
                                 </span>
-                                <span class="detail-value" id="modal-estado">N/A</span>
+                                <span class="detail-value" id="modal-pais">N/A</span>
                             </div>
 
                             <div class="detail-item">
