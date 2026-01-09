@@ -2932,6 +2932,23 @@
                 });
             });
 
+            // Eventos para prefijos del representante
+            const prefijoRepresentanteSelect = document.getElementById('prefijo-representante');
+            if (prefijoRepresentanteSelect) {
+                prefijoRepresentanteSelect.addEventListener('change', function() {
+                    // Limpiar validación del select
+                    limpiarError(this);
+                });
+            }
+
+            const prefijoDosRepresentanteSelect = document.getElementById('prefijo_dos-representante');
+            if (prefijoDosRepresentanteSelect) {
+                prefijoDosRepresentanteSelect.addEventListener('change', function() {
+                    // Limpiar validación del select
+                    limpiarError(this);
+                });
+            }
+
             // Eventos para REPRESENTANTE
             document.getElementById('idPais-representante').addEventListener('change', function() {
                 const paisId = this.value;
@@ -4654,14 +4671,26 @@
                         campo.readOnly = false;
                         campo.disabled = false;
 
-                        // Disparar evento change para actualizar la interfaz
-                        const event = new Event('change');
-                        campo.dispatchEvent(event);
-
                         // Manejar selectpicker si está presente
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
-                            $(campo).val(null).selectpicker('destroy');
-                            $(campo).selectpicker();
+                            try {
+                                $(campo).selectpicker('destroy');
+                                campo.value = '';
+                                $(campo).selectpicker({
+                                    liveSearch: true,
+                                    size: 8,
+                                    noneResultsText: 'No hay resultados para {0}',
+                                    title: 'Seleccione una opción',
+                                    showIcon: true,
+                                    width: 'auto'
+                                });
+                                $(campo).selectpicker('val', '');
+                                $(campo).selectpicker('refresh');
+                            } catch (error) {
+                                console.error('Error al limpiar selectpicker:', error);
+                                // Fallback simple
+                                campo.value = '';
+                            }
                         }
 
                         // Manejar select2 si está presente
@@ -4669,6 +4698,10 @@
                                 'select2-hidden-accessible')) {
                             $(campo).val(null).trigger('change');
                         }
+
+                        // Disparar evento change para actualizar la interfaz
+                        const event = new Event('change');
+                        campo.dispatchEvent(event);
                     }
                 });
 
