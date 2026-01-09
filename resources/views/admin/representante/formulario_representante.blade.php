@@ -2341,8 +2341,106 @@
                         return false;
                     }
                     
+                    console.log('=== VALIDACIÓN PERSONALIZADA PASÓ ===');
+                    
                     // Luego ejecutar validación de Bootstrap para campos requeridos
+                    console.log('=== VERIFICANDO VALIDACIÓN BOOTSTRAP ===');
+                    console.log('Form checkValidity ANTES:', form.checkValidity());
+                    
+                    // Remover required de campos en secciones deshabilitadas temporalmente
+                    const camposEnSeccionesDeshabilitadas = [];
+                    
+                    // Buscar todos los campos que están deshabilitados Y requeridos
+                    const camposDeshabilitadosRequeridos = form.querySelectorAll(':disabled[required]');
+                    console.log('Campos deshabilitados y requeridos encontrados:', camposDeshabilitadosRequeridos.length);
+                    camposDeshabilitadosRequeridos.forEach(campo => {
+                        console.log('Campo deshabilitado y requerido:', campo.id, campo.name, campo.type);
+                        camposEnSeccionesDeshabilitadas.push({campo, required: true});
+                        campo.removeAttribute('required');
+                    });
+                    
+                    // También verificar campos con readonly que son requeridos
+                    const camposReadonlyRequeridos = form.querySelectorAll('[readonly][required]');
+                    console.log('Campos readonly y requeridos encontrados:', camposReadonlyRequeridos.length);
+                    camposReadonlyRequeridos.forEach(campo => {
+                        console.log('Campo readonly y requerido:', campo.id, campo.name, campo.type);
+                        camposEnSeccionesDeshabilitadas.push({campo, required: true});
+                        campo.removeAttribute('required');
+                    });
+                    
+                    // Verificar selects específicos que podrían estar deshabilitados
+                    const selectsRequeridos = form.querySelectorAll('select[required]');
+                    selectsRequeridos.forEach(select => {
+                        if (select.disabled || select.readOnly) {
+                            console.log('Select requerido deshabilitado:', select.id, select.name);
+                            camposEnSeccionesDeshabilitadas.push({campo: select, required: true});
+                            select.removeAttribute('required');
+                        }
+                    });
+                    
+                    // Verificar campos "otra ocupación" que están vacíos pero requeridos
+                    const camposOtraOcupacion = form.querySelectorAll('[id*="otra-ocupacion"]');
+                    camposOtraOcupacion.forEach(campo => {
+                        // Verificar explícitamente si tiene el atributo required
+                        const tieneRequired = campo.hasAttribute('required');
+                        const estaVacio = !campo.value.trim();
+                        
+                        console.log(`Analizando campo ${campo.id}: required=${tieneRequired}, value="${campo.value}", vacio=${estaVacio}`);
+                        
+                        if (tieneRequired && estaVacio) {
+                            console.log(`Campo ${campo.id} vacío pero requerido, removiendo required`);
+                            camposEnSeccionesDeshabilitadas.push({campo, required: true});
+                            campo.removeAttribute('required');
+                        }
+                    });
+                    
+                    console.log('Total de campos modificados:', camposEnSeccionesDeshabilitadas.length);
+                    console.log('Form checkValidity DESPUÉS:', form.checkValidity());
+                    
+                    // Debug exhaustivo para encontrar el problema
+                    console.log('=== DEBUG EXHAUSTIVO ===');
+                    console.log('Formulario:', form);
+                    console.log('Form length:', form.length);
+                    console.log('Form elements:', form.elements.length);
+                    
+                    // Verificar cada elemento individualmente
+                    for (let i = 0; i < form.elements.length; i++) {
+                        const element = form.elements[i];
+                        console.log(`Elemento ${i}:`, {
+                            name: element.name,
+                            id: element.id,
+                            type: element.type,
+                            value: element.value,
+                            required: element.required,
+                            disabled: element.disabled,
+                            readOnly: element.readOnly,
+                            willValidate: element.willValidate,
+                            validity: element.validity,
+                            validationMessage: element.validationMessage
+                        });
+                        
+                        if (element.willValidate && !element.validity.valid) {
+                            console.log('*** ELEMENTO INVÁLIDO ENCONTRADO ***', element);
+                        }
+                    }
+                    
                     if (!form.checkValidity()) {
+                        console.log('=== VALIDACIÓN BOOTSTRAP FALLÓ ===');
+                        console.log('Form validity:', form.checkValidity());
+                        
+                        // Mostrar qué campos están inválidos
+                        const invalidFields = form.querySelectorAll(':invalid');
+                        console.log('Campos inválidos:', invalidFields);
+                        invalidFields.forEach(field => {
+                            console.log('Campo inválido:', field.id, field.name, field.type, field.value, 'validationMessage:', field.validationMessage);
+                        });
+                        
+                        // Restaurar atributos required antes de salir
+                        camposEnSeccionesDeshabilitadas.forEach(({campo, required}) => {
+                            if (required) campo.setAttribute('required', '');
+                        });
+                        console.log('Atributos required restaurados después de validación fallida');
+                        
                         event.preventDefault();
                         event.stopPropagation();
                         
@@ -2350,8 +2448,23 @@
                         readonlyFields.forEach(field => {
                             field.readOnly = true;
                         });
+                        
+                        form.classList.add('was-validated');
+                        return false;
                     }
+                    
+                    // Restaurar atributos required antes de enviar
+                    camposEnSeccionesDeshabilitadas.forEach(({campo, required}) => {
+                        if (required) campo.setAttribute('required', '');
+                    });
+                    console.log('Atributos required restaurados antes de enviar');
+                    
                     form.classList.add('was-validated');
+                    
+                    console.log('=== FORMULARIO ENVIÁNDOSE ===');
+                    console.log('Action:', form.action);
+                    console.log('Method:', form.method);
+                    console.log('Form data:', new FormData(form));
                 });
             });
         })()
@@ -5325,12 +5438,18 @@
             document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
 
             // Validar cada sección
+            console.log('=== INICIANDO VALIDACIÓN COMPLETA ===');
             const validoMadre = validarSeccionMadre();
+            console.log('Validación madre:', validoMadre);
             const validoPadre = validarSeccionPadre();
+            console.log('Validación padre:', validoPadre);
             const validoRepresentante = validarSeccionRepresentante();
+            console.log('Validación representante:', validoRepresentante);
 
             // Si hay errores, desplazarse al primero
             if (!validoMadre || !validoPadre || !validoRepresentante) {
+                console.log('=== VALIDACIÓN FALLÓ ===');
+                console.log('Madre válida:', validoMadre, 'Padre válido:', validoPadre, 'Representante válido:', validoRepresentante);
                 const primerError = document.querySelector('.is-invalid');
                 if (primerError) {
                     primerError.scrollIntoView({
@@ -5342,6 +5461,7 @@
                 return false;
             }
 
+            console.log('=== VALIDACIÓN EXITOSA ===');
             return true;
         }
 
