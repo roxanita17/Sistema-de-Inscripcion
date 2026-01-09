@@ -299,18 +299,20 @@ class RepresentanteController extends Controller
 
     public function mostrarFormulario()
     {
-        // Cargar estados con sus municipios y localidades anidadas
         $from = request('from');
+        
+        // Cargar solo datos necesarios para selects de ubicación
         $paises = Pais::where('status', true)->orderBy('nameES', 'ASC')->get();
         $estados = Estado::with(['municipio' => function ($query) {
             $query->with(['localidades'])->orderBy('nombre_municipio', 'ASC');
         }])->orderBy('nombre_estado', 'ASC')->get();
 
-        $bancos = Banco::WHERE('status', true)->orderBy("nombre_banco", "ASC")->get();
-        $prefijos_telefono = PrefijoTelefono::WHERE('status', true)->orderBy("prefijo", "ASC")->get();
-        $ocupaciones = Ocupacion::WHERE('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
-        $tipoDocumentos = TipoDocumento::WHERE('status', true)->where('nombre', '!=', 'CE')->get();
-        $generos = Genero::WHERE('status', true)->get();
+        // Cargar otros datos necesarios
+        $bancos = Banco::where('status', true)->orderBy("nombre_banco", "ASC")->get();
+        $prefijos_telefono = PrefijoTelefono::where('status', true)->orderBy("prefijo", "ASC")->get();
+        $ocupaciones = Ocupacion::where('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
+        $tipoDocumentos = TipoDocumento::where('status', true)->where('nombre', '!=', 'CE')->get();
+        $generos = Genero::where('status', true)->get();
 
         return view(
             "admin.representante.formulario_representante",
@@ -338,8 +340,7 @@ class RepresentanteController extends Controller
             }
         ])->findOrFail($id);
 
-
-        // Cargar estados con sus relaciones
+        // Cargar solo datos necesarios para selects
         $estados = Estado::where('status', true)
             ->with(['municipio' => function ($query) {
                 $query->where('status', true)
@@ -350,7 +351,6 @@ class RepresentanteController extends Controller
             ->orderBy('nombre_estado', 'ASC')
             ->get();
 
-        // Cargar municipios para el select
         $municipios = Municipio::where('status', true)
             ->orderBy('nombre_municipio', 'ASC')
             ->get();
@@ -376,7 +376,6 @@ class RepresentanteController extends Controller
             ->orderBy('nombre', 'ASC')
             ->get();
 
-        // localidades
         $parroquias_cargadas = Localidad::where('status', true)
             ->orderBy('nombre_localidad', 'ASC')
             ->get();

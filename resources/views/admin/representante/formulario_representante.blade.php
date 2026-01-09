@@ -2022,10 +2022,100 @@
     <!-- Bootstrap Select JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script>
-        // Variable para almacenar estados anteriores
-        const estadoAnterior = {};
+        // Datos de ubicaciones cargados desde Blade
+        const ubicacionesData = @json($estados);
 
-        // Función para mostrar alerta moderna de ausencia
+        // Función unificada para cargar selects anidados
+        function cargarSelectAnidado(tipo, parentId, targetSelectId, clearSelectId = null) {
+            const targetSelect = document.getElementById(targetSelectId);
+            const clearSelect = clearSelectId ? document.getElementById(clearSelectId) : null;
+
+            if (!targetSelect) return;
+
+            // Limpiar selects
+            limpiarSelectCompleto(targetSelect);
+            if (clearSelect) limpiarSelectCompleto(clearSelect);
+
+            if (!parentId) return;
+
+            let options = '<option value="">Seleccione un ' + tipo + '</option>';
+            let datos = [];
+
+            if (tipo === 'estado') {
+                datos = ubicacionesData.filter(e => String(e.pais_id) === String(parentId));
+                datos.forEach(item => {
+                    options += `<option value="${item.id}">${item.nombre_estado}</option>`;
+                });
+            } else if (tipo === 'municipio') {
+                const estado = ubicacionesData.find(e => e.id == parentId);
+                if (estado && estado.municipio) {
+                    datos = estado.municipio;
+                    datos.forEach(item => {
+                        options += `<option value="${item.id}">${item.nombre_municipio}</option>`;
+                    });
+                }
+            } else if (tipo === 'localidad') {
+                for (const estado of ubicacionesData) {
+                    if (estado.municipio) {
+                        const municipio = estado.municipio.find(m => m.id == parentId);
+                        if (municipio && municipio.localidades) {
+                            datos = municipio.localidades;
+                            datos.forEach(item => {
+                                options += `<option value="${item.id}">${item.nombre_localidad}</option>`;
+                            });
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Guardar el valor actual antes de modificar
+            const valorActual = targetSelect.value;
+            const valorGuardado = targetSelect.getAttribute('data-valor-guardado');
+            
+            targetSelect.innerHTML = options;
+            
+            // Re-inicializar selectpicker
+            const $targetSelect = $(targetSelect);
+            try {
+                $targetSelect.selectpicker('destroy');
+                $targetSelect.selectpicker({
+                    liveSearch: true,
+                    size: 8,
+                    noneResultsText: 'No hay resultados para {0}',
+                    selectOnTab: false,
+                    showSubtext: false,
+                    showIcon: true,
+                    width: 'auto'
+                });
+                
+                // Restaurar el valor si existía previamente
+                if (valorGuardado) {
+                    $targetSelect.selectpicker('val', valorGuardado);
+                    console.log('Valor restaurado desde data-valor-guardado:', valorGuardado);
+                } else if (valorActual) {
+                    $targetSelect.selectpicker('val', valorActual);
+                    console.log('Valor restaurado desde value:', valorActual);
+                }
+            } catch (e) {
+                $targetSelect.selectpicker({
+                    liveSearch: true,
+                    size: 8,
+                    noneResultsText: 'No hay resultados para {0}',
+                    selectOnTab: false,
+                    showSubtext: false,
+                    showIcon: true,
+                    width: 'auto'
+                });
+                
+                // Restaurar el valor si existía previamente
+                if (valorGuardado) {
+                    $targetSelect.selectpicker('val', valorGuardado);
+                } else if (valorActual) {
+                    $targetSelect.selectpicker('val', valorActual);
+                }
+            }
+        }
         function mostrarAlertaAusencia(tipo) {
             const nombre = tipo === 'madre' ? 'la madre' : 'el padre';
 
@@ -2090,9 +2180,6 @@
                 const valorAnterior = document.querySelector(`input[name="${radioName}"]:checked`)?.value ||
                     'Presente';
 
-                // Actualizar estado anterior
-                actualizarEstadoAnterior(radioName, 'Ausente');
-
                 // Cerrar modal
                 modal.hide();
 
@@ -2102,13 +2189,10 @@
                 }, 500);
             });
 
-            // Manejar cancelación - volver al estado anterior
+            // Manejar cancelación - mantener estado actual
             document.getElementById('btnCancelarAusencia').addEventListener('click', function() {
-                const radioName = `estado_${tipo}`;
-                const valorAnterior = estadoAnterior[radioName] || 'Presente';
-
-                // Volver al valor anterior
-                document.querySelector(`input[name="${radioName}"][value="${valorAnterior}"]`).checked = true;
+                // Cerrar modal sin hacer cambios
+                modal.hide();
 
                 // Cerrar modal
                 modal.hide();
@@ -2120,10 +2204,6 @@
             });
         }
 
-        // Función para actualizar estado anterior
-        function actualizarEstadoAnterior(radioName, valor) {
-            estadoAnterior[radioName] = valor;
-        }
 
         // Validación en tiempo real para campos numéricos
         function validarSoloNumeros(input) {
@@ -2275,26 +2355,6 @@
                 });
             });
         })()
-        // Datos de estados, municipios y localidades cargados desde Blade
-        const ubicacionesData = @json($estados);
-
-        if (ubicacionesData.length > 0) {
-            const primerEstado = ubicacionesData[0];
-            console.log('Primer estado:', primerEstado.nombre_estado);
-            console.log('ID del primer estado:', primerEstado.id); // Usar 'id' no 'id_estado'
-
-            if (primerEstado.municipio && primerEstado.municipio.length > 0) {
-                const primerMunicipio = primerEstado.municipio[0];
-                console.log('Primer municipio:', primerMunicipio.nombre_municipio);
-                console.log('ID del primer municipio:', primerMunicipio.id); // Usar 'id' no 'id_municipio'
-                console.log('¿Tiene localidades?', 'localidades' in primerMunicipio);
-
-                if (primerMunicipio.localidades && primerMunicipio.localidades.length > 0) {
-                    console.log('Primera localidad:', primerMunicipio.localidades[0]);
-                }
-            }
-        }
-
         // Función centralizada para inicializar selectpicker con configuración consistente
         function inicializarSelectPickerConBuscador($selectElement) {
             if (!$selectElement || !$selectElement.hasClass('selectpicker')) {
@@ -2379,622 +2439,57 @@
                     showIcon: true,
                     width: 'auto'
                 });
-                console.log('Selectpicker re-inicializado con buscador para:', selectElement.id);
             }
         }
 
-        // Función para cargar municipios del representante
-        window.cargarMunicipiosRepresentante = function(estadoId) {
-            const municipioSelect = document.getElementById('idMunicipio-representante');
-            const parroquiaSelect = document.getElementById('idparroquia-representante');
-
-            if (!municipioSelect) {
-                console.error('No se encontró el select de municipio del representante');
-                return;
-            }
-
-            // Limpiar selects completamente usando la nueva función
-            limpiarSelectCompleto(municipioSelect);
-            if (parroquiaSelect) {
-                limpiarSelectCompleto(parroquiaSelect);
-            }
-
-            if (!estadoId) {
-                limpiarSelectCompleto(municipioSelect);
-                return;
-            }
-
-            try {
-                // Buscar el estado en los datos cargados
-                const estado = ubicacionesData.find(e => e.id == estadoId);
-
-                if (!estado) {
-                    console.error('No se encontró el estado con ID:', estadoId);
-                    limpiarSelectCompleto(municipioSelect);
-                    return;
-                }
-
-                // Usar la propiedad 'municipio' (singular) según la estructura de datos
-                const municipios = estado.municipio || [];
-                console.log(`Encontrados ${municipios.length} municipios para el estado ${estadoId}`);
-
-                if (municipios.length > 0) {
-                    let options = '<option value="">Seleccione un municipio</option>';
-
-                    municipios.forEach(municipio => {
-                        const nombre = municipio.nombre_municipio || municipio.nombre || 'Municipio sin nombre';
-                        options += `<option value="${municipio.id}">${nombre}</option>`;
-                    });
-
-                    // Agregar las nuevas opciones
-                    municipioSelect.innerHTML = options;
-
-                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
-                    const $municipioSelect = $(municipioSelect);
-                    try {
-                        $municipioSelect.selectpicker('destroy');
-                        $municipioSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Municipios cargados y re-inicializado con buscador para:', municipioSelect.id);
-                        
-                        // Pequeño retraso para asegurar que el valor se muestre visualmente
-                        setTimeout(() => {
-                            // Si es el municipio del representante legal, asegurar que el valor se mantenga
-                            if (municipioSelect.id === 'idMunicipio-representante') {
-                                const valorGuardado = municipioSelect.getAttribute('data-valor-guardado');
-                                if (valorGuardado) {
-                                    $municipioSelect.selectpicker('val', valorGuardado);
-                                    console.log('Restaurando valor del municipio del representante:', valorGuardado);
-                                }
-                            }
-                        }, 100);
-                        
-                    } catch (e) {
-                        console.error('Error al re-inicializar municipios:', e);
-                        // Intentar inicializar directamente si destroy falla
-                        $municipioSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Municipios inicializados directamente con buscador para:', municipioSelect.id);
-                    }
-                } else {
-                    limpiarSelectCompleto(municipioSelect);
-                }
-            } catch (error) {
-                console.error('Error al cargar municipios:', error);
-                limpiarSelectCompleto(municipioSelect);
-            }
-        };
-
-        // Función para cargar parroquias del representante
-        window.cargarParroquiasRepresentante = function(municipioId) {
-            const selectParroquia = document.getElementById('idparroquia-representante');
-            if (!selectParroquia) {
-                console.error('No se encontró el select de parroquia del representante');
-                return;
-            }
-
-            // Limpiar completamente usando la nueva función
-            limpiarSelectCompleto(selectParroquia);
-
-            if (!municipioId) {
-                console.log('No se proporcionó ID de municipio');
-                return;
-            }
-
-            // Buscar el municipio seleccionado en los datos cargados
-            let municipioEncontrado = null;
-
-            // Buscar en todos los estados
-            for (const estado of ubicacionesData) {
-                // Verificar si el estado tiene la propiedad 'municipio' (singular)
-                if (estado.municipio) {
-                    municipioEncontrado = estado.municipio.find(m => m.id == municipioId);
-                    if (municipioEncontrado) break;
-                }
-            }
-
-            if (municipioEncontrado) {
-                console.log('Municipio encontrado:', municipioEncontrado);
-                console.log('Propiedades del municipio:', Object.keys(municipioEncontrado));
-                console.log('¿Tiene localidades?', 'localidades' in municipioEncontrado);
-                console.log('¿Tiene municipio?', 'municipio' in municipioEncontrado);
-
-                // Intentar con diferentes nombres de propiedad
-                const localidades = municipioEncontrado.localidades ||
-                    municipioEncontrado.municipio ||
-                    municipioEncontrado.parroquias || [];
-
-                console.log('Localidades encontradas:', localidades.length);
-                console.log('Contenido de localidades:', localidades);
-
-                if (localidades.length > 0) {
-                    // Agregar las nuevas opciones
-                    let options = '<option value="">Seleccione una parroquia</option>';
-
-                    localidades.forEach(parroquia => {
-                        const nombre = parroquia.nombre_parroquia || parroquia.nombre || parroquia
-                            .nombre_localidad || 'Sin nombre';
-                        options += `<option value="${parroquia.id}">${nombre}</option>`;
-                    });
-
-                    selectParroquia.innerHTML = options;
-
-                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
-                    const $selectParroquia = $(selectParroquia);
-                    try {
-                        $selectParroquia.selectpicker('destroy');
-                        $selectParroquia.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Parroquias cargadas y re-inicializado con buscador para:', selectParroquia.id);
-                    } catch (e) {
-                        console.error('Error al re-inicializar parroquias:', e);
-                        // Intentar inicializar directamente si destroy falla
-                        $selectParroquia.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Parroquias inicializadas directamente con buscador para:', selectParroquia.id);
-                    }
-                }
-            } else {
-                console.log('No se encontraron parroquias para el municipio', municipioId);
-                limpiarSelectCompleto(selectParroquia);
-            }
-        };
-
-        // Funciones para cargar ubicaciones
-        function cargarEstados(paisId, estadoSelectId, municipioSelectId, localidadSelectId) {
-            const estadoSelect = document.getElementById(estadoSelectId);
-            const municipioSelect = municipioSelectId ? document.getElementById(municipioSelectId) : null;
-            const localidadSelect = localidadSelectId ? document.getElementById(localidadSelectId) : null;
-
-            if (!estadoSelect) {
-                return;
-            }
-
-            limpiarSelectCompleto(estadoSelect);
-            if (municipioSelect) {
-                limpiarSelectCompleto(municipioSelect);
-            }
-            if (localidadSelect) {
-                limpiarSelectCompleto(localidadSelect);
-            }
-
-            if (!paisId || paisId === '') {
-                return;
-            }
-
-            const estadosFiltrados = (ubicacionesData || []).filter(e => String(e.pais_id) === String(paisId));
-            let options = '<option value="">Seleccione un estado</option>';
-
-            estadosFiltrados.forEach((estado) => {
-                const id = estado.id || '';
-                const nombre = estado.nombre_estado || 'Sin nombre';
-                options += `<option value="${id}">${nombre}</option>`;
-            });
-
-            estadoSelect.innerHTML = options;
-            estadoSelect.value = ''; // Establecer el valor del select en vacío
-
-            // Limpiar y re-inicializar el selectpicker del estado antes de cargar municipios
-            const $estadoSelect = $(estadoSelect);
-            try {
-                $estadoSelect.selectpicker('destroy');
-                $estadoSelect.selectpicker({
-                    liveSearch: true,
-                    size: 8,
-                    noneResultsText: 'No hay resultados para {0}',
-                    selectOnTab: false,
-                    showSubtext: false,
-                    showIcon: true,
-                    width: 'auto'
-                });
-                
-                // Pequeño retraso para asegurar que el valor se muestre visualmente
-                setTimeout(() => {
-                    console.log('Estados cargados y re-inicializado con buscador para:', estadoSelect.id);
-                    
-                    // Si es el estado del representante legal, asegurar que el valor se mantenga
-                    if (estadoSelect.id === 'idEstado-representante') {
-                        const valorGuardado = estadoSelect.getAttribute('data-valor-guardado');
-                        if (valorGuardado) {
-                            $estadoSelect.selectpicker('val', valorGuardado);
-                            console.log('Restaurando valor del estado del representante:', valorGuardado);
-                        }
-                    }
-                }, 100);
-                
-            } catch (e) {
-                console.error('Error al re-inicializar estados:', e);
-                // Intentar inicializar directamente si destroy falla
-                $estadoSelect.selectpicker({
-                    liveSearch: true,
-                    size: 8,
-                    noneResultsText: 'No hay resultados para {0}',
-                    selectOnTab: false,
-                    showSubtext: false,
-                    showIcon: true,
-                    width: 'auto'
-                });
-                console.log('Estados inicializados directamente con buscador para:', estadoSelect.id);
-            }
-        }
-
-        function cargarMunicipios(estadoId, municipioSelectId, localidadSelectId) {
-
-            const municipioSelect = document.getElementById(municipioSelectId);
-            const localidadSelect = localidadSelectId ? document.getElementById(localidadSelectId) : null;
-
-            // Limpiar los selects completamente usando la nueva función
-            limpiarSelectCompleto(municipioSelect);
-            if (localidadSelect) {
-                limpiarSelectCompleto(localidadSelect);
-            }
-
-            if (!estadoId || estadoId === '') {
-                limpiarSelectCompleto(municipioSelect);
-                return;
-            }
-
-            try {
-                console.log('Buscando estado con ID:', estadoId);
-                console.log('Tipo de estadoId:', typeof estadoId);
-                console.log('Estados disponibles:', ubicacionesData.map(e => ({
-                    id: e.id,
-                    nombre: e.nombre_estado
-                })));
-
-                // Buscar el estado por ID - usar 'id' (no 'id_estado')
-                const estado = ubicacionesData.find(e => e.id == estadoId);
-
-                if (!estado) {
-                    console.error('No se encontró el estado con ID:', estadoId);
-                    console.log('IDs disponibles en datos:', ubicacionesData.map(e => e.id));
-                    limpiarSelectCompleto(municipioSelect);
-                    return;
-                }
-
-                console.log('Estado encontrado:', estado.nombre_estado);
-
-                // Usar la propiedad 'municipio' (singular)
-                const municipios = estado.municipio || [];
-                console.log('Número de municipios encontrados:', municipios.length);
-                console.log('Municipios:', municipios);
-
-                if (municipios.length > 0) {
-                    let options = '<option value="">Seleccione un municipio</option>';
-
-                    municipios.forEach((municipio) => {
-                        // Usar 'id' (no 'id_municipio')
-                        const id = municipio.id || '';
-                        const nombre = municipio.nombre_municipio || municipio.nombre || 'Sin nombre';
-                        console.log(`Agregando municipio: ${nombre} (ID: ${id})`);
-                        options += `<option value="${id}">${nombre}</option>`;
-                    });
-
-                    // Agregar las nuevas opciones
-                    municipioSelect.innerHTML = options;
-
-                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
-                    const $municipioSelect = $(municipioSelect);
-                    try {
-                        $municipioSelect.selectpicker('destroy');
-                        $municipioSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Municipios cargados y re-inicializado con buscador para:', municipioSelect.id);
-                        
-                        // Pequeño retraso para asegurar que el valor se muestre visualmente
-                        setTimeout(() => {
-                            // Si es el municipio del representante legal, asegurar que el valor se mantenga
-                            if (municipioSelect.id === 'idMunicipio-representante') {
-                                const valorGuardado = municipioSelect.getAttribute('data-valor-guardado');
-                                if (valorGuardado) {
-                                    $municipioSelect.selectpicker('val', valorGuardado);
-                                    console.log('Restaurando valor del municipio del representante:', valorGuardado);
-                                }
-                            }
-                        }, 100);
-                        
-                    } catch (e) {
-                        console.error('Error al re-inicializar municipios:', e);
-                        // Intentar inicializar directamente si destroy falla
-                        $municipioSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Municipios inicializados directamente con buscador para:', municipioSelect.id);
-                    }
-
-                    console.log('Municipios cargados correctamente en', municipioSelectId);
-                } else {
-                    console.warn('No se encontraron municipios para el estado:', estado.nombre_estado);
-                    limpiarSelectCompleto(municipioSelect);
-                }
-            } catch (error) {
-                console.error('Error al cargar municipios:', error);
-                limpiarSelectCompleto(municipioSelect);
-            }
-        }
-
-        function cargarLocalidades(municipioId, localidadSelectId) {
-
-            const localidadSelect = document.getElementById(localidadSelectId);
-            // Limpiar completamente usando la nueva función
-            limpiarSelectCompleto(localidadSelect);
-
-            if (!municipioId) {
-                limpiarSelectCompleto(localidadSelect);
-                return;
-            }
-
-            try {
-                let localidadesEncontradas = [];
-
-                console.log('Buscando municipio con ID:', municipioId);
-
-                // Buscar en todos los estados
-                for (const estado of ubicacionesData) {
-                    if (!estado.municipio || !Array.isArray(estado.municipio)) {
-                        continue;
-                    }
-
-                    // Buscar el municipio por ID - usar 'id' (no 'id_municipio')
-                    const municipio = estado.municipio.find(m => m.id == municipioId);
-
-                    if (municipio) {
-                        console.log('Municipio encontrado:', municipio.nombre_municipio);
-
-                        // Usar 'localidades' (no 'parroquia')
-                        if (municipio.localidades && Array.isArray(municipio.localidades)) {
-                            localidadesEncontradas = municipio.localidades;
-                            console.log('Localidades encontradas:', localidadesEncontradas.length);
-                            console.log('Localidades:', localidadesEncontradas);
-                        } else {
-                            console.log('El municipio no tiene localidades');
-                            console.log('Propiedades del municipio:', Object.keys(municipio));
-                        }
-                        break;
-                    }
-                }
-
-                if (localidadesEncontradas.length > 0) {
-                    let options = '<option value="">Seleccione una localidad</option>';
-
-                    localidadesEncontradas.forEach(localidad => {
-                        // Usar 'id' (no 'id_parroquia')
-                        const id = localidad.id || '';
-                        const nombre = localidad.nombre_localidad || localidad.nombre || 'Sin nombre';
-                        console.log(`Agregando localidad: ${nombre} (ID: ${id})`);
-                        options += `<option value="${id}">${nombre}</option>`;
-                    });
-
-                    // Agregar las nuevas opciones
-                    localidadSelect.innerHTML = options;
-
-                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
-                    const $localidadSelect = $(localidadSelect);
-                    try {
-                        $localidadSelect.selectpicker('destroy');
-                        $localidadSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Localidades cargadas y re-inicializado con buscador para:', localidadSelect.id);
-                    } catch (e) {
-                        console.error('Error al re-inicializar localidades:', e);
-                        // Intentar inicializar directamente si destroy falla
-                        $localidadSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Localidades inicializadas directamente con buscador para:', localidadSelect.id);
-                    }
-
-                    console.log('Localidades cargadas correctamente en', localidadSelectId);
-                } else {
-                    console.warn('No se encontraron localidades para el municipio ID:', municipioId);
-                    limpiarSelectCompleto(localidadSelect);
-                }
-            } catch (error) {
-                console.error('Error al cargar localidades:', error);
-                limpiarSelectCompleto(localidadSelect);
-            }
-        }
-
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Eventos para MADRE
             document.getElementById('idPais').addEventListener('change', function() {
-                const paisId = this.value;
-                cargarEstados(paisId, 'idEstado', 'idMunicipio', 'idparroquia');
+                cargarSelectAnidado('estado', this.value, 'idEstado', 'idMunicipio');
                 inicializarSelectPickerConBuscador($(this));
             });
 
             document.getElementById('idEstado').addEventListener('change', function() {
-                const estadoId = this.value;
-
-                if (!estadoId) {
-                    console.log('❌ Estado ID está vacío');
-                    document.getElementById('idMunicipio').innerHTML =
-                        '<option value="">Seleccione un estado primero</option>';
-                    document.getElementById('idparroquia').innerHTML =
-                        '<option value="">Seleccione un municipio primero</option>';
-                    return;
-                }
-
-                console.log('Estado ID válido:', estadoId);
-                cargarMunicipios(estadoId, 'idMunicipio', 'idparroquia');
+                cargarSelectAnidado('municipio', this.value, 'idMunicipio', 'idparroquia');
             });
 
             document.getElementById('idMunicipio').addEventListener('change', function() {
-                const municipioId = this.value;
-
-                cargarLocalidades(municipioId, 'idparroquia');
-            });
-
-            // Evento para ocupación de la madre
-            const ocupacionMadreSelect = document.getElementById('ocupacion-madre');
-            if (ocupacionMadreSelect) {
-                ocupacionMadreSelect.addEventListener('change', function() {
-                    // Limpiar validación del select
-                    limpiarError(this);
-                });
-            }
-
-            // Evento para convivencia de la madre
-            document.querySelectorAll('input[name="convive"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    // Limpiar validación al cambiar la selección
-                    limpiarError(this);
-                });
+                cargarSelectAnidado('localidad', this.value, 'idparroquia');
             });
 
             // Eventos para PADRE
             document.getElementById('idPais-padre').addEventListener('change', function() {
-                const paisId = this.value;
-                cargarEstados(paisId, 'idEstado-padre', 'idMunicipio-padre', 'idparroquia-padre');
+                cargarSelectAnidado('estado', this.value, 'idEstado-padre', 'idMunicipio-padre');
                 inicializarSelectPickerConBuscador($(this));
             });
 
             document.getElementById('idEstado-padre').addEventListener('change', function() {
-                const estadoId = this.value;
-
-                cargarMunicipios(estadoId, 'idMunicipio-padre', 'idparroquia-padre');
+                cargarSelectAnidado('municipio', this.value, 'idMunicipio-padre', 'idparroquia-padre');
             });
 
             document.getElementById('idMunicipio-padre').addEventListener('change', function() {
-                const municipioId = this.value;
-
-                cargarLocalidades(municipioId, 'idparroquia-padre');
+                cargarSelectAnidado('localidad', this.value, 'idparroquia-padre');
             });
-
-            // Evento para ocupación del padre
-            const ocupacionPadreSelect = document.getElementById('ocupacion-padre');
-            if (ocupacionPadreSelect) {
-                ocupacionPadreSelect.addEventListener('change', function() {
-                    // Limpiar validación del select
-                    limpiarError(this);
-                });
-            }
-
-            // Evento para convivencia del padre
-            document.querySelectorAll('input[name="convive-padre"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    // Limpiar validación al cambiar la selección
-                    limpiarError(this);
-                });
-            });
-
-            // Eventos para prefijos del representante
-            const prefijoRepresentanteSelect = document.getElementById('prefijo-representante');
-            if (prefijoRepresentanteSelect) {
-                prefijoRepresentanteSelect.addEventListener('change', function() {
-                    // Limpiar validación del select
-                    limpiarError(this);
-                });
-            }
-
-            const prefijoDosRepresentanteSelect = document.getElementById('prefijo_dos-representante');
-            if (prefijoDosRepresentanteSelect) {
-                prefijoDosRepresentanteSelect.addEventListener('change', function() {
-                    // Limpiar validación del select
-                    limpiarError(this);
-                });
-            }
 
             // Eventos para REPRESENTANTE
             document.getElementById('idPais-representante').addEventListener('change', function() {
-                const paisId = this.value;
-                
-                // Limpiar y re-inicializar el selectpicker del país antes de cargar estados
-                const $paisSelect = $(this);
-                try {
-                    $paisSelect.selectpicker('destroy');
-                    $paisSelect.selectpicker({
-                        liveSearch: true,
-                        size: 8,
-                        noneResultsText: 'No hay resultados para {0}',
-                        title: 'Seleccione un país',
-                        showIcon: true,
-                        width: 'auto'
-                    });
-                } catch (e) {
-                    console.error('Error al re-inicializar selectpicker del país:', e);
-                }
-                
-                cargarEstados(paisId, 'idEstado-representante', 'idMunicipio-representante', 'idparroquia-representante');
+                cargarSelectAnidado('estado', this.value, 'idEstado-representante', 'idMunicipio-representante');
                 inicializarSelectPickerConBuscador($(this));
             });
 
-            // Asegurar reconstrucción inicial de los selects de país con la misma configuración que el resto
-            refrescarSelectPickerConBuscador(document.getElementById('idPais'));
-            refrescarSelectPickerConBuscador(document.getElementById('idPais-padre'));
-            refrescarSelectPickerConBuscador(document.getElementById('idPais-representante'));
-
             document.getElementById('idEstado-representante').addEventListener('change', function() {
-                // Obtener el valor correctamente del selectpicker
-                const estadoId = $(this).val() || this.value;
-
-                window.cargarMunicipiosRepresentante(estadoId);
+                cargarSelectAnidado('municipio', this.value, 'idMunicipio-representante', 'idparroquia-representante');
             });
 
             document.getElementById('idMunicipio-representante').addEventListener('change', function() {
-                // Obtener el valor correctamente del selectpicker
-                const municipioId = $(this).val() || this.value;
-
-                window.cargarParroquiasRepresentante(municipioId);
+                cargarSelectAnidado('localidad', this.value, 'idparroquia-representante');
             });
 
             // Funciones globales para compatibilidad
-            window.cargarMunicipiosInputFormulario = cargarMunicipios;
-            window.cargarParroquiasInputFormulario = cargarLocalidades;
+            window.cargarMunicipiosInputFormulario = (estadoId, municipioId, localidadId) => cargarSelectAnidado('municipio', estadoId, municipioId, localidadId);
+            window.cargarParroquiasInputFormulario = (municipioId, localidadId) => cargarSelectAnidado('localidad', municipioId, localidadId);
+
 
             // Bandera para evitar múltiples ejecuciones
             let actualizandoParentesco = false;
@@ -3494,7 +2989,6 @@
                             mostrarAlertaAusencia(this.name.replace('estado_', '').toLowerCase());
                         } else {
                             // Si no es ausente, permitir el cambio
-                            actualizarEstadoAnterior(this.name, valorNuevo);
                         }
                         valorPrevio = valorNuevo;
                         aplicarEstado();
@@ -3599,7 +3093,47 @@
             // Función segura para establecer un valor en un elemento
             const setValue = (id, value) => {
                 const element = getElement(id);
-                if (element) element.value = value || '';
+                if (element) {
+                    console.log(`=== SETVALUE: Estableciendo valor en ${id}:`, value);
+                    
+                    // Para selects con selectpicker, usar un enfoque más simple sin destruir
+                    if (typeof $ !== 'undefined' && $(element).hasClass('selectpicker')) {
+                        try {
+                            // Verificar si el elemento ya tiene el valor para evitar recargas innecesarias
+                            if (element.value === value.toString()) {
+                                console.log(`=== SETVALUE: El valor ${value} ya está establecido en ${id}, omitiendo`);
+                                return;
+                            }
+                            
+                            console.log(`=== SETVALUE: Estableciendo valor en selectpicker ${id}`);
+                            // Establecer el valor directamente sin destruir
+                            $(element).selectpicker('val', value);
+                            $(element).selectpicker('refresh');
+                            console.log(`=== SETVALUE: Valor establecido en selectpicker ${id}:`, value);
+                        } catch (error) {
+                            console.error(`=== SETVALUE: Error al manejar selectpicker ${id}:`, error);
+                            // Fallback: establecer el valor directamente
+                            element.value = value || '';
+                        }
+                    } else {
+                        // Para elementos normales, también verificar si ya tienen el valor
+                        if (element.value !== value.toString()) {
+                            element.value = value || '';
+                            console.log(`=== SETVALUE: Valor establecido directamente en ${id}:`, value);
+                        } else {
+                            console.log(`=== SETVALUE: El valor ${value} ya está establecido en ${id}, omitiendo`);
+                        }
+                    }
+                    
+                    // Disparar evento change para notificar el cambio
+                    setTimeout(() => {
+                        const event = new Event('change');
+                        element.dispatchEvent(event);
+                        console.log(`=== SETVALUE: Evento change disparado para ${id}`);
+                    }, 50);
+                } else {
+                    console.log(`=== SETVALUE: Elemento ${id} no encontrado`);
+                }
             };
 
             // Función para establecer valores en selects dependientes
@@ -3629,42 +3163,137 @@
 
                 // Función para copiar ubicación
                 const copiarUbicacion = (prefijoOrigen, prefijoDestino) => {
+                    // Evitar recargas múltiples si ya se está procesando
+                    if (window.copiandoUbicacion) {
+                        console.log('Ya se está copiando ubicación, omitiendo...');
+                        return;
+                    }
+                    window.copiandoUbicacion = true;
+                    
                     try {
-                        const estadoEl = getElement(`${prefijoOrigen}Estado`);
-                        const municipioEl = getElement(`${prefijoOrigen}Municipio`);
+                        console.log('=== INICIANDO COPIA DE UBICACIÓN ===');
+                        console.log('Prefijo origen:', prefijoOrigen);
+                        console.log('Prefijo destino:', prefijoDestino);
+                        
+                        const estadoEl = getElement(`id${prefijoOrigen === '' ? 'Estado' : 'Estado-padre'}`);
+                        const municipioEl = getElement(`id${prefijoOrigen === '' ? 'Municipio' : 'Municipio-padre'}`);
                         const parroquiaEl = getElement(
                             `id${prefijoOrigen === '' ? 'parroquia' : 'parroquia-padre'}`);
 
+                        console.log('Elementos encontrados:', {
+                            estado: estadoEl ? 'Sí' : 'No',
+                            municipio: municipioEl ? 'Sí' : 'No', 
+                            parroquia: parroquiaEl ? 'Sí' : 'No'
+                        });
+
                         if (estadoEl && estadoEl.value) {
                             const estado = estadoEl.value;
-                            setValue('idEstado-representante', estado);
-
-                            // Cargar municipios y manejar la carga asíncrona
-                            if (typeof cargarMunicipios === 'function') {
-                                cargarMunicipios(estado, 'idMunicipio-representante',
-                                    'idparroquia-representante');
-
-                                if (municipioEl && municipioEl.value) {
-                                    const municipio = municipioEl.value;
-                                    setTimeout(() => {
-                                        setValue('idMunicipio-representante', municipio);
-
-                                        if (typeof cargarLocalidades === 'function') {
-                                            cargarLocalidades(municipio, 'idparroquia-representante');
-
-                                            if (parroquiaEl && parroquiaEl.value) {
-                                                setTimeout(() => {
-                                                    setValue('idparroquia-representante',
-                                                        parroquiaEl.value);
-                                                }, 100);
-                                            }
-                                        }
-                                    }, 100);
+                            console.log('Copiando estado:', estado);
+                            
+                            // Para el estado, NO disparar evento change para evitar recargas
+                            const estadoSelect = getElement('idEstado-representante');
+                            if (estadoSelect) {
+                                // Verificar si el elemento ya tiene el valor para evitar recargas innecesarias
+                                if (estadoSelect.value === estado.toString()) {
+                                    console.log(`=== SETVALUE: El valor ${estado} ya está establecido en idEstado-representante, omitiendo`);
+                                    return; // Salir completamente de la función callback
                                 }
+                                
+                                console.log(`=== SETVALUE: Destruyendo selectpicker para idEstado-representante`);
+                                // Desactivar temporalmente el selectpicker para evitar errores
+                                $(estadoSelect).selectpicker('destroy');
+                                
+                                // Establecer el valor directamente en el select
+                                estadoSelect.value = estado || '';
+                                console.log(`=== SETVALUE: Valor establecido directamente en idEstado-representante:`, estado);
+                                
+                                // Reactivar el selectpicker después de un pequeño retraso
+                                setTimeout(() => {
+                                    try {
+                                        $(estadoSelect).selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            title: 'Seleccione una opción',
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                        $(estadoSelect).selectpicker('val', estado);
+                                        $(estadoSelect).selectpicker('refresh');
+                                        console.log(`=== SETVALUE: Selectpicker reactivado para idEstado-representante con valor:`, estado);
+                                    } catch (e) {
+                                        console.log(`=== SETVALUE: No se pudo reactivar selectpicker para idEstado-representante, manteniendo valor directo`);
+                                    }
+                                }, 300);
                             }
+
+                            // Cargar municipios usando la función unificada
+                            if (estado) {
+                                console.log('Cargando municipios para el representante...');
+                                cargarSelectAnidado('municipio', estado, 'idMunicipio-representante', 'idparroquia-representante');
+
+                                // Esperar a que carguen los municipios antes de copiar el valor
+                                setTimeout(() => {
+                                    if (municipioEl && municipioEl.value) {
+                                        const municipio = municipioEl.value;
+                                        console.log('Copiando municipio después de cargar:', municipio);
+                                        
+                                        // Verificar que el municipio exista en las opciones antes de establecerlo
+                                        const municipioSelect = document.getElementById('idMunicipio-representante');
+                                        if (municipioSelect) {
+                                            console.log('Select de municipio encontrado, opciones disponibles:', municipioSelect.options.length);
+                                            
+                                            // Esperar más tiempo para que el selectpicker termine de reactivarse
+                                            setTimeout(() => {
+                                                const opciones = municipioSelect.querySelectorAll('option');
+                                                console.log('Total de opciones encontradas:', opciones.length);
+                                                const municipioExiste = Array.from(opciones).some(opt => opt.value === municipio);
+                                                console.log('¿Municipio existe?', municipioExiste, 'Valor buscado:', municipio);
+                                                
+                                                if (municipioExiste) {
+                                                    console.log('Estableciendo municipio en representante...');
+                                                    setValue('idMunicipio-representante', municipio);
+                                                    console.log('Municipio establecido correctamente:', municipio);
+                                                    
+                                                    if (municipio) {
+                                                        console.log('Cargando localidades para el representante...');
+                                                        cargarSelectAnidado('localidad', municipio, 'idparroquia-representante');
+
+                                                        // Esperar a que carguen las localidades
+                                                        setTimeout(() => {
+                                                            if (parroquiaEl && parroquiaEl.value) {
+                                                                console.log('Copiando parroquia:', parroquiaEl.value);
+                                                                setValue('idparroquia-representante',
+                                                                    parroquiaEl.value);
+                                                                console.log('Ubicación copiada completamente');
+                                                            } else {
+                                                                console.log('No se encontró parroquia o no tiene valor');
+                                                            }
+                                                        }, 500);
+                                                    }
+                                                } else {
+                                                    console.log('El municipio no existe en las opciones:', municipio);
+                                                    console.log('Opciones disponibles:', Array.from(opciones).map(opt => ({value: opt.value, text: opt.text})));
+                                                }
+                                            }, 600); // Aumentar tiempo de espera para selectpicker
+                                        } else {
+                                            console.log('No se encontró el select de municipio del representante');
+                                        }
+                                    } else {
+                                        console.log('No se encontró municipio o no tiene valor');
+                                    }
+                                }, 1200); // Aumentar tiempo de espera principal
+                            }
+                        } else {
+                            console.log('No se encontró elemento de estado o no tiene valor');
                         }
                     } catch (error) {
                         console.error('Error al copiar ubicación:', error);
+                    } finally {
+                        // Resetear la bandera después de completar
+                        setTimeout(() => {
+                            window.copiandoUbicacion = false;
+                        }, 2000);
                     }
                 };
 
@@ -4200,6 +3829,13 @@
 
             // Función para copiar datos de un progenitor al representante
             function copiarDatosProgenitorARepresentante(esMadre = false) {
+                // Evitar múltiples ejecuciones simultáneas
+                if (window.copiandoDatosProgenitor) {
+                    console.log('Ya se está copiando datos del progenitor, omitiendo...');
+                    return;
+                }
+                window.copiandoDatosProgenitor = true;
+                
                 const prefijo = esMadre ? '' : '-padre';
                 const mensajeExito = esMadre ? 'de la madre' : 'del padre';
 
@@ -4276,8 +3912,8 @@
                                     console.log('Guardando valor del estado:', estadoSelect.value);
                                 }
                                 
-                                console.log('Llamando a cargarEstados con país:', paisSelect.value);
-                                cargarEstados(paisSelect.value, 'idEstado-representante', 'idMunicipio-representante', 'idparroquia-representante');
+                                console.log('Llamando a cargarSelectAnidado con país:', paisSelect.value);
+                                cargarSelectAnidado('estado', paisSelect.value, 'idEstado-representante', 'idMunicipio-representante');
                             } else {
                                 console.log('No se puede cargar estados - país select no encontrado o sin valor');
                             }
@@ -4289,27 +3925,52 @@
                         esSelect: true,
                         callback: function() {
                             // Cargar municipios cuando se copia el estado
-                            console.log('=== COPIANDO ESTADO ===');
+                            console.log('// === COPIANDO ESTADO ===');
                             const estadoSelect = document.getElementById('idEstado-representante');
                             console.log('Estado select encontrado:', estadoSelect);
-                            console.log('Valor del estado:', estadoSelect ? estadoSelect.value : 'no encontrado');
                             
-                            if (estadoSelect && estadoSelect.value) {
-                                // Guardar el valor actual del municipio antes de cargar nuevos municipios
-                                const municipioSelect = document.getElementById('idMunicipio-representante');
-                                if (municipioSelect && municipioSelect.value) {
-                                    municipioSelect.setAttribute('data-valor-guardado', municipioSelect.value);
-                                    console.log('Guardando valor del municipio:', municipioSelect.value);
-                                }
+                            if (estadoSelect) {
+                                console.log('DEBUG: Estado del select ANTES de habilitar:', {
+                                    disabled: estadoSelect.disabled,
+                                    value: estadoSelect.value,
+                                    innerHTML: estadoSelect.innerHTML.substring(0, 200) + '...'
+                                });
                                 
-                                console.log('Llamando a cargarMunicipiosRepresentante con estado:', estadoSelect.value);
-                                if (typeof cargarMunicipiosRepresentante === 'function') {
-                                    cargarMunicipiosRepresentante(estadoSelect.value);
+                                // Habilitar temporalmente para leer el valor
+                                const wasDisabled = estadoSelect.disabled;
+                                estadoSelect.disabled = false;
+                                
+                                console.log('DEBUG: Estado del select DESPUÉS de habilitar:', {
+                                    disabled: estadoSelect.disabled,
+                                    value: estadoSelect.value
+                                });
+                                
+                                const estadoValor = estadoSelect.value;
+                                console.log('Valor del estado:', estadoValor);
+                                
+                                // Restaurar estado original
+                                estadoSelect.disabled = wasDisabled;
+                                
+                                console.log('DEBUG: Estado del select FINAL:', {
+                                    disabled: estadoSelect.disabled,
+                                    value: estadoSelect.value
+                                });
+                                
+                                if (estadoValor) {
+                                    // Guardar el valor actual del municipio antes de cargar nuevos municipios
+                                    const municipioSelect = document.getElementById('idMunicipio-representante');
+                                    if (municipioSelect && municipioSelect.value) {
+                                        municipioSelect.setAttribute('data-valor-guardado', municipioSelect.value);
+                                        console.log('Guardando valor del municipio:', municipioSelect.value);
+                                    }
+                                    
+                                    console.log('Llamando a cargarSelectAnidado con estado:', estadoValor);
+                                    cargarSelectAnidado('municipio', estadoValor, 'idMunicipio-representante', 'idparroquia-representante');
                                 } else {
-                                    console.log('Función cargarMunicipiosRepresentante no encontrada');
+                                    console.log('No se pueden cargar municipios - estado sin valor');
                                 }
                             } else {
-                                console.log('No se pueden cargar municipios - estado select no encontrado o sin valor');
+                                console.log('No se puede cargar estados - estado select no encontrado');
                             }
                         }
                     },
@@ -4320,17 +3981,47 @@
                         callback: function() {
                             // Cargar parroquias cuando se copia el municipio
                             const municipioSelect = document.getElementById('idMunicipio-representante');
-                            if (municipioSelect && municipioSelect.value) {
-                                if (typeof cargarParroquiasRepresentante === 'function') {
-                                    cargarParroquiasRepresentante(municipioSelect.value);
+                            if (municipioSelect) {
+                                // Guardar el valor actual antes de cargar
+                                const valorMunicipioActual = municipioSelect.value;
+                                const valorMunicipioGuardado = municipioSelect.getAttribute('data-valor-guardado');
+                                
+                                if (valorMunicipioActual || valorMunicipioGuardado) {
+                                    console.log('Guardando valor del municipio:', valorMunicipioActual || valorMunicipioGuardado);
+                                    municipioSelect.setAttribute('data-valor-guardado', valorMunicipioActual || valorMunicipioGuardado);
                                 }
+                                
+                                cargarSelectAnidado('localidad', valorMunicipioGuardado || valorMunicipioActual, 'idparroquia-representante');
                             }
                         }
                     },
                     {
                         origen: `idparroquia${prefijo}`,
                         destino: 'idparroquia-representante',
-                        esSelect: true
+                        esSelect: true,
+                        callback: function() {
+                            // Copiar valor de la parroquia preservando el valor existente
+                            const parroquiaSelect = document.getElementById('idparroquia-representante');
+                            if (parroquiaSelect) {
+                                // Guardar el valor actual antes de modificar
+                                const valorParroquiaActual = parroquiaSelect.value;
+                                const valorParroquiaGuardado = parroquiaSelect.getAttribute('data-valor-guardado');
+                                
+                                if (valorParroquiaActual || valorParroquiaGuardado) {
+                                    console.log('Guardando valor de la parroquia:', valorParroquiaActual || valorParroquiaGuardado);
+                                    parroquiaSelect.setAttribute('data-valor-guardado', valorParroquiaActual || valorParroquiaGuardado);
+                                }
+                                
+                                // Establecer el valor directamente
+                                const valorFinal = valorParroquiaGuardado || valorParroquiaActual;
+                                if (valorFinal) {
+                                    parroquiaSelect.value = valorFinal;
+                                    $(parroquiaSelect).selectpicker('val', valorFinal);
+                                    $(parroquiaSelect).selectpicker('refresh');
+                                    console.log('Parroquia seleccionada:', valorFinal);
+                                }
+                            }
+                        }
                     },
                     {
                         origen: `direccion${prefijo}`,
@@ -4571,8 +4262,7 @@
 
                     if (estadoId) {
                         // Primero cargar municipios
-                        cargarMunicipios(estadoId, 'idMunicipio-representante',
-                            'idparroquia-representante');
+                        cargarSelectAnidado('municipio', estadoId, 'idMunicipio-representante', 'idparroquia-representante');
 
                         // Seleccionar el municipio después de cargar las opciones
                         setTimeout(() => {
@@ -4586,8 +4276,7 @@
 
                                     // Cargar localidades del municipio seleccionado
                                     setTimeout(() => {
-                                        cargarLocalidades(municipioId,
-                                            'idparroquia-representante');
+                                        cargarSelectAnidado('localidad', municipioId, 'idparroquia-representante');
 
                                         // Si ya hay una parroquia, seleccionarla después de cargar las localidades
                                         if (parroquiaId) {
@@ -4615,6 +4304,11 @@
                 }, 100);
 
                 console.log(`Datos ${mensajeExito} copiados al representante`);
+                
+                // Resetear la bandera después de completar
+                setTimeout(() => {
+                    window.copiandoDatosProgenitor = false;
+                }, 1000);
             }
 
             // Función para copiar datos del padre al representante
@@ -4776,35 +4470,36 @@
                 });
             });
 
-            // Al salir de la cédula del representante, si el tipo es progenitor_representante,
-            // primero intentamos copiar desde madre/padre; si no coincide, buscamos en BD
-            document.getElementById('numero_documento-representante')?.addEventListener('blur', function() {
-                const tipo = document.querySelector('input[name="tipo_representante"]:checked')?.value;
-                const numero_documento = this.value;
+            // NOTA: No se necesita la verificación final redundante
+            // ya que cada caso maneja sus campos correctamente
+            // El evento blur fue eliminado para evitar múltiples llamadas
+            // document.getElementById('numero_documento-representante')?.addEventListener('blur', function() {
+            //     const tipo = document.querySelector('input[name="tipo_representante"]:checked')?.value;
+            //     const numero_documento = this.value;
 
-                if (tipo !== 'progenitor_representante' || !numero_documento) {
-                    return;
-                }
+            //     if (tipo !== 'progenitor_representante' || !numero_documento) {
+            //         return;
+            //     }
 
-                // 1) Intentar copiar desde los datos ya cargados en este formulario (madre/padre)
-                const copiadoLocal = copiarDesdeMadreOPadreSiCoincide(numero_documento);
-                if (copiadoLocal) {
-                    return; // no hace falta ir a BD
-                }
+            //     // 1) Intentar copiar desde los datos ya cargados en este formulario (madre/padre)
+            //     const copiadoLocal = copiarDesdeMadreOPadreSiCoincide(numero_documento);
+            //     if (copiadoLocal) {
+            //         return; // no hace falta ir a BD
+            //     }
 
-                // 2) Si no coincide con madre/padre, buscar en BD
-                fetch(`${buscarnumero_documentoUrl}?numero_documento=${numero_documento}`)
-                    .then(response => response.json())
-                    .then(resp => {
-                        if (resp && resp.status === 'success') {
-                            rellenarRepresentanteDesdeRespuesta(resp);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al buscar cédula para representante legal como progenitor',
-                            error);
-                    });
-            });
+            //     // 2) Si no coincide con madre/padre, buscar en BD
+            //     fetch(`${buscarnumero_documentoUrl}?numero_documento=${numero_documento}`)
+            //         .then(response => response.json())
+            //         .then(resp => {
+            //             if (resp && resp.status === 'success') {
+            //                 rellenarRepresentanteDesdeRespuesta(resp);
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.error('Error al buscar cédula para representante legal como progenitor',
+            //                 error);
+            //         });
+            // });// });
 
             // Otras funciones
             document.querySelectorAll('input[name*="telefono"]').forEach(input => {
