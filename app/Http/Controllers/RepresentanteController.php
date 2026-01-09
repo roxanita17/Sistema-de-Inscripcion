@@ -340,7 +340,9 @@ class RepresentanteController extends Controller
             }
         ])->findOrFail($id);
 
-        // Cargar solo datos necesarios para selects
+        // Cargar datos necesarios para selects
+        $paises = Pais::where('status', true)->orderBy('nameES', 'ASC')->get();
+        
         $estados = Estado::where('status', true)
             ->with(['municipio' => function ($query) {
                 $query->where('status', true)
@@ -385,6 +387,7 @@ class RepresentanteController extends Controller
 
         return view("admin.representante.modales.editarModal", compact(
             'representante',
+            'paises',
             'estados',
             'municipios',
             'bancos',
@@ -561,6 +564,7 @@ class RepresentanteController extends Controller
             ],
             'sexo-representante' => 'required|exists:generos,id',
             'tipo-ci-representante' => 'required|exists:tipo_documentos,id',
+            'pais_id' => 'required|exists:paises,id',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
             'parroquia_id' => 'required|exists:localidads,id',
@@ -675,6 +679,7 @@ class RepresentanteController extends Controller
 
             // Preparar datos de actualización del representante
             $representanteData = [
+                'pais_id' => $request->input('pais_id'),
                 'estado_id' => $request->input('estado_id'),
                 'municipio_id' => $request->input('municipio_id'),
                 'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia') ?: $request->input('parroquia_id'),

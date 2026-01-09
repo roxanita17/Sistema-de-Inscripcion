@@ -598,17 +598,41 @@
                                 </div>
                             </div>
                             <div class="card-body p-3">
-                                <!-- Fila para Estado, Municipio y Parroquia -->
+                                <!-- Fila para País, Estado, Municipio y Parroquia -->
                                 <div class="row">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
+                                        <label class="form-label-modern">
+                                            <i class="fas fa-globe me-2"></i> País <span
+                                                class="required-badge">*</span>
+                                        </label>
+                                        <select class="form-select" id="pais_id" name="pais_id" required>
+                                            <option value="" disabled>Seleccione</option>
+                                            @php
+                                                // Obtener países únicos
+                                                $paisesUnicos = isset($paises) ? $paises->unique('id')->sortBy('nameES') : collect([]);
+                                            @endphp
+                                            @foreach ($paisesUnicos as $pais)
+                                                <option value="{{ $pais->id }}"
+                                                    {{ old('pais_id', $representante->pais_id ?? '') == $pais->id ? 'selected' : '' }}>
+                                                    {{ $pais->nameES }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Por favor seleccione un país.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 mb-3">
                                         <label class="form-label-modern">
                                             <i class="fas fa-map-marker-alt me-2"></i> Estado <span
                                                 class="required-badge">*</span>
                                         </label>
                                         <select class="form-select" id="estado_id" name="estado_id" required>
-                                            <option value="" disabled selected>Seleccione</option>
+                                            <option value="" disabled>Seleccione</option>
                                             @foreach ($estados as $estado)
                                                 <option value="{{ $estado->id }}"
+                                                    data-pais-id="{{ $estado->pais_id }}"
                                                     {{ old('estado_id', $representante->estado_id ?? '') == $estado->id ? 'selected' : '' }}>
                                                     {{ $estado->nombre_estado }}
                                                 </option>
@@ -619,12 +643,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <label class="form-label-modern">
                                             <i class="fas fa-map-marker-alt me-2"></i> Municipio <span
                                                 class="required-badge">*</span>
                                         </label>
-                                        <select class="form-select" id="municipio_id" name="municipio_id" required disabled>
+                                        <select class="form-select" id="municipio_id" name="municipio_id" required>
                                             <option value="" disabled>Seleccione</option>
                                             @foreach ($municipios as $municipio)
                                                 <option value="{{ $municipio->id }}"
@@ -639,12 +663,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <label class="form-label-modern">
                                             <i class="fas fa-map-marker-alt me-2"></i> Parroquia <span
                                                 class="required-badge">*</span>
                                         </label>
-                                        <select class="form-select" id="parroquia_id" name="parroquia_id" required disabled>
+                                        <select class="form-select" id="parroquia_id" name="parroquia_id" required>
                                             <option value="" disabled>Seleccione</option>
                                             @foreach ($parroquias_cargadas as $parroquia)
                                                 <option value="{{ $parroquia->id }}"
@@ -1098,14 +1122,19 @@
 
         // Función para inicializar los selects dependientes
         function inicializarSelectsDependientes() {
+            const $paisSelect = $('#pais_id');
             const $estadoSelect = $('#estado_id');
             const $municipioSelect = $('#municipio_id');
             const $parroquiaSelect = $('#parroquia_id');
 
             // Obtener los valores actuales
+            const paisId = $paisSelect.val();
             const estadoId = $estadoSelect.val();
             const municipioId = $municipioSelect.val();
             const parroquiaId = $parroquiaSelect.val();
+
+            // En formulario de edición, todos los campos deben estar habilitados
+            // No deshabilitamos ningún campo inicialmente
 
             // Función para filtrar opciones
             function filtrarOpciones($select, dataAttr, valorFiltro) {
@@ -1128,49 +1157,74 @@
                 });
             }
 
-            // Función para habilitar/deshabilitar select
-            function actualizarEstadoSelect($select, habilitar) {
-                $select.prop('disabled', !habilitar);
-                if (!habilitar) {
-                    $select.val('').trigger('change');
+            // Manejar cambio de país
+            $paisSelect.on('change', function() {
+                const paisId = $(this).val();
+
+                // Limpiar estado, municipio y parroquia si cambia el país
+                if (paisId !== $paisSelect.data('previous-value')) {
+                    $estadoSelect.val('').trigger('change');
+                    $municipioSelect.val('').trigger('change');
+                    $parroquiaSelect.val('').trigger('change');
                 }
-            }
+                $paisSelect.data('previous-value', paisId);
+
+                // Filtrar estados por país (si los datos tienen país_id)
+                filtrarOpciones($estadoSelect, 'pais-id', paisId);
+            });
 
             // Manejar cambio de estado
             $estadoSelect.on('change', function() {
                 const estadoId = $(this).val();
 
+                // Limpiar municipio y parroquia si cambia el estado
+                if (estadoId !== $estadoSelect.data('previous-value')) {
+                    $municipioSelect.val('').trigger('change');
+                    $parroquiaSelect.val('').trigger('change');
+                }
+                $estadoSelect.data('previous-value', estadoId);
+
                 // Filtrar municipios
                 filtrarOpciones($municipioSelect, 'estado-id', estadoId);
-                actualizarEstadoSelect($municipioSelect, estadoId);
-
-                // Limpiar parroquias
-                $parroquiaSelect.val('').trigger('change');
-                actualizarEstadoSelect($parroquiaSelect, false);
             });
 
             // Manejar cambio de municipio
             $municipioSelect.on('change', function() {
                 const municipioId = $(this).val();
 
+                // Limpiar parroquias si cambia el municipio
+                if (municipioId !== $municipioSelect.data('previous-value')) {
+                    $parroquiaSelect.val('').trigger('change');
+                }
+                $municipioSelect.data('previous-value', municipioId);
+
                 // Filtrar parroquias
                 filtrarOpciones($parroquiaSelect, 'municipio-id', municipioId);
-                actualizarEstadoSelect($parroquiaSelect, municipioId);
             });
 
             // Inicializar selects al cargar la página
-            if (estadoId) {
-                $estadoSelect.trigger('change');
-
-                // Esperar a que se actualicen las opciones del municipio
+            // Si hay valores preseleccionados, aplicar los filtros correspondientes
+            if (paisId) {
+                $paisSelect.trigger('change');
+                
                 setTimeout(() => {
-                    if (municipioId) {
-                        $municipioSelect.val(municipioId).trigger('change');
-
-                        // Esperar a que se actualicen las opciones de la parroquia
+                    // Establecer el estado después de filtrar
+                    if (estadoId) {
+                        $estadoSelect.val(estadoId);
+                        $estadoSelect.trigger('change');
+                        
                         setTimeout(() => {
-                            if (parroquiaId) {
-                                $parroquiaSelect.val(parroquiaId).trigger('change');
+                            // Establecer el municipio después de filtrar
+                            if (municipioId) {
+                                $municipioSelect.val(municipioId);
+                                $municipioSelect.trigger('change');
+                                
+                                setTimeout(() => {
+                                    // Establecer la parroquia después de filtrar
+                                    if (parroquiaId) {
+                                        $parroquiaSelect.val(parroquiaId);
+                                    }
+                                }, 100);
                             }
                         }, 100);
                     }
@@ -1270,10 +1324,6 @@
                     }
                     return;
                 }
-
-                //habilitar selects disabled
-                $('#municipio_id').prop('disabled', false);
-                $('#parroquia_id').prop('disabled', false);
 
                 const submitBtn = $(form).find('button[type="submit"]');
                 submitBtn.prop('disabled', true)

@@ -3111,9 +3111,116 @@
 
         
         document.addEventListener('DOMContentLoaded', function() {
+            // Establecer valores guardados si estamos editando un representante
+            @if(isset($representante))
+                // Valores para la madre (todos en tabla persona)
+                document.getElementById('idPais').setAttribute('data-valor-guardado', '{{ $representante->persona->pais_id ?? '' }}');
+                document.getElementById('idEstado').setAttribute('data-valor-guardado', '{{ $representante->persona->estado_id ?? '' }}');
+                document.getElementById('idMunicipio').setAttribute('data-valor-guardado', '{{ $representante->persona->municipio_id ?? '' }}');
+                document.getElementById('idparroquia').setAttribute('data-valor-guardado', '{{ $representante->persona->localidad_id ?? '' }}');
+                
+                // Valores para el padre (todos en tabla persona)
+                document.getElementById('idPais-padre').setAttribute('data-valor-guardado', '{{ $representante->persona->pais_id ?? '' }}');
+                document.getElementById('idEstado-padre').setAttribute('data-valor-guardado', '{{ $representante->persona->estado_id ?? '' }}');
+                document.getElementById('idMunicipio-padre').setAttribute('data-valor-guardado', '{{ $representante->persona->municipio_id ?? '' }}');
+                document.getElementById('idparroquia-padre').setAttribute('data-valor-guardado', '{{ $representante->persona->localidad_id ?? '' }}');
+                
+                // Valores para el representante (país, estado, municipio en tabla representantes; parroquia en persona)
+                document.getElementById('idPais-representante').setAttribute('data-valor-guardado', '{{ $representante->pais_id ?? '' }}');
+                document.getElementById('idEstado-representante').setAttribute('data-valor-guardado', '{{ $representante->estado_id ?? '' }}');
+                document.getElementById('idMunicipio-representante').setAttribute('data-valor-guardado', '{{ $representante->municipio_id ?? '' }}');
+                document.getElementById('idparroquia-representante').setAttribute('data-valor-guardado', '{{ $representante->parroquia_id ?? '' }}');
+                
+                // Inicializar la carga en cascada para la madre
+                setTimeout(() => {
+                    const paisMadre = document.getElementById('idPais').getAttribute('data-valor-guardado');
+                    if (paisMadre) {
+                        // Limpiar valores anteriores antes de cargar
+                        limpiarSelectCompleto(document.getElementById('idEstado'));
+                        limpiarSelectCompleto(document.getElementById('idMunicipio'));
+                        limpiarSelectCompleto(document.getElementById('idparroquia'));
+                        
+                        document.getElementById('idPais').value = paisMadre;
+                        cargarSelectAnidado('estado', paisMadre, 'idEstado', 'idMunicipio');
+                        
+                        setTimeout(() => {
+                            const estadoMadre = document.getElementById('idEstado').getAttribute('data-valor-guardado');
+                            if (estadoMadre) {
+                                cargarSelectAnidado('municipio', estadoMadre, 'idMunicipio', 'idparroquia');
+                                
+                                setTimeout(() => {
+                                    const municipioMadre = document.getElementById('idMunicipio').getAttribute('data-valor-guardado');
+                                    if (municipioMadre) {
+                                        cargarSelectAnidado('localidad', municipioMadre, 'idparroquia');
+                                    }
+                                }, 200);
+                            }
+                        }, 200);
+                    }
+                }, 100);
+                
+                // Inicializar la carga en cascada para el padre
+                setTimeout(() => {
+                    const paisPadre = document.getElementById('idPais-padre').getAttribute('data-valor-guardado');
+                    if (paisPadre) {
+                        // Limpiar valores anteriores antes de cargar
+                        limpiarSelectCompleto(document.getElementById('idEstado-padre'));
+                        limpiarSelectCompleto(document.getElementById('idMunicipio-padre'));
+                        limpiarSelectCompleto(document.getElementById('idparroquia-padre'));
+                        
+                        document.getElementById('idPais-padre').value = paisPadre;
+                        cargarSelectAnidado('estado', paisPadre, 'idEstado-padre', 'idMunicipio-padre');
+                        
+                        setTimeout(() => {
+                            const estadoPadre = document.getElementById('idEstado-padre').getAttribute('data-valor-guardado');
+                            if (estadoPadre) {
+                                cargarSelectAnidado('municipio', estadoPadre, 'idMunicipio-padre', 'idparroquia-padre');
+                                
+                                setTimeout(() => {
+                                    const municipioPadre = document.getElementById('idMunicipio-padre').getAttribute('data-valor-guardado');
+                                    if (municipioPadre) {
+                                        cargarSelectAnidado('localidad', municipioPadre, 'idparroquia-padre');
+                                    }
+                                }, 200);
+                            }
+                        }, 200);
+                    }
+                }, 100);
+                
+                // Inicializar la carga en cascada para el representante
+                setTimeout(() => {
+                    const paisRepresentante = document.getElementById('idPais-representante').getAttribute('data-valor-guardado');
+                    if (paisRepresentante) {
+                        // Limpiar valores anteriores antes de cargar
+                        limpiarSelectCompleto(document.getElementById('idEstado-representante'));
+                        limpiarSelectCompleto(document.getElementById('idMunicipio-representante'));
+                        limpiarSelectCompleto(document.getElementById('idparroquia-representante'));
+                        
+                        document.getElementById('idPais-representante').value = paisRepresentante;
+                        cargarSelectAnidado('estado', paisRepresentante, 'idEstado-representante', 'idMunicipio-representante');
+                        
+                        setTimeout(() => {
+                            const estadoRepresentante = document.getElementById('idEstado-representante').getAttribute('data-valor-guardado');
+                            if (estadoRepresentante) {
+                                cargarSelectAnidado('municipio', estadoRepresentante, 'idMunicipio-representante', 'idparroquia-representante');
+                                
+                                setTimeout(() => {
+                                    const municipioRepresentante = document.getElementById('idMunicipio-representante').getAttribute('data-valor-guardado');
+                                    if (municipioRepresentante) {
+                                        cargarSelectAnidado('localidad', municipioRepresentante, 'idparroquia-representante');
+                                    }
+                                }, 200);
+                            }
+                        }, 200);
+                    }
+                }, 100);
+            @endif
+            
             // Eventos para MADRE
             document.getElementById('idPais').addEventListener('change', function() {
                 cargarSelectAnidado('estado', this.value, 'idEstado', 'idMunicipio');
+                // También limpiar la parroquia cuando cambia el país
+                limpiarSelectCompleto(document.getElementById('idparroquia'));
                 inicializarSelectPickerConBuscador($(this));
             });
 
@@ -3128,6 +3235,8 @@
             // Eventos para PADRE
             document.getElementById('idPais-padre').addEventListener('change', function() {
                 cargarSelectAnidado('estado', this.value, 'idEstado-padre', 'idMunicipio-padre');
+                // También limpiar la parroquia cuando cambia el país
+                limpiarSelectCompleto(document.getElementById('idparroquia-padre'));
                 inicializarSelectPickerConBuscador($(this));
             });
 
@@ -3142,6 +3251,8 @@
             // Eventos para REPRESENTANTE
             document.getElementById('idPais-representante').addEventListener('change', function() {
                 cargarSelectAnidado('estado', this.value, 'idEstado-representante', 'idMunicipio-representante');
+                // También limpiar la parroquia cuando cambia el país
+                limpiarSelectCompleto(document.getElementById('idparroquia-representante'));
                 inicializarSelectPickerConBuscador($(this));
             });
 
