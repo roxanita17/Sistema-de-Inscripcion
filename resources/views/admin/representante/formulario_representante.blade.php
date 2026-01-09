@@ -2879,6 +2879,15 @@
                 cargarLocalidades(municipioId, 'idparroquia');
             });
 
+            // Evento para ocupación de la madre
+            const ocupacionMadreSelect = document.getElementById('ocupacion-madre');
+            if (ocupacionMadreSelect) {
+                ocupacionMadreSelect.addEventListener('change', function() {
+                    // Limpiar validación del select
+                    limpiarError(this);
+                });
+            }
+
             // Eventos para PADRE
             document.getElementById('idPais-padre').addEventListener('change', function() {
                 const paisId = this.value;
@@ -2897,6 +2906,15 @@
 
                 cargarLocalidades(municipioId, 'idparroquia-padre');
             });
+
+            // Evento para ocupación del padre
+            const ocupacionPadreSelect = document.getElementById('ocupacion-padre');
+            if (ocupacionPadreSelect) {
+                ocupacionPadreSelect.addEventListener('change', function() {
+                    // Limpiar validación del select
+                    limpiarError(this);
+                });
+            }
 
             // Eventos para REPRESENTANTE
             document.getElementById('idPais-representante').addEventListener('change', function() {
