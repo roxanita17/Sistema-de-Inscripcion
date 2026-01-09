@@ -2827,6 +2827,13 @@
                 const selectId = selectElement.id || 'unknown';
                 const $select = $(selectElement);
                 
+                // Validación: no procesar valores vacíos o nulos
+                if (!valor || valor === '' || valor === 'null' || valor === null) {
+                    console.log(`[${selectId}] [ULTRA] Valor vacío o nulo detectado: "${valor}", omitiendo procesamiento`);
+                    resolve(null);
+                    return;
+                }
+                
                 console.log(`[${selectId}] [ULTRA] Estableciendo valor: "${valor}"`);
                 
                 try {
@@ -3002,7 +3009,7 @@
                                                     selectElement.value = valor;
                                                     $select.selectpicker('refresh');
                                                 } else {
-                                                    console.warn(`[${selectId}] [ULTRA] Selectpicker no disponible para corrección, usando método nativo`);
+                                                    console.warn(`[${selectId}] [ULTRA] Selectpicker no completamente inicializado, usando método nativo`);
                                                     selectElement.value = valor;
                                                 }
                                             } catch (correctionError) {
@@ -4167,7 +4174,7 @@
                         copiarTelefonoYPrefijo('');
                         copiarUbicacion('', '');
                         copiarOcupacion('madre');
-                        copiarConvivencia('');
+                        // copiarConvivencia(''); // ELIMINADO - Usando sistema ultra optimizado
 
                         return true;
                     }
@@ -4187,7 +4194,7 @@
                         copiarTelefonoYPrefijo('padre-');
                         copiarUbicacion('padre-', 'padre-');
                         copiarOcupacion('padre');
-                        copiarConvivencia('-padre');
+                        // copiarConvivencia('-padre'); // ELIMINADO - Usando sistema ultra optimizado
 
                         return true;
                     }
@@ -4416,11 +4423,8 @@
                 // Campos que nunca deben ser deshabilitados
                 const camposExcluidos = ['correo-representante'];
 
-                // Radio buttons que nunca deben ser deshabilitados
-                const radioExcluidos = [
-                    'convive-si-representante',
-                    'convive-no-representante'
-                ];
+                // NOTA: Los radio buttons de convivencia fueron removidos completamente del toggle
+                // para que no sean procesados por esta función
 
                 // Aplicar a todos los campos excepto los excluidos
                 campos.forEach(id => {
@@ -4482,17 +4486,6 @@
                         campo.readOnly = false;
                         campo.classList.remove('bg-light', 'text-muted');
                         console.log(`[TOGGLE] Campo excluido ${id}: forzado a permanecer habilitado`);
-                    }
-                });
-
-                // Asegurar que los radio buttons excluidos siempre permanezcan habilitados
-                radioExcluidos.forEach(id => {
-                    const campo = document.getElementById(id);
-                    if (campo) {
-                        campo.disabled = false;
-                        campo.readOnly = false;
-                        // No aplicar estilos de deshabilitado a radio buttons
-                        console.log(`[TOGGLE] Radio excluido ${id}: forzado a permanecer habilitado`);
                     }
                 });
             }
@@ -4801,8 +4794,7 @@
                             }
                         }
 
-                        // 6. Manejar la convivencia
-                        console.log('PASO 6: Manejando convivencia...');
+                        // 6. Copiar convivencia de forma simple
                         const conviveNombreCampo = esMadre ? 'convive' : 'convive-padre';
                         const convive = document.querySelector(`input[name="${conviveNombreCampo}"]:checked`);
                         
@@ -4812,8 +4804,6 @@
                             
                             if (conviveRepresentante) {
                                 conviveRepresentante.checked = true;
-                                conviveRepresentante.dispatchEvent(new Event('change'));
-                                console.log(`[CONVIVENCIA] Marcado como: ${valorConvivencia}`);
                             }
                         }
 
@@ -4871,8 +4861,13 @@
                             console.log('[VALIDACIÓN ULTRA] 🎉 Todos los selects perfectos, sin duplicación');
                         }
 
-                        // Aplicar estilos de solo lectura
+                        // Aplicar estilos de solo lectura (excluyendo radios de convivencia)
                         document.querySelectorAll('[id$="-representante"]').forEach(elemento => {
+                            // Excluir radios de convivencia para no afectarlos
+                            if (elemento.id === 'convive-si-representante' || elemento.id === 'convive-no-representante') {
+                                return; // Saltar radios de convivencia
+                            }
+                            
                             if (!elemento.disabled && elemento.tagName !== 'SELECT') {
                                 elemento.classList.add('bg-light', 'text-muted');
                                 elemento.readOnly = true;
@@ -4881,76 +4876,6 @@
 
                         // Deshabilitar los campos después de copiar los datos
                         toggleCamposRepresentante(true);
-
-                        // Forzar que los campos críticos permanezcan habilitados con retraso para asegurar que se ejecute después de todo
-                        setTimeout(() => {
-                            console.log('[INICIO FORZADO] Iniciando verificación y forzado de campos críticos...');
-                            
-                            // Forzar que el campo de email permanezca habilitado (doble seguro)
-                            const emailCampo = document.getElementById('correo-representante');
-                            console.log('[EMAIL VERIFICACIÓN] Elemento correo-representante encontrado:', !!emailCampo);
-                            
-                            if (emailCampo) {
-                                console.log('[EMAIL VERIFICACIÓN] Estado antes del forzado:', {
-                                    disabled: emailCampo.disabled,
-                                    readOnly: emailCampo.readOnly,
-                                    className: emailCampo.className,
-                                    value: emailCampo.value
-                                });
-                                
-                                emailCampo.disabled = false;
-                                emailCampo.readOnly = false;
-                                emailCampo.classList.remove('bg-light', 'text-muted');
-                                
-                                console.log('[EMAIL VERIFICACIÓN] Estado después del forzado:', {
-                                    disabled: emailCampo.disabled,
-                                    readOnly: emailCampo.readOnly,
-                                    className: emailCampo.className,
-                                    value: emailCampo.value
-                                });
-                                
-                                console.log('[EMAIL FORZADO] Campo correo-representante forzado a permanecer habilitado');
-                            } else {
-                                console.error('[EMAIL ERROR] No se encontró el elemento correo-representante');
-                            }
-
-                            // Forzar que los radio buttons de convivencia permanezcan habilitados (doble seguro)
-                            const conviveSi = document.getElementById('convive-si-representante');
-                            const conviveNo = document.getElementById('convive-no-representante');
-                            
-                            console.log('[RADIO VERIFICACIÓN] Elemento convive-si-representante encontrado:', !!conviveSi);
-                            console.log('[RADIO VERIFICACIÓN] Elemento convive-no-representante encontrado:', !!conviveNo);
-                            
-                            if (conviveSi) {
-                                console.log('[RADIO VERIFICACIÓN] Estado convive-si antes:', {
-                                    disabled: conviveSi.disabled,
-                                    checked: conviveSi.checked
-                                });
-                                conviveSi.disabled = false;
-                                conviveSi.readOnly = false;
-                                console.log('[RADIO VERIFICACIÓN] Estado convive-si después:', {
-                                    disabled: conviveSi.disabled,
-                                    checked: conviveSi.checked
-                                });
-                                console.log('[RADIO FORZADO] Campo convive-si-representante forzado a permanecer habilitado');
-                            }
-                            
-                            if (conviveNo) {
-                                console.log('[RADIO VERIFICACIÓN] Estado convive-no antes:', {
-                                    disabled: conviveNo.disabled,
-                                    checked: conviveNo.checked
-                                });
-                                conviveNo.disabled = false;
-                                conviveNo.readOnly = false;
-                                console.log('[RADIO VERIFICACIÓN] Estado convive-no después:', {
-                                    disabled: conviveNo.disabled,
-                                    checked: conviveNo.checked
-                                });
-                                console.log('[RADIO FORZADO] Campo convive-no-representante forzado a permanecer habilitado');
-                            }
-                            
-                            console.log('[FIN FORZADO] Verificación y forzado de campos críticos completado');
-                        }, 100); // Pequeño retraso para asegurar que se ejecute después de todo
 
                         console.log(`=== COPIA ULTRA OPTIMIZADA ${mensajeExito.toUpperCase()} COMPLETADA ===`);
                         
@@ -4984,6 +4909,13 @@
 
             // Función para restablecer los campos del representante
             function resetearCamposRepresentante() {
+                console.log('[RESET] INICIO - resetearCamposRepresentante() llamado');
+                
+                // Verificar estado de radios ANTES de resetear
+                const estadoAntesSi = document.getElementById('convive-si-representante')?.checked;
+                const estadoAntesNo = document.getElementById('convive-no-representante')?.checked;
+                console.log(`[RESET] Estado radios ANTES de resetear - Si: ${estadoAntesSi}, No: ${estadoAntesNo}`);
+                
                 // Habilitar todos los campos
                 toggleCamposRepresentante(false);
 
@@ -5065,11 +4997,20 @@
                     }
                 });
 
-                // Desmarcar radios de convivencia
-                document.querySelectorAll('input[name="convive-representante"]').forEach(radio => {
-                    radio.checked = false;
-                    radio.disabled = false;
-                });
+                // Verificar estado de radios DESPUÉS de resetear
+                const estadoDespuesSi = document.getElementById('convive-si-representante')?.checked;
+                const estadoDespuesNo = document.getElementById('convive-no-representante')?.checked;
+                console.log(`[RESET] Estado radios DESPUÉS de resetear - Si: ${estadoDespuesSi}, No: ${estadoDespuesNo}`);
+
+                // Desmarcar radios de convivencia - COMENTADO para evitar perder el valor copiado
+                // NOTA: Esto estaba causando que se perdiera la selección de convivencia después de copiar
+                // document.querySelectorAll('input[name="convive-representante"]').forEach(radio => {
+                //     radio.checked = false;
+                //     radio.disabled = false;
+                // });
+                console.log('[RESET] Manteniendo valores de radios de convivencia (evitar limpieza automática)');
+                
+                console.log('[RESET] FIN - resetearCamposRepresentante() completado');
             }
 
             // Manejar cambios en los radio buttons de tipo de representante
@@ -5088,8 +5029,8 @@
                     }
                     // Si se selecciona "Padre como Representante legal"
                     else if (tipo === 'progenitor_padre_representante') {
-                        // Restablecer campos primero
-                        resetearCamposRepresentante();
+                        // NO resetear campos - la copia ultra optimizada maneja todo
+                        // resetearCamposRepresentante(); // ELIMINADO - Causa errores
 
                         // Verificar si el padre está presente
                         const padrePresente = document.querySelector(
@@ -5111,8 +5052,8 @@
                     }
                     // Si se selecciona "Madre como Representante legal"
                     else if (tipo === 'progenitor_madre_representante') {
-                        // Restablecer campos primero
-                        resetearCamposRepresentante();
+                        // NO resetear campos - la copia ultra optimizada maneja todo
+                        // resetearCamposRepresentante(); // ELIMINADO - Causa errores
 
                         // Verificar si la madre está presente
                         const madrePresente = document.querySelector(
