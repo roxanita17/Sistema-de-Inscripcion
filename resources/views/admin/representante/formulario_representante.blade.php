@@ -1639,6 +1639,7 @@
                                     <option value="Primo(a)">Primo(a)</option>
                                     <option value="Otro">Otro</option>
                                 </select>
+                                <input type="hidden" id="parentesco_hidden" name="parentesco_hidden" value="">
                                 <div class="invalid-feedback">
                                     Por favor seleccione el parentesco.
                                 </div>
@@ -3892,6 +3893,7 @@
             // Función para establecer el parentesco según el tipo de representante
             function establecerParentesco(esMadre = false) {
                 const parentescoSelect = document.getElementById('parentesco');
+                const parentescoHidden = document.getElementById('parentesco_hidden');
                 if (parentescoSelect) {
                     const valorParentesco = esMadre ? 'Mamá' : 'Papá';
 
@@ -3903,6 +3905,11 @@
                     }
 
                     parentescoSelect.value = valorParentesco;
+                    
+                    // Actualizar campo oculto para que se envíe cuando el select está deshabilitado
+                    if (parentescoHidden) {
+                        parentescoHidden.value = valorParentesco;
+                    }
 
                     // Deshabilitar el select
                     parentescoSelect.disabled = true;
@@ -3923,10 +3930,16 @@
             // Función para restablecer el campo de parentesco
             function resetearParentesco() {
                 const parentescoSelect = document.getElementById('parentesco');
+                const parentescoHidden = document.getElementById('parentesco_hidden');
                 if (parentescoSelect) {
                     parentescoSelect.disabled = false;
                     parentescoSelect.value = '';
                     parentescoSelect.classList.remove('bg-light', 'text-muted');
+                    
+                    // Limpiar campo oculto
+                    if (parentescoHidden) {
+                        parentescoHidden.value = '';
+                    }
 
                     // Disparar evento change para actualizar validaciones
                     const event = new Event('change');
@@ -3939,6 +3952,21 @@
                     }
                 }
             }
+
+            // Event listener para sincronizar campo oculto cuando el usuario cambia manualmente el parentesco
+            document.addEventListener('DOMContentLoaded', function() {
+                const parentescoSelect = document.getElementById('parentesco');
+                const parentescoHidden = document.getElementById('parentesco_hidden');
+                
+                if (parentescoSelect && parentescoHidden) {
+                    parentescoSelect.addEventListener('change', function() {
+                        // Solo actualizar el campo oculto si el select no está deshabilitado
+                        if (!this.disabled) {
+                            parentescoHidden.value = this.value;
+                        }
+                    });
+                }
+            });
 
             // Función para copiar datos de un progenitor al representante
             function copiarDatosProgenitorARepresentante(esMadre = false) {

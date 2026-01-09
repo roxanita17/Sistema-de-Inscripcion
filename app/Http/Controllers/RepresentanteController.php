@@ -1278,7 +1278,7 @@ class RepresentanteController extends Controller
 
         $datosRepresentanteLegal = [
             "banco_id" => $request->banco_id && $request->banco_id != '' ? $request->banco_id : null,
-            "parentesco" => $request->parentesco ?: 'No especificado',
+            "parentesco" => $request->parentesco ?: ($request->parentesco_hidden ?: 'No especificado'),
             "correo_representante" => $request->correo_representante ?: '',
             "pertenece_a_organizacion_representante" => $perteneceOrganizacion,
             "cual_organizacion_representante" => $cualOrganizacion,
