@@ -4406,7 +4406,6 @@
                     'idparroquia-representante',
                     'direccion-representante',
                     'telefono-representante',
-                    'email-representante',
                     'prefijo_dos-representante',
                     'telefono_dos-representante',
                     'ocupacion-representante',
@@ -4414,8 +4413,22 @@
                     'parentesco'
                 ];
 
-                // Aplicar a todos los campos
+                // Campos que nunca deben ser deshabilitados
+                const camposExcluidos = ['correo-representante'];
+
+                // Radio buttons que nunca deben ser deshabilitados
+                const radioExcluidos = [
+                    'convive-si-representante',
+                    'convive-no-representante'
+                ];
+
+                // Aplicar a todos los campos excepto los excluidos
                 campos.forEach(id => {
+                    if (camposExcluidos.includes(id)) {
+                        console.log(`[TOGGLE] Campo ${id} excluido de deshabilitación`);
+                        return; // Saltar este campo
+                    }
+
                     const campo = document.getElementById(id);
                     if (campo) {
                         campo.disabled = deshabilitar;
@@ -4433,23 +4446,54 @@
                         // Manejar select2 si está presente
                         if (typeof $.fn.select2 === 'function' && $(campo).hasClass(
                                 'select2-hidden-accessible')) {
-                            $(campo).prop('disabled', deshabilitar);
-                            $(campo).trigger('change.select2');
+                            try {
+                                if (deshabilitar) {
+                                    $(campo).select2('disable');
+                                } else {
+                                    $(campo).select2('enable');
+                                }
+                            } catch (error) {
+                                console.warn('Error al manejar select2:', error);
+                            }
                         }
 
                         // Manejar selectpicker si está presente
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
-                            $(campo).prop('disabled', deshabilitar);
-                            // Forzar reconstrucción completa del selectpicker con buscador
-                            inicializarSelectPickerConBuscador($(campo));
+                            try {
+                                if (deshabilitar) {
+                                    $(campo).selectpicker('refresh');
+                                }
+                            } catch (error) {
+                                console.warn('Error al manejar selectpicker:', error);
+                            }
                         }
+
+                        console.log(`[TOGGLE] Campo ${id}: ${deshabilitar ? 'deshabilitado' : 'habilitado'}`);
+                    } else {
+                        console.warn(`[TOGGLE] Campo ${id} no encontrado`);
                     }
                 });
 
-                // Manejar radio buttons de convivencia
-                const radiosConvivencia = document.querySelectorAll('input[name="convive-representante"]');
-                radiosConvivencia.forEach(radio => {
-                    radio.disabled = deshabilitar;
+                // Asegurar que los campos excluidos siempre permanezcan habilitados
+                camposExcluidos.forEach(id => {
+                    const campo = document.getElementById(id);
+                    if (campo) {
+                        campo.disabled = false;
+                        campo.readOnly = false;
+                        campo.classList.remove('bg-light', 'text-muted');
+                        console.log(`[TOGGLE] Campo excluido ${id}: forzado a permanecer habilitado`);
+                    }
+                });
+
+                // Asegurar que los radio buttons excluidos siempre permanezcan habilitados
+                radioExcluidos.forEach(id => {
+                    const campo = document.getElementById(id);
+                    if (campo) {
+                        campo.disabled = false;
+                        campo.readOnly = false;
+                        // No aplicar estilos de deshabilitado a radio buttons
+                        console.log(`[TOGGLE] Radio excluido ${id}: forzado a permanecer habilitado`);
+                    }
                 });
             }
 
@@ -4723,7 +4767,7 @@
                             [`direccion${prefijo}`, 'direccion-representante'],
                             [`telefono${prefijo}`, 'telefono-representante'],
                             [`telefono_dos${esMadre ? '' : '_padre'}`, 'telefono_dos-representante'],
-                            [`email${prefijo}`, 'email-representante']
+                            [`email${prefijo}`, 'correo-representante']
                         ];
 
                         for (const [origenId, destinoId] of camposContacto) {
@@ -4838,6 +4882,76 @@
                         // Deshabilitar los campos después de copiar los datos
                         toggleCamposRepresentante(true);
 
+                        // Forzar que los campos críticos permanezcan habilitados con retraso para asegurar que se ejecute después de todo
+                        setTimeout(() => {
+                            console.log('[INICIO FORZADO] Iniciando verificación y forzado de campos críticos...');
+                            
+                            // Forzar que el campo de email permanezca habilitado (doble seguro)
+                            const emailCampo = document.getElementById('correo-representante');
+                            console.log('[EMAIL VERIFICACIÓN] Elemento correo-representante encontrado:', !!emailCampo);
+                            
+                            if (emailCampo) {
+                                console.log('[EMAIL VERIFICACIÓN] Estado antes del forzado:', {
+                                    disabled: emailCampo.disabled,
+                                    readOnly: emailCampo.readOnly,
+                                    className: emailCampo.className,
+                                    value: emailCampo.value
+                                });
+                                
+                                emailCampo.disabled = false;
+                                emailCampo.readOnly = false;
+                                emailCampo.classList.remove('bg-light', 'text-muted');
+                                
+                                console.log('[EMAIL VERIFICACIÓN] Estado después del forzado:', {
+                                    disabled: emailCampo.disabled,
+                                    readOnly: emailCampo.readOnly,
+                                    className: emailCampo.className,
+                                    value: emailCampo.value
+                                });
+                                
+                                console.log('[EMAIL FORZADO] Campo correo-representante forzado a permanecer habilitado');
+                            } else {
+                                console.error('[EMAIL ERROR] No se encontró el elemento correo-representante');
+                            }
+
+                            // Forzar que los radio buttons de convivencia permanezcan habilitados (doble seguro)
+                            const conviveSi = document.getElementById('convive-si-representante');
+                            const conviveNo = document.getElementById('convive-no-representante');
+                            
+                            console.log('[RADIO VERIFICACIÓN] Elemento convive-si-representante encontrado:', !!conviveSi);
+                            console.log('[RADIO VERIFICACIÓN] Elemento convive-no-representante encontrado:', !!conviveNo);
+                            
+                            if (conviveSi) {
+                                console.log('[RADIO VERIFICACIÓN] Estado convive-si antes:', {
+                                    disabled: conviveSi.disabled,
+                                    checked: conviveSi.checked
+                                });
+                                conviveSi.disabled = false;
+                                conviveSi.readOnly = false;
+                                console.log('[RADIO VERIFICACIÓN] Estado convive-si después:', {
+                                    disabled: conviveSi.disabled,
+                                    checked: conviveSi.checked
+                                });
+                                console.log('[RADIO FORZADO] Campo convive-si-representante forzado a permanecer habilitado');
+                            }
+                            
+                            if (conviveNo) {
+                                console.log('[RADIO VERIFICACIÓN] Estado convive-no antes:', {
+                                    disabled: conviveNo.disabled,
+                                    checked: conviveNo.checked
+                                });
+                                conviveNo.disabled = false;
+                                conviveNo.readOnly = false;
+                                console.log('[RADIO VERIFICACIÓN] Estado convive-no después:', {
+                                    disabled: conviveNo.disabled,
+                                    checked: conviveNo.checked
+                                });
+                                console.log('[RADIO FORZADO] Campo convive-no-representante forzado a permanecer habilitado');
+                            }
+                            
+                            console.log('[FIN FORZADO] Verificación y forzado de campos críticos completado');
+                        }, 100); // Pequeño retraso para asegurar que se ejecute después de todo
+
                         console.log(`=== COPIA ULTRA OPTIMIZADA ${mensajeExito.toUpperCase()} COMPLETADA ===`);
                         
                     } catch (error) {
@@ -4897,7 +5011,7 @@
                     'telefono-representante',
                     'prefijo_dos-representante',
                     'telefono_dos-representante',
-                    'email-representante',
+                    'correo-representante',
                     'ocupacion-representante',
                     'otra-ocupacion-representante',
                     'parentesco'
