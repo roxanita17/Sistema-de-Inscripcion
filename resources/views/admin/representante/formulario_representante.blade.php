@@ -332,7 +332,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <div class="form-group">
                                             <label for="idPais" class="form-label-modern">
                                                 <i class="fas fa-map"></i>
@@ -353,7 +353,7 @@
                                                         {{ $pais->nameES }}
                                                     </option>
                                                 @endforeach
-                                                {{--
+                                                {{-- 
                                                 @foreach ($estados as $estado)
                                                     <option value="{{ $estado->id }}"
                                                         @if (old('idEstado') == $estado->id) selected @endif>
@@ -365,6 +365,8 @@
                                                 Por favor seleccione un pais.
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
                                         <div class="form-group">
                                             <label for="idEstado" class="form-label-modern">
                                                 <i class="fas fa-map"></i>
@@ -383,7 +385,7 @@
                                         <small id="idEstado-error" class="text-danger"></small>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <div class="form-group">
                                             <label for="idMunicipio" class="form-label-modern">
                                                 <i class="fas fa-map-marked-alt"></i>
@@ -401,7 +403,7 @@
                                         <small id="idMunicipio-error" class="text-danger"></small>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <div class="form-group">
                                             <label for="idparroquia" class="form-label-modern">
                                                 <i class="fas fa-map-pin"></i>
@@ -824,56 +826,34 @@
 
                 <div class="card-body-modern" style="padding: 2rem;">
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
-                                <label for="lugar-nacimiento-padre" class="form-label-modern">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    Lugar de Nacimiento
+                                <label for="idPais-padre" class="form-label-modern">
+                                    <i class="fas fa-map"></i>
+                                    Pais
                                     <span class="required-badge">*</span>
                                 </label>
-                                <input type="text" class="form-control-modern" id="lugar-nacimiento-padre"
-                                    name="lugar-nacimiento-padre" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                    title="Solo se permiten letras y espacios, no se aceptan números" required>
+                                <select class="form-control-modern selectpicker" id="idPais-padre"
+                                    name="idPais-padre" data-live-search="true"
+                                    aria-label="Seleccione un pais">
+                                    <option value="">Seleccione un pais</option>
+                                    @php
+                                        // Eliminar duplicados de países por ID y nombre
+                                        $paisesUnicosPadre = $paises->unique('id')->sortBy('nameES');
+                                    @endphp
+                                    @foreach ($paisesUnicosPadre as $pais)
+                                        <option value="{{ $pais->id }}"
+                                            @if (old('idPais-padre') == $pais->id) selected @endif>
+                                            {{ $pais->nameES }}
+                                        </option>
+                                    @endforeach
+                                </select>
                                 <div class="invalid-feedback">
-                                    Por favor ingrese un lugar de nacimiento válido.
+                                    Por favor seleccione un pais.
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                                        <div class="form-group">
-                                            <label for="idPais-padre" class="form-label-modern">
-                                                <i class="fas fa-map"></i>
-                                                Pais
-                                                <span class="required-badge">*</span>
-                                            </label>
-                                            <select class="form-control-modern selectpicker" id="idPais-padre"
-                                                name="idPais-padre" data-live-search="true"
-                                                aria-label="Seleccione un pais">
-                                                <option value="">Seleccione un pais</option>
-                                                @php
-                                                    // Eliminar duplicados de países por ID y nombre
-                                                    $paisesUnicosPadre = $paises->unique('id')->sortBy('nameES');
-                                                @endphp
-                                                @foreach ($paisesUnicosPadre as $pais)
-                                                    <option value="{{ $pais->id }}"
-                                                        @if (old('idPais-padre') == $pais->id) selected @endif>
-                                                        {{ $pais->nameES }}
-                                                    </option>
-                                                @endforeach
-                                                {{--
-                                                @foreach ($estados as $estado)
-                                                    <option value="{{ $estado->id }}"
-                                                        @if (old('idEstado') == $estado->id) selected @endif>
-                                                        {{ $estado->nombre_estado }}
-                                                    </option>
-                                                @endforeach--}}
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Por favor seleccione un pais.
-                                            </div>
-                                        </div>                       
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idEstado-padre" class="form-label-modern">
                                     <i class="fas fa-map"></i>
@@ -890,7 +870,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idMunicipio-padre" class="form-label-modern">
                                     <i class="fas fa-map-marked-alt"></i>
@@ -907,7 +887,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idparroquia-padre" class="form-label-modern">
                                     <i class="fas fa-map-pin"></i>
@@ -923,7 +903,8 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
+                    <div class="row">
                         <div class="col-md-12 mb-3">
                             <div class="form-group">
                                 <label for="direccion-padre" class="form-label-modern">
@@ -1380,39 +1361,41 @@
                         </div>
                     </div>
                     <div class="row">
-                                        <div class="form-group">
-                                            <label for="idPais-representante" class="form-label-modern">
-                                                <i class="fas fa-map"></i>
-                                                Pais
-                                                <span class="required-badge">*</span>
-                                            </label>
-                                            <select class="form-control-modern selectpicker" id="idPais-representante"
-                                                name="idPais-representante" data-live-search="true"
-                                                aria-label="Seleccione un pais">
-                                                <option value="">Seleccione un pais</option>
-                                                @php
-                                                    // Eliminar duplicados de países por ID y nombre
-                                                    $paisesUnicosRepresentante = $paises->unique('id')->sortBy('nameES');
-                                                @endphp
-                                                @foreach ($paisesUnicosRepresentante as $pais)
-                                                    <option value="{{ $pais->id }}"
-                                                        @if (old('idPais-representante') == $pais->id) selected @endif>
-                                                        {{ $pais->nameES }}
-                                                    </option>
-                                                @endforeach
-                                                {{--
-                                                @foreach ($estados as $estado)
-                                                    <option value="{{ $estado->id }}"
-                                                        @if (old('idEstado') == $estado->id) selected @endif>
-                                                        {{ $estado->nombre_estado }}
-                                                    </option>
-                                                @endforeach--}}
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Por favor seleccione un pais.
-                                            </div>
-                                        </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label for="idPais-representante" class="form-label-modern">
+                                    <i class="fas fa-map"></i>
+                                    Pais
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <select class="form-control-modern selectpicker" id="idPais-representante"
+                                    name="idPais-representante" data-live-search="true"
+                                    aria-label="Seleccione un pais">
+                                    <option value="">Seleccione un pais</option>
+                                    @php
+                                        // Eliminar duplicados de países por ID y nombre
+                                        $paisesUnicosRepresentante = $paises->unique('id')->sortBy('nameES');
+                                    @endphp
+                                    @foreach ($paisesUnicosRepresentante as $pais)
+                                        <option value="{{ $pais->id }}"
+                                            @if (old('idPais-representante') == $pais->id) selected @endif>
+                                            {{ $pais->nameES }}
+                                        </option>
+                                    @endforeach
+                                    {{--
+                                    @foreach ($estados as $estado)
+                                        <option value="{{ $estado->id }}"
+                                            @if (old('idEstado') == $estado->id) selected @endif>
+                                            {{ $estado->nombre_estado }}
+                                        </option>
+                                    @endforeach--}}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un pais.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idEstado-representante" class="form-label-modern">
                                     <i class="fas fa-map"></i>
@@ -1430,7 +1413,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idMunicipio-representante" class="form-label-modern">
                                     <i class="fas fa-map-marked-alt"></i>
@@ -1448,7 +1431,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idparroquia-representante" class="form-label-modern">
                                     <i class="fas fa-map-pin"></i>
@@ -5139,9 +5122,9 @@
 
             // Añadir clases de error
             elemento.classList.add('is-invalid');
-            if (elemento.tagName === 'SELECT') {
-                elemento.classList.add('border-danger');
-            }
+            // if (elemento.tagName === 'SELECT') {
+            //     elemento.classList.add('border-danger'); // ELIMINADO - No aplicar borde rojo a selects
+            // }
         }
 
         // Función para limpiar errores
@@ -5157,9 +5140,9 @@
             }
 
             elemento.classList.remove('is-invalid');
-            if (elemento.tagName === 'SELECT') {
-                elemento.classList.remove('border-danger');
-            }
+            // if (elemento.tagName === 'SELECT') {
+            //     elemento.classList.remove('border-danger'); // ELIMINADO - No aplicar borde rojo a selects
+            // }
         }
 
         // Validar campo requerido
