@@ -9,90 +9,67 @@ use App\Models\Grado;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Models\DocenteAreaGrado as ModeloDocenteAreaGrado;
-use App\Models\EjecucionesPercentil;
 use App\Models\Seccion;
+use App\Models\GrupoEstable;
 
 class DocenteAreaGrado extends Component
 {
-    /**
-     * PROPIEDADES PRINCIPALES
-     */
-
-
+    // Propiedades principales
     public $docenteId;
     public $docentes = [];
     public $docenteSeleccionado = null;
 
+    // === ASIGNACIÓN DE ÁREA ===
     public $materiaId;
     public $materias = [];
-    public $estudios = [];
+    public $gradoAreaId;         // 🔥 Variable independiente para área
+    public $gradosArea = [];     // 🔥 Colección independiente
+    public $seccionAreaId;       // 🔥 Variable independiente para área
+    public $seccionesArea = [];  // 🔥 Colección independiente
 
-    public $gradoId;
-    public $grados = [];
-
-    public $seccionId;
-    public $secciones = [];
+    // === ASIGNACIÓN DE GRUPO ESTABLE ===
+    public $grupoEstableId;
+    public $gruposEstables = [];
+    public $gradoGrupoId;        // 🔥 Variable independiente para grupo
+    public $gradosGrupo = [];    // 🔥 Colección independiente
+    public $seccionGrupoId;      // 🔥 Variable independiente para grupo
+    public $seccionesGrupo = []; // 🔥 Colección independiente
 
     public $asignaciones = [];
-
     public $modoEditar = false;
-
     public $asignacionAEliminar = null;
 
-    public $percentilEjecutado = false;
-
-
-    /**
-     * LISTENERS PARA EVENTOS
-     */
     protected $listeners = [
-        'materiaSeleccionada' => 'actualizarGrados',
         'asignacionCreada' => 'manejarAsignacionCreada',
     ];
 
-    /**
-     * Maneja la creación de una nueva asignación área-estudio
-     */
     public function manejarAsignacionCreada($data)
     {
-
-        // Recargar las materias del docente para incluir la nueva asignación
         if ($this->docenteSeleccionado) {
             $this->cargarMateriasPorEstudios();
-
-            session()->flash('success_temp', 'Nueva área-estudio disponible para asignar.');
+            session()->flash('success', 'Nueva área-estudio disponible para asignar.');
         }
     }
 
-
-    /**
-     * MÉTODO QUE SE EJECUTA AL CARGAR EL COMPONENTE
-     * Si se recibe $docenteId → Modo edición
-     */
     public function mount($docenteId = null)
     {
+        $this->cargarGruposEstables();
 
         if ($docenteId) {
-
             $this->modoEditar = true;
             $this->docenteId = $docenteId;
-
             $this->cargarDatosDocente();
             $this->cargarMateriasPorEstudios();
-            // No cargar grados aún - se cargarán cuando seleccione una materia
-            $this->grados = collect(); // Inicializar como colección vacía
-            $this->cargarSecciones();
+            $this->gradosArea = collect();
+            $this->gradosGrupo = collect();
+            $this->seccionesArea = collect();
+            $this->seccionesGrupo = collect();
             $this->cargarAsignaciones();
         } else {
-            // Modo registro normal → cargar listado de docentes
             $this->cargarDocentes();
         }
     }
 
-
-    /**
-     * CARGA COMPLETA DEL PERFIL DEL DOCENTE
-     */
     public function cargarDatosDocente()
     {
         $this->docenteSeleccionado = Docente::with([
@@ -105,17 +82,8 @@ class DocenteAreaGrado extends Component
             'docenteAreaGrado.areaEstudios.areaFormacion',
             'docenteAreaGrado.grado'
         ])->findOrFail($this->docenteId);
-
-
-        $this->estudios = $this->docenteSeleccionado->detalleEstudios;
-        $this->asignaciones = $this->docenteSeleccionado->docenteAreaGrado;
     }
 
-
-
-    /**
-     * LISTADO DE DOCENTES PARA MODO NORMAL
-     */
     public function cargarDocentes()
     {
         $this->docentes = Docente::with([
@@ -131,10 +99,6 @@ class DocenteAreaGrado extends Component
             ->get();
     }
 
-
-    /**
-     * CARGA ASIGNACIONES ACTUALES DEL DOCENTE
-     */
     public function cargarAsignaciones()
     {
         if (!$this->docenteSeleccionado) {
@@ -145,26 +109,32 @@ class DocenteAreaGrado extends Component
         $this->asignaciones = ModeloDocenteAreaGrado::with([
             'areaEstudios.areaFormacion',
             'grado',
-            'seccion'
+            'seccion',
+            'grupoEstable',
+            'gradoGrupoEstable', // para mostrar el grado del grupo estable
         ])
             ->whereHas('detalleDocenteEstudio', function ($q) {
                 $q->where('docente_id', $this->docenteSeleccionado->id);
             })
             ->where('status', true)
+            ->orderBy('tipo_asignacion')
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 
-    public function getPuedeAgregarAsignacionProperty()
+
+    // 🔥 Computed property para botón de ÁREA
+    public function getPuedeAgregarAreaProperty()
     {
-        return $this->materiaId && $this->gradoId && $this->seccionId;
+        return $this->materiaId && $this->gradoAreaId && $this->seccionAreaId;
     }
 
+    // 🔥 Computed property para botón de GRUPO ESTABLE
+    public function getPuedeAgregarGrupoProperty()
+    {
+        return $this->grupoEstableId && $this->gradoGrupoId;
+    }
 
-
-    /**
-     * EVENTO AUTOMÁTICO: Se ejecuta cuando cambia docenteId
-     * Esta es la clave para la selección automática
-     */
     public function updatedDocenteId($value)
     {
         if (!$value) {
@@ -172,13 +142,17 @@ class DocenteAreaGrado extends Component
                 'docenteSeleccionado',
                 'materiaId',
                 'materias',
-                'gradoId',
-                'grados',
-                'seccionId',
-                'secciones',
+                'gradoAreaId',
+                'gradosArea',
+                'seccionAreaId',
+                'seccionesArea',
+                'grupoEstableId',
+                'gradoGrupoId',
+                'gradosGrupo',
+                'seccionGrupoId',
+                'seccionesGrupo',
                 'asignaciones',
             ]);
-
             $this->dispatch('resetSelects');
             return;
         }
@@ -193,26 +167,24 @@ class DocenteAreaGrado extends Component
 
         $this->reset([
             'materiaId',
-            'gradoId',
-            'seccionId',
-            'grados',
-            'secciones',
+            'gradoAreaId',
+            'seccionAreaId',
+            'gradosArea',
+            'seccionesArea',
+            'grupoEstableId',
+            'gradoGrupoId',
+            'seccionGrupoId',
+            'gradosGrupo',
+            'seccionesGrupo'
         ]);
 
         $this->cargarMateriasPorEstudios();
-
         $this->cargarAsignaciones();
-
         $this->dispatch('resetSelects');
 
         session()->flash('success', 'Docente seleccionado correctamente.');
     }
 
-
-
-    /**
-     * CARGA LAS MATERIAS DISPONIBLES SEGÚN LOS ESTUDIOS DEL DOCENTE
-     */
     public function cargarMateriasPorEstudios()
     {
         if (!$this->docenteSeleccionado) {
@@ -220,7 +192,6 @@ class DocenteAreaGrado extends Component
             return;
         }
 
-        // IDs de estudios del docente
         $estudiosIds = $this->docenteSeleccionado
             ->detalleDocenteEstudio()
             ->where('status', true)
@@ -229,11 +200,9 @@ class DocenteAreaGrado extends Component
 
         if (empty($estudiosIds)) {
             $this->materias = [];
-            session()->flash('error', 'El docente no tiene estudios registrados.');
             return;
         }
 
-        // Filtrar materias por estudios y ordenarlas por el nombre del área de formación
         $this->materias = AreaEstudioRealizado::with('areaFormacion')
             ->where('status', true)
             ->whereIn('estudios_id', $estudiosIds)
@@ -242,29 +211,35 @@ class DocenteAreaGrado extends Component
             ->values();
     }
 
-    /**
-     * CARGA LISTA DE GRADOS SEGÚN LA MATERIA SELECCIONADA
-     */
-    public function cargarGrados()
+    public function cargarGruposEstables()
     {
-        // Si no hay materia seleccionada, no cargar grados
+        $this->gruposEstables = GrupoEstable::where('status', true)
+            ->orderBy('nombre_grupo_estable', 'asc')
+            ->get();
+    }
+
+    // === EVENTOS PARA ASIGNACIÓN DE ÁREA ===
+
+    public function updatedMateriaId()
+    {
+        $this->reset(['gradoAreaId', 'seccionAreaId']);
+        $this->seccionesArea = collect();
+
         if (!$this->materiaId) {
-            $this->grados = collect(); // Colección vacía
+            $this->gradosArea = collect();
             return;
         }
 
-        // Obtener el área de formación de la materia seleccionada
         $areaEstudio = AreaEstudioRealizado::with('areaFormacion')->find($this->materiaId);
 
         if (!$areaEstudio || !$areaEstudio->area_formacion_id) {
-            $this->grados = collect();
+            $this->gradosArea = collect();
             return;
         }
 
         $areaFormacionId = $areaEstudio->area_formacion_id;
 
-        // Cargar solo los grados que tienen asignada esta área de formación
-        $this->grados = Grado::where('status', true)
+        $this->gradosArea = Grado::where('status', true)
             ->whereHas('gradoAreaFormacion', function ($q) use ($areaFormacionId) {
                 $q->where('area_formacion_id', $areaFormacionId)
                     ->where('status', true);
@@ -273,101 +248,83 @@ class DocenteAreaGrado extends Component
             ->get();
     }
 
-    /**
-     * ACTUALIZA LOS GRADOS CUANDO CAMBIA LA MATERIA
-     * Este método se ejecuta cuando el select de materias cambia
-     */
-    public function actualizarGrados()
+    public function updatedGradoAreaId()
     {
-        // Resetear grado y sección al cambiar la materia
-        $this->reset(['gradoId', 'seccionId']);
+        $this->reset('seccionAreaId');
 
-        // Limpiar secciones
-        $this->secciones = collect();
-
-        // Recargar grados
-        $this->cargarGrados();
-
-        $this->dispatch('resetGradoSeccion');
-    }
-
-    public function updated($property)
-    {
-        // No hacer nada aquí para evitar recargas innecesarias
-    }
-
-    public function hydrate()
-    {
-        // Asegurar que el docente esté siempre cargado
-        if ($this->docenteId && !$this->docenteSeleccionado) {
-            $this->cargarDatosDocente();
-        }
-    }
-
-    /**
-     * EVENTO: Al cambiar la materia desde el select (llamado manualmente)
-     */
-    public function updatedMateriaId()
-    {
-        // Asegurar que el docente esté cargado antes de actualizar grados
-        if ($this->docenteId && !$this->docenteSeleccionado) {
-            $this->cargarDatosDocente();
-        }
-
-        $this->actualizarGrados();
-    }
-
-    public function updatedGradoId()
-    {
-        // Resetear sección al cambiar grado
-        $this->reset('seccionId');
-
-        // Cargar secciones filtradas
-        $this->cargarSecciones();
-    }
-
-    public function cargarSecciones()
-    {
-        if (!$this->gradoId) {
-            $this->secciones = collect();
+        if (!$this->gradoAreaId) {
+            $this->seccionesArea = collect();
             return;
         }
 
-        $this->secciones = Seccion::where('status', true)
-            ->where('grado_id', $this->gradoId)
+        $this->seccionesArea = Seccion::where('status', true)
+            ->where('grado_id', $this->gradoAreaId)
             ->orderBy('nombre', 'asc')
             ->get();
     }
 
-    /**
-     * REGISTRA UNA NUEVA ASIGNACIÓN
-     */
-    public function agregarAsignacion()
+    // === EVENTOS PARA ASIGNACIÓN DE GRUPO ESTABLE ===
+
+    public function updatedGrupoEstableId()
+    {
+        $this->reset(['gradoGrupoId', 'seccionGrupoId']);
+        $this->seccionesGrupo = collect();
+
+        if (!$this->grupoEstableId) {
+            $this->gradosGrupo = collect();
+            return;
+        }
+
+        // Para grupo estable: TODOS los grados activos
+        $this->gradosGrupo = Grado::where('status', true)
+            ->orderBy('numero_grado', 'asc')
+            ->get();
+    }
+
+    public function updatedGradoGrupoId()
+    {
+        $this->reset('seccionGrupoId');
+
+        if (!$this->gradoGrupoId) {
+            $this->seccionesGrupo = collect();
+            return;
+        }
+
+        $this->seccionesGrupo = Seccion::where('status', true)
+            ->where('grado_id', $this->gradoGrupoId)
+            ->orderBy('nombre', 'asc')
+            ->get();
+    }
+
+    // === AGREGAR ASIGNACIÓN DE ÁREA ===
+
+    public function agregarAsignacionArea()
     {
         $this->validate([
             'materiaId' => 'required|exists:area_estudio_realizados,id',
-            'gradoId' => 'required|exists:grados,id',
-            'seccionId' => 'required|exists:seccions,id',
+            'gradoAreaId' => 'required|exists:grados,id',
+            'seccionAreaId' => 'required|exists:seccions,id',
         ]);
 
         DB::beginTransaction();
+
         try {
             $area = AreaEstudioRealizado::findOrFail($this->materiaId);
 
-            // Verificar que el grado esté relacionado con el área de formación de la materia
-            $areaFormacionId = $area->area_formacion_id;
-            $gradoTieneMateria = \App\Models\GradoAreaFormacion::where('grado_id', $this->gradoId)
-                ->where('area_formacion_id', $areaFormacionId)
-                ->where('status', true)
-                ->exists();
+            // Validar relación grado - área de formación
+            $gradoTieneArea = \App\Models\GradoAreaFormacion::where([
+                'grado_id' => $this->gradoAreaId,
+                'area_formacion_id' => $area->area_formacion_id,
+                'status' => true
+            ])->exists();
 
-            if (!$gradoTieneMateria) {
+            if (!$gradoTieneArea) {
                 throw ValidationException::withMessages([
-                    'gradoId' => 'El nivel academico seleccionado no tiene asignada esta area de formacion en el sistema. Debe asignarla primero en Niveles Academicos - Areas de Formacion.'
+                    'gradoAreaId' => 'El nivel académico no tiene asignada esta área de formación.'
                 ]);
             }
 
-            // Buscar el detalle estudio al que pertenece la materia
+            // Obtener detalle de estudio del docente
             $detalleEstudio = $this->docenteSeleccionado->detalleDocenteEstudio()
                 ->where('estudios_id', $area->estudios_id)
                 ->where('status', true)
@@ -375,88 +332,170 @@ class DocenteAreaGrado extends Component
 
             if (!$detalleEstudio) {
                 throw ValidationException::withMessages([
-                    'materiaId' => 'No se encontró el estudio correspondiente a esta materia.'
+                    'materiaId' => 'El docente no posee el estudio correspondiente a esta área.'
                 ]);
             }
 
-            // Validar duplicado para el mismo docente
+            // Validar duplicado exacto
             $existe = ModeloDocenteAreaGrado::where([
                 'docente_estudio_realizado_id' => $detalleEstudio->id,
                 'area_estudio_realizado_id' => $this->materiaId,
-                'grado_id' => $this->gradoId,
-                'seccion_id' => $this->seccionId,
+                'grado_id' => $this->gradoAreaId,
+                'seccion_id' => $this->seccionAreaId,
+                'tipo_asignacion' => 'area',
                 'status' => true,
             ])->exists();
 
             if ($existe) {
                 throw ValidationException::withMessages([
-                    'materiaId' => 'Esta area de formacion ya está asignada a este nivel academico y sección para este docente.'
+                    'materiaId' => 'Esta asignación ya existe para este docente.'
                 ]);
             }
 
-            // Validar si la combinación materia-grado-sección ya está asignada a CUALQUIER docente
-            // IMPORTANTE: Validar por el área de formación (materia base), no por el ID específico de area_estudio_realizado
-            $areaFormacionId = AreaEstudioRealizado::where('id', $this->materiaId)
-                ->value('area_formacion_id');
-
-            if (!$areaFormacionId) {
-                throw ValidationException::withMessages([
-                    'materiaId' => 'No se pudo identificar el área de formación de esta materia.'
-                ]);
-            }
-
-            // Buscar si existe una asignación con la misma área de formación, grado y sección
-            $asignacionExistente = ModeloDocenteAreaGrado::where('grado_id', $this->gradoId)
-                ->where('seccion_id', $this->seccionId)
-                ->where('status', true)
-                ->whereHas('areaEstudios', function ($q) use ($areaFormacionId) {
-                    $q->where('area_formacion_id', $areaFormacionId);
+            // Validar que nadie más tenga esa área en ese grado-sección
+            $asignacionExistente = ModeloDocenteAreaGrado::where([
+                'grado_id' => $this->gradoAreaId,
+                'seccion_id' => $this->seccionAreaId,
+                'tipo_asignacion' => 'area',
+                'status' => true,
+            ])
+                ->whereHas('areaEstudios', function ($q) use ($area) {
+                    $q->where('area_formacion_id', $area->area_formacion_id);
                 })
-                ->with(['detalleDocenteEstudio.docente.persona'])
+                ->with('detalleDocenteEstudio.docente.persona')
                 ->first();
 
             if ($asignacionExistente) {
-                $docenteExistente = $asignacionExistente->detalleDocenteEstudio->docente;
+                $docente = $asignacionExistente->detalleDocenteEstudio->docente;
+                $nombre = $docente->persona->primer_nombre . ' ' . $docente->persona->primer_apellido;
 
-                // Si es el mismo docente, mensaje específico
-                if ($docenteExistente->id == $this->docenteSeleccionado->id) {
-                    throw ValidationException::withMessages([
-                        'materiaId' => 'Ya tienes esta area de formacion asignada a este nivel academico y sección.'
-                    ]);
-                }
-
-                // Si es otro docente, indicar quién la tiene
-                $nombreDocente = $docenteExistente->persona->primer_nombre . ' ' . $docenteExistente->persona->primer_apellido;
                 throw ValidationException::withMessages([
-                    'materiaId' => "Esta area de formacion ya está asignada a este nivel academico y sección por el docente: {$nombreDocente}"
+                    'materiaId' => "Esta área ya está asignada en este grado y sección al docente {$nombre}."
                 ]);
             }
 
-            // Crear asignación
             ModeloDocenteAreaGrado::create([
                 'docente_estudio_realizado_id' => $detalleEstudio->id,
                 'area_estudio_realizado_id' => $this->materiaId,
-                'grado_id' => $this->gradoId,
-                'seccion_id' => $this->seccionId,
+                'grado_id' => $this->gradoAreaId,
+                'seccion_id' => $this->seccionAreaId,
+                'tipo_asignacion' => 'area',
                 'status' => true,
             ]);
 
             DB::commit();
+
             $this->cargarAsignaciones();
-            $this->reset(['materiaId', 'gradoId', 'seccionId']);
+            $this->reset(['materiaId', 'gradoAreaId', 'seccionAreaId', 'gradosArea', 'seccionesArea']);
             $this->dispatch('resetSelects');
 
-            session()->flash('success', 'Asignación registrada correctamente.');
-        } catch (\Exception $e) {
+            session()->flash('success', 'Asignación de área registrada correctamente.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
             DB::rollBack();
             session()->flash('error', 'Error al registrar la asignación: ' . $e->getMessage());
         }
     }
 
+    // === AGREGAR ASIGNACIÓN DE GRUPO ESTABLE ===
 
-    /**
-     * ELIMINACIÓN LÓGICA DE ASIGNACIÓN
-     */
+    public function agregarAsignacionGrupo()
+    {
+        $this->validate([
+            'grupoEstableId' => 'required|exists:grupo_estables,id',
+            'gradoGrupoId'   => 'required|exists:grados,id',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            /*
+        |--------------------------------------------------------------------------
+        | 1️⃣ VALIDAR QUE EL DOCENTE NO TENGA YA GRUPO ESTABLE
+        |--------------------------------------------------------------------------
+        */
+
+            $detalleEstudio = $this->docenteSeleccionado
+                ->detalleDocenteEstudio()
+                ->where('status', true)
+                ->first();
+
+            if (!$detalleEstudio) {
+                throw ValidationException::withMessages([
+                    'grupoEstableId' => 'El docente no tiene estudios registrados.',
+                ]);
+            }
+
+            $existeGrupo = ModeloDocenteAreaGrado::where([
+                'docente_estudio_realizado_id' => $detalleEstudio->id,
+                'tipo_asignacion' => 'grupo_estable',
+                'status' => true,
+            ])->exists();
+
+            if ($existeGrupo) {
+                throw ValidationException::withMessages([
+                    'grupoEstableId' => 'Este docente ya tiene un grupo estable asignado.',
+                ]);
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ VALIDAR QUE EL GRUPO ESTABLE NO ESTÉ ASIGNADO A OTRO DOCENTE
+        |--------------------------------------------------------------------------
+        */
+            $asignacionExistente = ModeloDocenteAreaGrado::where([
+                'grupo_estable_id' => $this->grupoEstableId,
+                'grado_grupo_estable_id' => $this->gradoGrupoId,
+                'tipo_asignacion' => 'grupo_estable',
+                'status' => true,
+            ])
+                ->with('docente.persona')
+                ->first();
+
+            if ($asignacionExistente) {
+                $docente = $asignacionExistente->docente;
+                $nombre = $docente->persona->primer_nombre . ' ' . $docente->persona->primer_apellido;
+
+                throw ValidationException::withMessages([
+                    'grupoEstableId' => "Este grupo estable ya está asignado al docente {$nombre}.",
+                ]);
+            }
+
+            /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ CREAR ASIGNACIÓN (SIN ESTUDIO)
+        |--------------------------------------------------------------------------
+        */
+            ModeloDocenteAreaGrado::create([
+                'docente_estudio_realizado_id' => $detalleEstudio->id,
+                'grupo_estable_id' => $this->grupoEstableId,
+                'grado_grupo_estable_id' => $this->gradoGrupoId, // ✅ correcto para grupo
+                'tipo_asignacion' => 'grupo_estable',
+                'status' => true,
+            ]);
+
+
+
+            DB::commit();
+
+            $this->cargarAsignaciones();
+            $this->reset(['grupoEstableId', 'gradoGrupoId', 'gradosGrupo']);
+            $this->dispatch('resetSelects');
+
+            session()->flash('success', 'Asignación de grupo estable registrada correctamente.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            session()->flash('error', 'Error al registrar el grupo estable: ' . $e->getMessage());
+        }
+    }
+
+
     public function eliminarAsignacion($asignacionId)
     {
         DB::beginTransaction();
@@ -474,35 +513,11 @@ class DocenteAreaGrado extends Component
         }
     }
 
-    public function limpiarSeleccion()
-    {
-        $this->reset([
-            'docenteId',
-            'docenteSeleccionado',
-            'materiaId',
-            'gradoId',
-            'seccionId',
-            'materias',
-            'grados',
-            'secciones',
-            'asignaciones'
-        ]);
-
-        $this->dispatch('resetSelect');
-    }
-
-
-    /**
-     * RENDERIZA LA VISTA
-     */
     public function render()
     {
-        $totalGrados = Grado::where('status', true)->count();
-        $totalSecciones = Seccion::where('status', true)->count();
-
         return view('livewire.admin.transaccion-docente.docente-area-grado', [
-            'totalGrados' => $totalGrados,
-            'totalSecciones' => $totalSecciones,
+            'totalGrados' => Grado::where('status', true)->count(),
+            'totalSecciones' => Seccion::where('status', true)->count(),
         ]);
     }
 }

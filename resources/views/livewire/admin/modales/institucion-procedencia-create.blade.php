@@ -34,6 +34,24 @@
                             </div>
                         @endif
 
+                        {{-- Select País --}}
+                        <div class="form-group-modern">
+                            <label for="pais_id_modal" class="form-label-modern">
+                                <i class="fas fa-globe"></i>
+                                País
+                            </label>
+                            <select wire:model.live="pais_id" id="pais_id_modal" class="form-control-modern" required>
+                                <option value="">Seleccione un país</option>
+                                @foreach ($paises as $pais)
+                                    <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
+                                @endforeach
+                            </select>
+
+                            @error('pais_id')
+                                <div class="error-message">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         {{-- Select Estado --}}
                         <div class="form-group-modern">
                             <label for="estado_id_modal" class="form-label-modern">

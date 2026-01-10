@@ -199,7 +199,7 @@ class DocenteAreaGradoController extends Controller
 
         $pdf = Pdf::loadView('admin.transacciones.docente_area_grado.reportes.general_pdf', [
             'docentes' => $docentes
-        ]);
+        ]); 
 
         $pdf->setPaper('A4', 'landscape');
         $pdf->setOption('isPhpEnabled', true);

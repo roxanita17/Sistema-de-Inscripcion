@@ -62,12 +62,6 @@
                         <p>Modifique los campos necesarios</p>
                     </div>
                 </div>
-                <div class="header-right">
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
-                    </div>
-                </div>
             </div>
 
             <div class="card-body-modern" style="padding: 2rem;">

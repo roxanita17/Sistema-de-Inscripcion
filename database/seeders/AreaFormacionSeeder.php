@@ -25,5 +25,16 @@ class AreaFormacionSeeder extends Seeder
             ['nombre_area_formacion' => 'Orientación y Convivencia', 'codigo_area' => '13', 'siglas' => 'OC', 'status' => true],/* 13 */
         ]);
         $this->command->info('Areas de Formación insertados correctamente.');
+
+        DB::table('grupo_estables')->insert([
+            ['nombre_grupo_estable' =>  'Domino', 'status' => true], /* 1 */
+            ['nombre_grupo_estable' => 'Ajedrez', 'status' => true], /* 2 */
+            ['nombre_grupo_estable' => 'Kikimbol', 'status' => true], /* 3 */
+            ['nombre_grupo_estable' => 'Taekwondo', 'status' => true], /* 4 */
+            ['nombre_grupo_estable' => 'Futbol', 'status' => true], /* 5 */
+            ['nombre_grupo_estable' => 'Baloncesto', 'status' => true], /* 6 */
+           
+        ]);
+        $this->command->info('Grupos estables insertados correctamente.');
     }
 }

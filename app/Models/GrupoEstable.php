@@ -16,4 +16,9 @@ class GrupoEstable extends Model
         'nombre_grupo_estable',
         'status',
     ];
+
+    public function docenteAsignacion()
+    {
+        return $this->hasOne(DocenteAreaGrado::class, 'grupo_estable_id');
+    }
 }

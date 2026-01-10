@@ -15,6 +15,7 @@ class InstitucionProcedencia extends Model
     protected $fillable = [
         'nombre_institucion',
         'localidad_id',
+        'pais_id',
         'status',
     ];
 
@@ -29,4 +30,10 @@ class InstitucionProcedencia extends Model
     public function estado(){
         return $this->belongsTo(Estado::class, "estado_id", "id");
     }
+
+    public function pais()
+    {
+        return $this->belongsTo(Pais::class, "pais_id", "id");
+    }
 }
+

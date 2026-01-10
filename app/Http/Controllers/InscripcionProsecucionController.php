@@ -39,6 +39,8 @@ class InscripcionProsecucionController extends Controller
                 ->orderBy('nombre')
                 ->get();
         }
+        $status = $request->get('status', 'Activo');
+
 
         $prosecuciones = InscripcionProsecucion::with([
             'prosecucionAreas',
@@ -89,6 +91,10 @@ class InscripcionProsecucionController extends Controller
                     });
                 }
             })
+            // Filtro por status de inscripción
+            ->when($status, function ($q) use ($status) {
+                $q->where('status', $status);
+            }) 
             ->orderByDesc('created_at')
             ->paginate(10)
             ->withQueryString();

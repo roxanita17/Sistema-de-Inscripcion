@@ -15,7 +15,6 @@ use App\Models\OrdenNacimiento;
 use App\Models\EtniaIndigena;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Validate;
 
 class AlumnoEdit extends Component
 {
@@ -49,6 +48,8 @@ class AlumnoEdit extends Component
     public $estado_id;
     public $municipio_id;
     public $localidad_id;
+    public $pais_id = null;
+    public $paises = [];
 
     public $lateralidad_id;
     public $orden_nacimiento_id;
@@ -141,19 +142,16 @@ class AlumnoEdit extends Component
                 'regex:/^\d+([.,]\d+)?$/',
                 function ($attribute, $value, $fail) {
 
-                    // Normalizar coma a punto
                     $valor = (float) str_replace(',', '.', $value);
 
                     if ($valor <= 0) {
                         $fail('La estatura no es válida.');
                     }
 
-                    // CM
                     if ($valor > 3 && ($valor < 50 || $valor > 250)) {
                         $fail('La estatura en cm debe estar entre 50 y 250.');
                     }
 
-                    // METROS
                     if ($valor <= 3 && ($valor < 0.5 || $valor > 2.5)) {
                         $fail('La estatura en metros debe estar entre 0.50 y 2.50.');
                     }
@@ -306,6 +304,7 @@ class AlumnoEdit extends Component
 
     private function cargarDatosIniciales()
     {
+        $this->paises = \App\Models\Pais::where('status', true)->orderBy('nameES')->get();
         $this->tipos_documentos = \App\Models\TipoDocumento::where('status', true)->get();
         $this->generos = \App\Models\Genero::where('status', true)->get();
         $this->estados = Estado::where('status', true)->get();
@@ -341,17 +340,37 @@ class AlumnoEdit extends Component
         $this->talla_zapato = $alumno->talla_zapato;
         $this->talla_pantalon_id = $alumno->talla_pantalon_id;
 
-        if ($persona->localidad) {
-            $this->localidad_id = $persona->localidad_id;
+        if (
+            $persona->localidad &&
+            $persona->localidad->municipio &&
+            $persona->localidad->municipio->estado
+        ) {
+            $estado = $persona->localidad->municipio->estado;
+            $municipio = $persona->localidad->municipio;
+            $localidad = $persona->localidad;
+            $this->pais_id = $estado->pais_id;
+            $this->estados = Estado::where('pais_id', $this->pais_id)
+                ->where('status', true)
+                ->orderBy('nombre_estado')
+                ->get();
 
-            if ($persona->localidad->municipio) {
-                $this->municipio_id = $persona->localidad->municipio_id;
-                $this->estado_id = $persona->localidad->municipio->estado_id;
+            $this->estado_id = $estado->id;
 
-                $this->cargarMunicipios($this->estado_id);
-                $this->cargarLocalidades($this->municipio_id);
-            }
+            $this->municipios = Municipio::where('estado_id', $this->estado_id)
+                ->where('status', true)
+                ->orderBy('nombre_municipio')
+                ->get();
+
+            $this->municipio_id = $municipio->id;
+
+            $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+
+            $this->localidad_id = $localidad->id;
         }
+
 
         $this->lateralidad_id = $alumno->lateralidad_id;
         $this->orden_nacimiento_id = $alumno->orden_nacimiento_id;
@@ -373,6 +392,22 @@ class AlumnoEdit extends Component
             })->toArray();
         }
     }
+
+    public function updatedPaisId($paisId)
+    {
+        $this->estados = Estado::where('pais_id', $paisId)
+            ->where('status', true)
+            ->orderBy('nombre_estado')
+            ->get();
+
+        $this->estado_id = null;
+        $this->municipio_id = null;
+        $this->localidad_id = null;
+
+        $this->municipios = [];
+        $this->localidades = [];
+    }
+
 
     public function updatedEstadoId($value)
     {

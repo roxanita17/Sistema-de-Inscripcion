@@ -17,30 +17,29 @@ class LocalidadIndex extends Component
     public $estado_id; 
     public $municipio_id;
     public $localidad_id;
+    public $pais_id;
     public $updateMode = false;
     public $search = '';
 
     public $anioEscolarActivo = false; 
 
+    public $paises = [];
+    public $estados = [];
     public $municipios = [];
 
     protected $rules = [
         'nombre_localidad' => 'required|string|max:255',
         'estado_id' => 'required|integer|exists:estados,id',
         'municipio_id' => 'required|integer|exists:municipios,id',
+        'pais_id' => 'required|integer|exists:pais,id',
     ];
 
-        /**
-     * Se ejecuta al montar el componente
-     */
     public function mount()
     {
         $this->verificarAnioEscolar();
+        $this->paises = \App\Models\Pais::where('status', true)->get();
     }
 
-    /**
-     * Verifica si hay un año escolar activo
-     */
     private function verificarAnioEscolar()
     {
         $this->anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
@@ -48,9 +47,6 @@ class LocalidadIndex extends Component
             ->exists();
     }
 
-    /**
-     * Verifica antes de ejecutar acciones
-     */
     private function verificarAccion()
     {
         if (!$this->anioEscolarActivo) {
@@ -62,23 +58,16 @@ class LocalidadIndex extends Component
 
     public function render()
     {
-        $estados = Estado::where('status', true)->get();
-
         $localidades = Localidad::where('status', true)
             ->when($this->search, function ($query) {
-                $query->where('nombre_localidad', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('municipio', function ($q) {
-                        $q->where('nombre_municipio', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('municipio.estado', function ($q) {
-                        $q->where('nombre_estado', 'like', '%' . $this->search . '%');
-                    });
+                $query->where('nombre_localidad', 'like', '%' . $this->search . '%');
             })
-            ->orderBy('nombre_localidad', 'asc')
+            ->orderBy('nombre_localidad')
             ->paginate(10);
-            
-        return view('livewire.admin.localidad-index', compact('estados', 'localidades'));
+
+        return view('livewire.admin.localidad-index', compact('localidades'));
     }
+
 
     public function paginationView()
     {
@@ -90,17 +79,28 @@ class LocalidadIndex extends Component
         $this->resetPage();
     }
 
-
-    //Cuando cambia el estado, actualizamos los municipios
-    public function updatedEstadoId($estado_id)
+    public function updatedPaisId($paisId)
     {
-        $this->municipios = Municipio::where('estado_id', $estado_id)
+        $this->estados = Estado::where('pais_id', $paisId)
             ->where('status', true)
-            ->orderBy('nombre_municipio', 'asc')
+            ->orderBy('nombre_estado')
             ->get();
 
-        $this->municipio_id = null; //Reinicia el select dependiente
+        $this->estado_id = null;
+        $this->municipio_id = null;
+        $this->municipios = [];
     }
+
+    public function updatedEstadoId($estadoId)
+    {
+        $this->municipios = Municipio::where('estado_id', $estadoId)
+            ->where('status', true)
+            ->orderBy('nombre_municipio')
+            ->get();
+
+        $this->municipio_id = null;
+    }
+
 
     public function resetInputFields()
     {
@@ -135,26 +135,33 @@ class LocalidadIndex extends Component
 
 
     public function edit($id)
-    {
-        $localidad = Localidad::with('municipio.estado')->findOrFail($id);
+{
+    $localidad = Localidad::with('municipio.estado.pais')->findOrFail($id);
 
-        $this->localidad_id = $localidad->id;
-        $this->nombre_localidad = $localidad->nombre_localidad;
+    $this->localidad_id = $localidad->id;
+    $this->nombre_localidad = $localidad->nombre_localidad;
 
-        // Obtenemos correctamente el estado desde la relación
-        $this->estado_id = $localidad->municipio->estado->id ?? null;
-        $this->municipio_id = $localidad->municipio_id;
+    $this->pais_id = $localidad->municipio->estado->pais->id ?? null;
+    $this->estado_id = $localidad->municipio->estado->id ?? null;
+    $this->municipio_id = $localidad->municipio_id;
 
-        // Cargamos los municipios de ese estado
-        if ($this->estado_id) {
-            $this->municipios = Municipio::where('estado_id', $this->estado_id)
-                ->where('status', true)
-                ->orderBy('nombre_municipio', 'asc')
-                ->get();
-        }
-
-        $this->updateMode = true;
+    if ($this->pais_id) {
+        $this->estados = Estado::where('pais_id', $this->pais_id)
+            ->where('status', true)
+            ->orderBy('nombre_estado')
+            ->get();
     }
+
+    if ($this->estado_id) {
+        $this->municipios = Municipio::where('estado_id', $this->estado_id)
+            ->where('status', true)
+            ->orderBy('nombre_municipio')
+            ->get();
+    }
+
+    $this->updateMode = true;
+}
+
 
 
     public function update()

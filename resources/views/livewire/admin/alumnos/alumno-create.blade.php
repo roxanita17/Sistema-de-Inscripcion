@@ -331,7 +331,8 @@
                                 placeholder="Ej: 1.66 o 166"
                                 class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
                                 inputmode="numeric" pattern="^[0-9]*$"
-                                oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                                oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
+                                maxlength="4">
                             @error('talla_estudiante')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}

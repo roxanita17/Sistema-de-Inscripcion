@@ -30,10 +30,6 @@
                     <p class="title-subtitle">Administración de periodos académicos</p>
                 </div>
             </div>
-
-
-
-            <!-- Botón para abrir la modal de crear año escolar -->
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAnioEscolar">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Año Escolar</span>
@@ -51,10 +47,6 @@
     @php
         $anioEscolarActivo = \App\Models\AnioEscolar::activos()->exists();
     @endphp
-
-
-
-
     @if (!$anioEscolarActivo)
         <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
             <div class="d-flex align-items-center">
@@ -67,9 +59,6 @@
             </div>
         </div>
     @endif
-
-
-
     {{-- Alertas de sesión --}}
     @if (session('success') || session('error') || session('warning'))
         <div class="alerts-container mb-3">
@@ -120,7 +109,6 @@
         </div>
     @endif
 
-    {{-- Tabla de años escolares --}}
     <div class="card-modern">
         <div class="card-header-modern">
             <div class="header-left">
@@ -132,16 +120,8 @@
                     <p>{{ $escolar->total() }} registros encontrados</p>
                 </div>
             </div>
-            <div class="header-right">
-                <div class="date-badge">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>{{ now()->translatedFormat('d M Y') }}</span>
-                </div>
-
-            </div>
         </div>
 
-        {{-- Card Body --}}
         <div class="card-body-modern">
             <div class="table-wrapper">
                 <table class="table-modern overflow-hidden hidden">

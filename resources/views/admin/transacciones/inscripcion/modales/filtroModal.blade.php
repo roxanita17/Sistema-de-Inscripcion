@@ -16,6 +16,26 @@
             <div class="modal-body pt-0">
                 <form method="GET" action="{{ route('admin.transacciones.inscripcion.index') }}" id="formFiltros">
 
+                    {{-- STATUS --}}
+                    <label for="status">
+                        <i class="fas fa-toggle-on" style="color: var(--primary);"></i>
+                        Estado de la inscripción
+                    </label>
+                    <select name="status" id="status" class="form-select form-control-modern">
+                        <option value="">Todos</option>
+                        <option value="Activo" {{ request('status', 'Activo') == 'Activo' ? 'selected' : '' }}>
+                            Activo
+                        </option>
+                        <option value="Pendiente" {{ request('status') == 'Pendiente' ? 'selected' : '' }}>
+                            Pendiente
+                        </option>
+                        <option value="Inactivo" {{ request('status') == 'Inactivo' ? 'selected' : '' }}>
+                            Inactivo
+                        </option>
+                    </select>
+                    <br>
+
+
                     {{-- GRADO --}}
                     <label class="form-label-modern">
                         <i class="fas fa-layer-group" style="color: var(--primary);"></i>
@@ -86,65 +106,64 @@
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
 
-    const gradoSelect   = document.getElementById('grado_select');
-    const seccionSelect = document.getElementById('seccion_select');
+        const gradoSelect = document.getElementById('grado_select');
+        const seccionSelect = document.getElementById('seccion_select');
 
-    // URL correcta (con /admin)
-    const baseUrl = "{{ url('admin/transacciones/secciones-por-grado') }}";
+        // URL correcta (con /admin)
+        const baseUrl = "{{ url('admin/transacciones/secciones-por-grado') }}";
 
-    gradoSelect.addEventListener('change', async function () {
+        gradoSelect.addEventListener('change', async function() {
 
-        const gradoId = this.value;
+            const gradoId = this.value;
 
-        // Reset
-        seccionSelect.innerHTML = '';
-        seccionSelect.disabled = true;
+            // Reset
+            seccionSelect.innerHTML = '';
+            seccionSelect.disabled = true;
 
-        if (!gradoId) {
-            seccionSelect.innerHTML =
-                '<option value="">Primero seleccione un grado</option>';
-            return;
-        }
-
-        // Loading
-        seccionSelect.innerHTML =
-            '<option value="">Cargando secciones...</option>';
-
-        try {
-            const response = await fetch(`${baseUrl}/${gradoId}`);
-
-            if (!response.ok) {
-                throw new Error('Error HTTP ' + response.status);
-            }
-
-            const secciones = await response.json();
-
-            seccionSelect.innerHTML =
-                '<option value="">Todas las secciones</option>';
-
-            if (!secciones.length) {
+            if (!gradoId) {
                 seccionSelect.innerHTML =
-                    '<option value="">No hay secciones para este grado</option>';
+                    '<option value="">Primero seleccione un grado</option>';
                 return;
             }
 
-            secciones.forEach(seccion => {
-                const option = document.createElement('option');
-                option.value = seccion.id;
-                option.textContent = `${seccion.nombre}`;
-                seccionSelect.appendChild(option);
-            });
-
-            seccionSelect.disabled = false;
-
-        } catch (error) {
-            console.error('Error al cargar secciones:', error);
+            // Loading
             seccionSelect.innerHTML =
-                '<option value="">Error al cargar secciones</option>';
-        }
-    });
-});
-</script>
+                '<option value="">Cargando secciones...</option>';
 
+            try {
+                const response = await fetch(`${baseUrl}/${gradoId}`);
+
+                if (!response.ok) {
+                    throw new Error('Error HTTP ' + response.status);
+                }
+
+                const secciones = await response.json();
+
+                seccionSelect.innerHTML =
+                    '<option value="">Todas las secciones</option>';
+
+                if (!secciones.length) {
+                    seccionSelect.innerHTML =
+                        '<option value="">No hay secciones para este grado</option>';
+                    return;
+                }
+
+                secciones.forEach(seccion => {
+                    const option = document.createElement('option');
+                    option.value = seccion.id;
+                    option.textContent = `${seccion.nombre}`;
+                    seccionSelect.appendChild(option);
+                });
+
+                seccionSelect.disabled = false;
+
+            } catch (error) {
+                console.error('Error al cargar secciones:', error);
+                seccionSelect.innerHTML =
+                    '<option value="">Error al cargar secciones</option>';
+            }
+        });
+    });
+</script>

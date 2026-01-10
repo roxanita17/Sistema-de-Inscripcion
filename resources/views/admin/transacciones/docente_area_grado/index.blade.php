@@ -89,44 +89,43 @@
 
         {{-- Tabla de docentes --}}
         <div class="card-modern">
-            <div class="card-header-modern">
-                <div class="header-left">
+            <div class="card-header-modern d-flex align-items-center justify-content-between flex-wrap gap-3">
+
+                <!-- IZQUIERDA -->
+                <div class="header-left d-flex align-items-center gap-3">
                     <div class="header-icon">
                         <i class="fas fa-list-ul"></i>
                     </div>
                     <div>
-                        <h3>Listado de Docentes</h3>
-                        <p>{{ $docentes->total() }} docentes registrados</p>
+                        <h3 class="mb-0">Listado de Docentes</h3>
+                        <p class="mb-0">{{ $docentes->total() }} docentes registrados</p>
                     </div>
                 </div>
 
-                {{-- Buscador --}}
-                <form action="{{ route('admin.transacciones.docente_area_grado.index') }}">
-                    <div class="form-group-modern mb-2">
+                <!-- DERECHA -->
+                <div class="header-right d-flex align-items-center gap-2 flex-wrap">
+
+                    <!-- BUSCADOR -->
+                    <form action="{{ route('admin.transacciones.docente_area_grado.index') }}" class="mb-0 search-sm">
                         <div class="search-modern">
                             <i class="fas fa-search"></i>
                             <input type="text" name="buscar" id="buscar" class="form-control-modern"
                                 placeholder="Buscar..." value="{{ request('buscar') }}">
                         </div>
-                        <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
-                            <i class="fas fa-info-circle"></i>
-                            Buscar por cédula, nombre, apellido, código
-                        </small>
-                    </div>
-                </form>
+                    </form>
 
-                <div class="header-right">
-                    <a href="{{ route('admin.transacciones.docente_area_grado.reportePDFGeneral', request()->query()) }}" type="button" class="btn-pdf"
-                        target="_blank">
+                    <!-- PDF -->
+                    <a href="{{ route('admin.transacciones.docente_area_grado.reportePDFGeneral', request()->query()) }}"
+                        class="btn-pdf" target="_blank">
                         <i class="fas fa-file-pdf"></i> PDF General
                     </a>
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
-                    </div>
-                </div>
 
-                <div class="header-right">
+                    <!-- FILTRO -->
+                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                        <i class="fas fa-filter"></i>
+                    </button>
+
+                    <!-- AÑO ESCOLAR -->
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
@@ -134,51 +133,30 @@
                     @endphp
 
                     @if ($mostrarAnio)
-                        <div
-                            class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1 mb-2 border">
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                                    <i class="fas fa-calendar-check me-1"></i>
-
-                                    Año Escolar
-                                </span>
-
-                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-play-circle text-primary me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-
-
-                                </div>
-                            </div>
+                        <div class="d-flex align-items-center bg-light rounded px-2 py-1 border">
+                            <span class="badge bg-primary me-2" style="font-size: 0.7rem;">
+                                <i class="fas fa-calendar-check me-1"></i> Año Escolar
+                            </span>
+                            <span class="text-muted me-2" style="font-size: 0.8rem;">
+                                <i class="fas fa-play-circle text-primary me-1"></i>
+                                {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
+                            </span>
+                            <span class="text-muted" style="font-size: 0.8rem;">
+                                <i class="fas fa-flag-checkered text-danger me-1"></i>
+                                {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
+                            </span>
                         </div>
                     @else
                         <div
-                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1 mb-2 border border-warning">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-                            </div>
-
+                            class="d-flex align-items-center bg-warning bg-opacity-10 rounded px-2 py-1 border border-warning">
+                            <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
                         </div>
                     @endif
 
                 </div>
-
-                <div>
-                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
-                        <i class="fas fa-filter"></i>
-                        Filtros
-                    </button>
-                </div>
-
             </div>
+
         </div>
 
         <div class="card-body-modern">
@@ -188,10 +166,8 @@
                         <tr>
                             <th>Cédula</th>
                             <th>Docente</th>
-                            <th style="text-align: center;">Estudios</th>
-                            <th style="text-align: center;">Áreas</th>
-                            <th style="text-align: center;">Nivel Académico</th>
-                            <th style="text-align: center;">Sección</th>
+                            <th style="text-align: center;">Áreas, nivel academico y secciones</th>
+                            <th style="text-align: center;">Grupo Estable</th>
                             <th style="text-align: center; width: 120px;">Estado</th>
                             <th style="text-align: center; width: 150px;">Acciones</th>
                         </tr>
@@ -216,83 +192,77 @@
                                     </div>
                                 </td>
 
+                                {{-- Áreas, Grados y Secciones en un solo TD --}}
                                 <td style="text-align: center;">
-                                    @forelse($datos->detalleDocenteEstudio->where('status', true) as $detalle)
-                                        <span class="badge-estudio-small"
-                                            title="{{ $detalle->estudiosRealizado->estudios }}">
-                                            <i class="fas fa-graduation-cap"></i>
-                                            {{ Str::limit($detalle->estudiosRealizado->estudios, 20) }}
-                                        </span>
-                                        @if (!$loop->last)
-                                            <br>
-                                        @endif
-                                    @empty
-                                        <span class="text-muted" style="font-size: 0.85rem;">
-                                            <i class="fas fa-minus-circle"></i>
-                                            Sin estudios
-                                        </span>
-                                    @endforelse
-                                </td>
-
-                                {{-- Areas de formacion --}}
-                                <td style="text-align: center;">
-                                    @php $asigs = $datos->asignacionesAreas->where('status', true); @endphp
+                                    @php
+                                        // Filtrar solo asignaciones de tipo 'area' activas
+                                        $asigs = $datos->asignacionesAreas
+                                            ->where('status', true)
+                                            ->where('tipo_asignacion', 'area')
+                                            ->filter(
+                                                fn($a) => $a->areaEstudios !== null ||
+                                                    $a->grado !== null ||
+                                                    $a->seccion !== null,
+                                            );
+                                    @endphp
 
                                     @forelse($asigs as $asign)
-                                        <span style="font-weight: bold; margin-bottom: 2rem;"
-                                            title="{{ optional($asign->areaEstudios->areaFormacion)->nombre_area_formacion }}">
-                                            <i class="fas fa-graduation-cap"></i>
-                                            {{ Str::limit(optional($asign->areaEstudios->areaFormacion)->nombre_area_formacion ?? $asign->areaEstudios->id, 20) }}
-                                        </span>
-                                        @if (!$loop->last)
-                                            <br>
-                                        @endif
+                                        @php
+                                            $areaFormacion = optional($asign->areaEstudios)->areaFormacion;
+                                            $grado = optional($asign->grado);
+                                            $seccion = optional($asign->seccion);
+                                        @endphp
+
+                                        <div style="margin-bottom: 0.5rem;">
+                                            {{-- Área de formación --}}
+                                            <span title="{{ $areaFormacion->nombre_area_formacion ?? 'N/A' }}">
+                                                <i class="fas fa-graduation-cap"></i>
+                                                {{ Str::limit($areaFormacion->nombre_area_formacion ?? 'N/A', 20) }}
+                                            </span>
+
+                                            {{-- Grado --}}
+                                            <span title="Grado: {{ $grado->numero_grado ?? 'N/A' }}">
+                                            - {{ $grado->numero_grado .'° ' ?? 'N/A' }}
+                                            </span>
+
+                                            {{-- Sección --}}
+                                            <span title="Sección: {{ $seccion->nombre ?? 'N/A' }}">
+                                                - {{ $seccion->nombre ?? 'N/A' }}
+                                            </span>
+                                        </div>
                                     @empty
                                         <span class="text-muted" style="font-size: 0.85rem;">
-                                            <i class="fas fa-minus-circle"></i> Sin materias asignadas
+                                            <i class="fas fa-minus-circle"></i> Sin areas asignadas
                                         </span>
                                     @endforelse
                                 </td>
 
-                                {{-- Grados --}}
+                                {{-- Grupos Estables --}}
                                 <td style="text-align: center;">
-                                    @php $asigs = $datos->asignacionesAreas->where('status', true); @endphp
+                                    @php
+                                        // Filtrar solo asignaciones de tipo grupo_estable activas
+                                        $grupos = $datos->asignacionesAreas
+                                            ->where('status', true)
+                                            ->where('tipo_asignacion', 'grupo_estable');
+                                    @endphp
 
-                                    @forelse($asigs as $asign)
+                                    @forelse($grupos as $asign)
                                         <span style="font-weight: bold; margin-bottom: 2rem;"
-                                            title="{{ optional($asign->grado)->numero_grado }}">
-                                            <i class="fas "></i>
-                                            {{ $asign->grado->numero_grado }}
+                                            title="{{ optional($asign->grupoEstable)->nombre_grupo_estable ?? 'N/A' }} - Grado: {{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }}">
+                                            <i class="fas fa-users"></i>
+                                            {{ optional($asign->grupoEstable)->nombre_grupo_estable ?? 'N/A' }}
+                                            ({{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }})
                                         </span>
                                         @if (!$loop->last)
                                             <br>
                                         @endif
                                     @empty
                                         <span class="text-muted" style="font-size: 0.85rem;">
-                                            <i class="fas fa-minus-circle"></i> Sin años asignados
+                                            <i class="fas fa-minus-circle"></i> Sin grupos asignados
                                         </span>
                                     @endforelse
                                 </td>
 
-                                {{-- Secciones --}}
-                                <td style="text-align: center;">
-                                    @php $asigs = $datos->asignacionesAreas->where('status', true); @endphp
-
-                                    @forelse($asigs as $asign)
-                                        <span style="font-weight: bold; margin-bottom: 2rem;"
-                                            title="{{ optional($asign->seccion)->nombre }}">
-                                            <i class="fas "></i>
-                                            {{ $asign->seccion->nombre }}
-                                        </span>
-                                        @if (!$loop->last)
-                                            <br>
-                                        @endif
-                                    @empty
-                                        <span class="text-muted" style="font-size: 0.85rem;">
-                                            <i class="fas fa-minus-circle"></i> Sin secciones asignadas
-                                        </span>
-                                    @endforelse
-                                </td>
 
                                 {{-- Status --}}
                                 <td style="text-align: center;">
@@ -412,7 +382,6 @@
                                     </div>
                                 </td>
                             </tr>
-
                         @endforelse
 
                     </tbody>

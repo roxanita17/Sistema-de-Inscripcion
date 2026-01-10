@@ -81,6 +81,7 @@
                                 </span>
                                 @if ($localidad_id)
                                     <span class="info-value">
+                                        {{ $paises->find($pais_id)->nameES ?? ''}},
                                         {{ $estados->find($estado_id)->nombre_estado ?? '' }},
                                         {{ $municipios->find($municipio_id)->nombre_municipio ?? '' }},
                                         {{ $localidades->find($localidad_id)->nombre_localidad ?? '' }}
@@ -466,7 +467,8 @@
                         <input wire:model.live="talla_estudiante" wire:blur="validarEstatura"
                             placeholder="Ej: 1.66 o 166"
                             class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
-                            inputmode="decimal" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                            inputmode="decimal" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
+                            maxlength="4">
                         @error('talla_estudiante')
                             <div class="invalid-feedback-modern">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -551,6 +553,24 @@
                             style="color: var(--gray-700); font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
                             Lugar de Nacimiento
                         </h5>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label-modern">
+                            Pais
+                            <span class="required-badge">*</span>
+                        </label>
+                        <select wire:model.live="pais_id"
+                            class="form-control-modern @error('pais_id') is-invalid @enderror">
+                            <option value="">Seleccione</option>
+                            @foreach ($paises as $pais)
+                                <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
+                            @endforeach
+                        </select>
+                        @error('pais_id')
+                            <div class="invalid-feedback-modern">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
                     </div>
                     <div class="col-md-4">
                         <label class="form-label-modern">

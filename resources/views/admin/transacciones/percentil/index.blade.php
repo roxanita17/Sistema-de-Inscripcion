@@ -89,10 +89,6 @@
                         data-bs-toggle="modal" data-bs-target="#viewModal" title="Ver Detalles">
                         <i class="fas fa-eye"></i> Resumen de secciones
                     </button>
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ now()->translatedFormat('d M Y') }}</span>
-                    </div>
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();

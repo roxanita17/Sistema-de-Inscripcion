@@ -12,8 +12,11 @@ class DocenteAreaGrado extends Model
     protected $fillable = [
         'docente_estudio_realizado_id',
         'area_estudio_realizado_id',
+        'grupo_estable_id',
         'grado_id',
+        'grado_grupo_estable_id',
         'seccion_id',
+        'tipo_asignacion',
         'status',
     ];
 
@@ -59,5 +62,15 @@ class DocenteAreaGrado extends Model
     public function seccion()
     {
         return $this->belongsTo(Seccion::class, 'seccion_id');
+    }
+
+    public function gradoGrupoEstable()
+    {
+        return $this->belongsTo(Grado::class, 'grado_grupo_estable_id');
+    }
+
+    public function grupoEstable()
+    {
+        return $this->belongsTo(GrupoEstable::class);
     }
 }

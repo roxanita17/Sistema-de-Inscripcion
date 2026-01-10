@@ -8,6 +8,8 @@ use App\Models\Localidad;
 use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\AnioEscolar;
+use App\Models\Pais;
+
 
 class InstitucionProcedenciaCreate extends Component
 {
@@ -20,19 +22,45 @@ class InstitucionProcedenciaCreate extends Component
     public $localidades = [];
     public $estados = [];
 
+    public $pais_id;
+    public $paises = [];
+
+
     protected $rules = [
         'nombre_institucion' => 'required|string|max:255',
+        'pais_id' => 'required|integer|exists:pais,id',
         'estado_id' => 'required|integer|exists:estados,id',
         'municipio_id' => 'required|integer|exists:municipios,id',
         'localidad_id' => 'required|integer|exists:localidads,id',
     ];
 
+
     public function mount()
     {
-        $this->estados = Estado::where('status', true)
-            ->orderBy('nombre_estado', 'asc')
+        $this->paises = Pais::where('status', true)
+            ->orderBy('nameES', 'asc')
             ->get();
     }
+
+    public function updatedPaisId($paisId)
+    {
+        if ($paisId) {
+            $this->estados = Estado::where('pais_id', $paisId)
+                ->where('status', true)
+                ->orderBy('nombre_estado', 'asc')
+                ->get();
+        } else {
+            $this->estados = [];
+        }
+
+        $this->estado_id = null;
+        $this->municipio_id = null;
+        $this->localidad_id = null;
+
+        $this->municipios = [];
+        $this->localidades = [];
+    }
+
 
     public function updatedEstadoId($estadoId)
     {
@@ -49,6 +77,7 @@ class InstitucionProcedenciaCreate extends Component
         $this->localidad_id = null;
         $this->localidades = [];
     }
+
 
     public function updatedMunicipioId($municipioId)
     {
@@ -90,7 +119,7 @@ class InstitucionProcedenciaCreate extends Component
             'nombre_institucion' => $this->nombre_institucion,
             'localidad_id' => $this->localidad_id,
             'status' => true,
-        ]); 
+        ]);
 
         session()->flash('success', 'Institución creada exitosamente.');
 
@@ -108,12 +137,16 @@ class InstitucionProcedenciaCreate extends Component
     public function resetInputFields()
     {
         $this->nombre_institucion = '';
+        $this->pais_id = null;
         $this->estado_id = null;
         $this->municipio_id = null;
         $this->localidad_id = null;
+
+        $this->estados = [];
         $this->municipios = [];
         $this->localidades = [];
     }
+
 
     public function render()
     {
