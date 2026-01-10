@@ -808,23 +808,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="lugar-nacimiento-padre" class="form-label-modern">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    Lugar de Nacimiento
-                                    <span class="required-badge">*</span>
-                                </label>
-                                <input type="text" class="form-control-modern" id="lugar-nacimiento-padre"
-                                    name="lugar-nacimiento-padre" placeholder="Ej: Caracas, Venezuela"
-                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s,]+" maxlength="100" required>
-                                <div class="invalid-feedback">
-                                    Por favor ingrese un lugar de nacimiento válido.
-                                </div>
-                                <small id="lugar-nacimiento-padre-error" class="text-danger"></small>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -840,7 +823,22 @@
                         </div>
                     </div>
                 </div>
-
+                    <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="lugar-nacimiento-padre" class="form-label-modern">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Lugar de Nacimiento
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <input type="text" class="form-control-modern" id="lugar-nacimiento-padre"
+                                    name="lugar-nacimiento-padre" placeholder="Ej: Caracas, Venezuela"
+                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s,]+" maxlength="100" required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese un lugar de nacimiento válido.
+                                </div>
+                                <small id="lugar-nacimiento-padre-error" class="text-danger"></small>
+                            </div>
+                        </div>
                 <div class="card-body-modern" style="padding: 2rem;">
                     <div class="row">
                         <div class="col-md-3 mb-3">
@@ -2776,8 +2774,29 @@
                     $select.selectpicker('destroy');
                 }
                 
-                // Limpiar el HTML del select
-                selectElement.innerHTML = '';
+                // Guardar el placeholder si existe, sino crear uno genérico
+                const placeholderOption = selectElement.querySelector('option[value=""]');
+                let placeholderHTML = '';
+                
+                if (placeholderOption) {
+                    placeholderHTML = placeholderOption.outerHTML;
+                } else {
+                    // Crear placeholder genérico basado en el ID del select
+                    const selectId = selectElement.id;
+                    let placeholderText = 'Seleccione';
+                    
+                    if (selectId.includes('pais')) placeholderText = 'Seleccione un país';
+                    else if (selectId.includes('estado')) placeholderText = 'Seleccione un estado';
+                    else if (selectId.includes('municipio')) placeholderText = 'Seleccione un municipio';
+                    else if (selectId.includes('parroquia')) placeholderText = 'Seleccione una parroquia';
+                    else if (selectId.includes('prefijo')) placeholderText = 'Seleccione';
+                    else if (selectId.includes('ocupacion')) placeholderText = 'Seleccione una ocupación';
+                    
+                    placeholderHTML = `<option value="">${placeholderText}</option>`;
+                }
+                
+                // Limpiar y restaurar solo el placeholder
+                selectElement.innerHTML = placeholderHTML;
                 
                 // Re-inicializar siempre con liveSearch: true
                 $select.selectpicker({
@@ -5072,11 +5091,19 @@
                         // Manejar selectpicker si está presente
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
                             try {
+                                // Guardar el HTML original antes de destruir
+                                const originalHTML = campo.innerHTML;
+                                
                                 // Verificar si el selectpicker está inicializado antes de destruir
                                 if ($(campo).data('selectpicker')) {
                                     $(campo).selectpicker('destroy');
                                 }
+                                
+                                // Restaurar el HTML original para mantener todas las opciones
+                                campo.innerHTML = originalHTML;
                                 campo.value = '';
+                                
+                                // Re-inicializar selectpicker
                                 $(campo).selectpicker({
                                     liveSearch: true,
                                     size: 8,
@@ -5084,15 +5111,22 @@
                                     showIcon: true,
                                     width: 'auto'
                                 });
-                                // Verificar que el selectpicker esté inicializado antes de operar
-                                if ($(campo).data('selectpicker')) {
-                                    $(campo).selectpicker('val', '');
-                                    $(campo).selectpicker('refresh');
-                                }
+                                
+                                // Establecer valor vacío y refrescar
+                                $(campo).selectpicker('val', '');
+                                $(campo).selectpicker('refresh');
                             } catch (error) {
                                 console.error('Error al limpiar selectpicker:', error);
                                 // Fallback simple
                                 campo.value = '';
+                                try {
+                                    if ($(campo).data('selectpicker')) {
+                                        $(campo).selectpicker('val', '');
+                                        $(campo).selectpicker('refresh');
+                                    }
+                                } catch (fallbackError) {
+                                    console.error('Error en fallback selectpicker:', fallbackError);
+                                }
                             }
                         }
 
