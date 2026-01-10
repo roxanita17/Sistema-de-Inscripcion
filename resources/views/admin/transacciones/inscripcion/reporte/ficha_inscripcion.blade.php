@@ -384,6 +384,15 @@
                     </td>
                 </tr>
                 <tr>
+                    <td><strong>Lugar de Nacimiento:</strong></td>
+                    <td>
+                        <strong>País:</strong> {{ $datosCompletos['persona_alumno']['localidad']['estadoThroughMunicipio']['pais']['nameES'] ?? 'N/A' }} |
+                        <strong>Estado:</strong> {{ $datosCompletos['persona_alumno']['localidad']['estadoThroughMunicipio']['nombre_estado'] ?? 'N/A' }} |
+                        <strong>Municipio:</strong> {{ $datosCompletos['persona_alumno']['localidad']['municipio']['nombre_municipio'] ?? 'N/A' }} |
+                        <strong>Localidad:</strong> {{ $datosCompletos['persona_alumno']['localidad']['nombre_localidad'] ?? 'N/A' }}
+                    </td>
+                </tr>
+                <tr>
                     <td><strong>Características Físicas:</strong></td>
                     <td>
                         <strong>Estatura:</strong> {{ $datosCompletos['alumno']['estatura'] ?? 'N/A' }} cm |

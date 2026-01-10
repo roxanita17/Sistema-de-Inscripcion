@@ -1027,6 +1027,7 @@ class RepresentanteController extends Controller
                 'codigo-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
                 'serial-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
                 'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
+                'lugar-nacimiento-padre' => 'nullable|string|max:255|regex:/^[A-Za-záéíóúÁÉÍÓÚñÑ\s,]+$/',
             ];
 
             // Mensajes de error personalizados
@@ -1065,6 +1066,7 @@ class RepresentanteController extends Controller
                 'estado_id.required' => 'El estado es obligatorio',
                 'municipio_id.required' => 'El municipio es obligatorio',
                 'tipo_numero_documento_persona.required' => 'El tipo de documento es obligatorio',
+                'lugar-nacimiento-padre.regex' => 'El lugar de nacimiento solo puede contener letras, espacios y comas',
             ];
 
             $validator = \Validator::make($request->all(), $rules, $messages);
@@ -1205,7 +1207,7 @@ class RepresentanteController extends Controller
                 "localidad_id" => $request->input('idparroquia-padre'),
                 "telefono" => $request->input('telefono-padre'),
                 "tipo_documento_id" => $request->input('tipo-ci-padre'),
-                "direccion" => $request->input('direccion-padre') ?? $request->input('direccion-habitacion'),
+                "direccion" => $request->input('lugar-nacimiento-padre') ?? $request->input('direccion-padre') ?? $request->input('direccion-habitacion'),
                 "email" => $request->input('correo-padre') ?? $request->input('correo-representante'),
             ]);
         }
@@ -1851,7 +1853,7 @@ class RepresentanteController extends Controller
                 $personaPadre->prefijo_dos_id   = $request->input('prefijo_dos_padre');
                 $personaPadre->tipo_documento_id = $request->input('tipo-ci-padre');
                 $personaPadre->prefijo_id       = $request->input('prefijo-padre');
-                $personaPadre->direccion        = $request->input('direccion-padre');
+                $personaPadre->direccion        = $request->input('lugar-nacimiento-padre') ?? $request->input('direccion-padre');
                 $personaPadre->status           = $personaPadre->status ?? true;
 
                 Log::info('Datos del padre a guardar:', [

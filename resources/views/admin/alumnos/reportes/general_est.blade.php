@@ -318,6 +318,15 @@
                     <td>{{ \Carbon\Carbon::parse($alumno->persona->fecha_nacimiento)->age }}</td>
                 </tr>
                 <tr>
+                    <td>Lugar de Nacimiento</td>
+                    <td>
+                        <strong>País:</strong> {{ $alumno->persona->localidad->estadoThroughMunicipio->pais->nameES ?? 'N/A' }} |
+                        <strong>Estado:</strong> {{ $alumno->persona->localidad->estadoThroughMunicipio->nombre_estado ?? 'N/A' }} |
+                        <strong>Municipio:</strong> {{ $alumno->persona->localidad->municipio->nombre_municipio ?? 'N/A' }} |
+                        <strong>Localidad:</strong> {{ $alumno->persona->localidad->nombre_localidad ?? 'N/A' }}
+                    </td>
+                </tr>
+                <tr>
                     <td>Género</td>
                     <td>{{ $alumno->persona->genero->genero ?? 'N/A' }}</td>
                 </tr>

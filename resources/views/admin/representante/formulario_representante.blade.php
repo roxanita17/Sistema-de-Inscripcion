@@ -808,6 +808,23 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="lugar-nacimiento-padre" class="form-label-modern">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Lugar de Nacimiento
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <input type="text" class="form-control-modern" id="lugar-nacimiento-padre"
+                                    name="lugar-nacimiento-padre" placeholder="Ej: Caracas, Venezuela"
+                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s,]+" maxlength="100" required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese un lugar de nacimiento válido.
+                                </div>
+                                <small id="lugar-nacimiento-padre-error" class="text-danger"></small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

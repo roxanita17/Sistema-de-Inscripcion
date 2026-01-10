@@ -222,6 +222,7 @@ class InscripcionController extends Controller
     {
         $inscripcion = Inscripcion::with([
             'alumno.persona',
+            'alumno.persona.localidad.estado.pais',
             'alumno.ordenNacimiento',
             'alumno.lateralidad',
             'alumno.discapacidades',

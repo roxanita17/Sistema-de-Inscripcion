@@ -273,6 +273,7 @@ class Alumno extends Model
                 'personas.fecha_nacimiento',
                 'generos.genero as nombre_genero',
                 'tipo_documentos.nombre as tipo_documento',
+                'pais.nameES as pais',
 
 
                 'etnia_indigenas.nombre as etnia',
@@ -284,7 +285,10 @@ class Alumno extends Model
             ->leftJoin("etnia_indigenas", "etnia_indigenas.id", "=", "alumnos.etnia_indigena_id")
             ->leftJoin("lateralidads", "lateralidads.id", "=", "alumnos.lateralidad_id")
             ->leftJoin("generos", "generos.id", "=", "personas.genero_id")
-            ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id");
+            ->leftJoin("tipo_documentos", "tipo_documentos.id", "=", "personas.tipo_documento_id")
+            ->leftJoin("localidads", "localidads.id", "=", "personas.localidad_id")
+            ->leftJoin("estados", "estados.id", "=", "localidads.estado_id")
+            ->leftJoin("pais", "pais.id", "=", "estados.pais_id");
 
         /*
         * Filtros

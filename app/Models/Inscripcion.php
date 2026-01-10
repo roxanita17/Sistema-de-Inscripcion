@@ -265,13 +265,25 @@ class Inscripcion extends Model
     {
         $alumno = $this->alumno?->load([
             'tallaCamisa',
-            'tallaPantalon'
+            'tallaPantalon',
+            'persona.localidad.municipio.estado.pais'
         ]);
 
         return [
             'inscripcion' => $this->toArray(),
             'nuevo_ingreso' => $this->nuevoIngreso?->toArray(),
-            'persona_alumno' => $alumno?->persona?->toArray(),
+            'persona_alumno' => array_merge(
+                $alumno?->persona?->toArray() ?? [],
+                [
+                    'localidad' => array_merge(
+                        $alumno?->persona?->localidad?->toArray() ?? [],
+                        [
+                            'municipio' => $alumno?->persona?->localidad?->municipio?->toArray() ?? null,
+                            'estadoThroughMunicipio' => $alumno?->persona?->localidad?->municipio?->estado?->toArray() ?? null
+                        ]
+                    )
+                ]
+            ),
             'alumno' => array_merge($alumno?->toArray() ?? [], [
                 'talla_camisa' => $alumno?->tallaCamisa?->nombre,
                 'talla_pantalon' => $alumno?->tallaPantalon?->nombre,

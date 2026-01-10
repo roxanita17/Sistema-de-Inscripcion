@@ -24,7 +24,11 @@ class Localidad extends Model
     }
 
     public function estado(){
-        return $this->belongsTo(Estado::class, "estado_id", "id");
+    return $this->belongsTo(Estado::class, "municipio_id", "id");
+    }
+
+    public function estadoThroughMunicipio(){
+        return $this->municipio->estado();
     }
 
 
