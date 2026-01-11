@@ -5,9 +5,7 @@
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
-
 @section('title', 'Gestión de alumnos')
-
 @section('content_header')
     <div class="content-header-modern">
         <div class="header-content">
@@ -23,7 +21,6 @@
         </div>
     </div>
 @stop
-
 @section('content')
     <div class="main-container">
         @if (!$anioEscolarActivo)
@@ -73,7 +70,6 @@
                 @endif
             </div>
         @endif
-
         <div class="card-modern">
             <div class="card-header-modern d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div class="header-left d-flex align-items-center gap-3">
@@ -85,7 +81,6 @@
                         <p class="mb-0 text-muted">{{ $alumnos->total() }} registros encontrados</p>
                     </div>
                 </div>
-
                 <div class="header-right d-flex align-items-center gap-2 flex-wrap">
                     <form action="{{ route('admin.alumnos.index') }}" class="mb-0 search-sm">
                         <div class="search-modern">
@@ -108,13 +103,11 @@
                         target="_blank" class="btn-pdf">
                         <i class="fas fa-file-pdf"></i> PDF General
                     </a>
-
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                         $mostrarAnio = $anioActivo ?? $anioExtendido;
                     @endphp
-
                     @if ($mostrarAnio)
                         <div class="d-flex align-items-center bg-light rounded px-2 py-1 border">
                             <span class="badge bg-primary me-2" style="font-size: 0.7rem;">
@@ -246,9 +239,7 @@
                                             </div>
                                         </td>
                                     </tr>
-
                                     @include('admin.alumnos.modales.showModal')
-
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
                                         aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">

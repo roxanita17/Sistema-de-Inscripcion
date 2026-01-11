@@ -1,17 +1,14 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-
 @stop
 
 @section('title', 'Gestión de Etnias Indígenas')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -23,8 +20,6 @@
                     <p class="title-subtitle">Administración de las etnias indígenas</p>
                 </div>
             </div>
-
-            {{-- Botón que abre la ventana modal para crear una nueva etnia --}}
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
                 @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nueva Etnia Indígena' }}">
@@ -37,12 +32,7 @@
 
 @section('content')
     <div class="main-container">
-
-        {{-- Modal para crear una nueva etnia --}}
         @include('admin.etnia_indigena.modales.createModal')
-
-
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -58,8 +48,6 @@
                 </div>
             </div>
         @endif
-
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -76,7 +64,6 @@
                         </button>
                     </div>
                 @endif
-
                 @if (session('error'))
                     <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
                         <div class="alert-icon">
@@ -93,8 +80,6 @@
                 @endif
             </div>
         @endif
-
-        {{-- Contenedor principal de la tabla de etnias indígenas --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -106,7 +91,6 @@
                         <p>{{ $etniaIndigena->total() }} registros encontrados</p>
                     </div>
                 </div>
-                {{-- Buscador --}}
                 <form action="{{ route('admin.etnia_indigena.index') }}">
                     <div class="form-group-modern mb-2">
                         <div class="search-modern">
@@ -120,37 +104,28 @@
                         </small>
                     </div>
                 </form>
-
                 <div class="header-right">
-                    <!-- --------------------------- -->
-
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                         $mostrarAnio = $anioActivo ?? $anioExtendido;
                     @endphp
-
                     @if ($mostrarAnio)
                         <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
                             <div class="d-flex align-items-center">
                                 <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
                                     <i class="fas fa-calendar-check me-1"></i>
-
                                     Año Escolar
                                 </span>
-
                                 <div class="d-flex align-items-center" style="font-size: 0.8rem;">
                                     <span class="text-muted me-2">
                                         <i class="fas fa-play-circle text-primary me-1"></i>
                                         {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
                                     </span>
-
                                     <span class="text-muted me-2">
                                         <i class="fas fa-flag-checkered text-danger me-1"></i>
                                         {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
                                     </span>
-
-
                                 </div>
                             </div>
                         </div>
@@ -161,16 +136,10 @@
                                 <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
                                 <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
                             </div>
-
                         </div>
                     @endif
-                    <!-- --------------------------- -->
-
                 </div>
-
             </div>
-
-            {{-- Cuerpo de la tarjeta con la tabla --}}
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern overflow-hidden hidden">
@@ -183,7 +152,6 @@
                             </tr>
                         </thead>
                         <tbody style="text-align: center">
-                            {{-- Si no hay etnias indígenas, se muestra mensaje vacío --}}
                             @if ($etniaIndigena->isEmpty())
                                 <tr>
                                     <td colspan="4">
@@ -197,7 +165,6 @@
                                     </td>
                                 </tr>
                             @else
-                                {{-- Se recorren las etnias indígenas existentes --}}
                                 @foreach ($etniaIndigena as $index => $datos)
                                     <tr class="  row-12" style="text-align: center">
                                         <td>{{ $index + 1 }}</td>
@@ -217,30 +184,21 @@
                                         </td>
                                         <td>
                                             <div class="action-buttons">
-                                                {{-- Editar grado --}}
                                                 <button class="action-btn btn-edit" data-bs-toggle="modal"
                                                     data-bs-target="#viewModalEditar{{ $datos->id }}" title="Editar"
                                                     @if (!$anioEscolarActivo) disabled @endif
                                                     title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
                                                     <i class="fas fa-pen"></i>
                                                 </button>
-
-                                                {{-- Eliminar grado --}}
                                                 <button class="action-btn btn-delete" data-bs-toggle="modal"
                                                     data-bs-target="#confirmarEliminar{{ $datos->id }}"
                                                     title="Eliminar" @if (!$anioEscolarActivo) disabled @endif
                                                     title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar' }}">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
-
-
                                         </td>
                                     </tr>
-
-                                    {{-- Ruta modal de editar --}}
                                     @include('admin.etnia_indigena.modales.editModal')
-
-                                    {{-- Modal de confirmación para eliminar --}}
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
                                         aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -277,22 +235,17 @@
                                             </div>
                                         </div>
                                     </div>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
-                @endforeach
-                @endif
-                </tbody>
-                </table>
             </div>
         </div>
     </div>
-    </div>
-
-    {{-- Paginación moderna --}}
     <x-pagination :paginator="$etniaIndigena" />
-
 @endsection
 
-{{-- Incluir el archivo de validaciones --}}
 @push('js')
     <script src="{{ asset('js/validations/etnia_indigena.js') }}"></script>
 @endpush

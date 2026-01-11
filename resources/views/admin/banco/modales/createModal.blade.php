@@ -1,9 +1,7 @@
-<!-- Modal Crear Banco-->
-<div class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+<div class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modalCrearLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
-
-            {{-- Cabecera del modal --}}
             <div class="modal-header-create">
                 <div class="modal-icon-create">
                     <i class="fas fa-plus-circle"></i>
@@ -13,32 +11,18 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-
-            {{-- Cuerpo del modal con formulario --}}
             <div class="modal-body-create">
                 <form action="{{ route('admin.banco.modales.store') }}" method="POST" id="formCrearBanco">
                     @csrf
-
-                    {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
-
-                    {{-- Codigo --}}
                     <div class="form-group-modern">
                         <label for="codigo_banco" class="form-label-modern">
                             <i class="fas fa-hashtag"></i>
                             Codigo
                         </label>
-                        <input type="text" 
-                            name="codigo_banco" 
-                            inputmode="numeric" 
-                            id="codigo_banco" 
-                            class="form-control-modern" 
-                            placeholder="Ingrese el codigo"
-                            min="0"
-                            max="120"
-                            pattern="[0-9]+" 
-                            maxlength="4" 
-                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                        <input type="text" name="codigo_banco" inputmode="numeric" id="codigo_banco"
+                            class="form-control-modern" placeholder="Ingrese el codigo" min="0" max="120"
+                            pattern="[0-9]+" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                             required>
                         @error('codigo_banco')
                             <div class="error-message">
@@ -46,29 +30,20 @@
                             </div>
                         @enderror
                     </div>
-
-                    {{-- Nombre --}}
                     <div class="form-group-modern">
                         <label for="nombre_banco" class="form-label-modern">
-                            <i class="fas fa-hashtag me-2"></i> Nombre
+                            <i class="fas fa-hashtag me-2"></i> 
+                            Nombre
                         </label>
-                        <input type="text" 
-                               class="form-control-modern" 
-                               id="nombre_banco" 
-                               name="nombre_banco"
-                               type="text"
-                               inputmode="text"
-                               maxlength="100"
-                               placeholder="Ingrese el nombre del banco"
-                               required>
+                        <input type="text" class="form-control-modern" id="nombre_banco" name="nombre_banco"
+                            type="text" inputmode="text" maxlength="100" placeholder="Ingrese el nombre del banco"
+                            required>
                         @error('nombre_banco')
                             <div class="error-message">
                                 Este campo es obligatorio.
                             </div>
                         @enderror
                     </div>
-                    
-                    {{-- Botones --}}
                     <div class="modal-footer-create">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
@@ -85,15 +60,3 @@
         </div>
     </div>
 </div>
-
-
-
- {{-- <div class="input-group mb-3">
-                        <span class="input-group-text"><span class="text-danger">*</span> Codigo</span>
-                        <input type="text" class="form-control" id="codigo_banco" name="codigo_banco" inputmode="numeric" pattern="[0-9]+" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
-                    </div>
-                    @error('codigo_banco')
-                        <div class="alert text-danger p-0 m-0">
-                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                        </div>
-                    @enderror --}}

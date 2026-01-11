@@ -10,7 +10,6 @@ class DiscapacidadEstudiante extends Model
     use HasFactory;
 
     protected $table = 'discapacidad_estudiantes';
-
     protected $fillable = [
         'discapacidad_id',
         'alumno_id',
@@ -20,8 +19,6 @@ class DiscapacidadEstudiante extends Model
     protected $casts = [
         'status' => 'boolean',
     ];
-
-    /* ================= RELACIONES ================= */
 
     public function alumno()
     {

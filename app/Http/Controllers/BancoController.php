@@ -14,51 +14,33 @@ class BancoController extends Controller
             ->exists();
     }
 
-
-    /**
-     * Muestra el listado completo de bancos registrados.
-     */
     public function index()
     {
-        // Se obtienen todos los bancos ordenados por código
         $bancos = Banco::where('status', true)->orderBy('nombre_banco', 'asc')->paginate(10);
-
-        // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
-
-        // Se envían los datos a la vista
         return view('admin.banco.index', compact('bancos', 'anioEscolarActivo'));
     }   
 
-    /**
-     * Crea un nuevo registro de banco.
-     */
     public function store(Request $request)
     {
-        // Validación de campos
         $validated = $request->validate([
             'codigo_banco' => 'required|digits_between:1,4',
             'nombre_banco' => 'required|string|max:255',
         ]);
-
-        // Verificar si ya existe un banco activo con el mismo código
         $existe = Banco::where('codigo_banco', $validated['codigo_banco'])
             ->where('status', true)
             ->exists();
-
         if ($existe) {
             return redirect()
                 ->route('admin.banco.index')
                 ->with('error', 'Ya existe un banco activo con este código.');
         }
-
         try {
             $banco = new Banco();
             $banco->codigo_banco = $validated['codigo_banco'];
             $banco->nombre_banco = $validated['nombre_banco'];
             $banco->status = true;
             $banco->save();
-
             return redirect()
                 ->route('admin.banco.index')
                 ->with('success', 'Banco creado exitosamente.');
@@ -69,35 +51,26 @@ class BancoController extends Controller
         }
     }
 
-    /**
-     * Actualiza los datos de un banco existente.
-     */
     public function update(Request $request, $id)
     {
         $banco = Banco::findOrFail($id);
-
         $validated = $request->validate([
             'codigo_banco' => 'required|digits_between:1,4',
             'nombre_banco' => 'required|string|max:255',
         ]);
-
-        // Verificar si ya existe otro banco activo con el mismo código
         $existe = Banco::where('codigo_banco', $validated['codigo_banco'])
             ->where('status', true)
             ->where('id', '!=', $banco->id)
             ->exists();
-
         if ($existe) {
             return redirect()
                 ->route('admin.banco.index')
                 ->with('error', 'Ya existe otro banco activo con este código.');
         }
-
         try {
             $banco->codigo_banco = $validated['codigo_banco'];
             $banco->nombre_banco = $validated['nombre_banco'];
             $banco->save();
-
             return redirect()
                 ->route('admin.banco.index')
                 ->with('success', 'Banco actualizado exitosamente.');
@@ -108,22 +81,16 @@ class BancoController extends Controller
         }
     }
 
-    /**
-     * Realiza una baja lógica de un banco.
-     */
     public function destroy($id)
     {
         try {
             $banco = Banco::find($id);
-
             if ($banco) {
                 $banco->update(['status' => false]);
-
                 return redirect()
                     ->route('admin.banco.index')
                     ->with('success', 'Banco eliminado correctamente.');
             }
-
             return redirect()
                 ->route('admin.banco.index')
                 ->with('error', 'Banco no encontrado.');
@@ -134,12 +101,6 @@ class BancoController extends Controller
         }
     }
 
-    /**
-     * Verifica si un banco ya existe por código o nombre
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function verificarExistencia(Request $request)
     {
         try {
@@ -147,20 +108,15 @@ class BancoController extends Controller
                 'codigo' => 'nullable|digits_between:1,4',
                 'nombre' => 'nullable|string|max:255',
             ]);
-
             $query = Banco::where('status', true);
-
             if ($request->has('codigo') && $request->codigo) {
                 $query->where('codigo_banco', $request->codigo);
             }
-
             if ($request->has('nombre') && $request->nombre) {
                 $query->where('nombre_banco', $request->nombre);
             }
-
             $existe = $query->exists();
             $mensaje = '';
-
             if ($existe) {
                 if ($request->has('codigo') && $request->has('nombre') && $request->codigo && $request->nombre) {
                     $mensaje = 'Ya existe un banco activo con este código y nombre.';
@@ -170,15 +126,12 @@ class BancoController extends Controller
                     $mensaje = 'Ya existe un banco activo con este nombre.';
                 }
             }
-
             return response()->json([
                 'success' => true,
                 'existe' => $existe,
                 'mensaje' => $mensaje
             ]);
-
         } catch (\Exception $e) {
-            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al verificar el banco',
