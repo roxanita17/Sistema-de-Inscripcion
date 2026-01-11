@@ -162,6 +162,7 @@ class InscripcionProsecucionController extends Controller
     {
         $prosecucion = InscripcionProsecucion::with([
             'inscripcion.alumno.persona',
+            'inscripcion.alumno.persona.localidad.estado.pais',
             'inscripcion.alumno.ordenNacimiento',
             'inscripcion.alumno.lateralidad',
             'inscripcion.alumno.discapacidades',

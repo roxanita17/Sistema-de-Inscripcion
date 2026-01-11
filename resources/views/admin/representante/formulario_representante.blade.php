@@ -6,130 +6,11 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-    <!-- Bootstrap Select CSS -->
+    <link rel="stylesheet" href="{{ asset('css/representante.css') }}">
+   
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
-    <style>
-        /* Progress Steps Enhancement */
-        .progress-steps {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow);
-        }
 
-        .step-circle {
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-        }
-
-        .step-text {
-            color: var(--gray-600);
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-
-        /* Arreglos para Selectpicker */
-        .bootstrap-select .dropdown-menu {
-            z-index: 9999 !important;
-        }
-
-        .bootstrap-select .dropdown-menu.show {
-            z-index: 9999 !important;
-        }
-
-        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item.disabled {
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            cursor: not-allowed !important;
-            pointer-events: none !important;
-        }
-
-        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item[disabled] {
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            cursor: not-allowed !important;
-            pointer-events: none !important;
-        }
-
-        .bootstrap-select .dropdown-menu li[data-original-index] .dropdown-item[data-tokens="loading"] {
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            cursor: not-allowed !important;
-            pointer-events: none !important;
-            font-style: italic;
-        }
-
-        .step-indicator .step-text {
-            color: var(--gray-600);
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-
-        /* Enhanced Card Animations */
-        .card-modern {
-            border: 1px solid var(--gray-200);
-        }
-
-        .card-header-modern {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-header-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
-
-        /* Enhanced Form Controls */
-        .form-control-modern {
-            position: relative;
-        }
-
-        .form-control-modern:focus {
-            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
-        }
-
-        .form-check-input:checked {
-            background-color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .form-check-input:focus {
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        /* Alert Enhancement */
-        .alert-modern {
-            border-left: 4px solid var(--info);
-            background: linear-gradient(135deg, var(--info-lighter), white);
-        }
-
-        /* Button Styles */
-        .btn-primary-modern {
-            background: linear-gradient(135deg, var(--primary), #4f46e5);
-        }
-
-        /* Card Separation Fix */
-        .card-modern {
-            margin-bottom: 2rem !important;
-        }
-
-        .card-modern+.card-modern {
-            margin-top: 1.5rem !important;
-        }
-
-        /* Nested cards spacing */
-        .card-modern .card-modern {
-            margin-bottom: 1.5rem !important;
-            margin-top: 1rem !important;
-        }
-    </style>
     @livewireStyles
 @stop
 
@@ -451,7 +332,41 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-group">
+                                            <label for="idPais" class="form-label-modern">
+                                                <i class="fas fa-map"></i>
+                                                Pais
+                                                <span class="required-badge">*</span>
+                                            </label>
+                                            <select class="form-control-modern selectpicker" id="idPais"
+                                                name="idPais" data-live-search="true"
+                                                aria-label="Seleccione un pais">
+                                                <option value="">Seleccione un pais</option>
+                                                @php
+                                                    // Eliminar duplicados de países por ID y nombre
+                                                    $paisesUnicos = $paises->unique('id')->sortBy('nameES');
+                                                @endphp
+                                                @foreach ($paisesUnicos as $pais)
+                                                    <option value="{{ $pais->id }}"
+                                                        @if (old('idPais') == $pais->id) selected @endif>
+                                                        {{ $pais->nameES }}
+                                                    </option>
+                                                @endforeach
+                                                {{-- 
+                                                @foreach ($estados as $estado)
+                                                    <option value="{{ $estado->id }}"
+                                                        @if (old('idEstado') == $estado->id) selected @endif>
+                                                        {{ $estado->nombre_estado }}
+                                                    </option>
+                                                @endforeach--}}
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un pais.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
                                         <div class="form-group">
                                             <label for="idEstado" class="form-label-modern">
                                                 <i class="fas fa-map"></i>
@@ -459,15 +374,9 @@
                                                 <span class="required-badge">*</span>
                                             </label>
                                             <select class="form-control-modern selectpicker" id="idEstado"
-                                                name="idEstado" data-live-search="true" title="Seleccione un estado"
+                                                name="idEstado" data-live-search="true"
                                                 aria-label="Seleccione un estado">
                                                 <option value="">Seleccione un estado</option>
-                                                @foreach ($estados as $estado)
-                                                    <option value="{{ $estado->id }}"
-                                                        @if (old('idEstado') == $estado->id) selected @endif>
-                                                        {{ $estado->nombre_estado }}
-                                                    </option>
-                                                @endforeach
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un estado.
@@ -476,7 +385,7 @@
                                         <small id="idEstado-error" class="text-danger"></small>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <div class="form-group">
                                             <label for="idMunicipio" class="form-label-modern">
                                                 <i class="fas fa-map-marked-alt"></i>
@@ -485,7 +394,7 @@
                                             </label>
                                             <select class="form-control-modern selectpicker" id="idMunicipio"
                                                 name="idMunicipio" data-live-search="true"
-                                                title="Seleccione un municipio" aria-label="Seleccione un municipio">
+                                                aria-label="Seleccione un municipio">
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un municipio.
@@ -494,7 +403,7 @@
                                         <small id="idMunicipio-error" class="text-danger"></small>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <div class="form-group">
                                             <label for="idparroquia" class="form-label-modern">
                                                 <i class="fas fa-map-pin"></i>
@@ -503,7 +412,7 @@
                                             </label>
                                             <select class="form-control-modern selectpicker" id="idparroquia"
                                                 name="idparroquia" data-live-search="true"
-                                                title="Seleccione una parroquia" aria-label="Seleccione una parroquia">
+                                                aria-label="Seleccione una parroquia">
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione una parroquia.
@@ -555,7 +464,7 @@
                                                 <span class="required-badge">*</span>
                                             </label>
                                             <select class="form-control-modern selectpicker" id="prefijo"
-                                                name="prefijo" data-live-search="true" title="Seleccione" required>
+                                                name="prefijo" data-live-search="true" required>
                                                 <option value="" disabled selected>Seleccione</option>
                                                 @foreach ($prefijos_telefono as $prefijo)
                                                     <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
@@ -594,8 +503,7 @@
                                                 Prefijo 2
                                             </label>
                                             <select class="form-control-modern selectpicker" id="prefijo_dos"
-                                                name="prefijo_dos" data-live-search="true"
-                                                title="Seleccione el tipo de linea Teléfonica">
+                                                name="prefijo_dos" data-live-search="true">
                                                 <option value="">Seleccione</option>
                                                 @foreach ($prefijos_telefono as $prefijo)
                                                     <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
@@ -648,7 +556,7 @@
                                             </label>
                                             <select name="ocupacion-madre" id="ocupacion-madre"
                                                 class="form-control-modern selectpicker" data-live-search="true"
-                                                title="Seleccione una ocupación" required>
+                                                required>
                                                 <option value="" disabled selected>Seleccione</option>
                                                 @foreach ($ocupaciones as $ocupacion)
                                                     <option value="{{ $ocupacion->id }}">
@@ -915,10 +823,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card-body-modern" style="padding: 2rem;">
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
+                    <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <label for="lugar-nacimiento-padre" class="form-label-modern">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -926,16 +831,44 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <input type="text" class="form-control-modern" id="lugar-nacimiento-padre"
-                                    name="lugar-nacimiento-padre" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-                                    title="Solo se permiten letras y espacios, no se aceptan números" required>
+                                    name="lugar-nacimiento-padre" placeholder="Ej: Caracas, Venezuela"
+                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s,]+" maxlength="100" required>
                                 <div class="invalid-feedback">
                                     Por favor ingrese un lugar de nacimiento válido.
                                 </div>
+                                <small id="lugar-nacimiento-padre-error" class="text-danger"></small>
                             </div>
                         </div>
-                    </div>
+                <div class="card-body-modern" style="padding: 2rem;">
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label for="idPais-padre" class="form-label-modern">
+                                    <i class="fas fa-map"></i>
+                                    Pais
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <select class="form-control-modern selectpicker" id="idPais-padre"
+                                    name="idPais-padre" data-live-search="true"
+                                    aria-label="Seleccione un pais">
+                                    <option value="">Seleccione un pais</option>
+                                    @php
+                                        // Eliminar duplicados de países por ID y nombre
+                                        $paisesUnicosPadre = $paises->unique('id')->sortBy('nameES');
+                                    @endphp
+                                    @foreach ($paisesUnicosPadre as $pais)
+                                        <option value="{{ $pais->id }}"
+                                            @if (old('idPais-padre') == $pais->id) selected @endif>
+                                            {{ $pais->nameES }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un pais.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idEstado-padre" class="form-label-modern">
                                     <i class="fas fa-map"></i>
@@ -943,11 +876,8 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern selectpicker" id="idEstado-padre"
-                                    name="idEstado-padre" data-live-search="true" title="Seleccione un estado" required>
+                                    name="idEstado-padre" data-live-search="true" required>
                                     <option value="" disabled selected>Seleccione un estado</option>
-                                    @foreach ($estados as $estado)
-                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                                    @endforeach
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione un estado.
@@ -955,7 +885,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idMunicipio-padre" class="form-label-modern">
                                     <i class="fas fa-map-marked-alt"></i>
@@ -972,7 +902,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idparroquia-padre" class="form-label-modern">
                                     <i class="fas fa-map-pin"></i>
@@ -988,7 +918,8 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
+                    <div class="row">
                         <div class="col-md-12 mb-3">
                             <div class="form-group">
                                 <label for="direccion-padre" class="form-label-modern">
@@ -1028,7 +959,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern selectpicker" id="prefijo-padre" name="prefijo-padre"
-                                    data-live-search="true" title="Seleccione" required>
+                                    data-live-search="true" required>
                                     <option value="" disabled selected>Seleccione</option>
                                     @foreach ($prefijos_telefono as $prefijo)
                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
@@ -1065,8 +996,7 @@
                                     Prefijo 2
                                 </label>
                                 <select class="form-control-modern selectpicker" id="prefijo_dos_padre"
-                                    name="prefijo_dos_padre" data-live-search="true"
-                                    title="Seleccione el tipo de linea Teléfonica">
+                                    name="prefijo_dos_padre" data-live-search="true">
                                     <option value="">Seleccione</option>
                                     @foreach ($prefijos_telefono as $prefijo)
                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
@@ -1116,7 +1046,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern selectpicker" id="ocupacion-padre"
-                                    name="ocupacion-padre" data-live-search="true" title="Seleccione una ocupación"
+                                    name="ocupacion-padre" data-live-search="true"
                                     required>
                                     <option value="" disabled selected>Seleccione</option>
                                     @foreach ($ocupaciones as $ocupacion)
@@ -1153,14 +1083,14 @@
                                 <div class="d-flex align-items-center">
                                     <div class="form-check me-4">
                                         <input class="form-check-input" type="radio" name="convive-padre"
-                                            id="convive-si-padre" value="1" required>
+                                            id="convive-si-padre" value="si" required>
                                         <label class="form-check-label" for="convive-si-padre">
                                             <i class="fas fa-check-circle me-1"></i> Sí
                                         </label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="convive-padre"
-                                            id="convive-no-padre" value="0">
+                                            id="convive-no-padre" value="no">
                                         <label class="form-check-label" for="convive-no-padre">
                                             <i class="fas fa-times-circle me-1"></i> No
                                         </label>
@@ -1446,7 +1376,41 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label for="idPais-representante" class="form-label-modern">
+                                    <i class="fas fa-map"></i>
+                                    Pais
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <select class="form-control-modern selectpicker" id="idPais-representante"
+                                    name="idPais-representante" data-live-search="true"
+                                    aria-label="Seleccione un pais">
+                                    <option value="">Seleccione un pais</option>
+                                    @php
+                                        // Eliminar duplicados de países por ID y nombre
+                                        $paisesUnicosRepresentante = $paises->unique('id')->sortBy('nameES');
+                                    @endphp
+                                    @foreach ($paisesUnicosRepresentante as $pais)
+                                        <option value="{{ $pais->id }}"
+                                            @if (old('idPais-representante') == $pais->id) selected @endif>
+                                            {{ $pais->nameES }}
+                                        </option>
+                                    @endforeach
+                                    {{--
+                                    @foreach ($estados as $estado)
+                                        <option value="{{ $estado->id }}"
+                                            @if (old('idEstado') == $estado->id) selected @endif>
+                                            {{ $estado->nombre_estado }}
+                                        </option>
+                                    @endforeach--}}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un pais.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idEstado-representante" class="form-label-modern">
                                     <i class="fas fa-map"></i>
@@ -1454,11 +1418,8 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern selectpicker" id="idEstado-representante"
-                                    name="idEstado-representante" data-live-search="true" title="Seleccione un estado"
-                                    required>
-                                    @foreach ($estados as $estado)
-                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                                    @endforeach
+                                    name="idEstado-representante" data-live-search="true" required>
+                                    <option value="" disabled selected>Seleccione un estado</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione un estado.
@@ -1467,7 +1428,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idMunicipio-representante" class="form-label-modern">
                                     <i class="fas fa-map-marked-alt"></i>
@@ -1485,7 +1446,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="idparroquia-representante" class="form-label-modern">
                                     <i class="fas fa-map-pin"></i>
@@ -1545,7 +1506,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern selectpicker" id="prefijo-representante"
-                                    name="prefijo-representante" data-live-search="true" title="Seleccione" required>
+                                    name="prefijo-representante" data-live-search="true" required>
                                     <option value="" disabled selected>Seleccione</option>
                                     @foreach ($prefijos_telefono as $prefijo)
                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
@@ -1584,8 +1545,7 @@
                                     Prefijo 2
                                 </label>
                                 <select class="form-control-modern selectpicker" id="prefijo_dos-representante"
-                                    name="prefijo_dos-representante" data-live-search="true"
-                                    title="Seleccione el tipo de linea Teléfonica">
+                                    name="prefijo_dos-representante" data-live-search="true">
                                     <option value="">Seleccione</option>
                                     @foreach ($prefijos_telefono as $prefijo)
                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}</option>
@@ -1685,6 +1645,7 @@
                                     <option value="Primo(a)">Primo(a)</option>
                                     <option value="Otro">Otro</option>
                                 </select>
+                                <input type="hidden" id="parentesco_hidden" name="parentesco_hidden" value="">
                                 <div class="invalid-feedback">
                                     Por favor seleccione el parentesco.
                                 </div>
@@ -2068,10 +2029,332 @@
     <!-- Bootstrap Select JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script>
-        // Variable para almacenar estados anteriores
-        const estadoAnterior = {};
+        // Datos de ubicaciones cargados desde Blade
+        const ubicacionesData = @json($estados);
 
-        // Función para mostrar alerta moderna de ausencia
+        // Función unificada para cargar selects anidados
+        function cargarSelectAnidado(tipo, parentId, targetSelectId, clearSelectId = null) {
+            const targetSelect = document.getElementById(targetSelectId);
+            const clearSelect = clearSelectId ? document.getElementById(clearSelectId) : null;
+
+            if (!targetSelect) {
+                console.error(`[CARGAR_SELECT] Target select no encontrado: ${targetSelectId}`);
+                return;
+            }
+
+            console.log(`[CARGAR_SELECT] Iniciando carga: tipo=${tipo}, parentId=${parentId}, target=${targetSelectId}`);
+
+            // Limpiar selects
+            limpiarSelectCompleto(targetSelect);
+            if (clearSelect) limpiarSelectCompleto(clearSelect);
+
+            if (!parentId) {
+                console.warn(`[CARGAR_SELECT] parentId vacío, saliendo`);
+                return;
+            }
+
+            let options = '<option value="">Seleccione un ' + tipo + '</option>';
+            let datos = [];
+            let datosUnicos = [];
+
+            if (tipo === 'estado') {
+                datos = ubicacionesData.filter(e => String(e.pais_id) === String(parentId));
+                console.log(`[CARGAR_SELECT] Estados encontrados para país ${parentId}:`, datos.length);
+                
+                // Usar Set para eliminar duplicados por ID
+                const idsVistos = new Set();
+                datosUnicos = datos.filter(item => {
+                    if (idsVistos.has(item.id)) {
+                        console.warn(`[CARGAR_SELECT] Estado duplicado detectado y eliminado:`, item);
+                        return false;
+                    }
+                    idsVistos.add(item.id);
+                    return true;
+                });
+                
+                datosUnicos.forEach(item => {
+                    options += `<option value="${item.id}">${item.nombre_estado}</option>`;
+                });
+                console.log(`[CARGAR_SELECT] Estados únicos después de filtrar:`, datosUnicos.length);
+                
+            } else if (tipo === 'municipio') {
+                const estado = ubicacionesData.find(e => e.id == parentId);
+                if (estado && estado.municipio) {
+                    datos = estado.municipio;
+                    console.log(`[CARGAR_SELECT] Municipios encontrados para estado ${parentId}:`, datos.length);
+                    
+                    // Usar Set para eliminar duplicados por ID
+                    const idsVistos = new Set();
+                    datosUnicos = datos.filter(item => {
+                        if (idsVistos.has(item.id)) {
+                            console.warn(`[CARGAR_SELECT] Municipio duplicado detectado y eliminado:`, item);
+                            return false;
+                        }
+                        idsVistos.add(item.id);
+                        return true;
+                    });
+                    
+                    datosUnicos.forEach(item => {
+                        options += `<option value="${item.id}">${item.nombre_municipio}</option>`;
+                    });
+                    console.log(`[CARGAR_SELECT] Municipios únicos después de filtrar:`, datosUnicos.length);
+                }
+            } else if (tipo === 'localidad') {
+                for (const estado of ubicacionesData) {
+                    if (estado.municipio) {
+                        const municipio = estado.municipio.find(m => m.id == parentId);
+                        if (municipio && municipio.localidades) {
+                            datos = municipio.localidades;
+                            console.log(`[CARGAR_SELECT] Localidades encontradas para municipio ${parentId}:`, datos.length);
+                            
+                            // Usar Set para eliminar duplicados por ID
+                            const idsVistos = new Set();
+                            datosUnicos = datos.filter(item => {
+                                if (idsVistos.has(item.id)) {
+                                    console.warn(`[CARGAR_SELECT] Localidad duplicada detectada y eliminada:`, item);
+                                    return false;
+                                }
+                                idsVistos.add(item.id);
+                                return true;
+                            });
+                            
+                            datosUnicos.forEach(item => {
+                                options += `<option value="${item.id}">${item.nombre_localidad}</option>`;
+                            });
+                            console.log(`[CARGAR_SELECT] Localidades únicas después de filtrar:`, datosUnicos.length);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Validar datos antes de generar opciones
+            if (datosUnicos.length === 0) {
+                console.warn(`[CARGAR_SELECT] No se encontraron ${tipo} únicos para parentId=${parentId}`);
+            }
+
+            // Guardar el valor actual antes de modificar
+            const valorActual = targetSelect.value;
+            const valorGuardado = targetSelect.getAttribute('data-valor-guardado');
+            
+            console.log(`[CARGAR_SELECT] Valores guardados - actual: "${valorActual}", guardado: "${valorGuardado}"`);
+            
+            targetSelect.innerHTML = options;
+            
+            // Re-inicializar selectpicker
+            const $targetSelect = $(targetSelect);
+            try {
+                $targetSelect.selectpicker('destroy');
+                $targetSelect.selectpicker({
+                    liveSearch: true,
+                    size: 8,
+                    noneResultsText: 'No hay resultados para {0}',
+                    selectOnTab: false,
+                    showSubtext: false,
+                    showIcon: true,
+                    width: 'auto'
+                });
+                
+                // Restaurar el valor si existía previamente
+                if (valorGuardado) {
+                    $targetSelect.selectpicker('val', valorGuardado);
+                    console.log(`[CARGAR_SELECT] Valor restaurado desde data-valor-guardado: "${valorGuardado}"`);
+                } else if (valorActual) {
+                    $targetSelect.selectpicker('val', valorActual);
+                    console.log(`[CARGAR_SELECT] Valor restaurado desde value: "${valorActual}"`);
+                }
+            } catch (e) {
+                console.error(`[CARGAR_SELECT] Error al inicializar selectpicker:`, e);
+                $targetSelect.selectpicker({
+                    liveSearch: true,
+                    size: 8,
+                    noneResultsText: 'No hay resultados para {0}',
+                    selectOnTab: false,
+                    showSubtext: false,
+                    showIcon: true,
+                    width: 'auto'
+                });
+                
+                // Restaurar el valor si existía previamente
+                if (valorGuardado) {
+                    $targetSelect.selectpicker('val', valorGuardado);
+                } else if (valorActual) {
+                    $targetSelect.selectpicker('val', valorActual);
+                }
+            }
+
+            console.log(`[CARGAR_SELECT] Carga completada para ${targetSelectId}`);
+        }
+
+        // Versión promise-based de cargarSelectAnidado para carga secuencial
+        function cargarSelectAnidadoPromise(tipo, parentId, targetSelectId, clearSelectId = null) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const targetSelect = document.getElementById(targetSelectId);
+                    const clearSelect = clearSelectId ? document.getElementById(clearSelectId) : null;
+
+                    if (!targetSelect) {
+                        reject(new Error(`Select target no encontrado: ${targetSelectId}`));
+                        return;
+                    }
+
+                    console.log(`[CARGAR_SELECT_PROMISE] Iniciando carga: tipo=${tipo}, parentId=${parentId}, target=${targetSelectId}`);
+
+                    // Limpiar selects
+                    limpiarSelectCompleto(targetSelect);
+                    if (clearSelect) limpiarSelectCompleto(clearSelect);
+
+                    if (!parentId) {
+                        console.log(`[CARGAR_SELECT_PROMISE] parentId vacío, resolviendo con null`);
+                        resolve(null);
+                        return;
+                    }
+
+                    let options = '<option value="">Seleccione un ' + tipo + '</option>';
+                    let datos = [];
+                    let datosUnicos = [];
+
+                    if (tipo === 'estado') {
+                        datos = ubicacionesData.filter(e => String(e.pais_id) === String(parentId));
+                        console.log(`[CARGAR_SELECT_PROMISE] Estados encontrados para país ${parentId}:`, datos.length);
+                        
+                        // Usar Set para eliminar duplicados por ID
+                        const idsVistos = new Set();
+                        datosUnicos = datos.filter(item => {
+                            if (idsVistos.has(item.id)) {
+                                console.warn(`[CARGAR_SELECT_PROMISE] Estado duplicado detectado y eliminado:`, item);
+                                return false;
+                            }
+                            idsVistos.add(item.id);
+                            return true;
+                        });
+                        
+                        datosUnicos.forEach(item => {
+                            options += `<option value="${item.id}">${item.nombre_estado}</option>`;
+                        });
+                        console.log(`[CARGAR_SELECT_PROMISE] Estados únicos después de filtrar:`, datosUnicos.length);
+                        
+                    } else if (tipo === 'municipio') {
+                        const estado = ubicacionesData.find(e => e.id == parentId);
+                        if (estado && estado.municipio) {
+                            datos = estado.municipio;
+                            console.log(`[CARGAR_SELECT_PROMISE] Municipios encontrados para estado ${parentId}:`, datos.length);
+                            
+                            // Usar Set para eliminar duplicados por ID
+                            const idsVistos = new Set();
+                            datosUnicos = datos.filter(item => {
+                                if (idsVistos.has(item.id)) {
+                                    console.warn(`[CARGAR_SELECT_PROMISE] Municipio duplicado detectado y eliminado:`, item);
+                                    return false;
+                                }
+                                idsVistos.add(item.id);
+                                return true;
+                            });
+                            
+                            datosUnicos.forEach(item => {
+                                options += `<option value="${item.id}">${item.nombre_municipio}</option>`;
+                            });
+                            console.log(`[CARGAR_SELECT_PROMISE] Municipios únicos después de filtrar:`, datosUnicos.length);
+                        }
+                    } else if (tipo === 'localidad') {
+                        for (const estado of ubicacionesData) {
+                            if (estado.municipio) {
+                                const municipio = estado.municipio.find(m => m.id == parentId);
+                                if (municipio && municipio.localidades) {
+                                    datos = municipio.localidades;
+                                    console.log(`[CARGAR_SELECT_PROMISE] Localidades encontradas para municipio ${parentId}:`, datos.length);
+                                    
+                                    // Usar Set para eliminar duplicados por ID
+                                    const idsVistos = new Set();
+                                    datosUnicos = datos.filter(item => {
+                                        if (idsVistos.has(item.id)) {
+                                            console.warn(`[CARGAR_SELECT_PROMISE] Localidad duplicada detectada y eliminada:`, item);
+                                            return false;
+                                        }
+                                        idsVistos.add(item.id);
+                                        return true;
+                                    });
+                                    
+                                    datosUnicos.forEach(item => {
+                                        options += `<option value="${item.id}">${item.nombre_localidad}</option>`;
+                                    });
+                                    console.log(`[CARGAR_SELECT_PROMISE] Localidades únicas después de filtrar:`, datosUnicos.length);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // Validar datos antes de generar opciones
+                    if (datosUnicos.length === 0) {
+                        console.warn(`[CARGAR_SELECT_PROMISE] No se encontraron ${tipo} únicos para parentId=${parentId}`);
+                    }
+
+                    // Guardar el valor actual antes de modificar
+                    const valorActual = targetSelect.value;
+                    const valorGuardado = targetSelect.getAttribute('data-valor-guardado');
+                    
+                    console.log(`[CARGAR_SELECT_PROMISE] Valores guardados - actual: "${valorActual}", guardado: "${valorGuardado}"`);
+                    
+                    targetSelect.innerHTML = options;
+                    
+                    // Re-inicializar selectpicker
+                    const $targetSelect = $(targetSelect);
+                    try {
+                        $targetSelect.selectpicker('destroy');
+                        $targetSelect.selectpicker({
+                            liveSearch: true,
+                            size: 8,
+                            noneResultsText: 'No hay resultados para {0}',
+                            selectOnTab: false,
+                            showSubtext: false,
+                            showIcon: true,
+                            width: 'auto'
+                        });
+                        
+                        // Restaurar el valor si existía previamente
+                        if (valorGuardado) {
+                            $targetSelect.selectpicker('val', valorGuardado);
+                            console.log(`[CARGAR_SELECT_PROMISE] Valor restaurado desde data-valor-guardado: "${valorGuardado}"`);
+                        } else if (valorActual) {
+                            $targetSelect.selectpicker('val', valorActual);
+                            console.log(`[CARGAR_SELECT_PROMISE] Valor restaurado desde value: "${valorActual}"`);
+                        }
+
+                        // Esperar un poco para que se complete la inicialización
+                        setTimeout(() => {
+                            resolve({
+                                select: targetSelect,
+                                datos: datosUnicos,
+                                valorGuardado: valorGuardado || valorActual
+                            });
+                        }, 200);
+                    } catch (e) {
+                        console.error(`[CARGAR_SELECT_PROMISE] Error al inicializar selectpicker:`, e);
+                        $targetSelect.selectpicker({
+                            liveSearch: true,
+                            size: 8,
+                            noneResultsText: 'No hay resultados para {0}',
+                            selectOnTab: false,
+                            showSubtext: false,
+                            showIcon: true,
+                            width: 'auto'
+                        });
+                        
+                        setTimeout(() => {
+                            resolve({
+                                select: targetSelect,
+                                datos: datosUnicos,
+                                valorGuardado: valorGuardado || valorActual
+                            });
+                        }, 200);
+                    }
+                } catch (error) {
+                    console.error(`[CARGAR_SELECT_PROMISE] Error general:`, error);
+                    reject(error);
+                }
+            });
+        }
         function mostrarAlertaAusencia(tipo) {
             const nombre = tipo === 'madre' ? 'la madre' : 'el padre';
 
@@ -2136,9 +2419,6 @@
                 const valorAnterior = document.querySelector(`input[name="${radioName}"]:checked`)?.value ||
                     'Presente';
 
-                // Actualizar estado anterior
-                actualizarEstadoAnterior(radioName, 'Ausente');
-
                 // Cerrar modal
                 modal.hide();
 
@@ -2148,13 +2428,10 @@
                 }, 500);
             });
 
-            // Manejar cancelación - volver al estado anterior
+            // Manejar cancelación - mantener estado actual
             document.getElementById('btnCancelarAusencia').addEventListener('click', function() {
-                const radioName = `estado_${tipo}`;
-                const valorAnterior = estadoAnterior[radioName] || 'Presente';
-
-                // Volver al valor anterior
-                document.querySelector(`input[name="${radioName}"][value="${valorAnterior}"]`).checked = true;
+                // Cerrar modal sin hacer cambios
+                modal.hide();
 
                 // Cerrar modal
                 modal.hide();
@@ -2166,10 +2443,6 @@
             });
         }
 
-        // Función para actualizar estado anterior
-        function actualizarEstadoAnterior(radioName, valor) {
-            estadoAnterior[radioName] = valor;
-        }
 
         // Validación en tiempo real para campos numéricos
         function validarSoloNumeros(input) {
@@ -2285,38 +2558,155 @@
             // Obtener todos los formularios que necesitan validación
             var forms = document.querySelectorAll('.needs-validation')
 
-            // Bucle sobre los formularios y evitar el envío - TEMPORALMENTE DESACTIVADO
+            // Bucle sobre los formularios y evitar el envío
             Array.prototype.slice.call(forms).forEach(function(form) {
                 form.addEventListener('submit', function(event) {
-                    // Temporalmente desactivado para permitir envío
-                    // if (!form.checkValidity()) {
-                    //     event.preventDefault()
-                    //     event.stopPropagation()
-                    // }
-                    console.log('Validación de Bootstrap desactivada - formulario permitido');
+                    // Habilitar temporalmente todos los campos readOnly para que se envíen
+                    const readonlyFields = form.querySelectorAll('[readonly]');
+                    readonlyFields.forEach(field => {
+                        field.readOnly = false;
+                    });
+                    
+                    // Ejecutar validación personalizada primero
+                    if (!validarFormularioCompleto()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        
+                        // Restaurar readonly después de validación fallida
+                        readonlyFields.forEach(field => {
+                            field.readOnly = true;
+                        });
+                        
+                        return false;
+                    }
+                    
+                    console.log('=== VALIDACIÓN PERSONALIZADA PASÓ ===');
+                    
+                    // Luego ejecutar validación de Bootstrap para campos requeridos
+                    console.log('=== VERIFICANDO VALIDACIÓN BOOTSTRAP ===');
+                    console.log('Form checkValidity ANTES:', form.checkValidity());
+                    
+                    // Remover required de campos en secciones deshabilitadas temporalmente
+                    const camposEnSeccionesDeshabilitadas = [];
+                    
+                    // Buscar todos los campos que están deshabilitados Y requeridos
+                    const camposDeshabilitadosRequeridos = form.querySelectorAll(':disabled[required]');
+                    console.log('Campos deshabilitados y requeridos encontrados:', camposDeshabilitadosRequeridos.length);
+                    camposDeshabilitadosRequeridos.forEach(campo => {
+                        console.log('Campo deshabilitado y requerido:', campo.id, campo.name, campo.type);
+                        camposEnSeccionesDeshabilitadas.push({campo, required: true});
+                        campo.removeAttribute('required');
+                    });
+                    
+                    // También verificar campos con readonly que son requeridos
+                    const camposReadonlyRequeridos = form.querySelectorAll('[readonly][required]');
+                    console.log('Campos readonly y requeridos encontrados:', camposReadonlyRequeridos.length);
+                    camposReadonlyRequeridos.forEach(campo => {
+                        console.log('Campo readonly y requerido:', campo.id, campo.name, campo.type);
+                        camposEnSeccionesDeshabilitadas.push({campo, required: true});
+                        campo.removeAttribute('required');
+                    });
+                    
+                    // Verificar selects específicos que podrían estar deshabilitados
+                    const selectsRequeridos = form.querySelectorAll('select[required]');
+                    selectsRequeridos.forEach(select => {
+                        if (select.disabled || select.readOnly) {
+                            console.log('Select requerido deshabilitado:', select.id, select.name);
+                            camposEnSeccionesDeshabilitadas.push({campo: select, required: true});
+                            select.removeAttribute('required');
+                        }
+                    });
+                    
+                    // Verificar campos "otra ocupación" que están vacíos pero requeridos
+                    const camposOtraOcupacion = form.querySelectorAll('[id*="otra-ocupacion"]');
+                    camposOtraOcupacion.forEach(campo => {
+                        // Verificar explícitamente si tiene el atributo required
+                        const tieneRequired = campo.hasAttribute('required');
+                        const estaVacio = !campo.value.trim();
+                        
+                        console.log(`Analizando campo ${campo.id}: required=${tieneRequired}, value="${campo.value}", vacio=${estaVacio}`);
+                        
+                        if (tieneRequired && estaVacio) {
+                            console.log(`Campo ${campo.id} vacío pero requerido, removiendo required`);
+                            camposEnSeccionesDeshabilitadas.push({campo, required: true});
+                            campo.removeAttribute('required');
+                        }
+                    });
+                    
+                    console.log('Total de campos modificados:', camposEnSeccionesDeshabilitadas.length);
+                    console.log('Form checkValidity DESPUÉS:', form.checkValidity());
+                    
+                    // Debug exhaustivo para encontrar el problema
+                    console.log('=== DEBUG EXHAUSTIVO ===');
+                    console.log('Formulario:', form);
+                    console.log('Form length:', form.length);
+                    console.log('Form elements:', form.elements.length);
+                    
+                    // Verificar cada elemento individualmente
+                    for (let i = 0; i < form.elements.length; i++) {
+                        const element = form.elements[i];
+                        console.log(`Elemento ${i}:`, {
+                            name: element.name,
+                            id: element.id,
+                            type: element.type,
+                            value: element.value,
+                            required: element.required,
+                            disabled: element.disabled,
+                            readOnly: element.readOnly,
+                            willValidate: element.willValidate,
+                            validity: element.validity,
+                            validationMessage: element.validationMessage
+                        });
+                        
+                        if (element.willValidate && !element.validity.valid) {
+                            console.log('*** ELEMENTO INVÁLIDO ENCONTRADO ***', element);
+                        }
+                    }
+                    
+                    if (!form.checkValidity()) {
+                        console.log('=== VALIDACIÓN BOOTSTRAP FALLÓ ===');
+                        console.log('Form validity:', form.checkValidity());
+                        
+                        // Mostrar qué campos están inválidos
+                        const invalidFields = form.querySelectorAll(':invalid');
+                        console.log('Campos inválidos:', invalidFields);
+                        invalidFields.forEach(field => {
+                            console.log('Campo inválido:', field.id, field.name, field.type, field.value, 'validationMessage:', field.validationMessage);
+                        });
+                        
+                        // Restaurar atributos required antes de salir
+                        camposEnSeccionesDeshabilitadas.forEach(({campo, required}) => {
+                            if (required) campo.setAttribute('required', '');
+                        });
+                        console.log('Atributos required restaurados después de validación fallida');
+                        
+                        event.preventDefault();
+                        event.stopPropagation();
+                        
+                        // Restaurar readonly después de validación fallida
+                        readonlyFields.forEach(field => {
+                            field.readOnly = true;
+                        });
+                        
+                        form.classList.add('was-validated');
+                        return false;
+                    }
+                    
+                    // Restaurar atributos required antes de enviar
+                    camposEnSeccionesDeshabilitadas.forEach(({campo, required}) => {
+                        if (required) campo.setAttribute('required', '');
+                    });
+                    console.log('Atributos required restaurados antes de enviar');
+                    
+                    form.classList.add('was-validated');
+                    
+                    console.log('=== FORMULARIO ENVIÁNDOSE ===');
+                    console.log('Action:', form.action);
+                    console.log('Method:', form.method);
+                    console.log('Form data:', new FormData(form));
                 });
             });
         })()
-        // Datos de estados, municipios y localidades cargados desde Blade
-        const ubicacionesData = @json($estados);
-
-        if (ubicacionesData.length > 0) {
-            const primerEstado = ubicacionesData[0];
-            console.log('Primer estado:', primerEstado.nombre_estado);
-            console.log('ID del primer estado:', primerEstado.id); // Usar 'id' no 'id_estado'
-
-            if (primerEstado.municipio && primerEstado.municipio.length > 0) {
-                const primerMunicipio = primerEstado.municipio[0];
-                console.log('Primer municipio:', primerMunicipio.nombre_municipio);
-                console.log('ID del primer municipio:', primerMunicipio.id); // Usar 'id' no 'id_municipio'
-                console.log('¿Tiene localidades?', 'localidades' in primerMunicipio);
-
-                if (primerMunicipio.localidades && primerMunicipio.localidades.length > 0) {
-                    console.log('Primera localidad:', primerMunicipio.localidades[0]);
-                }
-            }
-        }
-
         // Función centralizada para inicializar selectpicker con configuración consistente
         function inicializarSelectPickerConBuscador($selectElement) {
             if (!$selectElement || !$selectElement.hasClass('selectpicker')) {
@@ -2366,6 +2756,7 @@
                     }, 50);
                 } catch (e) {
                     console.error('Error al refrescar selectpicker:', e);
+                    inicializarSelectPickerConBuscador($select);
                 }
             }
         }
@@ -2375,22 +2766,39 @@
             if (!selectElement) return;
 
             const $select = $(selectElement);
-
-            // Si tiene selectpicker, destruirlo completamente
-            if ($select.hasClass('selectpicker') && $select.data('selectpicker')) {
-                try {
+            
+            try {
+                // Verificar si el selectpicker está inicializado
+                if ($select.data('selectpicker')) {
+                    // Destruir el selectpicker de forma segura
                     $select.selectpicker('destroy');
-                    console.log('Selectpicker destruido para:', selectElement.id);
-                } catch (e) {
-                    console.log('Error al destruir selectpicker:', e);
                 }
-            }
-
-            // Limpiar HTML
-            selectElement.innerHTML = '';
-
-            // Re-inicializar siempre con liveSearch: true
-            if ($select.hasClass('selectpicker')) {
+                
+                // Guardar el placeholder si existe, sino crear uno genérico
+                const placeholderOption = selectElement.querySelector('option[value=""]');
+                let placeholderHTML = '';
+                
+                if (placeholderOption) {
+                    placeholderHTML = placeholderOption.outerHTML;
+                } else {
+                    // Crear placeholder genérico basado en el ID del select
+                    const selectId = selectElement.id;
+                    let placeholderText = 'Seleccione';
+                    
+                    if (selectId.includes('pais')) placeholderText = 'Seleccione un país';
+                    else if (selectId.includes('estado')) placeholderText = 'Seleccione un estado';
+                    else if (selectId.includes('municipio')) placeholderText = 'Seleccione un municipio';
+                    else if (selectId.includes('parroquia')) placeholderText = 'Seleccione una parroquia';
+                    else if (selectId.includes('prefijo')) placeholderText = 'Seleccione';
+                    else if (selectId.includes('ocupacion')) placeholderText = 'Seleccione una ocupación';
+                    
+                    placeholderHTML = `<option value="">${placeholderText}</option>`;
+                }
+                
+                // Limpiar y restaurar solo el placeholder
+                selectElement.innerHTML = placeholderHTML;
+                
+                // Re-inicializar siempre con liveSearch: true
                 $select.selectpicker({
                     liveSearch: true,
                     size: 8,
@@ -2400,338 +2808,326 @@
                     showIcon: true,
                     width: 'auto'
                 });
-                console.log('Selectpicker re-inicializado con buscador para:', selectElement.id);
+            } catch (error) {
+                console.error('Error en limpiarSelectCompleto:', error);
+                // Intentar recuperación: destruir y recrear selectpicker
+                try {
+                    $select.selectpicker('destroy');
+                    selectElement.innerHTML = '';
+                    $select.selectpicker({
+                        liveSearch: true,
+                        size: 8,
+                        noneResultsText: 'No hay resultados para {0}',
+                        selectOnTab: false,
+                        showSubtext: false,
+                        showIcon: true,
+                        width: 'auto'
+                    });
+                } catch (recoveryError) {
+                    console.error('Error en recuperación de limpiarSelectCompleto:', recoveryError);
+                    // Último recurso: limpiar solo el HTML sin selectpicker
+                    try {
+                        selectElement.innerHTML = '';
+                    } catch (finalError) {
+                        console.error('Error final en limpiarSelectCompleto:', finalError);
+                    }
+                }
             }
         }
 
-        // Función para cargar municipios del representante
-        window.cargarMunicipiosRepresentante = function(estadoId) {
-            const municipioSelect = document.getElementById('idMunicipio-representante');
-            const parroquiaSelect = document.getElementById('idparroquia-representante');
-
-            if (!municipioSelect) {
-                console.error('No se encontró el select de municipio del representante');
-                return;
-            }
-
-            // Limpiar selects completamente usando la nueva función
-            limpiarSelectCompleto(municipioSelect);
-            if (parroquiaSelect) {
-                limpiarSelectCompleto(parroquiaSelect);
-            }
-
-            if (!estadoId) {
-                limpiarSelectCompleto(municipioSelect);
-                return;
-            }
-
-            try {
-                // Buscar el estado en los datos cargados
-                const estado = ubicacionesData.find(e => e.id == estadoId);
-
-                if (!estado) {
-                    console.error('No se encontró el estado con ID:', estadoId);
-                    limpiarSelectCompleto(municipioSelect);
+        // Función ULTRA simplificada para establecer valores en selects (evita duplicación)
+        function establecerValorSelectUltraSimple(selectElement, valor, delay = 50) {
+            return new Promise((resolve, reject) => {
+                if (!selectElement) {
+                    reject(new Error('Elemento select no encontrado'));
                     return;
                 }
 
-                // Usar la propiedad 'municipio' (singular) según la estructura de datos
-                const municipios = estado.municipio || [];
-                console.log(`Encontrados ${municipios.length} municipios para el estado ${estadoId}`);
-
-                if (municipios.length > 0) {
-                    let options = '<option value="">Seleccione un municipio</option>';
-
-                    municipios.forEach(municipio => {
-                        const nombre = municipio.nombre_municipio || municipio.nombre || 'Municipio sin nombre';
-                        options += `<option value="${municipio.id}">${nombre}</option>`;
-                    });
-
-                    // Agregar las nuevas opciones
-                    municipioSelect.innerHTML = options;
-
-                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
-                    const $municipioSelect = $(municipioSelect);
-                    try {
-                        $municipioSelect.selectpicker('destroy');
-                        $municipioSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Municipios cargados y re-inicializado con buscador para:', municipioSelect.id);
-                    } catch (e) {
-                        console.error('Error al re-inicializar municipios:', e);
-                        // Intentar inicializar directamente si destroy falla
-                        $municipioSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Municipios inicializados directamente con buscador para:', municipioSelect.id);
-                    }
-                } else {
-                    limpiarSelectCompleto(municipioSelect);
-                }
-            } catch (error) {
-                console.error('Error al cargar municipios:', error);
-                limpiarSelectCompleto(municipioSelect);
-            }
-        };
-
-        // Función para cargar parroquias del representante
-        window.cargarParroquiasRepresentante = function(municipioId) {
-            const selectParroquia = document.getElementById('idparroquia-representante');
-            if (!selectParroquia) {
-                console.error('No se encontró el select de parroquia del representante');
-                return;
-            }
-
-            // Limpiar completamente usando la nueva función
-            limpiarSelectCompleto(selectParroquia);
-
-            if (!municipioId) {
-                console.log('No se proporcionó ID de municipio');
-                return;
-            }
-
-            // Buscar el municipio seleccionado en los datos cargados
-            let municipioEncontrado = null;
-
-            // Buscar en todos los estados
-            for (const estado of ubicacionesData) {
-                // Verificar si el estado tiene la propiedad 'municipio' (singular)
-                if (estado.municipio) {
-                    municipioEncontrado = estado.municipio.find(m => m.id == municipioId);
-                    if (municipioEncontrado) break;
-                }
-            }
-
-            if (municipioEncontrado) {
-                console.log('Municipio encontrado:', municipioEncontrado);
-                console.log('Propiedades del municipio:', Object.keys(municipioEncontrado));
-                console.log('¿Tiene localidades?', 'localidades' in municipioEncontrado);
-                console.log('¿Tiene municipio?', 'municipio' in municipioEncontrado);
-
-                // Intentar con diferentes nombres de propiedad
-                const localidades = municipioEncontrado.localidades ||
-                    municipioEncontrado.municipio ||
-                    municipioEncontrado.parroquias || [];
-
-                console.log('Localidades encontradas:', localidades.length);
-                console.log('Contenido de localidades:', localidades);
-
-                if (localidades.length > 0) {
-                    // Agregar las nuevas opciones
-                    let options = '<option value="">Seleccione una parroquia</option>';
-
-                    localidades.forEach(parroquia => {
-                        const nombre = parroquia.nombre_parroquia || parroquia.nombre || parroquia
-                            .nombre_localidad || 'Sin nombre';
-                        options += `<option value="${parroquia.id}">${nombre}</option>`;
-                    });
-
-                    selectParroquia.innerHTML = options;
-
-                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
-                    const $selectParroquia = $(selectParroquia);
-                    try {
-                        $selectParroquia.selectpicker('destroy');
-                        $selectParroquia.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Parroquias cargadas y re-inicializado con buscador para:', selectParroquia.id);
-                    } catch (e) {
-                        console.error('Error al re-inicializar parroquias:', e);
-                        // Intentar inicializar directamente si destroy falla
-                        $selectParroquia.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Parroquias inicializadas directamente con buscador para:', selectParroquia.id);
-                    }
-                }
-            } else {
-                console.log('No se encontraron parroquias para el municipio', municipioId);
-                limpiarSelectCompleto(selectParroquia);
-            }
-        };
-
-        // Funciones para cargar ubicaciones
-        function cargarMunicipios(estadoId, municipioSelectId, localidadSelectId) {
-
-            const municipioSelect = document.getElementById(municipioSelectId);
-            const localidadSelect = localidadSelectId ? document.getElementById(localidadSelectId) : null;
-
-            // Limpiar los selects completamente usando la nueva función
-            limpiarSelectCompleto(municipioSelect);
-            if (localidadSelect) {
-                limpiarSelectCompleto(localidadSelect);
-            }
-
-            if (!estadoId || estadoId === '') {
-                limpiarSelectCompleto(municipioSelect);
-                return;
-            }
-
-            try {
-                console.log('Buscando estado con ID:', estadoId);
-                console.log('Tipo de estadoId:', typeof estadoId);
-                console.log('Estados disponibles:', ubicacionesData.map(e => ({
-                    id: e.id,
-                    nombre: e.nombre_estado
-                })));
-
-                // Buscar el estado por ID - usar 'id' (no 'id_estado')
-                const estado = ubicacionesData.find(e => e.id == estadoId);
-
-                if (!estado) {
-                    console.error('No se encontró el estado con ID:', estadoId);
-                    console.log('IDs disponibles en datos:', ubicacionesData.map(e => e.id));
-                    limpiarSelectCompleto(municipioSelect);
+                const selectId = selectElement.id || 'unknown';
+                const $select = $(selectElement);
+                
+                // Validación: no procesar valores vacíos o nulos
+                if (!valor || valor === '' || valor === 'null' || valor === null) {
+                    console.log(`[${selectId}] [ULTRA] Valor vacío o nulo detectado: "${valor}", omitiendo procesamiento`);
+                    resolve(null);
                     return;
                 }
-
-                console.log('Estado encontrado:', estado.nombre_estado);
-
-                // Usar la propiedad 'municipio' (singular)
-                const municipios = estado.municipio || [];
-                console.log('Número de municipios encontrados:', municipios.length);
-                console.log('Municipios:', municipios);
-
-                if (municipios.length > 0) {
-                    let options = '<option value="">Seleccione un municipio</option>';
-
-                    municipios.forEach((municipio) => {
-                        // Usar 'id' (no 'id_municipio')
-                        const id = municipio.id || '';
-                        const nombre = municipio.nombre_municipio || municipio.nombre || 'Sin nombre';
-                        console.log(`Agregando municipio: ${nombre} (ID: ${id})`);
-                        options += `<option value="${id}">${nombre}</option>`;
-                    });
-
-                    // Agregar las nuevas opciones
-                    municipioSelect.innerHTML = options;
-
-                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
-                    const $municipioSelect = $(municipioSelect);
+                
+                console.log(`[${selectId}] [ULTRA] Estableciendo valor: "${valor}"`);
+                
+                try {
+                    // PASO 1: Verificar si el selectpicker está inicializado y tiene elementos
+                    const selectpickerInstance = $select.data('selectpicker');
+                    if (!selectpickerInstance) {
+                        console.warn(`[${selectId}] [ULTRA] Selectpicker no inicializado, inicializando...`);
+                        // Inicializar selectpicker si no existe
+                        $select.selectpicker({
+                            liveSearch: true,
+                            size: 8,
+                            noneResultsText: 'No hay resultados para {0}',
+                            selectOnTab: false,
+                            showSubtext: false,
+                            showIcon: true,
+                            width: 'auto'
+                        });
+                    }
+                    
+                    // PASO 2: Verificar que hay opciones disponibles
+                    const $options = $select.find('option');
+                    if ($options.length === 0) {
+                        console.warn(`[${selectId}] [ULTRA] No hay opciones disponibles en el select`);
+                        reject(new Error('No hay opciones disponibles en el select'));
+                        return;
+                    }
+                    
+                    // PASO 3: Desactivar liveSearch temporalmente si está activo
+                    const liveSearchOriginal = $select.data('selectpicker')?.options?.liveSearch;
+                    if (liveSearchOriginal) {
+                        $select.selectpicker('setOptions', { liveSearch: false });
+                        console.log(`[${selectId}] [ULTRA] LiveSearch desactivado temporalmente`);
+                    }
+                    
+                    // PASO 4: Limpiar completamente el estado residual
                     try {
-                        $municipioSelect.selectpicker('destroy');
-                        $municipioSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Municipios cargados y re-inicializado con buscador para:', municipioSelect.id);
-                    } catch (e) {
-                        console.error('Error al re-inicializar municipios:', e);
-                        // Intentar inicializar directamente si destroy falla
-                        $municipioSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Municipios inicializados directamente con buscador para:', municipioSelect.id);
-                    }
-
-                    console.log('Municipios cargados correctamente en', municipioSelectId);
-                } else {
-                    console.warn('No se encontraron municipios para el estado:', estado.nombre_estado);
-                    limpiarSelectCompleto(municipioSelect);
-                }
-            } catch (error) {
-                console.error('Error al cargar municipios:', error);
-                limpiarSelectCompleto(municipioSelect);
-            }
-        }
-
-        function cargarLocalidades(municipioId, localidadSelectId) {
-
-            const localidadSelect = document.getElementById(localidadSelectId);
-            // Limpiar completamente usando la nueva función
-            limpiarSelectCompleto(localidadSelect);
-
-            if (!municipioId) {
-                limpiarSelectCompleto(localidadSelect);
-                return;
-            }
-
-            try {
-                let localidadesEncontradas = [];
-
-                console.log('Buscando municipio con ID:', municipioId);
-
-                // Buscar en todos los estados
-                for (const estado of ubicacionesData) {
-                    if (!estado.municipio || !Array.isArray(estado.municipio)) {
-                        continue;
-                    }
-
-                    // Buscar el municipio por ID - usar 'id' (no 'id_municipio')
-                    const municipio = estado.municipio.find(m => m.id == municipioId);
-
-                    if (municipio) {
-                        console.log('Municipio encontrado:', municipio.nombre_municipio);
-
-                        // Usar 'localidades' (no 'parroquia')
-                        if (municipio.localidades && Array.isArray(municipio.localidades)) {
-                            localidadesEncontradas = municipio.localidades;
-                            console.log('Localidades encontradas:', localidadesEncontradas.length);
-                            console.log('Localidades:', localidadesEncontradas);
+                        // Verificación adicional: asegurar que el selectpicker está completamente inicializado
+                        if ($select.data('selectpicker') && $select.data('selectpicker').$element) {
+                            $select.selectpicker('val', '');
+                            $select.selectpicker('deselectAll');
+                            selectElement.value = '';
+                            selectElement.selectedIndex = -1;
                         } else {
-                            console.log('El municipio no tiene localidades');
-                            console.log('Propiedades del municipio:', Object.keys(municipio));
+                            console.warn(`[${selectId}] [ULTRA] Selectpicker no completamente inicializado, usando limpieza básica`);
+                            selectElement.value = '';
+                            selectElement.selectedIndex = -1;
                         }
-                        break;
+                    } catch (cleanError) {
+                        console.error(`[${selectId}] [ULTRA] Error en limpieza inicial:`, cleanError);
+                        // Fallback ultra seguro
+                        try {
+                            selectElement.value = '';
+                            selectElement.selectedIndex = -1;
+                        } catch (fallbackError) {
+                            console.error(`[${selectId}] [ULTRA] Error en fallback de limpieza:`, fallbackError);
+                        }
                     }
+                    
+                    // PASO 5: Forzar limpieza de texto del selectpicker
+                    const $button = $select.data('selectpicker')?.$button;
+                    if ($button && $button.length > 0) {
+                        const $title = $button.find('.filter-option');
+                        if ($title.length > 0) {
+                            $title.text(''); // Limpiar texto residual del title
+                            console.log(`[${selectId}] [ULTRA] Texto residual del title limpiado`);
+                        }
+                    }
+                    
+                    // PASO 6: Esperar a que se complete la limpieza
+                    setTimeout(() => {
+                        try {
+                            // PASO 7: Establecer el nuevo valor directamente
+                            try {
+                                // Validación final: asegurar que el select está en estado válido
+                                if (selectElement && selectElement.options && selectElement.options.length > 0) {
+                                    // Verificar que el valor existe en las opciones
+                                    const valorExiste = Array.from(selectElement.options).some(option => option.value === valor);
+                                    if (valorExiste || valor === '') {
+                                        selectElement.value = valor;
+                                        console.log(`[${selectId}] [ULTRA] Valor establecido directamente: "${valor}"`);
+                                    } else {
+                                        console.warn(`[${selectId}] [ULTRA] Valor "${valor}" no existe en las opciones disponibles`);
+                                        selectElement.value = '';
+                                    }
+                                } else {
+                                    console.warn(`[${selectId}] [ULTRA] Select no válido para establecer valor`);
+                                    selectElement.value = valor; // Intento de último recurso
+                                }
+                            } catch (setValueError) {
+                                console.error(`[${selectId}] [ULTRA] Error al establecer valor:`, setValueError);
+                                // Fallback ultra seguro
+                                try {
+                                    selectElement.value = valor;
+                                } catch (fallbackError) {
+                                    console.error(`[${selectId}] [ULTRA] Error fatal al establecer valor:`, fallbackError);
+                                    reject(fallbackError);
+                                    return;
+                                }
+                            }
+                            
+                            // PASO 8: Refrescar el selectpicker con validación segura
+                            try {
+                                // Verificar que el selectpicker todavía existe antes de refrescar
+                                if ($select.data('selectpicker')) {
+                                    $select.selectpicker('refresh');
+                                } else {
+                                    console.warn(`[${selectId}] [ULTRA] Selectpicker destruido, re-inicializando...`);
+                                    $select.selectpicker({
+                                        liveSearch: true,
+                                        size: 8,
+                                        noneResultsText: 'No hay resultados para {0}',
+                                        selectOnTab: false,
+                                        showSubtext: false,
+                                        showIcon: true,
+                                        width: 'auto'
+                                    });
+                                    selectElement.value = valor;
+                                }
+                            } catch (refreshError) {
+                                console.error(`[${selectId}] [ULTRA] Error en refresh:`, refreshError);
+                                // Intentar recuperación: destruir y recrear
+                                try {
+                                    $select.selectpicker('destroy');
+                                    $select.selectpicker({
+                                        liveSearch: true,
+                                        size: 8,
+                                        noneResultsText: 'No hay resultados para {0}',
+                                        selectOnTab: false,
+                                        showSubtext: false,
+                                        showIcon: true,
+                                        width: 'auto'
+                                    });
+                                    selectElement.value = valor;
+                                } catch (recoveryError) {
+                                    console.error(`[${selectId}] [ULTRA] Error en recuperación:`, recoveryError);
+                                    reject(recoveryError);
+                                    return;
+                                }
+                            }
+                            
+                            // PASO 9: Forzar actualización visual del texto
+                            setTimeout(() => {
+                                const $button = $select.data('selectpicker')?.$button;
+                                if ($button && $button.length > 0) {
+                                    const $title = $button.find('.filter-option');
+                                    const selectedText = $select.find('option:selected').text();
+                                    if ($title.length > 0 && selectedText) {
+                                        $title.text(selectedText); // Forzar texto limpio
+                                        console.log(`[${selectId}] [ULTRA] Texto forzado: "${selectedText}"`);
+                                    }
+                                }
+                            }, 50);
+                            
+                            // PASO 10: Esperar y verificar resultado
+                            setTimeout(() => {
+                                try {
+                                    const valorActual = $select.selectpicker('val');
+                                    const textoActual = $select.find('option:selected').text();
+                                    
+                                    console.log(`[${selectId}] [ULTRA] Resultado - Valor: "${valorActual}", Texto: "${textoActual}"`);
+                                    
+                                    // PASO 11: Validar consistencia (ID numérico vs texto)
+                                    if (valor && !isNaN(valor)) {
+                                        // Para valores numéricos (como prefijos), el texto no debe contener el número repetido
+                                        const patronDuplicacion = new RegExp(`${valor}.*${valor}`);
+                                        if (patronDuplicacion.test(textoActual)) {
+                                            console.warn(`[${selectId}] [ULTRA] ❌ Duplicación detectada en texto numérico: "${textoActual}"`);
+                                            
+                                            // Corrección forzada: limpiar y establecer de nuevo
+                                            try {
+                                                if ($select.data('selectpicker') && $select.data('selectpicker').$element) {
+                                                    $select.selectpicker('val', '');
+                                                    selectElement.value = valor;
+                                                    $select.selectpicker('refresh');
+                                                } else {
+                                                    console.warn(`[${selectId}] [ULTRA] Selectpicker no completamente inicializado, usando método nativo`);
+                                                    selectElement.value = valor;
+                                                }
+                                            } catch (correctionError) {
+                                                console.error(`[${selectId}] [ULTRA] Error en corrección:`, correctionError);
+                                                selectElement.value = valor;
+                                            }
+                                            
+                                            // Forzar texto limpio después de corrección
+                                            setTimeout(() => {
+                                                const $button = $select.data('selectpicker')?.$button;
+                                                if ($button && $button.length > 0) {
+                                                    const $title = $button.find('.filter-option');
+                                                    const textoCorregido = $select.find('option:selected').text();
+                                                    if ($title.length > 0) {
+                                                        $title.text(textoCorregido);
+                                                    }
+                                                }
+                                                console.log(`[${selectId}] [ULTRA] Texto después de corrección: "${textoCorregido}"`);
+                                            }, 100);
+                                        } else {
+                                            console.log(`[${selectId}] [ULTRA] ✅ Sin duplicación en texto numérico`);
+                                        }
+                                    } else {
+                                        // Para valores de texto, verificar que no esté concatenado
+                                        if (textoActual && textoActual.includes('Seleccione')) {
+                                            console.warn(`[${selectId}] [ULTRA] ❌ Concatenación con placeholder detectada: "${textoActual}"`);
+                                            
+                                            // Corrección forzada
+                                            setTimeout(() => {
+                                                const $button = $select.data('selectpicker')?.$button;
+                                                if ($button && $button.length > 0) {
+                                                    const $title = $button.find('.filter-option');
+                                                    if ($title.length > 0) {
+                                                        $title.text(textoActual.replace(/Seleccione.*?(?=[A-Z])/, '').trim());
+                                                    }
+                                                }
+                                            }, 50);
+                                        } else {
+                                            console.log(`[${selectId}] [ULTRA] ✅ Sin concatenación con placeholder`);
+                                        }
+                                    }
+                                    
+                                    // PASO 12: Reactivar liveSearch si estaba activo
+                                    if (liveSearchOriginal) {
+                                        $select.selectpicker('setOptions', { liveSearch: true });
+                                        console.log(`[${selectId}] [ULTRA] LiveSearch reactivado`);
+                                    }
+                                    
+                                    // PASO 13: Disparar evento change
+                                    const event = new Event('change', { bubbles: true });
+                                    selectElement.dispatchEvent(event);
+                                    
+                                    console.log(`[${selectId}] [ULTRA] ✅ Valor establecido exitosamente`);
+                                    resolve(valorActual);
+                                    
+                                } catch (error) {
+                                    console.error(`[${selectId}] [ULTRA] Error en verificación:`, error);
+                                    reject(error);
+                                }
+                            }, 100);
+                            
+                        } catch (error) {
+                            console.error(`[${selectId}] [ULTRA] Error al establecer valor:`, error);
+                            reject(error);
+                        }
+                    }, delay);
+                    
+                } catch (error) {
+                    console.error(`[${selectId}] [ULTRA] Error inicial:`, error);
+                    reject(error);
                 }
+            });
+        }
 
-                if (localidadesEncontradas.length > 0) {
-                    let options = '<option value="">Seleccione una localidad</option>';
-
-                    localidadesEncontradas.forEach(localidad => {
-                        // Usar 'id' (no 'id_parroquia')
-                        const id = localidad.id || '';
-                        const nombre = localidad.nombre_localidad || localidad.nombre || 'Sin nombre';
-                        console.log(`Agregando localidad: ${nombre} (ID: ${id})`);
-                        options += `<option value="${id}">${nombre}</option>`;
-                    });
-
-                    // Agregar las nuevas opciones
-                    localidadSelect.innerHTML = options;
-
-                    // Forzar re-inicialización completa con liveSearch (sin verificar hasClass)
-                    const $localidadSelect = $(localidadSelect);
+        // Función para activar/desactivar modo fallback de selects nativos
+        function toggleModoFallback(activo = false) {
+            window.usarSelectsNativos = activo;
+            console.log(`[FALLBACK] Modo de selects nativos: ${activo ? 'ACTIVADO' : 'DESACTIVADO'}`);
+            
+            if (activo) {
+                // Destruir todos los selectpickers para usar selects nativos
+                $('.selectpicker').each(function() {
+                    const $this = $(this);
+                    if ($this.data('selectpicker')) {
+                        try {
+                            $this.selectpicker('destroy');
+                            console.log(`[FALLBACK] Selectpicker destruido para: ${this.id}`);
+                        } catch (e) {
+                            console.warn(`[FALLBACK] Error al destruir selectpicker:`, e);
+                        }
+                    }
+                });
+                console.log('[FALLBACK] Todos los selectpickers han sido destruidos');
+            } else {
+                // Recrear todos los selectpickers
+                $('.selectpicker').each(function() {
+                    const $this = $(this);
                     try {
-                        $localidadSelect.selectpicker('destroy');
-                        $localidadSelect.selectpicker({
+                        $this.selectpicker({
                             liveSearch: true,
                             size: 8,
                             noneResultsText: 'No hay resultados para {0}',
@@ -2740,124 +3136,174 @@
                             showIcon: true,
                             width: 'auto'
                         });
-                        console.log('Localidades cargadas y re-inicializado con buscador para:', localidadSelect.id);
+                        console.log(`[FALLBACK] Selectpicker recreado para: ${this.id}`);
                     } catch (e) {
-                        console.error('Error al re-inicializar localidades:', e);
-                        // Intentar inicializar directamente si destroy falla
-                        $localidadSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
-                        console.log('Localidades inicializadas directamente con buscador para:', localidadSelect.id);
+                        console.error(`[FALLBACK] Error al recrear selectpicker:`, e);
                     }
-
-                    console.log('Localidades cargadas correctamente en', localidadSelectId);
-                } else {
-                    console.warn('No se encontraron localidades para el municipio ID:', municipioId);
-                    limpiarSelectCompleto(localidadSelect);
-                }
-            } catch (error) {
-                console.error('Error al cargar localidades:', error);
-                limpiarSelectCompleto(localidadSelect);
+                });
+                console.log('[FALLBACK] Todos los selectpickers han sido recreados');
             }
         }
 
+        
         document.addEventListener('DOMContentLoaded', function() {
+            // Establecer valores guardados si estamos editando un representante
+            @if(isset($representante))
+                // Valores para la madre (todos en tabla persona)
+                document.getElementById('idPais').setAttribute('data-valor-guardado', '{{ $representante->persona->pais_id ?? '' }}');
+                document.getElementById('idEstado').setAttribute('data-valor-guardado', '{{ $representante->persona->estado_id ?? '' }}');
+                document.getElementById('idMunicipio').setAttribute('data-valor-guardado', '{{ $representante->persona->municipio_id ?? '' }}');
+                document.getElementById('idparroquia').setAttribute('data-valor-guardado', '{{ $representante->persona->localidad_id ?? '' }}');
+                
+                // Valores para el padre (todos en tabla persona)
+                document.getElementById('idPais-padre').setAttribute('data-valor-guardado', '{{ $representante->persona->pais_id ?? '' }}');
+                document.getElementById('idEstado-padre').setAttribute('data-valor-guardado', '{{ $representante->persona->estado_id ?? '' }}');
+                document.getElementById('idMunicipio-padre').setAttribute('data-valor-guardado', '{{ $representante->persona->municipio_id ?? '' }}');
+                document.getElementById('idparroquia-padre').setAttribute('data-valor-guardado', '{{ $representante->persona->localidad_id ?? '' }}');
+                
+                // Valores para el representante (país, estado, municipio en tabla representantes; parroquia en persona)
+                document.getElementById('idPais-representante').setAttribute('data-valor-guardado', '{{ $representante->pais_id ?? '' }}');
+                document.getElementById('idEstado-representante').setAttribute('data-valor-guardado', '{{ $representante->estado_id ?? '' }}');
+                document.getElementById('idMunicipio-representante').setAttribute('data-valor-guardado', '{{ $representante->municipio_id ?? '' }}');
+                document.getElementById('idparroquia-representante').setAttribute('data-valor-guardado', '{{ $representante->parroquia_id ?? '' }}');
+                
+                // Inicializar la carga en cascada para la madre
+                setTimeout(() => {
+                    const paisMadre = document.getElementById('idPais').getAttribute('data-valor-guardado');
+                    if (paisMadre) {
+                        // Limpiar valores anteriores antes de cargar
+                        limpiarSelectCompleto(document.getElementById('idEstado'));
+                        limpiarSelectCompleto(document.getElementById('idMunicipio'));
+                        limpiarSelectCompleto(document.getElementById('idparroquia'));
+                        
+                        document.getElementById('idPais').value = paisMadre;
+                        cargarSelectAnidado('estado', paisMadre, 'idEstado', 'idMunicipio');
+                        
+                        setTimeout(() => {
+                            const estadoMadre = document.getElementById('idEstado').getAttribute('data-valor-guardado');
+                            if (estadoMadre) {
+                                cargarSelectAnidado('municipio', estadoMadre, 'idMunicipio', 'idparroquia');
+                                
+                                setTimeout(() => {
+                                    const municipioMadre = document.getElementById('idMunicipio').getAttribute('data-valor-guardado');
+                                    if (municipioMadre) {
+                                        cargarSelectAnidado('localidad', municipioMadre, 'idparroquia');
+                                    }
+                                }, 200);
+                            }
+                        }, 200);
+                    }
+                }, 100);
+                
+                // Inicializar la carga en cascada para el padre
+                setTimeout(() => {
+                    const paisPadre = document.getElementById('idPais-padre').getAttribute('data-valor-guardado');
+                    if (paisPadre) {
+                        // Limpiar valores anteriores antes de cargar
+                        limpiarSelectCompleto(document.getElementById('idEstado-padre'));
+                        limpiarSelectCompleto(document.getElementById('idMunicipio-padre'));
+                        limpiarSelectCompleto(document.getElementById('idparroquia-padre'));
+                        
+                        document.getElementById('idPais-padre').value = paisPadre;
+                        cargarSelectAnidado('estado', paisPadre, 'idEstado-padre', 'idMunicipio-padre');
+                        
+                        setTimeout(() => {
+                            const estadoPadre = document.getElementById('idEstado-padre').getAttribute('data-valor-guardado');
+                            if (estadoPadre) {
+                                cargarSelectAnidado('municipio', estadoPadre, 'idMunicipio-padre', 'idparroquia-padre');
+                                
+                                setTimeout(() => {
+                                    const municipioPadre = document.getElementById('idMunicipio-padre').getAttribute('data-valor-guardado');
+                                    if (municipioPadre) {
+                                        cargarSelectAnidado('localidad', municipioPadre, 'idparroquia-padre');
+                                    }
+                                }, 200);
+                            }
+                        }, 200);
+                    }
+                }, 100);
+                
+                // Inicializar la carga en cascada para el representante
+                setTimeout(() => {
+                    const paisRepresentante = document.getElementById('idPais-representante').getAttribute('data-valor-guardado');
+                    if (paisRepresentante) {
+                        // Limpiar valores anteriores antes de cargar
+                        limpiarSelectCompleto(document.getElementById('idEstado-representante'));
+                        limpiarSelectCompleto(document.getElementById('idMunicipio-representante'));
+                        limpiarSelectCompleto(document.getElementById('idparroquia-representante'));
+                        
+                        document.getElementById('idPais-representante').value = paisRepresentante;
+                        cargarSelectAnidado('estado', paisRepresentante, 'idEstado-representante', 'idMunicipio-representante');
+                        
+                        setTimeout(() => {
+                            const estadoRepresentante = document.getElementById('idEstado-representante').getAttribute('data-valor-guardado');
+                            if (estadoRepresentante) {
+                                cargarSelectAnidado('municipio', estadoRepresentante, 'idMunicipio-representante', 'idparroquia-representante');
+                                
+                                setTimeout(() => {
+                                    const municipioRepresentante = document.getElementById('idMunicipio-representante').getAttribute('data-valor-guardado');
+                                    if (municipioRepresentante) {
+                                        cargarSelectAnidado('localidad', municipioRepresentante, 'idparroquia-representante');
+                                    }
+                                }, 200);
+                            }
+                        }, 200);
+                    }
+                }, 100);
+            @endif
+            
             // Eventos para MADRE
+            document.getElementById('idPais').addEventListener('change', function() {
+                cargarSelectAnidado('estado', this.value, 'idEstado', 'idMunicipio');
+                // También limpiar la parroquia cuando cambia el país
+                limpiarSelectCompleto(document.getElementById('idparroquia'));
+                inicializarSelectPickerConBuscador($(this));
+            });
+
             document.getElementById('idEstado').addEventListener('change', function() {
-                const estadoId = this.value;
-
-                if (!estadoId) {
-                    console.log('❌ Estado ID está vacío');
-                    document.getElementById('idMunicipio').innerHTML =
-                        '<option value="">Seleccione un estado primero</option>';
-                    document.getElementById('idparroquia').innerHTML =
-                        '<option value="">Seleccione un municipio primero</option>';
-                    return;
-                }
-
-                console.log('Estado ID válido:', estadoId);
-                cargarMunicipios(estadoId, 'idMunicipio', 'idparroquia');
+                cargarSelectAnidado('municipio', this.value, 'idMunicipio', 'idparroquia');
             });
 
             document.getElementById('idMunicipio').addEventListener('change', function() {
-                const municipioId = this.value;
-
-                cargarLocalidades(municipioId, 'idparroquia');
+                cargarSelectAnidado('localidad', this.value, 'idparroquia');
             });
 
             // Eventos para PADRE
-            document.getElementById('idEstado-padre').addEventListener('change', function() {
-                const estadoId = this.value;
+            document.getElementById('idPais-padre').addEventListener('change', function() {
+                cargarSelectAnidado('estado', this.value, 'idEstado-padre', 'idMunicipio-padre');
+                // También limpiar la parroquia cuando cambia el país
+                limpiarSelectCompleto(document.getElementById('idparroquia-padre'));
+                inicializarSelectPickerConBuscador($(this));
+            });
 
-                cargarMunicipios(estadoId, 'idMunicipio-padre', 'idparroquia-padre');
+            document.getElementById('idEstado-padre').addEventListener('change', function() {
+                cargarSelectAnidado('municipio', this.value, 'idMunicipio-padre', 'idparroquia-padre');
             });
 
             document.getElementById('idMunicipio-padre').addEventListener('change', function() {
-                const municipioId = this.value;
-
-                cargarLocalidades(municipioId, 'idparroquia-padre');
+                cargarSelectAnidado('localidad', this.value, 'idparroquia-padre');
             });
 
             // Eventos para REPRESENTANTE
-            document.getElementById('idEstado-representante').addEventListener('change', function() {
-                // Obtener el valor correctamente del selectpicker
-                const estadoId = $(this).val() || this.value;
+            document.getElementById('idPais-representante').addEventListener('change', function() {
+                cargarSelectAnidado('estado', this.value, 'idEstado-representante', 'idMunicipio-representante');
+                // También limpiar la parroquia cuando cambia el país
+                limpiarSelectCompleto(document.getElementById('idparroquia-representante'));
+                inicializarSelectPickerConBuscador($(this));
+            });
 
-                window.cargarMunicipiosRepresentante(estadoId);
+            document.getElementById('idEstado-representante').addEventListener('change', function() {
+                cargarSelectAnidado('municipio', this.value, 'idMunicipio-representante', 'idparroquia-representante');
             });
 
             document.getElementById('idMunicipio-representante').addEventListener('change', function() {
-                // Obtener el valor correctamente del selectpicker
-                const municipioId = $(this).val() || this.value;
-
-                window.cargarParroquiasRepresentante(municipioId);
+                cargarSelectAnidado('localidad', this.value, 'idparroquia-representante');
             });
 
             // Funciones globales para compatibilidad
-            window.cargarMunicipiosInputFormulario = cargarMunicipios;
-            window.cargarParroquiasInputFormulario = cargarLocalidades;
+            window.cargarMunicipiosInputFormulario = (estadoId, municipioId, localidadId) => cargarSelectAnidado('municipio', estadoId, municipioId, localidadId);
+            window.cargarParroquiasInputFormulario = (municipioId, localidadId) => cargarSelectAnidado('localidad', municipioId, localidadId);
 
-            // Validación de formulario (solo marca visualmente, no bloquea el envío)
-            (function() {
-                'use strict';
-                window.addEventListener('load', function() {
-                    const forms = document.getElementsByClassName('needs-validation');
-                    Array.prototype.forEach.call(forms, function(form) {
-                        form.addEventListener('submit', function() {
-                            // Antes de validar, si madre/padre no están presentes, quitar required de sus campos
-                            const estadoMadre = document.querySelector(
-                                'input[name="estado_madre"]:checked');
-                            if (estadoMadre && estadoMadre.value !== 'Presente') {
-                                const cardMadreBody = document.getElementById(
-                                        'Presente_madre').closest('.card')
-                                    .querySelector('.card-body');
-                                const inputs = cardMadreBody.querySelectorAll(
-                                    'input, select, textarea');
-                                inputs.forEach(input => input.required = false);
-                            }
-
-                            const estadoPadre = document.querySelector(
-                                'input[name="estado_padre"]:checked');
-                            if (estadoPadre && estadoPadre.value !== 'Presente') {
-                                const cardPadreBody = document.getElementById(
-                                        'Presente_padre').closest('.card')
-                                    .querySelector('.card-body');
-                                const inputs = cardPadreBody.querySelectorAll(
-                                    'input, select, textarea');
-                                inputs.forEach(input => input.required = false);
-                            }
-
-                            form.classList.add('was-validated');
-                        }, false);
-                    });
-                }, false);
-            })();
 
             // Bandera para evitar múltiples ejecuciones
             let actualizandoParentesco = false;
@@ -3357,7 +3803,6 @@
                             mostrarAlertaAusencia(this.name.replace('estado_', '').toLowerCase());
                         } else {
                             // Si no es ausente, permitir el cambio
-                            actualizarEstadoAnterior(this.name, valorNuevo);
                         }
                         valorPrevio = valorNuevo;
                         aplicarEstado();
@@ -3462,7 +3907,47 @@
             // Función segura para establecer un valor en un elemento
             const setValue = (id, value) => {
                 const element = getElement(id);
-                if (element) element.value = value || '';
+                if (element) {
+                    console.log(`=== SETVALUE: Estableciendo valor en ${id}:`, value);
+                    
+                    // Para selects con selectpicker, usar un enfoque más simple sin destruir
+                    if (typeof $ !== 'undefined' && $(element).hasClass('selectpicker')) {
+                        try {
+                            // Verificar si el elemento ya tiene el valor para evitar recargas innecesarias
+                            if (element.value === value.toString()) {
+                                console.log(`=== SETVALUE: El valor ${value} ya está establecido en ${id}, omitiendo`);
+                                return;
+                            }
+                            
+                            console.log(`=== SETVALUE: Estableciendo valor en selectpicker ${id}`);
+                            // Establecer el valor directamente sin destruir
+                            $(element).selectpicker('val', value);
+                            $(element).selectpicker('refresh');
+                            console.log(`=== SETVALUE: Valor establecido en selectpicker ${id}:`, value);
+                        } catch (error) {
+                            console.error(`=== SETVALUE: Error al manejar selectpicker ${id}:`, error);
+                            // Fallback: establecer el valor directamente
+                            element.value = value || '';
+                        }
+                    } else {
+                        // Para elementos normales, también verificar si ya tienen el valor
+                        if (element.value !== value.toString()) {
+                            element.value = value || '';
+                            console.log(`=== SETVALUE: Valor establecido directamente en ${id}:`, value);
+                        } else {
+                            console.log(`=== SETVALUE: El valor ${value} ya está establecido en ${id}, omitiendo`);
+                        }
+                    }
+                    
+                    // Disparar evento change para notificar el cambio
+                    setTimeout(() => {
+                        const event = new Event('change');
+                        element.dispatchEvent(event);
+                        console.log(`=== SETVALUE: Evento change disparado para ${id}`);
+                    }, 50);
+                } else {
+                    console.log(`=== SETVALUE: Elemento ${id} no encontrado`);
+                }
             };
 
             // Función para establecer valores en selects dependientes
@@ -3492,42 +3977,137 @@
 
                 // Función para copiar ubicación
                 const copiarUbicacion = (prefijoOrigen, prefijoDestino) => {
+                    // Evitar recargas múltiples si ya se está procesando
+                    if (window.copiandoUbicacion) {
+                        console.log('Ya se está copiando ubicación, omitiendo...');
+                        return;
+                    }
+                    window.copiandoUbicacion = true;
+                    
                     try {
-                        const estadoEl = getElement(`${prefijoOrigen}Estado`);
-                        const municipioEl = getElement(`${prefijoOrigen}Municipio`);
+                        console.log('=== INICIANDO COPIA DE UBICACIÓN ===');
+                        console.log('Prefijo origen:', prefijoOrigen);
+                        console.log('Prefijo destino:', prefijoDestino);
+                        
+                        const estadoEl = getElement(`id${prefijoOrigen === '' ? 'Estado' : 'Estado-padre'}`);
+                        const municipioEl = getElement(`id${prefijoOrigen === '' ? 'Municipio' : 'Municipio-padre'}`);
                         const parroquiaEl = getElement(
                             `id${prefijoOrigen === '' ? 'parroquia' : 'parroquia-padre'}`);
 
+                        console.log('Elementos encontrados:', {
+                            estado: estadoEl ? 'Sí' : 'No',
+                            municipio: municipioEl ? 'Sí' : 'No', 
+                            parroquia: parroquiaEl ? 'Sí' : 'No'
+                        });
+
                         if (estadoEl && estadoEl.value) {
                             const estado = estadoEl.value;
-                            setValue('idEstado-representante', estado);
-
-                            // Cargar municipios y manejar la carga asíncrona
-                            if (typeof cargarMunicipios === 'function') {
-                                cargarMunicipios(estado, 'idMunicipio-representante',
-                                    'idparroquia-representante');
-
-                                if (municipioEl && municipioEl.value) {
-                                    const municipio = municipioEl.value;
-                                    setTimeout(() => {
-                                        setValue('idMunicipio-representante', municipio);
-
-                                        if (typeof cargarLocalidades === 'function') {
-                                            cargarLocalidades(municipio, 'idparroquia-representante');
-
-                                            if (parroquiaEl && parroquiaEl.value) {
-                                                setTimeout(() => {
-                                                    setValue('idparroquia-representante',
-                                                        parroquiaEl.value);
-                                                }, 100);
-                                            }
-                                        }
-                                    }, 100);
+                            console.log('Copiando estado:', estado);
+                            
+                            // Para el estado, NO disparar evento change para evitar recargas
+                            const estadoSelect = getElement('idEstado-representante');
+                            if (estadoSelect) {
+                                // Verificar si el elemento ya tiene el valor para evitar recargas innecesarias
+                                if (estadoSelect.value === estado.toString()) {
+                                    console.log(`=== SETVALUE: El valor ${estado} ya está establecido en idEstado-representante, omitiendo`);
+                                    return; // Salir completamente de la función callback
                                 }
+                                
+                                console.log(`=== SETVALUE: Destruyendo selectpicker para idEstado-representante`);
+                                // Desactivar temporalmente el selectpicker para evitar errores
+                                $(estadoSelect).selectpicker('destroy');
+                                
+                                // Establecer el valor directamente en el select
+                                estadoSelect.value = estado || '';
+                                console.log(`=== SETVALUE: Valor establecido directamente en idEstado-representante:`, estado);
+                                
+                                // Reactivar el selectpicker después de un pequeño retraso
+                                setTimeout(() => {
+                                    try {
+                                        $(estadoSelect).selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            title: 'Seleccione una opción',
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                        $(estadoSelect).selectpicker('val', estado);
+                                        $(estadoSelect).selectpicker('refresh');
+                                        console.log(`=== SETVALUE: Selectpicker reactivado para idEstado-representante con valor:`, estado);
+                                    } catch (e) {
+                                        console.log(`=== SETVALUE: No se pudo reactivar selectpicker para idEstado-representante, manteniendo valor directo`);
+                                    }
+                                }, 300);
                             }
+
+                            // Cargar municipios usando la función unificada
+                            if (estado) {
+                                console.log('Cargando municipios para el representante...');
+                                cargarSelectAnidado('municipio', estado, 'idMunicipio-representante', 'idparroquia-representante');
+
+                                // Esperar a que carguen los municipios antes de copiar el valor
+                                setTimeout(() => {
+                                    if (municipioEl && municipioEl.value) {
+                                        const municipio = municipioEl.value;
+                                        console.log('Copiando municipio después de cargar:', municipio);
+                                        
+                                        // Verificar que el municipio exista en las opciones antes de establecerlo
+                                        const municipioSelect = document.getElementById('idMunicipio-representante');
+                                        if (municipioSelect) {
+                                            console.log('Select de municipio encontrado, opciones disponibles:', municipioSelect.options.length);
+                                            
+                                            // Esperar más tiempo para que el selectpicker termine de reactivarse
+                                            setTimeout(() => {
+                                                const opciones = municipioSelect.querySelectorAll('option');
+                                                console.log('Total de opciones encontradas:', opciones.length);
+                                                const municipioExiste = Array.from(opciones).some(opt => opt.value === municipio);
+                                                console.log('¿Municipio existe?', municipioExiste, 'Valor buscado:', municipio);
+                                                
+                                                if (municipioExiste) {
+                                                    console.log('Estableciendo municipio en representante...');
+                                                    setValue('idMunicipio-representante', municipio);
+                                                    console.log('Municipio establecido correctamente:', municipio);
+                                                    
+                                                    if (municipio) {
+                                                        console.log('Cargando localidades para el representante...');
+                                                        cargarSelectAnidado('localidad', municipio, 'idparroquia-representante');
+
+                                                        // Esperar a que carguen las localidades
+                                                        setTimeout(() => {
+                                                            if (parroquiaEl && parroquiaEl.value) {
+                                                                console.log('Copiando parroquia:', parroquiaEl.value);
+                                                                setValue('idparroquia-representante',
+                                                                    parroquiaEl.value);
+                                                                console.log('Ubicación copiada completamente');
+                                                            } else {
+                                                                console.log('No se encontró parroquia o no tiene valor');
+                                                            }
+                                                        }, 500);
+                                                    }
+                                                } else {
+                                                    console.log('El municipio no existe en las opciones:', municipio);
+                                                    console.log('Opciones disponibles:', Array.from(opciones).map(opt => ({value: opt.value, text: opt.text})));
+                                                }
+                                            }, 600); // Aumentar tiempo de espera para selectpicker
+                                        } else {
+                                            console.log('No se encontró el select de municipio del representante');
+                                        }
+                                    } else {
+                                        console.log('No se encontró municipio o no tiene valor');
+                                    }
+                                }, 1200); // Aumentar tiempo de espera principal
+                            }
+                        } else {
+                            console.log('No se encontró elemento de estado o no tiene valor');
                         }
                     } catch (error) {
                         console.error('Error al copiar ubicación:', error);
+                    } finally {
+                        // Resetear la bandera después de completar
+                        setTimeout(() => {
+                            window.copiandoUbicacion = false;
+                        }, 2000);
                     }
                 };
 
@@ -3574,18 +4154,32 @@
                 // Función para copiar convivencia
                 const copiarConvivencia = (prefijoOrigen) => {
                     try {
-                        const convive = document.querySelector(`input[name="convive${prefijoOrigen}"]:checked`);
+                        // Construir el nombre del campo correctamente
+                        const nombreCampo = prefijoOrigen ? `convive${prefijoOrigen}` : 'convive';
+                        const convive = document.querySelector(`input[name="${nombreCampo}"]:checked`);
                         const conviveSiRepresentante = document.querySelector(
                             'input[name="convive-representante"][value="si"]');
                         const conviveNoRepresentante = document.querySelector(
                             'input[name="convive-representante"][value="no"]');
 
+                        console.log('=== DEPURACIÓN COPIAR CONVIVENCIA ===');
+                        console.log('Prefijo origen:', prefijoOrigen);
+                        console.log('Nombre campo:', nombreCampo);
+                        console.log('Elemento convivencia encontrado:', convive);
+                        console.log('Valor de convivencia:', convive ? convive.value : 'null');
+                        console.log('Radio Sí representante:', conviveSiRepresentante);
+                        console.log('Radio No representante:', conviveNoRepresentante);
+
                         if (convive && conviveSiRepresentante && conviveNoRepresentante) {
-                            if (convive.value === 'si' || convive.value === '1') {
+                            if (convive.value === 'si') {
                                 conviveSiRepresentante.checked = true;
-                            } else if (convive.value === 'no' || convive.value === '0') {
+                                console.log('Marcando Sí en representante');
+                            } else if (convive.value === 'no') {
                                 conviveNoRepresentante.checked = true;
+                                console.log('Marcando No en representante');
                             }
+                        } else {
+                            console.log('No se encontraron todos los elementos necesarios');
                         }
                     } catch (error) {
                         console.error('Error al copiar convivencia:', error);
@@ -3710,7 +4304,7 @@
                         copiarTelefonoYPrefijo('');
                         copiarUbicacion('', '');
                         copiarOcupacion('madre');
-                        copiarConvivencia('');
+                        // copiarConvivencia(''); // ELIMINADO - Usando sistema ultra optimizado
 
                         return true;
                     }
@@ -3730,7 +4324,7 @@
                         copiarTelefonoYPrefijo('padre-');
                         copiarUbicacion('padre-', 'padre-');
                         copiarOcupacion('padre');
-                        copiarConvivencia('-padre');
+                        // copiarConvivencia('-padre'); // ELIMINADO - Usando sistema ultra optimizado
 
                         return true;
                     }
@@ -3943,19 +4537,32 @@
                     'sexo-representante',
                     'fecha-nacimiento-representante',
                     'lugar-nacimiento-representante',
+                    'idPais-representante',
                     'idEstado-representante',
                     'idMunicipio-representante',
                     'idparroquia-representante',
                     'direccion-representante',
                     'telefono-representante',
-                    'email-representante',
+                    'prefijo_dos-representante',
+                    'telefono_dos-representante',
                     'ocupacion-representante',
                     'otra-ocupacion-representante',
                     'parentesco'
                 ];
 
-                // Aplicar a todos los campos
+                // Campos que nunca deben ser deshabilitados
+                const camposExcluidos = ['correo-representante'];
+
+                // NOTA: Los radio buttons de convivencia fueron removidos completamente del toggle
+                // para que no sean procesados por esta función
+
+                // Aplicar a todos los campos excepto los excluidos
                 campos.forEach(id => {
+                    if (camposExcluidos.includes(id)) {
+                        console.log(`[TOGGLE] Campo ${id} excluido de deshabilitación`);
+                        return; // Saltar este campo
+                    }
+
                     const campo = document.getElementById(id);
                     if (campo) {
                         campo.disabled = deshabilitar;
@@ -3973,30 +4580,50 @@
                         // Manejar select2 si está presente
                         if (typeof $.fn.select2 === 'function' && $(campo).hasClass(
                                 'select2-hidden-accessible')) {
-                            $(campo).prop('disabled', deshabilitar);
-                            $(campo).trigger('change.select2');
+                            try {
+                                if (deshabilitar) {
+                                    $(campo).select2('disable');
+                                } else {
+                                    $(campo).select2('enable');
+                                }
+                            } catch (error) {
+                                console.warn('Error al manejar select2:', error);
+                            }
                         }
 
                         // Manejar selectpicker si está presente
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
-                            $(campo).prop('disabled', deshabilitar);
-                            // Forzar reconstrucción completa del selectpicker
-                            $(campo).selectpicker('destroy');
-                            $(campo).selectpicker();
+                            try {
+                                if (deshabilitar) {
+                                    $(campo).selectpicker('refresh');
+                                }
+                            } catch (error) {
+                                console.warn('Error al manejar selectpicker:', error);
+                            }
                         }
+
+                        console.log(`[TOGGLE] Campo ${id}: ${deshabilitar ? 'deshabilitado' : 'habilitado'}`);
+                    } else {
+                        console.warn(`[TOGGLE] Campo ${id} no encontrado`);
                     }
                 });
 
-                // Manejar radio buttons de convivencia
-                const radiosConvivencia = document.querySelectorAll('input[name="convive-representante"]');
-                radiosConvivencia.forEach(radio => {
-                    radio.disabled = deshabilitar;
+                // Asegurar que los campos excluidos siempre permanezcan habilitados
+                camposExcluidos.forEach(id => {
+                    const campo = document.getElementById(id);
+                    if (campo) {
+                        campo.disabled = false;
+                        campo.readOnly = false;
+                        campo.classList.remove('bg-light', 'text-muted');
+                        console.log(`[TOGGLE] Campo excluido ${id}: forzado a permanecer habilitado`);
+                    }
                 });
             }
 
             // Función para establecer el parentesco según el tipo de representante
             function establecerParentesco(esMadre = false) {
                 const parentescoSelect = document.getElementById('parentesco');
+                const parentescoHidden = document.getElementById('parentesco_hidden');
                 if (parentescoSelect) {
                     const valorParentesco = esMadre ? 'Mamá' : 'Papá';
 
@@ -4008,6 +4635,11 @@
                     }
 
                     parentescoSelect.value = valorParentesco;
+                    
+                    // Actualizar campo oculto para que se envíe cuando el select está deshabilitado
+                    if (parentescoHidden) {
+                        parentescoHidden.value = valorParentesco;
+                    }
 
                     // Deshabilitar el select
                     parentescoSelect.disabled = true;
@@ -4028,10 +4660,16 @@
             // Función para restablecer el campo de parentesco
             function resetearParentesco() {
                 const parentescoSelect = document.getElementById('parentesco');
+                const parentescoHidden = document.getElementById('parentesco_hidden');
                 if (parentescoSelect) {
                     parentescoSelect.disabled = false;
                     parentescoSelect.value = '';
                     parentescoSelect.classList.remove('bg-light', 'text-muted');
+                    
+                    // Limpiar campo oculto
+                    if (parentescoHidden) {
+                        parentescoHidden.value = '';
+                    }
 
                     // Disparar evento change para actualizar validaciones
                     const event = new Event('change');
@@ -4045,10 +4683,34 @@
                 }
             }
 
-            // Función para copiar datos de un progenitor al representante
+            // Event listener para sincronizar campo oculto cuando el usuario cambia manualmente el parentesco
+            document.addEventListener('DOMContentLoaded', function() {
+                const parentescoSelect = document.getElementById('parentesco');
+                const parentescoHidden = document.getElementById('parentesco_hidden');
+                
+                if (parentescoSelect && parentescoHidden) {
+                    parentescoSelect.addEventListener('change', function() {
+                        // Solo actualizar el campo oculto si el select no está deshabilitado
+                        if (!this.disabled) {
+                            parentescoHidden.value = this.value;
+                        }
+                    });
+                }
+            });
+
+            // Función para copiar datos de un progenitor al representante (versión ultra optimizada)
             function copiarDatosProgenitorARepresentante(esMadre = false) {
+                // Evitar múltiples ejecuciones simultáneas
+                if (window.copiandoDatosProgenitor) {
+                    console.log('Ya se está copiando datos del progenitor, omitiendo...');
+                    return Promise.resolve();
+                }
+                window.copiandoDatosProgenitor = true;
+                
                 const prefijo = esMadre ? '' : '-padre';
                 const mensajeExito = esMadre ? 'de la madre' : 'del padre';
+
+                console.log(`=== INICIANDO COPIA ULTRA OPTIMIZADA ${mensajeExito.toUpperCase()} ===`);
 
                 // Establecer el parentesco según corresponda
                 establecerParentesco(esMadre);
@@ -4056,313 +4718,313 @@
                 // Habilitar temporalmente los campos para poder copiar los valores
                 toggleCamposRepresentante(false);
 
+                // Función para preparar todos los selects (ultra limpieza)
+                const prepararSelectsUltra = () => {
+                    console.log('PREPARACIÓN ULTRA: Limpiando estado residual de todos los selects...');
+                    const selectsPreparar = [
+                        'prefijo-representante',
+                        'prefijo_dos-representante',
+                        'idPais-representante',
+                        'idEstado-representante',
+                        'idMunicipio-representante',
+                        'idparroquia-representante',
+                        'ocupacion-representante'
+                    ];
 
-                // Mapeo de campos del progenitor al representante
-                const campos = [{
-                        origen: `prefijo${prefijo}`,
-                        destino: 'prefijo-representante'
-                    },
-                    {
-                        origen: `tipo-ci${prefijo}`,
-                        destino: 'tipo-ci-representante'
-                    },
-                    {
-                        origen: `numero_documento${prefijo}`,
-                        destino: 'numero_documento-representante'
-                    },
-                    {
-                        origen: `primer-nombre${prefijo}`,
-                        destino: 'primer-nombre-representante'
-                    },
-                    {
-                        origen: `segundo-nombre${prefijo}`,
-                        destino: 'segundo-nombre-representante'
-                    },
-                    {
-                        origen: `tercer-nombre${prefijo}`,
-                        destino: 'tercer-nombre-representante'
-                    },
-                    {
-                        origen: `primer-apellido${prefijo}`,
-                        destino: 'primer-apellido-representante'
-                    },
-                    {
-                        origen: `segundo-apellido${prefijo}`,
-                        destino: 'segundo-apellido-representante'
-                    },
-                    {
-                        origen: `sexo${prefijo}`,
-                        destino: 'sexo-representante'
-                    },
-                    // Usar 'fechaNacimiento' para la madre y 'fecha-nacimiento-padre' para el padre
-                    {
-                        origen: esMadre ? 'fechaNacimiento' : 'fecha-nacimiento-padre',
-                        destino: 'fecha-nacimiento-representante'
-                    },
-                    {
-                        origen: `lugar-nacimiento${prefijo}`,
-                        destino: 'lugar-nacimiento-representante'
-                    },
-                    {
-                        origen: `idEstado${prefijo}`,
-                        destino: 'idEstado-representante',
-                        esSelect: true,
-                        callback: function() {
-                            // Este callback se ejecutará después de copiar todos los valores
+                    selectsPreparar.forEach(selectId => {
+                        const select = document.getElementById(selectId);
+                        if (select) {
+                            const $select = $(select);
+                            try {
+                                // Verificar si el selectpicker está inicializado antes de operar
+                                if ($select.data('selectpicker')) {
+                                    // Limpieza ultra completa solo si está inicializado
+                                    $select.selectpicker('val', '');
+                                    $select.selectpicker('deselectAll');
+                                    select.value = '';
+                                    select.selectedIndex = -1;
+                                    console.log(`[PREP ULTRA] ${selectId}: Estado residual eliminado completamente`);
+                                } else {
+                                    // Si no está inicializado, limpiar solo el select nativo
+                                    select.value = '';
+                                    select.selectedIndex = -1;
+                                    console.log(`[PREP ULTRA] ${selectId}: Limpieza básica (selectpicker no inicializado)`);
+                                }
+                            } catch (error) {
+                                console.error(`[PREP ULTRA] ${selectId}: Error durante limpieza:`, error);
+                                // Intentar limpieza básica como fallback
+                                try {
+                                    select.value = '';
+                                    select.selectedIndex = -1;
+                                } catch (fallbackError) {
+                                    console.error(`[PREP ULTRA] ${selectId}: Error en fallback:`, fallbackError);
+                                }
+                            }
+                        } else {
+                            console.warn(`[PREP ULTRA] ${selectId}: Elemento no encontrado`);
                         }
-                    },
-                    {
-                        origen: `idMunicipio${prefijo}`,
-                        destino: 'idMunicipio-representante',
-                        esSelect: true,
-                        callback: function() {
-                            // Este callback se ejecutará después de copiar todos los valores
+                    });
+                };
+
+                // Función auxiliar para copiar campos simples
+                const copiarCampoSimple = (origenId, destinoId) => {
+                    const origen = document.getElementById(origenId);
+                    const destino = document.getElementById(destinoId);
+                    if (origen && destino) {
+                        destino.value = origen.value;
+                        destino.dispatchEvent(new Event('input'));
+                        destino.dispatchEvent(new Event('change'));
+                        console.log(`[SIMPLE] ${origenId} -> ${destinoId} = "${origen.value}"`);
+                        return true;
+                    }
+                    console.warn(`[SIMPLE] No se pudo copiar: ${origenId} -> ${destinoId}`);
+                    return false;
+                };
+
+                // Función principal asíncrona para la copia ultra optimizada
+                const ejecutarCopiaUltraOptimizada = async () => {
+                    try {
+                        // PASO 0: Preparación ultra completa
+                        prepararSelectsUltra();
+                        await new Promise(resolve => setTimeout(resolve, 300));
+
+                        // 1. Copiar campos personales primero
+                        console.log('PASO 1: Copiando campos personales...');
+                        const camposPersonales = [
+                            [`prefijo${prefijo}`, 'prefijo-representante'],
+                            [`tipo-ci${prefijo}`, 'tipo-ci-representante'],
+                            [`numero_documento${prefijo}`, 'numero_documento-representante'],
+                            [`primer-nombre${prefijo}`, 'primer-nombre-representante'],
+                            [`segundo-nombre${prefijo}`, 'segundo-nombre-representante'],
+                            [`tercer-nombre${prefijo}`, 'tercer-nombre-representante'],
+                            [`primer-apellido${prefijo}`, 'primer-apellido-representante'],
+                            [`segundo-apellido${prefijo}`, 'segundo-apellido-representante'],
+                            [`sexo${prefijo}`, 'sexo-representante'],
+                            [esMadre ? 'fechaNacimiento' : 'fecha-nacimiento-padre', 'fecha-nacimiento-representante'],
+                            [`lugar-nacimiento${prefijo}`, 'lugar-nacimiento-representante']
+                        ];
+
+                        for (const [origenId, destinoId] of camposPersonales) {
+                            copiarCampoSimple(origenId, destinoId);
+                            await new Promise(resolve => setTimeout(resolve, 100));
                         }
-                    },
-                    {
-                        origen: `idparroquia${prefijo}`,
-                        destino: 'idparroquia-representante',
-                        esSelect: true
-                    },
-                    {
-                        origen: `direccion${prefijo}`,
-                        destino: 'direccion-representante'
-                    },
-                    {
-                        origen: `telefono${prefijo}`,
-                        destino: 'telefono-representante'
-                    },
-                    {
-                        origen: `prefijo_dos${esMadre ? '' : '_padre'}`,
-                        destino: 'prefijo_dos-representante',
-                        esSelect: true
-                    },
-                    {
-                        origen: `telefono_dos${esMadre ? '' : '_padre'}`,
-                        destino: 'telefono_dos-representante'
-                    },
-                    {
-                        origen: `email${prefijo}`,
-                        destino: 'email-representante'
-                    },
-                    // Campos de ocupación - sin prefijo para la madre, con -padre para el padre
-                    {
-                        origen: esMadre ? 'ocupacion-madre' : 'ocupacion-padre',
-                        destino: 'ocupacion-representante',
-                        esSelect: true,
-                        callback: function() {
-                            // Obtener referencias a los elementos necesarios
-                            const origenOcupacionId = esMadre ? 'ocupacion-madre' : 'ocupacion-padre';
-                            const origenOtraOcupacionId = esMadre ? 'otra-ocupacion' :
-                                'otra-ocupacion-padre';
 
-                            const ocupacionSelect = document.getElementById(origenOcupacionId);
-                            const otraOcupacion = document.getElementById(origenOtraOcupacionId);
-                            const otraOcupacionRep = document.getElementById(
-                                'otra-ocupacion-representante');
-                            const otraOcupacionContainer = document.getElementById(
-                                'otra-ocupacion-container');
+                        // 2. Copiar prefijos telefónicos con función ultra simplificada
+                        console.log('PASO 2: Copiando prefijos telefónicos con función ultra...');
+                        const prefijo1 = document.getElementById(`prefijo${prefijo}`);
+                        const prefijo1Dest = document.getElementById('prefijo-representante');
+                        if (prefijo1 && prefijo1Dest && prefijo1.value) {
+                            console.log(`[PREFIJO ULTRA] Copiando prefijo1: ${prefijo1.value}`);
+                            await establecerValorSelectUltraSimple(prefijo1Dest, prefijo1.value, 100);
+                            await new Promise(resolve => setTimeout(resolve, 300));
+                        }
 
-                            if (ocupacionSelect && ocupacionSelect.value === 'otro' && otraOcupacion &&
-                                otraOcupacionRep) {
-                                // Mostrar el campo de otra ocupación si es necesario
+                        const prefijo2 = document.getElementById(`prefijo_dos${esMadre ? '' : '_padre'}`);
+                        const prefijo2Dest = document.getElementById('prefijo_dos-representante');
+                        if (prefijo2 && prefijo2Dest && prefijo2.value) {
+                            console.log(`[PREFIJO ULTRA] Copiando prefijo2: ${prefijo2.value}`);
+                            await establecerValorSelectUltraSimple(prefijo2Dest, prefijo2.value, 100);
+                            await new Promise(resolve => setTimeout(resolve, 300));
+                        }
+
+                        // 3. Copiar ubicación con función ultra simplificada
+                        console.log('PASO 3: Copiando ubicación con función ultra...');
+                        
+                        // 3.1. Copiar país
+                        const paisOrigen = document.getElementById(`idPais${prefijo}`);
+                        const paisDestino = document.getElementById('idPais-representante');
+                        if (paisOrigen && paisDestino && paisOrigen.value) {
+                            console.log(`[UBICACIÓN ULTRA] Copiando país: ${paisOrigen.value}`);
+                            await establecerValorSelectUltraSimple(paisDestino, paisOrigen.value, 150);
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            
+                            // 3.2. Cargar estados para el país copiado
+                            console.log(`[UBICACIÓN ULTRA] Cargando estados para país: ${paisOrigen.value}`);
+                            const resultadoEstados = await cargarSelectAnidadoPromise('estado', paisOrigen.value, 'idEstado-representante', 'idMunicipio-representante');
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            
+                            if (resultadoEstados) {
+                                // 3.3. Copiar estado
+                                const estadoOrigen = document.getElementById(`idEstado${prefijo}`);
+                                if (estadoOrigen && estadoOrigen.value) {
+                                    console.log(`[UBICACIÓN ULTRA] Copiando estado: ${estadoOrigen.value}`);
+                                    await establecerValorSelectUltraSimple(resultadoEstados.select, estadoOrigen.value, 150);
+                                    await new Promise(resolve => setTimeout(resolve, 500));
+                                    
+                                    // 3.4. Cargar municipios para el estado copiado
+                                    console.log(`[UBICACIÓN ULTRA] Cargando municipios para estado: ${estadoOrigen.value}`);
+                                    const resultadoMunicipios = await cargarSelectAnidadoPromise('municipio', estadoOrigen.value, 'idMunicipio-representante', 'idparroquia-representante');
+                                    await new Promise(resolve => setTimeout(resolve, 500));
+                                    
+                                    if (resultadoMunicipios) {
+                                        // 3.5. Copiar municipio
+                                        const municipioOrigen = document.getElementById(`idMunicipio${prefijo}`);
+                                        if (municipioOrigen && municipioOrigen.value) {
+                                            console.log(`[UBICACIÓN ULTRA] Copiando municipio: ${municipioOrigen.value}`);
+                                            await establecerValorSelectUltraSimple(resultadoMunicipios.select, municipioOrigen.value, 150);
+                                            await new Promise(resolve => setTimeout(resolve, 500));
+                                            
+                                            // 3.6. Cargar parroquias para el municipio copiado
+                                            console.log(`[UBICACIÓN ULTRA] Cargando parroquias para municipio: ${municipioOrigen.value}`);
+                                            const resultadoParroquias = await cargarSelectAnidadoPromise('localidad', municipioOrigen.value, 'idparroquia-representante');
+                                            await new Promise(resolve => setTimeout(resolve, 500));
+                                            
+                                            if (resultadoParroquias) {
+                                                // 3.7. Copiar parroquia
+                                                const parroquiaOrigen = document.getElementById(`idparroquia${prefijo}`);
+                                                if (parroquiaOrigen && parroquiaOrigen.value) {
+                                                    console.log(`[UBICACIÓN ULTRA] Copiando parroquia: ${parroquiaOrigen.value}`);
+                                                    await establecerValorSelectUltraSimple(resultadoParroquias.select, parroquiaOrigen.value, 150);
+                                                    await new Promise(resolve => setTimeout(resolve, 300));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // 4. Copiar campos de contacto y ocupación
+                        console.log('PASO 4: Copiando campos de contacto y ocupación...');
+                        const camposContacto = [
+                            [`direccion${prefijo}`, 'direccion-representante'],
+                            [`telefono${prefijo}`, 'telefono-representante'],
+                            [`telefono_dos${esMadre ? '' : '_padre'}`, 'telefono_dos-representante'],
+                            [`email${prefijo}`, 'correo-representante']
+                        ];
+
+                        for (const [origenId, destinoId] of camposContacto) {
+                            copiarCampoSimple(origenId, destinoId);
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                        }
+
+                        // 5. Copiar ocupación con función ultra
+                        console.log('PASO 5: Copiando ocupación con función ultra...');
+                        const ocupacionOrigen = document.getElementById(esMadre ? 'ocupacion-madre' : 'ocupacion-padre');
+                        const ocupacionDestino = document.getElementById('ocupacion-representante');
+                        if (ocupacionOrigen && ocupacionDestino) {
+                            await establecerValorSelectUltraSimple(ocupacionDestino, ocupacionOrigen.value, 150);
+                            await new Promise(resolve => setTimeout(resolve, 300));
+                            
+                            // Manejar campo "otra ocupación"
+                            const otraOcupacionOrigen = document.getElementById(esMadre ? 'otra-ocupacion' : 'otra-ocupacion-padre');
+                            const otraOcupacionDestino = document.getElementById('otra-ocupacion-representante');
+                            const otraOcupacionContainer = document.getElementById('otra-ocupacion-container');
+                            
+                            if (ocupacionOrigen.value === 'otro' && otraOcupacionOrigen && otraOcupacionDestino) {
                                 if (otraOcupacionContainer) {
                                     otraOcupacionContainer.classList.remove('d-none');
                                     otraOcupacionContainer.classList.add('d-block');
                                 }
-                                // Copiar el valor de otra ocupación
-                                otraOcupacionRep.value = otraOcupacion.value;
+                                otraOcupacionDestino.value = otraOcupacionOrigen.value;
+                                otraOcupacionDestino.dispatchEvent(new Event('input'));
                             } else if (otraOcupacionContainer) {
                                 otraOcupacionContainer.classList.add('d-none');
                                 otraOcupacionContainer.classList.remove('d-block');
                             }
-
-                            // Forzar la actualización del selectpicker y select2 si están presentes
-                            if (typeof $ !== 'undefined' && $.fn.selectpicker) {
-                                $('#ocupacion-representante').selectpicker('destroy');
-                                $('#ocupacion-representante').selectpicker();
-                            }
-                            if (typeof $.fn.select2 === 'function') {
-                                $('#ocupacion-representante').trigger('change.select2');
-                            }
                         }
-                    },
-                    {
-                        origen: esMadre ? 'otra-ocupacion' : 'otra-ocupacion-padre',
-                        destino: 'otra-ocupacion-representante',
-                        callback: function() {
-                            // Forzar la actualización del campo de texto
-                            const otraOcupacionRep = document.getElementById(
-                                'otra-ocupacion-representante');
-                            if (otraOcupacionRep) {
-                                const event = new Event('input');
-                                otraOcupacionRep.dispatchEvent(event);
-                            }
-                        }
-                    }
-                ];
 
-                // Copiar cada campo
-                campos.forEach(campo => {
-                    const origen = document.getElementById(campo.origen);
-                    const destino = document.getElementById(campo.destino);
-
-                    if (origen && destino) {
-                        if (campo.esSelect) {
-                            // Para selects, copiar el valor seleccionado
-                            destino.value = origen.value;
-                            // Disparar evento change si existe un callback
-                            if (campo.callback && typeof campo.callback === 'function') {
-                                campo.callback();
-                            }
-                        } else {
-                            // Para inputs normales, copiar el valor
-                            destino.value = origen.value;
-                            // Disparar evento input para activar validaciones
-                            destino.dispatchEvent(new Event('input'));
-                            if (campo.callback && typeof campo.callback === 'function') {
-                                campo.callback();
+                        // 6. Copiar convivencia de forma simple
+                        const conviveNombreCampo = esMadre ? 'convive' : 'convive-padre';
+                        const convive = document.querySelector(`input[name="${conviveNombreCampo}"]:checked`);
+                        
+                        if (convive) {
+                            const valorConvivencia = convive.value;
+                            const conviveRepresentante = document.querySelector(`input[name="convive-representante"][value="${valorConvivencia}"]`);
+                            
+                            if (conviveRepresentante) {
+                                conviveRepresentante.checked = true;
                             }
                         }
 
-                        // Disparar evento change para actualizar la interfaz
-                        destino.dispatchEvent(new Event('change'));
+                        // 7. Validación final ultra completa
+                        console.log('PASO 7: Validación final ultra completa...');
+                        
+                        // Esperar tiempo adicional para estabilización completa
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        
+                        // Validar que los selects no tengan duplicación
+                        const selectsValidar = [
+                            'prefijo-representante',
+                            'prefijo_dos-representante',
+                            'idPais-representante',
+                            'idEstado-representante',
+                            'idMunicipio-representante',
+                            'idparroquia-representante'
+                        ];
 
-                        // Aplicar estilos de solo lectura
-                        destino.classList.add('bg-light', 'text-muted');
-                        destino.readOnly = true;
-                    }
-                });
-
-                // Deshabilitar los campos después de copiar los datos
-                toggleCamposRepresentante(true);
-
-                // Manejar la convivencia
-                const conviveNombreCampo = esMadre ? 'convive' : 'convive-padre';
-                console.log('Buscando campo de convivencia:', conviveNombreCampo);
-                const convive = document.querySelector(`input[name="${conviveNombreCampo}"]:checked`);
-                console.log('Campo de convivencia encontrado:', convive ? `${convive.value} (${convive.checked})` :
-                    'No encontrado');
-
-                if (convive) {
-                    // Convertir el valor: 1 -> "si", 0 -> "no"
-                    const valorConvivencia = convive.value === '1' ? 'si' : 'no';
-                    console.log('Valor de convivencia convertido:', convive.value, '->', valorConvivencia);
-
-                    const conviveRepresentante = document.querySelector(
-                        `input[name="convive-representante"][value="${valorConvivencia}"]`);
-                    console.log('Campo de convivencia del representante:', conviveRepresentante ?
-                        `encontrado con valor ${valorConvivencia}` : 'no encontrado');
-
-                    if (conviveRepresentante) {
-                        conviveRepresentante.checked = true;
-                        console.log('Convivencia del representante marcada como:', valorConvivencia);
-                        // Disparar evento change para actualizar la interfaz
-                        const event = new Event('change');
-                        conviveRepresentante.dispatchEvent(event);
-
-                        // Forzar la actualización visual si es necesario
-                        if (typeof $.fn.select2 === 'function') {
-                            $('input[name="convive-representante"]').trigger('change');
-                        }
-                    }
-                }
-
-                // Copiar cada campo
-                campos.forEach(campo => {
-                    const origen = document.getElementById(campo.origen);
-                    const destino = document.getElementById(campo.destino);
-
-                    if (origen && destino) {
-                        if (campo.esSelect) {
-                            // Para selects, copiar el valor seleccionado
-                            destino.value = origen.value;
-                            // Disparar evento change si existe un callback
-                            if (campo.callback && typeof campo.callback === 'function') {
-                                campo.callback();
-                            }
-                        } else {
-                            // Para inputs normales, copiar el valor
-                            destino.value = origen.value;
-                        }
-
-                        // Disparar evento input para activar validaciones
-                        destino.dispatchEvent(new Event('input'));
-                        destino.dispatchEvent(new Event('change'));
-                    }
-                });
-
-                // Actualizar Select2 si está disponible
-                if (typeof $.fn.select2 === 'function') {
-                    $('select').select2();
-                }
-
-                // Refrescar todos los selectpickers para asegurar que se actualicen los valores
-                $('.selectpicker').each(function() {
-                    const $this = $(this);
-                    if ($this.data('selectpicker')) {
-                        $this.selectpicker('refresh');
-                    }
-                });
-
-                // Cargar municipios y localidades en el orden correcto después de copiar los valores
-                setTimeout(() => {
-                    const estadoId = document.getElementById('idEstado-representante').value;
-                    const municipioId = document.getElementById('idMunicipio-representante').value;
-                    const parroquiaId = document.getElementById('idparroquia-representante').value;
-
-                    console.log('Cargando ubicación después de copiar:', {
-                        estadoId,
-                        municipioId,
-                        parroquiaId
-                    });
-
-                    if (estadoId) {
-                        // Primero cargar municipios
-                        cargarMunicipios(estadoId, 'idMunicipio-representante',
-                            'idparroquia-representante');
-
-                        // Seleccionar el municipio después de cargar las opciones
-                        setTimeout(() => {
-                            if (municipioId) {
-                                const municipioSelect = document.getElementById(
-                                    'idMunicipio-representante');
-                                if (municipioSelect) {
-                                    municipioSelect.value = municipioId;
-                                    $(municipioSelect).selectpicker('refresh');
-                                    console.log('Municipio seleccionado:', municipioId);
-
-                                    // Cargar localidades del municipio seleccionado
-                                    setTimeout(() => {
-                                        cargarLocalidades(municipioId,
-                                            'idparroquia-representante');
-
-                                        // Si ya hay una parroquia, seleccionarla después de cargar las localidades
-                                        if (parroquiaId) {
-                                            setTimeout(() => {
-                                                const parroquiaSelect = document
-                                                    .getElementById(
-                                                        'idparroquia-representante'
-                                                    );
-                                                if (parroquiaSelect) {
-                                                    parroquiaSelect.value =
-                                                        parroquiaId;
-                                                    $(parroquiaSelect).selectpicker(
-                                                        'refresh');
-                                                    console.log(
-                                                        'Parroquia seleccionada:',
-                                                        parroquiaId);
-                                                }
-                                            }, 100);
+                        let duplicacionDetectada = false;
+                        selectsValidar.forEach(selectId => {
+                            const select = document.getElementById(selectId);
+                            if (select) {
+                                const $select = $(select);
+                                const valor = $select.selectpicker('val');
+                                const texto = $select.find('option:selected').text();
+                                
+                                // Validación ultra estricta
+                                if (texto && valor) {
+                                    // Para valores numéricos, verificar que no haya repetición
+                                    if (!isNaN(valor)) {
+                                        const patronDuplicacion = new RegExp(`${valor}.*${valor}`);
+                                        if (patronDuplicacion.test(texto)) {
+                                            console.error(`[VALIDACIÓN ULTRA] ❌ Duplicación numérica en ${selectId}: "${texto}"`);
+                                            duplicacionDetectada = true;
+                                        } else {
+                                            console.log(`[VALIDACIÓN ULTRA] ✅ ${selectId}: "${texto}" (sin duplicación numérica)`);
                                         }
-                                    }, 200);
+                                    } else {
+                                        // Para valores de texto, verificar que no esté concatenado
+                                        if (texto.includes(valor) && texto !== valor) {
+                                            console.error(`[VALIDACIÓN ULTRA] ❌ Duplicación textual en ${selectId}: "${texto}"`);
+                                            duplicacionDetectada = true;
+                                        } else {
+                                            console.log(`[VALIDACIÓN ULTRA] ✅ ${selectId}: "${texto}" (sin duplicación textual)`);
+                                        }
+                                    }
                                 }
                             }
-                        }, 300); // Esperar a que se carguen los municipios
-                    }
-                }, 100);
+                        });
 
-                console.log(`Datos ${mensajeExito} copiados al representante`);
+                        if (duplicacionDetectada) {
+                            console.warn('[VALIDACIÓN ULTRA] ⚠️ Se detectó duplicación persistente');
+                        } else {
+                            console.log('[VALIDACIÓN ULTRA] 🎉 Todos los selects perfectos, sin duplicación');
+                        }
+
+                        // Aplicar estilos de solo lectura (excluyendo radios de convivencia)
+                        document.querySelectorAll('[id$="-representante"]').forEach(elemento => {
+                            // Excluir radios de convivencia para no afectarlos
+                            if (elemento.id === 'convive-si-representante' || elemento.id === 'convive-no-representante') {
+                                return; // Saltar radios de convivencia
+                            }
+                            
+                            if (!elemento.disabled && elemento.tagName !== 'SELECT') {
+                                elemento.classList.add('bg-light', 'text-muted');
+                                elemento.readOnly = true;
+                            }
+                        });
+
+                        // Deshabilitar los campos después de copiar los datos
+                        toggleCamposRepresentante(true);
+
+                        console.log(`=== COPIA ULTRA OPTIMIZADA ${mensajeExito.toUpperCase()} COMPLETADA ===`);
+                        
+                    } catch (error) {
+                        console.error('Error durante la copia ultra optimizada:', error);
+                        throw error;
+                    } finally {
+                        // Resetear la bandera después de completar
+                        setTimeout(() => {
+                            window.copiandoDatosProgenitor = false;
+                        }, 3000);
+                    }
+                };
+
+                // Ejecutar la copia ultra optimizada
+                return ejecutarCopiaUltraOptimizada().catch(error => {
+                    console.error('Error fatal en la copia ultra optimizada:', error);
+                    window.copiandoDatosProgenitor = false;
+                });
             }
 
             // Función para copiar datos del padre al representante
@@ -4377,6 +5039,13 @@
 
             // Función para restablecer los campos del representante
             function resetearCamposRepresentante() {
+                console.log('[RESET] INICIO - resetearCamposRepresentante() llamado');
+                
+                // Verificar estado de radios ANTES de resetear
+                const estadoAntesSi = document.getElementById('convive-si-representante')?.checked;
+                const estadoAntesNo = document.getElementById('convive-no-representante')?.checked;
+                console.log(`[RESET] Estado radios ANTES de resetear - Si: ${estadoAntesSi}, No: ${estadoAntesNo}`);
+                
                 // Habilitar todos los campos
                 toggleCamposRepresentante(false);
 
@@ -4396,14 +5065,18 @@
                     'sexo-representante',
                     'fecha-nacimiento-representante',
                     'lugar-nacimiento-representante',
+                    'idPais-representante',
                     'idEstado-representante',
                     'idMunicipio-representante',
                     'idparroquia-representante',
                     'direccion-representante',
                     'telefono-representante',
-                    'email-representante',
+                    'prefijo_dos-representante',
+                    'telefono_dos-representante',
+                    'correo-representante',
                     'ocupacion-representante',
-                    'otra-ocupacion-representante'
+                    'otra-ocupacion-representante',
+                    'parentesco'
                 ];
 
                 // Limpiar campos
@@ -4415,14 +5088,46 @@
                         campo.readOnly = false;
                         campo.disabled = false;
 
-                        // Disparar evento change para actualizar la interfaz
-                        const event = new Event('change');
-                        campo.dispatchEvent(event);
-
                         // Manejar selectpicker si está presente
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
-                            $(campo).val(null).selectpicker('destroy');
-                            $(campo).selectpicker();
+                            try {
+                                // Guardar el HTML original antes de destruir
+                                const originalHTML = campo.innerHTML;
+                                
+                                // Verificar si el selectpicker está inicializado antes de destruir
+                                if ($(campo).data('selectpicker')) {
+                                    $(campo).selectpicker('destroy');
+                                }
+                                
+                                // Restaurar el HTML original para mantener todas las opciones
+                                campo.innerHTML = originalHTML;
+                                campo.value = '';
+                                
+                                // Re-inicializar selectpicker
+                                $(campo).selectpicker({
+                                    liveSearch: true,
+                                    size: 8,
+                                    noneResultsText: 'No hay resultados para {0}',
+                                    showIcon: true,
+                                    width: 'auto'
+                                });
+                                
+                                // Establecer valor vacío y refrescar
+                                $(campo).selectpicker('val', '');
+                                $(campo).selectpicker('refresh');
+                            } catch (error) {
+                                console.error('Error al limpiar selectpicker:', error);
+                                // Fallback simple
+                                campo.value = '';
+                                try {
+                                    if ($(campo).data('selectpicker')) {
+                                        $(campo).selectpicker('val', '');
+                                        $(campo).selectpicker('refresh');
+                                    }
+                                } catch (fallbackError) {
+                                    console.error('Error en fallback selectpicker:', fallbackError);
+                                }
+                            }
                         }
 
                         // Manejar select2 si está presente
@@ -4430,14 +5135,27 @@
                                 'select2-hidden-accessible')) {
                             $(campo).val(null).trigger('change');
                         }
+
+                        // Disparar evento change para actualizar la interfaz
+                        const event = new Event('change');
+                        campo.dispatchEvent(event);
                     }
                 });
 
-                // Desmarcar radios de convivencia
-                document.querySelectorAll('input[name="convive-representante"]').forEach(radio => {
-                    radio.checked = false;
-                    radio.disabled = false;
-                });
+                // Verificar estado de radios DESPUÉS de resetear
+                const estadoDespuesSi = document.getElementById('convive-si-representante')?.checked;
+                const estadoDespuesNo = document.getElementById('convive-no-representante')?.checked;
+                console.log(`[RESET] Estado radios DESPUÉS de resetear - Si: ${estadoDespuesSi}, No: ${estadoDespuesNo}`);
+
+                // Desmarcar radios de convivencia - COMENTADO para evitar perder el valor copiado
+                // NOTA: Esto estaba causando que se perdiera la selección de convivencia después de copiar
+                // document.querySelectorAll('input[name="convive-representante"]').forEach(radio => {
+                //     radio.checked = false;
+                //     radio.disabled = false;
+                // });
+                console.log('[RESET] Manteniendo valores de radios de convivencia (evitar limpieza automática)');
+                
+                console.log('[RESET] FIN - resetearCamposRepresentante() completado');
             }
 
             // Manejar cambios en los radio buttons de tipo de representante
@@ -4456,8 +5174,8 @@
                     }
                     // Si se selecciona "Padre como Representante legal"
                     else if (tipo === 'progenitor_padre_representante') {
-                        // Restablecer campos primero
-                        resetearCamposRepresentante();
+                        // NO resetear campos - la copia ultra optimizada maneja todo
+                        // resetearCamposRepresentante(); // ELIMINADO - Causa errores
 
                         // Verificar si el padre está presente
                         const padrePresente = document.querySelector(
@@ -4479,8 +5197,8 @@
                     }
                     // Si se selecciona "Madre como Representante legal"
                     else if (tipo === 'progenitor_madre_representante') {
-                        // Restablecer campos primero
-                        resetearCamposRepresentante();
+                        // NO resetear campos - la copia ultra optimizada maneja todo
+                        // resetearCamposRepresentante(); // ELIMINADO - Causa errores
 
                         // Verificar si la madre está presente
                         const madrePresente = document.querySelector(
@@ -4504,35 +5222,36 @@
                 });
             });
 
-            // Al salir de la cédula del representante, si el tipo es progenitor_representante,
-            // primero intentamos copiar desde madre/padre; si no coincide, buscamos en BD
-            document.getElementById('numero_documento-representante')?.addEventListener('blur', function() {
-                const tipo = document.querySelector('input[name="tipo_representante"]:checked')?.value;
-                const numero_documento = this.value;
+            // NOTA: No se necesita la verificación final redundante
+            // ya que cada caso maneja sus campos correctamente
+            // El evento blur fue eliminado para evitar múltiples llamadas
+            // document.getElementById('numero_documento-representante')?.addEventListener('blur', function() {
+            //     const tipo = document.querySelector('input[name="tipo_representante"]:checked')?.value;
+            //     const numero_documento = this.value;
 
-                if (tipo !== 'progenitor_representante' || !numero_documento) {
-                    return;
-                }
+            //     if (tipo !== 'progenitor_representante' || !numero_documento) {
+            //         return;
+            //     }
 
-                // 1) Intentar copiar desde los datos ya cargados en este formulario (madre/padre)
-                const copiadoLocal = copiarDesdeMadreOPadreSiCoincide(numero_documento);
-                if (copiadoLocal) {
-                    return; // no hace falta ir a BD
-                }
+            //     // 1) Intentar copiar desde los datos ya cargados en este formulario (madre/padre)
+            //     const copiadoLocal = copiarDesdeMadreOPadreSiCoincide(numero_documento);
+            //     if (copiadoLocal) {
+            //         return; // no hace falta ir a BD
+            //     }
 
-                // 2) Si no coincide con madre/padre, buscar en BD
-                fetch(`${buscarnumero_documentoUrl}?numero_documento=${numero_documento}`)
-                    .then(response => response.json())
-                    .then(resp => {
-                        if (resp && resp.status === 'success') {
-                            rellenarRepresentanteDesdeRespuesta(resp);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al buscar cédula para representante legal como progenitor',
-                            error);
-                    });
-            });
+            //     // 2) Si no coincide con madre/padre, buscar en BD
+            //     fetch(`${buscarnumero_documentoUrl}?numero_documento=${numero_documento}`)
+            //         .then(response => response.json())
+            //         .then(resp => {
+            //             if (resp && resp.status === 'success') {
+            //                 rellenarRepresentanteDesdeRespuesta(resp);
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.error('Error al buscar cédula para representante legal como progenitor',
+            //                 error);
+            //         });
+            // });// });
 
             // Otras funciones
             document.querySelectorAll('input[name*="telefono"]').forEach(input => {
@@ -4565,9 +5284,9 @@
 
             // Añadir clases de error
             elemento.classList.add('is-invalid');
-            if (elemento.tagName === 'SELECT') {
-                elemento.classList.add('border-danger');
-            }
+            // if (elemento.tagName === 'SELECT') {
+            //     elemento.classList.add('border-danger'); // ELIMINADO - No aplicar borde rojo a selects
+            // }
         }
 
         // Función para limpiar errores
@@ -4583,9 +5302,9 @@
             }
 
             elemento.classList.remove('is-invalid');
-            if (elemento.tagName === 'SELECT') {
-                elemento.classList.remove('border-danger');
-            }
+            // if (elemento.tagName === 'SELECT') {
+            //     elemento.classList.remove('border-danger'); // ELIMINADO - No aplicar borde rojo a selects
+            // }
         }
 
         // Validar campo requerido
@@ -4887,84 +5606,6 @@
             configurarValidacionesMadre();
             configurarValidacionesPadre();
             configurarValidacionesRepresentante();
-
-            // Validar formulario antes de enviar
-            const formulario = document.querySelector('form');
-            if (formulario) {
-                // Guardar el manejador original si existe
-                const originalSubmit = formulario.onsubmit;
-
-                // Agregar nuestro manejador
-                formulario.addEventListener('submit', function(e) {
-                    // Habilitar temporalmente todos los campos readOnly para que se envíen
-                    const readonlyFields = formulario.querySelectorAll('[readonly]');
-                    readonlyFields.forEach(field => {
-                        field.readOnly = false;
-                    });
-
-                    let valido = true;
-
-                    // Limpiar errores previos
-                    const erroresPrevios = formulario.querySelectorAll('.is-invalid');
-                    erroresPrevios.forEach(el => el.classList.remove('is-invalid'));
-
-                    const mensajesError = formulario.querySelectorAll('.invalid-feedback');
-                    mensajesError.forEach(el => el.remove());
-
-                    // Validar todos los campos requeridos
-                    const requiredInputs = formulario.querySelectorAll('[required]');
-                    requiredInputs.forEach(input => {
-                        if (input.offsetParent !== null) { // Solo validar campos visibles
-                            if (input.type === 'radio' || input.type === 'checkbox') {
-                                const name = input.name;
-                                const radioGroup = Array.from(document.querySelectorAll(
-                                    `input[name="${name}"]`));
-                                const isRequired = radioGroup.some(radio => radio.required);
-
-                                if (isRequired) {
-                                    const checked = formulario.querySelector(
-                                        `input[name="${name}"]:checked`);
-                                    if (!checked) {
-                                        const firstRadio = radioGroup[0];
-                                        mostrarError(firstRadio, 'Debe seleccionar una opción');
-                                        valido = false;
-                                    }
-                                }
-                            } else if (input.required && !input.value.trim()) {
-                                mostrarError(input, 'Este campo es obligatorio');
-                                valido = false;
-                            }
-                        }
-                    });
-
-                    if (!valido) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-
-                        // Desplazarse al primer error
-                        const primerError = formulario.querySelector('.is-invalid');
-                        if (primerError) {
-                            primerError.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center'
-                            });
-                            primerError.focus();
-                        }
-                        return false;
-                    }
-
-                    // Si hay un manejador original, ejecutarlo
-                    if (originalSubmit) {
-                        const result = originalSubmit.call(formulario, e);
-                        if (result === false) {
-                            e.preventDefault();
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }, true); // Usar captura para asegurarnos de ejecutarnos primero
-            }
         }
 
         // Función para validar un campo individual con validaciones específicas
@@ -5436,12 +6077,18 @@
             document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
 
             // Validar cada sección
+            console.log('=== INICIANDO VALIDACIÓN COMPLETA ===');
             const validoMadre = validarSeccionMadre();
+            console.log('Validación madre:', validoMadre);
             const validoPadre = validarSeccionPadre();
+            console.log('Validación padre:', validoPadre);
             const validoRepresentante = validarSeccionRepresentante();
+            console.log('Validación representante:', validoRepresentante);
 
             // Si hay errores, desplazarse al primero
             if (!validoMadre || !validoPadre || !validoRepresentante) {
+                console.log('=== VALIDACIÓN FALLÓ ===');
+                console.log('Madre válida:', validoMadre, 'Padre válido:', validoPadre, 'Representante válido:', validoRepresentante);
                 const primerError = document.querySelector('.is-invalid');
                 if (primerError) {
                     primerError.scrollIntoView({
@@ -5453,6 +6100,7 @@
                 return false;
             }
 
+            console.log('=== VALIDACIÓN EXITOSA ===');
             return true;
         }
 
@@ -5553,15 +6201,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Configurar validación en tiempo real
             agregarValidacionEnTiempoReal();
-
-            // Configurar el evento de envío del formulario
-            const formulario = document.getElementById('representante-form');
-            if (formulario) {
-                formulario.addEventListener('submit', function(e) {
-                    console.log('Formulario enviado correctamente');
-                    return true;
-                });
-            }
+            
+            // Inicializar validaciones específicas
+            inicializarValidaciones();
         });
 
         // ================= VALIDACIÓN DE FECHAS DE NACIMIENTO =================

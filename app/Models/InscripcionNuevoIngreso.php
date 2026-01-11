@@ -42,6 +42,7 @@ class InscripcionNuevoIngreso extends Model
             ->with([
                 'inscripcion.alumno.persona.tipoDocumento',
                 'inscripcion.alumno.persona.genero',
+                'inscripcion.alumno.persona.localidad.estado.pais',
                 'inscripcion.alumno.discapacidades',
                 'inscripcion.alumno.etniaIndigena',
                 'inscripcion.grado',

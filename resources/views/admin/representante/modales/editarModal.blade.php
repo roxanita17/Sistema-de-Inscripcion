@@ -341,16 +341,41 @@
                                 </div>
                             </div>
                             <div class="card-body p-3">
+                                <!-- Fila para País, Estado, Municipio y Parroquia -->
                                 <div class="row">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
+                                        <label class="form-label-modern">
+                                            <i class="fas fa-globe me-2"></i> País <span
+                                                class="required-badge">*</span>
+                                        </label>
+                                        <select class="form-select" id="pais_id" name="pais_id" required>
+                                            <option value="" disabled>Seleccione</option>
+                                            @php
+                                                // Obtener países únicos
+                                                $paisesUnicos = isset($paises) ? $paises->unique('id')->sortBy('nameES') : collect([]);
+                                            @endphp
+                                            @foreach ($paisesUnicos as $pais)
+                                                <option value="{{ $pais->id }}"
+                                                    {{ old('pais_id', $representante->pais_id ?? '') == $pais->id ? 'selected' : '' }}>
+                                                    {{ $pais->nameES }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Por favor seleccione un país.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 mb-3">
                                         <label class="form-label-modern">
                                             <i class="fas fa-map-marker-alt me-2"></i> Estado <span
                                                 class="required-badge">*</span>
                                         </label>
                                         <select class="form-select" id="estado_id" name="estado_id" required>
-                                            <option value="" disabled selected>Seleccione</option>
+                                            <option value="" disabled>Seleccione</option>
                                             @foreach ($estados as $estado)
                                                 <option value="{{ $estado->id }}"
+                                                    data-pais-id="{{ $estado->pais_id }}"
                                                     {{ old('estado_id', $representante->estado_id ?? '') == $estado->id ? 'selected' : '' }}>
                                                     {{ $estado->nombre_estado }}
                                                 </option>
@@ -361,12 +386,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <label class="form-label-modern">
                                             <i class="fas fa-map-marker-alt me-2"></i> Municipio <span
                                                 class="required-badge">*</span>
                                         </label>
-                                        <select class="form-select" id="municipio_id" name="municipio_id" required disabled>
+                                        <select class="form-select" id="municipio_id" name="municipio_id" required>
                                             <option value="" disabled>Seleccione</option>
                                             @foreach ($municipios as $municipio)
                                                 <option value="{{ $municipio->id }}"
@@ -381,12 +406,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <label class="form-label-modern">
                                             <i class="fas fa-map-marker-alt me-2"></i> Parroquia <span
                                                 class="required-badge">*</span>
                                         </label>
-                                        <select class="form-select" id="parroquia_id" name="parroquia_id" required disabled>
+                                        <select class="form-select" id="parroquia_id" name="parroquia_id" required>
                                             <option value="" disabled>Seleccione</option>
                                             @foreach ($parroquias_cargadas as $parroquia)
                                                 <option value="{{ $parroquia->id }}"
@@ -762,4 +787,342 @@
                 </form>
         </div>
     </div>
+@endsection
+
+@section('js')
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        // Función para mostrar errores
+        function mostrarError(element, mensaje) {
+            limpiarError(element);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'text-danger small mt-1';
+            errorDiv.textContent = mensaje;
+            
+            const container = element.closest('.form-group') || element.closest('.form-check') || element.parentElement;
+            container.appendChild(errorDiv);
+            element.classList.add('is-invalid');
+        }
+
+        // Función para limpiar errores
+        function limpiarError(element) {
+            const container = element.closest('.form-group') || element.closest('.form-check') || element.parentElement;
+            const errores = container.querySelectorAll('.text-danger');
+            errores.forEach(error => error.remove());
+            element.classList.remove('is-invalid');
+        }
+
+        // Función para validar un grupo de radio buttons
+        function validarRadioGroup(nombreGrupo, mensajeError) {
+            const inputs = document.querySelectorAll(`input[name="${nombreGrupo}"]`);
+            if (inputs.length === 0) return true;
+
+            const esRadio = inputs[0].type === 'radio';
+            const seleccionado = Array.from(inputs).some(input => input.checked);
+            const esRequerido = inputs[0].required || inputs[0].getAttribute('required') !== null;
+
+            // Solo validar si es requerido
+            if (esRequerido && !seleccionado) {
+                const primerInput = inputs[0];
+                const errorElement = primerInput.closest('.form-group') || primerInput.closest('.form-check');
+                mostrarError(errorElement, mensajeError || 'Debe seleccionar una opción');
+                return false;
+            }
+
+            // Limpiar errores si es válido
+            if (seleccionado) {
+                inputs.forEach(input => {
+                    limpiarError(input);
+                });
+            }
+
+            return true;
+        }
+
+        // Validar formulario antes de enviar
+        function validarFormulario() {
+            let valido = true;
+
+            // Validar campo convive-representante
+            if (!validarRadioGroup('convive-representante', 'Debe indicar si convive con el estudiante')) {
+                valido = false;
+            }
+
+            return valido;
+        }
+
+        // Función para inicializar los selects dependientes
+        function inicializarSelectsDependientes() {
+            const $paisSelect = $('#pais_id');
+            const $estadoSelect = $('#estado_id');
+            const $municipioSelect = $('#municipio_id');
+            const $parroquiaSelect = $('#parroquia_id');
+
+            // Obtener los valores actuales
+            const paisId = $paisSelect.val();
+            const estadoId = $estadoSelect.val();
+            const municipioId = $municipioSelect.val();
+            const parroquiaId = $parroquiaSelect.val();
+
+            // En formulario de edición, todos los campos deben estar habilitados
+            // No deshabilitamos ningún campo inicialmente
+
+            // Función para filtrar opciones
+            function filtrarOpciones($select, dataAttr, valorFiltro) {
+                $select.find('option').each(function() {
+                    const $option = $(this);
+                    if ($option.val() === '') {
+                        $option.show();
+                        return;
+                    }
+
+                    const dataValue = $option.data(dataAttr);
+                    if (!valorFiltro || dataValue == valorFiltro) {
+                        $option.show();
+                    } else {
+                        $option.hide();
+                        if ($option.is(':selected')) {
+                            $option.prop('selected', false);
+                        }
+                    }
+                });
+            }
+
+            // Manejar cambio de país
+            $paisSelect.on('change', function() {
+                const paisId = $(this).val();
+
+                // Limpiar estado, municipio y parroquia si cambia el país
+                if (paisId !== $paisSelect.data('previous-value')) {
+                    $estadoSelect.val('').trigger('change');
+                    $municipioSelect.val('').trigger('change');
+                    $parroquiaSelect.val('').trigger('change');
+                }
+                $paisSelect.data('previous-value', paisId);
+
+                // Filtrar estados por país (si los datos tienen país_id)
+                filtrarOpciones($estadoSelect, 'pais-id', paisId);
+            });
+
+            // Manejar cambio de estado
+            $estadoSelect.on('change', function() {
+                const estadoId = $(this).val();
+
+                // Limpiar municipio y parroquia si cambia el estado
+                if (estadoId !== $estadoSelect.data('previous-value')) {
+                    $municipioSelect.val('').trigger('change');
+                    $parroquiaSelect.val('').trigger('change');
+                }
+                $estadoSelect.data('previous-value', estadoId);
+
+                // Filtrar municipios
+                filtrarOpciones($municipioSelect, 'estado-id', estadoId);
+            });
+
+            // Manejar cambio de municipio
+            $municipioSelect.on('change', function() {
+                const municipioId = $(this).val();
+
+                // Limpiar parroquias si cambia el municipio
+                if (municipioId !== $municipioSelect.data('previous-value')) {
+                    $parroquiaSelect.val('').trigger('change');
+                }
+                $municipioSelect.data('previous-value', municipioId);
+
+                // Filtrar parroquias
+                filtrarOpciones($parroquiaSelect, 'municipio-id', municipioId);
+            });
+
+            // Inicializar selects al cargar la página
+            // Si hay valores preseleccionados, aplicar los filtros correspondientes
+            if (paisId) {
+                $paisSelect.trigger('change');
+                
+                setTimeout(() => {
+                    // Establecer el estado después de filtrar
+                    if (estadoId) {
+                        $estadoSelect.val(estadoId);
+                        $estadoSelect.trigger('change');
+                        
+                        setTimeout(() => {
+                            // Establecer el municipio después de filtrar
+                            if (municipioId) {
+                                $municipioSelect.val(municipioId);
+                                $municipioSelect.trigger('change');
+                                
+                                setTimeout(() => {
+                                    // Establecer la parroquia después de filtrar
+                                    if (parroquiaId) {
+                                        $parroquiaSelect.val(parroquiaId);
+                                    }
+                                }, 100);
+                            }
+                        }, 100);
+                    }
+                }, 100);
+            }
+        }
+
+        // Función para mostrar/ocultar campo de organización
+        function toggleCampoOrganizacion() {
+            const pertenece = $('input[name="pertenece_organizacion"]:checked').val();
+
+            if (pertenece === '1') {
+                $('#campo_organizacion').show();
+                $('#cual_organizacion_representante').prop('required', true);
+            } else {
+                $('#campo_organizacion').hide();
+                $('#cual_organizacion_representante')
+                    .prop('required', false)
+                    .val('');
+            }
+        }
+
+
+        // Función para mostrar/ocultar campos según el tipo de representante
+        function toggleRepresentativeFields() {
+            const isLegal = $('input[name="tipo_representante"]:checked').val() === 'legal';
+
+            const legalFields = [
+                '#correo-representante',
+                '#banco_id',
+                '#parentesco'
+            ];
+
+            if (isLegal) {
+                $('#seccion-conectividad').show();
+                $('#seccion-identificacion-familiar').show();
+
+                legalFields.forEach(selector => {
+                    $(selector).prop('required', true);
+                });
+
+                if ($('input[name="pertenece_organizacion"]:checked').val() === '1') {
+                    $('#cual_organizacion_representante').prop('required', true);
+                }
+
+            } else {
+                $('#seccion-conectividad').hide();
+                $('#seccion-identificacion-familiar').hide();
+
+                legalFields.forEach(selector => {
+                    $(selector)
+                        .prop('required', false)
+                        .val('');
+                });
+
+                $('#cual_organizacion_representante')
+                    .prop('required', false)
+                    .val('');
+
+                $('input[name="pertenece_organizacion"]').prop('checked', false);
+            }
+        }
+
+
+        $(document).ready(function() {
+            console.log('Documento listo - Inicializando campo de organización');
+
+            // Inicializar Select2
+            $('.select2').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $('.modal')
+            });
+
+            // Asegurar que el formulario se envíe correctamente
+            $('#representante-form').on('submit', function(e) {
+                e.preventDefault();
+
+                // Validar formulario con JavaScript
+                if (!validarFormulario()) {
+                    return false;
+                }
+
+                const form = this;
+
+                // Validación HTML5
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+
+                    const firstInvalid = form.querySelector(':invalid');
+                    if (firstInvalid) {
+                        firstInvalid.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                        firstInvalid.focus();
+                    }
+                    return;
+                }
+
+                const submitBtn = $(form).find('button[type="submit"]');
+                submitBtn.prop('disabled', true)
+                    .html('<i class="fas fa-spinner fa-spin me-1"></i> Guardando...');
+
+                $.ajax({
+                    url: $(form).attr('action'),
+                    type: 'POST', // Laravel usará _method=PUT
+                    data: $(form).serialize(),
+                    dataType: 'json',
+
+                    success: function(response) {
+                        if (response.redirect) {
+                            window.location.href = response.redirect;
+                        } else {
+                            window.location.href = '{{ route('representante.index') }}';
+                        }
+                    },
+
+                    error: function(xhr) {
+                        submitBtn.prop('disabled', false)
+                            .html('<i class="fas fa-save me-1"></i> Guardar Cambios');
+
+                        let msg = 'Error al guardar.';
+                        if (xhr.responseJSON?.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+
+                        $('#representante-form').prepend(`
+                            <div class="alert alert-danger alert-dismissible fade show">
+                                ${msg}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `);
+                    }
+                });
+            });
+
+
+            // Inicializar selects dependientes
+            inicializarSelectsDependientes();
+
+            // Inicializar el estado del campo de organización
+            toggleCampoOrganizacion();
+
+            // Inicializar visibilidad de campos según el tipo de representante
+            toggleRepresentativeFields();
+
+            // Manejar cambios en los radio buttons de organización
+            $('input[name="pertenece_organizacion"]').on('change', function() {
+                toggleCampoOrganizacion();
+            });
+
+            // Manejar cambios en el tipo de representante
+            $('input[name="tipo_representante"]').on('change', function() {
+                toggleRepresentativeFields();
+            });
+
+            // Manejar cambios en los radio buttons de convivencia
+            $('input[name="convive-representante"]').on('change', function() {
+                // Limpiar errores al seleccionar una opción
+                const radios = document.querySelectorAll('input[name="convive-representante"]');
+                radios.forEach(radio => {
+                    limpiarError(radio);
+                });
+            });
+        });
+    </script>
 @endsection

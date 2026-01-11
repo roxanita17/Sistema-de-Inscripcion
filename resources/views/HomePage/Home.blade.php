@@ -13,10 +13,12 @@
     @vite([
         'resources/sass/app.scss',
         'resources/js/app.js',
-        'resources/css/cusmto_estilos_menu.css',
         'resources/css/home/BoostrapHome.css',
         'resources/css/home/Home.css'
     ])
+    
+    <!-- Bootstrap JS CDN as fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <style>
 
@@ -111,16 +113,12 @@
             <div class=" accordion accordion-flush" id="accordionFlush">
 
                 <div class="accordion-item">
-        
-                    <div class="accordion-header">
-        
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-        
-                            <h2 class="titulo-reseña" > Reseña Histórica</h2>
-        
-                        </button>
-                    </div>
-                    <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+    <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+        <span class="titulo-reseña">Reseña Histórica</span>
+    </button>
+</h2>
+                    <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlush">
                         
                         <div class="fondo-reseña accordion-body">
                             <p class="textoReseña"> 
