@@ -1,5 +1,4 @@
 @extends('adminlte::page')
-
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
@@ -7,7 +6,6 @@
     <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
 @stop
 @section('title', 'Gestión de inscripciones')
-
 @section('content_header')
     <div class="content-header-modern">
         <div class="header-content">
@@ -35,7 +33,6 @@
         </div>
     </div>
 @stop
-
 @section('content')
     <div class="main-container">
         @if (!$anioEscolarActivo)
@@ -53,7 +50,6 @@
                 </div>
             </div>
         @endif
-
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @if (session('error'))
             <script>
@@ -71,7 +67,6 @@
                 });
             </script>
         @endif
-
         @if (session('success'))
             <script>
                 Swal.fire({
@@ -115,7 +110,6 @@
                 </div>
             </div>
         @endif
-
         <div class="card-modern">
             <div class="card-header-modern d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div class="header-left d-flex align-items-center gap-3">
@@ -126,7 +120,6 @@
                         <h3 class="mb-0">Listado de inscripciones</h3>
                     </div>
                 </div>
-
                 <div class="header-right d-flex align-items-center gap-2 flex-wrap">
                     <form action="{{ route('admin.transacciones.inscripcion.index') }}" class="mb-0 search-sm">
                         <input type="hidden" name="grado_id" value="{{ request('grado_id') }}">
@@ -149,7 +142,6 @@
                             @endif
                         @endforeach
                     </div>
-
                     <button class="btn-filtro" data-bs-toggle="modal" data-bs-target="#modalFiltros">
                         <i class="fas fa-filter"></i>
                         @if (request('grado_id') || request('seccion_id') || request('tipo_inscripcion') || request('status'))
@@ -158,18 +150,15 @@
                             </span>
                         @endif
                     </button>
-
                     <a href="{{ route('admin.transacciones.inscripcion.reporteGeneralNuevoIngresoPDF') }}"
                         target="_blank" class="btn-pdf" id="generarPdfBtn"> 
                         <i class="fas fa-file-pdf"></i> PDF General
                     </a>
-
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                         $mostrarAnio = $anioActivo ?? $anioExtendido;
                     @endphp
-
                     @if ($mostrarAnio)
                         <div class="d-flex align-items-center bg-light rounded px-2 py-1 border">
                             <span class="badge bg-primary me-2" style="font-size: 0.7rem;">
@@ -193,7 +182,6 @@
                     @endif
                 </div>
             </div>
-
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern ">
@@ -364,43 +352,26 @@
     @endforeach
 
     <script>
-        // Actualizar el enlace de generación de PDF con los filtros actuales
         function actualizarEnlacePDF() {
             const generarPdfBtn = document.getElementById('generarPdfBtn');
             if (generarPdfBtn) {
-                // Obtener todos los parámetros de la URL actual
                 const urlParams = new URLSearchParams(window.location.search);
-
-                // Construir la URL base del reporte
                 let reportUrl = generarPdfBtn.getAttribute('href').split('?')[0];
                 const params = new URLSearchParams();
-
-                // Agregar todos los parámetros de filtro actuales
                 for (const [key, value] of urlParams.entries()) {
                     if (value) {
                         params.append(key, value);
                     }
                 }
-
-                // Construir URL final
                 if (params.toString()) {
                     reportUrl += '?' + params.toString();
                 }
-
-                // Actualizar el atributo href del botón
                 generarPdfBtn.setAttribute('href', reportUrl);
             }
         }
-
-        // Inicializar el enlace de PDF cuando el documento esté listo
         document.addEventListener('DOMContentLoaded', function() {
-            // Actualizar el enlace de PDF al cargar la página
             actualizarEnlacePDF();
-
-            // Actualizar el enlace cuando cambie la URL (navegación con filtros)
             window.addEventListener('popstate', actualizarEnlacePDF);
-
-            // Actualizar el enlace cuando se muestre el modal de filtros
             const filtroModal = document.getElementById('modalFiltros');
             if (filtroModal) {
                 filtroModal.addEventListener('shown.bs.modal', actualizarEnlacePDF);
