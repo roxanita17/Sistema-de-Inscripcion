@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Grado extends Model
 {
-    /** @use HasFactory<\Database\Factories\GradoFactory> */
     use HasFactory;
     protected $table = 'grados';
 
@@ -26,15 +25,9 @@ class Grado extends Model
             ->withTimestamps();
     }
     
-    /**
-     * Relación uno a muchos con la tabla intermedia (para usar whereHas)
-     */
     public function gradoAreaFormacion()
     {
         return $this->hasMany(GradoAreaFormacion::class, 'grado_id', 'id');
     }
-
-
-
 
 }

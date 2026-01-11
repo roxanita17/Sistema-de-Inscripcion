@@ -14,27 +14,21 @@ use App\Models\GrupoEstable;
 
 class DocenteAreaGrado extends Component
 {
-    // Propiedades principales
     public $docenteId;
     public $docentes = [];
     public $docenteSeleccionado = null;
-
-    // === ASIGNACIÓN DE ÁREA ===
     public $materiaId;
     public $materias = [];
-    public $gradoAreaId;         // 🔥 Variable independiente para área
-    public $gradosArea = [];     // 🔥 Colección independiente
-    public $seccionAreaId;       // 🔥 Variable independiente para área
-    public $seccionesArea = [];  // 🔥 Colección independiente
-
-    // === ASIGNACIÓN DE GRUPO ESTABLE ===
+    public $gradoAreaId;         
+    public $gradosArea = [];     
+    public $seccionAreaId;       
+    public $seccionesArea = [];  
     public $grupoEstableId;
     public $gruposEstables = [];
-    public $gradoGrupoId;        // 🔥 Variable independiente para grupo
-    public $gradosGrupo = [];    // 🔥 Colección independiente
-    public $seccionGrupoId;      // 🔥 Variable independiente para grupo
-    public $seccionesGrupo = []; // 🔥 Colección independiente
-
+    public $gradoGrupoId;        
+    public $gradosGrupo = [];    
+    public $seccionGrupoId;      
+    public $seccionesGrupo = []; 
     public $asignaciones = [];
     public $modoEditar = false;
     public $asignacionAEliminar = null;
@@ -111,7 +105,7 @@ class DocenteAreaGrado extends Component
             'grado',
             'seccion',
             'grupoEstable',
-            'gradoGrupoEstable', // para mostrar el grado del grupo estable
+            'gradoGrupoEstable',
         ])
             ->whereHas('detalleDocenteEstudio', function ($q) {
                 $q->where('docente_id', $this->docenteSeleccionado->id);
@@ -122,14 +116,11 @@ class DocenteAreaGrado extends Component
             ->get();
     }
 
-
-    // 🔥 Computed property para botón de ÁREA
     public function getPuedeAgregarAreaProperty()
     {
         return $this->materiaId && $this->gradoAreaId && $this->seccionAreaId;
     }
 
-    // 🔥 Computed property para botón de GRUPO ESTABLE
     public function getPuedeAgregarGrupoProperty()
     {
         return $this->grupoEstableId && $this->gradoGrupoId;
@@ -218,8 +209,6 @@ class DocenteAreaGrado extends Component
             ->get();
     }
 
-    // === EVENTOS PARA ASIGNACIÓN DE ÁREA ===
-
     public function updatedMateriaId()
     {
         $this->reset(['gradoAreaId', 'seccionAreaId']);
@@ -263,8 +252,6 @@ class DocenteAreaGrado extends Component
             ->get();
     }
 
-    // === EVENTOS PARA ASIGNACIÓN DE GRUPO ESTABLE ===
-
     public function updatedGrupoEstableId()
     {
         $this->reset(['gradoGrupoId', 'seccionGrupoId']);
@@ -275,7 +262,6 @@ class DocenteAreaGrado extends Component
             return;
         }
 
-        // Para grupo estable: TODOS los grados activos
         $this->gradosGrupo = Grado::where('status', true)
             ->orderBy('numero_grado', 'asc')
             ->get();
@@ -296,8 +282,6 @@ class DocenteAreaGrado extends Component
             ->get();
     }
 
-    // === AGREGAR ASIGNACIÓN DE ÁREA ===
-
     public function agregarAsignacionArea()
     {
         $this->validate([
@@ -311,7 +295,6 @@ class DocenteAreaGrado extends Component
         try {
             $area = AreaEstudioRealizado::findOrFail($this->materiaId);
 
-            // Validar relación grado - área de formación
             $gradoTieneArea = \App\Models\GradoAreaFormacion::where([
                 'grado_id' => $this->gradoAreaId,
                 'area_formacion_id' => $area->area_formacion_id,
@@ -324,7 +307,6 @@ class DocenteAreaGrado extends Component
                 ]);
             }
 
-            // Obtener detalle de estudio del docente
             $detalleEstudio = $this->docenteSeleccionado->detalleDocenteEstudio()
                 ->where('estudios_id', $area->estudios_id)
                 ->where('status', true)
@@ -336,7 +318,6 @@ class DocenteAreaGrado extends Component
                 ]);
             }
 
-            // Validar duplicado exacto
             $existe = ModeloDocenteAreaGrado::where([
                 'docente_estudio_realizado_id' => $detalleEstudio->id,
                 'area_estudio_realizado_id' => $this->materiaId,
@@ -352,7 +333,6 @@ class DocenteAreaGrado extends Component
                 ]);
             }
 
-            // Validar que nadie más tenga esa área en ese grado-sección
             $asignacionExistente = ModeloDocenteAreaGrado::where([
                 'grado_id' => $this->gradoAreaId,
                 'seccion_id' => $this->seccionAreaId,
@@ -399,8 +379,6 @@ class DocenteAreaGrado extends Component
         }
     }
 
-    // === AGREGAR ASIGNACIÓN DE GRUPO ESTABLE ===
-
     public function agregarAsignacionGrupo()
     {
         $this->validate([
@@ -411,11 +389,6 @@ class DocenteAreaGrado extends Component
         DB::beginTransaction();
 
         try {
-            /*
-        |--------------------------------------------------------------------------
-        | 1️⃣ VALIDAR QUE EL DOCENTE NO TENGA YA GRUPO ESTABLE
-        |--------------------------------------------------------------------------
-        */
 
             $detalleEstudio = $this->docenteSeleccionado
                 ->detalleDocenteEstudio()
@@ -440,12 +413,6 @@ class DocenteAreaGrado extends Component
                 ]);
             }
 
-
-            /*
-        |--------------------------------------------------------------------------
-        | 2️⃣ VALIDAR QUE EL GRUPO ESTABLE NO ESTÉ ASIGNADO A OTRO DOCENTE
-        |--------------------------------------------------------------------------
-        */
             $asignacionExistente = ModeloDocenteAreaGrado::where([
                 'grupo_estable_id' => $this->grupoEstableId,
                 'grado_grupo_estable_id' => $this->gradoGrupoId,
@@ -464,15 +431,10 @@ class DocenteAreaGrado extends Component
                 ]);
             }
 
-            /*
-        |--------------------------------------------------------------------------
-        | 3️⃣ CREAR ASIGNACIÓN (SIN ESTUDIO)
-        |--------------------------------------------------------------------------
-        */
             ModeloDocenteAreaGrado::create([
                 'docente_estudio_realizado_id' => $detalleEstudio->id,
                 'grupo_estable_id' => $this->grupoEstableId,
-                'grado_grupo_estable_id' => $this->gradoGrupoId, // ✅ correcto para grupo
+                'grado_grupo_estable_id' => $this->gradoGrupoId,
                 'tipo_asignacion' => 'grupo_estable',
                 'status' => true,
             ]);

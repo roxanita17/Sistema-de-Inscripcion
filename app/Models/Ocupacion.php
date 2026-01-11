@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ocupacion extends Model
 {
-    /** @use HasFactory<\Database\Factories\OcupacionFactory> */
     use HasFactory;
 
     protected $table = 'ocupacions';

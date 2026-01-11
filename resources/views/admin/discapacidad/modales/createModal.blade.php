@@ -1,9 +1,7 @@
-<!-- Modal Crear Grado -->
 <div class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
 
-            {{-- Cabecera del modal --}}
             <div class="modal-header-create">
                 <div class="modal-icon-create">
                     <i class="fas fa-plus-circle"></i>
@@ -14,15 +12,12 @@
                 </button>
             </div>
 
-            {{-- Cuerpo del modal con formulario --}}
             <div class="modal-body-create">
                 <form action="{{ route('admin.discapacidad.modales.store') }}" method="POST" id="formCrearDiscapacidad">
                     @csrf
 
-                    {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
 
-                    {{-- Nombre --}}
                     <div class="form-group-modern">
                         <label for="nombre_discapacidad" class="form-label-modern">
                             <i class="fas fa-hashtag me-2"></i> Nombre
@@ -43,8 +38,6 @@
                         @enderror
                     </div>
 
-                   
-                    {{-- Botones --}}
                     <div class="modal-footer-create">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">

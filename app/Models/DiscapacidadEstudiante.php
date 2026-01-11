@@ -21,8 +21,6 @@ class DiscapacidadEstudiante extends Model
         'status' => 'boolean',
     ];
 
-    /* ================= RELACIONES ================= */
-
     public function alumno()
     {
         return $this->belongsTo(Alumno::class, 'alumno_id', 'id');

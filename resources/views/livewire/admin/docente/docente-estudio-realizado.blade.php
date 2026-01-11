@@ -1,6 +1,4 @@
 <div>
-    {{-- Alertas de anio escolar --}}
-
     @if (session()->has('success') || session()->has('error'))
         <div class="alerts-container mb-3">
             @if (session()->has('success'))
@@ -33,7 +31,6 @@
         </div>
     @endif
 
-    {{-- Formulario para agregar estudios --}}
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -97,7 +94,6 @@
     </div>
 
 
-    {{-- Tabla de estudios asignados --}}
     <div class="card-modern">
         <div class="card-header-modern">
             <div class="header-left">
@@ -174,7 +170,6 @@
 
                     </tbody>
                 </table>
-                <!-- Modal eliminar estudio -->
                 <div wire:ignore.self class="modal fade" id="modalEliminarEstudio" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content modal-modern">

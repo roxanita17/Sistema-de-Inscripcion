@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetalleDocenteEstudio;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Docente;
-use App\Models\AreaEstudioRealizado;
 use App\Models\DocenteAreaGrado;
-use Illuminate\Support\Facades\Log;
 use App\Models\Grado;
 use \App\Models\Seccion;
 use \App\Models\AreaFormacion;
@@ -17,9 +13,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class DocenteAreaGradoController extends Controller
 {
-    /**
-     * Verifica si hay un año escolar activo
-     */
     private function verificarAnioEscolar()
     {
         return \App\Models\AnioEscolar::where('status', 'Activo')
@@ -27,9 +20,6 @@ class DocenteAreaGradoController extends Controller
             ->exists();
     }
 
-    /**
-     * Muestra el listado de docentes
-     */
     public function index(Request $request)
     {
         $gradosEscolares = collect();
@@ -59,7 +49,6 @@ class DocenteAreaGradoController extends Controller
             });
         })
 
-
         ->when($seccionNombre, function ($q) use ($seccionNombre) {
             $q->whereHas('asignacionesAreas.seccion', function ($sub) use ($seccionNombre) {
                 $sub->where('seccions.nombre', $seccionNombre)
@@ -77,11 +66,7 @@ class DocenteAreaGradoController extends Controller
         ->paginate(10)
         ->withQueryString();
 
-
         $anioEscolarActivo = $this->verificarAnioEscolar();
-
-
-
 
         $gradosEscolares = Grado::where('status', true)
             ->orderBy('numero_grado')
@@ -97,7 +82,6 @@ class DocenteAreaGradoController extends Controller
             ->orderBy('nombre_area_formacion')
             ->get();
 
-
         return view('admin.transacciones.docente_area_grado.index', compact(
             'docentes',
             'anioEscolarActivo',
@@ -109,7 +93,6 @@ class DocenteAreaGradoController extends Controller
 
 
     }
-
 
     public function create()
     {
@@ -123,14 +106,9 @@ class DocenteAreaGradoController extends Controller
         ]);
     }
 
-    /**
-     * Eliminación lógica de la asignación
-     */
-
     public function destroyAsignacion($id)
     {
         try {
-            // Buscar TODAS las asignaciones del docente (no por id directo)
             $asignaciones = DocenteAreaGrado::whereHas('detalleDocenteEstudio', function ($q) use ($id) {
                 $q->where('docente_id', $id);
             })->get();
@@ -139,7 +117,6 @@ class DocenteAreaGradoController extends Controller
                 return back()->with('error', 'No existen asignaciones activas para este docente.');
             }
 
-            // Inactivar todas las asignaciones
             foreach ($asignaciones as $asg) {
                 $asg->update(['status' => false]);
             }
@@ -152,9 +129,6 @@ class DocenteAreaGradoController extends Controller
         }
     }
 
-    /**
-     * Generar reporte PDF general de docentes con asignaciones
-     */
     public function reportePDFGeneral(Request $request)
     {
         $gradoId = $request->grado_id;

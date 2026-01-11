@@ -17,10 +17,7 @@ class HistoricoController extends Controller
         $anioEscolarId = $request->anio_escolar_id;
         $tipo = $request->get('tipo', 'inscripciones');
         $modalidad = $request->get('modalidad');
-
         $anios = AnioEscolar::orderBy('inicio_anio_escolar', 'desc')->get();
-
-        // ================= DOCENTES =================
         if ($tipo === 'docentes') {
             $docentes = Docente::with([
                 'persona',
@@ -41,9 +38,6 @@ class HistoricoController extends Controller
             ));
         }
 
-        // ================= INSCRIPCIONES =================
-
-        // NUEVO INGRESO
         if ($modalidad === 'nuevo_ingreso') {
             $inscripciones = Inscripcion::with([
                 'anioEscolar',
@@ -69,16 +63,15 @@ class HistoricoController extends Controller
             ));
         }
 
-        // PROSECUCIÓN
         if ($modalidad === 'prosecucion') {
             $inscripciones = InscripcionProsecucion::with([
-                'inscripcion.anioEscolar', // Año de la inscripción base
+                'inscripcion.anioEscolar',
                 'inscripcion.alumno.persona',
-                'inscripcion.grado', // Grado de la inscripción base (de donde viene)
+                'inscripcion.grado',
                 'inscripcion.seccion',
-                'anioEscolar', // Año de la prosecución
-                'grado', // Grado al que fue promovido
-                'seccion' // Sección a la que fue asignado
+                'anioEscolar',
+                'grado',
+                'seccion'
             ])
                 ->where('status', 'Activo')
                 ->when($anioEscolarId, fn($q) => $q->where('anio_escolar_id', $anioEscolarId))
@@ -95,7 +88,6 @@ class HistoricoController extends Controller
             ));
         }
 
-        // TODAS LAS INSCRIPCIONES (sin filtro de modalidad)
         $inscripciones = Inscripcion::with([
             'anioEscolar',
             'alumno.persona',
@@ -103,7 +95,7 @@ class HistoricoController extends Controller
             'seccion',
             'seccionAsignada',
             'nuevoIngreso',
-            'prosecucion.grado', // Para obtener el grado de promoción
+            'prosecucion.grado',
             'prosecucion.seccion'
         ])
             ->whereNull('deleted_at')

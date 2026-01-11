@@ -1,10 +1,7 @@
-<!-- Modal Editar Grado -->
 <div class="modal fade" id="viewModalEditar{{ $datos->id }}" tabindex="-1"
     aria-labelledby="viewModalEditarLabel{{ $datos->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
-
-            {{-- Cabecera del modal --}}
             <div class="modal-header-edit">
                 <div class="modal-icon-edit">
                     <i class="fas fa-pen"></i>
@@ -16,14 +13,10 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-
-            {{-- Cuerpo del modal con formulario --}}
             <div class="modal-body-edit">
                 <form action="{{ route('admin.grado.modales.update', $datos->id) }}" method="POST">
                     @csrf
                     <input type="hidden" name="id" value="{{ $datos->id }}">
-
-                    {{-- Numero de grado --}}
                     <div class="form-group-modern">
                         <label for="numero_grado_{{ $datos->id }}" class="form-label-modern">
                             Nivel Academico
@@ -38,8 +31,6 @@
                             </div>
                         @enderror
                     </div>
-
-                    {{-- Capacidad máxima --}}
                     <div class="form-group-modern">
                         <label for="capacidad_max_{{ $datos->id }}" class="form-label-modern">
                             Capacidad Máxima de Cupos
@@ -54,8 +45,6 @@
                             </div>
                         @enderror
                     </div>
-
-                    {{-- Mínimo de sección --}}
                     <div class="form-group-modern">
                         <label for="min_seccion_{{ $datos->id }}" class="form-label-modern">
                             Mínimo de Sección
@@ -70,8 +59,6 @@
                             </div>
                         @enderror
                     </div>
-
-                    {{-- Máximo de sección --}}
                     <div class="form-group-modern">
                         <label for="max_seccion_{{ $datos->id }}" class="form-label-modern">
                             Máximo de Sección
@@ -86,8 +73,6 @@
                             </div>
                         @enderror
                     </div>
-
-                    {{-- Botones --}}
                     <div class="modal-footer-edit">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
@@ -98,10 +83,8 @@
                             </button>
                         </div>
                     </div>
-
                 </form>
             </div>
-
         </div>
     </div>
 </div>

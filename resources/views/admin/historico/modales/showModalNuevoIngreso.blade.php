@@ -5,8 +5,6 @@
     aria-labelledby="showModalNuevoIngresoLabel{{ $datos->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content modal-modern shadow">
-
-            <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
                     <h5 class="modal-title-view mb-2">
@@ -25,7 +23,6 @@
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -110,15 +107,12 @@
                             </div>
                         </div>
                     </div>
-
-                    {{-- Informacion de nuevo ingreso --}}
                     <div class="section-title">
                         <i class="fas fa-user-plus"></i>
                         <span>Datos de Nuevo Ingreso</span>
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 ">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -152,8 +146,6 @@
                         </div>
                     </div>
                 </div>
-
-                {{-- Datos del estudiante --}}
                 <div class="mb-4">
                     @php
                         $dato = $datos->alumno->persona;
@@ -165,7 +157,6 @@
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -224,8 +215,6 @@
                                         @php
                                             $pais = $dato?->localidad?->municipio?->estado?->pais?->nameES;
                                         @endphp
-
-                                        {{-- Mostrar país SOLO si NO es Venezuela --}}
                                         @if ($pais && strtolower($pais) !== 'venezuela')
                                             {{ $pais }} /
                                         @endif
@@ -359,8 +348,6 @@
                         </div>
                     </div>
                 </div>
-
-                {{-- Representantes --}}
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-users"></i>
@@ -370,7 +357,6 @@
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
 
                         <div class="row mt-2 mb-4">
-                            <!-- PADRE -->
                             @if ($datos->padre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100 ">
@@ -492,8 +478,6 @@
                                     </div>
                                 </div>
                             @endif
-
-                            <!-- MADRE -->
                             @if ($datos->madre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100">
@@ -617,7 +601,6 @@
                             @endif
                         </div>
                         <div class="row">
-                            <!-- REPRESENTANTE LEGAL -->
                             @if ($datos->representanteLegal)
                                 <div class="col-md-12">
                                     <div class="card shadow-sm border-0">
@@ -831,7 +814,6 @@
                                     </div>
                                 </div>
                             @endif
-                            <!-- Si no hay representantes -->
                             @if (!$datos->padre && !$datos->madre && !$datos->representanteLegal)
                                 <div class="col-12">
                                     <div class="alert alert-warning text-center">
@@ -844,8 +826,6 @@
 
                     </div>
                 </div>
-
-                {{-- Documentos --}}
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-folder-open"></i>
@@ -969,8 +949,6 @@
                         @endforeach
                     </div>
                 </div>
-
-                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
             </div>
             <div class="modal-footer modal-footer-view">

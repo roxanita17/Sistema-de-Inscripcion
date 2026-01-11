@@ -413,7 +413,7 @@
                             <i class="fas fa-arrow-left"></i> Cancelar
                         </a>
                         <button type="submit" class="btn-primary-modern">
-                            <i class="fas fa-save"></i> Siguiente
+                            <i class="fas fa-save"></i> Guardar
                         </button>
                     </div>
                 </form>

@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
@@ -11,7 +10,6 @@
 @section('title', 'Gestión de Docentes')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -51,7 +49,6 @@
             </div>
         @endif
 
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -86,11 +83,8 @@
             </div>
         @endif
 
-        {{-- Contenedor principal de la tabla de discapacidades --}}
         <div class="card-modern">
             <div class="card-header-modern d-flex align-items-center justify-content-between flex-wrap gap-3">
-
-                <!-- IZQUIERDA -->
                 <div class="header-left d-flex align-items-center gap-3">
                     <div class="header-icon">
                         <i class="fas fa-list-ul"></i>
@@ -101,10 +95,8 @@
                     </div>
                 </div>
 
-                <!-- DERECHA -->
                 <div class="header-right d-flex align-items-center gap-2 flex-wrap">
 
-                    <!-- BUSCADOR -->
                     <form action="{{ route('admin.docente.index') }}" class="mb-0 search-sm">
                         <div class="search-modern">
                             <i class="fas fa-search"></i>
@@ -113,39 +105,9 @@
                         </div>
                     </form>
 
-                    <!-- PDF -->
                     <a href="{{ route('admin.docente.reporteGeneralPDF') }}" target="_blank" class="btn-pdf">
                         <i class="fas fa-file-pdf"></i> PDF General
                     </a>
-
-                    <!-- AÑO ESCOLAR -->
-                    @php
-                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
-                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-                        $mostrarAnio = $anioActivo ?? $anioExtendido;
-                    @endphp
-
-                    @if ($mostrarAnio)
-                        <div class="d-flex align-items-center bg-light rounded px-2 py-1 border">
-                            <span class="badge bg-primary me-2" style="font-size: 0.7rem;">
-                                <i class="fas fa-calendar-check me-1"></i> Año Escolar
-                            </span>
-                            <span class="text-muted me-2" style="font-size: 0.8rem;">
-                                <i class="fas fa-play-circle text-primary me-1"></i>
-                                {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                            </span>
-                            <span class="text-muted" style="font-size: 0.8rem;">
-                                <i class="fas fa-flag-checkered text-danger me-1"></i>
-                                {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                            </span>
-                        </div>
-                    @else
-                        <div
-                            class="d-flex align-items-center bg-warning bg-opacity-10 rounded px-2 py-1 border border-warning">
-                            <i class="fas fa-exclamation-triangle text-warning me-1"></i>
-                            <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-                        </div>
-                    @endif
 
                 </div>
             </div>
@@ -296,7 +258,6 @@
         </div>
     </div>
 
-    {{-- Paginación moderna --}}
     <x-pagination :paginator="$docentes" />
 
 @endsection

@@ -2,8 +2,6 @@
 <div class="modal fade" id="showModalProsecucion-{{ $datos->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content modal-modern shadow">
-
-            <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
                     <h5 class="modal-title-view mb-2">
@@ -45,10 +43,7 @@
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
                     data-bs-dismiss="modal"></button>
             </div>
-
-            <!-- BODY -->
             <div class="modal-body modal-body-view">
-                {{-- ========== DATOS DEL ESTUDIANTE ========== --}}
                 <div class="mb-4">
                     @php
                         $dato = $datos->inscripcion->alumno->persona;
@@ -60,7 +55,6 @@
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 ">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -252,10 +246,7 @@
                     </div>
                 </div>
 
-                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                {{-- ========== DATOS DE PROSECUCIÓN ========== --}}
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-arrow-circle-up text-success"></i>
@@ -358,10 +349,7 @@
                     </div>
                 </div>
 
-                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                {{-- ========== ESTADO DE MATERIAS ========== --}}
                 <div class="mb-4">
 
 
@@ -379,7 +367,6 @@
                     @endphp
 
                     <div class="row g-1 mt-2 justify-content-center">
-                        <!-- Materias Aprobadas -->
                         @if ($materiasAprobadas->count() > 0)
                             <div class="col-md-6">
                                 <div class="card shadow-sm border-0">
@@ -412,7 +399,6 @@
                             </div>
                         @endif
 
-                        <!-- Materias Pendientes -->
                         @if ($materiasPendientes->count() > 0)
                             <div class="col-md-6">
                                 <div class="card shadow-sm border-0">
@@ -457,10 +443,7 @@
                     </div>
                 </div>
 
-                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                {{-- ========== REPRESENTANTES ========== --}}
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-users"></i>
@@ -470,7 +453,6 @@
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
 
                         <div class="row mt-2 mb-4">
-                            <!-- PADRE -->
                             @if ($datos->inscripcion->padre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100 ">
@@ -592,7 +574,6 @@
                                 </div>
                             @endif
 
-                            <!-- MADRE -->
                             @if ($datos->inscripcion->madre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100">
@@ -715,7 +696,6 @@
                             @endif
                         </div>
                         <div class="row">
-                            <!-- REPRESENTANTE LEGAL -->
                             @if ($datos->inscripcion->representanteLegal)
                                 <div class="col-md-12">
                                     <div class="card shadow-sm border-0">
@@ -928,7 +908,6 @@
                                     </div>
                                 </div>
                             @endif
-                            <!-- Si no hay representantes -->
                             @if (!$datos->inscripcion->padre && !$datos->inscripcion->madre && !$datos->inscripcion->representanteLegal)
                                 <div class="col-12">
                                     <div class="alert alert-warning text-center">
@@ -941,14 +920,7 @@
 
                     </div>
                 </div>
-
-
-
-
-                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                {{-- ========== OBSERVACIONES ========== --}}
                 <div class="mb-3">
                     <div class="section-title">
                         <i class="fas fa-comment-dots text-secondary"></i>
@@ -968,8 +940,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- FOOTER -->
             <div class="modal-footer modal-footer-view">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times me-2"></i>Cerrar

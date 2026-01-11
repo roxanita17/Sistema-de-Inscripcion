@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AreaFormacion extends Model
 {
-    /** @use HasFactory<\Database\Factories\AreaFormacionFactory> */
     use HasFactory;
     protected $table = 'area_formacions';
 

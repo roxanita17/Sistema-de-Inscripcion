@@ -1,4 +1,3 @@
-<!-- Modal Crear Area de Formación -->
 <div class="modal fade" id="modalCrearAreaFormacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearAreaFormacionLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
@@ -15,8 +14,6 @@
             <div class="modal-body-create">
                 <form id="formAreaFormacion" action="{{ route('admin.area_formacion.modales.store') }}" method="POST">
                     @csrf
-
-                    <!-- Nombre del area de formación -->
                     <div class="form-group-modern">
                         <label for="nombre_area_formacion" class="form-label-modern">
                             <i class="fas fa-book"></i>
@@ -36,7 +33,6 @@
                         @enderror
                     </div> 
                     
-                    <!-- Código del area de formación -->
                     <div class="form-group-modern">
                         <label for="codigo_area" class="form-label-modern">
                             <i class="fas fa-book"></i>
@@ -58,7 +54,6 @@
                         @enderror
                     </div>
                     
-                    <!-- Siglas del area de formación -->
                     <div class="form-group-modern">
                         <label for="siglas" class="form-label-modern">
                             <i class="fas fa-book"></i>
@@ -78,7 +73,6 @@
                         @enderror
                     </div> 
 
-                    {{-- Botones --}}
                     <div class="modal-footer-create">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
