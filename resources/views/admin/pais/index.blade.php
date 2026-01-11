@@ -14,33 +14,24 @@
                     <p class="title-subtitle">Administración de los paises del sistema</p>
                 </div>
             </div>
-
-            {{-- Botón crear --}}
-            <button type="button"
-                    class="btn-create"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalCrear"
-                    @if(!$anioEscolarActivo) disabled @endif
-                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo pais' }}">
+            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
+                @if (!$anioEscolarActivo) disabled @endif
+                title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Nuevo pais' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Pais</span>
             </button>
-        </div> 
+        </div>
     </div>
 @stop
-
-{{-- Estilos --}}
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
-
 @section('content')
     @livewire('admin.pais-index')
 @endsection
-
-@section('js')    
+@section('js')
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('cerrarModal', () => {
@@ -51,7 +42,6 @@
                         modalInstance.hide();
                     }
                 });
-
                 const backdrops = document.querySelectorAll('.modal-backdrop');
                 backdrops.forEach(backdrop => backdrop.remove());
 

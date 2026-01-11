@@ -1,9 +1,7 @@
-<!-- Modal Crear Estado -->
-<div wire:ignore.self class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+<div wire:ignore.self class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modalCrearLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
-
-            {{-- Cabecera del modal --}}
             <div class="modal-header-create">
                 <div class="modal-icon-create">
                     <i class="fas fa-plus-circle"></i>
@@ -13,54 +11,35 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-
-            {{-- Cuerpo del modal con formulario --}}
             <div class="modal-body-create">
                 <form wire:submit.prevent="store" id="formCrearEstado">
-                    
-                    {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaCrear"></div>
-
                     <div class="form-group-modern">
                         <label for="pais_id" class="form-label-modern">
                             <i class="fas fa-tags"></i>
                             Pais
                         </label>
-                        <select name="pais_id" 
-                            wire:model.defer="pais_id"
-                            id="pais_id" 
-                            class="form-control-modern " 
-                            data-live-search="true"
-                            title="Seleccione un pais"
-                            required>
+                        <select name="pais_id" wire:model.defer="pais_id" id="pais_id" class="form-control-modern "
+                            data-live-search="true" title="Seleccione un pais" required>
                             <option value="">Seleccione un pais</option>
                             @foreach ($paises as $pais)
                                 <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
                             @endforeach
                         </select>
                     </div>
-
-                    {{-- Nombre del Estado --}}
                     <div class="form-group-modern">
                         <label for="nombre_estado_crear" class="form-label-modern">
                             <i class="fas fa-hashtag me-2"></i> Nombre del Estado
                         </label>
-                        <input type="text" 
-                               class="form-control-modern" 
-                               id="nombre_estado_crear" 
-                               wire:model.defer="nombre_estado"
-                               inputmode="text"
-                               maxlength="100"
-                               placeholder="Ingrese el nombre del estado"
-                               required>
+                        <input type="text" class="form-control-modern" id="nombre_estado_crear"
+                            wire:model.defer="nombre_estado" inputmode="text" maxlength="100"
+                            placeholder="Ingrese el nombre del estado" required>
                         @error('nombre_estado')
                             <div class="error-message">
                                 {{ $message }}
                             </div>
                         @enderror
                     </div>
-
-                    {{-- Botones --}}
                     <div class="modal-footer-create">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
@@ -73,7 +52,6 @@
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </div>

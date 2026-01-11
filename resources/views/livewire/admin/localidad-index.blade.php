@@ -1,7 +1,6 @@
 <div class="main-container">
     @include('admin.localidad.modales.createModal')
     @include('admin.localidad.modales.editModal')
-
     @if (!$anioEscolarActivo)
         <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
             <div class="d-flex align-items-center">
@@ -33,7 +32,6 @@
                     </button>
                 </div>
             @endif
-
             @if (session('error'))
                 <div class="alert-modern alert-error alert alert-dismissible fade show">
                     <div class="alert-icon">
@@ -52,7 +50,6 @@
     @endif
     @include('admin.localidad.modales.createModal')
     @include('admin.localidad.modales.editModal')
-
     <div class="card-modern">
         <div class="card-header-modern">
             <div class="header-left">
@@ -64,7 +61,6 @@
                     <p>{{ $localidades->total() }} registros encontrados</p>
                 </div>
             </div>
-
             <div class="form-group-modern mb-2">
                 <div class="search-modern">
                     <i class="fas fa-search"></i>
@@ -72,7 +68,6 @@
                         placeholder="Buscar..." wire:model.live="search">
                 </div>
             </div>
-
             <div class="header-right">
                 @php
                     $anioActivo = \App\Models\AnioEscolar::activos()->first();
@@ -109,7 +104,6 @@
                 @endif
             </div>
         </div>
-
         <div class="card-body-modern">
             <div class="table-wrapper">
                 <table class="table-modern overflow-hidden hidden">
@@ -123,7 +117,6 @@
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-
                     <tbody class="text-center">
                         @if ($localidades->isEmpty())
                             <tr>
@@ -172,7 +165,6 @@
                                     </div>
                                 </td>
                             </tr>
-
                             <div wire:ignore.self class="modal fade" id="confirmarEliminar{{ $datos->id }}"
                                 tabindex="-1" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">

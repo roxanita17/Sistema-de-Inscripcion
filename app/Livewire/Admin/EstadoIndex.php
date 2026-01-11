@@ -11,7 +11,6 @@ use App\Models\Pais;
 class EstadoIndex extends Component
 {
     use WithPagination;
-
     public $nombre_estado;
     public $estado_id;
     public $updateMode = false;
@@ -61,7 +60,6 @@ class EstadoIndex extends Component
         return view('livewire.admin.estado-index', compact('estados', 'paises'));
     }
 
-
     public function paginationView()
     {
         return 'vendor.livewire.bootstrap-custom';
@@ -85,19 +83,16 @@ class EstadoIndex extends Component
         if (!$this->verificarAccion()) {
             return;
         }
-
         $this->validate();
         if (Estado::where('nombre_estado', $this->nombre_estado)->where('status', true)->exists()) {
             session()->flash('error', 'Ya existe un estado con ese nombre.');
             return;
         }
-
         Estado::create([
             'pais_id' => $this->pais_id,
             'nombre_estado' => $this->nombre_estado,
             'status' => true,
         ]);
-
         session()->flash('success', 'Estado creado correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetInputFields();
@@ -105,11 +100,9 @@ class EstadoIndex extends Component
 
     public function edit($id)
     {
-        // Verificar año escolar antes de editar
         if (!$this->verificarAccion()) {
             return;
         }
-
         $estado = Estado::findOrFail($id);
         $this->estado_id = $id;
         $this->nombre_estado = $estado->nombre_estado;
@@ -122,16 +115,12 @@ class EstadoIndex extends Component
         if (!$this->verificarAccion()) {
             return;
         }
-
         $this->validate();
-
         $estado = Estado::find($this->estado_id);
         $estado->update([
             'nombre_estado' => $this->nombre_estado,
             'pais_id' => $this->pais_id,
         ]);
-
-
         session()->flash('success', 'Estado actualizado correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetInputFields();
@@ -142,10 +131,8 @@ class EstadoIndex extends Component
         if (!$this->verificarAccion()) {
             return;
         }
-
         $estado = Estado::findOrFail($id);
         $estado->update(['status' => false]);
-
         session()->flash('success', 'Estado eliminado correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetPage();
