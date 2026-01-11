@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Discapacidad;
 use Illuminate\Http\Request;
+use App\Models\AnioEscolar;
 
 class DiscapacidadController extends Controller
 {
     private function verificarAnioEscolar()
     {
-        return \App\Models\AnioEscolar::where('status', 'Activo')
+        return AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->exists();
     }
@@ -74,6 +75,7 @@ class DiscapacidadController extends Controller
         try {
             $discapacidad = new Discapacidad();
             $discapacidad->nombre_discapacidad = $validated['nombre_discapacidad'];
+            $discapacidad->status = true;
             $discapacidad->status = true;
             $discapacidad->save();
             return redirect()

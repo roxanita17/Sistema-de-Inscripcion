@@ -1,10 +1,8 @@
-<!-- Modal Ver Detalles - MEJORADO -->
+
 <div class="modal fade" id="viewModal{{ $datos->id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ $datos->id }}"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content modal-modern">
-
-            <!-- Header -->
             <div class="modal-header-view">
                 <div class="modal-icon-view">
                     <i class="fas fa-eye"></i>
@@ -17,11 +15,10 @@
                 </button>
             </div>
 
-            <!-- Body -->
+            
             <div class="modal-body-view">
                 <div class="details-card">
 
-                    {{-- Información Principal --}}
                     <div class="detail-item">
                         <span class="detail-label">
                             <i class="fas fa-id-badge"></i>
@@ -50,7 +47,6 @@
                         </span>
                     </div>
 
-                    {{-- Duración calculada --}}
                     <div class="detail-item">
                         <span class="detail-label">
                             <i class="fas fa-clock"></i>
@@ -67,7 +63,6 @@
                         </span>
                     </div>
 
-                    {{-- Estado con badge mejorado --}}
                     <div class="detail-item">
                         <span class="detail-label">
                             <i class="fas fa-toggle-on"></i>
@@ -84,10 +79,8 @@
                         </span>
                     </div>
 
-                    {{-- Separador visual --}}
                     <div style="border-top: 2px dashed var(--gray-200); margin: 1rem 0;"></div>
 
-                    {{-- Información de auditoría --}}
                     <div class="detail-item">
                         <span class="detail-label">
                             <i class="fas fa-calendar-plus"></i>
@@ -116,7 +109,6 @@
                 </div>
             </div>
 
-            <!-- Footer -->
             <div class="modal-footer-view">
                 <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
                     <i class="fas fa-times-circle"></i>

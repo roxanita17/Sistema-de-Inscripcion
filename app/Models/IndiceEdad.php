@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class IndiceEdad extends Model
 {
-    /** @use HasFactory<\Database\Factories\IndiceEdadFactory> */
     use HasFactory;
 
     protected $table = 'indice_edads';

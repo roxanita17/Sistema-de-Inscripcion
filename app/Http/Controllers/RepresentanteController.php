@@ -12,13 +12,11 @@ use App\Models\Localidad;
 use App\Models\Banco;
 use App\Models\PrefijoTelefono;
 use App\Models\Ocupacion;
-use App\Models\TipoCuenta;
 use App\Models\TipoDocumento;
-use App\Models\AnoEscolar;
+use App\Models\AnioEscolar;
 use App\Models\Genero;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -26,28 +24,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RepresentanteController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | HELPER METHODS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Verifica si existe un año escolar activo o extendido
-     * 
-     * @return bool
-     */
-
     private function verificarAnioEscolar()
     {
-        return \App\Models\AnioEscolar::where('status', 'Activo')
+        return AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->exists();
     }
 
-    /**
-     * Mapear los valores del carnet patria afiliado a números
-     */
     private function mapearCarnetPatriaAfiliado($valor)
     {
         $mapeo = [
@@ -56,39 +39,19 @@ class RepresentanteController extends Controller
             'otro' => 3,
         ];
 
-        return $mapeo[$valor] ?? 0; // 0 para 'No especificado' o valores no reconocidos
+        return $mapeo[$valor] ?? 0;
     }
 
-    /**
-     * Obtiene el tipo de cuenta basado en la selección
-     * 
-     * @param string $tipo
-     * @return string
-     */
     private function obtenerTipoCuenta($tipo)
     {
         return $tipo === 'ahorro' ? 'Ahorro' : 'Corriente';
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | VIEW METHODS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Muestra la vista principal de representantes
-     * 
-     * @return \Illuminate\View\View
-     */
-
     public function index()
     {
         $anioEscolarActivo = $this->verificarAnioEscolar();
         $buscar = request('buscar');
-
-        // Construir la consulta
-        $query = \App\Models\Representante::with([
+        $query = Representante::with([
             'persona.tipoDocumento',
             'persona.genero',
             'persona.prefijo',
@@ -104,7 +67,6 @@ class RepresentanteController extends Controller
             'ocupacion'
         ]);
 
-        // Aplicar búsqueda
         if (!empty($buscar)) {
             $query->where(function ($q) use ($buscar) {
                 $q->where('id', 'LIKE', "%{$buscar}%")
@@ -118,8 +80,7 @@ class RepresentanteController extends Controller
             });
         }
 
-        // Aplicar filtros
-        \Log::info('Filtros recibidos:', [
+        Log::info('Filtros recibidos:', [
             'es_legal' => request('es_legal'),
             'grado_id' => request('grado_id'), 
             'seccion_id' => request('seccion_id'),
@@ -133,13 +94,12 @@ class RepresentanteController extends Controller
             } else {
                 $query->whereDoesntHave('legal');
             }
-            \Log::info('Aplicando filtro es_legal: ' . $esLegal);
+            Log::info('Aplicando filtro es_legal: ' . $esLegal);
         }
 
-        // Aplicar filtro por grado (nivel académico) - usando consulta directa
         if (request()->has('grado_id') && request('grado_id') !== '' && request('grado_id') !== null) {
             $gradoId = request('grado_id');
-            \Log::info('Aplicando filtro grado_id: ' . $gradoId);
+            Log::info('Aplicando filtro grado_id: ' . $gradoId);
             $query->whereExists(function ($subquery) use ($gradoId) {
                 $subquery->select(DB::raw(1))
                     ->from('inscripcions')
@@ -152,10 +112,9 @@ class RepresentanteController extends Controller
             });
         }
 
-        // Aplicar filtro por sección - solo si se selecciona explícitamente una sección
         if (request()->has('seccion_id') && request('seccion_id') !== '' && request('seccion_id') !== null && request('seccion_id') != '0') {
             $seccionNombre = request('seccion_id');
-            \Log::info('Aplicando filtro seccion_id: ' . $seccionNombre);
+            Log::info('Aplicando filtro seccion_id: ' . $seccionNombre);
             $query->whereExists(function ($subquery) use ($seccionNombre) {
                 $subquery->select(DB::raw(1))
                     ->from('inscripcions')
@@ -169,24 +128,20 @@ class RepresentanteController extends Controller
             });
         }
 
-        // Solo mostrar representantes activos (status != 0) y no eliminados con soft delete
         $query->where('status', '!=', 0)
             ->whereNull('deleted_at');
 
-        // Ordenar por ID descendente (más recientes primero)
         $query->orderBy('id', 'desc');
 
-        // Ejecutar la consulta con paginación
         $representantes = $query->paginate(10)
             ->appends(request()->query());
 
-        \Log::info('Resultados después de filtros:', [
+        Log::info('Resultados después de filtros:', [
             'total_encontrados' => $representantes->total(),
             'pagina_actual' => $representantes->currentPage(),
             'sql_query' => $query->toSql()
         ]);
 
-        // Obtener datos para los filtros
         $grados = \App\Models\Grado::where('status', true)
             ->orderBy('numero_grado')
             ->get();
@@ -197,10 +152,9 @@ class RepresentanteController extends Controller
             ->orderBy('nombre')
             ->get();
 
-        // Debug: verificar datos cargados
         if ($representantes->count() > 0) {
             $primerRep = $representantes->first();
-            \Log::info('Datos del primer representante:', [
+            Log::info('Datos del primer representante:', [
                 'persona_id' => $primerRep->persona_id,
                 'tiene_persona' => isset($primerRep->persona),
                 'persona_tipo_documento_id' => $primerRep->persona ? $primerRep->persona->tipo_documento_id : null,
@@ -219,14 +173,8 @@ class RepresentanteController extends Controller
         return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo', 'grados', 'secciones'));
     }
 
-    /**
-     * Muestra la lista de representantes eliminados
-     * 
-     * @return \Illuminate\View\View
-     */
     public function eliminados()
     {
-        // Mostrar solo los que tienen status = 0 o han sido eliminados con soft delete
         $representantes = \App\Models\Representante::with([
             'persona',
             'estado',
@@ -243,29 +191,19 @@ class RepresentanteController extends Controller
         return view("admin.representante.eliminados", compact('representantes'));
     }
 
-    /**
-     * Restaura un representante eliminado
-     * 
-     * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function restaurar($id)
     {
-        // Buscar incluyendo los eliminados con soft delete
         $representante = Representante::withTrashed()->findOrFail($id);
 
         DB::beginTransaction();
         try {
-            // Restaurar el soft delete si está eliminado
             if ($representante->trashed()) {
                 $representante->restore();
             }
 
-            // Cambiar a estado activo
             $representante->status = 1;
             $representante->save();
 
-            // Si tiene datos legales, restaurarlos también
             if ($representante->legal) {
                 if (method_exists($representante->legal, 'restore') && $representante->legal->trashed()) {
                     $representante->legal->restore();
@@ -281,7 +219,7 @@ class RepresentanteController extends Controller
                 ->with('success', 'Representante restaurado exitosamente');
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Error al restaurar representante: ' . $e->getMessage());
+            Log::error('Error al restaurar representante: ' . $e->getMessage());
 
             return redirect()->back()
                 ->with('error', 'Error al restaurar el representante: ' . $e->getMessage());
@@ -289,16 +227,8 @@ class RepresentanteController extends Controller
     }
 
 
-
-    /**
-     * Muestra el formulario para crear un nuevo representante
-     * 
-     * @return \Illuminate\View\View
-     */
-
     public function mostrarFormulario()
     {
-        // Cargar estados con sus municipios y localidades anidadas
         $from = request('from');
         $estados = Estado::with(['municipio' => function ($query) {
             $query->with(['localidades'])->orderBy('nombre_municipio', 'ASC');
@@ -316,14 +246,6 @@ class RepresentanteController extends Controller
         );
     }
 
-
-    /**
-     * Muestra el formulario para editar un representante existente
-     * 
-     * @param int $id
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
-     */
-
     public function mostrarFormularioEditar(Request $request, $id)
     {
         $representante = Representante::with([
@@ -336,8 +258,6 @@ class RepresentanteController extends Controller
             }
         ])->findOrFail($id);
 
-
-        // Cargar estados con sus relaciones
         $estados = Estado::where('status', true)
             ->with(['municipio' => function ($query) {
                 $query->where('status', true)
@@ -348,7 +268,6 @@ class RepresentanteController extends Controller
             ->orderBy('nombre_estado', 'ASC')
             ->get();
 
-        // Cargar municipios para el select
         $municipios = Municipio::where('status', true)
             ->orderBy('nombre_municipio', 'ASC')
             ->get();
@@ -374,7 +293,6 @@ class RepresentanteController extends Controller
             ->orderBy('nombre', 'ASC')
             ->get();
 
-        // localidades
         $parroquias_cargadas = Localidad::where('status', true)
             ->orderBy('nombre_localidad', 'ASC')
             ->get();
@@ -397,25 +315,6 @@ class RepresentanteController extends Controller
         ));
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | CRUD OPERATIONS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Guarda o actualiza un representante
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-
-    /**
-     * Parse a date string into Y-m-d format
-     *
-     * @param string|null $dateString
-     * @return string|null
-     */
     private function parseDate($dateString)
     {
         Log::info('parseDate llamado con:', ['dateString' => $dateString]);
@@ -428,10 +327,10 @@ class RepresentanteController extends Controller
         $formats = [
             'd/m/Y',
             'd-m-Y',
-            'd.m.Y', // Common date formats
+            'd.m.Y',
             'Y-m-d',
             'Y/m/d',
-            'Y.m.d', // Alternative formats
+            'Y.m.d',
         ];
 
         foreach ($formats as $format) {
@@ -444,7 +343,6 @@ class RepresentanteController extends Controller
             }
         }
 
-        // If no format matched, try PHP's strtotime as a fallback
         try {
             $result = \Carbon\Carbon::parse($dateString)->format('Y-m-d');
             Log::info('parseDate éxito con strtotime:', ['result' => $result]);
@@ -458,12 +356,6 @@ class RepresentanteController extends Controller
         }
     }
 
-    /**
-     * Validate if a date string matches any of the expected formats
-     *
-     * @param string $dateString
-     * @return bool
-     */
     private function isValidDate($dateString)
     {
         if (empty($dateString)) {
@@ -500,21 +392,10 @@ class RepresentanteController extends Controller
         ]);
     }
 
-
-    /**
-     * Handle the update of an existing representante.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        // Find the representante to update
         $representante = Representante::with(['persona', 'legal'])->findOrFail($id);
         $persona = $representante->persona;
-
-        // Determine if this is a legal representative or progenitor
         $isLegalRepresentative = in_array($request->input('tipo_representante'), [
             'legal',
             'solo_representante', 
@@ -522,8 +403,6 @@ class RepresentanteController extends Controller
             'progenitor_madre_representante'
         ]);
 
-
-        // Log the update attempt
         Log::info('=== ACTUALIZANDO REPRESENTANTE ===', [
             'representante_id' => $id,
             'persona_id' => $persona->id,
@@ -535,7 +414,6 @@ class RepresentanteController extends Controller
             'prefijo_dos_padre' => $request->input('prefijo_dos_padre'),
         ]);
 
-        // Base validation rules
         $rules = [
             'numero_documento-representante' => [
                 'required',
@@ -565,7 +443,6 @@ class RepresentanteController extends Controller
             'parroquia_id' => 'required|exists:localidads,id',
         ];
 
-        // Add validation rules for legal representative fields
         if ($isLegalRepresentative) {
             $rules = array_merge($rules, [
                 'correo-representante' => 'required|email|max:100',
@@ -603,11 +480,9 @@ class RepresentanteController extends Controller
             ], 422);
         }
 
-        // Start transaction
         DB::beginTransaction();
 
         try {
-            // Log before update with more details
             Log::info('=== DETALLES DE TELÉFONOS ===', [
                 'telefono_representante' => $request->input('telefono-representante'),
                 'telefono_madre' => $request->input('telefono-madre'),
@@ -639,7 +514,6 @@ class RepresentanteController extends Controller
                 'isLegalRepresentative' => $isLegalRepresentative
             ]);
 
-            // Update persona data
             $persona->update([
                 'primer_nombre' => $request->input('primer-nombre-representante'),
                 'segundo_nombre' => $request->input('segundo-nombre-representante'),
@@ -663,7 +537,6 @@ class RepresentanteController extends Controller
                             : ($request->input('telefono-padre')
                                 ? preg_replace('/^0+/', '', $request->input('telefono-padre'))
                                 : null))),
-                // Handle second phone number and prefix
                 'telefono_dos' => $request->filled('telefono_dos')
                     ? preg_replace('/^0+/', '', (string)$request->input('telefono_dos'))
                     : null,
@@ -672,7 +545,6 @@ class RepresentanteController extends Controller
                 'localidad_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia') ?: $request->input('parroquia_id'),
             ]);
 
-            // Preparar datos de actualización del representante
             $representanteData = [
                 'estado_id' => $request->input('estado_id'),
                 'municipio_id' => $request->input('municipio_id'),
@@ -681,20 +553,15 @@ class RepresentanteController extends Controller
                 'convivenciaestudiante_representante' => $request->input('convive-representante', 'no'),
             ];
 
-            // Actualizar datos del representante sin modificar el estatus
             $representante->update($representanteData);
-
-            // Handle legal representative specific data
             if ($isLegalRepresentative) {
                 $perteneceOrganizacion = $request->boolean('pertenece_organizacion');
-                // Update or create legal representative data
                 $legalData = [
                     'banco_id' => $request->input('banco_id'),
                     'pertenece_a_organizacion_representante' => $perteneceOrganizacion,
                     'cual_organizacion_representante' => $perteneceOrganizacion ? $request->input('cual_organizacion_representante') : ''
                 ];
 
-                // Remove cual_organizacion_representante from the data if not in organization
                 if (!$perteneceOrganizacion) {
                     unset($legalData['cual_organizacion_representante']);
                 }
@@ -705,16 +572,12 @@ class RepresentanteController extends Controller
                     $representante->legal()->create($legalData);
                 }
 
-                // No actualizamos el status aquí para mantener el valor existente
             } else {
-                // If changing from legal to progenitor, remove legal data
                 if ($representante->legal) {
                     $representante->legal()->delete();
                 }
-                // No actualizamos el status para mantener el valor existente
             }
 
-            // Log the final state before commit
             Log::info('=== ESTADO FINAL ANTES DE COMMIT ===', [
                 'representante_id' => $representante->id,
                 'persona_id' => $persona->id,
@@ -725,11 +588,9 @@ class RepresentanteController extends Controller
                 'is_dirty' => $persona->isDirty()
             ]);
 
-            // Save all changes to the database
             DB::commit();
 
-            // Log success after commit
-            $persona->refresh(); // Refresh to get the latest data from the database
+            $persona->refresh();
             Log::info('=== REPRESENTANTE ACTUALIZADO EXITOSAMENTE ===', [
                 'representante_id' => $representante->id,
                 'persona_id' => $persona->id,
@@ -774,21 +635,14 @@ class RepresentanteController extends Controller
         }
     }
 
-    /**
-     * Handle the creation or update of a representante.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function save(Request $request)
     {
 
-        \Log::info('=== ACCEDIENDO A save() ===');
-        \Log::info('Route name:', [$request->route()->getName()]);
-        \Log::info('Route action:', [$request->route()->getActionName()]);
-        \Log::info('Request path:', [$request->path()]);
-        \Log::info('Request method:', [$request->method()]);
-        // Determinar si es una actualización o creación
+        Log::info('=== ACCEDIENDO A save() ===');
+        Log::info('Route name:', [$request->route()->getName()]);
+        Log::info('Route action:', [$request->route()->getActionName()]);
+        Log::info('Request path:', [$request->path()]);
+        Log::info('Request method:', [$request->method()]);
         $isUpdate = $request->has('id') || $request->has('representante_id');
         $id = $request->input('id', $request->input('representante_id'));
 
@@ -802,7 +656,6 @@ class RepresentanteController extends Controller
             'id' => $id
         ]);
 
-        // Debug: Verificar valores de teléfono
         Log::info('Valores de teléfono recibidos:', [
             'telefono-representante' => $request->input('telefono-representante'),
             'telefono-madre' => $request->input('telefono-madre'),
@@ -811,15 +664,11 @@ class RepresentanteController extends Controller
             'prefijo_dos' => $request->input('prefijo_dos')
         ]);
 
-        // Verificar si es un progenitor que también es representante
         $tipoRepresentante = $request->input('tipo_representante');
         $esProgenitorRepresentante = ($tipoRepresentante === 'progenitor_representante');
-
-        // Determinar si estamos usando datos de la madre o del padre
         $numero_documentoRepresentante = $request->input('numero_documento-representante');
         $numero_documentoMadre = $request->input('numero_documento');
         $numero_documentoPadre = $request->input('numero_documento-padre');
-
         $usandoDatosMadre = !empty($numero_documentoMadre) && $numero_documentoMadre === $numero_documentoRepresentante;
         $usandoDatosPadre = !empty($numero_documentoPadre) && $numero_documentoPadre === $numero_documentoRepresentante;
         $numero_documentoProgenitor = null;
@@ -833,9 +682,7 @@ class RepresentanteController extends Controller
             $tipoProgenitor = 'padre';
         }
 
-        // Si es progenitor representante pero no se pudo determinar la cédula, intentar con la cédula del representante
         if ($esProgenitorRepresentante && !$numero_documentoProgenitor && $numero_documentoRepresentante) {
-            // Verificar si la cédula del representante coincide con la madre o el padre
             if ($numero_documentoRepresentante === $numero_documentoMadre) {
                 $numero_documentoProgenitor = $numero_documentoMadre;
                 $tipoProgenitor = 'madre';
@@ -859,13 +706,6 @@ class RepresentanteController extends Controller
             'numero_documentoPadre' => $numero_documentoPadre
         ]);
 
-        // =============================================================
-        // MAPEO DE CAMPOS DESDE EL FORMULARIO BLADE AL CONTROLADOR
-        // =============================================================
-        // Estos nombres vienen del formulario de representante en la vista
-        // admin/representante/formulario_representante.blade.php
-
-        // Fecha de nacimiento: tomar la del representante y formatear correctamente
         $fechaNacimientoRaw = $request->input('fecha-nacimiento-representante');
         Log::info('Fecha de nacimiento recibida del formulario:', [
             'fecha-nacimiento-representante' => $fechaNacimientoRaw,
@@ -873,38 +713,27 @@ class RepresentanteController extends Controller
         ]);
 
         $fechaNacimientoParseada = $this->parseDate($fechaNacimientoRaw);
-        // Si parseDate devuelve null, usar la fecha actual como fallback
         if ($fechaNacimientoParseada === null) {
             Log::warning('parseDate devolvió null, usando fecha actual como fallback');
-            $fechaNacimientoParseada = now()->subYears(18)->format('Y-m-d'); // Usar hace 18 años como valor por defecto
+            $fechaNacimientoParseada = now()->subYears(18)->format('Y-m-d');
         }
 
         $request->merge([
-            // Identificación persona/representante
             'numero_numero_documento_persona' => $request->input('numero_documento-representante'),
             'nombre_uno'            => $request->input('primer-nombre-representante'),
             'nombre_dos'            => $request->input('segundo-nombre-representante'),
             'nombre_tres'           => $request->input('tercer-nombre-representante'),
             'apellido_uno'          => $request->input('primer-apellido-representante'),
             'apellido_dos'          => $request->input('segundo-apellido-representante'),
-
-            // Fecha de nacimiento: tomar la del representante y formatear correctamente
             'fecha_nacimiento' => $fechaNacimientoParseada,
             'fecha_nacimiento_personas' => $fechaNacimientoParseada,
-
-            // Género del representante: tomar el del bloque de representante, y si viene vacío usar madre o padre
             'sexo_representante'    => $request->input('sexo-representante')
-                ?: $request->input('sexo')           // madre
-                ?: $request->input('genero-padre'),  // padre
-
+                ?: $request->input('sexo')
+                ?: $request->input('genero-padre'),
             'tipo_numero_documento_persona'   => $request->input('tipo-ci-representante'),
-
-            // Ubicación
             'estado_id'    => $request->input('idEstado-representante') ?: $request->input('idEstado-padre') ?: $request->input('idEstado'),
             'municipio_id' => $request->input('idMunicipio-representante') ?: $request->input('idMunicipio-padre') ?: $request->input('idMunicipio'),
             'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia'),
-
-            // Teléfono (se almacena completo en Persona.telefono)
             'telefono' => $request->input('telefono-representante')
                 ? preg_replace('/^0+/', '', $request->input('telefono-representante'))
                 : ($request->input('telefono-madre')
@@ -919,53 +748,39 @@ class RepresentanteController extends Controller
             'prefijo_id' => $request->input('prefijo-representante')
                 ?: $request->input('prefijo-madre')
                 ?: $request->input('prefijo-padre'),
-
-            // Ocupación y convivencia
             'ocupacion_representante'             => $request->input('ocupacion-representante'),
             'convivenciaestudiante_representante' => $request->input('convive-representante'),
-
-            // Correo y organización (representante legal)
             'correo_representante'                    => $request->input('correo-representante'),
             'pertenece_a_organizacion_representante' => $request->input('organizacion-representante') === 'si' ? 1 : 0,
             'cual_organizacion_representante'        => $request->input('especifique-organizacion'),
-
-            // Mapeo de campos de carnet de la patria y banco desde el formulario
             'carnet_patria_afiliado'             => $request->input('carnet-patria-afiliado'),
             'serial_carnet_patria_representante' => $request->input('serial-patria') ?: $request->input('serial'),
             'codigo_carnet_patria_representante' => $request->input('codigo-patria') ?: $request->input('codigo'),
             'banco_id'                           => $request->input('banco_id'),
             'direccion_representante'            => $request->input('direccion-habitacion'),
-
-            // IDs para edición
             'persona_id'       => $request->input('persona-id-representante'),
             'representante_id' => $request->input('representante-id'),
-
-            // En este formulario siempre tratamos al registro como representante legal
             'es_representate_legal' => true,
         ]);
 
-        // Verificar si es petición AJAX
         if ($request->ajax() || $request->wantsJson()) {
             Log::info('Es petición AJAX/JSON');
 
-            // Convertir campos de ubicación a enteros para evitar problemas de validación
             $request->merge([
                 'estado_id' => (int) $request->input('estado_id'),
                 'municipio_id' => (int) $request->input('municipio_id'),
                 'parroquia_id' => (int) ($request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia') ?: $request->input('parroquia_id')),
             ]);
 
-            // Debug: verificar si los IDs existen
             Log::info('Verificando existencia de IDs:', [
                 'estado_id' => $request->estado_id,
-                'estado_existe' => \DB::table('estados')->where('id', $request->estado_id)->exists(),
+                'estado_existe' => DB::table('estados')->where('id', $request->estado_id)->exists(),
                 'municipio_id' => $request->municipio_id,
-                'municipio_existe' => \DB::table('municipios')->where('id', $request->municipio_id)->exists(),
+                'municipio_existe' => DB::table('municipios')->where('id', $request->municipio_id)->exists(),
                 'localidad_id' => $request->localidad_id,
-                'localidad_existe' => \DB::table('localidads')->where('id', $request->localidad_id)->exists(),
+                'localidad_existe' => DB::table('localidads')->where('id', $request->localidad_id)->exists(),
             ]);
 
-            // Reglas de validación base para representantes
             $personaId = $request->input('persona_id');
             $currentDocument = $personaId ? Persona::find($personaId)->numero_documento : null;
             $newDocument = $request->input('numero_documento-representante');
@@ -976,7 +791,6 @@ class RepresentanteController extends Controller
                     'string',
                     'max:20',
                     function ($attribute, $value, $fail) use ($currentDocument, $newDocument, $personaId) {
-                        // Solo validar si el documento ha cambiado
                         ($currentDocument !== $newDocument) &&
                             Rule::unique('personas', 'numero_documento')->ignore($personaId);
 
@@ -1014,7 +828,6 @@ class RepresentanteController extends Controller
                 'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
             ];
 
-            // Mensajes de error personalizados
             $messages = [
                 'primer-nombre-representante.required' => 'El primer nombre es obligatorio',
                 'primer-apellido-representante.required' => 'El primer apellido es obligatorio',
@@ -1089,26 +902,20 @@ class RepresentanteController extends Controller
             'parroquia_id' => $request->parroquia_id
         ]);
 
-        // VALIDACIÓN DE CÉDULA DUPLICADA
-        // En el modelo Persona la cédula se almacena en el campo numero_documento
         $numero_documento = $request->input('numero_documento-representante');
         $personaId = $request->id ?? $request->persona_id;
-
-        // 1. Buscar si ya existe una persona con este número de documento
         $personaExistente = Persona::where('numero_documento', $numero_documento)
             ->when($personaId, function ($q) use ($personaId) {
                 $q->where('id', '!=', $personaId);
             })
             ->first();
 
-        // 2. Si la persona existe, verificar si tiene representante activo
         if ($personaExistente) {
             $tieneRepresentanteActivo = $personaExistente->representante()
                 ->where('status', '!=', 0)
                 ->whereNull('deleted_at')
                 ->exists();
 
-            // 3. Si tiene representante activo y no es un caso de progenitor como representante, mostrar error
             if ($tieneRepresentanteActivo && !$esProgenitorRepresentante) {
                 Log::warning('Intento de registrar cédula duplicada', [
                     'numero_documento' => $numero_documento,
@@ -1133,23 +940,16 @@ class RepresentanteController extends Controller
                 }
             }
 
-            // 4. Si la persona existe pero no tiene representante activo, usamos su ID para actualizar
             $request->merge(['persona_id' => $personaExistente->id]);
             $request->merge(['persona-id-representante' => $personaExistente->id]);
         }
 
-        // Datos de persona
-        // Adaptar los datos de Persona al esquema actual del modelo Persona
         $tipoRepresentante = $request->input('tipo_representante');
-
-        // Inicializar el array de datos de persona
         $datosPersona = [
             "id" => $request->id ?? $request->input('persona-id-representante')
         ];
 
-        // Si es un representante legal que es la madre
         if ($tipoRepresentante === 'progenitor_madre_representante') {
-            // Depuración: Mostrar todos los inputs recibidos
             Log::info('Inputs recibidos para madre:', $request->all());
 
             $datosPersona = array_merge($datosPersona, [
@@ -1169,10 +969,9 @@ class RepresentanteController extends Controller
                 "email" => $request->input('correo-representante'),
             ]);
 
-            // Depuración: Mostrar los datos que se van a guardar
             Log::info('Datos procesados para madre:', $datosPersona);
         }
-        // Si el padre es el representante y la madre está ausente
+
         elseif ($request->input('estado_madre') === 'Ausente' && $tipoRepresentante === 'progenitor_padre_representante') {
             $datosPersona = array_merge($datosPersona, [
                 "primer_nombre" => $request->input('primer-nombre-padre'),
@@ -1191,7 +990,7 @@ class RepresentanteController extends Controller
                 "email" => $request->input('correo-padre') ?? $request->input('correo-representante'),
             ]);
         }
-        // Caso por defecto (representante normal o no progenitor)
+
         else {
             $datosPersona = array_merge($datosPersona, [
                 "primer_nombre" => $request->input('primer-nombre-representante'),
@@ -1211,34 +1010,27 @@ class RepresentanteController extends Controller
             ]);
         }
 
-        // Campos adicionales del request que no existen en el modelo Persona se ignoran
-
-        // Determinar el status basado en el tipo de representante
-        $status = 1; // Por defecto, activo
+        $status = 1;
         $tipoRepresentante = $request->input('tipo_representante');
 
-        // Si es una actualización, obtener el status actual
         if ($request->representante_id) {
-            $representanteExistente = \App\Models\Representante::find($request->representante_id);
+            $representanteExistente = Representante::find($request->representante_id);
             if ($representanteExistente) {
-                $status = $representanteExistente->status; // Mantener el status actual
+                $status = $representanteExistente->status;
             }
         }
 
-        // Solo actualizar el status si se envía explícitamente en la solicitud
         if ($request->has('status')) {
             $status = $request->input('status');
         }
-        // Si no se envía status y es un nuevo registro, determinar según el tipo
         elseif (!$request->representante_id) {
             if ($tipoRepresentante === 'progenitor_padre_representante') {
-                $status = 2; // Padre
+                $status = 2;
             } elseif ($tipoRepresentante === 'progenitor_madre_representante') {
-                $status = 3; // Madre
+                $status = 3;
             }
         }
 
-        // Datos de representante
         $datosRepresentante = [
             "estado_id" => $request->estado_id ?: 1,
             "municipio_id" => $request->municipio_id,
@@ -1248,7 +1040,7 @@ class RepresentanteController extends Controller
                 ?: $request->input('ocupacion-representante')
                 ?: null,
             "convivenciaestudiante_representante" => $request->convivenciaestudiante_representante ?: 'no',
-            "status" => $status, // Asignar el status determinado
+            "status" => $status,
         ];
 
         if ($request->representante_id) {
@@ -1261,7 +1053,6 @@ class RepresentanteController extends Controller
             'es_representate_legal' => $request->es_representate_legal
         ]);
 
-        // Datos de representante legal
         $perteneceOrganizacion = $request->pertenece_a_organizacion_representante ?: 0;
         $cualOrganizacion = '';
         if ($perteneceOrganizacion == 1) {
@@ -1286,7 +1077,6 @@ class RepresentanteController extends Controller
             $datosRepresentanteLegal["id"] = $request->representante_legal_id;
         }
 
-        // Inicializar variables
         $mensaje = '';
         $persona = null;
         $isUpdate = false;
@@ -1294,8 +1084,6 @@ class RepresentanteController extends Controller
 
         DB::beginTransaction();
         try {
-
-            // CASO ESPECIAL: Progenitor como representante
             if ($esProgenitorRepresentante) {
                 if (!$numero_documentoProgenitor) {
                     $errorMsg = 'No se pudo determinar la cédula del progenitor. Asegúrese de que la cédula del representante coincida con la de la madre o el padre.';
@@ -1312,20 +1100,17 @@ class RepresentanteController extends Controller
                     'tipo_progenitor' => $tipoProgenitor
                 ]);
 
-                // 1. Verificar si los datos del formulario están completos
                 $fechaNacimiento = $request->input('fecha-nacimiento-padre');
-                $prefijoId = $request->input('prefijo-padre'); // Obtener el prefijo del padre
+                $prefijoId = $request->input('prefijo-padre');
 
                 $datosCompletos = !empty($datosPersona['primer_nombre']) &&
                     !empty($datosPersona['primer_apellido']) &&
                     !empty($fechaNacimiento);
 
-                // Asegurarse de que los campos obligatorios estén en el formato correcto
                 if ($fechaNacimiento) {
                     $datosPersona['fecha_nacimiento'] = $fechaNacimiento;
                 }
 
-                // Incluir el prefijo_id en los datos de la persona
                 if ($prefijoId) {
                     $datosPersona['prefijo_id'] = $prefijoId;
                 }
@@ -1336,14 +1121,12 @@ class RepresentanteController extends Controller
                         'nombres' => $datosPersona['primer_nombre'] . ' ' . $datosPersona['primer_apellido']
                     ]);
 
-                    // Crear o actualizar con los datos del formulario
                     $persona = Persona::updateOrCreate(
                         ['numero_documento' => $numero_documentoProgenitor],
                         $datosPersona
                     );
                     $isUpdate = true;
                 } else {
-                    // 2. Si los datos del formulario no están completos, buscar en la base de datos
                     Log::info('Buscando datos del progenitor en la base de datos', [
                         'numero_documento' => $numero_documentoProgenitor
                     ]);
@@ -1357,7 +1140,6 @@ class RepresentanteController extends Controller
                             'nombres' => $persona->nombre_uno . ' ' . $persona->apellido_uno
                         ]);
 
-                        // Actualizar solo los campos que no están vacíos en el formulario
                         $camposActualizables = [
                             'telefono',
                             'correo_persona',
@@ -1375,31 +1157,25 @@ class RepresentanteController extends Controller
 
                         $persona->save();
                     } else {
-                        // 3. Si no se encuentra en la base de datos, crear un nuevo registro con los datos disponibles
                         Log::info('Creando nuevo registro para el progenitor', [
                             'numero_documento' => $numero_documentoProgenitor,
                             'tipo_progenitor' => $tipoProgenitor
                         ]);
-
-                        // Asegurarse de que los campos requeridos tengan valores por defecto si están vacíos
                         $datosPersona = array_merge([
                             'numero_documento' => $numero_documentoProgenitor,
                             'status' => true,
-                            'tipo_documento_id' => $datosPersona['tipo_documento_id'] ?? 1, // Valor por defecto para tipo de documento
-                            'genero_id' => $datosPersona['genero_id'] ?? 1, // Valor por defecto para género
-                            'localidad_id' => $datosPersona['localidad_id'] ?? 1, // Valor por defecto para localidad
-                            'prefijo_id' => $datosPersona['prefijo_id'] ?? 1, // Valor por defecto para prefijo
+                            'tipo_documento_id' => $datosPersona['tipo_documento_id'] ?? 1,
+                            'genero_id' => $datosPersona['genero_id'] ?? 1,
+                            'localidad_id' => $datosPersona['localidad_id'] ?? 1,
+                            'prefijo_id' => $datosPersona['prefijo_id'] ?? 1,
                             'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
                             'primer_apellido' => $datosPersona['primer_apellido'] ?? 'SIN APELLIDO',
                             'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->subYears(18)->format('Y-m-d')
                         ], $datosPersona);
 
                         try {
-                            // Crear la persona con los datos básicos
                             $persona = new Persona();
                             $persona->fill($datosPersona);
-
-                            // Asignar manualmente los campos que no están en $fillable
                             if (isset($datosPersona['telefono_dos'])) {
                                 $persona->telefono_dos = $datosPersona['telefono_dos'];
                             }
@@ -1430,11 +1206,8 @@ class RepresentanteController extends Controller
                     }
                 }
 
-                // Determinar si es un progenitor (madre o padre) que también es representante legal
                 $esProgenitorNoRepresentante = false;
                 $tipoProgenitor = null;
-
-                // Obtener el tipo de representante del request
                 $tipoRepresentante = $request->input('tipo_representante');
                 $esRepresentanteLegal = in_array($tipoRepresentante, ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
 
@@ -1445,11 +1218,7 @@ class RepresentanteController extends Controller
                     'numero_documento_representante' => $request->input('numero_documento-representante'),
                     'numero_documento_padre' => $request->input('numero_documento-padre')
                 ]);
-
-                // Por defecto, asumimos que es representante legal (estado 1)
                 $datosRepresentante['status'] = 1;
-
-                // Verificar si es la madre (estado_madre = "Presente")
                 if (
                     $request->input('estado_madre') === 'Presente' &&
                     $request->input('numero_documento') === $request->input('numero_documento-representante')
@@ -1458,13 +1227,11 @@ class RepresentanteController extends Controller
                     $tipoProgenitor = 'madre';
 
                     if ($esRepresentanteLegal) {
-                        // Si es representante legal, mantener estado 1
                         Log::info('Madre es representante legal, manteniendo estado 1', [
                             'numero_documento' => $request->input('numero_documento-representante'),
                             'tipo_representante' => $tipoRepresentante
                         ]);
                     } else {
-                        // Si no es representante legal, marcar como madre (estado 3)
                         $esProgenitorNoRepresentante = true;
                         $datosRepresentante['status'] = 3;
                         Log::info('Madre no es representante legal, asignando estado 3', [
@@ -1473,7 +1240,6 @@ class RepresentanteController extends Controller
                         ]);
                     }
                 }
-                // Verificar si es el padre (estado_padre = "Presente")
                 elseif (
                     $request->input('estado_padre') === 'Presente' &&
                     $request->input('numero_documento-padre') === $request->input('numero_documento-representante')
@@ -1482,13 +1248,11 @@ class RepresentanteController extends Controller
                     $tipoProgenitor = 'padre';
 
                     if ($esRepresentanteLegal) {
-                        // Si es representante legal, mantener estado 1
                         Log::info('Padre es representante legal, manteniendo estado 1', [
                             'numero_documento' => $request->input('numero_documento-representante'),
                             'tipo_representante' => $tipoRepresentante
                         ]);
                     } else {
-                        // Si no es representante legal, marcar como padre (estado 2)
                         $esProgenitorNoRepresentante = true;
                         $datosRepresentante['status'] = 2;
                         Log::info('Padre no es representante legal, asignando estado 2', [
@@ -1498,7 +1262,6 @@ class RepresentanteController extends Controller
                     }
                 }
 
-                // Buscar o crear el representante
                 $representante = Representante::updateOrCreate(
                     ['persona_id' => $persona->id],
                     $datosRepresentante
@@ -1519,7 +1282,6 @@ class RepresentanteController extends Controller
                     'usando_datos_bd' => !$datosCompletos ? 'Sí' : 'No'
                 ]);
             }
-            // VERIFICAR SI ES ACTUALIZACIÓN O CREACIÓN NORMAL
             elseif (!empty($datosPersona["id"])) {
                 $persona = Persona::with(['representante', 'representante.legal'])->find($datosPersona["id"]);
                 if ($persona) {
@@ -1528,19 +1290,14 @@ class RepresentanteController extends Controller
             }
 
             if ($isUpdate && !$esProgenitorRepresentante) {
-                // === MODO ACTUALIZACIÓN NORMAL (no para progenitor como representante) ===
                 Log::info('=== MODO ACTUALIZACIÓN NORMAL ===');
-
-                // 1. Actualizar persona
                 Log::info('Actualizando persona con datos:', [
                     'persona_id' => $persona->id,
                     'datos_persona' => $datosPersona
                 ]);
 
-                // Actualizar la persona con los datos básicos
                 $persona->fill($datosPersona);
 
-                // Asignar manualmente los campos que no están en $fillable
                 if (isset($datosPersona['telefono_dos'])) {
                     $persona->telefono_dos = $datosPersona['telefono_dos'];
                 } else {
@@ -1559,7 +1316,6 @@ class RepresentanteController extends Controller
                     'prefijo_dos_id' => $persona->prefijo_dos_id
                 ]);
 
-                // 2. Actualizar o crear representante asociado a la persona
                 $representante = Representante::where('persona_id', $persona->id)->first();
 
                 if ($representante) {
@@ -1571,14 +1327,12 @@ class RepresentanteController extends Controller
                     Log::info('Representante creado: ID ' . $representante->id);
                 }
             } elseif ($esProgenitorRepresentante) {
-                // Ya se manejó el caso de progenitor como representante, solo registrar
                 Log::info('=== MODO PROGENITOR COMO REPRESENTANTE ===');
                 Log::info('Datos del progenitor actualizados como representante', [
                     'persona_id' => $persona->id,
                     'representante_id' => $representante->id
                 ]);
 
-                // 3. Manejar representante legal
                 if ($request->es_representate_legal == true) {
                     $representanteLegal = RepresentanteLegal::where('representante_id', $representante->id)->first();
 
@@ -1592,39 +1346,31 @@ class RepresentanteController extends Controller
                         Log::info('Nuevo representante legal creado: ID ' . $representanteLegal->id);
                     }
                 } else if ($esProgenitorRepresentante && $request->es_representate_legal) {
-                    // Si es progenitor y además es representante legal
                     $datosRepresentanteLegal["representante_id"] = $representante->id;
                     $representanteLegal = new RepresentanteLegal($datosRepresentanteLegal);
                     $representante->legal()->save($representanteLegal);
                     Log::info('Progenitor registrado también como representante legal: ID ' . $representanteLegal->id);
                 } else {
-                    // Si no es representante legal pero existe, eliminarlo
                     $representante->legal()->delete();
                     Log::info('Representante legal eliminado');
                 }
 
                 $mensaje = "Los datos del representante han sido actualizados exitosamente";
             } else {
-                // Establecer mensaje para creación normal
                 $mensaje = $isUpdate ? 'Representante actualizado exitosamente' : 'Representante creado exitosamente';
-                // === MODO CREACIÓN ===
                 Log::info('=== MODO CREACIÓN ===');
 
-                // Depuración: Mostrar todos los inputs del request
                 Log::info('=== DATOS DEL REQUEST ===', $request->all());
 
-                // Obtener el teléfono del campo del formulario
                 $telefono = $request->input('telefono-representante');
 
                 Log::info('Valor de teléfono encontrado en el request:', ['telefono-representante' => $telefono]);
 
-                // Si no se encontró en el request, usar el valor existente si existe
                 if (is_null($telefono) && isset($datosPersona['telefono'])) {
                     $telefono = $datosPersona['telefono'];
                     Log::info('Usando teléfono existente de datosPersona:', ['telefono' => $telefono]);
                 }
 
-                // Asegurar que los campos requeridos tengan valores por defecto
                 $datosPersona = array_merge([
                     'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
                     'primer_apellido' => $datosPersona['primer_apellido'] ?? 'SIN APELLIDO',
@@ -1633,28 +1379,23 @@ class RepresentanteController extends Controller
                     'genero_id' => $datosPersona['genero_id'] ?? 1,
                     'localidad_id' => $datosPersona['localidad_id'] ?? 1,
                     'prefijo_id' => $datosPersona['prefijo_id'] ?? 1,
-                    'telefono' => $telefono, // Usamos el teléfono obtenido
+                    'telefono' => $telefono,
                     'telefono_dos' => $request->input('telefono_dos'),
                     'prefijo_dos_id' => $request->input('prefijo_dos'),
                     'status' => true
                 ], $datosPersona);
 
-                // 1. Crear persona con asignación directa
                 Log::info('Creando nueva persona con datos:', [
                     'datos_persona' => $datosPersona
                 ]);
 
                 $persona = new Persona();
-                $persona->fill($datosPersona); // Llena solo los campos fillable
-
-                // Asignar manualmente los campos que no están en $fillable
-                $persona->telefono = $telefono; // Asignación directa del teléfono
+                $persona->fill($datosPersona);
+                $persona->telefono = $telefono;
                 $persona->telefono_dos = $request->input('telefono_dos');
                 $persona->prefijo_dos_id = $request->input('prefijo_dos');
-
                 $persona->save();
 
-                // Depuración
                 Log::info('Datos guardados en la persona:', [
                     'telefono' => $persona->telefono,
                     'telefono_dos' => $persona->telefono_dos,
@@ -1663,12 +1404,9 @@ class RepresentanteController extends Controller
 
                 Log::info('Persona creada: ID ' . $persona->id);
 
-                // 2. Crear representante
                 $datosRepresentante["persona_id"] = $persona->id;
                 $representante = Representante::create($datosRepresentante);
                 Log::info('Representante creado: ID ' . $representante->id);
-
-                // 3. Manejar representante legal si es necesario
                 if ($request->es_representate_legal == true) {
                     $datosRepresentanteLegal["representante_id"] = $representante->id;
                     $representanteLegal = new RepresentanteLegal($datosRepresentanteLegal);
@@ -1678,10 +1416,6 @@ class RepresentanteController extends Controller
 
                 $mensaje = "Representante registrado exitosamente";
             }
-
-            // =============================================================
-            // CREACIÓN / ACTUALIZACIÓN DE MADRE COMO PERSONA + REPRESENTANTE
-            // =============================================================
 
             $numero_documentoMadre = $request->input('numero_documento');
             if ($numero_documentoMadre) {
@@ -1718,7 +1452,6 @@ class RepresentanteController extends Controller
                     'persona_id' => $personaMadre->id,
                 ]);
 
-                // Verificar si es representante legal para mantener el estado 1
                 $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
 
                 Log::info('Guardando madre como representante', [
@@ -1729,15 +1462,14 @@ class RepresentanteController extends Controller
 
                 $representanteMadre->estado_id = $request->input('idEstado');
 
-                // Mantener el estado 1 si es representante legal, de lo contrario asignar estado 3
                 if ($esRepresentanteLegal) {
-                    $representanteMadre->status = 1; // Mantener como representante legal
+                    $representanteMadre->status = 1;
                     Log::info('Manteniendo estado 1 para madre representante legal', [
                         'numero_documento' => $numero_documentoMadre,
                         'tipo_representante' => $request->input('tipo_representante')
                     ]);
                 } else {
-                    $representanteMadre->status = 3; // Madre no representante legal
+                    $representanteMadre->status = 3;
                     Log::info('Asignando estado 3 a madre no representante legal', [
                         'numero_documento' => $numero_documentoMadre,
                         'tipo_representante' => $request->input('tipo_representante')
@@ -1747,16 +1479,14 @@ class RepresentanteController extends Controller
                 $representanteMadre->parroquia_id = $request->input('idparroquia');
                 $representanteMadre->ocupacion_representante = $request->input('ocupacion-madre');
                 $representanteMadre->convivenciaestudiante_representante = $request->input('convive') ?: 'no';
-
-                // Solo actualizar el estado si no es representante legal
                 if ($request->input('estado_madre') === 'Presente' && !$esRepresentanteLegal) {
-                    $representanteMadre->status = 3; // Solo asignar estado 3 si no es representante legal
+                    $representanteMadre->status = 3;
                     Log::info('Asignando estado de madre (3) al representante', [
                         'numero_documento' => $numero_documentoMadre,
                         'representante_id' => $representanteMadre->id ?? 'nuevo'
                     ]);
                 } else {
-                    $representanteMadre->status = 1; // Estado por defecto
+                    $representanteMadre->status = 1;
                 }
 
                 $representanteMadre->save();
@@ -1766,10 +1496,6 @@ class RepresentanteController extends Controller
                     'representante_id' => $representanteMadre->id,
                 ]);
             }
-
-            // =============================================================
-            // CREACIÓN / ACTUALIZACIÓN DE PADRE COMO PERSONA + REPRESENTANTE
-            // =============================================================
 
             $numero_documentoPadre = $request->input('numero_documento-padre');
             if ($numero_documentoPadre) {
@@ -1785,7 +1511,6 @@ class RepresentanteController extends Controller
                 $personaPadre->genero_id        = $request->input('sexo-padre');
                 $personaPadre->localidad_id     = $request->input('idparroquia-padre');
                 $personaPadre->telefono         = $request->input('telefono-padre');
-                // Usando los campos específicos para el padre
                 $personaPadre->telefono_dos     = $request->input('telefono_dos_padre');
                 $personaPadre->prefijo_dos_id   = $request->input('prefijo_dos_padre');
                 $personaPadre->tipo_documento_id = $request->input('tipo-ci-padre');
@@ -1806,7 +1531,6 @@ class RepresentanteController extends Controller
                     'persona_id' => $personaPadre->id,
                 ]);
 
-                // Verificar si es representante legal para mantener el estado 1
                 $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
 
                 Log::info('Guardando padre como representante', [
@@ -1821,21 +1545,20 @@ class RepresentanteController extends Controller
                 $representantePadre->ocupacion_representante = $request->input('ocupacion-padre');
                 $representantePadre->convivenciaestudiante_representante = $request->input('convive-padre') ?: 'no';
 
-                // Mantener el estado 1 si es representante legal, de lo contrario asignar estado 2
                 if ($esRepresentanteLegal) {
-                    $representantePadre->status = 1; // Mantener como representante legal
+                    $representantePadre->status = 1;
                     Log::info('Manteniendo estado 1 para padre representante legal', [
                         'numero_documento' => $numero_documentoPadre,
                         'tipo_representante' => $request->input('tipo_representante')
                     ]);
                 } else if ($request->input('estado_padre') === 'Presente') {
-                    $representantePadre->status = 2; // Solo asignar estado 2 si no es representante legal y está presente
+                    $representantePadre->status = 2;
                     Log::info('Asignando estado 2 a padre no representante legal', [
                         'numero_documento' => $numero_documentoPadre,
                         'tipo_representante' => $request->input('tipo_representante')
                     ]);
                 } else {
-                    $representantePadre->status = 1; // Estado por defecto
+                    $representantePadre->status = 1;
                 }
 
                 $representantePadre->save();
@@ -1848,9 +1571,7 @@ class RepresentanteController extends Controller
 
             DB::commit();
 
-            // Respuesta según tipo de petición
             if ($request->ajax() || $request->wantsJson()) {
-                // Cargar representante asociado con sus relaciones para la respuesta
                 $representanteResponse = Representante::with(['persona', 'legal', 'legal.banco'])
                     ->where('persona_id', $persona->id)
                     ->first();
@@ -1862,14 +1583,12 @@ class RepresentanteController extends Controller
                 ], 200);
             }
 
-            // Si vino desde inscripcion, redirigir a la pantalla de Inscripción
             if ($request->input('from') === 'inscripcion') {
                 return redirect()
-                    ->route('admin.transacciones.inscripcion.create') // ruta de Inscripción en tu app
+                    ->route('admin.transacciones.inscripcion.create')
                     ->with('success', 'Representante creado. Puedes seleccionarlo ahora en Inscripción.');
             }
 
-            // Petición normal desde formulario HTML
             return redirect()->route('representante.index')->with('success', $mensaje);
         } catch (\Throwable $th) {
             Log::error('Error en save representante: ' . $th->getMessage());
@@ -1890,16 +1609,8 @@ class RepresentanteController extends Controller
         }
     }
 
-
-    /**
-     * Busca un representante por su número de cédula
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function buscarPornumero_documento(Request $request): JsonResponse
     {
-        // En el modelo Persona la cédula se almacena en numero_documento
         $numero_documento = $request->get('numero_documento');
         Log::info(" Buscando cédula: " . $numero_documento);
 
@@ -1924,15 +1635,14 @@ class RepresentanteController extends Controller
         Log::info("Representante encontrado: " . ($representante ? 'SÍ (ID: ' . $representante->id . ')' : 'NO'));
 
         if (!$representante) {
-            // Si no tiene registro de representante, crear uno básico para poder usarlo como progenitor
             Log::info("Creando registro de representante para progenitor");
             $representante = Representante::create([
                 'persona_id' => $persona->id,
-                'estado_id' => 1, // Valor por defecto
-                'municipio_id' => 1, // Valor por defecto
-                'parroquia_id' => 1, // Valor por defecto
+                'estado_id' => 1,
+                'municipio_id' => 1,
+                'parroquia_id' => 1,
                 'ocupacion_representante' => 'No especificado',
-                'convivenciaestudiante_representante' => 'si', // Asumir que convive por ser progenitor
+                'convivenciaestudiante_representante' => 'si',
             ]);
             Log::info("Representante creado: ID " . $representante->id);
         } else {
@@ -1944,7 +1654,6 @@ class RepresentanteController extends Controller
                 'ocupacion_representante' => $representante->ocupacion_representante,
             ]);
 
-            // Si el representante existe pero le faltan campos de ubicación, actualizarlos
             if (!$representante->municipio_id || !$representante->parroquia_id) {
                 Log::info("DEBUG: Actualizando campos de ubicación faltantes");
                 $representante->update([
@@ -1968,12 +1677,6 @@ class RepresentanteController extends Controller
         ], 200);
     }
 
-    /**
-     * Consulta los datos de un representante específico
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function consultar(Request $request): JsonResponse
     {
         $representante = Representante::find($request->id);
@@ -1993,29 +1696,14 @@ class RepresentanteController extends Controller
         ], 200);
     }
 
-    /**
-     * Filtra los representantes según los criterios de búsqueda
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    /**
-     * Filtra los representantes según los criterios de búsqueda
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function filtar(Request $request)
     {
         $buscador = $request->buscador ?? '';
         $esLegal = $request->es_legal;
-
-        // Iniciar consulta con relaciones necesarias
         $consulta = Representante::with('persona')
             ->where('status', '!=', 0)
             ->whereNull('deleted_at');
 
-        // Aplicar filtro de tipo de representante
         if ($esLegal !== null && $esLegal !== '') {
             $esLegal = $esLegal == '1';
             if ($esLegal) {
@@ -2038,10 +1726,8 @@ class RepresentanteController extends Controller
             });
         }
 
-        // Ordenar por fecha de creación descendente (los más recientes primero)
         $consulta->orderBy('created_at', 'desc');
 
-        // Paginar los resultados
         $respuesta = $consulta->paginate(10);
 
         return response()->json([
@@ -2083,7 +1769,6 @@ class RepresentanteController extends Controller
 
         DB::beginTransaction();
         try {
-            // 1. Actualizar el estado a 0 (Eliminado)
             $representante->status = 0;
             $saved = $representante->save();
 
@@ -2093,20 +1778,15 @@ class RepresentanteController extends Controller
                 'updated_at' => $representante->updated_at
             ]);
 
-            // 2. Aplicar soft delete
             $deleted = $representante->delete();
             Log::info('Soft delete aplicado:', ['deleted' => $deleted]);
 
-            // 3. Manejar datos legales relacionados
             if ($representante->legal) {
                 Log::info('Datos legales encontrados, actualizando...');
-
-                // Si el modelo legal tiene soft delete, usarlo
                 if (method_exists($representante->legal, 'delete')) {
                     $deletedLegal = $representante->legal->delete();
                     Log::info('Datos legales marcados como eliminados (soft delete):', ['deleted' => $deletedLegal]);
                 }
-                // Si no tiene soft delete pero tiene campo status
                 elseif (isset($representante->legal->status)) {
                     $representante->legal->status = 0;
                     $legalSaved = $representante->legal->save();
@@ -2138,7 +1818,7 @@ class RepresentanteController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             $errorMessage = 'Error al eliminar el representante: ' . $th->getMessage();
-            \Log::error($errorMessage, [
+            Log::error($errorMessage, [
                 'exception' => $th,
                 'trace' => $th->getTraceAsString(),
                 'representante_id' => $representanteId
@@ -2156,23 +1836,10 @@ class RepresentanteController extends Controller
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDACIONES
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Verifica si una cédula ya existe en la base de datos
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function verificarnumero_documento(Request $request): JsonResponse
     {
         $numero_documento = $request->input('numero_documento');
-        $personaId = $request->input('persona_id'); // Para excluir la persona actual en edición
-
+        $personaId = $request->input('persona_id'); 
         if (!$numero_documento) {
             return response()->json([
                 'status' => 'error',
@@ -2180,10 +1847,8 @@ class RepresentanteController extends Controller
             ]);
         }
 
-        // Buscar persona con la misma cédula, excluyendo la persona actual si estamos editando
         $query = Persona::where('numero_documento', $numero_documento)
             ->whereHas('representante', function ($q) {
-                // Solo verificar cédulas de representantes activos (status != 0 y no eliminados)
                 $q->where('status', '!=', 0)
                     ->whereNull('deleted_at');
             });
@@ -2201,7 +1866,6 @@ class RepresentanteController extends Controller
             ], 409);
         }
 
-        // Verificar si existe un registro con esta cédula pero está marcado como eliminado
         $registroEliminado = Persona::where('numero_documento', $numero_documento)
             ->whereHas('representante', function ($q) {
                 $q->where('status', 0)
@@ -2226,21 +1890,12 @@ class RepresentanteController extends Controller
             'message' => 'Cédula disponible',
         ], 200);
     }
-    /*
-    |--------------------------------------------------------------------------
-    | REPORTES
-    |--------------------------------------------------------------------------
-    */
 
     public function reportePDF(Request $request)
     {
         $filtro = $request->all();
-        
         $representantes = Representante::reportePDF($filtro);
-        
-        // Ordenamos por la primera letra del primer apellido
         $representantes = $representantes->sortBy(function ($item) {
-            // Accedemos directamente a la propiedad si existe
             $primerApellido = $item->primer_apellido ??
                 ($item->persona->primer_apellido ?? '');
             return strtoupper(substr($primerApellido, 0, 1));
@@ -2251,12 +1906,8 @@ class RepresentanteController extends Controller
         }
 
         $pdf = PDF::loadView('admin.representante.reportes.general_pdf', compact('representantes', 'filtro'));
-        
-        // Configurar el papel y márgenes
         $pdf->setPaper('A4', 'landscape');
         $pdf->setOption('margin-bottom', '25mm');
-
-        // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
         $pdf->setOption('isPhpEnabled', true);
         
         return $pdf->stream('representantes.pdf');

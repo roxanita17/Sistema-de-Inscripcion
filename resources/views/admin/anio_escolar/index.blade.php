@@ -1,23 +1,19 @@
 @extends('adminlte::page')
 
-{{-- CSS --}}
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
 
-{{-- JS --}}
 @section('js')
 
     <script src="{{ asset('js/anio-escolar/anio-escolar-create.js') }}"></script>
     <script src="{{ asset('js/anio-escolar/anio-escolar-extender.js') }}"></script>
 @stop
 
-{{-- Title --}}
 @section('title', 'Gestión de Años Escolares')
 
-{{-- Content Header --}}
 @section('content_header')
     <div class="content-header-modern">
         <div class="header-content">
@@ -38,12 +34,9 @@
     </div>
 @stop
 
-{{-- Content --}}
 @section('content')
-    {{-- Modal Crear (solo una vez, fuera del loop) --}}
     @include('admin.anio_escolar.modales.createModal')
 
-    {{-- Alerta si no hay año escolar activo --}}
     @php
         $anioEscolarActivo = \App\Models\AnioEscolar::activos()->exists();
     @endphp
@@ -59,7 +52,7 @@
             </div>
         </div>
     @endif
-    {{-- Alertas de sesión --}}
+
     @if (session('success') || session('error') || session('warning'))
         <div class="alerts-container mb-3">
             @if (session('success'))
@@ -136,20 +129,17 @@
                         </tr>
                     </thead>
 
-                    {{-- Tabla Body --}}
                     <tbody style="text-align: center">
                         @forelse ($escolar as $index => $datos)
                             <tr class=" row-12" style="text-align: center">
                                 <td>{{ $escolar->firstItem() + $index }}</td>
                                 <td>
                                     <i class="fas fa-calendar text-primary me-2"></i>
-                                    {{-- Formato de fecha --}}
                                     <span
                                         class="fw-semibold">{{ \Carbon\Carbon::parse($datos->inicio_anio_escolar)->format('d/m/Y') }}</span>
                                 </td>
                                 <td>
                                     <i class="fas fa-calendar text-primary me-2"></i>
-                                    {{-- Formato de fecha --}}
                                     <span
                                         class="fw-semibold">{{ \Carbon\Carbon::parse($datos->cierre_anio_escolar)->format('d/m/Y') }}</span>
                                 </td>
@@ -159,7 +149,6 @@
                                     </span>
                                 </td>
                                 <td>
-                                    {{-- Estado --}}
                                     @if ($datos->status == 'Activo')
                                         <span class="status-badge status-active">
                                             <span class="status-dot"></span>
@@ -186,7 +175,6 @@
                                             </button>
 
                                             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                                {{-- Ver mas --}}
                                                 <li>
                                                     <button class="dropdown-item d-flex align-items-center text-primary"
                                                         data-bs-toggle="modal"
@@ -197,7 +185,6 @@
                                                     </button>
                                                 </li>
 
-                                                {{-- Extender --}}
                                                 <li>
                                                     @if (in_array($datos->status, ['Activo', 'Extendido']))
                                                         <button class="dropdown-item d-flex align-items-center text-warning"
@@ -210,7 +197,6 @@
                                                     @endif
                                                 </li>
 
-                                                {{-- Inactivar --}}
                                                 <li>
                                                     @if (in_array($datos->status, ['Activo', 'Extendido']))
                                                         <button class="dropdown-item d-flex align-items-center text-danger"
@@ -222,19 +208,15 @@
                                                         </button>
                                                     @endif
                                                 </li>
-
-
                                             </ul>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
 
-                            {{-- Modales por registro --}}
                             @include('admin.anio_escolar.modales.extenderModal')
                             @include('admin.anio_escolar.modales.showModal')
 
-                            {{-- Modal Eliminar --}}
                             <div class="modal fade" id="deleteModal{{ $datos->id }}" tabindex="-1"
                                 aria-labelledby="deleteModalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -297,7 +279,6 @@
             </div>
         </div>
 
-        {{-- Paginación --}}
         <div class="mt-3">
             <x-pagination :paginator="$escolar" />
         </div>

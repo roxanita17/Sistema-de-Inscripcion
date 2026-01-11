@@ -8,9 +8,6 @@ use Illuminate\Http\Request;
 
 class AreaFormacionController extends Controller
 {
-        /**
-     * Verifica si hay un año escolar activo
-     */
     private function verificarAnioEscolar()
     {
         return \App\Models\AnioEscolar::where('status', 'Activo')
@@ -18,30 +15,21 @@ class AreaFormacionController extends Controller
             ->exists();
     }
 
-    /**
-     * Muestra el listado de áreas de formación y grupos estables.
-     */
     public function index()
     {
-        // Traer solo materias activas y paginarlas (10 por página)
         $areaFormacion = AreaFormacion::where('status', true)
             ->orderBy('nombre_area_formacion', 'asc')
             ->paginate(5);
 
-        // Traer solo grupos estables activos y paginarlos (10 por página)
         $grupoEstable = GrupoEstable::where('status', true)
             ->orderBy('nombre_grupo_estable', 'asc')
             ->paginate(5);
 
-        // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         return view('admin.area_formacion.index', compact('areaFormacion', 'grupoEstable', 'anioEscolarActivo'));
     }
 
-    /**
-     * Crea un nuevo registro de grupo estable.
-     */
     public function storeGrupoEstable(Request $request)
     {
         $validated = $request->validate([
@@ -49,7 +37,6 @@ class AreaFormacionController extends Controller
             
         ]);
 
-        // Verificar si ya existe un grupo estable activo con el mismo nombre
         $existe = GrupoEstable::where('nombre_grupo_estable', $validated['nombre_grupo_estable'])
             ->where('status', true)
             ->exists();
@@ -77,9 +64,6 @@ class AreaFormacionController extends Controller
         }
     }
 
-    /**
-     * Crea una nueva área de formación.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -88,7 +72,6 @@ class AreaFormacionController extends Controller
             'siglas' => 'required|string|max:255',
         ]);
 
-        // Verificar si ya existe un área de formación activa con el mismo nombre
         $existe = AreaFormacion::where('nombre_area_formacion', $validated['nombre_area_formacion'])
             ->where('status', true)
             ->exists();
@@ -117,16 +100,12 @@ class AreaFormacionController extends Controller
         }
     }
 
-    /**
-     * Actualiza los datos de un grupo estable.
-     */
     public function updateGrupoEstable(Request $request, $id)
     {
         $validated = $request->validate([
             'nombre_grupo_estable' => 'required|string|max:255',
         ]);
 
-        // Verificar si ya existe otro grupo estable activo con el mismo nombre
         $existe = GrupoEstable::where('nombre_grupo_estable', $validated['nombre_grupo_estable'])
             ->where('status', true)
             ->where('id', '!=', $id)
@@ -153,9 +132,6 @@ class AreaFormacionController extends Controller
         }
     }
 
-    /**
-     * Actualiza los datos de un área de formación.
-     */
     public function update(Request $request, $id)
     {
         $areaFormacion = AreaFormacion::findOrFail($id);
@@ -166,7 +142,6 @@ class AreaFormacionController extends Controller
             'siglas' => 'required|string|max:255',
         ]);
 
-        // Verificar si ya existe otra área de formación activa con el mismo nombre
         $existe = AreaFormacion::where('nombre_area_formacion', $validated['nombre_area_formacion'])
             ->where('status', true)
             ->where('id', '!=', $areaFormacion->id)
@@ -194,9 +169,6 @@ class AreaFormacionController extends Controller
         }
     }
 
-    /**
-     * Realiza una baja lógica de un grupo estable.
-     */
     public function destroyGrupoEstable($id)
     {
         try {
@@ -220,12 +192,6 @@ class AreaFormacionController extends Controller
         }
     }
 
-    /**
-     * Verifica si ya existe un área de formación con el nombre proporcionado.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function verificarExistencia(Request $request)
     {
         try {
@@ -252,12 +218,6 @@ class AreaFormacionController extends Controller
         }
     }
 
-    /**
-     * Verifica si ya existe un grupo estable con el nombre proporcionado.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function verificarExistenciaGrupoEstable(Request $request)
     {
         try {
@@ -284,9 +244,6 @@ class AreaFormacionController extends Controller
         }
     }
 
-    /**
-     * Realiza una baja lógica de un área de formación.
-     */
     public function destroy($id)
     {
         try {

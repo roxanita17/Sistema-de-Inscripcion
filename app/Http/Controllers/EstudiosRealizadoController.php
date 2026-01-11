@@ -4,26 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\EstudiosRealizado;
 use Illuminate\Http\Request;
+use App\Models\AnioEscolar;
 
 class EstudiosRealizadoController extends Controller
 {
-
-    /**
-     * Verifica si hay un año escolar activo
-     */
     private function verificarAnioEscolar()
     {
-        return \App\Models\AnioEscolar::where('status', 'Activo')
+        return AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->exists();
     }
 
-    /**
-     * Verifica si ya existe un estudio realizado con el nombre proporcionado
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function verificarExistencia(Request $request)
     {
         try {
@@ -31,7 +22,6 @@ class EstudiosRealizadoController extends Controller
                 'estudios' => 'required|string|max:255',
             ]);
 
-            // Verificar si ya existe un estudio realizado activo con este nombre
             $existe = EstudiosRealizado::where('estudios', $request->estudios)
                 ->where('status', true)
                 ->exists();
@@ -49,18 +39,12 @@ class EstudiosRealizadoController extends Controller
         }
     }
 
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $buscar = request('buscar');
 
-        // Construir la consulta base
         $query = EstudiosRealizado::query();
 
-        // Aplicar búsqueda
         if (!empty($buscar)) {
             $query->where(function ($q) use ($buscar) {
                 $q->where('estudios', 'LIKE', "%{$buscar}%")
@@ -68,12 +52,10 @@ class EstudiosRealizadoController extends Controller
             });
         }
 
-        // Ordenar y paginar
         $estudiosRealizados = $query->orderBy('estudios', 'asc')
             ->paginate(10)
             ->appends(request()->query());
 
-        // Verificar si hay año escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         return view('admin.estudios_realizados.index', compact(
@@ -83,16 +65,12 @@ class EstudiosRealizadoController extends Controller
         ));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'estudios' => 'required|string|max:255',
         ]);
 
-        // Verificar si ya existe un área de formación activa con el mismo nombre
         $existe = EstudiosRealizado::where('estudios', $validated['estudios'])
             ->where('status', true)
             ->exists();
@@ -118,9 +96,6 @@ class EstudiosRealizadoController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $estudiosRealizados = EstudiosRealizado::findOrFail($id);
@@ -129,7 +104,6 @@ class EstudiosRealizadoController extends Controller
             'estudios' => 'required|string|max:255',
         ]);
 
-        // Verificar si ya existe otra área de formación activa con el mismo nombre
         $existe = EstudiosRealizado::where('estudios', $validated['estudios'])
             ->where('status', true)
             ->where('id', '!=', $estudiosRealizados->id)
@@ -155,25 +129,18 @@ class EstudiosRealizadoController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        // Buscar el registro a desactivar
         $estudiosRealizados = EstudiosRealizado::find($id);
 
         if ($estudiosRealizados) {
-            // Cambiar el estado a inactivo
             $estudiosRealizados->update(['status' => false]);
 
-            // Mensaje de éxito para el usuario
             return redirect()
                 ->route('admin.estudios_realizados.index')
                 ->with('success', 'El estudio realizado fue eliminado correctamente.');
         }
 
-        // Mensaje si el registro no existe
         return redirect()
             ->route('admin.estudios_realizados.index')
             ->with('error', 'No se encontró el estudio realizado especificado.');

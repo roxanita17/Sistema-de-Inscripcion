@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class GrupoEstable extends Model
 {
-    /** @use HasFactory<\Database\Factories\GrupoEstableFactory> */
     use HasFactory;
 
     protected $table = 'grupo_estables';

@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 class Representante extends Model
 {
     use HasFactory;
-    //
     use SoftDeletes;
 
     protected $table = "representantes";
@@ -25,7 +24,7 @@ class Representante extends Model
         "status"
     ];
     protected $attributes = [
-        'status' => 1  // Valor por defecto: 1 = Activo
+        'status' => 1
     ];
     
     protected $dates = ['deleted_at']; 
@@ -69,19 +68,15 @@ class Representante extends Model
         });
     }
 
-    //--- REPORTES ---//
-
     public static function reportePDF($filtro=null){
     \Log::info('=== MODELO REPRESENTANTE - REPORTE PDF ===');
     \Log::info('Filtros recibidos en modelo:', ['filtros' => $filtro]);
     
-    // Primero obtener los IDs de representantes que cumplen con los filtros
     $queryIds = DB::table("representantes")
         ->where('representantes.status', 1)
         ->join("personas", "personas.id", "=", "representantes.persona_id")
         ->where('personas.status', 1);
-    
-    // Filtro por tipo (representante legal o no)
+
     if (isset($filtro['es_legal'])) {
         \Log::info('Aplicando filtro es_legal en reporte:', ['es_legal' => $filtro['es_legal']]);
         if ($filtro['es_legal']) {
@@ -99,7 +94,6 @@ class Representante extends Model
         }
     }
 
-    // Filtro por grado (nivel académico)
     if (isset($filtro['grado_id']) && $filtro['grado_id'] !== '' && $filtro['grado_id'] !== null) {
         $gradoId = $filtro['grado_id'];
         \Log::info('Aplicando filtro grado_id en reporte:', ['grado_id' => $gradoId]);
@@ -115,7 +109,6 @@ class Representante extends Model
         });
     }
 
-    // Filtro por sección
     if (isset($filtro['seccion_id']) && $filtro['seccion_id'] !== '' && $filtro['seccion_id'] !== null && $filtro['seccion_id'] != '0') {
         $seccionNombre = $filtro['seccion_id'];
         \Log::info('Aplicando filtro seccion_id en reporte:', ['seccion_id' => $seccionNombre]);
@@ -132,7 +125,7 @@ class Representante extends Model
         });
     }
     
-    // Obtener los IDs que cumplen los filtros
+
     \Log::info('Consulta SQL para IDs:', ['sql' => $queryIds->toSql(), 'bindings' => $queryIds->getBindings()]);
     $representantesIds = $queryIds->pluck('representantes.id');
     
@@ -145,17 +138,13 @@ class Representante extends Model
         return collect([]);
     }
     
-    // Ahora construir la consulta principal con todos los datos usando esos IDs
     $query = DB::table("representantes")
         ->where('representantes.status', 1)
         ->where('personas.status', 1)
         ->select(
-            // Datos del representante
             'representantes.id as representante_id',
             'representantes.ocupacion_representante',
             'representantes.status as representante_status',
-            
-            // Datos de persona del representante
             'personas.primer_nombre',
             'personas.segundo_nombre',
             'personas.tercer_nombre',
@@ -169,14 +158,10 @@ class Representante extends Model
             'personas.genero_id',
             'personas.localidad_id',
             'personas.prefijo_id',
-
-            // Datos de ubicación
             'estados.nombre_estado as estado_nombre',
             'municipios.nombre_municipio as municipio_nombre',
             'localidads.nombre_localidad as localidad_nombre',
             'ocupacions.nombre_ocupacion as ocupacion_nombre',
-
-            // Datos del representante legal
             'representante_legal.parentesco',
             'representante_legal.correo_representante',
             'representante_legal.pertenece_a_organizacion_representante',
@@ -186,16 +171,12 @@ class Representante extends Model
             'representante_legal.tipo_cuenta',
             'representante_legal.codigo_carnet_patria_representante',
             'bancos.nombre_banco as banco_nombre',
-
-            // Datos del estudiante relacionado (primera inscripción)
             'personas_alumno.primer_nombre as alumno_primer_nombre',
             'personas_alumno.segundo_nombre as alumno_segundo_nombre',
             'personas_alumno.tercer_nombre as alumno_tercer_nombre',
             'personas_alumno.primer_apellido as alumno_primer_apellido',
             'personas_alumno.segundo_apellido as alumno_segundo_apellido',
             'personas_alumno.numero_documento as alumno_cedula',
-
-            // Datos de año escolar y sección
             'anio_escolars.inicio_anio_escolar',
             'anio_escolars.cierre_anio_escolar',
             'seccions.nombre as seccion_nombre',
@@ -208,7 +189,6 @@ class Representante extends Model
         ->leftJoin("ocupacions", "ocupacions.id", "=", "representantes.ocupacion_representante")
         ->leftJoin("representante_legal", "representante_legal.representante_id", "=", "representantes.id")
         ->leftJoin("bancos", "bancos.id", "=", "representante_legal.banco_id")
-        // Subconsulta para obtener solo la primera inscripción de cada representante
         ->leftJoin(DB::raw("(SELECT i.* FROM inscripcions i 
                    WHERE i.id = (
                        SELECT MIN(i2.id) 

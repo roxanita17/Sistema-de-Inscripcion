@@ -52,71 +52,46 @@ class Persona extends Model
         'status' => 'boolean',
     ];
 
-    /**
-     * Relación con TipoDocumento
-     */
     public function tipoDocumento()
     {
         return $this->belongsTo(TipoDocumento::class, 'tipo_documento_id', 'id');
     }
 
-    /**
-     * Relación con Genero
-     */
     public function genero()
     {
         return $this->belongsTo(Genero::class, 'genero_id', 'id');
     }
 
-    /**
-     * Relación con PrefijoTelefono
-     */
     public function prefijoTelefono()
     {
         return $this->belongsTo(PrefijoTelefono::class, 'prefijo_id', 'id');
     }
 
-    /**
-     * Alias para prefijoTelefono para mantener compatibilidad
-     */
     public function prefijo()
     {
         return $this->prefijoTelefono();
     }
 
-    /**
-     * Relación con el segundo prefijo de teléfono
-     */
     public function prefijoDos()
     {
         return $this->belongsTo(PrefijoTelefono::class, 'prefijo_dos_id', 'id');
     }
 
-
-    /**
-     * Relación con Localidad
-     */
     public function localidad()
     {
         return $this->belongsTo(Localidad::class, 'localidad_id', 'id');
     }
 
-    /**
-     * Relación inversa con Docente
-     */
     public function docente()
     {
         return $this->hasOne(Docente::class, 'persona_id', 'id');
     }
 
-    //relacion con el representante
     public function representante()
     {
         return $this->hasOne(Representante::class, 'persona_id');
     }
-    /**
-     * Accessor para obtener el nombre completo
-     */
+
     public function getNombreCompletoAttribute()
     {
         return trim(
@@ -128,9 +103,6 @@ class Persona extends Model
         );
     }
 
-    /**
-     * Accessor para obtener edad
-     */
     public function getEdadAttribute()
     {
         return $this->fecha_nacimiento ? $this->fecha_nacimiento->age : null;

@@ -16,9 +16,6 @@ class ExpresionLiteraria extends Model
         'status',
     ];
 
-    /**
-     * Mutator: asegura que siempre se guarde una sola letra en mayúscula.
-     */
     public function setLetraExpresionLiterariaAttribute($value)
     {
         $value = mb_strtoupper(trim($value), 'UTF-8');

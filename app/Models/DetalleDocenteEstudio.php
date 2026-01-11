@@ -21,17 +21,11 @@ class DetalleDocenteEstudio extends Model
         'status' => 'boolean',
     ];
 
-    /**
-     * Relación: pertenece a un docente
-     */
     public function docente()
     {
         return $this->belongsTo(Docente::class, 'docente_id', 'id');
     }
 
-    /**
-     * Relación: pertenece a un estudio realizado
-     */
     public function estudiosRealizado() 
     {
         return $this->belongsTo(EstudiosRealizado::class, 'estudios_id', 'id');
