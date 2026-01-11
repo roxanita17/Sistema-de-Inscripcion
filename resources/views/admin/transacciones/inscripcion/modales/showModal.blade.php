@@ -6,8 +6,6 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content modal-modern shadow">
-
-            <!-- HEADER -->
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
                     <h5 class="modal-title-view mb-2">Información de Inscripción por Prosecución</h5>
@@ -31,13 +29,7 @@
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
                     data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-
-            <!-- BODY -->
             <div class="modal-body modal-body-view">
-
-                <!-- ======================
-                    SECCIÓN 1: DATOS DEL ESTUDIANTE
-                ======================= -->
                 <div class="mb-4">
                     @php
                         $dato = $datos->alumno->persona;
@@ -49,7 +41,6 @@
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -84,7 +75,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-6 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -108,12 +98,9 @@
                                         @php
                                             $pais = $dato?->localidad?->municipio?->estado?->pais?->nameES;
                                         @endphp
-
-                                        {{-- Mostrar país SOLO si NO es Venezuela --}}
                                         @if ($pais && strtolower($pais) !== 'venezuela')
                                             {{ $pais }} /
                                         @endif
-
                                         {{ $dato?->localidad?->municipio?->estado?->nombre_estado ?? 'N/A' }}
                                         /
                                         {{ $dato?->localidad?->municipio?->nombre_municipio ?? 'N/A' }}
@@ -132,7 +119,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -143,7 +129,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -154,7 +139,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -164,9 +148,7 @@
                                         {{ $alumno->ordenNacimiento->orden_nacimiento ?? 'N/A' }}
                                     </span>
                                 </div>
-
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -177,7 +159,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -188,7 +169,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -205,7 +185,6 @@
                                         <span class="detail-label">
                                             Etnia Indígena
                                         </span>
-
                                         @if ($alumno->etniaIndigena->count() > 0)
                                             <div class="detail-value">
                                                 {{ $alumno->etniaIndigena->nombre }}
@@ -218,14 +197,12 @@
                                     </div>
                                 </div>
                             @endif
-
                             @if ($alumno->discapacidades)
                                 <div class="col-md-4">
                                     <div class="detail-item">
                                         <span class="detail-label">
                                             Discapacidades
                                         </span>
-
                                         @if ($alumno->discapacidades->count() > 0)
                                             <div class="d-flex flex-wrap mt-1">
                                                 @foreach ($alumno->discapacidades as $discapacidad)
@@ -243,23 +220,14 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                <!-- ======================
-                    SECCIÓN 2: REPRESENTANTES
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-users"></i>
                         <span>Representantes</span>
                     </div>
-
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
-
                         <div class="row mt-2 mb-4">
-                            <!-- PADRE -->
                             @if ($datos->padre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100 ">
@@ -381,8 +349,6 @@
                                     </div>
                                 </div>
                             @endif
-
-                            <!-- MADRE -->
                             @if ($datos->madre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100">
@@ -506,7 +472,6 @@
                             @endif
                         </div>
                         <div class="row">
-                            <!-- REPRESENTANTE LEGAL -->
                             @if ($datos->representanteLegal)
                                 <div class="col-md-12">
                                     <div class="card shadow-sm border-0">
@@ -640,7 +605,6 @@
                                                     <div class="detail-item mb-2">
                                                         <span class="detail-label">Parentesco</span>
                                                         <span class="detail-value">
-
                                                             @if ($datos->representanteLegal->parentesco === 'Padre')
                                                                 <span class="badge-sm bg-info">
                                                                     {{ $datos->representanteLegal->parentesco ?? 'No especificado' }}
@@ -720,7 +684,6 @@
                                     </div>
                                 </div>
                             @endif
-                            <!-- Si no hay representantes -->
                             @if (!$datos->padre && !$datos->madre && !$datos->representanteLegal)
                                 <div class="col-12">
                                     <div class="alert alert-warning text-center">
@@ -730,14 +693,9 @@
                                 </div>
                             @endif
                         </div>
-
                     </div>
                 </div>
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                <!-- ======================
-                    SECCIÓN 3: DATOS DE INSCRIPCIÓN
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-file-signature"></i>
@@ -766,7 +724,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -777,7 +734,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -791,7 +747,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -802,7 +757,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -824,13 +778,7 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- DIVISOR -->
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                <!-- ======================
-                    SECCIÓN 4: DOCUMENTOS
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-folder-open"></i>
@@ -917,7 +865,6 @@
                             : (json_decode($datos->documentos, true) ?:
                             []);
                     @endphp
-
                     @php
                         if ($esPrimerGrado) {
                             unset($todosDocumentos['notas_certificadas'], $todosDocumentos['liberacion_cupo']);
@@ -940,7 +887,6 @@
                                                 {{ $info['label'] }}
                                             </div>
                                         </div>
-
                                         <div class="documento-status">
                                             @if ($entregado)
                                                 <i class="fas fa-check-circle text-success"></i>
@@ -978,7 +924,6 @@
                     <i class="fas fa-times me-2"></i>Cerrar
                 </button>
             </div>
-
         </div>
     </div>
 </div>

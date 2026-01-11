@@ -14,7 +14,6 @@
             });
         });
     </script>
-
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -31,7 +30,6 @@
             <livewire:admin.alumnos.alumno-edit :alumnoId="$alumnoId" />
         </div>
     </div>
-
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -75,7 +73,6 @@
                     @endif
                 </div>
             </div>
-
             @if ($padreSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
                     <div class="details-grid">
@@ -97,7 +94,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-user"></i>
@@ -150,7 +146,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="details-section">
                             <div class="info-section">
                                 <div class="section-header">
@@ -200,7 +195,6 @@
                     </div>
                 </div>
             @endif
-
             <div class="row align-items-center mb-4 mt-4">
                 <div class="col-md-10" wire:ignore>
                     <label for="madre_select" class="form-label-modern">
@@ -294,7 +288,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="details-section">
                             <div class="info-section">
                                 <div class="section-header">
@@ -344,7 +337,6 @@
                     </div>
                 </div>
             @endif
-
             <div class="row align-items-center mb-4 mt-4">
                 <div class="col-md-10" wire:ignore>
                     <label for="representante_legal_select" class="form-label-modern">
@@ -402,7 +394,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="info-section">
                                 <div class="section-header">
                                     <i class="fas fa-user"></i>
@@ -433,7 +424,6 @@
                                                 {{ $representanteLegalSeleccionado->representante->persona->genero->genero ?? 'N/A' }}
                                             </span>
                                         </div>
-
                                         <div class="info-item" style="width: 15rem;">
                                             <span class="info-label">
                                                 Teléfono
@@ -452,7 +442,6 @@
                                     <i class="fas fa-map-marker-alt"></i>
                                     <h4>Ubicación</h4>
                                 </div>
-
                                 <div class="info-group">
                                     <div class="info-item">
                                         <span class="info-label">
@@ -481,7 +470,6 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div class="info-group pt-3">
                                     <div class="info-item">
                                         <span class="info-label">
@@ -496,7 +484,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="info-section mt-4">
                     <div class="section-header">
                         <i class="fas fa-gavel"></i>
@@ -577,7 +564,6 @@
             @endif
         </div>
     </div>
-
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -628,7 +614,6 @@
                             </div>
                         @enderror
                     </div>
-
                 @endif
                 @if ($esPrimerGrado)
                     <div class="col-md-4">
@@ -642,59 +627,70 @@
                     </div>
                 @endif
             </div>
-
             <div class="row mt-3">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="paisId" class="form-label-modern">Pais<span class="required-badge">*</span></label>
-                        <select wire:model.live="paisId" class="form-control-modern @error('paisId') is-invalid @enderror">
+                        <label for="paisId" class="form-label-modern">Pais<span
+                                class="required-badge">*</span></label>
+                        <select wire:model.live="paisId"
+                            class="form-control-modern @error('paisId') is-invalid @enderror">
                             <option value="">Seleccione un país</option>
-                            @foreach($paises as $pais)
+                            @foreach ($paises as $pais)
                                 <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
                             @endforeach
                         </select>
-                        @error('paisId') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
+                        @error('paisId')
+                            <div class="invalid-feedback-modern">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
-
-
-                @if($esVenezolano)
+                @if ($esVenezolano)
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="estado_id" class="form-label-modern">Estado <span class="required-badge">*</span></label>
-                            <select wire:model.live="estado_id" id="estado_id" @disabled(!$paisId) class="form-control-modern @error('estado_id') is-invalid @enderror">
+                            <label for="estado_id" class="form-label-modern">Estado <span
+                                    class="required-badge">*</span></label>
+                            <select wire:model.live="estado_id" id="estado_id" @disabled(!$paisId)
+                                class="form-control-modern @error('estado_id') is-invalid @enderror">
                                 <option value="">Seleccione un estado</option>
                                 @foreach ($estados as $estado)
                                     <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
                                 @endforeach
                             </select>
-                            @error('estado_id') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
+                            @error('estado_id')
+                                <div class="invalid-feedback-modern">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
-
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="municipio_id" class="form-label-modern">Municipio <span class="required-badge">*</span></label>
-                            <select wire:model.live="municipio_id" id="municipio_id" @disabled(!$estado_id) class="form-control-modern @error('municipio_id') is-invalid @enderror">
+                            <label for="municipio_id" class="form-label-modern">Municipio <span
+                                    class="required-badge">*</span></label>
+                            <select wire:model.live="municipio_id" id="municipio_id" @disabled(!$estado_id)
+                                class="form-control-modern @error('municipio_id') is-invalid @enderror">
                                 <option value="">Seleccione un municipio</option>
                                 @foreach ($municipios as $municipio)
                                     <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
                                 @endforeach
                             </select>
-                            @error('municipio_id') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
+                            @error('municipio_id')
+                                <div class="invalid-feedback-modern">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
-
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="localidad_id" class="form-label-modern">Localidad <span class="required-badge">*</span></label>
-                            <select wire:model.live="localidad_id" id="localidad_id" @disabled(!$municipio_id) class="form-control-modern @error('localidad_id') is-invalid @enderror">
+                            <label for="localidad_id" class="form-label-modern">Localidad <span
+                                    class="required-badge">*</span></label>
+                            <select wire:model.live="localidad_id" id="localidad_id" @disabled(!$municipio_id)
+                                class="form-control-modern @error('localidad_id') is-invalid @enderror">
                                 <option value="">Seleccione una localidad</option>
                                 @foreach ($localidades as $localidad)
                                     <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}</option>
                                 @endforeach
                             </select>
-                            @error('localidad_id') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
+                            @error('localidad_id')
+                                <div class="invalid-feedback-modern">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 @endif
@@ -704,8 +700,7 @@
                     <label class="form-label-modern">
                         Institución de Procedencia
                     </label>
-
-                    @if($esVenezolano)
+                    @if ($esVenezolano)
                         <select wire:model.live="institucion_procedencia_id"
                             class="form-control-modern @error('institucion_procedencia_id') is-invalid @enderror"
                             @disabled(!$localidad_id)>
@@ -715,18 +710,13 @@
                             @endforeach
                         </select>
                     @else
-                        <input type="text"
-                            wire:model.live="otroPaisNombre"
-                            class="form-control-modern"
+                        <input type="text" wire:model.live="otroPaisNombre" class="form-control-modern"
                             placeholder="Nombre de la institución extranjera">
                     @endif
-
                     @error('institucion_procedencia_id')
                         <div class="invalid-feedback-modern">{{ $message }}</div>
                     @enderror
                 </div>
-
-
                 <div class="col-md-4">
                     <label class="form-label-modern">
                         Literal
@@ -759,7 +749,6 @@
             </div>
         </div>
     </div>
-
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -795,26 +784,21 @@
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 @php
                     $colCounter = 0;
                 @endphp
-
                 @foreach ($documentosEtiquetas as $documento => $etiqueta)
                     @php
                         if ($esPrimerGrado && in_array($documento, ['notas_certificadas', 'liberacion_cupo'])) {
                             continue;
                         }
-
                         $esFaltante = in_array($documento, $documentosFaltantes);
                     @endphp
-
                     @if ($colCounter % 12 === 0 && $colCounter !== 0)
             </div>
             <div class="row mt-3">
                 @endif
-
                 <div class="col-md-6 mb-3">
                     <div class="checkbox-item-modern {{ $esFaltante ? 'checkbox-warning' : '' }}">
                         <input type="checkbox" id="doc_{{ $documento }}" wire:model.live="documentos"
@@ -829,11 +813,9 @@
                         </label>
                     </div>
                 </div>
-
                 @php $colCounter++; @endphp
                 @endforeach
             </div>
-
             <div class="row mt-4">
                 <div class="col-12">
                     <label class="form-label-modern">
@@ -855,14 +837,12 @@
         </div>
     </div>
     @include('admin.transacciones.inscripcion.modales.showContratoModal')
-
     <div class="card-modern">
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="d-flex justify-content-end gap-3">
                 <a href="{{ route('admin.transacciones.inscripcion.index') }}" class="btn-cancel-modern">
                     <i class="fas fa-arrow-left"></i> Cancelar
                 </a>
-
                 <button type="button" wire:click="actualizar" class="btn-primary-modern"
                     wire:loading.attr="disabled">
                     <span wire:loading.remove wire:target="actualizar">
