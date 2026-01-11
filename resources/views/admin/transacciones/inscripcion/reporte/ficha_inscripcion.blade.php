@@ -469,11 +469,7 @@
                             <tr>
                                 <td><strong>Teléfono:</strong></td>
                                 <td>{{ $datosCompletos['persona_madre']['telefono'] ?? 'N/A' }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Correo Electrónico:</strong></td>
-                                <td>{{ $datosCompletos['persona_madre']['email'] ?? 'N/A' }}</td>
-                            </tr>
+                            </tr>            
                             <tr>
                                 <td><strong>Conviven con el estudiante:</strong></td>
                                 <td>{{ $datosCompletos['madre']['convivenciaestudiante_representante'] ?? 'N/A' }}</td>
@@ -515,10 +511,6 @@
                             <tr>
                                 <td><strong>Teléfono:</strong></td>
                                 <td>{{ $datosCompletos['persona_padre']['telefono'] ?? 'N/A' }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Correo Electrónico:</strong></td>
-                                <td>{{ $datosCompletos['persona_padre']['email'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Conviven con el estudiante:</strong></td>

@@ -3,7 +3,7 @@
         <nav class="navbar  fixed-top navbar-expand-lg bg-primary" style="min-height: 96px;">
             <div class="container-fluid">
 
-                <img class="logo-institucion" src="{{ asset('/images/comunidad/liceo_logo.png') }}" alt="image">
+                <img class="logo-institucion" src="{{ asset('/img/liceo_logo_color.png') }}" alt="image">
 
 
 
