@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PrefijoTelefono extends Model
 {
-    /** @use HasFactory<\Database\Factories\PrefijoTelefonoFactory> */
     use HasFactory;
 
     protected $table = "prefijo_telefonos";

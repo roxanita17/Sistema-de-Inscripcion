@@ -11,24 +11,18 @@ use App\Models\Genero;
 use App\Models\PrefijoTelefono;
 use App\Models\TipoDocumento;
 use App\Models\EstudiosRealizado;
-use App\Models\DocenteEstudioRealizado;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\AnioEscolar;
 
 class DocenteController extends Controller
 {
-    /**
-     * Verifica si hay un año escolar activo
-     */
     private function verificarAnioEscolar()
     {
-        return \App\Models\AnioEscolar::where('status', 'Activo')
+        return AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->exists();
     }
 
-    /**
-     * Muestra el listado de docentes
-     */
     public function index()
     {
         $buscar = request('buscar');
@@ -48,9 +42,6 @@ class DocenteController extends Controller
         return view('admin.docente.index', compact('docentes', 'anioEscolarActivo', 'personas', 'buscar'));
     }
 
-    /**
-     * Muestra el formulario de creación
-     */
     public function create()
     {
         $personas = Persona::all();
@@ -62,15 +53,9 @@ class DocenteController extends Controller
         return view('admin.docente.create', compact('personas', 'prefijos', 'generos', 'tipoDocumentos', 'docentes'));
     }
 
-    /**
-     * Obtiene el año escolar activo actual
-     * 
-     * @return \App\Models\AnioEscolar
-     * @throws \Exception Si no hay un año escolar activo
-     */
     public function obtenerAnioEscolarActivo()
     {
-        $anioEscolar = \App\Models\AnioEscolar::activos()
+        $anioEscolar = AnioEscolar::activos()
             ->whereIn('status',[ 'Activo', 'Extendido'])
             ->first();
 
@@ -81,12 +66,8 @@ class DocenteController extends Controller
         return $anioEscolar;
     }
  
-    /**
-     * Guarda un nuevo docente
-     */
     public function store(Request $request)
     {
-        // VALIDACIÓN
         $validated = $request->validate([
             'tipo_documento_id' => 'required|exists:tipo_documentos,id',
             'numero_documento' => 'required|string|max:20',
@@ -125,7 +106,6 @@ class DocenteController extends Controller
 
         try {
             $anioEscolar = $this->obtenerAnioEscolarActivo();
-            // 1. PERSONA
             $persona = Persona::create([
                 'primer_nombre' => $request->primer_nombre,
                 'segundo_nombre' => $request->segundo_nombre,
@@ -145,7 +125,6 @@ class DocenteController extends Controller
                 'status' => true,
             ]);
 
-            // 2. DOCENTE
             $docente = Docente::create([
                 'anio_escolar_id' => $anioEscolar->id,
                 'codigo' => $request->codigo,
@@ -168,9 +147,6 @@ class DocenteController extends Controller
         }
     }
 
-    /**
-     * Muestra el formulario de edición
-     */
     public function edit($id)
     {
         $docente = Docente::with('persona')->findOrFail($id);
@@ -181,15 +157,11 @@ class DocenteController extends Controller
         return view('admin.docente.edit', compact('docente', 'prefijos', 'generos', 'tipoDocumentos'));
     }
 
-    /**
-     * Actualiza un docente existente
-     */
     public function update(Request $request, $id)
     {
         $docente = Docente::findOrFail($id);
         $persona = $docente->persona;
 
-        // VALIDACIÓN (excluyendo la cédula actual)
         $validated = $request->validate(
             [
                 'tipo_documento_id' => 'required|exists:tipo_documentos,id',
@@ -255,7 +227,6 @@ class DocenteController extends Controller
                 'dependencia' => $request->dependencia,
             ]);
 
-
             DB::commit();
 
             return redirect()->route('admin.docente.estudios', $docente->id)
@@ -269,9 +240,6 @@ class DocenteController extends Controller
         }
     }
 
-    /**
-     * Muestra los detalles de un docente
-     */
     public function show($id)
     {
         $docente = Docente::with([
@@ -289,9 +257,6 @@ class DocenteController extends Controller
         return view('admin.docente.modales.showModal', compact('docente'));
     }
 
-    /**
-     * Registro de estudios del docente, componente livewire
-     */
     public function estudios($id)
     {
         $docentes = Docente::with(
@@ -309,9 +274,6 @@ class DocenteController extends Controller
         return view('admin.docente.estudios', compact('docentes', 'estudios', 'docenteEstudios'));
     }
 
-    /**
-     * Eliminación lógica del docente y su persona
-     */
     public function destroy($id)
     {
         DB::beginTransaction();
@@ -319,8 +281,6 @@ class DocenteController extends Controller
         try {
             $docente = Docente::findOrFail($id);
             $persona = $docente->persona;
-
-            // ELIMINACIÓN LÓGICA
             $docente->update(['status' => false]);
             $persona->update(['status' => false]);
 
@@ -339,16 +299,13 @@ class DocenteController extends Controller
     public function reportePDF($id)
     {
         try {
-            // Cargar el docente con las relaciones necesarias
             $docente = Docente::with([
                 'persona.tipoDocumento',
                 'persona.genero',
                 'detalleDocenteEstudio.estudiosRealizado'
             ])->findOrFail($id);
 
-            // Verificar si se cargaron los datos de la persona
             if ($docente->persona) {
-                // Cargar explícitamente las relaciones si no están cargadas
                 if (!$docente->persona->relationLoaded('genero')) {
                     $docente->persona->load('genero');
                 }
@@ -356,7 +313,6 @@ class DocenteController extends Controller
                     $docente->persona->load('tipoDocumento');
                 }
 
-                // Mapear los datos de la persona al objeto docente
                 $docente->tipo_documento = $docente->persona->tipoDocumento->nombre ?? 'N/A';
                 $docente->numero_documento = $docente->persona->numero_documento ?? 'N/A';
                 $docente->primer_nombre = $docente->persona->primer_nombre ?? 'N/A';
@@ -371,9 +327,6 @@ class DocenteController extends Controller
                 $docente->telefono = $docente->primer_telefono ?? $docente->segundo_telefono ?? 'N/A';
                 $docente->telefono_dos = $docente->persona->telefono_dos ?? 'N/A';
             }
-
-            // Para depuración
-            // return response()->json($docente);
 
             $pdf = PDF::loadView('admin.docente.reportes.individual_PDF', [
                 'docente' => $docente
@@ -414,12 +367,11 @@ class DocenteController extends Controller
                     return $docente;
                 })
                 ->sortBy(function ($docente) {
-                    // Ordenar por la primera letra del primer apellido
                     $primerApellido = $docente->primer_apellido ??
                         ($docente->persona->primer_apellido ?? '');
                     return strtoupper(substr($primerApellido, 0, 1));
                 })
-                ->values(); // Reindexar el array después de ordenar
+                ->values();
 
             $pdf = PDF::loadView('admin.docente.reportes.general_pdf', [
                 'docentes' => $docentes

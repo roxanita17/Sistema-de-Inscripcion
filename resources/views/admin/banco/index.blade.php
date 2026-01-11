@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
@@ -10,7 +9,6 @@
 @section('title', 'Gestión de Bancos')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -22,8 +20,6 @@
                     <p class="title-subtitle">Administración de los bancos</p>
                 </div>
             </div>
-
-            {{-- Botón que abre la ventana modal para crear un nuevo banco --}}
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
                 @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nuevo banco' }}">
@@ -33,14 +29,9 @@
         </div>
     </div>
 @stop
-
 @section('content')
     <div class="main-container">
-
-        {{-- Modal para crear un nuevo banco --}}
         @include('admin.banco.modales.createModal')
-
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -56,8 +47,6 @@
                 </div>
             </div>
         @endif
-
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -74,7 +63,6 @@
                         </button>
                     </div>
                 @endif
-
                 @if (session('error'))
                     <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
                         <div class="alert-icon">
@@ -91,8 +79,6 @@
                 @endif
             </div>
         @endif
-
-        {{-- Contenedor principal de la tabla de bancos --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -104,36 +90,28 @@
                         <p>{{ $bancos->total() }} registros encontrados</p>
                     </div>
                 </div>
-
                 <div class="header-right">
-
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                         $mostrarAnio = $anioActivo ?? $anioExtendido;
                     @endphp
-
                     @if ($mostrarAnio)
                         <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
                             <div class="d-flex align-items-center">
                                 <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
                                     <i class="fas fa-calendar-check me-1"></i>
-
                                     Año Escolar
                                 </span>
-
                                 <div class="d-flex align-items-center" style="font-size: 0.8rem;">
                                     <span class="text-muted me-2">
                                         <i class="fas fa-play-circle text-primary me-1"></i>
                                         {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
                                     </span>
-
                                     <span class="text-muted me-2">
                                         <i class="fas fa-flag-checkered text-danger me-1"></i>
                                         {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
                                     </span>
-
-
                                 </div>
                             </div>
                         </div>
@@ -144,16 +122,10 @@
                                 <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
                                 <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
                             </div>
-
                         </div>
                     @endif
-                    <!-- --------------------------- -->
-
                 </div>
-
             </div>
-
-            {{-- Cuerpo de la tarjeta con la tabla --}}
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern overflow-hidden hidden">
@@ -166,7 +138,6 @@
                             </tr>
                         </thead>
                         <tbody style="text-align: center">
-                            {{-- Si no hay bancos, se muestra mensaje vacío --}}
                             @if ($bancos->isEmpty())
                                 <tr>
                                     <td colspan="4">
@@ -180,16 +151,16 @@
                                     </td>
                                 </tr>
                             @else
-                                {{-- Se recorren los bancos existentes --}}
                                 @foreach ($bancos as $index => $datos)
-                                    <tr class="  row-12" style="text-align: center">
-
+                                    <tr class="row-12" style="text-align: center">
                                         <td class="tittle-main" style="font-weight: 700">
                                             <div class="number-badge" style="padding: 0.5rem 1rem; min-width: 200px;">
                                                 {{ $datos->codigo_banco }}
                                             </div>
                                         </td>
-                                        <td style="text-align: left">{{ $datos->nombre_banco }}</td>
+                                        <td style="text-align: left">
+                                            {{ $datos->nombre_banco }}
+                                        </td>
                                         <td>
                                             @if ($datos->status)
                                                 <span class="status-badge status-active">
@@ -205,31 +176,22 @@
                                         </td>
                                         <td>
                                             <div class="action-buttons">
-
-                                                {{-- Editar banco --}}
                                                 <button class="action-btn btn-edit" data-bs-toggle="modal"
                                                     data-bs-target="#viewModalEditar{{ $datos->id }}"
                                                     @if (!$anioEscolarActivo) disabled @endif
                                                     title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
                                                     <i class="fas fa-pen"></i>
                                                 </button>
-
-                                                {{-- Eliminar banco --}}
                                                 <button class="action-btn btn-delete" data-bs-toggle="modal"
                                                     data-bs-target="#confirmarEliminar{{ $datos->id }}"
                                                     @if (!$anioEscolarActivo) disabled @endif
                                                     title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Eliminar' }}">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
-
                                             </div>
                                         </td>
                                     </tr>
-
-                                    {{-- Modal de editar --}}
                                     @include('admin.banco.modales.editModal')
-
-                                    {{-- Modal de confirmación para eliminar --}}
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
                                         aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -272,22 +234,16 @@
                     </table>
                 </div>
             </div>
-
-            {{-- Paginación moderna --}}
             <div class="mt-3">
-                <x-pagination :paginator="$bancos" />
+                <x-pagination :paginator="$bancos"/>
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('js')
-    <!-- Incluir el archivo de validaciones -->
     <script src="{{ asset('js/validations/banco.js') }}"></script>
-
     <script>
-        // Inicializar tooltips de Bootstrap
         document.addEventListener('DOMContentLoaded', function() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {

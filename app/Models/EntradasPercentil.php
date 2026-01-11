@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\EjecucionesPercentil;
 
 class EntradasPercentil extends Model
 {
-    /** @use HasFactory<\Database\Factories\EntradasPercentilFactory> */
     use HasFactory;
 
     protected $table = 'entradas_percentils';
@@ -38,7 +38,7 @@ class EntradasPercentil extends Model
     public function ejecucion()
     {
         return $this->belongsTo(
-            \App\Models\EjecucionesPercentil::class,
+            EjecucionesPercentil::class,
             'ejecucion_percentil_id'
         );
     }

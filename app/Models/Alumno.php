@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Persona;
 use App\Models\OrdenNacimiento;
 use App\Models\Discapacidad;
-use App\Models\ExpresionLiteraria;
 use App\Models\Lateralidad;
 use App\Models\EtniaIndigena;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -37,40 +36,27 @@ class Alumno extends Model
     {
         return Attribute::make(
             get: function ($value) {
-                // Quita .00 si es entero
                 if ((float)$value == (int)$value) {
                     return (int)$value;
                 }
-
-                // Quita ceros innecesarios (1.50 → 1.5)
                 return rtrim(rtrim($value, '0'), '.');
             },
-
             set: function ($value) {
-
                 if ($value === null || $value === '') {
                     return null;
                 }
-
                 $value = str_replace(',', '.', (string) $value);
-
                 if (!is_numeric($value)) {
                     return null;
                 }
-
                 $value = (float) $value;
-
-                // Si viene en cm cambiar a metros
                 if ($value > 3) {
                     return round($value / 100, 2);
                 }
-
                 return round($value, 2);
             }
         );
     }
-
-
 
     public function ordenNacimiento()
     {
@@ -107,9 +93,6 @@ class Alumno extends Model
         return $this->belongsTo(Talla::class, 'talla_pantalon_id');
     }
 
-    /**
-     * Relación muchos a muchos con discapacidades
-     */
     public function discapacidades()
     {
         return $this->belongsToMany(
@@ -123,17 +106,11 @@ class Alumno extends Model
             ->withTimestamps();
     }
 
-    /**
-     * Relación directa con la tabla intermedia
-     */
     public function discapacidadEstudiante()
     {
         return $this->hasMany(DiscapacidadEstudiante::class, 'alumno_id', 'id');
     }
 
-    /**
-     * Relación con Inscripciones
-     */
     public function inscripciones()
     {
         return $this->hasMany(Inscripcion::class, 'alumno_id', 'id');
@@ -144,16 +121,13 @@ class Alumno extends Model
         return $this->hasManyThrough(
             InscripcionProsecucion::class,
             Inscripcion::class,
-            'alumno_id',        // FK en inscripcions
-            'inscripcion_id',   // FK en inscripcion_prosecucions
-            'id',               // PK en alumnos
-            'id'                // PK en inscripcions
+            'alumno_id',
+            'inscripcion_id',
+            'id',
+            'id'
         );
     }
 
-    /**
-     * Obtener la inscripción activa del alumno
-     */
     public function inscripcionActiva()
     {
         return $this->hasOne(Inscripcion::class, 'alumno_id', 'id')
@@ -163,13 +137,11 @@ class Alumno extends Model
 
     public function inscripcionAnterior(int $anioActualId)
     {
-        // Última inscripción base (nuevo ingreso)
         $inscripcionBase = $this->inscripciones()
             ->where('anio_escolar_id', '<', $anioActualId)
             ->orderByDesc('anio_escolar_id')
             ->first();
 
-        // Última prosecución
         $inscripcionProsecucion = InscripcionProsecucion::whereHas(
             'inscripcion',
             fn($q) => $q->where('alumno_id', $this->id)
@@ -179,27 +151,23 @@ class Alumno extends Model
             ->with('grado')
             ->first();
 
-        // Comparar cuál es la más reciente
         if ($inscripcionBase && $inscripcionProsecucion) {
             return $inscripcionBase->anio_escolar_id > $inscripcionProsecucion->anio_escolar_id
                 ? $inscripcionBase
                 : $inscripcionProsecucion;
         }
-
         return $inscripcionBase ?? $inscripcionProsecucion;
     }
 
 
     public function ultimaInscripcionAntesDe(int $anioActualId)
     {
-        // Última inscripción base
         $base = $this->inscripciones()
             ->where('anio_escolar_id', '<', $anioActualId)
             ->with('grado')
             ->orderByDesc('anio_escolar_id')
             ->first();
 
-        // Última prosecución
         $prosecucion = InscripcionProsecucion::whereHas(
             'inscripcion',
             fn($q) => $q->where('alumno_id', $this->id)
@@ -214,7 +182,6 @@ class Alumno extends Model
                 ? $base
                 : $prosecucion;
         }
-
         return $base ?? $prosecucion;
     }
 
@@ -231,11 +198,6 @@ class Alumno extends Model
             ->get();
     }
 
-
-
-    /**
-     * Scope para buscar alumnos
-     */
     public function scopeBuscar($query, $buscar)
     {
         if (!empty($buscar)) {
@@ -245,25 +207,19 @@ class Alumno extends Model
                     ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
             });
         }
-
         return $query;
     }
-
-    //REPORTES
 
     public static function ReportePDF($genero = null, $tipo_documento = null)
     {
         $query = DB::table("alumnos")
             ->select(
-                // Datos del alumno
                 'alumnos.id',
                 'alumnos.talla_camisa',
                 'alumnos.talla_pantalon',
                 'alumnos.talla_zapato',
                 'alumnos.peso',
                 'alumnos.estatura',
-
-                // Datos de persona
                 'personas.primer_nombre',
                 'personas.segundo_nombre',
                 'personas.tercer_nombre',
@@ -274,6 +230,7 @@ class Alumno extends Model
                 'generos.genero as nombre_genero',
                 'tipo_documentos.nombre as tipo_documento',
                 'pais.nameES as pais',
+
 
 
                 'etnia_indigenas.nombre as etnia',
@@ -290,10 +247,6 @@ class Alumno extends Model
             ->leftJoin("estados", "estados.id", "=", "localidads.estado_id")
             ->leftJoin("pais", "pais.id", "=", "estados.pais_id");
 
-        /*
-        * Filtros
-        */
-
         if ($genero) {
             $query->where("generos.genero", $genero);
         }
@@ -301,7 +254,6 @@ class Alumno extends Model
         if ($tipo_documento) {
             $query->where("tipo_documentos.nombre", $tipo_documento);
         }
-
         return $query->get();
     }
 
@@ -311,19 +263,15 @@ class Alumno extends Model
 
             $alumno = Alumno::with('inscripciones')->findOrFail($id);
 
-            // 1. Inactivar alumno
             $alumno->update([
                 'status' => false,
             ]);
-
-            // 2. Inactivar inscripciones relacionadas (Activo o Pendiente)
             $alumno->inscripciones()
                 ->whereIn('status', ['Activo', 'Pendiente'])
                 ->update([
                     'status' => 'Inactivo',
                     'updated_at' => now(),
                 ]);
-
             return true;
         });
     }

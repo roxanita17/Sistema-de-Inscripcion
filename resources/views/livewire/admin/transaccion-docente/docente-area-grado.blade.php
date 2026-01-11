@@ -321,7 +321,6 @@
                         @enderror
                     </div>
 
-                    {{-- Secciones ÁREA --}}
                     <div class="col-md-3">
                         <label for="seccion_area_select" class="form-label-modern">
                             <i class="fas fa-users"></i>
@@ -356,7 +355,6 @@
                         @enderror
                     </div>
 
-                    {{-- Botón Agregar ÁREA --}}
                     <div class="col-md-2 d-flex align-items-end">
                         <button class="btn-primary-modern w-100" wire:click="agregarAsignacionArea"
                             wire:loading.attr="disabled" style="margin-bottom: 0rem;" @disabled(!$this->puedeAgregarArea)
@@ -514,7 +512,6 @@
 
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
-                    {{-- Grupo Estable --}}
                     <div class="col-md-4">
                         <label class="form-label-modern">
                             <i class="fas fa-users"></i>
@@ -539,7 +536,6 @@
                         @enderror
                     </div>
 
-                    {{-- Grado GRUPO --}}
                     <div class="col-md-3">
                         <label class="form-label-modern">
                             <i class="fas fa-layer-group"></i>
@@ -574,7 +570,6 @@
                         @enderror
                     </div>
 
-                    {{-- Botón Agregar GRUPO --}}
                     <div class="col-md-2 d-flex align-items-end">
                         <button class="btn-primary-modern w-100" wire:click="agregarAsignacionGrupo"
                             wire:loading.attr="disabled" style="margin-bottom: 0rem;" @disabled(!$this->puedeAgregarGrupo)

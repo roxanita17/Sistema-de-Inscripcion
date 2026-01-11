@@ -3,15 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class InscripcionProsecucion extends Model
 {
-    use HasFactory;
-
     protected $table = 'inscripcion_prosecucions';
-
     protected $fillable = [
         'inscripcion_id',
         'inscripcion_anterior_id',
@@ -39,7 +35,7 @@ class InscripcionProsecucion extends Model
     {
         return $this->belongsTo(Inscripcion::class, 'inscripcion_anterior_id', 'id');
     }
-    
+
     public function grado()
     {
         return $this->belongsTo(Grado::class, 'grado_id', 'id');
@@ -78,46 +74,36 @@ class InscripcionProsecucion extends Model
         return $this->hasMany(Representante::class);
     }
 
-
     public static function inactivar($prosecucionId)
     {
         return DB::transaction(function () use ($prosecucionId) {
-
             $prosecucion = self::with('inscripcion.alumno')
                 ->findOrFail($prosecucionId);
-
             $prosecucion->update([
                 'status' => 'Inactivo',
             ]);
-
             if ($prosecucion->inscripcion?->alumno) {
                 $prosecucion->inscripcion->alumno->update([
                     'status' => false,
                 ]);
             }
-
             return true;
         });
     }
 
-
     public static function restaurar($prosecucionId)
     {
         return DB::transaction(function () use ($prosecucionId) {
-
             $prosecucion = self::with('inscripcion.alumno')
                 ->findOrFail($prosecucionId);
-
             $prosecucion->update([
                 'status' => 'Activo',
             ]);
-
             if ($prosecucion->inscripcion?->alumno) {
                 $prosecucion->inscripcion->alumno->update([
                     'status' => true,
                 ]);
             }
-
             return true;
         });
     }
@@ -130,7 +116,6 @@ class InscripcionProsecucion extends Model
         $estatusInscripcion = $filtros['status'] ?? null;
         $buscar = $filtros['buscar'] ?? null;
         $materiasPendientes = $filtros['materias_pendientes'] ?? null;
-
         return self::query()
             ->with([
                 'inscripcion.alumno.persona.tipoDocumento',

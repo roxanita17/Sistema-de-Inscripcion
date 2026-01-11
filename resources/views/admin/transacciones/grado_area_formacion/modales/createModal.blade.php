@@ -10,7 +10,6 @@
                     <i class="fas fa-times"></i>
                 </button> 
             </div>
-
             <div class="modal-body-create">
                 <form id="formAsignacion" action="{{ route('admin.transacciones.grado_area_formacion.modales.store') }}" method="POST">
                     @csrf
@@ -44,7 +43,6 @@
                             @endforeach
                         </select>
                     </div>
-
                     <div class="modal-footer-create">
                         <div class="footer-buttons">
                             <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
@@ -67,8 +65,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     $('.selectpicker').selectpicker();
-
-    // Refresca los selects al abrir el modal
     const modal = document.getElementById('modalCrearAsignacion');
     modal.addEventListener('shown.bs.modal', function () {
         $('.selectpicker').selectpicker('render');

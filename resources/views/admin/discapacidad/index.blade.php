@@ -1,17 +1,12 @@
 @extends('adminlte::page')
-
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 
 @stop
-
 @section('title', 'Gestión de Discapacidades')
-
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -23,8 +18,6 @@
                     <p class="title-subtitle">Administración de las discapacidades</p>
                 </div>
             </div>
-
-            {{-- Botón que abre la ventana modal para crear una nueva discapacidad --}}
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
                 @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nuevo registro' }}">
@@ -37,11 +30,7 @@
 
 @section('content')
     <div class="main-container">
-
-        {{-- Modal para crear una nueva discapacidad --}}
         @include('admin.discapacidad.modales.createModal')
-
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -57,8 +46,6 @@
                 </div>
             </div>
         @endif
-
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -75,7 +62,6 @@
                         </button>
                     </div>
                 @endif
-
                 @if (session('error'))
                     <div class="alert-modern alert-error alert alert-dismissible fade show" role="alert">
                         <div class="alert-icon">
@@ -116,14 +102,12 @@
                         </small>
                     </div>
                 </form>
-
                 <div class="header-right">
                     @php
                         $anioActivo = \App\Models\AnioEscolar::activos()->first();
                         $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                         $mostrarAnio = $anioActivo ?? $anioExtendido;
                     @endphp
-
                     @if ($mostrarAnio)
                         <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
                             <div class="d-flex align-items-center">
@@ -155,8 +139,6 @@
                     @endif
                 </div>
             </div>
-
-            {{-- Cuerpo de la tarjeta con la tabla --}}
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern overflow-hidden hidden">
@@ -169,7 +151,6 @@
                             </tr>
                         </thead>
                         <tbody style="text-align: center">
-                            {{-- Si no hay discapacidades, se muestra mensaje vacío --}}
                             @if ($discapacidad->isEmpty())
                                 <tr>
                                     <td colspan="4">
@@ -183,7 +164,6 @@
                                     </td>
                                 </tr>
                             @else
-                                {{-- Se recorren las discapacidades existentes --}}
                                 @foreach ($discapacidad as $index => $datos)
                                     <tr class="  row-12" style="text-align: center">
                                         <td>{{ $index + 1 }}</td>
@@ -203,16 +183,12 @@
                                         </td>
                                         <td>
                                             <div class="action-buttons">
-
-                                                {{-- Editar grado --}}
                                                 <button class="action-btn btn-edit" data-bs-toggle="modal"
                                                     data-bs-target="#viewModalEditar{{ $datos->id }}" title="Editar"
                                                     @if (!$anioEscolarActivo) disabled @endif
                                                     title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
                                                     <i class="fas fa-pen"></i>
                                                 </button>
-
-                                                {{-- Eliminar grado --}}
                                                 <button class="action-btn btn-delete" data-bs-toggle="modal"
                                                     data-bs-target="#confirmarEliminar{{ $datos->id }}"
                                                     title="Eliminar" @if (!$anioEscolarActivo) disabled @endif
@@ -221,11 +197,7 @@
                                                 </button>
                                         </td>
                                     </tr>
-
-                                    {{-- Ruta modal de editar --}}
                                     @include('admin.discapacidad.modales.editModal')
-
-                                    {{-- Modal de confirmación para eliminar --}}
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
                                         aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -270,13 +242,8 @@
             </div>
         </div>
     </div>
-
-    {{-- Paginación moderna --}}
     <x-pagination :paginator="$discapacidad" />
-
 @endsection
-
-{{-- Incluir el archivo de validaciones --}}
 @push('js')
     <script src="{{ asset('js/validations/discapacidad.js') }}"></script>
 @endpush

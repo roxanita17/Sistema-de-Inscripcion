@@ -3,14 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class InscripcionNuevoIngreso extends Model
 {
-    use HasFactory;
-    
     protected $table = 'inscripcion_nuevo_ingresos';
-
     protected $fillable = [
         'numero_zonificacion',
         'inscripcion_id',
@@ -18,7 +14,6 @@ class InscripcionNuevoIngreso extends Model
         'expresion_literaria_id',
         'anio_egreso',
     ];
-
 
     public function inscripcion()
     {
@@ -43,7 +38,6 @@ class InscripcionNuevoIngreso extends Model
         $seccionId = $filtros['seccion_id'] ?? null;
         $estatusInscripcion = $filtros['status'] ?? null;
         $buscar = $filtros['buscar'] ?? null;
-
         return self::query()
             ->with([
                 'inscripcion.alumno.persona.tipoDocumento',
@@ -61,15 +55,12 @@ class InscripcionNuevoIngreso extends Model
                 if ($anioEscolarId) {
                     $q->where('anio_escolar_id', $anioEscolarId);
                 }
-
                 if ($gradoId) {
                     $q->where('grado_id', $gradoId);
                 }
-
                 if ($seccionId) {
                     $q->where('seccion_id', $seccionId);
                 }
-
                 if ($estatusInscripcion) {
                     $q->where('status', $estatusInscripcion);
                 }
@@ -78,11 +69,11 @@ class InscripcionNuevoIngreso extends Model
                 $query->whereHas('inscripcion.alumno.persona', function ($q) use ($buscar) {
                     $q->where(function ($subQuery) use ($buscar) {
                         $subQuery->where('primer_nombre', 'LIKE', "%{$buscar}%")
-                              ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
-                              ->orWhere('tercer_nombre', 'LIKE', "%{$buscar}%")
-                              ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
-                              ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%")
-                              ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
+                            ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
+                            ->orWhere('tercer_nombre', 'LIKE', "%{$buscar}%")
+                            ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                            ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%")
+                            ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
                     });
                 });
             })

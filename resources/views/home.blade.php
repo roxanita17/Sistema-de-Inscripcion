@@ -3,14 +3,12 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <style>
-        /* Estilos específicos del dashboard */
         .dashboard-container {
             padding: 1.5rem;
             background: var(--gray-50);
             min-height: calc(100vh - 200px);
         }
 
-        /* Cards de estadísticas */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -130,7 +128,6 @@
             color: var(--danger);
         }
 
-        /* Charts container */
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -138,7 +135,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Quick actions */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -186,7 +182,6 @@
             margin: 0;
         }
 
-        /* Recent activity */
         .activity-item {
             display: flex;
             gap: 1rem;
@@ -229,7 +224,6 @@
             color: var(--gray-500);
         }
 
-        /* Welcome banner */
         .welcome-banner {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
@@ -279,7 +273,6 @@
             opacity: 0.9;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
 
             .stats-grid,
@@ -301,13 +294,10 @@
 @section('title', 'Dashboard - Sistema de Inscripción')
 
 @section('content_header')
-    {{-- Header vacío o minimal --}}
 @stop
 
 @section('content')
     <div class="dashboard-container">
-
-        {{-- Welcome Banner --}}
         <div class="welcome-banner">
             <div class="welcome-content">
                 <h1 class="welcome-title">
@@ -318,10 +308,7 @@
                 </p>
             </div>
         </div>
-
-        {{-- Estadísticas Principales --}}
         <div class="stats-grid">
-            {{-- Total Inscripciones --}}
             <div class="stat-card primary">
                 <div class="stat-card-header">
                     <div>
@@ -346,9 +333,6 @@
                 </div>
             </div>
 
-
-
-            {{-- Total Docentes --}}
             <div class="stat-card success">
                 <div class="stat-card-header">
                     <div>
@@ -361,7 +345,6 @@
                 </div>
             </div>
 
-            {{-- Total Grados --}}
             <div class="stat-card warning">
                 <div class="stat-card-header">
                     <div>
@@ -374,7 +357,6 @@
                 </div>
             </div>
 
-            {{-- Año Escolar Activo --}}
             <div class="stat-card info">
                 <div class="stat-card-header">
                     <div>
@@ -390,7 +372,6 @@
             </div>
         </div>
 
-        {{-- Acciones Rápidas --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -449,7 +430,6 @@
         </div>
 
         <div class="row mt-4">
-            {{-- Información del Sistema --}}
             <div class="col-md-6">
                 <div class="card-modern">
                     <div class="card-header-modern">
@@ -513,8 +493,6 @@
 @section('js')
     <script>
         console.log("Dashboard cargado correctamente");
-
-        // Auto-cerrar alertas después de 5 segundos
         setTimeout(function() {
             $('.alert').fadeOut('slow');
         }, 5000);

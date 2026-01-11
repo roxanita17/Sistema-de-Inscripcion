@@ -34,12 +34,7 @@
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
                     data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-
             <div class="modal-body modal-body-view">
-
-                <!-- ======================
-                    SECCIÓN 1: DATOS DEL ESTUDIANTE
-                ======================= -->
                 <div class="mb-4">
                     @php
                         $dato = $datos->inscripcion->alumno->persona;
@@ -51,7 +46,6 @@
                     </div>
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="row">
-                            <!-- Información personal -->
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -62,7 +56,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -86,7 +79,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-6 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -131,7 +123,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -142,7 +133,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4 mb-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -153,7 +143,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -163,9 +152,7 @@
                                         {{ $alumno->ordenNacimiento->orden_nacimiento ?? 'N/A' }}
                                     </span>
                                 </div>
-
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -176,7 +163,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -187,7 +173,6 @@
                                     </span>
                                 </div>
                             </div>
-
                             <div class="col-md-4">
                                 <div class="detail-item">
                                     <span class="detail-label">
@@ -204,7 +189,6 @@
                                         <span class="detail-label">
                                             Etnia Indígena
                                         </span>
-
                                         @if ($datos->inscripcion->alumno->etniaIndigena->count() > 0)
                                             <div class="detail-value">
                                                 {{ $datos->inscripcion->alumno->etniaIndigena->nombre }}
@@ -217,14 +201,12 @@
                                     </div>
                                 </div>
                             @endif
-
                             @if ($datos->inscripcion->alumno->discapacidades)
                                 <div class="col-md-4">
                                     <div class="detail-item">
                                         <span class="detail-label">
                                             Discapacidades
                                         </span>
-
                                         @if ($datos->inscripcion->alumno->discapacidades->count() > 0)
                                             <div class="d-flex flex-wrap mt-1">
                                                 @foreach ($datos->inscripcion->alumno->discapacidades as $discapacidad)
@@ -242,18 +224,12 @@
                         </div>
                     </div>
                 </div>
-
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                <!-- ======================
-                    SECCIÓN 2: DATOS DE PROSECUCIÓN
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-arrow-circle-up"></i>
                         <span>Información de Prosecución</span>
                     </div>
-
                     <div class="row justify-content-center g-3 mt-2">
                         <div class="col-md-3">
                             <div class="card shadow-sm border-0 ">
@@ -269,7 +245,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-md-3">
                             <div class="card shadow-sm border-0">
                                 <div class="card-body bg-success">
@@ -284,7 +259,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-md-3">
                             <div class="card shadow-sm border-0 ">
                                 <div class="card-body {{ $datos->repite_grado ? 'bg-warning' : 'bg-success' }}">
@@ -300,9 +274,7 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                         @if ($datos->seccion)
                             <div class="col-md-3">
                                 <div class="detail-item">
@@ -315,7 +287,6 @@
                                 </div>
                             </div>
                         @endif
-
                         <div class="col-md-3">
                             <div class="detail-item">
                                 <span class="detail-label">
@@ -336,28 +307,18 @@
                         </div>
                     </div>
                 </div>
-
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                <!-- ======================
-                    SECCIÓN 3: MATERIAS
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-book "></i>
                         <span>Estado de Materias</span>
                     </div>
-
                     @php
                         $prosecucionAreas = $datos->prosecucionAreas ?? collect();
-
                         $materiasAprobadas = $datos->prosecucionAreas->where('status', 'aprobada');
                         $materiasPendientes = $datos->prosecucionAreas->where('status', 'pendiente');
-
                     @endphp
-
                     <div class="row g-1 mt-2 justify-content-center">
-                        <!-- Materias Aprobadas -->
                         @if ($materiasAprobadas->count() > 0)
                             <div class="col-md-6">
                                 <div class="card shadow-sm border-0">
@@ -389,8 +350,6 @@
                                 </div>
                             </div>
                         @endif
-
-                        <!-- Materias Pendientes -->
                         @if ($materiasPendientes->count() > 0)
                             <div class="col-md-6">
                                 <div class="card shadow-sm border-0">
@@ -423,7 +382,6 @@
                                 </div>
                             </div>
                         @endif
-
                         @if ($materiasAprobadas->count() == 0 && $materiasPendientes->count() == 0)
                             <div class="col-12">
                                 <div class="alert alert-info text-center">
@@ -434,22 +392,14 @@
                         @endif
                     </div>
                 </div>
-
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                <!-- ======================
-                    SECCIÓN 2: REPRESENTANTES
-                ======================= -->
                 <div class="mb-4">
                     <div class="section-title">
                         <i class="fas fa-users"></i>
                         <span>Representantes</span>
                     </div>
-
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
-
                         <div class="row mt-2 mb-4">
-                            <!-- PADRE -->
                             @if ($datos->inscripcion->padre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100 ">
@@ -570,8 +520,6 @@
                                     </div>
                                 </div>
                             @endif
-
-                            <!-- MADRE -->
                             @if ($datos->inscripcion->madre)
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0 h-100">
@@ -694,7 +642,6 @@
                             @endif
                         </div>
                         <div class="row">
-                            <!-- REPRESENTANTE LEGAL -->
                             @if ($datos->inscripcion->representanteLegal)
                                 <div class="col-md-12">
                                     <div class="card shadow-sm border-0">
@@ -907,7 +854,6 @@
                                     </div>
                                 </div>
                             @endif
-                            <!-- Si no hay representantes -->
                             @if (!$datos->inscripcion->padre && !$datos->inscripcion->madre && !$datos->inscripcion->representanteLegal)
                                 <div class="col-12">
                                     <div class="alert alert-warning text-center">
@@ -917,21 +863,14 @@
                                 </div>
                             @endif
                         </div>
-
                     </div>
                 </div>
-
                 <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
-
-                <!-- ======================
-                    SECCIÓN 5: OBSERVACIONES
-                ======================= -->
                 <div class="mb-3">
                     <div class="section-title">
                         <i class="fas fa-comment-dots text-secondary"></i>
                         <span>Observaciones</span>
                     </div>
-
                     <div class="card shadow-sm border-0 mt-2">
                         <div class="card-body bg-light">
                             @if ($datos->observaciones)
@@ -944,7 +883,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
             <div class="modal-footer modal-footer-view">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

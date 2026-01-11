@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +14,6 @@ class Inscripcion extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'inscripcions';
-
     protected $fillable = [
         'anio_escolar_id',
         'alumno_id',
@@ -45,7 +43,6 @@ class Inscripcion extends Model
         );
     }
 
-    // App\Models\Inscripcion.php
     public function prosecucion()
     {
         return $this->hasOne(
@@ -54,17 +51,14 @@ class Inscripcion extends Model
         );
     }
 
-
     public function getTipoInscripcionAttribute()
     {
         if ($this->nuevoIngreso) {
             return 'nuevo_ingreso';
         }
-
         if ($this->prosecucion) {
             return 'prosecucion';
         }
-
         return null;
     }
 
@@ -73,19 +67,12 @@ class Inscripcion extends Model
         if ($this->nuevoIngreso) {
             return $this->grado;
         }
-
         if ($this->prosecucion) {
             return $this->prosecucion->grado;
         }
-
         return null;
     }
 
-
-
-    /**
-     * Relación con EntradasPercentil
-     */
     public function entradaPercentil()
     {
         return $this->hasOne(EntradasPercentil::class, 'inscripcion_id');
@@ -96,55 +83,38 @@ class Inscripcion extends Model
         return $this->belongsTo(Seccion::class,  'seccion_id', 'id');
     }
 
-    /**
-     * Relación con Sección a través de EntradasPercentil
-     */
     public function seccionAsignada()
     {
         return $this->hasOneThrough(
             Seccion::class,
             EntradasPercentil::class,
-            'inscripcion_id', // Foreign key on EntradasPercentil table
-            'id', // Foreign key on Seccion table
-            'id', // Local key on Inscripcion table
-            'seccion_id' // Local key on EntradasPercentil table
+            'inscripcion_id',
+            'id',
+            'id',
+            'seccion_id'
         );
     }
-    /**
-     * Relación con Alumno
-     */
+
     public function alumno()
     {
         return $this->belongsTo(Alumno::class, 'alumno_id', 'id');
     }
 
-    /**
-     * Relación con Grado
-     */
     public function grado()
     {
         return $this->belongsTo(Grado::class, 'grado_id', 'id');
     }
 
-    /**
-     * Relación con Padre (Representante)
-     */
     public function padre()
     {
         return $this->belongsTo(Representante::class, 'padre_id', 'id');
     }
 
-    /**
-     * Relación con Madre (Representante)
-     */
     public function madre()
     {
         return $this->belongsTo(Representante::class, 'madre_id', 'id');
     }
 
-    /**
-     * Relación con Representante Legal
-     */
     public function representanteLegal()
     {
         return $this->belongsTo(RepresentanteLegal::class, 'representante_legal_id', 'id');
@@ -155,40 +125,30 @@ class Inscripcion extends Model
         return $this->belongsTo(AnioEscolar::class, 'anio_escolar_id', 'id');
     }
 
-    /**
-     * Obtener todos los representantes de la inscripción
-     */
     public function representantes()
     {
         $representantes = collect();
-
         if ($this->padre) {
             $representantes->push([
                 'tipo' => 'Padre',
                 'representante' => $this->padre
             ]);
         }
-
         if ($this->madre) {
             $representantes->push([
                 'tipo' => 'Madre',
                 'representante' => $this->madre
             ]);
         }
-
         if ($this->representanteLegal) {
             $representantes->push([
                 'tipo' => 'Representante Legal',
                 'representante' => $this->representanteLegal
             ]);
         }
-
         return $representantes;
     }
 
-    /**
-     * Scope para buscar inscripciones
-     */
     public function scopeBuscar($query, $buscar)
     {
         if (!empty($buscar)) {
@@ -198,37 +158,24 @@ class Inscripcion extends Model
                     ->orWhere('numero_documento', 'LIKE', "%{$buscar}%");
             });
         }
-
         return $query;
     }
 
-    /**
-     * Scope para inscripciones activas
-     */
     public function scopeActivas($query)
     {
         return $query->where('status', true);
     }
 
-    /**
-     * Scope para inscripciones por grado
-     */
     public function scopePorGrado($query, $gradoId)
     {
         return $query->where('grado_id', $gradoId);
     }
 
-    /**
-     * Scope para inscripciones del año actual
-     */
     public function scopeAnioActual($query)
     {
         return $query->whereYear('fecha_inscripcion', now()->year);
     }
 
-    /**
-     * Scope: Inscripciones del año escolar o extendido
-     */
     public function scopeAnioEscolarVigente($query)
     {
         return $query->whereHas('anioEscolar', function ($q) {
@@ -236,11 +183,6 @@ class Inscripcion extends Model
         });
     }
 
-
-
-    /**
-     * Obtener representante principal (primero disponible)
-     */
     public function getRepresentantePrincipalAttribute()
     {
         return $this->padre ?? $this->madre ?? $this->representanteLegal;
@@ -256,11 +198,6 @@ class Inscripcion extends Model
             ]);
     }
 
-    /**
-     * Obtiene todos los datos relacionados con la inscripción incluyendo alumno, representantes, etc.
-     * 
-     * @return array
-     */
     public function obtenerDatosCompletos()
     {
         $alumno = $this->alumno?->load([
@@ -268,7 +205,6 @@ class Inscripcion extends Model
             'tallaPantalon',
             'persona.localidad.municipio.estado.pais'
         ]);
-
         return [
             'inscripcion' => $this->toArray(),
             'nuevo_ingreso' => $this->nuevoIngreso?->toArray(),
@@ -290,9 +226,7 @@ class Inscripcion extends Model
             ]),
             'datos_adicionales' => [
                 'lateralidad' => $alumno?->lateralidad?->toArray(),
-
                 'orden_nacimiento' => $alumno?->ordenNacimiento?->toArray(),
-
                 'discapacidades' => $this->alumno
                     ?->discapacidades
                     ?->map(fn($d) => [
@@ -300,50 +234,35 @@ class Inscripcion extends Model
                         'nombre_discapacidad' => $d->nombre_discapacidad,
                     ])
                     ->toArray() ?? [],
-
                 'etnia_indigena' => $alumno?->etniaIndigena?->toArray(),
             ],
-
             'persona_madre' => $this->madre?->persona?->toArray(),
             'madre' => $this->madre?->toArray(),
-
             'persona_padre' => $this->padre?->persona?->toArray(),
             'padre' => $this->padre?->toArray(),
-
             'representante_legal' => $this->representanteLegal?->load([
                 'representante.persona',
                 'banco'
             ])?->toArray(),
-
             'institucion_procedencia' => $this->nuevoIngreso?->institucionProcedencia?->toArray(),
-
             'expresion_literaria' => $this->nuevoIngreso?->expresionLiteraria?->toArray(),
-
             'grado' => $this->grado?->toArray(),
             'seccion' => $this->seccionAsignada?->toArray(),
-
         ];
     }
-
 
     public static function inactivar($id)
     {
         return DB::transaction(function () use ($id) {
-
             $inscripcion = Inscripcion::with('alumno')->findOrFail($id);
-
-            // Inactivar la inscripción
             $inscripcion->update([
                 'status' => 'Inactivo',
             ]);
-
-            // Inactivar el alumno relacionado
             if ($inscripcion->alumno) {
                 $inscripcion->alumno->update([
                     'status' => false,
                 ]);
             }
-
             return true;
         });
     }
@@ -351,21 +270,15 @@ class Inscripcion extends Model
     public static function restaurar($id)
     {
         return DB::transaction(function () use ($id) {
-
             $inscripcion = Inscripcion::with('alumno')->findOrFail($id);
-
-            // Restaurar la inscripción
             $inscripcion->update([
                 'status' => 'Activo',
             ]);
-
-            // Restaurar el alumno relacionado
             if ($inscripcion->alumno) {
                 $inscripcion->alumno->update([
                     'status' => true,
                 ]);
             }
-
             return true;
         });
     }

@@ -1,4 +1,3 @@
-{{-- Modal de inactivar --}}
 <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
@@ -17,7 +16,6 @@
                     El estudiante también será inactivado.
                 </p>
             </div>
-
             <div class="modal-footer-delete">
                 <form action="{{ route('admin.transacciones.inscripcion_prosecucion.destroy', $datos->id) }}"
                     method="POST" class="w-100">

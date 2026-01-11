@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
@@ -11,7 +10,6 @@
 @section('title', 'Gestión de Niveles Academicos')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -23,8 +21,6 @@
                     <p class="title-subtitle">Administración de los Niveles académicos</p>
                 </div>
             </div>
-
-            {{-- Botón que abre la ventana modal para crear un nuevo grado --}}
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearGrado"
                 @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nuevo Nivel' }}">
@@ -37,11 +33,7 @@
 
 @section('content')
     <div class="main-container">
-
-        {{-- Modal para crear un nuevo grado --}}
         @include('admin.grado.modales.createModal')
-
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -57,8 +49,6 @@
                 </div>
             </div>
         @endif
-
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -92,8 +82,6 @@
                 @endif
             </div>
         @endif
-
-        {{-- Contenedor principal de la tabla de grados --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -104,48 +92,6 @@
                         <h3>Listado de Niveles</h3>
                         <p>{{ $grados->total() }} registros encontrados</p>
                     </div>
-                </div>
-
-                <div class="header-right">
-
-                    @php
-                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
-                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-                        $mostrarAnio = $anioActivo ?? $anioExtendido;
-                    @endphp
-
-                    @if ($mostrarAnio)
-                        <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                                    <i class="fas fa-calendar-check me-1"></i>
-
-                                    Año Escolar
-                                </span>
-
-                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-play-circle text-primary me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    @else
-                        <div
-                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-                            </div>
-
-                        </div>
-                    @endif
                 </div>
             </div>
             <div class="card-body-modern">
@@ -172,7 +118,6 @@
                                     </td>
                                 </tr>
                             @else
-                                {{-- Se recorren los grados existentes --}}
                                 @foreach ($grados as $index => $datos)
                                     <tr class="  row-12" style="text-align: center">
                                         <td class="title-main">{{ $datos->numero_grado }}</td>
@@ -190,7 +135,6 @@
                                             @endif
                                         </td>
                                         <td>
-                                            {{-- BOTONES DE ACCIONES --}}
                                             <div class="action-buttons">
                                                 <div class="dropdown dropstart text-center">
                                                     <button class="btn btn-light btn-sm rounded-circle shadow-sm action-btn"
@@ -198,7 +142,6 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                                        {{-- Ver mas --}}
                                                         <li>
                                                             <button
                                                                 class="dropdown-item d-flex align-items-center text-primary"
@@ -211,8 +154,6 @@
                                                                 Ver mas
                                                             </button>
                                                         </li>
-
-                                                        {{-- Editar --}}
                                                         <li>
                                                             <button
                                                                 class="dropdown-item d-flex align-items-center text-warning"
@@ -225,8 +166,6 @@
                                                                 Editar
                                                             </button>
                                                         </li>
-
-                                                        {{-- Inactivar --}}
                                                         <li>
                                                             <button
                                                                 class="dropdown-item d-flex align-items-center text-danger"
@@ -242,14 +181,8 @@
                                             </div>
                                         </td>
                                     </tr>
-
-                                    {{-- Ruta modal de ver detalles --}}
                                     @include('admin.grado.modales.showModal')
-
-                                    {{-- Ruta modal de editar --}}
                                     @include('admin.grado.modales.editModal')
-
-                                    {{-- Modal de confirmación para eliminar --}}
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
                                         aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -285,17 +218,16 @@
                                             </div>
                                         </div>
                                     </div>
-                </div>
-                @endforeach
-                @endif
-                </tbody>
+                                </div>
+                            @endforeach
+                        @endif
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
     </div>
 
-    {{-- Paginación moderna --}}
     <x-pagination :paginator="$grados" />
 
     @push('js')

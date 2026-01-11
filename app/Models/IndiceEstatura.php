@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class IndiceEstatura extends Model
 {
-    /** @use HasFactory<\Database\Factories\IndiceEstaturaFactory> */
     use HasFactory;
 
     protected $table = 'indice_estaturas';

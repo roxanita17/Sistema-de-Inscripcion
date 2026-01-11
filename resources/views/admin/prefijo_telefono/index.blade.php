@@ -20,7 +20,6 @@
                     <p class="title-subtitle">Administración de los prefijos</p>
                 </div>
             </div>
-
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
                 @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nuevo Prefijo' }}">
@@ -95,44 +94,6 @@
                         <h3>Listado de Prefijos</h3>
                         <p>{{ $prefijos->total() }} registros encontrados</p>
                     </div>
-                </div>
-
-                <div class="header-right">
-                    @php
-                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
-                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-                        $mostrarAnio = $anioActivo ?? $anioExtendido;
-                    @endphp
-                    @if ($mostrarAnio)
-                        <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                                    <i class="fas fa-calendar-check me-1"></i>
-
-                                    Año Escolar
-                                </span>
-                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-play-circle text-primary me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    @else
-                        <div
-                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-                            </div>
-                        </div>
-                    @endif
                 </div>
             </div>
             <div class="card-body-modern">

@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @section('css')
-    {{-- Estilos modernos reutilizados del sistema --}}
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
@@ -11,7 +10,6 @@
 @section('title', 'Gestión de Ocupaciones')
 
 @section('content_header')
-    {{-- Encabezado principal de la página --}}
     <div class="content-header-modern">
         <div class="header-content">
             <div class="header-title">
@@ -23,8 +21,6 @@
                     <p class="title-subtitle">Administración de las ocupaciones</p>
                 </div>
             </div>
-
-            {{-- Botón que abre la ventana modal para crear una nueva ocupacion --}}
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
                 @if (!$anioEscolarActivo) disabled @endif
                 title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nueva Ocupacion' }}">
@@ -38,10 +34,8 @@
 @section('content')
     <div class="main-container">
 
-        {{-- Modal para crear una nueva ocupacion --}}
         @include('admin.ocupacion.modales.createModal')
 
-        {{-- Alerta si NO hay año escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
@@ -58,7 +52,6 @@
             </div>
         @endif
 
-        {{-- Sección de alertas de éxito o error --}}
         @if (session('success') || session('error'))
             <div class="alerts-container">
                 @if (session('success'))
@@ -93,7 +86,6 @@
             </div>
         @endif
 
-        {{-- Contenedor principal de la tabla de ocupaciones --}}
         <div class="card-modern">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -105,7 +97,6 @@
                         <p>{{ $ocupacion->total() }} registros encontrados</p>
                     </div>
                 </div>
-                {{-- Buscador --}}
                 <form action="{{ route('admin.ocupacion.index') }}">
                     <div class="form-group-modern mb-2">
                         <div class="search-modern">
@@ -119,56 +110,8 @@
                         </small>
                     </div>
                 </form>
-
-                <div class="header-right">
-                    <!-- --------------------------- -->
-
-                    @php
-                        $anioActivo = \App\Models\AnioEscolar::activos()->first();
-                        $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
-                        $mostrarAnio = $anioActivo ?? $anioExtendido;
-                    @endphp
-
-                    @if ($mostrarAnio)
-                        <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
-                                    <i class="fas fa-calendar-check me-1"></i>
-
-                                    Año Escolar
-                                </span>
-
-                                <div class="d-flex align-items-center" style="font-size: 0.8rem;">
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-play-circle text-primary me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->inicio_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-
-                                    <span class="text-muted me-2">
-                                        <i class="fas fa-flag-checkered text-danger me-1"></i>
-                                        {{ \Carbon\Carbon::parse($mostrarAnio->cierre_anio_escolar)->format('d/m/Y') }}
-                                    </span>
-
-
-                                </div>
-                            </div>
-                        </div>
-                    @else
-                        <div
-                            class="d-flex align-items-center justify-content-between bg-warning bg-opacity-10 rounded px-2 py-1  border border-warning">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
-                                <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
-                            </div>
-
-                        </div>
-                    @endif
-                    <!-- --------------------------- -->
-
-                </div>
             </div>
 
-            {{-- Cuerpo de la tarjeta con la tabla --}}
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern overflow-hidden hidden">
@@ -181,7 +124,6 @@
                             </tr>
                         </thead>
                         <tbody style="text-align: center">
-                            {{-- Si no hay ocupaciones, se muestra mensaje vacío --}}
                             @if ($ocupacion->isEmpty())
                                 <tr>
                                     <td colspan="4">
@@ -195,7 +137,6 @@
                                     </td>
                                 </tr>
                             @else
-                                {{-- Se recorren las ocupaciones existentes --}}
                                 @foreach ($ocupacion as $index => $datos)
                                     <tr class="  row-12" style="text-align: center">
                                         <td>{{ $index + 1 }}</td>
@@ -215,8 +156,6 @@
                                         </td>
                                         <td>
                                             <div class="action-buttons">
-
-                                                {{-- Editar grado --}}
                                                 <button class="action-btn btn-edit" data-bs-toggle="modal"
                                                     data-bs-target="#viewModalEditar{{ $datos->id }}"
                                                     @if (!$anioEscolarActivo) disabled @endif
@@ -224,7 +163,6 @@
                                                     <i class="fas fa-pen"></i>
                                                 </button>
 
-                                                {{-- Eliminar grado --}}
                                                 <button class="action-btn btn-delete" data-bs-toggle="modal"
                                                     data-bs-target="#confirmarEliminar{{ $datos->id }}"
                                                     title="Eliminar" @if (!$anioEscolarActivo) disabled @endif
@@ -236,10 +174,8 @@
                                         </td>
                                     </tr>
 
-                                    {{-- Ruta modal de editar --}}
                                     @include('admin.ocupacion.modales.editModal')
 
-                                    {{-- Modal de confirmación para eliminar --}}
                                     <div class="modal fade" id="confirmarEliminar{{ $datos->id }}" tabindex="-1"
                                         aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -276,22 +212,20 @@
                                             </div>
                                         </div>
                                     </div>
-                </div>
-                @endforeach
-                @endif
-                </tbody>
+                                </div>
+                            @endforeach
+                        @endif
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
     </div>
 
-    {{-- Paginación moderna --}}
     <x-pagination :paginator="$ocupacion" />
 
 @endsection
 
-{{-- Incluir el archivo de validaciones --}}
 @push('js')
     <script src="{{ asset('js/validations/ocupacion.js') }}"></script>
 @endpush

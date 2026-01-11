@@ -1,262 +1,12 @@
 @extends('adminlte::page')
 
-{{-- Verificación de depuración --}}
-@php
-    \Log::info('Verificando datos en la vista:');
-    \Log::info('Municipio ID del representante: ' . ($representante->municipio_id ?? 'No definido'));
-    \Log::info('Parroquia ID del representante: ' . ($representante->parroquia_id ?? 'No definido'));
-    \Log::info('Relación municipios cargada: ' . ($representante->relationLoaded('municipios') ? 'Sí' : 'No'));
-    \Log::info('Relación localidads cargada: ' . ($representante->relationLoaded('localidads') ? 'Sí' : 'No'));
-
-    if ($representante->relationLoaded('municipios') && $representante->municipios) {
-        \Log::info('Datos del municipio:', $representante->municipios->toArray());
-    }
-
-    if ($representante->relationLoaded('localidads') && $representante->localidads) {
-        \Log::info('Datos de la localidad:', $representante->localidads->toArray());
-    }
-@endphp
-
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/view-styles.css') }}">
-    <!-- Select2 CSS from CDN -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
         rel="stylesheet" />
-    <style>
-        .form-label.required::after {
-            content: ' *';
-            color: #dc3545;
-        }
-
-        /* Etiquetas de formulario en negritas */
-        .form-label, .form-label-modern {
-            font-weight: 600 !important;
-            color: #374151 !important;
-            margin-bottom: 0.5rem !important;
-        }
-
-        .form-label-modern i {
-            color: #6b7280 !important;
-        }
-
-        .form-control:disabled,
-        .form-control[readonly] {
-            background-color: #f8f9fa;
-            opacity: 1;
-        }
-
-        .card {
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            margin-bottom: 1.5rem;
-        }
-
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-        }
-
-        .form-section {
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #0d6efd;
-        }
-
-        .form-section h5 {
-            color: #2c3e50;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-        }
-
-        .required-badge {
-            color: #dc3545;
-            font-weight: bold;
-        }
-
-        .invalid-feedback {
-            display: none;
-            width: 100%;
-            margin-top: 0.25rem;
-            font-size: 0.875em;
-            color: #dc3545;
-        }
-
-        .was-validated .form-control:invalid~.invalid-feedback,
-        .was-validated .form-control:invalid~.invalid-tooltip,
-        .form-control.is-invalid~.invalid-feedback,
-        .form-control.is-invalid~.invalid-tooltip {
-            display: block;
-        }
-
-        /* Modern Button Styles */
-        .btn-primary-modern {
-            background: linear-gradient(135deg, var(--primary), #4f46e5);
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        .btn-primary-modern:hover {
-            background: linear-gradient(135deg, #4f46e5, #4338ca);
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .btn-cancel-modern {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        .btn-cancel-modern:hover {
-            background: linear-gradient(135deg, #4b5563, #374151);
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Card Header Modern Styles */
-        .card-header-modern {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .header-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: white;
-            font-size: 1.25rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-left h5 {
-            margin: 0;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .header-left p {
-            margin: 0;
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        /* Enhanced Card Animations */
-        .card-modern {
-            border: 1px solid var(--gray-200);
-            border-radius: 12px !important;
-            margin-bottom: 2rem !important;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            overflow: hidden;
-        }
-
-        .card-modern:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .card-modern+.card-modern {
-            margin-top: 1.5rem !important;
-        }
-
-        .card-modern .card-modern {
-            margin-bottom: 1.5rem !important;
-            margin-top: 1rem !important;
-            border-radius: 8px !important;
-        }
-
-        /* Card Header Redondeado y Alineado */
-        .card-header-modern {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            border-radius: 12px 12px 0 0 !important;
-            border-bottom: 1px solid var(--gray-200);
-            padding: 1.25rem 1.5rem !important;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* Header Icon Redondeado */
-        .header-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            flex-shrink: 0;
-        }
-
-        /* Header Left Alignment */
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            width: 100%;
-        }
-
-        .header-left h3 {
-            margin: 0;
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--gray-800);
-        }
-
-        .header-left p {
-            margin: 0;
-            font-size: 0.875rem;
-            color: var(--gray-600);
-        }
-
-        /* Card Body Redondeado */
-        .card-modern .card-body {
-            padding: 1.5rem !important;
-            border-radius: 0 0 12px 12px !important;
-        }
-
-        .card-modern .card-modern .card-body {
-            padding: 1rem !important;
-            border-radius: 0 0 8px 8px !important;
-        }
-
-        /* Subcards internas - más compactas */
-        .card-modern .card-modern {
-            max-width: 100%;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-        }
-    </style>
 @stop
 
 @section('title', 'Editar representante')
@@ -335,19 +85,15 @@
                         <input type="hidden" name="inscripcion_id" value="{{ $inscripcion_id }}">
                     @endif
 
-
                     <input type="hidden" name="id" value="{{ $representante->id }}">
                     <input type="hidden" name="es_legal" id="es_legal"
                         value="{{ $representante->status === 1 ? '1' : '0' }}">
                     <input type="hidden" name="persona_id" value="{{ $representante->persona_id }}">
-
-                    <!-- Hidden field to track representative type -->
                     <input type="radio" name="tipo_representante" value="progenitor" id="tipo_progenitor"
                         style="display: none;" {{ $representante->status !== 1 ? 'checked' : '' }}>
                     <input type="radio" name="tipo_representante" value="legal" id="tipo_legal" style="display: none;"
                         {{ $representante->status === 1 ? 'checked' : '' }}>
 
-                    <!-- Sección de Datos Básicos -->
                     <div class="card-modern mb-4">
                         <div class="card-header-modern">
                             <div class="header-left">
@@ -365,7 +111,6 @@
                             <input type="hidden" name="id" value="{{ $representante->id }}">
                         @endif
                         
-                        {{-- Subsección: Información Personal --}}
                         <div class="card-modern mb-4">
                             <div class="card-header-modern">
                                 <div class="header-left">
@@ -513,7 +258,6 @@
                             </div>
                         </div>
 
-                        {{-- Subsección: Teléfonos y Contacto --}}
                         <div class="card-modern mb-4">
                             <div class="card-header-modern">
                                 <div class="header-left">
@@ -584,7 +328,6 @@
                             </div>
                         </div>
 
-                        {{-- Subsección: Dirección y Ubicación --}}
                         <div class="card-modern mb-4">
                             <div class="card-header-modern">
                                 <div class="header-left">
@@ -686,7 +429,6 @@
                             </div>
                         </div>
 
-                        {{-- Subsección: Relación Familiar y Ocupación --}}
                         <div class="card-modern mb-4">
                             <div class="card-header-modern">
                                 <div class="header-left">
@@ -741,7 +483,6 @@
                         </div>
                     </div>
 
-                    <!-- Sección de Datos del Representante Legal -->
                     @if ($representante->status === 1)
                     <div class="card-modern mb-4">
                         <div class="card-header-modern">
@@ -756,8 +497,6 @@
                             </div>
                         </div>
                         <div class="card-body p-3">
-                            
-                            {{-- Subsección: Conectividad y Participación Ciudadana --}}
                             <div class="card-modern mb-3">
                                 <div class="card-header-modern">
                                     <div class="header-left">
@@ -845,8 +584,6 @@
                             </div>
                         </div>
                             </div>
-
-                            {{-- Subsección: Identificación Familiar y Datos de Cuenta --}}
                             <div class="card-modern mb-3">
                                 <div class="card-header-modern">
                                     <div class="header-left">
@@ -862,7 +599,6 @@
                                 <div class="card-body p-3">
 
                             <div class="row">
-                                <!-- Fila 1 -->
                                 <div class="col-md-4 mb-3">
                                     <div class="form-group">
                                         <label for="parentesco" class="form-label">Parentesco</label>
@@ -911,7 +647,6 @@
                                             if (!isset($valorCarnet) && isset($representante->legal)) {
                                                 $valorCarnet = $representante->legal->carnet_patria_afiliado;
                                             }
-                                            // Asegurarse de que el valor sea numérico
                                             $valorCarnet = $valorCarnet !== null ? (int) $valorCarnet : null;
                                         @endphp
                                         <select class="form-select" id="carnet_patria_afiliado"
@@ -1033,8 +768,6 @@
                         </div>
                     </div>
                     @endif
-
-                        <!-- Botones de acción -->
                         <div class="d-flex justify-content-end gap-3 pt-5 pb-4 border-top mt-4">
                             @if (request('from') === 'inscripcion_edit')
                                 <a href="{{ route('admin.transacciones.inscripcion.edit', request('inscripcion_id')) }}" class="btn-cancel-modern">
