@@ -27,7 +27,7 @@
                         <select class="form-select" id="tipo_representante" name="es_legal">
                             <option value="" {{ !request()->has('es_legal') ? 'selected' : '' }}>Todos los representantes</option>
                             <option value="1" {{ request('es_legal') === '1' ? 'selected' : '' }}>Solo representantes legales</option>
-                            <option value="0" {{ request('es_legal') === '0' ? 'selected' : '' }}>Solo representantes no legales</option>
+                            <option value="0" {{ request('es_legal') === '0' ? 'selected' : '' }}>Solo progenitores</option>
                         </select>
                     </div>
 
@@ -40,7 +40,7 @@
                             <option value="" {{ !request()->has('grado_id') ? 'selected' : '' }}>Todos los niveles</option>
                             @foreach($grados as $grado)
                                 <option value="{{ $grado->id }}" {{ request('grado_id') == $grado->id ? 'selected' : '' }}>
-                                    {{ $grado->numero_grado }}° Grado
+                                    {{ $grado->numero_grado }}° Niveles academicos
                                 </option>
                             @endforeach
                         </select>

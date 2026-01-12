@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
-@section('title', 'Gestión de Asignación de Años a Áreas de Formación')
+@section('title', 'Gestión de Asignación de Niveles academicos a Áreas de Formación')
 @section('content_header')
     <div class="content-header-modern">
         <div class="header-content">
@@ -13,8 +13,8 @@
                     <i class="fas fa-university"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Asignación de Años a Áreas de Formación</h1>
-                    <p class="title-subtitle">Gestión de vínculos entre años académicos y áreas formativas</p>
+                    <h1 class="title-main">Asignación de Niveles academicos a Áreas de Formación</h1>
+                    <p class="title-subtitle">Gestión de vínculos entre niveles academicos y áreas formativas</p>
                 </div>
             </div>
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion"
@@ -130,7 +130,7 @@
                         <thead>
                             <tr>
                                 <th style="text-align: center">Código</th>
-                                <th>Año</th>
+                                <th>Niveles academicos</th>
                                 <th>Área de Formación</th>
                                 <th style="text-align: center">Estado</th>
                                 <th style="text-align: center">Acciones</th>
