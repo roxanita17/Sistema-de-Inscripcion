@@ -317,7 +317,7 @@
                     </button>
 
                     <a href="{{ route('representante.reporte_pdf', request()->query()) }}" class="btn-pdf" target="_blank">
-                        <i class="fas fa-file-pdf me-1"></i> PDF
+                        <i class="fas fa-file-pdf me-1"></i> PDF General
                     </a>
 
                     @php

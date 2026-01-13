@@ -154,7 +154,7 @@
                                                 <i class="fas fa-inbox"></i>
                                             </div>
                                             <h4>No hay alumnos registrados</h4>
-                                            <p>Agrega un nuevo banco con el botón superior</p>
+                                            <p>Agrega un nuevo alumno con el botón superior</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -255,7 +255,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body-delete">
-                                                    <p>¿Deseas eliminar este banco?</p>
+                                                    <p>¿Deseas eliminar a este alumno?</p>
                                                     <p class="delete-warning">
                                                         Esta acción no se puede deshacer.
                                                     </p>

@@ -39,10 +39,10 @@
                     {{-- GRADO --}}
                     <label class="form-label-modern">
                         <i class="fas fa-layer-group" style="color: var(--primary);"></i>
-                        Grado
+                        Niveles academicos
                     </label>
                     <select name="grado_id" id="grado_select_prosecucion" class="form-select form-control-modern">
-                        <option value="">Todos los grados</option>
+                        <option value="">Todos los niveles</option>
                         @foreach ($grados as $grado)
                             <option value="{{ $grado->id }}"
                                 {{ request('grado_id') == $grado->id ? 'selected' : '' }}>
