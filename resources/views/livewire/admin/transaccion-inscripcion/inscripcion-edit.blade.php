@@ -113,36 +113,33 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div
-                                    style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                                    <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
-                                        <div class="info-item" style="width: 15rem;">
-                                            <span class="info-label">
-                                                Género
-                                            </span>
-                                            <span class="info-value">
-                                                {{ $padreSeleccionado->persona->genero->genero ?? 'N/A' }}
-                                            </span>
-                                        </div>
-                                        <div class="info-item" style="width: 15rem;">
-                                            <span class="info-label">
-                                                Teléfono
-                                            </span>
-                                            <span class="info-value">
-                                                {{ $padreSeleccionado->persona->telefono_completo ?? 'N/A' }}
-                                            </span>
-                                        </div>
-                                        @if ($padreSeleccionado->persona->telefono_dos_completo)
-                                            <div class="info-item" style="width: 15rem;">
-                                                <span class="info-label">
-                                                    Segundo Teléfono
-                                                </span>
-                                                <span class="info-value">
-                                                    {{ $padreSeleccionado->persona->telefono_dos_completo ?? 'N/A' }}
-                                                </span>
-                                            </div>
-                                        @endif
+                                <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
+                                    <div class="info-item" style="width: 15rem;">
+                                        <span class="info-label">
+                                            Género
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $padreSeleccionado->persona->genero->genero ?? 'N/A' }}
+                                        </span>
                                     </div>
+                                    <div class="info-item" style="width: 15rem;">
+                                        <span class="info-label">
+                                            Teléfono
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $padreSeleccionado->persona->telefono_completo ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                    @if ($padreSeleccionado->persona->telefono_dos_completo)
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                Segundo Teléfono
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $padreSeleccionado->persona->telefono_dos_completo ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -265,26 +262,33 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div
-                                    style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                                    <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
-                                        <div class="info-item" style="width: 15rem;">
-                                            <span class="info-label">
-                                                Género
-                                            </span>
-                                            <span class="info-value">
-                                                {{ $madreSeleccionado->persona->genero->genero ?? 'N/A' }}
-                                            </span>
-                                        </div>
-                                        <div class="info-item" style="width: 15rem;">
-                                            <span class="info-label">
-                                                Teléfono
-                                            </span>
-                                            <span class="info-value">
-                                                {{ $madreSeleccionado->persona->telefono ?? 'N/A' }}
-                                            </span>
-                                        </div>
+                                <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
+                                    <div class="info-item" style="width: 15rem;">
+                                        <span class="info-label">
+                                            Género
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $madreSeleccionado->persona->genero->genero ?? 'N/A' }}
+                                        </span>
                                     </div>
+                                    <div class="info-item" style="width: 15rem;">
+                                        <span class="info-label">
+                                            Teléfono
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $madreSeleccionado->persona->telefono_completo ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                    @if ($madreSeleccionado->persona->telefono_dos_completo)
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                Segundo Teléfono
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $madreSeleccionado->persona->telefono_dos_completo ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -413,26 +417,33 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div
-                                    style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                                    <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
-                                        <div class="info-item" style="width: 15rem;">
-                                            <span class="info-label">
-                                                Género
-                                            </span>
-                                            <span class="info-value">
-                                                {{ $representanteLegalSeleccionado->representante->persona->genero->genero ?? 'N/A' }}
-                                            </span>
-                                        </div>
-                                        <div class="info-item" style="width: 15rem;">
-                                            <span class="info-label">
-                                                Teléfono
-                                            </span>
-                                            <span class="info-value">
-                                                {{ $representanteLegalSeleccionado->representante->persona->telefono ?? 'N/A' }}
-                                            </span>
-                                        </div>
+                                <div class="info-group pt-3" style="display:flex; gap:2rem; flex-direction:row">
+                                    <div class="info-item" style="width: 15rem;">
+                                        <span class="info-label">
+                                            Género
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $representanteLegalSeleccionado->representante->persona->genero->genero ?? 'N/A' }}
+                                        </span>
                                     </div>
+                                    <div class="info-item" style="width: 15rem;">
+                                        <span class="info-label">
+                                            Teléfono
+                                        </span>
+                                        <span class="info-value">
+                                            {{ $representanteLegalSeleccionado->representante->persona->telefono_completo ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                    @if ($representanteLegalSeleccionado->representante->persona->telefono_dos_completo)
+                                        <div class="info-item" style="width: 15rem;">
+                                            <span class="info-label">
+                                                Segundo Teléfono
+                                            </span>
+                                            <span class="info-value">
+                                                {{ $representanteLegalSeleccionado->representante->persona->telefono_dos_completo ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
