@@ -7,10 +7,12 @@
 @stop
 
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="{{ asset('js/anio-escolar/anio-escolar-create.js') }}"></script>
     <script src="{{ asset('js/anio-escolar/anio-escolar-extender.js') }}"></script>
 @stop
+
 
 @section('title', 'Gestión de Años Escolares')
 
@@ -26,7 +28,7 @@
                     <p class="title-subtitle">Administración de periodos académicos</p>
                 </div>
             </div>
-            <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAnioEscolar">
+            <button type="button" id="btnNuevoAnioEscolar" class="btn-create">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Año Escolar</span>
             </button>
@@ -284,3 +286,31 @@
         </div>
     </div>
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const anioEscolarActivo = @json($anioEscolarActivo);
+        const btn = document.getElementById('btnNuevoAnioEscolar');
+
+        if (!btn) return;
+
+        btn.addEventListener('click', function() {
+
+            if (anioEscolarActivo) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Año escolar activo',
+                    html: 'Ya existe un <b>año escolar activo o extendido</b>.<br><br>' +
+                        'Debe cerrar o finalizar el año actual antes de crear uno nuevo.',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+
+            const modal = new bootstrap.Modal(
+                document.getElementById('modalCrearAnioEscolar')
+            );
+            modal.show();
+        });
+    });
+</script>
