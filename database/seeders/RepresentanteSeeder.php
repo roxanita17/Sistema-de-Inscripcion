@@ -15,6 +15,7 @@ class RepresentanteSeeder extends Seeder
                 'estado_id' => 1,
                 'municipio_id' => 1,
                 'parroquia_id' => 1,
+                'pais_id' => 1,
                 'convivenciaestudiante_representante' => 'Si',
                 'ocupacion_representante' => 6
 
@@ -24,6 +25,7 @@ class RepresentanteSeeder extends Seeder
                 'estado_id' => 1,
                 'municipio_id' => 1,
                 'parroquia_id' => 1,
+                'pais_id' => 1,
                 'convivenciaestudiante_representante' => 'Si',
                 'ocupacion_representante' => 10
 
@@ -33,6 +35,7 @@ class RepresentanteSeeder extends Seeder
                 'estado_id' => 1,
                 'municipio_id' => 1,
                 'parroquia_id' => 1,
+                'pais_id' => 1,
                 'convivenciaestudiante_representante' => 'Si',
                 'ocupacion_representante' => 1
 
@@ -42,6 +45,7 @@ class RepresentanteSeeder extends Seeder
                 'estado_id' => 1,
                 'municipio_id' => 1,
                 'parroquia_id' => 1,
+                'pais_id' => 1,
                 'convivenciaestudiante_representante' => 'No',
                 'ocupacion_representante' => 18
             ],
@@ -50,6 +54,7 @@ class RepresentanteSeeder extends Seeder
                 'estado_id' => 1,
                 'municipio_id' => 1,
                 'parroquia_id' => 1,
+                'pais_id' => 1,
                 'convivenciaestudiante_representante' => 'No',
                 'ocupacion_representante' => 50
             ],
@@ -58,6 +63,7 @@ class RepresentanteSeeder extends Seeder
                 'estado_id' => 1,
                 'municipio_id' => 1,
                 'parroquia_id' => 1,
+                'pais_id' => 1,
                 'convivenciaestudiante_representante' => 'No',
                 'ocupacion_representante' => 7
             ],
@@ -66,6 +72,7 @@ class RepresentanteSeeder extends Seeder
                 'estado_id' => 1,
                 'municipio_id' => 1,
                 'parroquia_id' => 1,
+                'pais_id' => 1,
                 'convivenciaestudiante_representante' => 'No',
                 'ocupacion_representante' => 18
             ],
@@ -74,6 +81,7 @@ class RepresentanteSeeder extends Seeder
                 'estado_id' => 1,
                 'municipio_id' => 1,
                 'parroquia_id' => 1,
+                'pais_id' => 1,
                 'convivenciaestudiante_representante' => 'No',
                 'ocupacion_representante' => 18
             ]
