@@ -16,10 +16,18 @@ class AnioEscolarController extends Controller
         $this->anioEscolarService = $anioEscolarService;
     }
 
+    private function verificarAnioEscolar()
+    {
+        return AnioEscolar::where('status', 'Activo')
+            ->orWhere('status', 'Extendido')
+            ->exists();
+    }
+
     public function index()
     {
         $escolar = AnioEscolar::orderBy('inicio_anio_escolar', 'desc')->paginate(10);
-        return view('admin.anio_escolar.index', compact('escolar'));
+        $anioEscolarActivo = $this->verificarAnioEscolar();
+        return view('admin.anio_escolar.index', compact('escolar', 'anioEscolarActivo'));
     }
 
     public function store(StoreAnioEscolarRequest $request)
@@ -51,7 +59,7 @@ class AnioEscolarController extends Controller
             ->route('admin.anio_escolar.index')
             ->with('error', $resultado['error']);
     }
-    
+
     public function destroy($id)
     {
         $resultado = $this->anioEscolarService->inactivar($id);
