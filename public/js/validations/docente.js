@@ -1,10 +1,15 @@
+// URL para verificar cédula duplicada - será establecida desde la vista
+if (typeof window.verificarCedulaUrl === 'undefined') {
+    window.verificarCedulaUrl = null;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('docenteForm');
     
     if (form) {
         // Add submit event listener
-        form.addEventListener('submit', function(event) {
-            if (!validateForm()) {
+        form.addEventListener('submit', async function(event) {
+            if (!(await validateForm())) {
                 event.preventDefault();
             }
         });
@@ -33,20 +38,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.addEventListener('change', validateField);
             }
         });
-
-        // Validación de cédula duplicada
-        const cedulaInput = document.getElementById('numero_documento');
-        if (cedulaInput) {
-            cedulaInput.addEventListener('blur', async function() {
-                await verificarCedulaDuplicada(this);
-            });
-        }
     } else {
         console.warn('No se encontró el formulario con ID "docenteForm". Asegúrese de que el formulario tenga el ID correcto.');
     }
 });
 
-function validateForm() {
+async function validateForm() {
     let isValid = true;
     const form = document.getElementById('docenteForm');
     let firstInvalidField = null;
@@ -122,6 +119,12 @@ function validateForm() {
         if (!/^[VE]?\d{6,8}$/i.test(numeroDocumento)) {
             showError('numero_documento', 'La cédula debe tener entre 6 y 8 dígitos');
             isValid = false;
+        } else {
+            // Verificar cédula duplicada de forma síncrona para bloquear el envío
+            const cedulaValida = await verificarCedulaDuplicada(numeroDocumento);
+            if (!cedulaValida) {
+                isValid = false;
+            }
         }
 
         // Validate phone number
@@ -223,6 +226,9 @@ function validateField(e) {
             if (!/^[VE]?\d{6,8}$/i.test(value)) {
                 errorMessage = 'La cédula debe tener entre 6 y 8 dígitos';
                 isValid = false;
+            } else {
+                // Verificar cédula duplicada en tiempo real
+                verificarCedulaDuplicada(value);
             }
             break;
             
@@ -322,50 +328,52 @@ function showError(fieldId, message) {
 field.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function clearError(e) {
-const field = e.target;
-field.classList.remove('is-invalid');
-    
-const formGroup = field.closest('.form-group') || field.closest('.input-group') || field.closest('.mb-3') || field.parentNode;
-const errorMessage = formGroup.querySelector('.invalid-feedback');
-if (errorMessage) {
-    errorMessage.remove();
-}
+function verificarCedulaDuplicada(cedula) {
+return new Promise(async (resolve) => {
+    try {
+        if (!window.verificarCedulaUrl) {
+            console.error('La URL de verificación de cédula no está configurada');
+            resolve(true);
+            return;
+        }
+        
+        const response = await fetch(`${window.verificarCedulaUrl}?numero_documento=${cedula}`);
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error al verificar la cédula');
+        }
+
+            const data = await response.json();
+            
+            if (data.status === 'error') {
+                showError('numero_documento', data.message);
+                resolve(false);
+            } else if (data.status === 'info') {
+                // Cédula de registro eliminado, se puede usar
+                console.log(data.message);
+                clearError({ target: document.getElementById('numero_documento') });
+                resolve(true);
+            } else {
+                // Cédula disponible
+                clearError({ target: document.getElementById('numero_documento') });
+                resolve(true);
+            }
+        } catch (error) {
+            console.error('Error al verificar cédula:', error);
+            showError('numero_documento', error.message || 'Error al verificar la cédula');
+            resolve(false);
+        }
+    });
 }
 
-// Función para verificar cédula duplicada
-async function verificarCedulaDuplicada(input) {
-const valor = input.value.trim();
-clearError({ target: input });
+function clearError(e) {
+    const field = e.target;
+    field.classList.remove('is-invalid');
     
-if (!valor) return;
-    
-// Validar formato primero
-if (!/^[VE]?\d{6,8}$/i.test(valor)) {
-    showError(input.id, 'La cédula debe tener entre 6 y 8 dígitos');
-    return;
-}
-    
-// Obtener ID del docente actual (para modo edición)
-const docenteIdInput = document.querySelector('input[name="docente_id"]');
-const docenteId = docenteIdInput ? docenteIdInput.value : '';
-    
-try {
-    const response = await fetch(`/admin/docente/verificar-cedula?numero_documento=${valor}&docente_id=${docenteId}`);
-        
-    if (!response.ok) {
-        throw new Error('Error al verificar la cédula');
+    const formGroup = field.closest('.form-group') || field.closest('.input-group') || field.closest('.mb-3') || field.parentNode;
+    const errorMessage = formGroup.querySelector('.invalid-feedback');
+    if (errorMessage) {
+        errorMessage.remove();
     }
-        
-    const data = await response.json();
-        
-    if (data.exists) {
-        showError(input.id, 'Esta cédula ya está registrada en el sistema');
-    } else {
-        clearError({ target: input });
-    }
-} catch (error) {
-    console.error('Error al verificar cédula duplicada:', error);
-    // No mostrar error al usuario, solo log en consola para no bloquear
-}
 }

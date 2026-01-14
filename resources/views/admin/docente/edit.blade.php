@@ -65,7 +65,7 @@
             </div>
 
             <div class="card-body-modern" style="padding: 2rem;">
-                <form action="{{ route('admin.docente.update', $docente->id) }}" method="POST" class="form-modern">
+                <form id="docenteForm" action="{{ route('admin.docente.update', $docente->id) }}" method="POST" class="form-modern">
                     @csrf
                     <div class="section-title-modern">
                         <i class="fas fa-id-badge"></i> Datos de Identificación
@@ -149,7 +149,7 @@
                                 <i class="fas fa-user"></i>
                                 Primer nombre <span class="required-badge">*</span>
                             </label>
-                            <input type="text" name="primer_nombre"
+                            <input type="text" name="primer_nombre" id="primer_nombre"
                                 class="text-capitalize form-control-modern @error('primer_nombre') is-invalid @enderror"
                                 value="{{ old('primer_nombre', $docente->persona->primer_nombre) }}"
                                 placeholder="Ej: Juan" required>
@@ -197,7 +197,7 @@
                                 <i class="fas fa-user-tag"></i>
                                 Primer apellido <span class="required-badge">*</span>
                             </label>
-                            <input type="text" name="primer_apellido"
+                            <input type="text" name="primer_apellido" id="primer_apellido"
                                 class="text-capitalize form-control-modern @error('primer_apellido') is-invalid @enderror"
                                 value="{{ old('primer_apellido', $docente->persona->primer_apellido) }}"
                                 placeholder="Ej: Pérez" required>
@@ -251,7 +251,7 @@
                                 <i class="fas fa-calendar"></i>
                                 Fecha de nacimiento <span class="required-badge">*</span>
                             </label>
-                            <input type="date" name="fecha_nacimiento"
+                            <input type="date" name="fecha_nacimiento" id="fecha_nacimiento"
                                 class="form-control-modern @error('fecha_nacimiento') is-invalid @enderror"
                                 value="{{ old('fecha_nacimiento', $docente->persona->fecha_nacimiento->format('Y-m-d')) }}"
                                 max="{{ date('Y-m-d') }}" required>
@@ -296,9 +296,9 @@
                                 <i class="fas fa-phone"></i>
                                 Prefijo Telefono
                             </label>
-                            <select name="prefijo_id" id="prefijoTelefono"
+                            <select name="prefijo_id" id="prefijo_id"
                                 class="form-control-modern 
-                                @error('prefijo_id') is-invalid @enderror">
+                                @error('prefijo_id') is-invalid @enderror" required>
                                 <option value="" disabled selected>Seleccione</option>
                                 @foreach ($prefijos as $item)
                                     <option value="{{ $item->id }}"
@@ -319,12 +319,11 @@
                                 <i class="fas fa-phone"></i>
                                 Primer Telefono
                             </label>
-                            <input type="text" name="primer_telefono"
+                            <input type="text" name="primer_telefono" id="primer_telefono"
                                 class="form-control-modern 
-                            @error('primer_telefono') is-invalid @enderror"
-                                id="primer_telefono" maxlength="8" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                            @error('primer_telefono') is-invalid @enderror" maxlength="8" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                                 value="{{ old('primer_telefono', $docente->persona->telefono) }}"
-                                placeholder="Ej: 12345678">
+                                placeholder="Ej: 12345678" required>
                             @error('primer_telefono')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i>
@@ -337,7 +336,7 @@
                                 <i class="fas fa-phone"></i>
                                 Prefijo Telefono 2
                             </label>
-                            <select name="prefijo_dos_id" id="prefijoTelefono"
+                            <select name="prefijo_dos_id" id="prefijo_dos_id"
                                 class="form-control-modern 
                                 @error('prefijo_dos_id') is-invalid @enderror">
                                 <option value="" disabled selected>Seleccione</option>
@@ -360,10 +359,9 @@
                                 <i class="fas fa-phone"></i>
                                 Segundo Telefono
                             </label>
-                            <input type="text" name="telefono_dos"
+                            <input type="text" name="telefono_dos" id="telefono_dos"
                                 class="form-control-modern 
-                            @error('telefono_dos') is-invalid @enderror"
-                                id="telefono_dos" maxlength="8" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                            @error('telefono_dos') is-invalid @enderror" maxlength="8" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                                 value="{{ old('telefono_dos', $docente->persona->telefono_dos) }}"
                                 placeholder="Ej: 12345678">
                             @error('telefono_dos')
@@ -378,10 +376,9 @@
                                 <i class="fas fa-building"></i>
                                 Dependencia
                             </label>
-                            <input type="text" name="dependencia"
-                                class="text-capitalize form-control-modern @error('dependencia') is-invalid @enderror"
-                                value="{{ old('dependencia', $docente->dependencia) }}"
-                                placeholder="Ej: Departamento de Matemáticas">
+                            <input type="text" name="dependencia" id="dependencia" required
+                                class=" text-capitalize form-control-modern @error('dependencia') is-invalid @enderror"
+                                value="{{ old('dependencia', $docente->dependencia) }}" placeholder="Ej: Departamento de Matemáticas">
                             @error('dependencia')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i>
@@ -398,8 +395,8 @@
                                 <i class="fas fa-map-marker-alt"></i>
                                 Dirección
                             </label>
-                            <textarea class="text-capitalize form-control-modern @error('direccion') is-invalid @enderror" name="direccion" rows="3"
-                                placeholder="Ingrese la dirección completa">{{ old('direccion', $docente->persona->direccion) }}</textarea>
+                            <textarea class="text-capitalize form-control-modern @error('direccion') is-invalid @enderror" name="direccion" id="direccion" rows="3"
+                                placeholder="Ingrese la dirección completa" required>{{ old('direccion', $docente->persona->direccion) }}</textarea>
                             @error('direccion')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i>
@@ -420,4 +417,12 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('js')
+    <script>
+        // Configurar la URL para verificación de cédula
+        window.verificarCedulaUrl = "{{ route('admin.docente.verificar_cedula') }}";
+    </script>
+    <script src="{{ asset('js/validations/docente.js') }}"></script>
 @endsection

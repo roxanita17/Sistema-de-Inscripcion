@@ -414,5 +414,9 @@
 @stop
 
 @section('js')
+    <script>
+        // Configurar la URL para verificación de cédula
+        window.verificarCedulaUrl = "{{ route('admin.docente.verificar_cedula') }}";
+    </script>
     <script src="{{ asset('js/validations/docente.js') }}"></script>
 @stop

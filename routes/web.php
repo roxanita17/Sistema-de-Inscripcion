@@ -292,6 +292,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     //===== RUTA REPORTES DOCENTE ======
     Route::get('docente/reporte/{id}', [DocenteController::class, 'reportePDF'])->name('docente.reportePDF');
     Route::get('docente/reporte-general', [DocenteController::class, 'reporteGeneralPDF'])->name('docente.reporteGeneralPDF');
+    
+    // Verificar cédula duplicada (AJAX)
+    Route::get('docente/verificar-cedula', [DocenteController::class, 'verificarCedula'])->name('docente.verificar_cedula');
 
     // ===== ALUMNOS ======
     Route::get('alumnos',  [AlumnoController::class, 'index'])->name('alumnos.index');

@@ -13,6 +13,7 @@ use App\Models\TipoDocumento;
 use App\Models\EstudiosRealizado;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\AnioEscolar;
+use Illuminate\Http\JsonResponse;
 
 class DocenteController extends Controller
 {
@@ -383,6 +384,67 @@ class DocenteController extends Controller
             return $pdf->stream('docentes_general.pdf');
         } catch (\Exception $e) {
             return response('Error al generar el PDF: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function verificarCedula(Request $request): JsonResponse
+    {
+        try {
+            $numero_documento = $request->input('numero_documento');
+            $personaId = $request->input('persona_id');
+            
+            if (!$numero_documento) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Debe proporcionar una cédula',
+                ]);
+            }
+
+            $query = Persona::where('numero_documento', $numero_documento)
+                ->whereHas('docente', function ($q) {
+                    $q->where('status', '!=', 0);
+                });
+
+            if ($personaId) {
+                $query->where('id', '!=', $personaId);
+            }
+
+            $personaExistente = $query->first();
+
+            if ($personaExistente) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Esta cédula ya está registrada en el sistema',
+                ], 409);
+            }
+
+            $registroEliminado = Persona::where('numero_documento', $numero_documento)
+                ->whereHas('docente', function ($q) {
+                    $q->where('status', 0);
+                })
+                ->when($personaId, function ($q) use ($personaId) {
+                    $q->where('id', '!=', $personaId);
+                })
+                ->first();
+
+            if ($registroEliminado) {
+                return response()->json([
+                    'status' => 'info',
+                    'message' => 'Esta cédula pertenece a un registro previamente eliminado. Puede reutilizarla.',
+                    'puede_usar' => true,
+                    'persona' => $registroEliminado
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Cédula disponible',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al verificar cédula: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }
