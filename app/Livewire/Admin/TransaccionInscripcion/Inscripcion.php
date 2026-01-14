@@ -544,6 +544,19 @@ class Inscripcion extends Component
         if (!$this->validarRepresentantes()) {
             return;
         }
+        if (!empty($this->documentosFaltantes)) {
+            $mensaje = collect($this->documentosFaltantes)
+                ->map(fn($doc) => $this->documentosEtiquetas[$doc] ?? $doc)
+                ->implode('<br>');
+
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Documentos incompletos',
+                'html' => $mensaje
+            ]);
+
+            return;
+        }
         $this->dispatch('solicitarDatosAlumno');
     }
 
@@ -557,7 +570,9 @@ class Inscripcion extends Component
             ]);
             return;
         }
+
         $this->validate();
+
         try {
             $dto = $this->crearInscripcionDTO();
             $inscripcion = $this->inscripcionService->registrarConAlumno(

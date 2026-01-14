@@ -16,6 +16,8 @@ use App\Models\InstitucionProcedencia;
 use App\Models\EntradasPercentil;
 use App\Models\Seccion;
 use App\Models\InscripcionNuevoIngreso;
+use App\Exceptions\InscripcionException;
+
 
 class InscripcionController extends Controller
 {
