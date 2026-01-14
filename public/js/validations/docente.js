@@ -33,6 +33,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.addEventListener('change', validateField);
             }
         });
+
+        // Validación de cédula duplicada
+        const cedulaInput = document.getElementById('numero_documento');
+        if (cedulaInput) {
+            cedulaInput.addEventListener('blur', async function() {
+                await verificarCedulaDuplicada(this);
+            });
+        }
     } else {
         console.warn('No se encontró el formulario con ID "docenteForm". Asegúrese de que el formulario tenga el ID correcto.');
     }
@@ -310,17 +318,54 @@ function showError(fieldId, message) {
         formGroup.appendChild(errorElement);
     }
     
-    // Ensure the field is visible
-    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+// Ensure the field is visible
+field.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function clearError(e) {
-    const field = e.target;
-    field.classList.remove('is-invalid');
+const field = e.target;
+field.classList.remove('is-invalid');
     
-    const formGroup = field.closest('.form-group') || field.closest('.input-group') || field.closest('.mb-3') || field.parentNode;
-    const errorMessage = formGroup.querySelector('.invalid-feedback');
-    if (errorMessage) {
-        errorMessage.remove();
+const formGroup = field.closest('.form-group') || field.closest('.input-group') || field.closest('.mb-3') || field.parentNode;
+const errorMessage = formGroup.querySelector('.invalid-feedback');
+if (errorMessage) {
+    errorMessage.remove();
+}
+}
+
+// Función para verificar cédula duplicada
+async function verificarCedulaDuplicada(input) {
+const valor = input.value.trim();
+clearError({ target: input });
+    
+if (!valor) return;
+    
+// Validar formato primero
+if (!/^[VE]?\d{6,8}$/i.test(valor)) {
+    showError(input.id, 'La cédula debe tener entre 6 y 8 dígitos');
+    return;
+}
+    
+// Obtener ID del docente actual (para modo edición)
+const docenteIdInput = document.querySelector('input[name="docente_id"]');
+const docenteId = docenteIdInput ? docenteIdInput.value : '';
+    
+try {
+    const response = await fetch(`/admin/docente/verificar-cedula?numero_documento=${valor}&docente_id=${docenteId}`);
+        
+    if (!response.ok) {
+        throw new Error('Error al verificar la cédula');
     }
+        
+    const data = await response.json();
+        
+    if (data.exists) {
+        showError(input.id, 'Esta cédula ya está registrada en el sistema');
+    } else {
+        clearError({ target: input });
+    }
+} catch (error) {
+    console.error('Error al verificar cédula duplicada:', error);
+    // No mostrar error al usuario, solo log en consola para no bloquear
+}
 }
