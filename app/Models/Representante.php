@@ -131,6 +131,9 @@ class Representante extends Model
         });
     }
     
+    // Execute the query to get the filtered IDs
+    $representantesIds = $queryIds->pluck('representantes.id')->toArray();
+    
     $query = DB::table("representantes")
         ->where('representantes.status', 1)
         ->where('personas.status', 1)

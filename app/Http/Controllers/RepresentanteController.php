@@ -1258,7 +1258,7 @@ class RepresentanteController extends Controller
                 $esProgenitorNoRepresentante = false;
                 $tipoProgenitor = null;
                 $tipoRepresentante = $request->input('tipo_representante');
-                $esRepresentanteLegal = in_array($tipoRepresentante, ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
+                $esRepresentanteLegal = in_array($tipoRepresentante, ['representante_legal', 'progenitor_representante']);
 
                 Log::info('Validando tipo de representante', [
                     'tipo_representante' => $tipoRepresentante,
@@ -1514,7 +1514,7 @@ class RepresentanteController extends Controller
                     'persona_id' => $personaMadre->id,
                 ]);
 
-                $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
+                $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante']);
 
                 Log::info('Guardando madre como representante', [
                     'persona_id' => $personaMadre->id,
@@ -1594,7 +1594,7 @@ class RepresentanteController extends Controller
                     'persona_id' => $personaPadre->id,
                 ]);
 
-                $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
+                $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante']);
 
                 Log::info('Guardando padre como representante', [
                     'persona_id' => $personaPadre->id,

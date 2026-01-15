@@ -2960,22 +2960,33 @@
                                     $select.selectpicker('refresh');
                                 } else {
                                     console.warn(`[${selectId}] [ULTRA] Selectpicker destruido, re-inicializando...`);
-                                    $select.selectpicker({
-                                        liveSearch: true,
-                                        size: 8,
-                                        noneResultsText: 'No hay resultados para {0}',
-                                        selectOnTab: false,
-                                        showSubtext: false,
-                                        showIcon: true,
-                                        width: 'auto'
-                                    });
-                                    selectElement.value = valor;
+                                    // Solo re-inicializar si no hay opciones duplicadas
+                                    const currentOptions = $select.find('option').length;
+                                    if (currentOptions > 0) {
+                                        $select.selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            selectOnTab: false,
+                                            showSubtext: false,
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                        selectElement.value = valor;
+                                    }
                                 }
                             } catch (refreshError) {
                                 console.error(`[${selectId}] [ULTRA] Error en refresh:`, refreshError);
                                 // Intentar recuperación: destruir y recrear
                                 try {
                                     $select.selectpicker('destroy');
+                                    // Solo re-inicializar si el select está vacío para evitar duplicación
+                                    const currentOptions = $select.find('option').length;
+                                    if (currentOptions === 0) {
+                                        console.warn(`[${selectId}] [ULTRA] Select vacío, no se puede re-inicializar`);
+                                        reject(new Error('Select vacío después de destruir'));
+                                        return;
+                                    }
                                     $select.selectpicker({
                                         liveSearch: true,
                                         size: 8,
@@ -3361,37 +3372,51 @@
                     if (typeof $ !== 'undefined' && $.fn.selectpicker) {
                         const $parentescoSelect = $(parentescoSelect);
                         
-                        // Guardar las opciones originales
-                        const opcionesOriginales = [];
-                        Array.from(parentescoSelect.options).forEach(option => {
-                            opcionesOriginales.push({
-                                value: option.value,
-                                text: option.text,
-                                disabled: option.disabled,
-                                selected: option.selected
-                            });
-                        });
+                        console.log('[PARENTESCO] Iniciando limpieza completa para evitar duplicación');
                         
-                        // Destruir el selectpicker
-                        $parentescoSelect.selectpicker('destroy');
+                        // Siempre destruir y limpiar completamente para evitar duplicación
+                        if ($parentescoSelect.data('selectpicker')) {
+                            $parentescoSelect.selectpicker('destroy');
+                        }
                         
                         // Limpiar completamente el select
                         $parentescoSelect.empty();
                         
-                        // Restaurar las opciones sin duplicación
-                        const valoresVistos = new Set();
-                        opcionesOriginales.forEach(opcion => {
-                            if (!valoresVistos.has(opcion.value)) {
-                                const $newOption = $('<option>', {
-                                    value: opcion.value,
-                                    text: opcion.text,
-                                    disabled: opcion.disabled,
-                                    selected: opcion.selected
-                                });
-                                $parentescoSelect.append($newOption);
-                                valoresVistos.add(opcion.value);
+                        // Reconstruir siempre con opciones base limpias
+                        const opcionesBase = [
+                            { value: '', text: 'Seleccione', disabled: false, selected: true },
+                            { value: 'Papá', text: 'Papá', disabled: false, selected: false },
+                            { value: 'Mamá', text: 'Mamá', disabled: false, selected: false },
+                            { value: 'Hermano(a)', text: 'Hermano(a)', disabled: false, selected: false },
+                            { value: 'Tío(a)', text: 'Tío(a)', disabled: false, selected: false },
+                            { value: 'Abuelo(a)', text: 'Abuelo(a)', disabled: false, selected: false },
+                            { value: 'Otro', text: 'Otro', disabled: false, selected: false }
+                        ];
+                        
+                        // Aplicar estados de deshabilitado según la lógica existente
+                        const estadoMadre = document.querySelector('input[name="estado_madre"]:checked')?.value;
+                        const estadoPadre = document.querySelector('input[name="estado_padre"]:checked')?.value;
+                        const tipoRepresentante = document.querySelector('input[name="tipo_representante"]:checked')?.value;
+                        
+                        opcionesBase.forEach(opcion => {
+                            let disabled = opcion.disabled;
+                            
+                            if (opcion.value === 'Mamá') {
+                                disabled = (estadoMadre !== 'Presente' || tipoRepresentante === 'solo_representante');
+                            } else if (opcion.value === 'Papá') {
+                                disabled = (estadoPadre !== 'Presente' || tipoRepresentante === 'solo_representante');
                             }
+                            
+                            const $newOption = $('<option>', {
+                                value: opcion.value,
+                                text: opcion.text,
+                                disabled: disabled,
+                                selected: opcion.selected
+                            });
+                            $parentescoSelect.append($newOption);
                         });
+                        
+                        console.log('[PARENTESCO] Reconstruido con opciones limpias');
                         
                         // Reconstruir el selectpicker
                         $parentescoSelect.selectpicker();
@@ -4662,6 +4687,47 @@
                 const parentescoSelect = document.getElementById('parentesco');
                 const parentescoHidden = document.getElementById('parentesco_hidden');
                 if (parentescoSelect) {
+                    console.log('[RESET PARENTESCO] Iniciando reset completo');
+                    
+                    // Limpiar completamente el selectpicker si existe
+                    if (typeof $ !== 'undefined' && $.fn.selectpicker && $(parentescoSelect).hasClass('selectpicker')) {
+                        const $parentescoSelect = $(parentescoSelect);
+                        
+                        // Destruir el selectpicker
+                        if ($parentescoSelect.data('selectpicker')) {
+                            $parentescoSelect.selectpicker('destroy');
+                        }
+                        
+                        // Limpiar completamente el select
+                        $parentescoSelect.empty();
+                        
+                        // Reconstruir con opciones base limpias
+                        const opcionesBase = [
+                            { value: '', text: 'Seleccione', disabled: false, selected: true },
+                            { value: 'Papá', text: 'Papá', disabled: false, selected: false },
+                            { value: 'Mamá', text: 'Mamá', disabled: false, selected: false },
+                            { value: 'Hermano(a)', text: 'Hermano(a)', disabled: false, selected: false },
+                            { value: 'Tío(a)', text: 'Tío(a)', disabled: false, selected: false },
+                            { value: 'Abuelo(a)', text: 'Abuelo(a)', disabled: false, selected: false },
+                            { value: 'Otro', text: 'Otro', disabled: false, selected: false }
+                        ];
+                        
+                        opcionesBase.forEach(opcion => {
+                            const $newOption = $('<option>', {
+                                value: opcion.value,
+                                text: opcion.text,
+                                disabled: opcion.disabled,
+                                selected: opcion.selected
+                            });
+                            $parentescoSelect.append($newOption);
+                        });
+                        
+                        // Reconstruir el selectpicker
+                        $parentescoSelect.selectpicker();
+                        console.log('[RESET PARENTESCO] Reconstruido con opciones limpias');
+                    }
+                    
+                    // Restablecer estado del campo
                     parentescoSelect.disabled = false;
                     parentescoSelect.value = '';
                     parentescoSelect.classList.remove('bg-light', 'text-muted');
@@ -4680,6 +4746,8 @@
                             'select2-hidden-accessible')) {
                         $(parentescoSelect).val('').trigger('change');
                     }
+                    
+                    console.log('[RESET PARENTESCO] Reset completado');
                 }
             }
 
@@ -5091,19 +5159,40 @@
                         // Manejar selectpicker si está presente
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
                             try {
-                                // Guardar el HTML original antes de destruir
-                                const originalHTML = campo.innerHTML;
-                                
                                 // Verificar si el selectpicker está inicializado antes de destruir
                                 if ($(campo).data('selectpicker')) {
                                     $(campo).selectpicker('destroy');
                                 }
                                 
-                                // Restaurar el HTML original para mantener todas las opciones
-                                campo.innerHTML = originalHTML;
+                                // Validación especial para campos que se duplican
+                                if (campo.id === 'prefijo_dos-representante' || campo.id === 'parentesco') {
+                                    console.log(`[RESET] Validación especial para ${campo.id}`);
+                                    // Contar opciones actuales
+                                    const opcionesActuales = $(campo).find('option').length;
+                                    console.log(`[RESET] Opciones actuales en ${campo.id}: ${opcionesActuales}`);
+                                    
+                                    // Si hay demasiadas opciones (duplicadas), limpiar y reconstruir
+                                    const limiteOpciones = campo.id === 'parentesco' ? 10 : 50; // parentesco tiene menos opciones
+                                    if (opcionesActuales > limiteOpciones) {
+                                        console.warn(`[RESET] Detectada duplicación en ${campo.id}, limpiando...`);
+                                        // Mantener solo la primera ocurrencia de cada valor
+                                        const valoresVistos = new Set();
+                                        $(campo).find('option').each(function() {
+                                            const valor = $(this).val();
+                                            if (valoresVistos.has(valor)) {
+                                                $(this).remove(); // Eliminar duplicado
+                                            } else {
+                                                valoresVistos.add(valor);
+                                            }
+                                        });
+                                        console.log(`[RESET] Opciones después de limpiar ${campo.id}: ${$(campo).find('option').length}`);
+                                    }
+                                }
+                                
+                                // Limpiar solo el valor seleccionado, no restaurar HTML
                                 campo.value = '';
                                 
-                                // Re-inicializar selectpicker
+                                // Re-inicializar selectpicker con las opciones existentes
                                 $(campo).selectpicker({
                                     liveSearch: true,
                                     size: 8,
