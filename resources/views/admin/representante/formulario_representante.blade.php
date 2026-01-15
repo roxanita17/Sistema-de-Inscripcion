@@ -4682,7 +4682,96 @@
                 }
             }
 
-            // Función para restablecer el campo de parentesco
+            // Función para limpiar selects problemáticos que se duplican
+            function limpiarSelectsProblematicos() {
+                console.log('[LIMPIAR SELECTS] Iniciando limpieza de selects problemáticos');
+                
+                const selectsProblematicos = [
+                    'prefijo-representante',
+                    'prefijo_dos-representante', 
+                    'ocupacion-representante',
+                    'idPais-representante',
+                    'parentesco'
+                ];
+                
+                selectsProblematicos.forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    if (!select) return;
+                    
+                    console.log(`[LIMPIAR SELECTS] Procesando ${selectId}`);
+                    
+                    // Limpiar completamente el selectpicker si existe
+                    if (typeof $ !== 'undefined' && $.fn.selectpicker && $(select).hasClass('selectpicker')) {
+                        const $select = $(select);
+                        
+                        // Destruir el selectpicker
+                        if ($select.data('selectpicker')) {
+                            $select.selectpicker('destroy');
+                        }
+                        
+                        // Contar opciones antes de limpiar
+                        const opcionesAntes = $select.find('option').length;
+                        console.log(`[LIMPIAR SELECTS] Opciones antes de limpiar ${selectId}: ${opcionesAntes}`);
+                        
+                        // Si hay demasiadas opciones (duplicación), limpiar agresivamente
+                        if (opcionesAntes > 50) {
+                            console.warn(`[LIMPIAR SELECTS] Detectada duplicación masiva en ${selectId}, limpiando agresivamente...`);
+                            
+                            // Guardar solo valores únicos
+                            const valoresUnicos = new Set();
+                            const opcionesUnicas = [];
+                            
+                            $select.find('option').each(function() {
+                                const valor = $(this).val();
+                                const texto = $(this).text();
+                                
+                                if (!valoresUnicos.has(valor)) {
+                                    valoresUnicos.add(valor);
+                                    opcionesUnicas.push({
+                                        value: valor,
+                                        text: texto,
+                                        disabled: $(this).prop('disabled'),
+                                        selected: $(this).prop('selected')
+                                    });
+                                }
+                            });
+                            
+                            // Limpiar completamente
+                            $select.empty();
+                            
+                            // Restaurar solo opciones únicas
+                            opcionesUnicas.forEach(opcion => {
+                                const $newOption = $('<option>', {
+                                    value: opcion.value,
+                                    text: opcion.text,
+                                    disabled: opcion.disabled,
+                                    selected: opcion.selected
+                                });
+                                $select.append($newOption);
+                            });
+                            
+                            console.log(`[LIMPIAR SELECTS] Opciones después de limpiar ${selectId}: ${opcionesUnicas.length}`);
+                        }
+                        
+                        // Reconstruir el selectpicker
+                        $select.selectpicker({
+                            liveSearch: true,
+                            size: 8,
+                            noneResultsText: 'No hay resultados para {0}',
+                            showIcon: true,
+                            width: 'auto'
+                        });
+                        
+                        // Establecer valor vacío y refrescar
+                        $select.selectpicker('val', '');
+                        $select.selectpicker('refresh');
+                        
+                        console.log(`[LIMPIAR SELECTS] Selectpicker reconstruido para ${selectId}`);
+                    }
+                });
+                
+                console.log('[LIMPIAR SELECTS] Limpieza completada');
+            }
             function resetearParentesco() {
                 const parentescoSelect = document.getElementById('parentesco');
                 const parentescoHidden = document.getElementById('parentesco_hidden');
@@ -5117,6 +5206,9 @@
                 // Habilitar todos los campos
                 toggleCamposRepresentante(false);
 
+                // Limpiar selects problemáticos que se duplican
+                limpiarSelectsProblematicos();
+
                 // Restablecer el campo de parentesco
                 resetearParentesco();
 
@@ -5165,7 +5257,11 @@
                                 }
                                 
                                 // Validación especial para campos que se duplican
-                                if (campo.id === 'prefijo_dos-representante' || campo.id === 'parentesco') {
+                                if (campo.id === 'prefijo_dos-representante' || 
+                                    campo.id === 'parentesco' || 
+                                    campo.id === 'prefijo-representante' || 
+                                    campo.id === 'ocupacion-representante' || 
+                                    campo.id === 'idPais-representante') {
                                     console.log(`[RESET] Validación especial para ${campo.id}`);
                                     // Contar opciones actuales
                                     const opcionesActuales = $(campo).find('option').length;
