@@ -4780,6 +4780,9 @@
                 const parentescoSelect = document.getElementById('parentesco');
                 const parentescoHidden = document.getElementById('parentesco_hidden');
                 if (parentescoSelect) {
+                    // LIMPIEZA ULTRA PARA PARENTESCO ANTES DE ESTABLECER
+                    limpiarSelectPickerEstatico(parentescoSelect, 'Seleccione');
+                    
                     const valorParentesco = esMadre ? 'Mamá' : 'Papá';
 
                     // Verificar que la opción no esté deshabilitada
@@ -5009,12 +5012,17 @@
                             await new Promise(resolve => setTimeout(resolve, 300));
                         }
 
-                        // 3. Copiar ubicación con función ultra simplificada
+                        // 3.1. Copiar país con función ultra
                         console.log('PASO 3: Copiando ubicación con función ultra...');
                         
-                        // 3.1. Copiar país
-                        const paisOrigen = document.getElementById(`idPais${prefijo}`);
+                        // LIMPIEZA ULTRA PARA PAÍS ANTES DE COPIAR
                         const paisDestino = document.getElementById('idPais-representante');
+                        if (paisDestino) {
+                            limpiarSelectPickerEstatico(paisDestino, 'Seleccione un pais');
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                        }
+                        
+                        const paisOrigen = document.getElementById(`idPais${prefijo}`);
                         if (paisOrigen && paisDestino && paisOrigen.value) {
                             console.log(`[UBICACIÓN ULTRA] Copiando país: ${paisOrigen.value}`);
                             await establecerValorSelectUltraSimple(paisDestino, paisOrigen.value, 150);
@@ -5274,8 +5282,8 @@
 
                         // Manejo especial para selects con selectpicker
                         if ($(campo).hasClass('selectpicker')) {
-                            // Usar limpieza ultra para selects estáticos (ocupación y prefijos)
-                            if (id.includes('ocupacion') || id.includes('prefijo')) {
+                            // Usar limpieza ultra para selects estáticos (ocupación, prefijos, parentesco, pais)
+                            if (id.includes('ocupacion') || id.includes('prefijo') || id.includes('parentesco') || id.includes('idPais')) {
                                 limpiarSelectPickerEstatico(campo, 'Seleccione');
                             } else {
                                 // Para selects dinámicos (ubicación), usar limpieza completa
