@@ -4981,8 +4981,21 @@
 
                         // 2. Copiar prefijos telefónicos con función ultra simplificada
                         console.log('PASO 2: Copiando prefijos telefónicos con función ultra...');
-                        const prefijo1 = document.getElementById(`prefijo${prefijo}`);
+                        
+                        // LIMPIEZA ULTRA PARA PREFIJOS ANTES DE COPIAR
                         const prefijo1Dest = document.getElementById('prefijo-representante');
+                        if (prefijo1Dest) {
+                            limpiarSelectPickerEstatico(prefijo1Dest, 'Seleccione');
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                        }
+                        
+                        const prefijo2Dest = document.getElementById('prefijo_dos-representante');
+                        if (prefijo2Dest) {
+                            limpiarSelectPickerEstatico(prefijo2Dest, 'Seleccione');
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                        }
+                        
+                        const prefijo1 = document.getElementById(`prefijo${prefijo}`);
                         if (prefijo1 && prefijo1Dest && prefijo1.value) {
                             console.log(`[PREFIJO ULTRA] Copiando prefijo1: ${prefijo1.value}`);
                             await establecerValorSelectUltraSimple(prefijo1Dest, prefijo1.value, 100);
@@ -4990,7 +5003,6 @@
                         }
 
                         const prefijo2 = document.getElementById(`prefijo_dos${esMadre ? '' : '_padre'}`);
-                        const prefijo2Dest = document.getElementById('prefijo_dos-representante');
                         if (prefijo2 && prefijo2Dest && prefijo2.value) {
                             console.log(`[PREFIJO ULTRA] Copiando prefijo2: ${prefijo2.value}`);
                             await establecerValorSelectUltraSimple(prefijo2Dest, prefijo2.value, 100);
@@ -5070,8 +5082,15 @@
 
                         // 5. Copiar ocupación con función ultra
                         console.log('PASO 5: Copiando ocupación con función ultra...');
-                        const ocupacionOrigen = document.getElementById(esMadre ? 'ocupacion-madre' : 'ocupacion-padre');
+                        
+                        // LIMPIEZA ULTRA PARA OCUPACIÓN ANTES DE COPIAR
                         const ocupacionDestino = document.getElementById('ocupacion-representante');
+                        if (ocupacionDestino) {
+                            limpiarSelectPickerEstatico(ocupacionDestino, 'Seleccione una ocupación');
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                        }
+                        
+                        const ocupacionOrigen = document.getElementById(esMadre ? 'ocupacion-madre' : 'ocupacion-padre');
                         if (ocupacionOrigen && ocupacionDestino) {
                             await establecerValorSelectUltraSimple(ocupacionDestino, ocupacionOrigen.value, 150);
                             await new Promise(resolve => setTimeout(resolve, 300));
@@ -5255,9 +5274,13 @@
 
                         // Manejo especial para selects con selectpicker
                         if ($(campo).hasClass('selectpicker')) {
-                            // Usar limpiarSelectCompleto para todos los selects dinámicos
-                            // (ocupación, prefijos, y ubicaciones)
-                            limpiarSelectCompleto(campo);
+                            // Usar limpieza ultra para selects estáticos (ocupación y prefijos)
+                            if (id.includes('ocupacion') || id.includes('prefijo')) {
+                                limpiarSelectPickerEstatico(campo, 'Seleccione');
+                            } else {
+                                // Para selects dinámicos (ubicación), usar limpieza completa
+                                limpiarSelectCompleto(campo);
+                            }
                         } else {
                             // Para otros campos, limpiar normalmente
                             campo.value = '';
