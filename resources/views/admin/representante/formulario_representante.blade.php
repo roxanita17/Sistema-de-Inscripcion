@@ -4750,6 +4750,10 @@
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
                             try {
                                 if (deshabilitar) {
+                                    $(campo).prop('disabled', true);
+                                    $(campo).selectpicker('refresh');
+                                } else {
+                                    $(campo).prop('disabled', false);
                                     $(campo).selectpicker('refresh');
                                 }
                             } catch (error) {
@@ -4770,6 +4774,17 @@
                         campo.disabled = false;
                         campo.readOnly = false;
                         campo.classList.remove('bg-light', 'text-muted');
+                        
+                        // Manejar selectpicker si está presente en campos excluidos
+                        if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
+                            try {
+                                $(campo).prop('disabled', false);
+                                $(campo).selectpicker('refresh');
+                            } catch (error) {
+                                console.warn('Error al manejar selectpicker en campo excluido:', error);
+                            }
+                        }
+                        
                         console.log(`[TOGGLE] Campo excluido ${id}: forzado a permanecer habilitado`);
                     }
                 });
