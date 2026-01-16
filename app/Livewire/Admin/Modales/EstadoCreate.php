@@ -67,10 +67,8 @@ class EstadoCreate extends Component
 
             session()->flash('success', 'estado creado exitosamente.');
 
-            $this->dispatch('estadoCreado', [
-                'id' => $estado->id,
-                'pais_id' => $estado->pais_id,
-            ]);
+            $this->dispatch('estadoCreado', id: $estado->id, pais_id: $estado->pais_id);
+
 
             $this->dispatch('cerrarModalDespuesDe', ['delay' => 1500]);
 

@@ -466,6 +466,8 @@ class AlumnoCreate extends Component
         'solicitarDatosAlumno' => 'enviarDatosAlumno',
         'localidadCreada' => 'manejarLocalidadCreada',
         'localidadCreada' => 'refrescarLocalidades',
+        'estadoCreado' => 'manejarEstadoCreado',
+        'municipioCreado' => 'manejarMunicipioCreado',
     ];
 
     public function manejarLocalidadCreada($id, $municipio_id)
@@ -481,6 +483,36 @@ class AlumnoCreate extends Component
             session()->flash('success', 'Localidad creada y seleccionada correctamente.');
         }
     }
+
+     public function manejarEstadoCreado($id, $pais_id)
+    {
+        if ($this->paisId == $pais_id) {
+            $this->estados = Estado::where('pais_id', $this->paisId)
+                ->where('status', true)
+                ->orderBy('nombre_estado')
+                ->get();
+
+            $this->estado_id = $id;
+
+            // fuerza carga de municipios vacía
+            $this->updatedEstadoId($id);
+        }
+    }
+
+    public function manejarMunicipioCreado($id, $estado_id)
+    {
+        if ($this->estado_id == $estado_id) {
+            $this->municipios = Municipio::where('estado_id', $this->estado_id)
+                ->where('status', true)
+                ->orderBy('nombre_municipio')
+                ->get();
+
+            $this->municipio_id = $id;
+
+            $this->updatedMunicipioId($id);
+        }
+    }
+
 
     public function refrescarLocalidades($data)
     {
