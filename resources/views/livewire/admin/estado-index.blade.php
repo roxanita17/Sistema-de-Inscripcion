@@ -1,7 +1,6 @@
 <div class="main-container">
     @include('admin.estado.modales.createModal')
     @include('admin.estado.modales.editModal')
-
     @if (!$anioEscolarActivo)
         <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
             <div class="d-flex align-items-center">
@@ -33,7 +32,6 @@
                     </button>
                 </div>
             @endif
-
             @if (session('error'))
                 <div class="alert-modern alert-error alert alert-dismissible fade show">
                     <div class="alert-icon">
@@ -50,7 +48,6 @@
             @endif
         </div>
     @endif
-
     <div class="card-modern">
         <div class="card-header-modern">
             <div class="header-left">
@@ -69,14 +66,12 @@
                         placeholder="Buscar..." wire:model.live="search">
                 </div>
             </div>
-
             <div class="header-right">
                 @php
                     $anioActivo = \App\Models\AnioEscolar::activos()->first();
                     $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                     $mostrarAnio = $anioActivo ?? $anioExtendido;
                 @endphp
-
                 @if ($mostrarAnio)
                     <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
                         <div class="d-flex align-items-center">
@@ -103,7 +98,6 @@
                             <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
                             <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
                         </div>
-
                     </div>
                 @endif
             </div>
@@ -120,7 +114,6 @@
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-
                     <tbody class="text-center">
                         @if ($estados->isEmpty())
                             <tr>

@@ -317,7 +317,7 @@
                     </button>
 
                     <a href="{{ route('representante.reporte_pdf', request()->query()) }}" class="btn-pdf" target="_blank">
-                        <i class="fas fa-file-pdf me-1"></i> PDF
+                        <i class="fas fa-file-pdf me-1"></i> PDF General
                     </a>
 
                     @php
@@ -511,6 +511,7 @@
         const municipios = @json(\App\Models\Municipio::all());
         const parroquias = @json(\App\Models\Localidad::all());
         const bancos = @json(\App\Models\Banco::all());
+        const paises = @json($paises);
 
         // Inicialización cuando el documento esté listo
         document.addEventListener('DOMContentLoaded', function() {
@@ -788,6 +789,23 @@
                     }
                 }
 
+                // Ubicación - País
+                let pais = '';
+                if (representante.pais && representante.pais.nameES) {
+                    pais = representante.pais.nameES;
+                } else if (representante.pais_id) {
+                    // Buscar en el array global de países si existe
+                    if (typeof paises !== 'undefined' && paises.length > 0) {
+                        const pai = paises.find(p => p.id == representante.pais_id);
+                        pais = pai ? pai.nameES : 'País no especificado';
+                    } else {
+                        pais = 'País no especificado';
+                    }
+                } else {
+                    pais = 'País no especificado';
+                }
+                document.getElementById('modal-pais').textContent = pais;
+
                 // Ubicación - Estado
                 let estado = '';
                 if (representante.estado && representante.estado.nombre_estado) {
@@ -876,16 +894,22 @@
                     const carnetEl = document.getElementById('modal-carnet-afiliado');
                     if (carnetEl) {
                         const tieneCarnet = legal.carnet_patria_afiliado;
-                        if (tieneCarnet === 1 || tieneCarnet === '1') {
-                            carnetEl.textContent = 'Afiliado';
-                            carnetEl.className = 'badge bg-success';
-                        } else if (tieneCarnet === 0 || tieneCarnet === '0') {
-                            carnetEl.textContent = 'No afiliado';
-                            carnetEl.className = 'badge bg-secondary';
-                        } else {
-                            carnetEl.textContent = 'No especificado';
-                            carnetEl.className = 'badge bg-secondary';
+                        let texto = 'No especificado';
+                        let badgeClass = 'badge bg-secondary';
+                        
+                        if (tieneCarnet === 1) {
+                            texto = 'Madre';
+                            badgeClass = 'badge bg-info';
+                        } else if (tieneCarnet === 2) {
+                            texto = 'Padre';
+                            badgeClass = 'badge bg-primary';
+                        } else if (tieneCarnet === 3) {
+                            texto = 'Otro';
+                            badgeClass = 'badge bg-warning';
                         }
+                        
+                        carnetEl.textContent = texto;
+                        carnetEl.className = badgeClass;
                     }
 
                     // Código y serial de carnet

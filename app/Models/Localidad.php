@@ -1,15 +1,10 @@
 <?php
 
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Localidad extends Model
 {
-    /** @use HasFactory<\Database\Factories\LocalidadFactory> */
-    use HasFactory;
-
     protected $table = 'localidads';
     
     protected $fillable = [
@@ -25,7 +20,11 @@ class Localidad extends Model
     }
 
     public function estado(){
-        return $this->belongsTo(Estado::class, "estado_id", "id");
+    return $this->belongsTo(Estado::class, "municipio_id", "id");
+    }
+
+    public function estadoThroughMunicipio(){
+        return $this->municipio->estado();
     }
     
     public function pais()

@@ -736,12 +736,12 @@
                 </tr>
                 <tr>
                     <td><strong>Convive con el Estudiante:</strong></td>
-                    <td>{{ $datosCompletos['representante_legal']['representante']['convivenciaestudiante_representante'] == 1 ? 'Sí' : 'No' }}
+                    <td>{{ ($datosCompletos['representante_legal']['representante']['convivenciaestudiante_representante'] ?? null) == 1 ? 'Sí' : 'No' }}
                     </td>
                 </tr>
                 <tr>
                     <td><strong>Carnet de la Patria:</strong></td>
-                    <td>{{ $datosCompletos['representante_legal']['carnet_patria_afiliado'] == 1 ? 'Sí' : 'No' }}</td>
+                    <td>{{ ($datosCompletos['representante_legal']['carnet_patria_afiliado'] ?? null) == 1 ? 'Sí' : 'No' }}</td>
                 </tr>
                 <tr>
                     <td><strong>Serial del Carnet de la Patria:</strong></td>

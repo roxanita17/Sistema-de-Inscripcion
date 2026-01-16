@@ -16,7 +16,6 @@
             </div>
         </div>
     @endif
-
     @if (session('success') || session('error'))
         <div class="alerts-container">
             @if (session('success'))
@@ -33,7 +32,6 @@
                     </button>
                 </div>
             @endif
-
             @if (session('error'))
                 <div class="alert-modern alert-error alert alert-dismissible fade show">
                     <div class="alert-icon">
@@ -50,10 +48,8 @@
             @endif
         </div>
     @endif
-
     @include('admin.municipio.modales.createModal')
     @include('admin.municipio.modales.editModal')
-
     <div class="card-modern">
         <div class="card-header-modern">
             <div class="header-left">
@@ -72,14 +68,12 @@
                         placeholder="Buscar..." wire:model.live="search">
                 </div>
             </div>
-
             <div class="header-right">
                 @php
                     $anioActivo = \App\Models\AnioEscolar::activos()->first();
                     $anioExtendido = \App\Models\AnioEscolar::where('status', 'Extendido')->first();
                     $mostrarAnio = $anioActivo ?? $anioExtendido;
                 @endphp
-
                 @if ($mostrarAnio)
                     <div class="d-flex align-items-center justify-content-between bg-light rounded px-2 py-1  border">
                         <div class="d-flex align-items-center">
@@ -106,12 +100,10 @@
                             <i class="fas fa-exclamation-triangle text-warning me-1" style="font-size: 0.8rem;"></i>
                             <span class="fw-semibold" style="font-size: 0.8rem;">Sin año activo</span>
                         </div>
-
                     </div>
                 @endif
             </div>
         </div>
-
         <div class="card-body-modern">
             <div class="table-wrapper">
                 <table class="table-modern overflow-hidden hidden">
@@ -124,7 +116,6 @@
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-
                     <tbody class="text-center">
                         @if ($municipios->isEmpty())
                             <tr>
@@ -172,7 +163,6 @@
                                     </div>
                                 </td>
                             </tr>
-
                             <div wire:ignore.self class="modal fade" id="confirmarEliminar{{ $datos->id }}"
                                 tabindex="-1" aria-labelledby="modalLabel{{ $datos->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -209,10 +199,8 @@
                 </table>
             </div>
         </div>
-
         <div class="mt-3">
             {{ $municipios->links() }}
         </div>
     </div>
-
 </div>

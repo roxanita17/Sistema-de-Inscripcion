@@ -21,18 +21,14 @@ class DiscapacidadController extends Controller
             $request->validate([
                 'nombre' => 'required|string|max:255',
             ]);
-
             $existe = Discapacidad::where('nombre_discapacidad', $request->nombre)
                 ->where('status', true)
                 ->exists();
-
             return response()->json([
                 'success' => true,
                 'existe' => $existe
             ]);
-
         } catch (\Exception $e) {
-            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al verificar la discapacidad',
@@ -44,24 +40,18 @@ class DiscapacidadController extends Controller
     public function index()
     {
         $buscar = request('buscar');
-        
         $query = Discapacidad::query();
-        
         if (!empty($buscar)) {
             $query->where(function($q) use ($buscar) {
                 $q->where('nombre_discapacidad', 'LIKE', "%{$buscar}%")
                   ->orWhere('id', 'LIKE', "%{$buscar}%");
             });
         }
-        
         $query->where('status', true);
-        
         $discapacidad = $query->orderBy('nombre_discapacidad', 'asc')
-                            ->paginate(10)
-                            ->appends(request()->query());
-        
+            ->paginate(10)
+            ->appends(request()->query());
         $anioEscolarActivo = $this->verificarAnioEscolar();
-        
         return view('admin.discapacidad.index', compact(
             'discapacidad', 
             'anioEscolarActivo',
@@ -74,23 +64,20 @@ class DiscapacidadController extends Controller
         $validated = $request->validate([
             'nombre_discapacidad' => 'required|string|max:255',
         ]);
-
         $existe = Discapacidad::where('nombre_discapacidad', $validated['nombre_discapacidad'])
             ->where('status', true)
             ->exists();
-
         if ($existe) {
             return redirect()
                 ->route('admin.discapacidad.index')
                 ->with('error', 'Esta discapacidad ya está registrada.');
         }
-
         try {
             $discapacidad = new Discapacidad();
             $discapacidad->nombre_discapacidad = $validated['nombre_discapacidad'];
             $discapacidad->status = true;
+            $discapacidad->status = true;
             $discapacidad->save();
-
             return redirect()
                 ->route('admin.discapacidad.index')
                 ->with('success', 'Discapacidad creada correctamente.');
@@ -107,22 +94,18 @@ class DiscapacidadController extends Controller
         $validated = $request->validate([
             'nombre_discapacidad' => 'required|string|max:255',
         ]);
-
         $existe = Discapacidad::where('nombre_discapacidad', $validated['nombre_discapacidad'])
             ->where('status', true)
             ->where('id', '!=', $id)
             ->exists();
-
         if ($existe) {
             return redirect()
                 ->route('admin.discapacidad.index')
                 ->with('error', 'No se puede actualizar: ya existe una discapacidad con este nombre.');
         }
-
         try {
             $discapacidad->nombre_discapacidad = $validated['nombre_discapacidad'];
             $discapacidad->save();
-
             return redirect()
                 ->route('admin.discapacidad.index')
                 ->with('success', 'Discapacidad actualizada exitosamente.');
@@ -137,15 +120,12 @@ class DiscapacidadController extends Controller
     {
         try {
             $discapacidad = Discapacidad::find($id);
-
             if ($discapacidad) {
                 $discapacidad->update(['status' => false]);
-
                 return redirect()
                     ->route('admin.discapacidad.index')
                     ->with('success', 'Discapacidad eliminada correctamente.');
             }
-
             return redirect()
                 ->route('admin.discapacidad.index')
                 ->with('error', 'Discapacidad no encontrada.');

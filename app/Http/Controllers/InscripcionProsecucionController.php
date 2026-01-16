@@ -21,17 +21,14 @@ class InscripcionProsecucionController extends Controller
     public function index(Request $request)
     {
         $anioEscolarActivo = \App\Models\AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
-
-        $buscar    = $request->buscar;
-        $gradoId   = $request->grado_id;
+        $buscar = $request->buscar;
+        $gradoId = $request->grado_id;
         $seccionId = $request->seccion_id;
-        $status    = $request->status;
+        $status = $request->status;
         $materiasPendientes = $request->materias_pendientes;
-
         $grados = Grado::where('status', true)
             ->orderBy('numero_grado')
             ->get();
-
         $secciones = collect();
         if ($gradoId) {
             $secciones = Seccion::where('grado_id', $gradoId)
@@ -40,17 +37,11 @@ class InscripcionProsecucionController extends Controller
                 ->get();
         }
         $status = $request->get('status', 'Activo');
-
-
         $prosecuciones = InscripcionProsecucion::with([
             'prosecucionAreas',
             'inscripcion.alumno.persona',
-
-            // inscripción base
             'inscripcion.alumno.persona.tipoDocumento',
             'inscripcion.representanteLegal.representante.persona',
-
-            // datos de prosecución
             'grado',
             'seccion',
             'anioEscolar',
@@ -91,14 +82,12 @@ class InscripcionProsecucionController extends Controller
                     });
                 }
             })
-            // Filtro por status de inscripción
             ->when($status, function ($q) use ($status) {
                 $q->where('status', $status);
-            }) 
+            })
             ->orderByDesc('created_at')
             ->paginate(10)
             ->withQueryString();
-
         return view('admin.transacciones.inscripcion_prosecucion.index', [
             'anioEscolarActivo' => (bool) $anioEscolarActivo,
             'anioEscolar' => $anioEscolarActivo,
@@ -119,7 +108,6 @@ class InscripcionProsecucionController extends Controller
             ->where('status', true)
             ->orderBy('nombre')
             ->get(['id', 'nombre']);
-
         return response()->json($secciones);
     }
 
@@ -133,7 +121,6 @@ class InscripcionProsecucionController extends Controller
         $grados = Grado::all();
         $expresion_literaria = ExpresionLiteraria::all();
         $institucion_procedencia = InstitucionProcedencia::all();
-
         return view('admin.transacciones.inscripcion_prosecucion.create', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
     }
 
@@ -141,7 +128,6 @@ class InscripcionProsecucionController extends Controller
     {
         try {
             InscripcionProsecucion::inactivar($inscripcionId);
-
             return redirect()
                 ->route('admin.transacciones.inscripcion_prosecucion.index')
                 ->with('success', 'Inscripción por prosecución inactivada correctamente');
@@ -162,6 +148,7 @@ class InscripcionProsecucionController extends Controller
     {
         $prosecucion = InscripcionProsecucion::with([
             'inscripcion.alumno.persona',
+            'inscripcion.alumno.persona.localidad.estado.pais',
             'inscripcion.alumno.ordenNacimiento',
             'inscripcion.alumno.lateralidad',
             'inscripcion.alumno.discapacidades',
@@ -179,10 +166,7 @@ class InscripcionProsecucionController extends Controller
             'anioEscolar',
             'prosecucionAreas.gradoAreaFormacion.area_formacion',
         ])->findOrFail($id);
-
         $datosCompletos = $prosecucion->inscripcion->obtenerDatosCompletos();
-
-        // Agregar datos específicos de prosecución
         $datosCompletos['prosecucion'] = [
             'grado_anterior' => $prosecucion->inscripcion->grado->numero_grado ?? 'N/A',
             'grado_actual' => $prosecucion->grado->numero_grado ?? 'N/A',
@@ -195,17 +179,11 @@ class InscripcionProsecucionController extends Controller
             'materias_pendientes' => $prosecucion->prosecucionAreas->where('status', 'pendiente'),
             'materias_reprobadas' => $prosecucion->prosecucionAreas->where('status', 'reprobada'),
         ];
-
-        // Obtener el año escolar activo
         $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->first();
-
         $pdf = PDF::loadview('admin.transacciones.inscripcion_prosecucion.reportes.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
-
-        // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
         $pdf->setOption('isPhpEnabled', true);
-
         return $pdf->stream('ficha_inscripcion_prosecucion.pdf');
     }
 
@@ -214,49 +192,35 @@ class InscripcionProsecucionController extends Controller
         $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->first();
-
         $filtro = $request->all();
-
         if (!isset($filtro['anio_escolar_id']) && $anioEscolarActivo) {
             $filtro['anio_escolar_id'] = $anioEscolarActivo->id;
         }
-
         $prosecuciones = InscripcionProsecucion::reporteGeneralPDF($filtro);
-
-        // Ordenamos por la primera letra del primer apellido
         $prosecuciones = $prosecuciones->sortBy(function ($item) {
             $primerApellido = $item->inscripcion->alumno->persona->primer_apellido ?? '';
             return strtoupper(substr($primerApellido, 0, 1));
         });
-
         if ($prosecuciones->isEmpty()) {
             return response('No se encontraron inscripciones de prosecución', 404);
         }
-
-        // Preparar filtros para mostrar en la vista
         $filtrosVista = [
             'anio_escolar' => $anioEscolarActivo ? ($anioEscolarActivo->nombre ?? $anioEscolarActivo->anio ?? null) : null,
         ];
-
-        // Agregar información de filtros aplicados
         if (isset($filtro['grado_id']) && $filtro['grado_id']) {
             $grado = \App\Models\Grado::find($filtro['grado_id']);
             $filtrosVista['grado'] = $grado ? $grado->numero_grado : null;
         }
-
         if (isset($filtro['seccion_id']) && $filtro['seccion_id']) {
             $seccion = \App\Models\Seccion::find($filtro['seccion_id']);
             $filtrosVista['seccion'] = $seccion ? $seccion->nombre : null;
         }
-
         if (isset($filtro['status']) && $filtro['status'] !== '') {
             $filtrosVista['estatus'] = $filtro['status'] == '1' ? 'Activo' : 'Inactivo';
         }
-
         if (isset($filtro['buscar']) && $filtro['buscar']) {
             $filtrosVista['buscar'] = $filtro['buscar'];
         }
-
         if (isset($filtro['materias_pendientes']) && $filtro['materias_pendientes']) {
             if ($filtro['materias_pendientes'] === 'con_pendientes') {
                 $filtrosVista['materias_pendientes'] = 'Con materias pendientes';
@@ -264,7 +228,6 @@ class InscripcionProsecucionController extends Controller
                 $filtrosVista['materias_pendientes'] = 'Sin materias pendientes';
             }
         }
-
         $pdf = Pdf::loadView(
             'admin.transacciones.inscripcion_prosecucion.reportes.reporte_general_prosecucion',
             [
@@ -272,10 +235,8 @@ class InscripcionProsecucionController extends Controller
                 'filtros' => $filtrosVista,
             ]
         );
-
         $pdf->setPaper('A4', 'landscape');
         $pdf->setOption('isPhpEnabled', true);
-
         return $pdf->stream('reporte_general_prosecucion.pdf');
     }
 }

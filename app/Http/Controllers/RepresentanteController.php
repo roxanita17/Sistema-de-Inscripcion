@@ -7,6 +7,7 @@ use App\Models\Persona;
 use App\Models\Representante;
 use App\Models\RepresentanteLegal;
 use App\Models\Estado;
+use App\Models\Pais;
 use App\Models\Municipio;
 use App\Models\Localidad;
 use App\Models\Banco;
@@ -64,7 +65,8 @@ class RepresentanteController extends Controller
             'estado',
             'municipios',
             'localidads',
-            'ocupacion'
+            'ocupacion',
+            'pais'  // Agregar relación de país
         ]);
 
         if (!empty($buscar)) {
@@ -82,7 +84,7 @@ class RepresentanteController extends Controller
 
         Log::info('Filtros recibidos:', [
             'es_legal' => request('es_legal'),
-            'grado_id' => request('grado_id'), 
+            'grado_id' => request('grado_id'),
             'seccion_id' => request('seccion_id'),
             'todos_los_params' => request()->all()
         ]);
@@ -105,8 +107,8 @@ class RepresentanteController extends Controller
                     ->from('inscripcions')
                     ->where(function ($q) use ($gradoId) {
                         $q->where('inscripcions.padre_id', DB::raw('representantes.id'))
-                          ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
-                          ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
+                            ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
+                            ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
                     })
                     ->where('inscripcions.grado_id', $gradoId);
             });
@@ -121,8 +123,8 @@ class RepresentanteController extends Controller
                     ->join('seccions', 'seccions.id', '=', 'inscripcions.seccion_id')
                     ->where(function ($q) use ($seccionNombre) {
                         $q->where('inscripcions.padre_id', DB::raw('representantes.id'))
-                          ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
-                          ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
+                            ->orWhere('inscripcions.madre_id', DB::raw('representantes.id'))
+                            ->orWhere('inscripcions.representante_legal_id', DB::raw('representantes.id'));
                     })
                     ->where('seccions.nombre', $seccionNombre);
             });
@@ -145,11 +147,15 @@ class RepresentanteController extends Controller
         $grados = \App\Models\Grado::where('status', true)
             ->orderBy('numero_grado')
             ->get();
-            
+
         $secciones = \App\Models\Seccion::where('status', true)
             ->select('nombre')
             ->distinct()
             ->orderBy('nombre')
+            ->get();
+
+        $paises = \App\Models\Pais::where('status', true)
+            ->orderBy('nameES', 'ASC')
             ->get();
 
         if ($representantes->count() > 0) {
@@ -170,7 +176,7 @@ class RepresentanteController extends Controller
             ]);
         }
 
-        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo', 'grados', 'secciones'));
+        return view("admin.representante.representante", compact('representantes', 'anioEscolarActivo', 'grados', 'secciones', 'paises'));
     }
 
     public function eliminados()
@@ -230,19 +236,23 @@ class RepresentanteController extends Controller
     public function mostrarFormulario()
     {
         $from = request('from');
+
+        // Cargar solo datos necesarios para selects de ubicación
+        $paises = Pais::where('status', true)->orderBy('nameES', 'ASC')->get();
         $estados = Estado::with(['municipio' => function ($query) {
             $query->with(['localidades'])->orderBy('nombre_municipio', 'ASC');
         }])->orderBy('nombre_estado', 'ASC')->get();
 
-        $bancos = Banco::WHERE('status', true)->orderBy("nombre_banco", "ASC")->get();
-        $prefijos_telefono = PrefijoTelefono::WHERE('status', true)->orderBy("prefijo", "ASC")->get();
-        $ocupaciones = Ocupacion::WHERE('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
-        $tipoDocumentos = TipoDocumento::WHERE('status', true)->where('nombre', '!=', 'CE')->get();
-        $generos = Genero::WHERE('status', true)->get();
+        // Cargar otros datos necesarios
+        $bancos = Banco::where('status', true)->orderBy("nombre_banco", "ASC")->get();
+        $prefijos_telefono = PrefijoTelefono::where('status', true)->orderBy("prefijo", "ASC")->get();
+        $ocupaciones = Ocupacion::where('status', true)->orderBy('nombre_ocupacion', 'ASC')->get();
+        $tipoDocumentos = TipoDocumento::where('status', true)->where('nombre', '!=', 'CE')->get();
+        $generos = Genero::where('status', true)->get();
 
         return view(
             "admin.representante.formulario_representante",
-            compact('estados', 'bancos', 'prefijos_telefono', 'ocupaciones', 'tipoDocumentos', 'generos', 'from')
+            compact('paises', 'estados', 'bancos', 'prefijos_telefono', 'ocupaciones', 'tipoDocumentos', 'generos', 'from')
         );
     }
 
@@ -258,6 +268,8 @@ class RepresentanteController extends Controller
             }
         ])->findOrFail($id);
 
+
+        $paises = Pais::where('status', true)->orderBy('nameES', 'ASC')->get();
         $estados = Estado::where('status', true)
             ->with(['municipio' => function ($query) {
                 $query->where('status', true)
@@ -302,6 +314,7 @@ class RepresentanteController extends Controller
 
         return view("admin.representante.modales.editarModal", compact(
             'representante',
+            'paises',
             'estados',
             'municipios',
             'bancos',
@@ -398,8 +411,8 @@ class RepresentanteController extends Controller
         $persona = $representante->persona;
         $isLegalRepresentative = in_array($request->input('tipo_representante'), [
             'legal',
-            'solo_representante', 
-            'progenitor_padre_representante', 
+            'solo_representante',
+            'progenitor_padre_representante',
             'progenitor_madre_representante'
         ]);
 
@@ -438,6 +451,7 @@ class RepresentanteController extends Controller
             ],
             'sexo-representante' => 'required|exists:generos,id',
             'tipo-ci-representante' => 'required|exists:tipo_documentos,id',
+            'pais_id' => 'required|exists:paises,id',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
             'parroquia_id' => 'required|exists:localidads,id',
@@ -472,7 +486,7 @@ class RepresentanteController extends Controller
                 'rules' => $rules,
                 'request_all' => $request->all()
             ]);
-            
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error de validación',
@@ -546,6 +560,7 @@ class RepresentanteController extends Controller
             ]);
 
             $representanteData = [
+                'pais_id' => $request->input('pais_id'),
                 'estado_id' => $request->input('estado_id'),
                 'municipio_id' => $request->input('municipio_id'),
                 'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia') ?: $request->input('parroquia_id'),
@@ -571,7 +586,6 @@ class RepresentanteController extends Controller
                 } else {
                     $representante->legal()->create($legalData);
                 }
-
             } else {
                 if ($representante->legal) {
                     $representante->legal()->delete();
@@ -731,6 +745,8 @@ class RepresentanteController extends Controller
                 ?: $request->input('sexo')
                 ?: $request->input('genero-padre'),
             'tipo_numero_documento_persona'   => $request->input('tipo-ci-representante'),
+
+            'pais_id'     => $request->input('idPais-representante') ?: $request->input('idPais-padre') ?: $request->input('idPais'),
             'estado_id'    => $request->input('idEstado-representante') ?: $request->input('idEstado-padre') ?: $request->input('idEstado'),
             'municipio_id' => $request->input('idMunicipio-representante') ?: $request->input('idMunicipio-padre') ?: $request->input('idMunicipio'),
             'parroquia_id' => $request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia'),
@@ -767,6 +783,7 @@ class RepresentanteController extends Controller
             Log::info('Es petición AJAX/JSON');
 
             $request->merge([
+                'pais_id' => (int) $request->input('pais_id'),
                 'estado_id' => (int) $request->input('estado_id'),
                 'municipio_id' => (int) $request->input('municipio_id'),
                 'parroquia_id' => (int) ($request->input('idparroquia-representante') ?: $request->input('idparroquia-padre') ?: $request->input('idparroquia') ?: $request->input('parroquia_id')),
@@ -813,6 +830,7 @@ class RepresentanteController extends Controller
                 'telefono-representante' => 'required|string|max:20',
                 'sexo-representante' => 'required|exists:generos,id',
                 'tipo-ci-representante' => 'required|exists:tipos_documentos,id',
+                'pais_id' => 'required|exists:pais,id',
                 'estado_id' => 'required|exists:estados,id',
                 'municipio_id' => 'required|exists:municipios,id',
                 'idparroquia-representante' => 'required_without_all:idparroquia-padre,idparroquia|exists:parroquias,id',
@@ -826,6 +844,7 @@ class RepresentanteController extends Controller
                 'codigo-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
                 'serial-patria' => 'required_unless:carnet-patria-afiliado,0|nullable|string|max:20',
                 'tipo_numero_documento_persona' => 'required|exists:tipo_documentos,id',
+                'lugar-nacimiento-padre' => 'nullable|string|max:255|regex:/^[A-Za-záéíóúÁÉÍÓÚñÑ\s,]+$/',
             ];
 
             $messages = [
@@ -836,6 +855,8 @@ class RepresentanteController extends Controller
                 'telefono-representante.required' => 'El teléfono es obligatorio',
                 'sexo-representante.required' => 'El género es obligatorio',
                 'tipo-ci-representante.required' => 'El tipo de documento es obligatorio',
+                'pais_id.required' => 'El país es obligatorio',
+                'pais_id.exists' => 'El país seleccionado no es válido',
                 'estado_id.required' => 'El estado es obligatorio',
                 'municipio_id.required' => 'El municipio es obligatorio',
                 'idparroquia-representante.required_without_all' => 'La parroquia es obligatoria',
@@ -861,6 +882,7 @@ class RepresentanteController extends Controller
                 'estado_id.required' => 'El estado es obligatorio',
                 'municipio_id.required' => 'El municipio es obligatorio',
                 'tipo_numero_documento_persona.required' => 'El tipo de documento es obligatorio',
+                'lugar-nacimiento-padre.regex' => 'El lugar de nacimiento solo puede contener letras, espacios y comas',
             ];
 
             $validator = \Validator::make($request->all(), $rules, $messages);
@@ -897,6 +919,7 @@ class RepresentanteController extends Controller
         }
 
         Log::info('Campos geográficos recibidos:', [
+            'pais_id' => $request->pais_id,
             'estado_id' => $request->estado_id,
             'municipio_id' => $request->municipio_id,
             'parroquia_id' => $request->parroquia_id
@@ -971,8 +994,8 @@ class RepresentanteController extends Controller
 
             Log::info('Datos procesados para madre:', $datosPersona);
         }
-
-        elseif ($request->input('estado_madre') === 'Ausente' && $tipoRepresentante === 'progenitor_padre_representante') {
+        // Si el padre es el representante y la madre está ausente
+        elseif ($tipoRepresentante === 'progenitor_padre_representante') {
             $datosPersona = array_merge($datosPersona, [
                 "primer_nombre" => $request->input('primer-nombre-padre'),
                 "segundo_nombre" => $request->input('segundo-nombre-padre'),
@@ -986,12 +1009,10 @@ class RepresentanteController extends Controller
                 "localidad_id" => $request->input('idparroquia-padre'),
                 "telefono" => $request->input('telefono-padre'),
                 "tipo_documento_id" => $request->input('tipo-ci-padre'),
-                "direccion" => $request->input('direccion-padre') ?? $request->input('direccion-habitacion'),
+                "direccion" => $request->input('lugar-nacimiento-padre') ?? $request->input('direccion-padre') ?? $request->input('direccion-habitacion'),
                 "email" => $request->input('correo-padre') ?? $request->input('correo-representante'),
             ]);
-        }
-
-        else {
+        } else {
             $datosPersona = array_merge($datosPersona, [
                 "primer_nombre" => $request->input('primer-nombre-representante'),
                 "segundo_nombre" => $request->input('segundo-nombre-representante'),
@@ -1022,8 +1043,7 @@ class RepresentanteController extends Controller
 
         if ($request->has('status')) {
             $status = $request->input('status');
-        }
-        elseif (!$request->representante_id) {
+        } elseif (!$request->representante_id) {
             if ($tipoRepresentante === 'progenitor_padre_representante') {
                 $status = 2;
             } elseif ($tipoRepresentante === 'progenitor_madre_representante') {
@@ -1032,6 +1052,7 @@ class RepresentanteController extends Controller
         }
 
         $datosRepresentante = [
+            "pais_id" => $request->pais_id,
             "estado_id" => $request->estado_id ?: 1,
             "municipio_id" => $request->municipio_id,
             "parroquia_id" => $request->parroquia_id,
@@ -1061,7 +1082,7 @@ class RepresentanteController extends Controller
 
         $datosRepresentanteLegal = [
             "banco_id" => $request->banco_id && $request->banco_id != '' ? $request->banco_id : null,
-            "parentesco" => $request->parentesco ?: 'No especificado',
+            "parentesco" => $request->parentesco ?: ($request->parentesco_hidden ?: 'No especificado'),
             "correo_representante" => $request->correo_representante ?: '',
             "pertenece_a_organizacion_representante" => $perteneceOrganizacion,
             "cual_organizacion_representante" => $cualOrganizacion,
@@ -1072,6 +1093,34 @@ class RepresentanteController extends Controller
             "estados_representante" => $request->estados_representante ?: '',
             "tipo_cuenta" => $this->obtenerTipoCuenta($request->input('tipo-cuenta', '')),
         ];
+
+        $serialCarnet = (string) ($datosRepresentanteLegal['serial_carnet_patria_representante'] ?? '');
+        $codigoCarnet = (string) ($datosRepresentanteLegal['codigo_carnet_patria_representante'] ?? '');
+
+        if (strlen($serialCarnet) > 20 || strlen($codigoCarnet) > 20) {
+            $errors = [];
+            if (strlen($serialCarnet) > 20) {
+                $errors['serial-patria'] = ['El serial del carnet de la patria no puede exceder 20 caracteres.'];
+            }
+            if (strlen($codigoCarnet) > 20) {
+                $errors['codigo-patria'] = ['El código del carnet de la patria no puede exceder 20 caracteres.'];
+            }
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Error de validación',
+                    'errors' => $errors,
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        $datosRepresentanteLegal['serial_carnet_patria_representante'] = substr($serialCarnet, 0, 20);
+        $datosRepresentanteLegal['codigo_carnet_patria_representante'] = substr($codigoCarnet, 0, 20);
 
         if ($request->representante_legal_id) {
             $datosRepresentanteLegal["id"] = $request->representante_legal_id;
@@ -1239,8 +1288,7 @@ class RepresentanteController extends Controller
                             'tipo_representante' => $tipoRepresentante
                         ]);
                     }
-                }
-                elseif (
+                } elseif (
                     $request->input('estado_padre') === 'Presente' &&
                     $request->input('numero_documento-padre') === $request->input('numero_documento-representante')
                 ) {
@@ -1281,8 +1329,7 @@ class RepresentanteController extends Controller
                     'usando_datos_formulario' => $datosCompletos ? 'Sí' : 'No',
                     'usando_datos_bd' => !$datosCompletos ? 'Sí' : 'No'
                 ]);
-            }
-            elseif (!empty($datosPersona["id"])) {
+            } elseif (!empty($datosPersona["id"])) {
                 $persona = Persona::with(['representante', 'representante.legal'])->find($datosPersona["id"]);
                 if ($persona) {
                     $isUpdate = true;
@@ -1364,6 +1411,16 @@ class RepresentanteController extends Controller
 
                 $telefono = $request->input('telefono-representante');
 
+                // Si el representante legal es padre/madre, los campos del representante suelen estar deshabilitados
+                // y NO se envían en el request; por eso tomamos el teléfono desde el progenitor.
+                if (is_null($telefono)) {
+                    if ($tipoRepresentante === 'progenitor_padre_representante') {
+                        $telefono = $request->input('telefono-padre');
+                    } elseif ($tipoRepresentante === 'progenitor_madre_representante') {
+                        $telefono = $request->input('telefono');
+                    }
+                }
+
                 Log::info('Valor de teléfono encontrado en el request:', ['telefono-representante' => $telefono]);
 
                 if (is_null($telefono) && isset($datosPersona['telefono'])) {
@@ -1371,23 +1428,28 @@ class RepresentanteController extends Controller
                     Log::info('Usando teléfono existente de datosPersona:', ['telefono' => $telefono]);
                 }
 
-                $datosPersona = array_merge([
-                    'primer_nombre' => $datosPersona['primer_nombre'] ?? 'SIN NOMBRE',
-                    'primer_apellido' => $datosPersona['primer_apellido'] ?? 'SIN APELLIDO',
-                    'fecha_nacimiento' => $datosPersona['fecha_nacimiento'] ?? now()->subYears(18)->format('Y-m-d'),
-                    'tipo_documento_id' => $datosPersona['tipo_documento_id'] ?? 1,
-                    'genero_id' => $datosPersona['genero_id'] ?? 1,
-                    'localidad_id' => $datosPersona['localidad_id'] ?? 1,
-                    'prefijo_id' => $datosPersona['prefijo_id'] ?? 1,
-                    'telefono' => $telefono,
-                    'telefono_dos' => $request->input('telefono_dos'),
-                    'prefijo_dos_id' => $request->input('prefijo_dos'),
-                    'status' => true
-                ], $datosPersona);
+                // Asegurar que los campos requeridos tengan valores por defecto
+                $datosPersonaFiltrados = array_filter($datosPersona, static fn($v) => $v !== null);
 
+                $datosPersona = array_merge([
+                    'primer_nombre' => 'SIN NOMBRE',
+                    'primer_apellido' => 'SIN APELLIDO',
+                    'fecha_nacimiento' => now()->subYears(18)->format('Y-m-d'),
+                    'tipo_documento_id' => 1,
+                    'genero_id' => 1,
+                    'localidad_id' => 1,
+                    'prefijo_id' => 1,
+                    'telefono' => $telefono,
+                    'telefono_dos' => $request->input('telefono_dos-representante') ?: $request->input('telefono_dos') ?: $request->input('telefono_dos_padre'),
+                    'prefijo_dos_id' => $request->input('prefijo_dos-representante') ?: $request->input('prefijo_dos') ?: $request->input('prefijo_dos_padre'),
+                    'status' => true
+                ], $datosPersonaFiltrados);
+
+                // 1. Crear persona con asignación directa
                 Log::info('Creando nueva persona con datos:', [
                     'datos_persona' => $datosPersona
                 ]);
+
 
                 $persona = new Persona();
                 $persona->fill($datosPersona);
@@ -1460,6 +1522,7 @@ class RepresentanteController extends Controller
                     'tipo_representante' => $request->input('tipo_representante')
                 ]);
 
+                $representanteMadre->pais_id = $request->input('idPais');
                 $representanteMadre->estado_id = $request->input('idEstado');
 
                 if ($esRepresentanteLegal) {
@@ -1515,7 +1578,7 @@ class RepresentanteController extends Controller
                 $personaPadre->prefijo_dos_id   = $request->input('prefijo_dos_padre');
                 $personaPadre->tipo_documento_id = $request->input('tipo-ci-padre');
                 $personaPadre->prefijo_id       = $request->input('prefijo-padre');
-                $personaPadre->direccion        = $request->input('direccion-padre');
+                $personaPadre->direccion        = $request->input('lugar-nacimiento-padre') ?? $request->input('direccion-padre');
                 $personaPadre->status           = $personaPadre->status ?? true;
 
                 Log::info('Datos del padre a guardar:', [
@@ -1539,6 +1602,7 @@ class RepresentanteController extends Controller
                     'tipo_representante' => $request->input('tipo_representante')
                 ]);
 
+                $representantePadre->pais_id = $request->input('idPais-padre');
                 $representantePadre->estado_id    = $request->input('idEstado-padre');
                 $representantePadre->municipio_id = $request->input('idMunicipio-padre');
                 $representantePadre->parroquia_id = $request->input('idparroquia-padre');
@@ -1687,7 +1751,7 @@ class RepresentanteController extends Controller
             ], 404);
         }
 
-        $representante->load(['persona', 'legal']);
+        $representante->load(['persona', 'legal', 'pais', 'estado', 'municipios', 'localidads']);
 
         return response()->json([
             'status' => 'success',
@@ -1786,8 +1850,7 @@ class RepresentanteController extends Controller
                 if (method_exists($representante->legal, 'delete')) {
                     $deletedLegal = $representante->legal->delete();
                     Log::info('Datos legales marcados como eliminados (soft delete):', ['deleted' => $deletedLegal]);
-                }
-                elseif (isset($representante->legal->status)) {
+                } elseif (isset($representante->legal->status)) {
                     $representante->legal->status = 0;
                     $legalSaved = $representante->legal->save();
                     Log::info('Estado de datos legales actualizado a inactivo:', ['saved' => $legalSaved]);
@@ -1839,7 +1902,7 @@ class RepresentanteController extends Controller
     public function verificarnumero_documento(Request $request): JsonResponse
     {
         $numero_documento = $request->input('numero_documento');
-        $personaId = $request->input('persona_id'); 
+        $personaId = $request->input('persona_id');
         if (!$numero_documento) {
             return response()->json([
                 'status' => 'error',
@@ -1909,7 +1972,7 @@ class RepresentanteController extends Controller
         $pdf->setPaper('A4', 'landscape');
         $pdf->setOption('margin-bottom', '25mm');
         $pdf->setOption('isPhpEnabled', true);
-        
+
         return $pdf->stream('representantes.pdf');
     }
 }

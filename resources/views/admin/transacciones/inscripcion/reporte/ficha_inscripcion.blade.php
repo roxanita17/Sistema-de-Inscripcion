@@ -384,6 +384,15 @@
                     </td>
                 </tr>
                 <tr>
+                    <td><strong>Lugar de Nacimiento:</strong></td>
+                    <td>
+                        <strong>País:</strong> {{ $datosCompletos['persona_alumno']['localidad']['estadoThroughMunicipio']['pais']['nameES'] ?? 'N/A' }} |
+                        <strong>Estado:</strong> {{ $datosCompletos['persona_alumno']['localidad']['estadoThroughMunicipio']['nombre_estado'] ?? 'N/A' }} |
+                        <strong>Municipio:</strong> {{ $datosCompletos['persona_alumno']['localidad']['municipio']['nombre_municipio'] ?? 'N/A' }} |
+                        <strong>Localidad:</strong> {{ $datosCompletos['persona_alumno']['localidad']['nombre_localidad'] ?? 'N/A' }}
+                    </td>
+                </tr>
+                <tr>
                     <td><strong>Características Físicas:</strong></td>
                     <td>
                         <strong>Estatura:</strong> {{ $datosCompletos['alumno']['estatura'] ?? 'N/A' }} cm |
@@ -460,11 +469,7 @@
                             <tr>
                                 <td><strong>Teléfono:</strong></td>
                                 <td>{{ $datosCompletos['persona_madre']['telefono'] ?? 'N/A' }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Correo Electrónico:</strong></td>
-                                <td>{{ $datosCompletos['persona_madre']['email'] ?? 'N/A' }}</td>
-                            </tr>
+                            </tr>            
                             <tr>
                                 <td><strong>Conviven con el estudiante:</strong></td>
                                 <td>{{ $datosCompletos['madre']['convivenciaestudiante_representante'] ?? 'N/A' }}</td>
@@ -506,10 +511,6 @@
                             <tr>
                                 <td><strong>Teléfono:</strong></td>
                                 <td>{{ $datosCompletos['persona_padre']['telefono'] ?? 'N/A' }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Correo Electrónico:</strong></td>
-                                <td>{{ $datosCompletos['persona_padre']['email'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Conviven con el estudiante:</strong></td>

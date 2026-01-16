@@ -12,17 +12,14 @@ use App\Models\AnioEscolar;
 class LocalidadIndex extends Component
 {
     use WithPagination;
-
     public $nombre_localidad;
-    public $estado_id; 
+    public $estado_id;
     public $municipio_id;
     public $localidad_id;
     public $pais_id;
     public $updateMode = false;
     public $search = '';
-
-    public $anioEscolarActivo = false; 
-
+    public $anioEscolarActivo = false;
     public $paises = [];
     public $estados = [];
     public $municipios = [];
@@ -68,7 +65,6 @@ class LocalidadIndex extends Component
         return view('livewire.admin.localidad-index', compact('localidades'));
     }
 
-
     public function paginationView()
     {
         return 'vendor.livewire.bootstrap-custom';
@@ -85,7 +81,6 @@ class LocalidadIndex extends Component
             ->where('status', true)
             ->orderBy('nombre_estado')
             ->get();
-
         $this->estado_id = null;
         $this->municipio_id = null;
         $this->municipios = [];
@@ -97,10 +92,8 @@ class LocalidadIndex extends Component
             ->where('status', true)
             ->orderBy('nombre_municipio')
             ->get();
-
         $this->municipio_id = null;
     }
-
 
     public function resetInputFields()
     {
@@ -115,66 +108,51 @@ class LocalidadIndex extends Component
     public function store()
     {
         $this->validate();
-
         if (Localidad::where('nombre_localidad', $this->nombre_localidad)->where('status', true)->exists()) {
             session()->flash('error', 'Ya existe una localidad con ese nombre.');
             return;
         }
-
         Localidad::create([
             'nombre_localidad' => $this->nombre_localidad,
             'municipio_id' => $this->municipio_id,
             'status' => true,
         ]);
-
         session()->flash('success', 'Localidad creada correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetInputFields();
     }
 
-
-
     public function edit($id)
-{
-    $localidad = Localidad::with('municipio.estado.pais')->findOrFail($id);
-
-    $this->localidad_id = $localidad->id;
-    $this->nombre_localidad = $localidad->nombre_localidad;
-
-    $this->pais_id = $localidad->municipio->estado->pais->id ?? null;
-    $this->estado_id = $localidad->municipio->estado->id ?? null;
-    $this->municipio_id = $localidad->municipio_id;
-
-    if ($this->pais_id) {
-        $this->estados = Estado::where('pais_id', $this->pais_id)
-            ->where('status', true)
-            ->orderBy('nombre_estado')
-            ->get();
+    {
+        $localidad = Localidad::with('municipio.estado.pais')->findOrFail($id);
+        $this->localidad_id = $localidad->id;
+        $this->nombre_localidad = $localidad->nombre_localidad;
+        $this->pais_id = $localidad->municipio->estado->pais->id ?? null;
+        $this->estado_id = $localidad->municipio->estado->id ?? null;
+        $this->municipio_id = $localidad->municipio_id;
+        if ($this->pais_id) {
+            $this->estados = Estado::where('pais_id', $this->pais_id)
+                ->where('status', true)
+                ->orderBy('nombre_estado')
+                ->get();
+        }
+        if ($this->estado_id) {
+            $this->municipios = Municipio::where('estado_id', $this->estado_id)
+                ->where('status', true)
+                ->orderBy('nombre_municipio')
+                ->get();
+        }
+        $this->updateMode = true;
     }
-
-    if ($this->estado_id) {
-        $this->municipios = Municipio::where('estado_id', $this->estado_id)
-            ->where('status', true)
-            ->orderBy('nombre_municipio')
-            ->get();
-    }
-
-    $this->updateMode = true;
-}
-
-
 
     public function update()
     {
         $this->validate();
-
         $localidad = Localidad::findOrFail($this->localidad_id);
         $localidad->update([
             'nombre_localidad' => $this->nombre_localidad,
             'municipio_id' => $this->municipio_id,
-
         ]);
-
         session()->flash('success', 'Localidad actualizada correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetInputFields();
@@ -184,7 +162,6 @@ class LocalidadIndex extends Component
     {
         $localidad = Localidad::findOrFail($id);
         $localidad->update(['status' => false]);
-
         session()->flash('success', 'Localidad eliminada correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetPage();

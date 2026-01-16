@@ -12,40 +12,33 @@ use App\Exceptions\InscripcionException;
 use App\Models\Localidad;
 use Illuminate\Database\QueryException;
 
-
 class Inscripcion extends Component
 {
     protected InscripcionService $inscripcionService;
     protected DocumentoService $documentoService;
     protected InscripcionRepository $inscripcionRepository;
     protected RepresentanteRepository $representanteRepository;
-
     public $alumnoId;
     public $padreId;
     public $madreId;
     public $representanteLegalId;
     public $gradoId;
     public $seccion_id = null;
-
     public $infoCupos = null;
     public $alumnoSeleccionado = null;
     public $padreSeleccionado = null;
     public $madreSeleccionado = null;
     public $representanteLegalSeleccionado = null;
- 
     public $paisId = null;
     public bool $esVenezolano = true;
     public $estado_id = null;
     public $municipio_id = null;
     public $localidad_id = null;
-    
     public $otroPaisNombre = '';
-
     public $paises = [];
     public $estados = [];
     public $municipios = [];
     public $localidades = [];
-
     public $padres = [];
     public $madres = [];
     public $representantes = [];
@@ -53,7 +46,6 @@ class Inscripcion extends Component
     public $grados = [];
     public $secciones = [];
     public $expresiones_literarias = [];
-
     public $documentos = [];
     public array $documentosFaltantes = [];
     public ?string $observaciones = null;
@@ -64,24 +56,17 @@ class Inscripcion extends Component
     public $anio_escolar_id;
     public $acepta_normas_contrato = false;
     public $seleccionarTodos = false;
-
     public $discapacidades = [];
     public $discapacidadSeleccionada = null;
     public $discapacidadesAgregadas = [];
-
     public $documentosDisponibles = [];
     public $documentosEtiquetas = [];
-
     public string $estadoDocumentos = '';
     public string $statusInscripcion = '';
-
     public bool $esPrimerGrado = true;
-
     public string $tipo_inscripcion = 'nuevo_ingreso';
-
     public bool $gradoSinCupos = false;
     public string $mensajeCupos = '';
-
     public function boot(
         InscripcionService $inscripcionService,
         DocumentoService $documentoService,
@@ -127,8 +112,6 @@ class Inscripcion extends Component
             'otroPaisNombre' => !$this->esVenezolano && !$this->institucion_procedencia_id
                 ? 'required|string|max:255'
                 : 'nullable',
-
-
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'gradoId' => [
                 'required',
@@ -284,7 +267,6 @@ class Inscripcion extends Component
             $this->requiereAutorizacion(),
             $this->esPrimerGrado
         );
-
         $this->documentosFaltantes = $evaluacion['faltantes'];
         $this->estadoDocumentos = $evaluacion['estado_documentos'];
         $this->statusInscripcion = $evaluacion['status_inscripcion'];
@@ -299,11 +281,9 @@ class Inscripcion extends Component
             !$this->padreId && !$this->madreId,
             $this->esPrimerGrado
         );
-
         if ($obsDocumentos) {
             $observaciones[] = $obsDocumentos;
         }
-
         $obsDiscapacidades = $this->generarObservacionesDiscapacidades();
         if ($obsDiscapacidades) {
             $observaciones[] = $obsDiscapacidades;
@@ -316,20 +296,16 @@ class Inscripcion extends Component
         $nombres = [];
         if ($this->alumnoId) {
             $alumno = \App\Models\Alumno::with('discapacidades')->find($this->alumnoId);
-
             if ($alumno) {
                 $nombres = $alumno->discapacidades
                     ->pluck('nombre_discapacidad')
                     ->toArray();
             }
         }
-
         foreach ($this->discapacidadesAgregadas as $discapacidad) {
             $nombres[] = $discapacidad['nombre'];
         }
-
         $nombres = array_unique($nombres);
-
         if (empty($nombres)) {
             return null;
         }
@@ -343,14 +319,11 @@ class Inscripcion extends Component
             $this->esVenezolano = true;
             return;
         }
-
         $pais = \App\Models\Pais::find($value);
         $this->esVenezolano = $pais->nameES === 'Venezuela';
-
         if ($this->esVenezolano) {
             $this->otroPaisNombre = '';
             $this->institucion_procedencia_id = null;
-
             $this->estados = \App\Models\Estado::where('status', true)
                 ->orderBy('nombre_estado', 'asc')
                 ->get();
@@ -373,12 +346,10 @@ class Inscripcion extends Component
         $this->institucion_procedencia_id = null;
         $this->localidades = [];
         $this->instituciones = [];
-
         if (!$value) {
             $this->municipios = [];
             return;
         }
-
         $this->municipios = \App\Models\Municipio::where('estado_id', $value)
             ->where('status', true)
             ->orderBy('nombre_municipio')
@@ -390,12 +361,10 @@ class Inscripcion extends Component
         $this->localidad_id = null;
         $this->institucion_procedencia_id = null;
         $this->instituciones = [];
-
         if (!$value) {
             $this->localidades = [];
             return;
         }
-
         $this->localidades = \App\Models\Localidad::where('municipio_id', $value)
             ->where('status', true)
             ->orderBy('nombre_localidad')
@@ -423,26 +392,21 @@ class Inscripcion extends Component
         $this->resetErrorBag('gradoId');
         $this->gradoSinCupos = false;
         $this->mensajeCupos = '';
-
         if (!$value) {
             $this->infoCupos = null;
             $this->secciones = [];
             $this->seccion_id = null;
             return;
         }
-
         $this->infoCupos = $this->inscripcionService->obtenerInfoCupos($value);
-
         if ($this->infoCupos['cupos_disponibles'] <= 0) {
             $this->gradoSinCupos = true;
             $this->mensajeCupos = 'Este nivel academico ha alcanzado el máximo de cupos disponibles.';
             $this->addError('gradoId', $this->mensajeCupos);
             return;
         }
-
         $grado = \App\Models\Grado::find($value);
         $this->esPrimerGrado = ((int) $grado->numero_grado === 1);
-
         if (!$this->esPrimerGrado) {
             $this->secciones = \App\Models\Seccion::where('grado_id', $value)
                 ->where('status', true)
@@ -452,7 +416,6 @@ class Inscripcion extends Component
             $this->secciones = [];
             $this->seccion_id = null;
         }
-
         $this->validarDocumentosEnTiempoReal();
         $this->evaluarDocumentosVisual();
         $this->recalcularObservaciones();
@@ -466,12 +429,10 @@ class Inscripcion extends Component
             'discapacidadSeleccionada.required' => 'Debe seleccionar una discapacidad.',
             'discapacidadSeleccionada.exists' => 'La discapacidad seleccionada no es válida.'
         ]);
-
         if (collect($this->discapacidadesAgregadas)->contains('id', $this->discapacidadSeleccionada)) {
             $this->addError('discapacidadSeleccionada', 'Esta discapacidad ya ha sido agregada.');
             return;
         }
-
         $discapacidad = \App\Models\Discapacidad::find($this->discapacidadSeleccionada);
         if ($discapacidad) {
             $this->discapacidadesAgregadas[] = [
@@ -511,11 +472,9 @@ class Inscripcion extends Component
         if ($this->esVenezolano) {
             return $this->institucion_procedencia_id;
         }
-
         if (trim($this->otroPaisNombre) === '') {
             return null;
         }
-
         $institucion = \App\Models\InstitucionProcedencia::firstOrCreate(
             [
                 'pais_id' => $this->paisId,
@@ -526,7 +485,6 @@ class Inscripcion extends Component
                 'localidad_id' => null,
             ]
         );
-
         return $institucion->id;
     }
 
@@ -558,11 +516,7 @@ class Inscripcion extends Component
             ]);
             return;
         }
-
-
-
         $this->validate();
-
         try {
             $dto = $this->crearInscripcionDTO();
             $inscripcion = $this->inscripcionService->registrar($dto);
@@ -573,7 +527,6 @@ class Inscripcion extends Component
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
         } catch (InscripcionException $e) {
-
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'No se puede completar la inscripción',
@@ -588,8 +541,20 @@ class Inscripcion extends Component
             $this->addError('acepta_normas_contrato', 'Debe aceptar las normas para continuar.');
             return;
         }
-
         if (!$this->validarRepresentantes()) {
+            return;
+        }
+        if (!empty($this->documentosFaltantes)) {
+            $mensaje = collect($this->documentosFaltantes)
+                ->map(fn($doc) => $this->documentosEtiquetas[$doc] ?? $doc)
+                ->implode('<br>');
+
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Documentos incompletos',
+                'html' => $mensaje
+            ]);
+
             return;
         }
         $this->dispatch('solicitarDatosAlumno');
@@ -615,7 +580,6 @@ class Inscripcion extends Component
                 $dto,
                 $this->discapacidadesAgregadas
             );
-
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
         } catch (InscripcionException $e) {
@@ -710,7 +674,6 @@ class Inscripcion extends Component
             'observaciones' => $this->observaciones,
             'documentos' => $this->documentos,
         ]);
-
         return redirect()->route('representante.formulario', ['from' => 'inscripcion']);
     }
 

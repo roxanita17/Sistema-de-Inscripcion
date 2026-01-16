@@ -1,4 +1,3 @@
-{{-- Modal de restauracion --}}
 <div class="modal fade" id="confirmarRestaurar{{ $datos->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-modern">
@@ -18,15 +17,14 @@
                 </p>
             </div>
             <div class="modal-footer-delete">
-                <form action="{{ route('admin.transacciones.inscripcion.restore', $datos->id) }}" method="POST" class="w-100">
+                <form action="{{ route('admin.transacciones.inscripcion.restore', $datos->id) }}" method="POST"
+                    class="w-100">
                     @csrf
                     @method('GET')
-
                     <div class="footer-buttons">
                         <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
                             Cancelar
                         </button>
-
                         <button type="submit" class="btn-modal-delete">
                             Restaurar
                         </button>

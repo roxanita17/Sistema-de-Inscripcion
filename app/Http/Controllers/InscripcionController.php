@@ -16,6 +16,8 @@ use App\Models\InstitucionProcedencia;
 use App\Models\EntradasPercentil;
 use App\Models\Seccion;
 use App\Models\InscripcionNuevoIngreso;
+use App\Exceptions\InscripcionException;
+
 
 class InscripcionController extends Controller
 {
@@ -109,15 +111,11 @@ class InscripcionController extends Controller
             'prosecucion',
             'anioEscolar'
         ])
-            // FILTRO POR AÑO ESCOLAR ACTIVO (por defecto)
             ->when($anioEscolarActivo, function ($q) use ($anioEscolarActivo) {
                 $q->where('anio_escolar_id', $anioEscolarActivo->id);
             })
-            // Filtro por grado
             ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
-            // Filtro por sección
             ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
-            // Filtro por tipo de inscripción
             ->when($tipoInscripcion, function ($q) use ($tipoInscripcion) {
                 if ($tipoInscripcion === 'nuevo_ingreso') {
                     $q->whereNotNull('nuevo_ingreso_id');
@@ -125,7 +123,6 @@ class InscripcionController extends Controller
                     $q->whereNotNull('prosecucion_id');
                 }
             })
-            // Búsqueda
             ->when($buscar, function ($q) use ($buscar) {
                 $q->whereHas('alumno.persona', function ($qq) use ($buscar) {
                     $qq->where('primer_nombre', 'like', "%$buscar%")
@@ -133,15 +130,12 @@ class InscripcionController extends Controller
                         ->orWhere('numero_documento', 'like', "%$buscar%");
                 });
             })
-            // Filtro por status de inscripción
             ->when($status, function ($q) use ($status) {
                 $q->where('status', $status);
             })
-
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
-
         return view('admin.transacciones.inscripcion.index', [
             'anioEscolarActivo' => $anioEscolarActivo ? true : false,
             'anioEscolar' => $anioEscolarActivo,
@@ -183,7 +177,6 @@ class InscripcionController extends Controller
         $grados = Grado::all();
         $expresion_literaria = ExpresionLiteraria::all();
         $institucion_procedencia = InstitucionProcedencia::all();
-
         return view('admin.transacciones.inscripcion.createProsecucion', compact('personas', 'generos', 'tipoDocumentos', 'alumnos', 'grados'));
     }
 
@@ -193,7 +186,6 @@ class InscripcionController extends Controller
             ->where('status', true)
             ->orderBy('nombre')
             ->get(['id', 'nombre']);
-
         return response()->json($secciones);
     }
 
@@ -209,7 +201,6 @@ class InscripcionController extends Controller
             return redirect()->route('admin.transacciones.inscripcion.index')
                 ->with('error', 'Esta inscripción no es de nuevo ingreso.');
         }
-
         return view('admin.transacciones.inscripcion.edit', compact('inscripcion'));
     }
 
@@ -229,39 +220,26 @@ class InscripcionController extends Controller
     {
         $inscripcion = Inscripcion::with([
             'alumno.persona',
+            'alumno.persona.localidad.estado.pais',
             'alumno.ordenNacimiento',
             'alumno.lateralidad',
             'alumno.discapacidades',
             'alumno.etniaIndigena',
-
             'grado',
             'seccionAsignada',
-
             'padre.persona',
             'madre.persona',
-
             'representanteLegal.representante.persona',
             'representanteLegal.banco',
-
             'nuevoIngreso.institucionProcedencia',
             'nuevoIngreso.expresionLiteraria',
-
-
         ])->findOrFail($id);
-
-
         $datosCompletos = $inscripcion->obtenerDatosCompletos();
-
-        // Obtener el año escolar activo
         $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->first();
-
         $pdf = PDF::loadview('admin.transacciones.inscripcion.reporte.ficha_inscripcion', compact('datosCompletos', 'anioEscolarActivo'));
-
-        // Permite ejecutar <script type="text/php"> en la vista (numeración de páginas)
         $pdf->setOption('isPhpEnabled', true);
-
         return $pdf->stream('ficha_inscripcion.pdf');
     }
 
@@ -270,29 +248,21 @@ class InscripcionController extends Controller
         $anioEscolarActivo = \App\Models\AnioEscolar::where('status', 'Activo')
             ->orWhere('status', 'Extendido')
             ->first();
-
         $filtro = $request->all();
-
         if (!isset($filtro['anio_escolar_id']) && $anioEscolarActivo) {
             $filtro['anio_escolar_id'] = $anioEscolarActivo->id;
         }
-
         $nuevoIngresos = InscripcionNuevoIngreso::reporteGeneralPDF($filtro);
-
-        // Ordenamos por la primera letra del primer apellido
         $nuevoIngresos = $nuevoIngresos->sortBy(function ($item) {
             $primerApellido = $item->inscripcion->alumno->persona->primer_apellido ?? '';
             return strtoupper(substr($primerApellido, 0, 1));
         });
-
         if ($nuevoIngresos->isEmpty()) {
             return response('No se encontraron inscripciones de nuevo ingreso', 404);
         }
-
         $filtrosVista = [
             'anio_escolar' => $anioEscolarActivo ? ($anioEscolarActivo->nombre ?? $anioEscolarActivo->anio ?? null) : null,
         ];
-
         $pdf = Pdf::loadView(
             'admin.transacciones.inscripcion.reporte.reporte_general_nuevo_ingreso',
             [
@@ -300,10 +270,8 @@ class InscripcionController extends Controller
                 'filtros' => $filtrosVista,
             ]
         );
-
         $pdf->setPaper('A4', 'landscape');
         $pdf->setOption('isPhpEnabled', true);
-
         return $pdf->stream('reporte_general_nuevo_ingreso.pdf');
     }
 }

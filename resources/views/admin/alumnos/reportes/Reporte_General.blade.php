@@ -296,6 +296,7 @@
                     <th>Fecha Nac.</th>
                     <th>Edad</th>
                     <th>Sexo</th>
+                    <th>País</th>
                     <th>Discapacidad</th>
                 </tr>
             </thead>
@@ -314,6 +315,7 @@
                             @endif
                         </td>
                         <td class="text-center">{{ $alumno['genero'] }}</td>
+                        <td class="text-center">{{ $alumno['pais'] }}</td>
                         <td class="text-center">{{ $alumno['discapacidad'] }}</td>
                     </tr>
                 @empty

@@ -10,30 +10,22 @@ use App\Models\Pais;
 class PaisIndex extends Component
 {
     use WithPagination;
-
     public $nameES;
     public $iso2;
     public $pais_id;
     public $updateMode = false;
     public $search = '';
     public $anioEscolarActivo = false;
-
     protected $rules = [
         'nameES' => 'required|string|max:255',
         'iso2' => 'required|string|max:3',
     ];
 
-    /**
-     * Se ejecuta al montar el componente
-     */
     public function mount()
     {
         $this->verificarAnioEscolar();
     }
 
-    /**
-     * Verifica si hay un año escolar activo
-     */
     private function verificarAnioEscolar()
     {
         $this->anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
@@ -41,9 +33,6 @@ class PaisIndex extends Component
             ->exists();
     }
 
-    /**
-     * Verifica antes de ejecutar acciones
-     */
     private function verificarAccion()
     {
         if (!$this->anioEscolarActivo) {
@@ -62,7 +51,6 @@ class PaisIndex extends Component
             })
             ->orderBy('nameES', 'asc')
             ->paginate(10);
-
         return view('livewire.admin.pais-index', compact('paises'));
     }
 
@@ -86,25 +74,19 @@ class PaisIndex extends Component
 
     public function store()
     {
-        // Verificar año escolar antes de crear
         if (!$this->verificarAccion()) {
             return;
         }
-
         $this->validate();
-
-        // Evitar duplicados
         if (Pais::where('nameES', $this->nameES)->where('status', true)->orWhere('iso2', $this->iso2)->exists()) {
             session()->flash('error', 'Ya existe un país con ese nombre o código ISO.');
             return;
         }
-
         Pais::create([
             'nameES' => $this->nameES,
             'iso2' => $this->iso2,
             'status' => true,
         ]);
-
         session()->flash('success', 'País creado correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetInputFields();
@@ -112,11 +94,9 @@ class PaisIndex extends Component
 
     public function edit($id)
     {
-        // Verificar año escolar antes de editar
         if (!$this->verificarAccion()) {
             return;
         }
-
         $paises = Pais::findOrFail($id);
         $this->pais_id = $id;
         $this->iso2 = $paises->iso2;
@@ -126,16 +106,12 @@ class PaisIndex extends Component
 
     public function update()
     {
-        // Verificar año escolar antes de actualizar
         if (!$this->verificarAccion()) {
             return;
         }
-
         $this->validate();
-
         $paises = Pais::find($this->pais_id);
         $paises->update(['nameES' => $this->nameES, 'iso2' => $this->iso2]);
-
         session()->flash('success', 'País actualizado correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetInputFields();
@@ -143,17 +119,13 @@ class PaisIndex extends Component
 
     public function destroy($id)
     {
-        // Verificar año escolar antes de eliminar
         if (!$this->verificarAccion()) {
             return;
         }
-
         $paises = Pais::findOrFail($id);
         $paises->update(['status' => false]);
-
         session()->flash('success', 'País eliminado correctamente.');
         $this->dispatch('cerrarModal');
         $this->resetPage();
     }
-    
 }

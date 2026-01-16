@@ -160,6 +160,7 @@ class AlumnoController extends Controller
             ->with([
                 'persona.tipoDocumento',
                 'persona.genero',
+                'persona.localidad.municipio.estado.pais',
                 'discapacidades',
                 'ordenNacimiento',
                 'lateralidad',
@@ -218,6 +219,7 @@ class AlumnoController extends Controller
         $query->with([
             'persona.tipoDocumento:id,nombre',
             'persona.genero:id,genero',
+            'persona.localidad.estado.pais:id,nameES',
             'discapacidades:id,nombre_discapacidad',
             'etniaIndigena:id,nombre'
         ]);
@@ -240,6 +242,7 @@ class AlumnoController extends Controller
                 'fecha_nacimiento' => $alumno->persona->fecha_nacimiento ?? null,
                 'edad' => $alumno->persona->fecha_nacimiento ? \Carbon\Carbon::parse($alumno->persona->fecha_nacimiento)->age : 'N/A',
                 'genero' => $alumno->persona->genero->genero ?? 'N/A',
+                'pais' => $alumno->persona->localidad->estado->pais->nameES ?? 'N/A',
                 'discapacidad' => $discapacidades ?: 'Ninguna',
                 'etnia_indigena' => $alumno->etniaIndigena->nombre ?? 'No pertenece a ninguna etnia indígena'
             ];

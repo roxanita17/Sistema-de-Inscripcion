@@ -22,43 +22,6 @@
                     <p class="title-subtitle">Formulario de inscripción de estudiantes</p>
                 </div>
             </div>
-            {{-- <div class="header-right" style="width: 15rem">
-                    @if ($infoCupos)
-                        <div class="cupos-box">
-                            <div class="cupos-titulo">
-                                {{ $infoCupos['nombre_grado'] }}
-                            </div>
-
-                            <div class="cupos-datos text-center">
-                                <div>
-                                    <span class="label">Cupos totales</span>
-                                    <span class="valor">{{ $infoCupos['total_cupos'] }}</span>
-                                </div>
-
-                                <div>
-                                    <span class="label">En uso</span>
-                                    <span class="valor">{{ $infoCupos['cupos_ocupados'] }}</span>
-                                </div>
-
-                                <div>
-                                    <span class="label">Disponibles</span>
-                                    <span class="valor">{{ $infoCupos['cupos_disponibles'] }}</span>
-                                </div>
-                            </div>
-
-                            <div class="cupos-barra">
-                                <div class="cupos-barra-progreso
-            {{ $infoCupos['porcentaje_ocupacion'] >= 90
-                ? 'rojo'
-                : ($infoCupos['porcentaje_ocupacion'] >= 70
-                    ? 'amarillo'
-                    : 'verde') }}"
-                                    style="width: {{ $infoCupos['porcentaje_ocupacion'] }}%">
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div> --}}
             <a href="{{ route('admin.transacciones.inscripcion.index') }}" 
                class="btn-create" style="background: var(--gray-500);">
                 <i class="fas fa-arrow-left"></i>
@@ -67,13 +30,11 @@
         </div>
     </div>
 @stop
-
 @section('content')
     <div class="main-container">
         @php
             $anoActivo = App\Models\AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
         @endphp
-
         @if (!$anoActivo)
             <div class="alert alert-warning">
                 <strong>No hay año escolar activo.</strong>

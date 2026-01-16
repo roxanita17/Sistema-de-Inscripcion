@@ -39,7 +39,6 @@
             @endif
         </div>
     @endif
-
     <div class="card-modern mb-4">
         <div class="card-header-modern">
             <div class="header-left">
@@ -66,7 +65,10 @@
                         <option value="">Seleccione un estudiante</option>
                         @foreach ($alumnos as $alumno)
                             @php
-                                $anioActual = \App\Models\AnioEscolar::whereIn('status',[ 'Activo', 'Extendido'])->first();
+                                $anioActual = \App\Models\AnioEscolar::whereIn('status', [
+                                    'Activo',
+                                    'Extendido',
+                                ])->first();
                                 $inscripcionAnterior = $alumno->ultimaInscripcionAntesDe($anioActual->id);
                                 $gradoAnterior = $inscripcionAnterior?->grado?->numero_grado;
                             @endphp
@@ -85,7 +87,6 @@
                     @enderror
                 </div>
             </div>
-
             @if ($alumnoSeleccionado && $gradoAnteriorId)
                 <div class="card-modern mb-4 mt-4">
                     <div class="card-header-modern">
@@ -129,9 +130,7 @@
                                                 PADRE
                                             </span>
                                         </div>
-
                                         <div class="representante-grid">
-                                            <!-- Columna Izquierda -->
                                             <div class="representante-column">
                                                 <div class="info-block">
                                                     <div class="info-block-header">
@@ -162,8 +161,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <!-- Columna Derecha -->
                                             <div class="representante-column">
                                                 <div class="info-block">
                                                     <div class="info-block-header">
@@ -188,12 +185,10 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
                                 @endif
-
                                 @if ($ins->madre)
                                     <div class="representante-card">
                                         <div class="representante-badge-wrapper">
@@ -204,7 +199,6 @@
                                         </div>
 
                                         <div class="representante-grid">
-                                            <!-- Columna Izquierda -->
                                             <div class="representante-column">
                                                 <div class="info-block">
                                                     <div class="info-block-header">
@@ -235,8 +229,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <!-- Columna Derecha -->
                                             <div class="representante-column">
                                                 <div class="info-block">
                                                     <div class="info-block-header">
@@ -261,12 +253,10 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
                                 @endif
-
                                 @if ($ins->representanteLegal)
                                     <div class="representante-card">
                                         <div class="representante-badge-wrapper">
@@ -275,9 +265,7 @@
                                                 REPRESENTANTE LEGAL
                                             </span>
                                         </div>
-
                                         <div class="representante-grid">
-                                            <!-- Columna Izquierda -->
                                             <div class="representante-column">
                                                 <div class="info-block">
                                                     <div class="info-block-header">
@@ -308,8 +296,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <!-- Columna Derecha -->
                                             <div class="representante-column">
                                                 <div class="info-block">
                                                     <div class="info-block-header">
@@ -334,11 +320,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
-
-                                        {{-- Información Legal Adicional --}}
                                         <div class="legal-info-section">
                                             <div class="info-block-header">
                                                 <i class="fas fa-file-contract"></i>
@@ -398,7 +381,6 @@
                             </div>
                         </div>
                     @endif
-
                     <div class="alert alert-info mt-3">
                         <div class="d-flex align-items-center gap-2">
                             <i class="fas fa-info-circle fa-2x"></i>
@@ -416,7 +398,6 @@
             @endif
         </div>
     </div>
-
     @if ($alumnoSeleccionado)
         <div class="card-modern mb-4">
             @php
@@ -446,7 +427,8 @@
                                 </div>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i>
-                                    El estudiante tiene areas de formacion reprobadas de niveles academicos anteriores. Debe
+                                    El estudiante tiene areas de formacion reprobadas de niveles academicos anteriores.
+                                    Debe
                                     aprobarlas todas;
                                     de lo contrario, deberá repetir el nivel academico completo.
                                     <b>MARQUE</b> las áreas de formación que el estudiante <b>APROBÓ</b>
@@ -462,14 +444,12 @@
                                         </label>
                                     </div>
                                 </div>
-
                                 @foreach ($materiasArrastradas as $materia)
                                     <div class="col-md-6 mb-3">
                                         <div class="checkbox-item-modern border-warning bg-warning-light">
                                             <input type="checkbox" wire:model.live="materiasSeleccionadas"
                                                 value="{{ $materia['id'] }}" id="materia_{{ $materia['id'] }}"
                                                 class="checkbox-modern checkbox-warning">
-
                                             <label for="materia_{{ $materia['id'] }}" class="checkbox-label-modern">
                                                 <div class="d-flex justify-content-between align-items-center w-100">
                                                     <div>
@@ -523,7 +503,6 @@
                                             <input type="checkbox" wire:model.live="materiasSeleccionadas"
                                                 value="{{ $materia['id'] }}" id="materia_{{ $materia['id'] }}"
                                                 class="checkbox-modern">
-
                                             <label for="materia_{{ $materia['id'] }}" class="checkbox-label-modern">
                                                 <div class="d-flex justify-content-between align-items-center w-100">
                                                     <div>
@@ -655,7 +634,6 @@
                         <div class="checkbox-item-modern">
                             <input type="checkbox" id="acepta_normas_contrato"
                                 wire:model.live="acepta_normas_contrato" class="checkbox-modern">
-
                             <label for="acepta_normas_contrato" class="checkbox-label-modern">
                                 He leído y acepto
                                 <a class="text-primary ms-1" data-bs-toggle="modal"
@@ -701,18 +679,14 @@
     @push('js')
         <script>
             document.addEventListener('livewire:init', () => {
-
                 const select = $('#alumno_select');
-
                 select.selectpicker();
-
                 select.on('changed.bs.select', function() {
                     const alumnoId = $(this).val();
                     Livewire.dispatch('seleccionarAlumno', {
                         alumnoId
                     });
                 });
-
                 Livewire.on('refreshSelectAlumno', () => {
                     select.selectpicker('destroy');
                     select.selectpicker();

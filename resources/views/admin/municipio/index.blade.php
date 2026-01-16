@@ -1,7 +1,5 @@
 @extends('adminlte::page')
-
 @section('title', 'Gestión de Municipios')
-
 @section('content_header')
     <div class="content-header-modern">
         <div class="header-content">
@@ -23,13 +21,11 @@
         </div>
     </div>
 @stop
-
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
-
 @section('content')
     @livewire('admin.municipio-index')
 @endsection

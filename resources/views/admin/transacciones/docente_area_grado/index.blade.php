@@ -251,7 +251,8 @@
                                             title="{{ optional($asign->grupoEstable)->nombre_grupo_estable ?? 'N/A' }} - Grado: {{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }}">
                                             <i class="fas fa-users"></i>
                                             {{ optional($asign->grupoEstable)->nombre_grupo_estable ?? 'N/A' }}
-                                            ({{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }})
+                                            -
+                                            {{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }}
                                         </span>
                                         @if (!$loop->last)
                                             <br>
