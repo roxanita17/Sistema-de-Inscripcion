@@ -367,12 +367,13 @@
                             </span>
                         </button>
                     </div>
-
                 </div>
-                <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
-                    <i class="fas fa-info-circle"></i>
-                    Si no hay asignaciones de areas de formacion y estudios para el docente puede agregar una
-                    <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">"aquí"</a>
+                <small class="form-text-modern d-flex align-items-center gap-1">
+                    <i class="fas fa-plus-circle text-primary"></i>
+                    <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                        data-bs-target="#modalCrearAsignacion">
+                        Crear nueva asignacion
+                    </a>
                 </small>
             </div>
         </div>
@@ -587,7 +588,7 @@
         </div>
 
         <div class="card-modern">
-        
+
             <div class="card-body-modern">
                 <div class="table-wrapper">
                     <table class="table-modern">

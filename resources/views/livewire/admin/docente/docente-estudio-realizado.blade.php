@@ -69,10 +69,12 @@
                             {{ $message }}
                         </div>
                     @enderror
-                    <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
-                        <i class="fas fa-info-circle"></i>
-                        Si no hay estudios registrados agrega uno
-                        <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearEstudio">"aquí"</a>
+                    <small class="form-text-modern d-flex align-items-center gap-1">
+                        <i class="fas fa-plus-circle text-primary"></i>
+                        <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#modalCrearEstudio">
+                            Crear nuevo estudio
+                        </a>
                     </small>
                 </div>
 
