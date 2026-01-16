@@ -10,19 +10,19 @@ class ProsecucionAreaSeeder extends Seeder
 {
     public function run(): void
     {
-        { 
-
-            // Crear datos específicos de nuevo ingreso
-            ProsecucionArea::create([
+             $prosecucionesAreas = [
+            // Alumno 1: 1° → 2°
+            [
+                'id' => 1,
                 'inscripcion_prosecucion_id' => 1,
                 'grado_area_formacion_id' => 1,
-                'status' => 'Pendiente',
-            ]);
-           
-
+                'status' => 'Aprobado',
+            ],
             
-        }
+        ];
 
-        $this->command->info('Seeder de Areas de Prosecucion ejecutado correctamente.');
+        foreach ($prosecucionesAreas as $prosecucionArea) {
+            ProsecucionArea::create($prosecucionArea);
+        }
     }
 }

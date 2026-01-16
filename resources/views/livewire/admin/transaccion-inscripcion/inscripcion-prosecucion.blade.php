@@ -545,6 +545,7 @@
             </div>
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
+
                     @if ($mensajeSugerencia)
                         <div class="alert alert-info mt-2">
                             <i class="fas fa-lightbulb"></i>

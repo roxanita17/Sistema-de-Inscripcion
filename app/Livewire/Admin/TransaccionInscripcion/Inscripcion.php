@@ -92,8 +92,47 @@ class Inscripcion extends Component
             ->orderBy('nombre_estado', 'asc')
             ->get();
         $this->paises = \App\Models\Pais::where('status', true)
-        ->orderBy('nameES', 'asc')
-        ->get();
+            ->orderBy('nameES', 'asc')
+            ->get();
+        $this->autoseleccionarUbicacionPorDefecto();
+    }
+
+    public function autoseleccionarUbicacionPorDefecto()
+    {
+        $pais = \App\Models\Pais::where('status', true)
+            ->where('nameES', 'Venezuela')
+            ->first();
+
+        if (!$pais) {
+            return;
+        }
+
+        $this->paisId = $pais->id;
+        $this->updatedPaisId($this->paisId);
+
+        $estado = \App\Models\Estado::where('status', true)
+            ->where('pais_id', $pais->id)
+            ->where('nombre_estado', 'Portuguesa')
+            ->first();
+
+        if (!$estado) {
+            return;
+        }
+
+        $this->estado_id = $estado->id;
+        $this->updatedEstadoId($this->estado_id);
+
+        $municipio = \App\Models\Municipio::where('status', true)
+            ->where('estado_id', $estado->id)
+            ->where('nombre_municipio', 'Araure')
+            ->first();
+
+        if (!$municipio) {
+            return;
+        }
+
+        $this->municipio_id = $municipio->id;
+        $this->updatedMunicipioId($this->municipio_id);
     }
 
     public function rules()
@@ -532,7 +571,7 @@ class Inscripcion extends Component
                 'title' => 'No se puede completar la inscripción',
                 'message' => $e->getMessage()
             ]);
-        } 
+        }
     }
 
     public function finalizar()
@@ -588,7 +627,7 @@ class Inscripcion extends Component
                 'title' => 'No se puede completar la inscripción',
                 'message' => $e->getMessage()
             ]);
-        } 
+        }
     }
 
     private function validarRepresentantes(): bool

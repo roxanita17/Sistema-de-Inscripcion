@@ -263,7 +263,8 @@
                                                 <i class="fas fa-layer-group"></i>Nivel Academico Anterior
                                             </span>
                                             <span class="detail-value fw-bold text-center">
-                                                {{ $datos->inscripcion->grado->numero_grado ?? 'N/A' }}°
+                                                {{ $datos->inscripcionAnterior?->grado?->numero_grado ?? 'N/A' }}°
+                                                
                                             </span>
                                         </div>
                                     </div>
@@ -275,7 +276,7 @@
                                     <div class="card-body bg-success">
                                         <div class="detail-item">
                                             <span class="detail-label ">
-                                                <i class="fas fa-arrow-right "></i> Nivel Academico de Promoción
+                                                <i class="fas fa-arrow-right "></i> Nivel de Promoción
                                             </span>
                                             <span class="detail-value fw-bold text-center">
                                                 {{ $datos->grado->numero_grado ?? 'N/A' }}°

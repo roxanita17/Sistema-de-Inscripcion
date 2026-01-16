@@ -250,7 +250,7 @@ class MunicipioSeeder extends Seeder
             ['id' => 298, 'estado_id' => 18, 'nombre_municipio' => 'Arismendi'],
             ['id' => 299, 'estado_id' => 18, 'nombre_municipio' => 'Benítez'],
             ['id' => 300, 'estado_id' => 18, 'nombre_municipio' => 'Bermúdez'],
-            ['id' => 301, 'estado_id' => 18, 'nombre_municipio' => 'Bolívar'],
+            ['id' => 301, 'estado_id' => 18, 'nombre_municipio' => 'Bolívar'], 
             ['id' => 302, 'estado_id' => 18, 'nombre_municipio' => 'Cajigal'],
             ['id' => 303, 'estado_id' => 18, 'nombre_municipio' => 'Cruz Salmerón Acosta'],
             ['id' => 304, 'estado_id' => 18, 'nombre_municipio' => 'Libertador'],

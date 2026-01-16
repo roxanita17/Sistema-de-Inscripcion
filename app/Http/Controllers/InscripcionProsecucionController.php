@@ -46,21 +46,15 @@ class InscripcionProsecucionController extends Controller
             'seccion',
             'anioEscolar',
         ])
-            ->when(
-                $anioEscolarActivo,
-                fn($q) =>
-                $q->where('anio_escolar_id', $anioEscolarActivo->id)
-            )
-            ->when(
-                $gradoId,
-                fn($q) =>
-                $q->where('grado_id', $gradoId)
-            )
-            ->when(
-                $seccionId,
-                fn($q) =>
-                $q->where('seccion_id', $seccionId)
-            )
+            ->whereHas('inscripcion', function ($q) use ($anioEscolarActivo) {
+                $q->where('tipo_inscripcion', 'prosecucion');
+
+                if ($anioEscolarActivo) {
+                    $q->where('anio_escolar_id', $anioEscolarActivo->id);
+                }
+            })
+            ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
+            ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
             ->when($buscar, function ($q) use ($buscar) {
                 $q->whereHas('inscripcion.alumno.persona', function ($qq) use ($buscar) {
                     $qq->where('primer_nombre', 'like', "%$buscar%")
@@ -68,26 +62,26 @@ class InscripcionProsecucionController extends Controller
                         ->orWhere('numero_documento', 'like', "%$buscar%");
                 });
             })
-            ->when($status !== null && $status !== '', function ($q) use ($status) {
-                $q->where('status', $status);
-            })
+            ->when($status, fn($q) => $q->where('status', $status))
             ->when($materiasPendientes, function ($q) use ($materiasPendientes) {
                 if ($materiasPendientes === 'con_pendientes') {
-                    $q->whereHas('prosecucionAreas', function ($subQ) {
-                        $subQ->where('status', 'pendiente');
-                    });
+                    $q->whereHas(
+                        'prosecucionAreas',
+                        fn($subQ) =>
+                        $subQ->where('status', 'pendiente')
+                    );
                 } elseif ($materiasPendientes === 'sin_pendientes') {
-                    $q->whereDoesntHave('prosecucionAreas', function ($subQ) {
-                        $subQ->where('status', 'pendiente');
-                    });
+                    $q->whereDoesntHave(
+                        'prosecucionAreas',
+                        fn($subQ) =>
+                        $subQ->where('status', 'pendiente')
+                    );
                 }
             })
-            ->when($status, function ($q) use ($status) {
-                $q->where('status', $status);
-            })
             ->orderByDesc('created_at')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
+
+
         return view('admin.transacciones.inscripcion_prosecucion.index', [
             'anioEscolarActivo' => (bool) $anioEscolarActivo,
             'anioEscolar' => $anioEscolarActivo,

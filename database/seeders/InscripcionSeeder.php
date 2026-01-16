@@ -4,75 +4,200 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Inscripcion;
-use App\Models\InscripcionNuevoIngreso;
 use App\Models\AnioEscolar;
-use App\Models\InscripcionProsecucion;
-use Carbon\Carbon;
 
 class InscripcionSeeder extends Seeder
 {
+
     public function run(): void
     {
-        $anioEscolar = AnioEscolar::first();
+        $anioAnterior = AnioEscolar::find(1);
 
-        if (!$anioEscolar) {
-            $this->command->warn('No hay año escolar, seeder cancelado.');
+        if (!$anioAnterior) {
+            $this->command->error('No existe el año escolar con ID 1');
             return;
         }
 
-        for ($i = 1; $i <= 10; $i++) {
-
-            // Crear inscripción
-            $inscripcion = Inscripcion::create([
-                'anio_escolar_id' => rand(1, 3),
-                'alumno_id' => $i,
+        $inscripciones = [
+            // ============================================
+            // Anio Escolar 1
+            // ============================================
+            [
+                'id' => 1,
+                'anio_escolar_id' => 1,
+                'alumno_id' => 1,
                 'grado_id' => 1,
-                'seccion_id' => null,
-
+                'seccion_id' => 1,
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
-
                 'tipo_inscripcion' => 'nuevo_ingreso',
-
-                'documentos' => [
-                    'partida_nacimiento',
-                    'boletin',
-                    'fotos'
-                ],
-
-                'estado_documentos' => 'Pendiente',
-                'observaciones' => 'Inscripción por nuevo ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
                 'acepta_normas_contrato' => true,
                 'status' => 'Activo',
-            ]);
-
-            // Crear datos específicos de nuevo ingreso
-            InscripcionNuevoIngreso::create([
-                'inscripcion_id' => $inscripcion->id,
-                'numero_zonificacion' => $i,
-                'institucion_procedencia_id' => rand(1, 3),
-                'expresion_literaria_id' => rand(1, 3),
-                'anio_egreso' => Carbon::create(2024, 7, 15),
-            ]);
-        }
-        // Crear datos específicos de nuevo ingreso
-        InscripcionProsecucion::create(
+            ],
             [
-                'inscripcion_id' => 1,
-                'promovido' => true,
-                'grado_id' => 2,
+                'id' => 2,
+                'anio_escolar_id' => 1,
+                'alumno_id' => 2,
+                'grado_id' => 1,
                 'seccion_id' => 2,
-                'repite_grado' => false,
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
                 'acepta_normas_contrato' => true,
-                'anio_escolar_id' => 2,
-                'observaciones' => 'Inscripción por nuevo ingreso',
                 'status' => 'Activo',
-            ]
+            ],
+            [
+                'id' => 3,
+                'anio_escolar_id' => 1,
+                'alumno_id' => 2,
+                'grado_id' => 1,
+                'seccion_id' => 2,
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
+                'acepta_normas_contrato' => true,
+                'status' => 'Activo',
+            ],
 
-        );
-        
+            // ============================================
+            // Anio escolar 2
+            // ============================================
+            [
+                'id' => 4,
+                'anio_escolar_id' => 2,
+                'alumno_id' => 3,
+                'grado_id' => 2,
+                'seccion_id' => 1, // Sección A
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
+                'acepta_normas_contrato' => true,
+                'status' => 'Activo',
+            ],
+            [
+                'id' => 5,
+                'anio_escolar_id' => 2,
+                'alumno_id' => 4,
+                'grado_id' => 2,
+                'seccion_id' => 2, // Sección B
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
+                'acepta_normas_contrato' => true,
+                'status' => 'Activo',
+            ],
+            [
+                'id' => 6,
+                'anio_escolar_id' => 2,
+                'alumno_id' => 6,
+                'grado_id' => 3,
+                'seccion_id' => 4, // Sección B
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
+                'acepta_normas_contrato' => true,
+                'status' => 'Activo',
+            ],
 
-        $this->command->info('Seeder de Inscripción Nuevo Ingreso ejecutado correctamente.');
+            // ============================================
+            // Anio Escolar 3
+            // ============================================
+            [
+                'id' => 7,
+                'anio_escolar_id' => 3,
+                'alumno_id' => 7,
+                'grado_id' => 1,
+                'seccion_id' => null, 
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
+                'acepta_normas_contrato' => true,
+                'status' => 'Activo',
+            ],
+            [
+                'id' => 8,
+                'anio_escolar_id' => 3,
+                'alumno_id' => 8,
+                'grado_id' => 1,
+                'seccion_id' => null,
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
+                'acepta_normas_contrato' => true,
+                'status' => 'Activo',
+            ],
+            [
+                'id' => 9,
+                'anio_escolar_id' => 3,
+                'alumno_id' => 9,
+                'grado_id' => 1,
+                'seccion_id' => null,
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' =>["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
+                'acepta_normas_contrato' => true,
+                'status' => 'Activo',
+            ],
+            [
+                'id' => 10,
+                'anio_escolar_id' => 3,
+                'alumno_id' => 10,
+                'grado_id' => 1,
+                'seccion_id' => null,
+                'padre_id' => 1,
+                'madre_id' => 2,
+                'representante_legal_id' => 1,
+                'tipo_inscripcion' => 'nuevo_ingreso',
+                'documentos' => ["partida_nacimiento","copia_cedula_representante","copia_cedula_estudiante","boletin_6to_grado","certificado_calificaciones","constancia_aprobacion_primaria","foto_estudiante","foto_representante","carnet_vacunacion","autorizacion_tercero","notas_certificadas","liberacion_cupo"],
+                'estado_documentos' => 'Completo',
+                'observaciones' => 'Sin observaciones',
+                'acepta_normas_contrato' => true,
+                'status' => 'Activo',
+            ],
+
+        ];
+
+        // Insertar las inscripciones
+        foreach ($inscripciones as $inscripcion) {
+            Inscripcion::create($inscripcion);
+        }
+
+        $this->command->info(' Inscripciones del año anterior creadas: 10 registros');
     }
 }

@@ -1152,7 +1152,7 @@ class LocalidadSeeder extends Seeder
             ['municipio_id' => 462, 'nombre_localidad' => 'Santa Rosalía',],
             ['municipio_id' => 462, 'nombre_localidad' => 'Santa Teresa',],
             ['municipio_id' => 462, 'nombre_localidad' => 'Sucre (Catia)',],
-            ['municipio_id' => 462, 'nombre_localidad' => '23 de enero',],
+            ['municipio_id' => 462, 'nombre_localidad' => '23 de enero',], 
 
         ];
         $this->command->info('Localidades insertadas correctamente.');

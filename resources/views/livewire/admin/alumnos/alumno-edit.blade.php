@@ -81,7 +81,7 @@
                                 </span>
                                 @if ($localidad_id)
                                     <span class="info-value">
-                                        {{ $paises->find($pais_id)->nameES ?? ''}},
+                                        {{ $paises->find($pais_id)->nameES ?? '' }},
                                         {{ $estados->find($estado_id)->nombre_estado ?? '' }},
                                         {{ $municipios->find($municipio_id)->nombre_municipio ?? '' }},
                                         {{ $localidades->find($localidad_id)->nombre_localidad ?? '' }}
@@ -589,6 +589,13 @@
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
                             </div>
                         @enderror
+                        <small class="form-text-modern d-flex align-items-center gap-1">
+                            <i class="fas fa-plus-circle text-primary"></i>
+                            <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                                data-bs-target="#modalCrearEstado">
+                                Crear nuevo estado
+                            </a>
+                        </small>
                     </div>
 
                     <div class="col-md-4">
@@ -608,6 +615,13 @@
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
                             </div>
                         @enderror
+                        <small class="form-text-modern d-flex align-items-center gap-1">
+                            <i class="fas fa-plus-circle text-primary"></i>
+                            <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                                data-bs-target="#modalCrearMunicipio">
+                                Crear nuevo municipio
+                            </a>
+                        </small>
                     </div>
 
                     <div class="col-md-4">
@@ -627,11 +641,12 @@
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
                             </div>
                         @enderror
-                        <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
-                            <i class="fas fa-info-circle"></i>
-                            Si no hay localidades registradas agrega una
-                            <a class="text-primary" data-bs-toggle="modal"
-                                data-bs-target="#modalCrearLocalidad">"aquí"</a>
+                        <small class="form-text-modern d-flex align-items-center gap-1">
+                            <i class="fas fa-plus-circle text-primary"></i>
+                            <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                                data-bs-target="#modalCrearLocalidad">
+                                Crear nueva localidad
+                            </a>
                         </small>
                     </div>
                 </div>

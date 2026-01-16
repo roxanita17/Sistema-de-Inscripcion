@@ -65,7 +65,9 @@ class DatabaseSeeder extends Seeder
             RepresentanteSeeder::class,
             RepresentanteLegalSeeder::class,
             InscripcionSeeder::class,
-            ProsecucionAreaSeeder::class,
+            InscripcionNuevoIngresoSeeder::class,
+            InscripcionProsecucionSeeder::class,
+            ProsecucionAreaSeeder::class, 
             /*  DocenteAreaGrado::class, */
         ]);
         $this->command->info('¡Base de datos poblada con éxito!');

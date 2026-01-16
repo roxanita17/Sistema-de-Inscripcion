@@ -670,6 +670,7 @@
                             @error('estado_id')
                                 <div class="invalid-feedback-modern">{{ $message }}</div>
                             @enderror
+
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -720,6 +721,13 @@
                                 <option value="{{ $inst->id }}">{{ $inst->nombre_institucion }}</option>
                             @endforeach
                         </select>
+                        <small class="form-text-modern d-flex align-items-center gap-1">
+                            <i class="fas fa-plus-circle text-primary"></i>
+                            <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                                data-bs-target="#modalCrearInstitucionInscripcion">
+                                Crear nueva institución
+                            </a>
+                        </small>
                     @else
                         <input type="text" wire:model.live="otroPaisNombre" class="form-control-modern"
                             placeholder="Nombre de la institución extranjera">
@@ -868,6 +876,8 @@
     </div>
     @livewire('admin.modales.institucion-procedencia-create')
     @livewire('admin.modales.localidad-create')
+    @livewire('admin.modales.municipio-create')
+    @livewire('admin.modales.estado-create')
 </div>
 
 @push('js')
