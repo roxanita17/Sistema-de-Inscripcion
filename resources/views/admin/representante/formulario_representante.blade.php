@@ -3802,12 +3802,113 @@
                     // Mostrar la sección de representante
                     toggleSeccionRepresentante(true);
 
-                    // Solo limpiar completamente para progenitores, no para "solo representante legal"
+                    // Limpiar campos según el tipo seleccionado
                     if (tipo !== 'solo_representante') {
                         await resetearCamposRepresentante();
                     } else {
-                        // Para "solo representante legal", solo habilitar campos sin limpiar selects
+                        // Para "solo representante legal", realizar limpieza agresiva completa
                         toggleCamposRepresentante(false);
+                        
+                        // Limpieza agresiva adicional para SELECTPICKERS del representante (para evitar residuos visuales)
+                        const selectpickersRepresentante = [
+                            'prefijo-representante',
+                            'prefijo_dos-representante',
+                            'ocupacion-representante',
+                            'parentesco',
+                            'idPais-representante',
+                            'idEstado-representante',
+                            'idMunicipio-representante',
+                            'idparroquia-representante'
+                        ];
+
+                        for (const id of selectpickersRepresentante) {
+                            const select = document.getElementById(id);
+                            if (select) {
+                                // Usar limpieza agresiva para selectpicker
+                                await limpiarSelectPickerEstatico(select, 'Seleccione');
+                                console.log(`[LIMPIEZA EXTRA] Selectpicker ${id} limpiado agresivamente`);
+                            }
+                        }
+
+                        // Limpieza de SELECTS REGULARES del representante
+                        const selectsRegularesRepresentante = [
+                            'tipo-ci-representante',
+                            'sexo-representante'
+                        ];
+
+                        selectsRegularesRepresentante.forEach(id => {
+                            const select = document.getElementById(id);
+                            if (select) {
+                                select.value = '';
+                                select.selectedIndex = -1;
+                                console.log(`[LIMPIEZA EXTRA] Select regular ${id} limpiado`);
+                            }
+                        });
+
+                        // Limpieza de inputs de texto del representante
+                        const inputsRepresentante = [
+                            'numero_documento-representante',
+                            'primer-nombre-representante',
+                            'segundo-nombre-representante', 
+                            'tercer-nombre-representante',
+                            'primer-apellido-representante',
+                            'segundo-apellido-representante',
+                            'fecha-nacimiento-representante',
+                            'lugar-nacimiento-representante',
+                            'direccion-representante',
+                            'telefono-representante',
+                            'telefono_dos-representante',
+                            'correo-representante',
+                            'codigo-patria',
+                            'serial-patria',
+                            'especifique-organizacion',
+                            'direccion-habitacion'
+                        ];
+
+                        inputsRepresentante.forEach(id => {
+                            const input = document.getElementById(id);
+                            if (input) {
+                                input.value = '';
+                                // Limpiar clases de validación si existen
+                                input.classList.remove('is-invalid');
+                                const errorElement = document.getElementById(id + '-error');
+                                if (errorElement) errorElement.textContent = '';
+                                console.log(`[LIMPIEZA EXTRA] Input ${id} limpiado`);
+                            }
+                        });
+
+                        // Limpiar campos ocultos si es necesario
+                        const hiddenFields = ['persona-id-representante', 'representante-id', 'parentesco_hidden'];
+                        hiddenFields.forEach(id => {
+                            const hidden = document.getElementById(id);
+                            if (hidden) hidden.value = '';
+                        });
+
+                        // Limpiar selects sin selectpicker (como tipo-cuenta, banco_id)
+                        const simpleSelects = ['carnet-patria-afiliado', 'tipo-cuenta', 'banco_id'];
+                        simpleSelects.forEach(id => {
+                            const select = document.getElementById(id);
+                            if (select) {
+                                select.value = '';
+                                select.selectedIndex = -1;
+                                console.log(`[LIMPIEZA EXTRA] Select simple ${id} limpiado`);
+                            }
+                        });
+
+                        // Limpiar radio buttons
+                        const radioButtons = document.querySelectorAll('input[name="convive-representante"], input[name="organizacion-representante"]');
+                        radioButtons.forEach(radio => {
+                            radio.checked = false;
+                        });
+
+                        // Ocultar contenedores condicionales si están visibles
+                        const contenedoresCondicionales = ['especifique-organizacion-container'];
+                        contenedoresCondicionales.forEach(id => {
+                            const container = document.getElementById(id);
+                            if (container) container.style.display = 'none';
+                        });
+
+                        console.log('[LIMPIEZA EXTRA] Limpieza completa del representante realizada');
                     }
 
                     // Resetear bandera NUEVAMENTE después del reseteo de campos (por si los selectpickers la afectaron)
