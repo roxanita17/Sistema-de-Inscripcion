@@ -3095,11 +3095,54 @@
                             
                             // PASO 8: Refrescar el selectpicker con validación segura
                             try {
-                                // Verificar que el selectpicker todavía existe antes de refrescar
-                                if ($select.data('selectpicker')) {
-                                    $select.selectpicker('refresh');
+                                // Verificación robusta: asegurar que el selectpicker y sus elementos DOM existen
+                                const selectpickerInstance = $select.data('selectpicker');
+                                if (selectpickerInstance && selectpickerInstance.$element && selectpickerInstance.$element.length > 0) {
+                                    // Verificación adicional: asegurar que el elemento DOM principal existe
+                                    const mainElement = selectpickerInstance.$element[0];
+                                    if (mainElement && document.contains(mainElement)) {
+                                        try {
+                                            $select.selectpicker('refresh');
+                                            console.log(`[${selectId}] [ULTRA] Selectpicker refrescado exitosamente`);
+                                        } catch (refreshError) {
+                                            console.error(`[${selectId}] [ULTRA] Error en refresh:`, refreshError);
+                                            // Intentar recuperación: destruir y recrear
+                                            try {
+                                                $select.selectpicker('destroy');
+                                                $select.selectpicker({
+                                                    liveSearch: true,
+                                                    size: 8,
+                                                    noneResultsText: 'No hay resultados para {0}',
+                                                    selectOnTab: false,
+                                                    showSubtext: false,
+                                                    showIcon: true,
+                                                    width: 'auto'
+                                                });
+                                                selectElement.value = valor;
+                                                console.log(`[${selectId}] [ULTRA] Selectpicker recuperado después de error`);
+                                            } catch (recoveryError) {
+                                                console.error(`[${selectId}] [ULTRA] Error en recuperación:`, recoveryError);
+                                                // Último recurso: establecer valor sin selectpicker
+                                                selectElement.value = valor;
+                                                console.log(`[${selectId}] [ULTRA] Valor establecido sin selectpicker como último recurso`);
+                                            }
+                                        }
+                                    } else {
+                                        console.warn(`[${selectId}] [ULTRA] Elemento DOM principal no existe, re-inicializando...`);
+                                        $select.selectpicker('destroy');
+                                        $select.selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            selectOnTab: false,
+                                            showSubtext: false,
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                        selectElement.value = valor;
+                                    }
                                 } else {
-                                    console.warn(`[${selectId}] [ULTRA] Selectpicker destruido, re-inicializando...`);
+                                    console.warn(`[${selectId}] [ULTRA] Selectpicker destruido o incompleto, re-inicializando...`);
                                     $select.selectpicker({
                                         liveSearch: true,
                                         size: 8,
@@ -3731,11 +3774,105 @@
                 }
             });
 
-            // Actualizar cuando cambie el tipo de representante (solo actualizar parentesco, no carnet de la patria)
+            // Event listener consolidado para tipo_representante (eliminamos listeners duplicados)
             document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    actualizarOpcionesParentesco();
-                    // No actualizamos carnet de la patria aquí para permitir cualquier opción
+                radio.addEventListener('change', async function() {
+                    const tipo = this.value;
+                    console.log(`[TIPO REPRESENTANTE] Cambiando a: ${tipo}`);
+
+                    // Resetear bandera de copia para permitir nuevas copias (MÚLTIPLES INTENTOS)
+                    console.log('[TIPO REPRESENTANTE] Estado ANTES de resetear copiandoDatosProgenitor:', window.copiandoDatosProgenitor);
+                    
+                    // FORZAR RESETEO MÚLTIPLE VECES para asegurar que se resetee
+                    for (let i = 0; i < 3; i++) {
+                        window.copiandoDatosProgenitor = false;
+                        await new Promise(resolve => setTimeout(resolve, 10));
+                    }
+                    
+                    console.log('[TIPO REPRESENTANTE] Bandera copiandoDatosProgenitor RESETEADA MÚLTIPLES VECES');
+                    console.log('[TIPO REPRESENTANTE] Estado DESPUÉS de resetear copiandoDatosProgenitor:', window.copiandoDatosProgenitor);
+
+                    // Actualizar opciones de parentesco con manejo de errores
+                    try {
+                        actualizarOpcionesParentesco();
+                    } catch (error) {
+                        console.warn('[TIPO REPRESENTANTE] Error en actualizarOpcionesParentesco (ignorado):', error);
+                    }
+
+                    // Mostrar la sección de representante
+                    toggleSeccionRepresentante(true);
+
+                    // Solo limpiar completamente para progenitores, no para "solo representante legal"
+                    if (tipo !== 'solo_representante') {
+                        await resetearCamposRepresentante();
+                    } else {
+                        // Para "solo representante legal", solo habilitar campos sin limpiar selects
+                        toggleCamposRepresentante(false);
+                    }
+
+                    // Resetear bandera NUEVAMENTE después del reseteo de campos (por si los selectpickers la afectaron)
+                    window.copiandoDatosProgenitor = false;
+                    console.log('[TIPO REPRESENTANTE] Bandera reseteada DESPUÉS de resetearCamposRepresentante');
+
+                    // Manejar validación de cédula del representante según el tipo
+                    const cedulaRepresentanteInput = document.getElementById('numero_documento-representante');
+                    if (cedulaRepresentanteInput) {
+                        if (tipo === 'progenitor_padre_representante' || tipo === 'progenitor_madre_representante') {
+                            limpiarError(cedulaRepresentanteInput);
+                        } else {
+                            // Para otros tipos, validar la cédula
+                            validarnumero_documento(cedulaRepresentanteInput);
+                        }
+                    }
+
+                    if (tipo === 'solo_representante') {
+                        // Para "Solo Representante Legal", los campos ya están habilitados arriba
+                        console.log('[TIPO REPRESENTANTE] Modo: Solo Representante Legal - campos habilitados sin limpiar');
+                    } else if (tipo === 'progenitor_padre_representante') {
+                        // Para "Padre como Representante Legal"
+                        console.log('[TIPO REPRESENTANTE] Modo: Padre como Representante Legal');
+                        
+                        // Verificar estado del padre y copiar si es presente
+                        const padrePresente = document.querySelector('input[name="estado_padre"]:checked')?.value === 'Presente';
+                        if (padrePresente) {
+                            // Esperar más tiempo a que los selects se estabilicen después del reseteo
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                            
+                            // Resetear bandera UNA VEZ MÁS antes de copiar
+                            window.copiandoDatosProgenitor = false;
+                            console.log('[TIPO REPRESENTANTE] Bandera reseteada ANTES de copiar padre');
+                            
+                            // Establecer parentesco como "Papá" y copiar datos del padre
+                            await establecerParentesco(false);
+                            await copiarDatosPadreARepresentante();
+                        } else {
+                            alert('No se puede seleccionar al padre como representante porque está marcado como ausente.');
+                            document.getElementById('solo_representante').checked = true;
+                            return;
+                        }
+                    } else if (tipo === 'progenitor_madre_representante') {
+                        // Para "Madre como Representante Legal"
+                        console.log('[TIPO REPRESENTANTE] Modo: Madre como Representante Legal');
+                        
+                        // Verificar estado de la madre y copiar si es presente
+                        const madrePresente = document.querySelector('input[name="estado_madre"]:checked')?.value === 'Presente';
+                        if (madrePresente) {
+                            // Esperar más tiempo a que los selects se estabilicen después del reseteo
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                            
+                            // Resetear bandera UNA VEZ MÁS antes de copiar
+                            window.copiandoDatosProgenitor = false;
+                            console.log('[TIPO REPRESENTANTE] Bandera reseteada ANTES de copiar madre');
+                            
+                            // Establecer parentesco como "Mamá" y copiar datos de la madre
+                            await establecerParentesco(true);
+                            await copiarDatosMadreARepresentante();
+                        } else {
+                            alert('No se puede seleccionar a la madre como representante porque está marcada como ausente.');
+                            document.getElementById('solo_representante').checked = true;
+                            return;
+                        }
+                    }
                 });
             });
 
@@ -4406,7 +4543,7 @@
                         }
 
                         // Copiar ubicación
-                        const prefijoUbicacion = esMadre ? '' : '-padre';
+                        const prefijoUbicacion = esMadre ? '-madre' : '-padre';
                         const estado = getElement(`idEstado${prefijoUbicacion}`)?.value;
                         const municipio = getElement(`idMunicipio${prefijoUbicacion}`)?.value;
                         const parroquia = getElement(`idparroquia${prefijoUbicacion}`)?.value;
@@ -4799,7 +4936,7 @@
             }
 
             // Función para establecer el parentesco según el tipo de representante
-            function establecerParentesco(esMadre = false) {
+            async function establecerParentesco(esMadre = false) {
                 // Evitar ejecución durante reseteo para prevenir duplicaciones
                 if (reseteandoRepresentante) {
                     console.log('[PARENTESCO] Omitiendo establecimiento durante reseteo para evitar duplicaciones');
@@ -4821,7 +4958,8 @@
                         return;
                     }
 
-                    parentescoSelect.value = valorParentesco;
+                    // Usar función ultra simple para evitar duplicación de texto en selectpicker
+                    await establecerValorSelectUltraSimple(parentescoSelect, valorParentesco, 100);
                     
                     // Actualizar campo oculto para que se envíe cuando el select está deshabilitado
                     if (parentescoHidden) {
@@ -4885,246 +5023,311 @@
                 }
             });
 
-            // Función para copiar datos de un progenitor al representante (versión ultra optimizada)
-            function copiarDatosProgenitorARepresentante(esMadre = false) {
+            // Función para copiar datos de un progenitor al representante (versión con watchdog y manejo de errores reforzado)
+            async function copiarDatosProgenitorARepresentante(esMadre = false) {
+                console.log('[COPIA WATCHDOG] Iniciando función. Estado actual de copiandoDatosProgenitor:', window.copiandoDatosProgenitor);
+                
+                // CORRECCIÓN: Resetear bandera múltiples veces al inicio para asegurar que esté limpia
+                for (let i = 0; i < 5; i++) {
+                    window.copiandoDatosProgenitor = false;
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                }
+                console.log('[COPIA WATCHDOG] Bandera reseteada múltiples veces al inicio');
+                
                 // Evitar múltiples ejecuciones simultáneas
                 if (window.copiandoDatosProgenitor) {
-                    console.log('Ya se está copiando datos del progenitor, omitiendo...');
+                    console.log('[COPIA WATCHDOG] Ya se está copiando datos del progenitor, omitiendo...');
                     return Promise.resolve();
                 }
                 window.copiandoDatosProgenitor = true;
                 
-                const prefijo = esMadre ? '' : '-padre';
-                const mensajeExito = esMadre ? 'de la madre' : 'del padre';
-
-                console.log(`[COPIA ULTRA] Iniciando copia para ${esMadre ? 'madre' : 'padre'}`);
-                
-                // Limpiar todos los selects del representante antes de copiar
-                const selectsRepresentante = [
-                    'prefijo-representante', 'prefijo_dos-representante', 'ocupacion-representante',
-                    'idPais-representante', 'idEstado-representante', 'idMunicipio-representante', 'idparroquia-representante'
-                ];
-                selectsRepresentante.forEach(id => {
-                    const select = document.getElementById(id);
-                    if (select) {
-                        // Para selects con opciones originales (prefijos, ocupación, país), usar limpieza simple
-                        // Para selects anidados (estado, municipio, parroquia), usar limpieza completa
-                        if (id.includes('prefijo') || id.includes('ocupacion') || id.includes('Pais')) {
-                            select.value = '';
-                            select.selectedIndex = -1;
-                            if ($(select).data('selectpicker')) {
-                                $(select).selectpicker('val', '');
-                                $(select).selectpicker('refresh');
-                            }
-                        } else {
-                            // Para selects de ubicación anidados, usar limpiarSelectCompleto
-                            limpiarSelectCompleto(select);
-                        }
+                // CORRECCIÓN: Timeout de seguridad (watchdog) para resetear la bandera si la función se atasca
+                const watchdogTimeout = setTimeout(() => {
+                    if (window.copiandoDatosProgenitor) {
+                        console.error('[EMERGENCIA] Detectada bandera atascada, reseteando automáticamente...');
+                        window.copiandoDatosProgenitor = false;
                     }
-                });
+                }, 10000); // 10 segundos de timeout
+                
+                try {
+                    const prefijo = esMadre ? '' : '-padre';
+                    const mensajeExito = esMadre ? 'de la madre' : 'del padre';
 
-                console.log(`=== INICIANDO COPIA ULTRA OPTIMIZADA ${mensajeExito.toUpperCase()} ===`);
-
-                // Establecer el parentesco según corresponda
-                establecerParentesco(esMadre);
-
-                // Habilitar temporalmente los campos para poder copiar los valores
-                toggleCamposRepresentante(false);
-
-                // Función para preparar todos los selects (ultra limpieza)
-                const prepararSelectsUltra = () => {
-                    console.log('PREPARACIÓN ULTRA: Limpiando estado residual de todos los selects...');
-                    const selectsPreparar = [
-                        'prefijo-representante',
-                        'prefijo_dos-representante',
-                        // 'idPais-representante', // NO limpiar país - necesita mantener opciones originales
-                        'idEstado-representante',
-                        'idMunicipio-representante',
-                        'idparroquia-representante',
-                        'ocupacion-representante'
+                    console.log(`[COPIA WATCHDOG] Iniciando copia para ${esMadre ? 'madre' : 'padre'}`);
+                    
+                    // Limpieza MENOS AGRESIVA - Solo limpiar valores sin destruir selectpicker
+                    const selectsRepresentante = [
+                        'prefijo-representante', 'prefijo_dos-representante', 'ocupacion-representante',
+                        'idPais-representante', 'idEstado-representante', 'idMunicipio-representante', 'idparroquia-representante'
                     ];
-
-                    selectsPreparar.forEach(selectId => {
-                        const select = document.getElementById(selectId);
-                        if (select) {
-                            const $select = $(select);
+                    for (const id of selectsRepresentante) {
+                        const select = document.getElementById(id);
+                        if (select && select.parentNode) { // VALIDACIÓN: Verificar que existe en el DOM
                             try {
-                                // Verificar si el selectpicker está inicializado antes de operar
-                                if ($select.data('selectpicker')) {
-                                    // Limpieza ultra completa solo si está inicializado
-                                    $select.selectpicker('val', '');
-                                    $select.selectpicker('deselectAll');
-                                    select.value = '';
-                                    select.selectedIndex = -1;
-                                    console.log(`[PREP ULTRA] ${selectId}: Estado residual eliminado completamente`);
+                                const $select = $(select);
+                                if ($select.length && $select[0] && $select.data('selectpicker')) {
+                                    $select.selectpicker('val', '');  // Limpiar selección
+                                    $select.selectpicker('refresh');  // Refrescar visualmente
                                 } else {
-                                    // Si no está inicializado, limpiar solo el select nativo
                                     select.value = '';
                                     select.selectedIndex = -1;
-                                    console.log(`[PREP ULTRA] ${selectId}: Limpieza básica (selectpicker no inicializado)`);
                                 }
+                                console.log(`[LIMPIEZA WATCHDOG] ${id} limpiado (valor solo, opciones preservadas)`);
                             } catch (error) {
-                                console.error(`[PREP ULTRA] ${selectId}: Error durante limpieza:`, error);
+                                console.error(`[LIMPIEZA WATCHDOG] Error al limpiar ${id}:`, error);
                                 // Intentar limpieza básica como fallback
                                 try {
                                     select.value = '';
                                     select.selectedIndex = -1;
                                 } catch (fallbackError) {
-                                    console.error(`[PREP ULTRA] ${selectId}: Error en fallback:`, fallbackError);
+                                    console.error(`[LIMPIEZA WATCHDOG] Error en fallback para ${id}:`, fallbackError);
                                 }
                             }
                         } else {
-                            console.warn(`[PREP ULTRA] ${selectId}: Elemento no encontrado`);
+                            console.warn(`[LIMPIEZA WATCHDOG] Elemento ${id} no encontrado o no está en el DOM`);
                         }
-                    });
-                };
-
-                // Función auxiliar para copiar campos simples
-                const copiarCampoSimple = (origenId, destinoId) => {
-                    const origen = document.getElementById(origenId);
-                    const destino = document.getElementById(destinoId);
-                    if (origen && destino) {
-                        destino.value = origen.value;
-                        destino.dispatchEvent(new Event('input'));
-                        destino.dispatchEvent(new Event('change'));
-                        console.log(`[SIMPLE] ${origenId} -> ${destinoId} = "${origen.value}"`);
-                        return true;
                     }
-                    console.warn(`[SIMPLE] No se pudo copiar: ${origenId} -> ${destinoId}`);
-                    return false;
-                };
 
-                // Función principal asíncrona para la copia ultra optimizada
-                const ejecutarCopiaUltraOptimizada = async () => {
-                    try {
-                        // PASO 0: Preparación ultra completa
-                        prepararSelectsUltra();
-                        await new Promise(resolve => setTimeout(resolve, 300));
+                    console.log(`=== INICIANDO COPIA ULTRA OPTIMIZADA ${mensajeExito.toUpperCase()} ===`);
 
-                        // 1. Copiar campos personales primero
-                        console.log('PASO 1: Copiando campos personales...');
-                        const camposPersonales = [
-                            [`prefijo${prefijo}`, 'prefijo-representante'],
-                            [`tipo-ci${prefijo}`, 'tipo-ci-representante'],
-                            [`numero_documento${prefijo}`, 'numero_documento-representante'],
-                            [`primer-nombre${prefijo}`, 'primer-nombre-representante'],
-                            [`segundo-nombre${prefijo}`, 'segundo-nombre-representante'],
-                            [`tercer-nombre${prefijo}`, 'tercer-nombre-representante'],
-                            [`primer-apellido${prefijo}`, 'primer-apellido-representante'],
-                            [`segundo-apellido${prefijo}`, 'segundo-apellido-representante'],
-                            [`sexo${prefijo}`, 'sexo-representante'],
-                            [esMadre ? 'fechaNacimiento' : 'fecha-nacimiento-padre', 'fecha-nacimiento-representante'],
-                            [`lugar-nacimiento${prefijo}`, 'lugar-nacimiento-representante']
+                    // Establecer el parentesco según corresponda
+                    await establecerParentesco(esMadre);
+
+                    // Habilitar temporalmente los campos para poder copiar los valores
+                    toggleCamposRepresentante(false);
+
+                    // Función para preparar todos los selects (ultra limpieza)
+                    const prepararSelectsUltra = () => {
+                        console.log('PREPARACIÓN ULTRA: Limpiando estado residual de todos los selects...');
+                        const selectsPreparar = [
+                            'prefijo-representante',
+                            'prefijo_dos-representante',
+                            // 'idPais-representante', // NO limpiar país - necesita mantener opciones originales
+                            'idEstado-representante',
+                            'idMunicipio-representante',
+                            'idparroquia-representante',
+                            'ocupacion-representante'
                         ];
 
-                        for (const [origenId, destinoId] of camposPersonales) {
-                            copiarCampoSimple(origenId, destinoId);
-                            await new Promise(resolve => setTimeout(resolve, 100));
-                        }
+                        selectsPreparar.forEach(selectId => {
+                            const select = document.getElementById(selectId);
+                            if (select) {
+                                const $select = $(select);
+                                try {
+                                    // Verificar si el selectpicker está inicializado antes de operar
+                                    if ($select.data('selectpicker')) {
+                                        // Limpieza ultra completa solo si está inicializado
+                                        $select.selectpicker('val', '');
+                                        $select.selectpicker('deselectAll');
+                                        select.value = '';
+                                        select.selectedIndex = -1;
+                                        console.log(`[PREP ULTRA] ${selectId}: Estado residual eliminado completamente`);
+                                    } else {
+                                        // Si no está inicializado, limpiar solo el select nativo
+                                        select.value = '';
+                                        select.selectedIndex = -1;
+                                        console.log(`[PREP ULTRA] ${selectId}: Limpieza básica (selectpicker no inicializado)`);
+                                    }
+                                } catch (error) {
+                                    console.error(`[PREP ULTRA] ${selectId}: Error durante limpieza:`, error);
+                                    // Intentar limpieza básica como fallback
+                                    try {
+                                        select.value = '';
+                                        select.selectedIndex = -1;
+                                    } catch (fallbackError) {
+                                        console.error(`[PREP ULTRA] ${selectId}: Error en fallback:`, fallbackError);
+                                    }
+                                }
+                            } else {
+                                console.warn(`[PREP ULTRA] ${selectId}: Elemento no encontrado`);
+                            }
+                        });
+                    };
 
-                        // 2. Copiar prefijos telefónicos con función ultra simplificada
-                        console.log('PASO 2: Copiando prefijos telefónicos con función ultra...');
+                    // Función auxiliar para copiar campos simples
+                    const copiarCampoSimple = (origenId, destinoId) => {
+                        const origen = document.getElementById(origenId);
+                        const destino = document.getElementById(destinoId);
+                        if (origen && destino) {
+                            destino.value = origen.value;
+                            destino.dispatchEvent(new Event('input'));
+                            destino.dispatchEvent(new Event('change'));
+                            console.log(`[SIMPLE] ${origenId} -> ${destinoId} = "${origen.value}"`);
+                            return true;
+                        }
+                        console.warn(`[SIMPLE] No se pudo copiar: ${origenId} -> ${destinoId}`);
+                        return false;
+                    };
+
+                    // PASO 0: Preparación ultra completa
+                    prepararSelectsUltra();
+                    await new Promise(resolve => setTimeout(resolve, 300));
+
+                    // 1. Copiar campos personales primero
+                    console.log('PASO 1: Copiando campos personales...');
+                    const camposPersonales = [
+                        [`prefijo${prefijo}`, 'prefijo-representante'],
+                        [`tipo-ci${prefijo}`, 'tipo-ci-representante'],
+                        [`numero_documento${prefijo}`, 'numero_documento-representante'],
+                        [`primer-nombre${prefijo}`, 'primer-nombre-representante'],
+                        [`segundo-nombre${prefijo}`, 'segundo-nombre-representante'],
+                        [`tercer-nombre${prefijo}`, 'tercer-nombre-representante'],
+                        [`primer-apellido${prefijo}`, 'primer-apellido-representante'],
+                        [`segundo-apellido${prefijo}`, 'segundo-apellido-representante'],
+                        [`sexo${prefijo}`, 'sexo-representante'],
+                        [esMadre ? 'fechaNacimiento' : 'fecha-nacimiento-padre', 'fecha-nacimiento-representante'],
+                        [`lugar-nacimiento${prefijo}`, 'lugar-nacimiento-representante']
+                    ];
+
+                    for (const [origenId, destinoId] of camposPersonales) {
+                        copiarCampoSimple(origenId, destinoId);
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+
+                    // 2. Copiar prefijos telefónicos con función ultra simplificada
+                    console.log('PASO 2: Copiando prefijos telefónicos con función ultra...');
+                    
+                    // Asegurar que los selects de prefijos tengan opciones antes de copiar
+                    const prefijo1Dest = document.getElementById('prefijo-representante');
+                    const prefijo2Dest = document.getElementById('prefijo_dos-representante');
+                    
+                    // Forzar inicialización desde los selects originales de la página
+                    if (prefijo1Dest) {
+                        console.log('[PREFIJO ULTRA] Estado inicial prefijo1 - options.length:', prefijo1Dest.options.length);
                         
-                        // Asegurar que los selects de prefijos tengan opciones antes de copiar
-                        const prefijo1Dest = document.getElementById('prefijo-representante');
-                        const prefijo2Dest = document.getElementById('prefijo_dos-representante');
-                        
-                        // Forzar inicialización desde los selects originales de la página
-                        if (prefijo1Dest) {
-                            console.log('[PREFIJO ULTRA] Estado inicial prefijo1 - options.length:', prefijo1Dest.options.length);
-                            
-                            // Si está vacío, buscar el HTML original desde algún select de origen
-                            if (prefijo1Dest.options.length <= 1) {
-                                const prefijoOrigen = document.getElementById('prefijo-padre') || document.getElementById('prefijo');
-                                if (prefijoOrigen && prefijoOrigen.options.length > 1) {
-                                    console.log('[PREFIJO ULTRA] Copiando opciones desde select origen');
-                                    const $select = $(prefijo1Dest);
-                                    $select.selectpicker('destroy');
-                                    
-                                    let html = '<option value="" disabled selected>Seleccione</option>';
-                                    Array.from(prefijoOrigen.options).forEach(option => {
-                                        if (option.value !== '') {
-                                            html += `<option value="${option.value}">${option.text}</option>`;
+                        // Si está vacío, buscar el HTML original desde algún select de origen
+                        if (prefijo1Dest.options.length <= 1) {
+                            const prefijoOrigen = document.getElementById('prefijo-padre') || document.getElementById('prefijo');
+                            if (prefijoOrigen && prefijoOrigen.options.length > 1) {
+                                console.log('[PREFIJO ULTRA] Copiando opciones desde select origen');
+                                const $select = $(prefijo1Dest);
+                                
+                                // VALIDACIÓN ROBUSTA: Verificar que el elemento exista antes de destruir
+                                if ($select.length && $select[0] && $select.data('selectpicker')) {
+                                    try {
+                                        $select.selectpicker('destroy');
+                                    } catch (error) {
+                                        console.warn('[PREFIJO ULTRA] Error al destruir selectpicker:', error);
+                                        // Continuar sin destruir, probablemente ya no existe
+                                    }
+                                }
+                                
+                                // VALIDACIÓN: Verificar que el elemento DOM exista antes de modificar
+                                if (prefijo1Dest && prefijo1Dest.parentNode) {
+                                    try {
+                                        let html = '<option value="" disabled selected>Seleccione</option>';
+                                        Array.from(prefijoOrigen.options).forEach(option => {
+                                            if (option.value !== '') {
+                                                html += `<option value="${option.value}">${option.text}</option>`;
+                                            }
+                                        });
+                                        prefijo1Dest.innerHTML = html;
+                                        
+                                        // Solo inicializar si el elemento aún existe
+                                        if ($select.length && $select[0]) {
+                                            $select.selectpicker({
+                                                liveSearch: true,
+                                                size: 8,
+                                                noneResultsText: 'No hay resultados para {0}',
+                                                selectOnTab: false,
+                                                showSubtext: false,
+                                                showIcon: true,
+                                                width: 'auto'
+                                            });
+                                            console.log('[PREFIJO ULTRA] Opciones copiadas desde origen para prefijo1');
                                         }
-                                    });
-                                    prefijo1Dest.innerHTML = html;
-                                    
-                                    $select.selectpicker({
-                                        liveSearch: true,
-                                        size: 8,
-                                        noneResultsText: 'No hay resultados para {0}',
-                                        selectOnTab: false,
-                                        showSubtext: false,
-                                        showIcon: true,
-                                        width: 'auto'
-                                    });
-                                    console.log('[PREFIJO ULTRA] Opciones copiadas desde origen para prefijo1');
+                                    } catch (error) {
+                                        console.error('[PREFIJO ULTRA] Error crítico al procesar prefijo1:', error);
+                                    }
+                                } else {
+                                    console.warn('[PREFIJO ULTRA] Elemento prefijo1Dest ya no existe en el DOM');
                                 }
                             }
                         }
+                    }
+                    
+                    if (prefijo2Dest) {
+                        console.log('[PREFIJO ULTRA] Estado inicial prefijo2 - options.length:', prefijo2Dest.options.length);
                         
-                        if (prefijo2Dest) {
-                            console.log('[PREFIJO ULTRA] Estado inicial prefijo2 - options.length:', prefijo2Dest.options.length);
-                            
-                            if (prefijo2Dest.options.length <= 1) {
-                                const prefijo2Origen = document.getElementById('prefijo_dos_padre') || document.getElementById('prefijo_dos');
-                                if (prefijo2Origen && prefijo2Origen.options.length > 1) {
-                                    console.log('[PREFIJO ULTRA] Copiando opciones desde select origen2');
-                                    const $select = $(prefijo2Dest);
-                                    $select.selectpicker('destroy');
-                                    
-                                    let html = '<option value="">Seleccione</option>';
-                                    Array.from(prefijo2Origen.options).forEach(option => {
-                                        if (option.value !== '') {
-                                            html += `<option value="${option.value}">${option.text}</option>`;
+                        if (prefijo2Dest.options.length <= 1) {
+                            const prefijo2Origen = document.getElementById('prefijo_dos_padre') || document.getElementById('prefijo_dos');
+                            if (prefijo2Origen && prefijo2Origen.options.length > 1) {
+                                console.log('[PREFIJO ULTRA] Copiando opciones desde select origen2');
+                                const $select = $(prefijo2Dest);
+                                
+                                // VALIDACIÓN ROBUSTA: Verificar que el elemento exista antes de destruir
+                                if ($select.length && $select[0] && $select.data('selectpicker')) {
+                                    try {
+                                        $select.selectpicker('destroy');
+                                    } catch (error) {
+                                        console.warn('[PREFIJO ULTRA] Error al destruir selectpicker (prefijo2):', error);
+                                        // Continuar sin destruir, probablemente ya no existe
+                                    }
+                                }
+                                
+                                // VALIDACIÓN: Verificar que el elemento DOM exista antes de modificar
+                                if (prefijo2Dest && prefijo2Dest.parentNode) {
+                                    try {
+                                        let html = '<option value="">Seleccione</option>';
+                                        Array.from(prefijo2Origen.options).forEach(option => {
+                                            if (option.value !== '') {
+                                                html += `<option value="${option.value}">${option.text}</option>`;
+                                            }
+                                        });
+                                        prefijo2Dest.innerHTML = html;
+                                        
+                                        // Solo inicializar si el elemento aún existe
+                                        if ($select.length && $select[0]) {
+                                            $select.selectpicker({
+                                                liveSearch: true,
+                                                size: 8,
+                                                noneResultsText: 'No hay resultados para {0}',
+                                                selectOnTab: false,
+                                                showSubtext: false,
+                                                showIcon: true,
+                                                width: 'auto'
+                                            });
+                                            console.log('[PREFIJO ULTRA] Opciones copiadas desde origen para prefijo2');
                                         }
-                                    });
-                                    prefijo2Dest.innerHTML = html;
-                                    
-                                    $select.selectpicker({
-                                        liveSearch: true,
-                                        size: 8,
-                                        noneResultsText: 'No hay resultados para {0}',
-                                        selectOnTab: false,
-                                        showSubtext: false,
-                                        showIcon: true,
-                                        width: 'auto'
-                                    });
-                                    console.log('[PREFIJO ULTRA] Opciones copiadas desde origen para prefijo2');
+                                    } catch (error) {
+                                        console.error('[PREFIJO ULTRA] Error crítico al procesar prefijo2:', error);
+                                    }
+                                } else {
+                                    console.warn('[PREFIJO ULTRA] Elemento prefijo2Dest ya no existe en el DOM');
                                 }
                             }
                         }
-                        
-                        const prefijo1 = document.getElementById(`prefijo${prefijo}`);
-                        if (prefijo1 && prefijo1Dest && prefijo1.value) {
-                            console.log(`[PREFIJO ULTRA] Copiando prefijo1: ${prefijo1.value}`);
-                            await establecerValorSelectUltraSimple(prefijo1Dest, prefijo1.value, 100);
-                            await new Promise(resolve => setTimeout(resolve, 300));
-                        }
+                    }
+                    
+                    const prefijo1 = document.getElementById(`prefijo${prefijo}`);
+                    if (prefijo1 && prefijo1Dest && prefijo1.value) {
+                        console.log(`[PREFIJO ULTRA] Copiando prefijo1: ${prefijo1.value}`);
+                        await establecerValorSelectUltraSimple(prefijo1Dest, prefijo1.value, 100);
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    }
 
-                        const prefijo2 = document.getElementById(`prefijo_dos${esMadre ? '' : '_padre'}`);
-                        if (prefijo2 && prefijo2Dest && prefijo2.value) {
-                            console.log(`[PREFIJO ULTRA] Copiando prefijo2: ${prefijo2.value}`);
-                            await establecerValorSelectUltraSimple(prefijo2Dest, prefijo2.value, 100);
-                            await new Promise(resolve => setTimeout(resolve, 300));
-                        }
+                    const prefijo2 = document.getElementById(`prefijo_dos${esMadre ? '' : '_padre'}`);
+                    if (prefijo2 && prefijo2Dest && prefijo2.value) {
+                        console.log(`[PREFIJO ULTRA] Copiando prefijo2: ${prefijo2.value}`);
+                        await establecerValorSelectUltraSimple(prefijo2Dest, prefijo2.value, 100);
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    }
 
-                        // 3.1. Copiar país con método directo
-                        console.log('PASO 3: Copiando ubicación con método directo...');
+                    // 3.1. Copiar país con método directo
+                    console.log('PASO 3: Copiando ubicación con método directo...');
+                    
+                    // Activar bandera para evitar eventos change durante la copia
+                    copiandoUbicacion = true;
+                    
+                    const paisOrigen = document.getElementById(`idPais${prefijo}`);
+                    const paisDestino = document.getElementById('idPais-representante');
+                    if (paisOrigen && paisDestino && paisOrigen.value) {
+                        console.log(`[PAÍS DIRECTO] Copiando país: ${paisOrigen.value}`);
+                        // Usar función ultra simple para evitar duplicación de texto en selectpicker
+                        await establecerValorSelectUltraSimple(paisDestino, paisOrigen.value, 200);
+                        await new Promise(resolve => setTimeout(resolve, 200));
                         
-                        // Activar bandera para evitar eventos change durante la copia
-                        copiandoUbicacion = true;
-                        
-                        const paisOrigen = document.getElementById(`idPais${prefijo}`);
-                        const paisDestino = document.getElementById('idPais-representante');
-                        if (paisOrigen && paisDestino && paisOrigen.value) {
-                            console.log(`[PAÍS DIRECTO] Copiando país: ${paisOrigen.value}`);
-                            // Usar función ultra simple para evitar duplicación de texto en selectpicker
-                            await establecerValorSelectUltraSimple(paisDestino, paisOrigen.value, 200);
-                            await new Promise(resolve => setTimeout(resolve, 200));
-                        }
-                            
-                            // 3.2. Cargar estados para el país copiado
+                        // 3.2. Cargar estados para el país copiado
                         console.log(`[UBICACIÓN DIRECTA] Cargando estados para país: ${paisOrigen.value}`);
                         const resultadoEstados = await cargarSelectAnidadoPromise('estado', paisOrigen.value, 'idEstado-representante', 'idMunicipio-representante');
                         await new Promise(resolve => setTimeout(resolve, 300));
@@ -5167,7 +5370,7 @@
                                             const parroquiaOrigen = document.getElementById(`idparroquia${prefijo}`);
                                             const parroquiaDestino = document.getElementById('idparroquia-representante');
                                             if (parroquiaOrigen && parroquiaDestino && parroquiaOrigen.value) {
-                                                console.log(`[PARROQUIA DIRECTA] Copiando parroquia: ${parroquiaOrigen.value}`);
+                                                console.log(`[PARROQUIA DIRECTO] Copiando parroquia: ${parroquiaOrigen.value}`);
                                                 await new Promise(resolve => setTimeout(resolve, 100));
                                                 // Usar función ultra simple para evitar duplicación de texto en selectpicker
                                                 await establecerValorSelectUltraSimple(parroquiaDestino, parroquiaOrigen.value, 200);
@@ -5178,188 +5381,206 @@
                                 }
                             }
                         }
-                        
-                        // Desactivar bandera para permitir eventos change normales
-                        copiandoUbicacion = false;
-                        console.log('[UBICACIÓN DIRECTA] Copia de ubicación completada, bandera desactivada');
+                    }
+                    
+                    // Desactivar bandera para permitir eventos change normales
+                    copiandoUbicacion = false;
+                    console.log('[UBICACIÓN DIRECTA] Copia de ubicación completada, bandera desactivada');
 
-                        // 4. Copiar campos de contacto y ocupación
-                        console.log('PASO 4: Copiando campos de contacto y ocupación...');
-                        const camposContacto = [
-                            [`direccion${prefijo}`, 'direccion-representante'],
-                            [`telefono${prefijo}`, 'telefono-representante'],
-                            [`telefono_dos${esMadre ? '' : '_padre'}`, 'telefono_dos-representante'],
-                            [`email${prefijo}`, 'correo-representante']
-                        ];
+                    // 4. Copiar campos de contacto y ocupación
+                    console.log('PASO 4: Copiando campos de contacto y ocupación...');
+                    const camposContacto = [
+                        [`direccion${prefijo}`, 'direccion-representante'],
+                        [`telefono${prefijo}`, 'telefono-representante'],
+                        [`telefono_dos${esMadre ? '' : '_padre'}`, 'telefono_dos-representante'],
+                        [`email${prefijo}`, 'correo-representante']
+                    ];
 
-                        for (const [origenId, destinoId] of camposContacto) {
-                            copiarCampoSimple(origenId, destinoId);
-                            await new Promise(resolve => setTimeout(resolve, 100));
-                        }
+                    for (const [origenId, destinoId] of camposContacto) {
+                        copiarCampoSimple(origenId, destinoId);
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
 
-                        // 5. Copiar ocupación con función ultra
-                        console.log('PASO 5: Copiando ocupación con función ultra...');
+                    // 5. Copiar ocupación con función ultra
+                    console.log('PASO 5: Copiando ocupación con función ultra...');
+                    
+                    // El select de ocupación ya tiene las opciones cargadas desde Blade
+                    const ocupacionDestino = document.getElementById('ocupacion-representante');
+                    
+                    if (ocupacionDestino) {
+                        console.log('[OCUPACIÓN ULTRA] Estado inicial ocupación - options.length:', ocupacionDestino.options.length);
                         
-                        // El select de ocupación ya tiene las opciones cargadas desde Blade
-                        const ocupacionDestino = document.getElementById('ocupacion-representante');
-                        
-                        if (ocupacionDestino) {
-                            console.log('[OCUPACIÓN ULTRA] Estado inicial ocupación - options.length:', ocupacionDestino.options.length);
-                            
+                        // VALIDACIÓN: Verificar que el elemento exista en el DOM
+                        if (ocupacionDestino.parentNode) {
                             // Solo asegurarse de que el selectpicker esté inicializado
                             const $select = $(ocupacionDestino);
-                            if (!$select.data('selectpicker')) {
-                                console.log('[OCUPACIÓN ULTRA] Inicializando selectpicker...');
-                                $select.selectpicker({
-                                    liveSearch: true,
-                                    size: 8,
-                                    noneResultsText: 'No hay resultados para {0}',
-                                    selectOnTab: false,
-                                    showSubtext: false,
-                                    showIcon: true,
-                                    width: 'auto'
-                                });
-                            }
-                            
-                            // Refrescar el selectpicker para asegurar que se muestren las opciones
-                            $select.selectpicker('refresh');
-                            console.log('[OCUPACIÓN ULTRA] Selectpicker refrescado');
-                        }
-                        
-                        const ocupacionOrigen = document.getElementById(esMadre ? 'ocupacion-madre' : 'ocupacion-padre');
-                        if (ocupacionOrigen && ocupacionDestino) {
-                            await establecerValorSelectUltraSimple(ocupacionDestino, ocupacionOrigen.value, 150);
-                            await new Promise(resolve => setTimeout(resolve, 300));
-                            
-                            // Manejar campo "otra ocupación"
-                            const otraOcupacionOrigen = document.getElementById(esMadre ? 'otra-ocupacion' : 'otra-ocupacion-padre');
-                            const otraOcupacionDestino = document.getElementById('otra-ocupacion-representante');
-                            const otraOcupacionContainer = document.getElementById('otra-ocupacion-container');
-                            
-                            if (ocupacionOrigen.value === 'otro' && otraOcupacionOrigen && otraOcupacionDestino) {
-                                if (otraOcupacionContainer) {
-                                    otraOcupacionContainer.classList.remove('d-none');
-                                    otraOcupacionContainer.classList.add('d-block');
+                            if ($select.length && $select[0]) {
+                                try {
+                                    if (!$select.data('selectpicker')) {
+                                        console.log('[OCUPACIÓN ULTRA] Inicializando selectpicker...');
+                                        $select.selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            selectOnTab: false,
+                                            showSubtext: false,
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                    }
+                                    
+                                    // Refrescar el selectpicker para asegurar que se muestren las opciones
+                                    $select.selectpicker('refresh');
+                                    console.log('[OCUPACIÓN ULTRA] Selectpicker refrescado');
+                                } catch (error) {
+                                    console.error('[OCUPACIÓN ULTRA] Error al manejar selectpicker:', error);
+                                    // Continuar sin selectpicker si hay error
                                 }
-                                otraOcupacionDestino.value = otraOcupacionOrigen.value;
-                                otraOcupacionDestino.dispatchEvent(new Event('input'));
-                            } else if (otraOcupacionContainer) {
-                                otraOcupacionContainer.classList.add('d-none');
-                                otraOcupacionContainer.classList.remove('d-block');
+                            } else {
+                                console.warn('[OCUPACIÓN ULTRA] Elemento ocupacionDestino no válido para jQuery');
                             }
+                        } else {
+                            console.warn('[OCUPACIÓN ULTRA] Elemento ocupacionDestino ya no existe en el DOM');
                         }
-
-                        // 6. Copiar convivencia de forma simple
-                        const conviveNombreCampo = esMadre ? 'convive' : 'convive-padre';
-                        const convive = document.querySelector(`input[name="${conviveNombreCampo}"]:checked`);
+                    }
+                    
+                    const ocupacionOrigen = document.getElementById(esMadre ? 'ocupacion-madre' : 'ocupacion-padre');
+                    if (ocupacionOrigen && ocupacionDestino) {
+                        await establecerValorSelectUltraSimple(ocupacionDestino, ocupacionOrigen.value, 150);
+                        await new Promise(resolve => setTimeout(resolve, 300));
                         
-                        if (convive) {
-                            const valorConvivencia = convive.value;
-                            const conviveRepresentante = document.querySelector(`input[name="convive-representante"][value="${valorConvivencia}"]`);
+                        // Manejar campo "otra ocupación"
+                        const otraOcupacionOrigen = document.getElementById(esMadre ? 'otra-ocupacion' : 'otra-ocupacion-padre');
+                        const otraOcupacionDestino = document.getElementById('otra-ocupacion-representante');
+                        const otraOcupacionContainer = document.getElementById('otra-ocupacion-container');
+                        
+                        if (ocupacionOrigen.value === 'otro' && otraOcupacionOrigen && otraOcupacionDestino) {
+                            if (otraOcupacionContainer) {
+                                otraOcupacionContainer.classList.remove('d-none');
+                                otraOcupacionContainer.classList.add('d-block');
+                            }
+                            otraOcupacionDestino.value = otraOcupacionOrigen.value;
+                            otraOcupacionDestino.dispatchEvent(new Event('input'));
+                        } else if (otraOcupacionContainer) {
+                            otraOcupacionContainer.classList.add('d-none');
+                            otraOcupacionContainer.classList.remove('d-block');
+                        }
+                    }
+
+                    // 6. Copiar convivencia de forma simple
+                    const conviveNombreCampo = esMadre ? 'convive' : 'convive-padre';
+                    const convive = document.querySelector(`input[name="${conviveNombreCampo}"]:checked`);
+                    
+                    if (convive) {
+                        const valorConvivencia = convive.value;
+                        const conviveRepresentante = document.querySelector(`input[name="convive-representante"][value="${valorConvivencia}"]`);
+                        
+                        if (conviveRepresentante) {
+                            conviveRepresentante.checked = true;
+                        }
+                    }
+
+                    // 7. Validación final ultra completa
+                    console.log('PASO 7: Validación final ultra completa...');
+                    
+                    // Esperar tiempo adicional para estabilización completa
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Validar que los selects no tengan duplicación
+                    const selectsValidar = [
+                        'prefijo-representante',
+                        'prefijo_dos-representante',
+                        'idPais-representante',
+                        'idEstado-representante',
+                        'idMunicipio-representante',
+                        'idparroquia-representante'
+                    ];
+
+                    let duplicacionDetectada = false;
+                    selectsValidar.forEach(selectId => {
+                        const select = document.getElementById(selectId);
+                        if (select) {
+                            const $select = $(select);
+                            const valor = $select.selectpicker('val');
+                            const texto = $select.find('option:selected').text();
                             
-                            if (conviveRepresentante) {
-                                conviveRepresentante.checked = true;
-                            }
-                        }
-
-                        // 7. Validación final ultra completa
-                        console.log('PASO 7: Validación final ultra completa...');
-                        
-                        // Esperar tiempo adicional para estabilización completa
-                        await new Promise(resolve => setTimeout(resolve, 1500));
-                        
-                        // Validar que los selects no tengan duplicación
-                        const selectsValidar = [
-                            'prefijo-representante',
-                            'prefijo_dos-representante',
-                            'idPais-representante',
-                            'idEstado-representante',
-                            'idMunicipio-representante',
-                            'idparroquia-representante'
-                        ];
-
-                        let duplicacionDetectada = false;
-                        selectsValidar.forEach(selectId => {
-                            const select = document.getElementById(selectId);
-                            if (select) {
-                                const $select = $(select);
-                                const valor = $select.selectpicker('val');
-                                const texto = $select.find('option:selected').text();
-                                
-                                // Validación ultra estricta
-                                if (texto && valor) {
-                                    // Para valores numéricos, verificar que no haya repetición
-                                    if (!isNaN(valor)) {
-                                        const patronDuplicacion = new RegExp(`${valor}.*${valor}`);
-                                        if (patronDuplicacion.test(texto)) {
-                                            console.error(`[VALIDACIÓN ULTRA] ❌ Duplicación numérica en ${selectId}: "${texto}"`);
-                                            duplicacionDetectada = true;
-                                        } else {
-                                            console.log(`[VALIDACIÓN ULTRA] ✅ ${selectId}: "${texto}" (sin duplicación numérica)`);
-                                        }
+                            // Validación ultra estricta
+                            if (texto && valor) {
+                                // Para valores numéricos, verificar que no haya repetición
+                                if (!isNaN(valor)) {
+                                    const patronDuplicacion = new RegExp(`${valor}.*${valor}`);
+                                    if (patronDuplicacion.test(texto)) {
+                                        console.error(`[VALIDACIÓN ULTRA] ❌ Duplicación numérica en ${selectId}: "${texto}"`);
+                                        duplicacionDetectada = true;
                                     } else {
-                                        // Para valores de texto, verificar que no esté concatenado
-                                        if (texto.includes(valor) && texto !== valor) {
-                                            console.error(`[VALIDACIÓN ULTRA] ❌ Duplicación textual en ${selectId}: "${texto}"`);
-                                            duplicacionDetectada = true;
-                                        } else {
-                                            console.log(`[VALIDACIÓN ULTRA] ✅ ${selectId}: "${texto}" (sin duplicación textual)`);
-                                        }
+                                        console.log(`[VALIDACIÓN ULTRA] ✅ ${selectId}: "${texto}" (sin duplicación numérica)`);
+                                    }
+                                } else {
+                                    // Para valores de texto, verificar que no esté concatenado
+                                    if (texto.includes(valor) && texto !== valor) {
+                                        console.error(`[VALIDACIÓN ULTRA] ❌ Duplicación textual en ${selectId}: "${texto}"`);
+                                        duplicacionDetectada = true;
+                                    } else {
+                                        console.log(`[VALIDACIÓN ULTRA] ✅ ${selectId}: "${texto}" (sin duplicación textual)`);
                                     }
                                 }
                             }
-                        });
-
-                        if (duplicacionDetectada) {
-                            console.warn('[VALIDACIÓN ULTRA] ⚠️ Se detectó duplicación persistente');
-                        } else {
-                            console.log('[VALIDACIÓN ULTRA] 🎉 Todos los selects perfectos, sin duplicación');
                         }
+                    });
 
-                        // Aplicar estilos de solo lectura (excluyendo radios de convivencia)
-                        document.querySelectorAll('[id$="-representante"]').forEach(elemento => {
-                            // Excluir radios de convivencia para no afectarlos
-                            if (elemento.id === 'convive-si-representante' || elemento.id === 'convive-no-representante') {
-                                return; // Saltar radios de convivencia
-                            }
-                            
-                            if (!elemento.disabled && elemento.tagName !== 'SELECT') {
-                                elemento.classList.add('bg-light', 'text-muted');
-                                elemento.readOnly = true;
-                            }
-                        });
-
-                        // Deshabilitar los campos después de copiar los datos
-                        toggleCamposRepresentante(true);
-
-                        console.log(`=== COPIA ULTRA OPTIMIZADA ${mensajeExito.toUpperCase()} COMPLETADA ===`);
-                        
-                    } catch (error) {
-                        console.error('Error durante la copia ultra optimizada:', error);
-                        throw error;
-                    } finally {
-                        // Resetear la bandera después de completar
-                        setTimeout(() => {
-                            window.copiandoDatosProgenitor = false;
-                        }, 3000);
+                    if (duplicacionDetectada) {
+                        console.warn('[VALIDACIÓN ULTRA] ⚠️ Se detectó duplicación persistente');
+                    } else {
+                        console.log('[VALIDACIÓN ULTRA] 🎉 Todos los selects perfectos, sin duplicación');
                     }
-                };
 
-                // Ejecutar la copia ultra optimizada
-                return ejecutarCopiaUltraOptimizada().catch(error => {
-                    console.error('Error fatal en la copia ultra optimizada:', error);
+                    // Aplicar estilos de solo lectura (excluyendo radios de convivencia)
+                    document.querySelectorAll('[id$="-representante"]').forEach(elemento => {
+                        // Excluir radios de convivencia para no afectarlos
+                        if (elemento.id === 'convive-si-representante' || elemento.id === 'convive-no-representante') {
+                            return; // Saltar radios de convivencia
+                        }
+                        
+                        if (!elemento.disabled && elemento.tagName !== 'SELECT') {
+                            elemento.classList.add('bg-light', 'text-muted');
+                            elemento.readOnly = true;
+                        }
+                    });
+
+                    // Deshabilitar los campos después de copiar los datos
+                    toggleCamposRepresentante(true);
+                    
+                    console.log(`=== COPIA WATCHDOG ${mensajeExito.toUpperCase()} COMPLETADA ===`);
+                        
+                } catch (error) {
+                    console.error('[COPIA WATCHDOG] Error durante la copia:', error);
+                    // CORRECCIÓN: Forzar reset inmediato en caso de error
                     window.copiandoDatosProgenitor = false;
-                });
+                    throw error; // Re-lanzar para que se maneje arriba si es necesario
+                } finally {
+                    // CORRECCIÓN: Resetear bandera SIEMPRE al final, incluso en error
+                    clearTimeout(watchdogTimeout); // Limpiar el timeout para evitar resets innecesarios
+                    window.copiandoDatosProgenitor = false;
+                    console.log('[COPIA WATCHDOG] Bandera reseteada al final (finally ejecutado)');
+                }
             }
 
             // Función para copiar datos del padre al representante
-            function copiarDatosPadreARepresentante() {
-                return copiarDatosProgenitorARepresentante(false);
+            async function copiarDatosPadreARepresentante() {
+                console.log('[COPIA PADRE] Iniciando. Estado actual de copiandoDatosProgenitor:', window.copiandoDatosProgenitor);
+                // Resetear bandera por si quedó activa
+                window.copiandoDatosProgenitor = false;
+                console.log('[COPIA PADRE] Bandera reseteada al inicio');
+                return await copiarDatosProgenitorARepresentante(false);
             }
 
             // Función para copiar datos de la madre al representante
-            function copiarDatosMadreARepresentante() {
-                return copiarDatosProgenitorARepresentante(true);
+            async function copiarDatosMadreARepresentante() {
+                console.log('[COPIA MADRE] Iniciando. Estado actual de copiandoDatosProgenitor:', window.copiandoDatosProgenitor);
+                // Resetear bandera por si quedó activa
+                window.copiandoDatosProgenitor = false;
+                console.log('[COPIA MADRE] Bandera reseteada al inicio');
+                return await copiarDatosProgenitorARepresentante(true);
             }
 
             // Función para restablecer los campos del representante con limpieza ultra
@@ -5447,53 +5668,7 @@
                 console.log('[RESET ULTRA] FIN - resetearCamposRepresentante() completado, bandera desactivada');
             }
 
-            // [NUEVO EVENTO] Manejar cambios en tipo_representante con limpieza forzada
-            document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const tipo = this.value;
-                    console.log(`[TIPO REPRESENTANTE] Cambiando a: ${tipo}`);
-
-                    // Mostrar la sección de representante
-                    toggleSeccionRepresentante(true);
-
-                    // Solo limpiar completamente para progenitores, no para "solo representante legal"
-                    if (tipo !== 'solo_representante') {
-                        resetearCamposRepresentante();
-                    } else {
-                        // Para "solo representante legal", solo habilitar campos sin limpiar selects
-                        toggleCamposRepresentante(false);
-                    }
-
-                    if (tipo === 'solo_representante') {
-                        // Para "Solo Representante Legal", los campos ya están habilitados arriba
-                        console.log('[TIPO REPRESENTANTE] Solo representante legal - campos habilitados sin limpiar selects');
-                    } else if (tipo === 'progenitor_padre_representante') {
-                        // Verificar estado del padre y copiar si es presente
-                        const padrePresente = document.querySelector('input[name="estado_padre"]:checked')?.value === 'Presente';
-                        if (padrePresente) {
-                            // Establecer el parentesco como "Padre"
-                            establecerParentesco(false);
-                            copiarDatosPadreARepresentante();
-                        } else {
-                            alert('No se puede seleccionar al padre como representante porque está marcado como ausente.');
-                            document.getElementById('solo_representante').checked = true;
-                            return;
-                        }
-                    } else if (tipo === 'progenitor_madre_representante') {
-                        // Verificar estado de la madre y copiar si es presente
-                        const madrePresente = document.querySelector('input[name="estado_madre"]:checked')?.value === 'Presente';
-                        if (madrePresente) {
-                            // Establecer el parentesco como "Madre"
-                            establecerParentesco(true);
-                            copiarDatosMadreARepresentante();
-                        } else {
-                            alert('No se puede seleccionar a la madre como representante porque está marcada como ausente.');
-                            document.getElementById('solo_representante').checked = true;
-                            return;
-                        }
-                    }
-                });
-            });
+            // NOTA: Event listener duplicado eliminado - ahora toda la lógica está consolidada en el listener principal (línea 3778)
 
             // NOTA: No se necesita la verificación final redundante
             // ya que cada caso maneja sus campos correctamente
@@ -5685,17 +5860,10 @@
             });
 
             // Si es el campo de cédula del representante, agregar evento para el cambio de tipo de representante
+            // NOTA: Event listener duplicado eliminado - ya está manejado en el listener principal (línea 3778)
             if (input.id === 'numero_documento-representante') {
-                document.querySelectorAll('input[name="tipo_representante"]').forEach(radio => {
-                    radio.addEventListener('change', function() {
-                        if (this.value === 'progenitor_representante') {
-                            limpiarError(input);
-                        } else {
-                            // Si cambia a otro tipo, validar la cédula
-                            validarnumero_documento(input);
-                        }
-                    });
-                });
+                // La lógica de limpiar error/validar ya está manejada en el event listener principal
+                console.log('[VALIDACIÓN] Campo cédula representante configurado - listener duplicado eliminado');
             }
         }
 
@@ -6643,6 +6811,24 @@
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
+
+            // Resetear bandera global al cargar la página
+            window.copiandoDatosProgenitor = false;
+            console.log('[INICIO] Bandera copiandoDatosProgenitor reseteada al cargar página');
+
+            // MÉTODO DE EMERGENCIA: Resetear bandera cada 5 segundos por si queda atascada
+            setInterval(() => {
+                if (window.copiandoDatosProgenitor) {
+                    console.warn('[EMERGENCIA] Detectada bandera atascada, reseteando automáticamente...');
+                    window.copiandoDatosProgenitor = false;
+                }
+            }, 5000);
+
+            // MÉTODO DE EMERGENCIA: Agregar función global para forzar reseteo manual
+            window.forzarReseteoCopia = function() {
+                console.log('[EMERGENCIA MANUAL] Forzando reseteo de bandera copiandoDatosProgenitor');
+                window.copiandoDatosProgenitor = false;
+            };
         });
     </script>
 
