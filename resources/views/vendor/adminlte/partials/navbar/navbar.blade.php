@@ -20,7 +20,7 @@
             <nav aria-label="breadcrumb" class="mb-0">
                 @if (Breadcrumbs::exists())
                     {!! Breadcrumbs::render() !!}
-                @endif
+                @endif 
             </nav>
         </li>
     </ul>

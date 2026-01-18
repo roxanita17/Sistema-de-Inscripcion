@@ -15,7 +15,7 @@ use App\Models\InstitucionProcedencia;
 use App\Models\Seccion;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-
+ 
 class InscripcionProsecucionController extends Controller
 {
     public function index(Request $request)

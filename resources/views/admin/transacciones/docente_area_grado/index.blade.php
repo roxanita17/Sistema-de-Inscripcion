@@ -210,7 +210,7 @@
                                         @php
                                             $areaFormacion = optional($asign->areaEstudios)->areaFormacion;
                                             $grado = optional($asign->grado);
-                                            $seccion = optional($asign->seccion);
+                                            $seccion = optional($asign->seccion); 
                                         @endphp
 
                                         <div style="margin-bottom: 0.5rem;">

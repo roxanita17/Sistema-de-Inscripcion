@@ -306,8 +306,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
         Route::post('alumnos/{alumno}/update', [AlumnoController::class, 'update'])
             ->name('alumnos.update');
-
-
+            
         Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
     });
 

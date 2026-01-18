@@ -102,9 +102,8 @@
                             @elseif($tipo === 'docentes')
                                 <th class="text-center">Año Escolar</th>
                                 <th class="text-center">Docente</th>
-                                <th class="text-center">Nivel Academico</th>
-                                <th class="text-center">Área</th>
-                                <th class="text-center">Sección</th>
+                                <th class="text-center">Areas de Formacion</th>
+                                <th class="text-center">Grupo Estable</th>
                                 <th class="text-center">Acciones</th>
                             @endif
                         </thead>
@@ -190,7 +189,7 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-success">
-                                                    {{ $inscripcion->grado->numero_grado }}° 
+                                                    {{ $inscripcion->grado->numero_grado }}°
                                                 </span>
                                             </td>
                                             <td>{{ $inscripcion->seccionAsignada->nombre ?? '—' }}</td>
@@ -332,34 +331,62 @@
                                             {{ $docente->persona->primer_apellido }}
                                             {{ $docente->persona->primer_nombre }}
                                         </td>
-                                        <td class="text-center">
-                                            @forelse ($asignaciones as $asignacion)
-                                                <div>
-                                                    <i class="fas fa-book-open me-1 text-muted"></i>
-                                                    {{ optional($asignacion->areaEstudios->areaFormacion)->nombre_area_formacion ?? '—' }}
+                                        <td style="text-align: center;">
+                                            @php
+                                                $asigs = $asignaciones
+                                                    ->where('status', true)
+                                                    ->where('tipo_asignacion', 'area')
+                                                    ->filter(
+                                                        fn($a) => $a->areaEstudios !== null ||
+                                                            $a->grado !== null ||
+                                                            $a->seccion !== null,
+                                                    );
+                                            @endphp
+                                            @forelse($asigs as $asign)
+                                                @php
+                                                    $areaFormacion = optional($asign->areaEstudios)->areaFormacion;
+                                                    $grado = optional($asign->grado);
+                                                    $seccion = optional($asign->seccion);
+                                                @endphp
+                                                <div style="margin-bottom: 0.5rem;">
+                                                    <span title="{{ $areaFormacion->nombre_area_formacion ?? 'N/A' }}">
+                                                        <i class="fas fa-graduation-cap"></i>
+                                                        {{ Str::limit($areaFormacion->nombre_area_formacion ?? 'N/A', 30) }}
+                                                    </span>
+                                                    <span title="Grado: {{ $grado->numero_grado ?? 'N/A' }}">
+                                                        - {{ $grado->numero_grado . '° ' ?? 'N/A' }}
+                                                    </span>
+                                                    <span title="Sección: {{ $seccion->nombre ?? 'N/A' }}">
+                                                        - {{ $seccion->nombre ?? 'N/A' }}
+                                                    </span>
                                                 </div>
                                             @empty
-                                                <span class="text-muted">Sin áreas</span>
+                                                <span class="text-muted" style="font-size: 0.85rem;">
+                                                    <i class="fas fa-minus-circle"></i> Sin areas asignadas
+                                                </span>
                                             @endforelse
                                         </td>
-
-                                        <td class="text-center">
-                                            @forelse ($asignaciones as $asignacion)
-                                                <div>
-                                                    {{ $asignacion->grado->numero_grado ?? '—' }}°
-                                                </div>
+                                        <td style="text-align: center;">
+                                            @php
+                                                $grupos = $asignaciones
+                                                    ->where('status', true)
+                                                    ->where('tipo_asignacion', 'grupo_estable');
+                                            @endphp
+                                            @forelse($grupos as $asign)
+                                                <span style="font-weight: bold; margin-bottom: 2rem;"
+                                                    title="{{ optional($asign->grupoEstable)->nombre_grupo_estable ?? 'N/A' }} - Grado: {{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }}">
+                                                    <i class="fas fa-users"></i>
+                                                    {{ Str::limit($asign->grupoEstable->nombre_grupo_estable ?? 'N/A', 20) }}
+                                                    -
+                                                    {{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }}
+                                                </span>
+                                                @if (!$loop->last)
+                                                    <br>
+                                                @endif
                                             @empty
-                                                <span class="text-muted">Sin grados</span>
-                                            @endforelse
-                                        </td>
-
-                                        <td class="text-center">
-                                            @forelse ($asignaciones as $asignacion)
-                                                <div>
-                                                    {{ $asignacion->seccion->nombre ?? '—' }}
-                                                </div>
-                                            @empty
-                                                <span class="text-muted">Sin secciones</span>
+                                                <span class="text-muted" style="font-size: 0.85rem;">
+                                                    <i class="fas fa-minus-circle"></i> Sin grupos asignados
+                                                </span>
                                             @endforelse
                                         </td>
                                         <td class="d-flex justify-content-center">

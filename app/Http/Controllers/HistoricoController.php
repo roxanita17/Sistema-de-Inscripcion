@@ -9,6 +9,9 @@ use App\Models\DocenteAreaGrado;
 use App\Models\Inscripcion;
 use App\Models\InscripcionNuevoIngreso;
 use App\Models\InscripcionProsecucion;
+use App\Models\Grado;
+use App\Models\Seccion;
+
 
 class HistoricoController extends Controller
 {
@@ -17,15 +20,50 @@ class HistoricoController extends Controller
         $anioEscolarId = $request->anio_escolar_id;
         $tipo = $request->get('tipo', 'inscripciones');
         $modalidad = $request->get('modalidad');
+        $gradoId = $request->grado_id;
+        $seccionId = $request->seccion_id;
+
         $anios = AnioEscolar::orderBy('inicio_anio_escolar', 'desc')->get();
+        $grados = Grado::orderBy('numero_grado')->get();
+
+        $secciones = collect();
+
+        if ($gradoId) {
+            $secciones = Seccion::where('grado_id', $gradoId)
+                ->orderBy('nombre')
+                ->get();
+        }
+
+
         if ($tipo === 'docentes') {
+
             $docentes = Docente::with([
                 'persona',
                 'anioEscolar',
                 'asignacionesAreas.grado',
+                'asignacionesAreas.seccion',
                 'asignacionesAreas.areaEstudios.areaFormacion'
             ])
-                ->when($anioEscolarId, fn($q) => $q->where('anio_escolar_id', $anioEscolarId))
+                ->when(
+                    $anioEscolarId,
+                    fn($q) =>
+                    $q->where('anio_escolar_id', $anioEscolarId)
+                )
+
+                // 🔹 FILTRO POR GRADO
+                ->when($gradoId, function ($q) use ($gradoId) {
+                    $q->whereHas('asignacionesAreas', function ($sub) use ($gradoId) {
+                        $sub->where('grado_id', $gradoId);
+                    });
+                })
+
+                // 🔹 FILTRO POR SECCIÓN
+                ->when($seccionId, function ($q) use ($seccionId) {
+                    $q->whereHas('asignacionesAreas', function ($sub) use ($seccionId) {
+                        $sub->where('seccion_id', $seccionId);
+                    });
+                })
+
                 ->paginate(10)
                 ->withQueryString();
 
@@ -34,9 +72,13 @@ class HistoricoController extends Controller
                 'anios',
                 'anioEscolarId',
                 'tipo',
-                'modalidad'
+                'modalidad',
+                'grados',
+                'secciones',
+                'gradoId'
             ));
         }
+
 
         if ($modalidad === 'nuevo_ingreso') {
             $inscripciones = Inscripcion::with([
@@ -50,6 +92,8 @@ class HistoricoController extends Controller
             ])
                 ->whereHas('nuevoIngreso')
                 ->when($anioEscolarId, fn($q) => $q->where('anio_escolar_id', $anioEscolarId))
+                ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
+                ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
                 ->orderBy('created_at', 'desc')
                 ->paginate(10)
                 ->withQueryString();
@@ -59,7 +103,10 @@ class HistoricoController extends Controller
                 'anios',
                 'anioEscolarId',
                 'tipo',
-                'modalidad'
+                'modalidad',
+                'grados',
+                'secciones',
+                'gradoId'
             ));
         }
 
@@ -75,6 +122,17 @@ class HistoricoController extends Controller
             ])
                 ->where('status', 'Activo')
                 ->when($anioEscolarId, fn($q) => $q->where('anio_escolar_id', $anioEscolarId))
+                ->when(
+                    $gradoId,
+                    fn($q) =>
+                    $q->whereHas('inscripcion', fn($i) => $i->where('grado_id', $gradoId))
+                )
+                ->when(
+                    $seccionId,
+                    fn($q) =>
+                    $q->whereHas('inscripcion', fn($i) => $i->where('seccion_id', $seccionId))
+                )
+
                 ->orderBy('created_at', 'desc')
                 ->paginate(10)
                 ->withQueryString();
@@ -84,7 +142,10 @@ class HistoricoController extends Controller
                 'anios',
                 'anioEscolarId',
                 'tipo',
-                'modalidad'
+                'modalidad',
+                'grados',
+                'secciones',
+                'gradoId'
             ));
         }
 
@@ -100,6 +161,9 @@ class HistoricoController extends Controller
         ])
             ->whereNull('deleted_at')
             ->when($anioEscolarId, fn($q) => $q->where('anio_escolar_id', $anioEscolarId))
+            ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
+            ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
+
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
@@ -109,7 +173,19 @@ class HistoricoController extends Controller
             'anios',
             'anioEscolarId',
             'tipo',
-            'modalidad'
+            'modalidad',
+            'grados',
+            'secciones',
+            'gradoId'
         ));
+    }
+
+    public function seccionesPorGrado($gradoId)
+    {
+        $secciones = Seccion::where('grado_id', $gradoId)
+            ->orderBy('nombre')
+            ->get(['id', 'nombre']);
+
+        return response()->json($secciones);
     }
 }

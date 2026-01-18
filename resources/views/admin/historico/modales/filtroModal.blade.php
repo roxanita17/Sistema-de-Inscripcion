@@ -71,20 +71,48 @@
                         </select>
                     </div>
 
+                    <div id="filtroGradoSeccion">
+                        <label class="form-label-modern mt-3">
+                            <i class="fas fa-layer-group" style="color: var(--primary);"></i>
+                            Nivel Academico
+                        </label>
+
+                        <select name="grado_id" id="gradoSelect" class="form-select form-control-modern mt-2">
+                            <option value="">Todos los grados</option>
+                            @foreach ($grados as $grado)
+                                <option value="{{ $grado->id }}"
+                                    {{ request('grado_id') == $grado->id ? 'selected' : '' }}>
+                                    {{ $grado->numero_grado }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <label class="form-label-modern mt-3">
+                            <i class="fas fa-layer-group" style="color: var(--primary);"></i>
+                            Sección
+                        </label>
+                        <select name="seccion_id" id="seccionSelect" class="form-select form-control-modern mt-2"
+                            disabled>
+                            <option value="">
+                                {{ request('grado_id') ? 'Cargando secciones...' : 'Primero seleccione un grado' }}
+                            </option>
+
+                            @foreach ($secciones as $seccion)
+                                <option value="{{ $seccion->id }}"
+                                    {{ request('seccion_id') == $seccion->id ? 'selected' : '' }}>
+                                    {{ $seccion->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                    </div>
+
                     <button class="btn-modal-create mt-4 w-100">
                         <i class="fas fa-check"></i>
                         Aplicar
                     </button>
                 </form>
-
-
-
-
             </div>
-
-
-
-
         </div>
     </div>
 </div>
@@ -117,6 +145,64 @@
                 modalidadDiv.style.display = 'block';
             } else {
                 modalidadDiv.style.display = 'none';
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const gradoSelect = document.getElementById('gradoSelect');
+        const seccionSelect = document.getElementById('seccionSelect');
+
+        const baseUrl = "{{ url('admin/historico/secciones-por-grado') }}";
+
+        gradoSelect.addEventListener('change', async function() {
+
+            const gradoId = this.value;
+
+            seccionSelect.innerHTML = '';
+            seccionSelect.disabled = true;
+
+            if (!gradoId) {
+                seccionSelect.innerHTML =
+                    '<option value="">Primero seleccione un grado</option>';
+                return;
+            }
+
+            seccionSelect.innerHTML =
+                '<option value="">Cargando secciones...</option>';
+
+            try {
+                const response = await fetch(`${baseUrl}/${gradoId}`);
+
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+
+                const secciones = await response.json();
+
+                seccionSelect.innerHTML =
+                    '<option value="">Todas las secciones</option>';
+
+                if (!secciones.length) {
+                    seccionSelect.innerHTML =
+                        '<option value="">No hay secciones para este grado</option>';
+                    return;
+                }
+
+                secciones.forEach(seccion => {
+                    const option = document.createElement('option');
+                    option.value = seccion.id;
+                    option.textContent = seccion.nombre;
+                    seccionSelect.appendChild(option);
+                });
+
+                seccionSelect.disabled = false;
+
+            } catch (error) {
+                console.error(error);
+                seccionSelect.innerHTML =
+                    '<option value="">Error al cargar secciones</option>';
             }
         });
     });
