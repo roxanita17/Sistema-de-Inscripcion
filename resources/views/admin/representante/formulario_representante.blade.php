@@ -3824,9 +3824,47 @@
                         for (const id of selectpickersRepresentante) {
                             const select = document.getElementById(id);
                             if (select) {
-                                // Usar limpieza agresiva para selectpicker
-                                await limpiarSelectPickerEstatico(select, 'Seleccione');
-                                console.log(`[LIMPIEZA EXTRA] Selectpicker ${id} limpiado agresivamente`);
+                                // Usar limpieza simple que no causa duplicación
+                                try {
+                                    const $select = $(select);
+                                    if ($select.data('selectpicker')) {
+                                        // Limpiar valor seleccionado
+                                        $select.selectpicker('val', '');
+                                        $select.selectpicker('refresh');
+                                        
+                                        // Para selects estáticos (prefijos, ocupación, parentesco): 
+                                        // usar limpieza agresiva pero segura que no duplica opciones
+                                        if (id.includes('prefijo') || id.includes('ocupacion') || id.includes('parentesco')) {
+                                            // Limpiar valor primero
+                                            $select.selectpicker('val', '');
+                                            
+                                            // Destruir y recrear para limpiar completamente el estado visual
+                                            $select.selectpicker('destroy');
+                                            
+                                            // El HTML original ya está intacto, solo re-inicializar
+                                            $select.selectpicker({
+                                                liveSearch: true,
+                                                size: 8,
+                                                noneResultsText: 'No hay resultados para {0}',
+                                                selectOnTab: false,
+                                                showSubtext: false,
+                                                showIcon: true,
+                                                width: 'auto'
+                                            });
+                                            
+                                            console.log(`[LIMPIEZA EXTRA] Selectpicker estático ${id} limpiado con destroy/recreate`);
+                                        } else {
+                                            // Para selects dinámicos (ubicación): usar limpieza completa
+                                            limpiarSelectCompleto(select);
+                                            console.log(`[LIMPIEZA EXTRA] Selectpicker dinámico ${id} limpiado con limpiarSelectCompleto`);
+                                        }
+                                    }
+                                } catch (error) {
+                                    console.warn(`[LIMPIEZA EXTRA] Error limpiando selectpicker ${id}:`, error);
+                                    // Fallback: limpiar valor directamente
+                                    select.value = '';
+                                    select.selectedIndex = -1;
+                                }
                             }
                         }
 
