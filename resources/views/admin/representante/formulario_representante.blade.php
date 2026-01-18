@@ -5747,42 +5747,121 @@
                     return;
                 }
                 
+                console.log(`[PARENTESCO] Estableciendo parentesco: ${esMadre ? 'Mamá' : 'Papá'}`);
+                
                 const parentescoSelect = document.getElementById('parentesco');
                 const parentescoHidden = document.getElementById('parentesco_hidden');
                 if (parentescoSelect) {
-                    // LIMPIEZA ULTRA PARA PARENTESCO ANTES DE ESTABLECER
-                    limpiarSelectPickerEstatico(parentescoSelect, 'Seleccione');
+                    // Mostrar opciones disponibles para depuración
+                    console.log('[PARENTESCO] Opciones disponibles:');
+                    Array.from(parentescoSelect.options).forEach((opt, index) => {
+                        console.log(`  ${index}: value="${opt.value}", text="${opt.text}", disabled=${opt.disabled}`);
+                    });
                     
                     const valorParentesco = esMadre ? 'Mamá' : 'Papá';
+                    console.log(`[PARENTESCO] Valor a establecer: "${valorParentesco}"`);
 
-                    // Verificar que la opción no esté deshabilitada
+                    // Verificar que la opción exista
                     const opcion = Array.from(parentescoSelect.options).find(opt => opt.value === valorParentesco);
-                    if (opcion && opcion.disabled) {
-                        // Si la opción está deshabilitada, no hacer nada (o manejar el error según sea necesario)
+                    if (!opcion) {
+                        console.error(`[PARENTESCO] ERROR: No se encontró la opción con valor "${valorParentesco}"`);
                         return;
                     }
-
-                    // Usar función ultra simple para evitar duplicación de texto en selectpicker
-                    await establecerValorSelectUltraSimple(parentescoSelect, valorParentesco, 100);
                     
-                    // Actualizar campo oculto para que se envíe cuando el select está deshabilitado
-                    if (parentescoHidden) {
-                        parentescoHidden.value = valorParentesco;
+                    if (opcion.disabled) {
+                        console.error(`[PARENTESCO] ERROR: La opción "${valorParentesco}" está deshabilitada`);
+                        return;
                     }
+                    
+                    console.log(`[PARENTESCO] Opción encontrada y habilitada, estableciendo valor...`);
 
-                    // Deshabilitar el select
-                    parentescoSelect.disabled = true;
-                    parentescoSelect.classList.add('bg-light', 'text-muted');
+                    // MODO COPIA: Desactivar selectpicker y usar select nativo
+                    if (window.copiandoDatosProgenitor) {
+                        console.log('[PARENTESCO] Modo copia: usando select nativo SIN reactivar selectpicker...');
+                        
+                        // Desactivar selectpicker completamente
+                        const $parentesco = $(parentescoSelect);
+                        if ($parentesco.data('selectpicker')) {
+                            $parentesco.selectpicker('destroy');
+                            $parentesco.removeData('selectpicker');
+                            parentescoSelect.classList.remove('selectpicker');
+                            
+                            // Eliminar elementos DOM residuales de bootstrap-select
+                            const bootstrapSelect = parentescoSelect.nextElementSibling;
+                            if (bootstrapSelect && bootstrapSelect.classList.contains('bootstrap-select')) {
+                                bootstrapSelect.remove();
+                            }
+                            
+                            console.log('[PARENTESCO] Selectpicker destruido completamente (no se reactivará)');
+                        }
+                        
+                        // Establecer valor directamente en select nativo
+                        parentescoSelect.value = valorParentesco;
+                        console.log(`[PARENTESCO] Valor establecido en select nativo: "${valorParentesco}"`);
+                        
+                        // Actualizar campo oculto
+                        if (parentescoHidden) {
+                            parentescoHidden.value = valorParentesco;
+                            console.log(`[PARENTESCO] Campo oculto actualizado: "${parentescoHidden.value}"`);
+                        }
+                        
+                        // Deshabilitar el select nativo con estilo visual
+                        parentescoSelect.disabled = true;
+                        parentescoSelect.classList.add('bg-light', 'text-muted');
+                        console.log('[PARENTESCO] Select nativo deshabilitado (permanente durante copia)');
+                        
+                        // Disparar evento change
+                        const event = new Event('change');
+                        parentescoSelect.dispatchEvent(event);
+                        console.log('[PARENTESCO] Evento change disparado en select nativo');
+                        
+                    } else {
+                        // MODO NORMAL: Usar selectpicker con fallback
+                        try {
+                            await establecerValorSelectUltraSimple(parentescoSelect, valorParentesco, 100);
+                            console.log(`[PARENTESCO] Selectpicker actualizado correctamente`);
+                        } catch (error) {
+                            console.warn(`[PARENTESCO] Error en selectpicker, usando método nativo:`, error);
+                            // Fallback: establecer valor directamente en el select nativo
+                            parentescoSelect.value = valorParentesco;
+                            console.log(`[PARENTESCO] Valor establecido con método nativo: "${valorParentesco}"`);
+                        }
+                        
+                        // Actualizar campo oculto para que se envíe cuando el select está deshabilitado
+                        if (parentescoHidden) {
+                            parentescoHidden.value = valorParentesco;
+                            console.log(`[PARENTESCO] Campo oculto actualizado: "${parentescoHidden.value}"`);
+                        }
 
-                    // Disparar evento change para actualizar validaciones
-                    const event = new Event('change');
-                    parentescoSelect.dispatchEvent(event);
+                        // Deshabilitar el select
+                        parentescoSelect.disabled = true;
+                        parentescoSelect.classList.add('bg-light', 'text-muted');
+                        console.log('[PARENTESCO] Select deshabilitado');
 
-                    // Actualizar Select2 si está en uso
-                    if (typeof $.fn.select2 === 'function' && $(parentescoSelect).hasClass(
-                            'select2-hidden-accessible')) {
-                        $(parentescoSelect).val(valorParentesco).trigger('change');
+                        // Disparar evento change para actualizar validaciones
+                        try {
+                            const event = new Event('change');
+                            parentescoSelect.dispatchEvent(event);
+                            console.log('[PARENTESCO] Evento change disparado');
+                        } catch (error) {
+                            console.warn('[PARENTESCO] Error al disparar evento change:', error);
+                        }
+
+                        // Actualizar Select2 si está en uso
+                        try {
+                            if (typeof $.fn.select2 === 'function' && $(parentescoSelect).hasClass(
+                                    'select2-hidden-accessible')) {
+                                $(parentescoSelect).val(valorParentesco).trigger('change');
+                                console.log('[PARENTESCO] Select2 actualizado');
+                            }
+                        } catch (error) {
+                            console.warn('[PARENTESCO] Error al actualizar Select2:', error);
+                        }
                     }
+                    
+                    console.log(`[PARENTESCO] Parentesco establecido exitosamente: "${valorParentesco}"`);
+                } else {
+                    console.error('[PARENTESCO] ERROR: No se encontró el select de parentesco');
                 }
             }
 
