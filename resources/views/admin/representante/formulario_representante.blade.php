@@ -3832,9 +3832,9 @@
                                         $select.selectpicker('val', '');
                                         $select.selectpicker('refresh');
                                         
-                                        // Para selects estáticos (prefijos, ocupación, parentesco): 
+                                        // Para selects estáticos (prefijos, ocupación, parentesco, país): 
                                         // usar limpieza agresiva pero segura que no duplica opciones
-                                        if (id.includes('prefijo') || id.includes('ocupacion') || id.includes('parentesco')) {
+                                        if (id.includes('prefijo') || id.includes('ocupacion') || id.includes('parentesco') || id.includes('idPais')) {
                                             // Limpiar valor primero
                                             $select.selectpicker('val', '');
                                             
