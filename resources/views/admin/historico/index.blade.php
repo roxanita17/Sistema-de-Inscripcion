@@ -128,7 +128,7 @@
                                             <td class="text-center">
                                                 <div class="d-flex flex-column align-items-center">
                                                     <span class="badge bg-info mb-1">
-                                                        {{ $prosecucion->grado->numero_grado }}° Grado
+                                                        {{ $prosecucion->grado->numero_grado }}°
                                                     </span>
                                                     @if ($prosecucion->repite_grado)
                                                         <small class="text-warning">

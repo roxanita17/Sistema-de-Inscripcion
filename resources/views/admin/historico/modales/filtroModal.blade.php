@@ -78,7 +78,7 @@
                         </label>
 
                         <select name="grado_id" id="gradoSelect" class="form-select form-control-modern mt-2">
-                            <option value="">Todos los grados</option>
+                            <option value="">Todos los niveles academicos</option>
                             @foreach ($grados as $grado)
                                 <option value="{{ $grado->id }}"
                                     {{ request('grado_id') == $grado->id ? 'selected' : '' }}>
@@ -94,7 +94,7 @@
                         <select name="seccion_id" id="seccionSelect" class="form-select form-control-modern mt-2"
                             disabled>
                             <option value="">
-                                {{ request('grado_id') ? 'Cargando secciones...' : 'Primero seleccione un grado' }}
+                                {{ request('grado_id') ? 'Cargando secciones...' : 'Primero seleccione un nivel academico' }}
                             </option>
 
                             @foreach ($secciones as $seccion)
@@ -165,7 +165,7 @@
 
             if (!gradoId) {
                 seccionSelect.innerHTML =
-                    '<option value="">Primero seleccione un grado</option>';
+                    '<option value="">Primero seleccione un nivel academico</option>';
                 return;
             }
 
@@ -186,7 +186,7 @@
 
                 if (!secciones.length) {
                     seccionSelect.innerHTML =
-                        '<option value="">No hay secciones para este grado</option>';
+                        '<option value="">No hay secciones para este nivel academico</option>';
                     return;
                 }
 

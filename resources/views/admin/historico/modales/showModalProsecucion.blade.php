@@ -31,7 +31,7 @@
                         @endif
                         @if ($datos->repite_grado)
                             <span class="badge bg-warning text-dark">
-                                <i class="fas fa-redo"></i> Repite Grado
+                                <i class="fas fa-redo"></i> Repite Nivel Academico
                             </span>
                         @else
                             <span class="badge bg-success">

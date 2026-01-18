@@ -20,7 +20,6 @@ class InscripcionProsecucionSeeder extends Seeder
             'grado_id' => 2,
             'seccion_id' => 6,
 
-            // 🔥 COPIA REAL
             'padre_id' => $inscripcionAnterior->padre_id,
             'madre_id' => $inscripcionAnterior->madre_id,
             'representante_legal_id' => $inscripcionAnterior->representante_legal_id,
@@ -50,7 +49,6 @@ class InscripcionProsecucionSeeder extends Seeder
             'grado_id' => 3,
             'seccion_id' => 9,
 
-            // 🔥 COPIA REAL
             'padre_id' => $inscripcionAnterior->padre_id,
             'madre_id' => $inscripcionAnterior->madre_id,
             'representante_legal_id' => $inscripcionAnterior->representante_legal_id,

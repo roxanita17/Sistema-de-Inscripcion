@@ -61,9 +61,9 @@
                         {{ !request('grado_id') ? 'disabled' : '' }}>
                         <option value="">
                             @if (!request('grado_id'))
-                                Primero seleccione un grado
+                                Primero seleccione un nivel academico
                             @elseif($secciones->isEmpty())
-                                No hay secciones para este grado
+                                No hay secciones para este nivel academico
                             @else
                                 Todas las secciones
                             @endif
@@ -143,7 +143,7 @@
 
             if (!gradoId) {
                 seccionSelect.innerHTML =
-                    '<option value="">Primero seleccione un grado</option>';
+                    '<option value="">Primero seleccione un nivel academico</option>';
                 return;
             }
 
@@ -165,7 +165,7 @@
 
                 if (!secciones.length) {
                     seccionSelect.innerHTML =
-                        '<option value="">No hay secciones para este grado</option>';
+                        '<option value="">No hay secciones para este nivel academico</option>';
                     return;
                 }
 

@@ -180,7 +180,7 @@
                 <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 10px; font-size: 8pt;">
                     <strong>Filtros aplicados:</strong><br>
                     @if(isset($filtros['grado']))
-                        • Grado: {{ $filtros['grado'] }}<br>
+                        • Nivel Academico: {{ $filtros['grado'] }}<br>
                     @endif
                     @if(isset($filtros['seccion']))
                         • Sección: {{ $filtros['seccion'] }}<br>
@@ -209,7 +209,7 @@
                     <th>Discapacidad</th>
                     <th>Etnia</th>
                     <th>Áreas de formación pendiente</th>
-                    <th class="text-center">Grado</th>
+                    <th class="text-center">Nivel Academico</th>
                     <th class="text-center">Sección</th>
                     <th>Representante Legal</th>
                 </tr>

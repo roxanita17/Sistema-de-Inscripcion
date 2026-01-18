@@ -76,10 +76,10 @@ class Docente extends Model
         return $this->hasManyThrough(
             DocenteAreaGrado::class,
             DetalleDocenteEstudio::class,
-            'docente_id',                    // FK en detalle_docente_estudios que apunta a docentes.id
-            'docente_estudio_realizado_id',  // FK en docente_area_grados que apunta a detalle_docente_estudios.id
-            'id',                            // PK local en docentes
-            'id'                             // PK local en detalle_docente_estudios
+            'docente_id',                    
+            'docente_estudio_realizado_id',  
+            'id',                            
+            'id'                            
         );
     }
 
@@ -93,10 +93,10 @@ class Docente extends Model
         return $this->hasManyThrough(
             DocenteAreaGrado::class,
             DetalleDocenteEstudio::class,
-            'docente_id', // fk detalle → docente
-            'docente_estudio_realizado_id', // fk area_grado → detalle
-            'id', // docente
-            'id'  // detalle
+            'docente_id',
+            'docente_estudio_realizado_id',
+            'id',
+            'id'
         );
     }
 

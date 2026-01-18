@@ -551,7 +551,7 @@ class Inscripcion extends Component
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'Cupos agotados',
-                'html' => 'Este grado ha alcanzado el máximo de cupos disponibles.'
+                'html' => 'Este nivel academico ha alcanzado el máximo de cupos disponibles.'
             ]);
             return;
         }

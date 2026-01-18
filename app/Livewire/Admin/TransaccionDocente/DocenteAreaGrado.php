@@ -353,7 +353,7 @@ class DocenteAreaGrado extends Component
                 $docente = $asignacionExistente->detalleDocenteEstudio->docente;
                 $nombre = $docente->persona->primer_nombre . ' ' . $docente->persona->primer_apellido;
 
-                $this->alertaAsignacion = " Esta área ya está asignada en este grado y sección al docente {$nombre}.";
+                $this->alertaAsignacion = " Esta área ya está asignada en este nivel academico y sección al docente {$nombre}.";
                 return;
             }
 

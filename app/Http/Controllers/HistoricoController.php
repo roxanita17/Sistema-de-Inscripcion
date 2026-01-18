@@ -50,14 +50,12 @@ class HistoricoController extends Controller
                     $q->where('anio_escolar_id', $anioEscolarId)
                 )
 
-                // 🔹 FILTRO POR GRADO
                 ->when($gradoId, function ($q) use ($gradoId) {
                     $q->whereHas('asignacionesAreas', function ($sub) use ($gradoId) {
                         $sub->where('grado_id', $gradoId);
                     });
                 })
 
-                // 🔹 FILTRO POR SECCIÓN
                 ->when($seccionId, function ($q) use ($seccionId) {
                     $q->whereHas('asignacionesAreas', function ($sub) use ($seccionId) {
                         $sub->where('seccion_id', $seccionId);

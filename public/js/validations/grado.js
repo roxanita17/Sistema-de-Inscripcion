@@ -3,15 +3,15 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Cargando validaciones para grados...');
+    console.log('Cargando validaciones para nivel academico...');
     
     // Inicializar validaciones cuando el DOM esté completamente cargado
     const modalGrado = document.getElementById('modalCrearGrado');
     if (modalGrado) {
-        console.log('Modal de grado encontrado, inicializando validaciones...');
+        console.log('Modal de nivel academico encontrado, inicializando validaciones...');
         inicializarValidacionesGrado();
     } else {
-        console.log('Modal de grado no encontrado');
+        console.log('Modal de nivel academico no encontrado');
     }
 });
 
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * Inicializa las validaciones para el formulario de grados
  */
 function inicializarValidacionesGrado() {
-    console.log('Inicializando validaciones para grados...');
+    console.log('Inicializando validaciones para nivel academico...');
     const form = document.getElementById('formCrearGrado');
     
     if (!form) {
@@ -117,7 +117,7 @@ function inicializarValidacionesGrado() {
             
             return data.existe;
         } catch (error) {
-            console.error('Error al verificar el grado:', error);
+            console.error('Error al verificar el nivel academico:', error);
             return false; // En caso de error, asumimos que no existe para no bloquear al usuario
         }
     }
@@ -129,14 +129,14 @@ function inicializarValidacionesGrado() {
 
         // Validar formato mientras se escribe
         numeroGradoInput.addEventListener('input', function() {
-            console.log('Evento input en número de grado:', this.value);
+            console.log('Evento input en número de nivel academico:', this.value);
             clearTimeout(timeoutId);
             const valor = this.value.trim();
             
             // Solo validar formato mientras se escribe, no si está vacío
             if (valor) {
                 if (!validarNumeroGrado(valor)) {
-                    mostrarError(this, 'El número de grado debe ser un número entre 1 y 9999');
+                    mostrarError(this, 'El número de nivel academico debe ser un número entre 1 y 9999');
                 } else {
                     mostrarError(this, '');
                     
@@ -146,7 +146,7 @@ function inicializarValidacionesGrado() {
                         const existe = await verificarGradoExistente(valor);
                         console.log('Resultado de verificación:', existe);
                         if (existe) {
-                            mostrarError(this, 'Ya existe un grado con este número');
+                            mostrarError(this, 'Ya existe un nivel academico con este número');
                         } else if (haHechoBlur) {
                             mostrarError(this, '');
                         }
@@ -159,20 +159,20 @@ function inicializarValidacionesGrado() {
 
         // Validar campo obligatorio solo cuando se hace blur
         numeroGradoInput.addEventListener('blur', function() {
-            console.log('Evento blur en número de grado:', this.value);
+            console.log('Evento blur en número de nivel academico:', this.value);
             haHechoBlur = true;
             const valor = this.value.trim();
             
             if (!valor) {
-                mostrarError(this, 'El número de grado es obligatorio');
+                mostrarError(this, 'El número de nivel academico es obligatorio');
             } else if (!validarNumeroGrado(valor)) {
-                mostrarError(this, 'El número de grado debe ser un número entre 1 y 9999');
+                mostrarError(this, 'El número de nivel academico debe ser un número entre 1 y 9999');
             } else {
                 // Verificar duplicados al salir del campo
                 verificarGradoExistente(valor).then(existe => {
                     console.log('Verificación después de blur:', existe);
                     if (existe) {
-                        mostrarError(this, 'Ya existe un grado con este número');
+                        mostrarError(this, 'Ya existe un nivel academico con este número');
                     } else {
                         mostrarError(this, '');
                     }
@@ -239,10 +239,10 @@ function inicializarValidacionesGrado() {
         if (numeroGradoInput) {
             const valor = numeroGradoInput.value.trim();
             if (!valor) {
-                mostrarError(numeroGradoInput, 'El número de grado es obligatorio');
+                mostrarError(numeroGradoInput, 'El número de nivel academico es obligatorio');
                 esValido = false;
             } else if (!validarNumeroGrado(valor)) {
-                mostrarError(numeroGradoInput, 'El número de grado debe ser un número entre 1 y 9999');
+                mostrarError(numeroGradoInput, 'El número de nivel academico debe ser un número entre 1 y 9999');
                 esValido = false;
             } else {
                 // Verificar si el grado ya existe
@@ -250,7 +250,7 @@ function inicializarValidacionesGrado() {
                 const existe = await verificarGradoExistente(valor);
                 console.log('Resultado de verificación antes de enviar:', existe);
                 if (existe) {
-                    mostrarError(numeroGradoInput, 'Ya existe un grado con este número');
+                    mostrarError(numeroGradoInput, 'Ya existe un nivel academico con este número');
                     esValido = false;
                 }
             }
@@ -314,7 +314,7 @@ function inicializarValidacionesGrado() {
     const modal = document.getElementById('modalCrearGrado');
     if (modal) {
         modal.addEventListener('hidden.bs.modal', function() {
-            console.log('Modal de grado cerrado, limpiando formulario...');
+            console.log('Modal de nivel academico cerrado, limpiando formulario...');
             form.reset();
             const errores = form.querySelectorAll('.error-validacion, .is-invalid');
             errores.forEach(error => {
@@ -330,5 +330,5 @@ function inicializarValidacionesGrado() {
         });
     }
 
-    console.log('Validaciones de grado inicializadas correctamente');
+    console.log('Validaciones de nivel academico inicializadas correctamente');
 }
