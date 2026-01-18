@@ -2034,6 +2034,230 @@
         const ocupaciones = @json(\App\Models\Ocupacion::all());
         const prefijosTelefono = @json($prefijos_telefono);
 
+        // [NUEVA FUNCIÓN] Diagnóstico completo de selectpickers
+        function diagnosticarSelectpicker(selectId) {
+            const select = document.getElementById(selectId);
+            if (!select) {
+                console.log(`[DIAGNÓSTICO] ${selectId}: Elemento no encontrado`);
+                return;
+            }
+
+            console.log(`=== DIAGNÓSTICO COMPLETO DE ${selectId} ===`);
+            
+            // 1. Inspeccionar HTML nativo
+            const optionsNativas = Array.from(select.options);
+            console.log(`[HTML NATIVO] Total opciones: ${optionsNativas.length}`);
+            optionsNativas.forEach((opt, i) => {
+                console.log(`  ${i}: value="${opt.value}", text="${opt.text}", display="${opt.style.display}"`);
+            });
+
+            // 2. Inspeccionar Bootstrap-Select
+            const $select = $(select);
+            const selectpickerData = $select.data('selectpicker');
+            
+            if (selectpickerData) {
+                console.log(`[BOOTSTRAP-SELECT] Selectpicker inicializado: true`);
+                
+                // 3. Inspeccionar elementos DOM del selectpicker
+                const bootstrapSelect = select.nextElementSibling;
+                if (bootstrapSelect && bootstrapSelect.classList.contains('bootstrap-select')) {
+                    const dropdownItems = bootstrapSelect.querySelectorAll('.dropdown-item');
+                    console.log(`[BOOTSTRAP-SELECT] Items en dropdown: ${dropdownItems.length}`);
+                    
+                    dropdownItems.forEach((item, i) => {
+                        const text = item.textContent.trim();
+                        const hidden = item.style.display === 'none';
+                        const disabled = item.classList.contains('disabled');
+                        console.log(`  ${i}: "${text}" (hidden: ${hidden}, disabled: ${disabled})`);
+                    });
+                    
+                    // 4. Verificar duplicados en el dropdown
+                    const textos = Array.from(dropdownItems).map(item => item.textContent.trim());
+                    const duplicados = textos.filter((text, index) => textos.indexOf(text) !== index);
+                    if (duplicados.length > 0) {
+                        console.log(`[BOOTSTRAP-SELECT] DUPLICADOS ENCONTRADOS:`, duplicados);
+                    } else {
+                        console.log(`[BOOTSTRAP-SELECT] Sin duplicados en dropdown`);
+                    }
+                } else {
+                    console.log(`[BOOTSTRAP-SELECT] No se encontró elemento bootstrap-select`);
+                }
+            } else {
+                console.log(`[BOOTSTRAP-SELECT] Selectpicker NO inicializado`);
+            }
+            
+            console.log(`=== FIN DIAGNÓSTICO DE ${selectId} ===`);
+        }
+
+        // [NUEVA FUNCIÓN] Diagnóstico de todos los selects del representante
+        function diagnosticarTodosLosSelects() {
+            const selectIds = [
+                'prefijo-representante',
+                'prefijo_dos-representante',
+                'ocupacion-representante',
+                'parentesco',
+                'idPais-representante',
+                'idEstado-representante',
+                'idMunicipio-representante',
+                'idparroquia-representante'
+            ];
+            
+            console.log('\n🔍 INICIANDO DIAGNÓSTICO COMPLETO DE TODOS LOS SELECTS 🔍\n');
+            
+            selectIds.forEach(id => {
+                diagnosticarSelectpicker(id);
+                console.log(''); // Espacio entre diagnósticos
+            });
+        }
+        function limpiarSelectPickerNuclear(selectElement, selectId) {
+            if (!selectElement) return;
+            
+            console.log(`[LIMPIEZA NUCLEAR] Iniciando limpieza nuclear para ${selectId}`);
+            
+            try {
+                const $select = $(selectElement);
+                
+                // PASO 1: Guardar HTML original la primera vez
+                if (!selectElement.hasAttribute('data-original-html')) {
+                    const originalHTML = selectElement.outerHTML;
+                    selectElement.setAttribute('data-original-html', originalHTML);
+                    console.log(`[LIMPIEZA NUCLEAR] HTML original guardado para ${selectId}`);
+                }
+                
+                // PASO 2: Eliminar COMPLETAMENTE el selectpicker del DOM
+                if ($select.data('selectpicker')) {
+                    try {
+                        $select.selectpicker('destroy');
+                    } catch (e) {
+                        console.warn(`[LIMPIEZA NUCLEAR] Error destruyendo selectpicker ${selectId}:`, e);
+                    }
+                }
+                
+                // PASO 3: Eliminar el selectpicker del jQuery data
+                $select.removeData('selectpicker');
+                
+                // PASO 4: Restaurar HTML original si está corrupto
+                const originalHTML = selectElement.getAttribute('data-original-html');
+                if (originalHTML) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = originalHTML;
+                    const newSelect = tempDiv.querySelector('select');
+                    
+                    if (newSelect && newSelect.id === selectId) {
+                        // Reemplazar el select actual con el original
+                        selectElement.parentNode.replaceChild(newSelect, selectElement);
+                        selectElement = newSelect;
+                        console.log(`[LIMPIEZA NUCLEAR] HTML original restaurado para ${selectId}`);
+                    }
+                }
+                
+                // PASO 5: Limpiar selección del select restaurado
+                selectElement.value = '';
+                selectElement.selectedIndex = -1;
+                
+                // PASO 6: Re-inicializar selectpicker con delay
+                setTimeout(() => {
+                    try {
+                        const $newSelect = $(selectElement);
+                        $newSelect.selectpicker({
+                            liveSearch: true,
+                            size: 8,
+                            noneResultsText: 'No hay resultados para {0}',
+                            selectOnTab: false,
+                            showSubtext: false,
+                            showIcon: true,
+                            width: 'auto'
+                        });
+                        
+                        // PASO 7: Forzar limpieza completa del estado
+                        $newSelect.selectpicker('val', '');
+                        $newSelect.selectpicker('deselectAll');
+                        $newSelect.selectpicker('render');
+                        $newSelect.selectpicker('refresh');
+                        
+                        console.log(`[LIMPIEZA NUCLEAR] ${selectId}: Selectpicker recreado con HTML original`);
+                        
+                    } catch (initError) {
+                        console.error(`[LIMPIEZA NUCLEAR] Error inicializando ${selectId}:`, initError);
+                    }
+                }, 50);
+                
+            } catch (error) {
+                console.error(`[LIMPIEZA NUCLEAR] Error crítico en ${selectId}:`, error);
+            }
+        }
+
+        // [NUEVA FUNCIÓN] Limpieza ultra-agresiva para selectpickers (combina todos los métodos)
+        function limpiarSelectPickerUltra(selectElement, selectId) {
+            if (!selectElement) return;
+            
+            console.log(`[LIMPIEZA ULTRA] Iniciando limpieza ultra-agresiva para ${selectId}`);
+            
+            try {
+                const $select = $(selectElement);
+                
+                // MÉTODO 1: Limpieza básica del select nativo
+                selectElement.value = '';
+                selectElement.selectedIndex = -1;
+                
+                // MÉTODO 2: Limpieza agresiva si el selectpicker está inicializado
+                if ($select.data('selectpicker')) {
+                    console.log(`[LIMPIEZA ULTRA] Selectpicker detectado, aplicando limpieza completa...`);
+                    
+                    // Paso 1: Limpiar valor y deseleccionar todo
+                    $select.selectpicker('val', '');
+                    $select.selectpicker('deselectAll');
+                    
+                    // Paso 2: Forzar render para limpiar texto visual
+                    $select.selectpicker('render');
+                    
+                    // Paso 3: Refresh para actualizar estado interno
+                    $select.selectpicker('refresh');
+                    
+                    // Paso 4: Destruir para eliminar estado residual
+                    $select.selectpicker('destroy');
+                    
+                    // Paso 5: Recrear con configuración limpia (solo para selects estáticos)
+                    if (selectId.includes('prefijo') || selectId.includes('ocupacion') || selectId.includes('parentesco') || selectId.includes('idPais')) {
+                        // El HTML original ya está intacto, solo re-inicializar
+                        $select.selectpicker({
+                            liveSearch: true,
+                            size: 8,
+                            noneResultsText: 'No hay resultados para {0}',
+                            selectOnTab: false,
+                            showSubtext: false,
+                            showIcon: true,
+                            width: 'auto'
+                        });
+                        console.log(`[LIMPIEZA ULTRA] ${selectId}: Selectpicker estático recreado`);
+                    } else {
+                        // Para selects dinámicos, usar limpiarSelectCompleto
+                        limpiarSelectCompleto(selectElement);
+                        console.log(`[LIMPIEZA ULTRA] ${selectId}: Selectpicker dinámico limpiado con limpiarSelectCompleto`);
+                    }
+                } else {
+                    console.log(`[LIMPIEZA ULTRA] ${selectId}: Selectpicker no inicializado, limpieza básica aplicada`);
+                }
+                
+                console.log(`[LIMPIEZA ULTRA] ${selectId}: Limpieza completada exitosamente`);
+                
+            } catch (error) {
+                console.error(`[LIMPIEZA ULTRA] Error en ${selectId}:`, error);
+                // Fallback de emergencia
+                try {
+                    selectElement.value = '';
+                    selectElement.selectedIndex = -1;
+                    const $select = $(selectElement);
+                    if ($select.data('selectpicker')) {
+                        $select.selectpicker('val', '');
+                        $select.selectpicker('refresh');
+                    }
+                } catch (fallbackError) {
+                    console.error(`[LIMPIEZA ULTRA] Error en fallback para ${selectId}:`, fallbackError);
+                }
+            }
+        }
+
         // [NUEVA FUNCIÓN] Limpieza ultra segura para selects estáticos (ocupación, prefijos)
         function limpiarSelectPickerEstatico(selectElement, placeholderText = 'Seleccione') {
             if (!selectElement) return;
@@ -2117,6 +2341,12 @@
 
         // Función unificada para cargar selects anidados
         function cargarSelectAnidado(tipo, parentId, targetSelectId, clearSelectId = null) {
+            // BLOQUEO DE COPIA: No ejecutar si estamos copiando datos
+            if (window.copiandoDatosProgenitor) {
+                console.log(`[CARGAR_SELECT] ⚠️ Modo copia activo, omitiendo carga de ${targetSelectId}`);
+                return;
+            }
+            
             const targetSelect = document.getElementById(targetSelectId);
             const clearSelect = clearSelectId ? document.getElementById(clearSelectId) : null;
 
@@ -2284,6 +2514,20 @@
         // Versión promise-based de cargarSelectAnidado para carga secuencial
         function cargarSelectAnidadoPromise(tipo, parentId, targetSelectId, clearSelectId = null) {
             return new Promise((resolve, reject) => {
+                // BLOQUEO DE COPIA: No ejecutar si estamos copiando datos
+                if (window.copiandoDatosProgenitor) {
+                    console.log(`[CARGAR_SELECT_PROMISE] ⚠️ Modo copia activo, omitiendo carga de ${targetSelectId}`);
+                    resolve(); // Resolver la promise para no romper la cadena
+                    return;
+                }
+                
+                // BLOQUEO DE COPIA: Verificación adicional antes de ejecutar cualquier cosa
+                if (window.copiandoDatosProgenitor) {
+                    console.log(`[CARGAR_SELECT_PROMISE] ⚠️ Verificación adicional: Modo copia activo, omitiendo ${targetSelectId}`);
+                    resolve();
+                    return;
+                }
+                
                 try {
                     const targetSelect = document.getElementById(targetSelectId);
                     const clearSelect = clearSelectId ? document.getElementById(clearSelectId) : null;
@@ -2295,9 +2539,19 @@
 
                     console.log(`[CARGAR_SELECT_PROMISE] Iniciando carga: tipo=${tipo}, parentId=${parentId}, target=${targetSelectId}`);
 
-                    // Limpiar selects
-                    limpiarSelectCompleto(targetSelect);
-                    if (clearSelect) limpiarSelectCompleto(clearSelect);
+                    // Limpiar selects con método SIMPLE (sin selectpicker)
+                    const limpiarSelectSimple = (selectElement) => {
+                        if (selectElement) {
+                            // Solo limpiar HTML, NO tocar selectpicker
+                            const placeholderOption = selectElement.querySelector('option[value=""]');
+                            const placeholderHTML = placeholderOption ? placeholderOption.outerHTML : `<option value="">Seleccione un ${tipo}</option>`;
+                            selectElement.innerHTML = placeholderHTML;
+                            console.log(`[CARGAR_SELECT_PROMISE] Select ${selectElement.id} limpiado con método simple`);
+                        }
+                    };
+                    
+                    limpiarSelectSimple(targetSelect);
+                    if (clearSelect) limpiarSelectSimple(clearSelect);
                     
                     // Verificación adicional: asegurar que los selects estén completamente vacíos
                     if (targetSelect.options.length > 1) {
@@ -2405,30 +2659,37 @@
                     
                     targetSelect.innerHTML = options;
                     
-                    // Re-inicializar selectpicker
+                    // Actualizar selectpicker con método SIMPLE (sin destroy)
                     const $targetSelect = $(targetSelect);
                     try {
-                        $targetSelect.selectpicker('destroy');
-                        $targetSelect.selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto'
-                        });
+                        // Solo refrescar el selectpicker existente, NO destruirlo
+                        if ($targetSelect.data('selectpicker')) {
+                            $targetSelect.selectpicker('refresh');
+                            console.log(`[CARGAR_SELECT_PROMISE] Selectpicker refrescado para ${targetSelectId}`);
+                        } else {
+                            // Inicializar solo si no existe
+                            $targetSelect.selectpicker({
+                                liveSearch: true,
+                                size: 8,
+                                noneResultsText: 'No hay resultados para {0}',
+                                selectOnTab: false,
+                                showSubtext: false,
+                                showIcon: true,
+                                width: 'auto'
+                            });
+                            console.log(`[CARGAR_SELECT_PROMISE] Selectpicker inicializado para ${targetSelectId}`);
+                        }
                         
-                        // Restaurar el valor si existía previamente
+                        // Restaurar el valor si existía previamente (usando método simple)
                         if (valorGuardado) {
-                            $targetSelect.selectpicker('val', valorGuardado);
+                            targetSelect.value = valorGuardado;
                             console.log(`[CARGAR_SELECT_PROMISE] Valor restaurado desde data-valor-guardado: "${valorGuardado}"`);
                         } else if (valorActual) {
-                            $targetSelect.selectpicker('val', valorActual);
+                            targetSelect.value = valorActual;
                             console.log(`[CARGAR_SELECT_PROMISE] Valor restaurado desde value: "${valorActual}"`);
                         }
 
-                        // Esperar un poco para que se complete la inicialización
+                        // Esperar un poco para que se complete la actualización
                         setTimeout(() => {
                             resolve({
                                 select: targetSelect,
@@ -2823,6 +3084,12 @@
         })()
         // Función centralizada para inicializar selectpicker con configuración consistente
         function inicializarSelectPickerConBuscador($selectElement) {
+            // BLOQUEO DE COPIA: No ejecutar si estamos copiando datos
+            if (window.copiandoDatosProgenitor) {
+                console.log(`[INICIALIZAR_SELECT] ⚠️ Modo copia activo, omitiendo inicialización de selectpicker`);
+                return;
+            }
+            
             if (!$selectElement || !$selectElement.hasClass('selectpicker')) {
                 return;
             }
@@ -3473,7 +3740,7 @@
 
             // Eventos para REPRESENTANTE
             document.getElementById('idPais-representante').addEventListener('change', function() {
-                if (!copiandoUbicacion && !reseteandoRepresentante) {
+                if (!copiandoUbicacion && !reseteandoRepresentante && !window.copiandoDatosProgenitor) {
                     cargarSelectAnidado('estado', this.value, 'idEstado-representante', 'idMunicipio-representante');
                     // También limpiar la parroquia cuando cambia el país
                     limpiarSelectCompleto(document.getElementById('idparroquia-representante'));
@@ -3482,13 +3749,13 @@
             });
 
             document.getElementById('idEstado-representante').addEventListener('change', function() {
-                if (!copiandoUbicacion && !reseteandoRepresentante) {
+                if (!copiandoUbicacion && !reseteandoRepresentante && !window.copiandoDatosProgenitor) {
                     cargarSelectAnidado('municipio', this.value, 'idMunicipio-representante', 'idparroquia-representante');
                 }
             });
 
             document.getElementById('idMunicipio-representante').addEventListener('change', function() {
-                if (!copiandoUbicacion && !reseteandoRepresentante) {
+                if (!copiandoUbicacion && !reseteandoRepresentante && !window.copiandoDatosProgenitor) {
                     cargarSelectAnidado('localidad', this.value, 'idparroquia-representante');
                 }
             });
@@ -3806,10 +4073,10 @@
                     if (tipo !== 'solo_representante') {
                         await resetearCamposRepresentante();
                     } else {
-                        // Para "solo representante legal", realizar limpieza agresiva completa
+                        // Para "solo representante legal", realizar limpieza SIMPLE (sin duplicación)
                         toggleCamposRepresentante(false);
                         
-                        // Limpieza agresiva adicional para SELECTPICKERS del representante (para evitar residuos visuales)
+                        // Limpieza SIMPLE para SELECTPICKERS del representante (evita duplicación)
                         const selectpickersRepresentante = [
                             'prefijo-representante',
                             'prefijo_dos-representante',
@@ -3824,49 +4091,30 @@
                         for (const id of selectpickersRepresentante) {
                             const select = document.getElementById(id);
                             if (select) {
-                                // Usar limpieza simple que no causa duplicación
+                                // Limpieza SIMPLE: solo limpiar valor, NO guardar/restaurar HTML
                                 try {
-                                    const $select = $(select);
-                                    if ($select.data('selectpicker')) {
-                                        // Limpiar valor seleccionado
-                                        $select.selectpicker('val', '');
-                                        $select.selectpicker('refresh');
-                                        
-                                        // Para selects estáticos (prefijos, ocupación, parentesco, país): 
-                                        // usar limpieza agresiva pero segura que no duplica opciones
-                                        if (id.includes('prefijo') || id.includes('ocupacion') || id.includes('parentesco') || id.includes('idPais')) {
-                                            // Limpiar valor primero
-                                            $select.selectpicker('val', '');
-                                            
-                                            // Destruir y recrear para limpiar completamente el estado visual
-                                            $select.selectpicker('destroy');
-                                            
-                                            // El HTML original ya está intacto, solo re-inicializar
-                                            $select.selectpicker({
-                                                liveSearch: true,
-                                                size: 8,
-                                                noneResultsText: 'No hay resultados para {0}',
-                                                selectOnTab: false,
-                                                showSubtext: false,
-                                                showIcon: true,
-                                                width: 'auto'
-                                            });
-                                            
-                                            console.log(`[LIMPIEZA EXTRA] Selectpicker estático ${id} limpiado con destroy/recreate`);
-                                        } else {
-                                            // Para selects dinámicos (ubicación): usar limpieza completa
-                                            limpiarSelectCompleto(select);
-                                            console.log(`[LIMPIEZA EXTRA] Selectpicker dinámico ${id} limpiado con limpiarSelectCompleto`);
-                                        }
-                                    }
-                                } catch (error) {
-                                    console.warn(`[LIMPIEZA EXTRA] Error limpiando selectpicker ${id}:`, error);
-                                    // Fallback: limpiar valor directamente
                                     select.value = '';
                                     select.selectedIndex = -1;
+                                    
+                                    const $select = $(select);
+                                    if ($select.data('selectpicker')) {
+                                        $select.selectpicker('val', '');
+                                        $select.selectpicker('refresh');
+                                    }
+                                    
+                                    console.log(`[LIMPIEZA SIMPLE] Selectpicker ${id} limpiado sin duplicación`);
+                                } catch (error) {
+                                    console.warn(`[LIMPIEZA SIMPLE] Error limpiando ${id}:`, error);
                                 }
                             }
                         }
+                        
+                        // DIAGNÓSTICO: Verificar qué está pasando después de la limpieza
+                        setTimeout(() => {
+                            console.log('\n🔍 DIAGNÓSTICO DESPUÉS DE LIMPIEZA 🔍');
+                            diagnosticarSelectpicker('prefijo-representante');
+                            diagnosticarSelectpicker('ocupacion-representante');
+                        }, 2000); // Aumentado a 2 segundos
 
                         // Limpieza de SELECTS REGULARES del representante
                         const selectsRegularesRepresentante = [
@@ -3965,8 +4213,63 @@
                     }
 
                     if (tipo === 'solo_representante') {
-                        // Para "Solo Representante Legal", los campos ya están habilitados arriba
-                        console.log('[TIPO REPRESENTANTE] Modo: Solo Representante Legal - campos habilitados sin limpiar');
+                        // Para "Solo Representante Legal", reactivar selectpickers y habilitar campos
+                        console.log('[TIPO REPRESENTANTE] Modo: Solo Representante Legal - reactivando selectpickers');
+                        
+                        // REACTIVAR SELECTPICKERS: Convertir selects normales de vuelta a selectpickers
+                        const selectIdsParaReactivar = [
+                            'prefijo-representante',
+                            'prefijo_dos-representante',
+                            'ocupacion-representante',
+                            'parentesco',
+                            'idPais-representante',
+                            'idEstado-representante',
+                            'idMunicipio-representante',
+                            'idparroquia-representante'
+                        ];
+                        
+                        selectIdsParaReactivar.forEach((id, index) => {
+                            setTimeout(() => {
+                                const select = document.getElementById(id);
+                                if (select && !select.classList.contains('selectpicker')) {
+                                    console.log(`[REACTIVACIÓN] Reactivando selectpicker para ${id}`);
+                                    
+                                    // Agregar clase selectpicker
+                                    select.classList.add('selectpicker');
+                                    
+                                    // Inicializar selectpicker
+                                    try {
+                                        $(select).selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            selectOnTab: false,
+                                            showSubtext: false,
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                        
+                                        // Refresh para asegurar que se muestre el valor actual
+                                        $(select).selectpicker('refresh');
+                                        
+                                        console.log(`[REACTIVACIÓN] ✅ ${id} reactivado correctamente`);
+                                        
+                                    } catch (error) {
+                                        console.error(`[REACTIVACIÓN] Error reactivando ${id}:`, error);
+                                    }
+                                } else if (select && select.classList.contains('selectpicker')) {
+                                    // Si ya tiene selectpicker, solo hacer refresh
+                                    try {
+                                        $(select).selectpicker('refresh');
+                                        console.log(`[REACTIVACIÓN] ${id} ya tenía selectpicker, solo refresh`);
+                                    } catch (error) {
+                                        console.error(`[REACTIVACIÓN] Error en refresh de ${id}:`, error);
+                                    }
+                                }
+                            }, index * 100); // Stagger para evitar conflictos
+                        });
+                        
+                        // Los campos ya están habilitados arriba
                     } else if (tipo === 'progenitor_padre_representante') {
                         // Para "Padre como Representante Legal"
                         console.log('[TIPO REPRESENTANTE] Modo: Padre como Representante Legal');
@@ -5026,12 +5329,31 @@
                         // Manejar selectpicker si está presente
                         if (typeof $ !== 'undefined' && $.fn.selectpicker && $(campo).hasClass('selectpicker')) {
                             try {
-                                // TEMPORAL: No hacer refresh en ocupación, prefijos y ubicación para evitar duplicaciones
+                                // NUEVO ENFOQUE: Serializar reconstrucciones para evitar conflictos
                                 if (id.includes('ocupacion') || id.includes('prefijo') || 
                                     id.includes('Pais') || id.includes('Estado') || 
                                     id.includes('Municipio') || id.includes('parroquia')) {
-                                    console.log(`[TOGGLE] Omitiendo refresh de selectpicker ${id} para evitar duplicaciones`);
+                                    
+                                    console.log(`[TOGGLE] Agregando ${id} a la cola de reconstrucción`);
+                                    
+                                    // Agregar a la cola global de reconstrucciones
+                                    if (!window.reconstruccionCola) {
+                                        window.reconstruccionCola = [];
+                                        window.reconstruyendo = false;
+                                    }
+                                    
+                                    window.reconstruccionCola.push({
+                                        campo: campo,
+                                        id: id,
+                                        deshabilitar: deshabilitar
+                                    });
+                                    
+                                    // Iniciar procesamiento de la cola si no está activo
+                                    if (!window.reconstruyendoSelectpickers) {
+                                        procesarColaReconstruccion();
+                                    }
                                 } else {
+                                    // Comportamiento normal para otros selects
                                     if (deshabilitar) {
                                         $(campo).prop('disabled', true);
                                         $(campo).selectpicker('refresh');
@@ -5042,6 +5364,155 @@
                                 }
                             } catch (error) {
                                 console.warn('Error al manejar selectpicker:', error);
+                            }
+                        }
+
+                        // Función para procesar la cola de reconstrucciones con BLOQUEO GLOBAL
+                        function procesarColaReconstruccion() {
+                            // BLOQUEO DE COPIA: No procesar si estamos copiando datos
+                            if (window.copiandoDatosProgenitor) {
+                                console.log('[TOGGLE] ⚠️ Modo copia activo, omitiendo procesamiento de cola de reconstrucción');
+                                return;
+                            }
+                            
+                            // Usar bloqueo global para evitar conflictos con otros procesos
+                            if (window.reconstruyendoSelectpickers || window.reconstruccionCola.length === 0) {
+                                return;
+                            }
+                            
+                            window.reconstruyendoSelectpickers = true;
+                            const item = window.reconstruccionCola.shift();
+                            
+                            console.log(`[TOGGLE] Reconstruyendo ${item.id} (cola: ${window.reconstruccionCola.length} restantes)`);
+                            
+                            try {
+                                // PASO 1: Destruir completamente
+                                $(item.campo).selectpicker('destroy');
+                                
+                                // PASO 2: Limpiar elementos residuales PERO MANTENER clase selectpicker
+                                const bootstrapSelect = item.campo.nextElementSibling;
+                                if (bootstrapSelect && bootstrapSelect.classList.contains('bootstrap-select')) {
+                                    bootstrapSelect.remove();
+                                }
+                                
+                                // ASEGURAR que la clase selectpicker esté presente
+                                if (!item.campo.classList.contains('selectpicker')) {
+                                    item.campo.classList.add('selectpicker');
+                                }
+                                
+                                // PASO 3: Re-inicializar con delay mayor y forzamiento de DOM
+                                setTimeout(() => {
+                                    console.log(`[TOGGLE] ${item.id}: Iniciando inicialización forzada...`);
+                                    
+                                    // Asegurar que el elemento esté visible y no oculto
+                                    item.campo.style.display = '';
+                                    item.campo.style.visibility = 'visible';
+                                    
+                                    // FORZAR: Destruir completamente cualquier instancia previa
+                                    try {
+                                        $(item.campo).selectpicker('destroy');
+                                    } catch (e) {
+                                        // Ignorar si no existe
+                                    }
+                                    
+                                    // FORZAR: Limpiar completamente el DOM alrededor
+                                    const elementosResiduales = item.campo.parentNode.querySelectorAll('.bootstrap-select');
+                                    elementosResiduales.forEach(el => el.remove());
+                                    
+                                    // FORZAR: Re-agregar clase si falta
+                                    if (!item.campo.classList.contains('selectpicker')) {
+                                        item.campo.classList.add('selectpicker');
+                                    }
+                                    
+                                    // FORZAR: Inicialización con verificación
+                                    try {
+                                        $(item.campo).selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            selectOnTab: false,
+                                            showSubtext: false,
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                        
+                                        console.log(`[TOGGLE] ${item.id}: selectpicker() ejecutado`);
+                                        
+                                        // FORZAR: Verificación inmediata de creación DOM
+                                        setTimeout(() => {
+                                            const bootstrapSelectElement = item.campo.nextElementSibling;
+                                            
+                                            if (!bootstrapSelectElement || !bootstrapSelectElement.classList.contains('bootstrap-select')) {
+                                                console.error(`[TOGGLE] ${item.id}: ❌ DOM no creado, intentando método alternativo...`);
+                                                
+                                                // MÉTODO ALTERNATIVO: Forzar recreación completa
+                                                try {
+                                                    // Destruir y limpiar
+                                                    $(item.campo).selectpicker('destroy');
+                                                    
+                                                    // Clonar el elemento para limpiar estado
+                                                    const originalSelect = item.campo;
+                                                    const clonedSelect = originalSelect.cloneNode(true);
+                                                    
+                                                    // Reemplazar en el DOM
+                                                    originalSelect.parentNode.replaceChild(clonedSelect, originalSelect);
+                                                    
+                                                    // Actualizar referencia
+                                                    item.campo = clonedSelect;
+                                                    
+                                                    // Re-inicializar con el clon
+                                                    $(item.campo).selectpicker({
+                                                        liveSearch: true,
+                                                        size: 8,
+                                                        noneResultsText: 'No hay resultados para {0}',
+                                                        selectOnTab: false,
+                                                        showSubtext: false,
+                                                        showIcon: true,
+                                                        width: 'auto'
+                                                    });
+                                                    
+                                                    console.log(`[TOGGLE] ${item.id}: ⚠️ Método alternativo aplicado`);
+                                                    
+                                                } catch (altError) {
+                                                    console.error(`[TOGGLE] ${item.id}: ❌ Método alternativo falló:`, altError);
+                                                }
+                                            }
+                                            
+                                            // Verificación final
+                                            const finalBootstrapElement = item.campo.nextElementSibling;
+                                            if (finalBootstrapElement && finalBootstrapElement.classList.contains('bootstrap-select')) {
+                                                console.log(`[TOGGLE] Selectpicker ${item.id} ✅ DOM creado correctamente`);
+                                            } else {
+                                                console.error(`[TOGGLE] Selectpicker ${item.id} ❌ Error: DOM no creado después de todos los intentos`);
+                                            }
+                                            
+                                            console.log(`[TOGGLE] Selectpicker ${item.id} reconstruido correctamente`);
+                                            
+                                        }, 100);
+                                        
+                                    } catch (initError) {
+                                        console.error(`[TOGGLE] ${item.id}: Error en inicialización:`, initError);
+                                    }
+                                    
+                                    // PASO 4: Aplicar estado
+                                    if (item.deshabilitar) {
+                                        $(item.campo).prop('disabled', true);
+                                    } else {
+                                        $(item.campo).prop('disabled', false);
+                                    }
+                                    
+                                    $(item.campo).selectpicker('refresh');
+                                    
+                                    // Liberar bloqueo y continuar con el siguiente
+                                    window.reconstruyendoSelectpickers = false;
+                                    setTimeout(() => procesarColaReconstruccion(), 150);
+                                    
+                                }, 300); // Aumentado a 300ms
+                            } catch (error) {
+                                console.error(`[TOGGLE] Error reconstruyendo ${item.id}:`, error);
+                                // Liberar bloqueo en caso de error
+                                window.reconstruyendoSelectpickers = false;
+                                setTimeout(() => procesarColaReconstruccion(), 150);
                             }
                         }
 
@@ -5323,211 +5794,93 @@
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
 
-                    // 2. Copiar prefijos telefónicos con función ultra simplificada
-                    console.log('PASO 2: Copiando prefijos telefónicos con función ultra...');
+                    // 2. Copiar prefijos telefónicos con método NATIVO PURO (sin Bootstrap-Select)
+                    console.log('PASO 2: Copiando prefijos telefónicos con método nativo puro...');
                     
-                    // Asegurar que los selects de prefijos tengan opciones antes de copiar
-                    const prefijo1Dest = document.getElementById('prefijo-representante');
-                    const prefijo2Dest = document.getElementById('prefijo_dos-representante');
-                    
-                    // Forzar inicialización desde los selects originales de la página
-                    if (prefijo1Dest) {
-                        console.log('[PREFIJO ULTRA] Estado inicial prefijo1 - options.length:', prefijo1Dest.options.length);
+                    const copiarSelectNativoPuro = (origenId, destinoId) => {
+                        const origen = document.getElementById(origenId);
+                        const destino = document.getElementById(destinoId);
                         
-                        // Si está vacío, buscar el HTML original desde algún select de origen
-                        if (prefijo1Dest.options.length <= 1) {
-                            const prefijoOrigen = document.getElementById('prefijo-padre') || document.getElementById('prefijo');
-                            if (prefijoOrigen && prefijoOrigen.options.length > 1) {
-                                console.log('[PREFIJO ULTRA] Copiando opciones desde select origen');
-                                const $select = $(prefijo1Dest);
+                        if (origen && destino && origen.value) {
+                            console.log(`[NATIVO PURO] ${origenId} -> ${destinoId} = "${origen.value}"`);
+                            
+                            try {
+                                // PASO 1: Desactivar COMPLETAMENTE Bootstrap-Select durante la copia
+                                const $destino = $(destino);
+                                const selectpickerData = $destino.data('selectpicker');
                                 
-                                // VALIDACIÓN ROBUSTA: Verificar que el elemento exista antes de destruir
-                                if ($select.length && $select[0] && $select.data('selectpicker')) {
-                                    try {
-                                        $select.selectpicker('destroy');
-                                    } catch (error) {
-                                        console.warn('[PREFIJO ULTRA] Error al destruir selectpicker:', error);
-                                        // Continuar sin destruir, probablemente ya no existe
+                                if (selectpickerData) {
+                                    // Destruir Bootstrap-Select completamente
+                                    $destino.selectpicker('destroy');
+                                    $destino.removeData('selectpicker');
+                                    destino.classList.remove('selectpicker');
+                                    
+                                    // Eliminar elementos DOM residuales
+                                    const bootstrapSelect = destino.nextElementSibling;
+                                    if (bootstrapSelect && bootstrapSelect.classList.contains('bootstrap-select')) {
+                                        bootstrapSelect.remove();
                                     }
+                                    
+                                    console.log(`[NATIVO PURO] Bootstrap-Select completamente desactivado para ${destinoId}`);
                                 }
                                 
-                                // VALIDACIÓN: Verificar que el elemento DOM exista antes de modificar
-                                if (prefijo1Dest && prefijo1Dest.parentNode) {
-                                    try {
-                                        let html = '<option value="" disabled selected>Seleccione</option>';
-                                        Array.from(prefijoOrigen.options).forEach(option => {
-                                            if (option.value !== '') {
-                                                html += `<option value="${option.value}">${option.text}</option>`;
-                                            }
-                                        });
-                                        prefijo1Dest.innerHTML = html;
-                                        
-                                        // Solo inicializar si el elemento aún existe
-                                        if ($select.length && $select[0]) {
-                                            $select.selectpicker({
-                                                liveSearch: true,
-                                                size: 8,
-                                                noneResultsText: 'No hay resultados para {0}',
-                                                selectOnTab: false,
-                                                showSubtext: false,
-                                                showIcon: true,
-                                                width: 'auto'
-                                            });
-                                            console.log('[PREFIJO ULTRA] Opciones copiadas desde origen para prefijo1');
-                                        }
-                                    } catch (error) {
-                                        console.error('[PREFIJO ULTRA] Error crítico al procesar prefijo1:', error);
-                                    }
-                                } else {
-                                    console.warn('[PREFIJO ULTRA] Elemento prefijo1Dest ya no existe en el DOM');
-                                }
+                                // PASO 2: Asignación DIRECTA al select nativo (ahora es un select normal)
+                                destino.value = origen.value;
+                                destino.selectedIndex = Array.from(destino.options).findIndex(opt => opt.value === origen.value);
+                                
+                                console.log(`[NATIVO PURO] Valor asignado a select normal ${destinoId}`);
+                                return true;
+                                
+                            } catch (error) {
+                                console.warn(`[NATIVO PURO] Error copiando ${origenId}:`, error);
+                                return false;
                             }
                         }
-                    }
+                        return false;
+                    };
                     
-                    if (prefijo2Dest) {
-                        console.log('[PREFIJO ULTRA] Estado inicial prefijo2 - options.length:', prefijo2Dest.options.length);
-                        
-                        if (prefijo2Dest.options.length <= 1) {
-                            const prefijo2Origen = document.getElementById('prefijo_dos_padre') || document.getElementById('prefijo_dos');
-                            if (prefijo2Origen && prefijo2Origen.options.length > 1) {
-                                console.log('[PREFIJO ULTRA] Copiando opciones desde select origen2');
-                                const $select = $(prefijo2Dest);
-                                
-                                // VALIDACIÓN ROBUSTA: Verificar que el elemento exista antes de destruir
-                                if ($select.length && $select[0] && $select.data('selectpicker')) {
-                                    try {
-                                        $select.selectpicker('destroy');
-                                    } catch (error) {
-                                        console.warn('[PREFIJO ULTRA] Error al destruir selectpicker (prefijo2):', error);
-                                        // Continuar sin destruir, probablemente ya no existe
-                                    }
-                                }
-                                
-                                // VALIDACIÓN: Verificar que el elemento DOM exista antes de modificar
-                                if (prefijo2Dest && prefijo2Dest.parentNode) {
-                                    try {
-                                        let html = '<option value="">Seleccione</option>';
-                                        Array.from(prefijo2Origen.options).forEach(option => {
-                                            if (option.value !== '') {
-                                                html += `<option value="${option.value}">${option.text}</option>`;
-                                            }
-                                        });
-                                        prefijo2Dest.innerHTML = html;
-                                        
-                                        // Solo inicializar si el elemento aún existe
-                                        if ($select.length && $select[0]) {
-                                            $select.selectpicker({
-                                                liveSearch: true,
-                                                size: 8,
-                                                noneResultsText: 'No hay resultados para {0}',
-                                                selectOnTab: false,
-                                                showSubtext: false,
-                                                showIcon: true,
-                                                width: 'auto'
-                                            });
-                                            console.log('[PREFIJO ULTRA] Opciones copiadas desde origen para prefijo2');
-                                        }
-                                    } catch (error) {
-                                        console.error('[PREFIJO ULTRA] Error crítico al procesar prefijo2:', error);
-                                    }
-                                } else {
-                                    console.warn('[PREFIJO ULTRA] Elemento prefijo2Dest ya no existe en el DOM');
-                                }
-                            }
-                        }
-                    }
-                    
-                    const prefijo1 = document.getElementById(`prefijo${prefijo}`);
-                    if (prefijo1 && prefijo1Dest && prefijo1.value) {
-                        console.log(`[PREFIJO ULTRA] Copiando prefijo1: ${prefijo1.value}`);
-                        await establecerValorSelectUltraSimple(prefijo1Dest, prefijo1.value, 100);
-                        await new Promise(resolve => setTimeout(resolve, 300));
-                    }
+                    copiarSelectNativoPuro(`prefijo${prefijo}`, 'prefijo-representante');
+                    copiarSelectNativoPuro(`prefijo_dos${esMadre ? '' : '_padre'}`, 'prefijo_dos-representante');
 
-                    const prefijo2 = document.getElementById(`prefijo_dos${esMadre ? '' : '_padre'}`);
-                    if (prefijo2 && prefijo2Dest && prefijo2.value) {
-                        console.log(`[PREFIJO ULTRA] Copiando prefijo2: ${prefijo2.value}`);
-                        await establecerValorSelectUltraSimple(prefijo2Dest, prefijo2.value, 100);
-                        await new Promise(resolve => setTimeout(resolve, 300));
-                    }
-
-                    // 3.1. Copiar país con método directo
-                    console.log('PASO 3: Copiando ubicación con método directo...');
+                    // 3. Copiar ubicación con método NATIVO PURO (sin Bootstrap-Select)
+                    console.log('PASO 3: Copiando ubicación con método nativo puro...');
                     
                     // Activar bandera para evitar eventos change durante la copia
                     copiandoUbicacion = true;
                     
-                    const paisOrigen = document.getElementById(`idPais${prefijo}`);
-                    const paisDestino = document.getElementById('idPais-representante');
-                    if (paisOrigen && paisDestino && paisOrigen.value) {
-                        console.log(`[PAÍS DIRECTO] Copiando país: ${paisOrigen.value}`);
-                        // Usar función ultra simple para evitar duplicación de texto en selectpicker
-                        await establecerValorSelectUltraSimple(paisDestino, paisOrigen.value, 200);
-                        await new Promise(resolve => setTimeout(resolve, 200));
-                        
-                        // 3.2. Cargar estados para el país copiado
-                        console.log(`[UBICACIÓN DIRECTA] Cargando estados para país: ${paisOrigen.value}`);
-                        const resultadoEstados = await cargarSelectAnidadoPromise('estado', paisOrigen.value, 'idEstado-representante', 'idMunicipio-representante');
+                    // Copiar país
+                    if (copiarSelectNativoPuro(`idPais${prefijo}`, 'idPais-representante')) {
+                        // MODO COPIA: NO cargar estados, solo copiar el valor del país
+                        const paisOrigen = document.getElementById(`idPais${prefijo}`);
+                        console.log(`[UBICACIÓN NATIVA] País copiado: ${paisOrigen.value}, omitiendo carga de estados en modo copia`);
                         await new Promise(resolve => setTimeout(resolve, 300));
-                            
-                        if (resultadoEstados) {
-                            // 3.3. Copiar estado con método directo (después de cargar opciones)
+                        
+                        // Copiar estado
+                        if (copiarSelectNativoPuro(`idEstado${prefijo}`, 'idEstado-representante')) {
+                            // MODO COPIA: NO cargar municipios, solo copiar el valor del estado
                             const estadoOrigen = document.getElementById(`idEstado${prefijo}`);
-                            const estadoDestino = document.getElementById('idEstado-representante');
-                            if (estadoOrigen && estadoDestino && estadoOrigen.value) {
-                                console.log(`[ESTADO DIRECTO] Copiando estado: ${estadoOrigen.value}`);
-                                // Esperar un poco más para que las opciones se carguen completamente
-                                await new Promise(resolve => setTimeout(resolve, 100));
-                                // Usar función ultra simple para evitar duplicación de texto en selectpicker
-                                await establecerValorSelectUltraSimple(estadoDestino, estadoOrigen.value, 200);
-                                await new Promise(resolve => setTimeout(resolve, 200));
-                                
-                                // 3.4. Cargar municipios para el estado copiado
-                                console.log(`[UBICACIÓN DIRECTA] Cargando municipios para estado: ${estadoOrigen.value}`);
-                                const resultadoMunicipios = await cargarSelectAnidadoPromise('municipio', estadoOrigen.value, 'idMunicipio-representante', 'idparroquia-representante');
+                            console.log(`[UBICACIÓN NATIVA] Estado copiado: ${estadoOrigen.value}, omitiendo carga de municipios en modo copia`);
+                            await new Promise(resolve => setTimeout(resolve, 300));
+                            
+                            // Copiar municipio
+                            if (copiarSelectNativoPuro(`idMunicipio${prefijo}`, 'idMunicipio-representante')) {
+                                // MODO COPIA: NO cargar parroquias, solo copiar el valor del municipio
+                                const municipioOrigen = document.getElementById(`idMunicipio${prefijo}`);
+                                console.log(`[UBICACIÓN NATIVA] Municipio copiado: ${municipioOrigen.value}, omitiendo carga de parroquias en modo copia`);
                                 await new Promise(resolve => setTimeout(resolve, 300));
                                 
-                                if (resultadoMunicipios) {
-                                    // 3.5. Copiar municipio con método directo (después de cargar opciones)
-                                    const municipioOrigen = document.getElementById(`idMunicipio${prefijo}`);
-                                    const municipioDestino = document.getElementById('idMunicipio-representante');
-                                    if (municipioOrigen && municipioDestino && municipioOrigen.value) {
-                                        console.log(`[MUNICIPIO DIRECTO] Copiando municipio: ${municipioOrigen.value}`);
-                                        await new Promise(resolve => setTimeout(resolve, 100));
-                                        // Usar función ultra simple para evitar duplicación de texto en selectpicker
-                                        await establecerValorSelectUltraSimple(municipioDestino, municipioOrigen.value, 200);
-                                        await new Promise(resolve => setTimeout(resolve, 200));
-                                        
-                                        // 3.6. Cargar parroquias para el municipio copiado
-                                        console.log(`[UBICACIÓN DIRECTA] Cargando parroquias para municipio: ${municipioOrigen.value}`);
-                                        const resultadoParroquias = await cargarSelectAnidadoPromise('localidad', municipioOrigen.value, 'idparroquia-representante');
-                                        await new Promise(resolve => setTimeout(resolve, 300));
-                                        
-                                        if (resultadoParroquias) {
-                                            // 3.7. Copiar parroquia con método directo (después de cargar opciones)
-                                            const parroquiaOrigen = document.getElementById(`idparroquia${prefijo}`);
-                                            const parroquiaDestino = document.getElementById('idparroquia-representante');
-                                            if (parroquiaOrigen && parroquiaDestino && parroquiaOrigen.value) {
-                                                console.log(`[PARROQUIA DIRECTO] Copiando parroquia: ${parroquiaOrigen.value}`);
-                                                await new Promise(resolve => setTimeout(resolve, 100));
-                                                // Usar función ultra simple para evitar duplicación de texto en selectpicker
-                                                await establecerValorSelectUltraSimple(parroquiaDestino, parroquiaOrigen.value, 200);
-                                                await new Promise(resolve => setTimeout(resolve, 200));
-                                            }
-                                        }
-                                    }
-                                }
+                                // Copiar parroquia
+                                copiarSelectNativoPuro(`idparroquia${prefijo}`, 'idparroquia-representante');
                             }
                         }
                     }
                     
                     // Desactivar bandera para permitir eventos change normales
                     copiandoUbicacion = false;
-                    console.log('[UBICACIÓN DIRECTA] Copia de ubicación completada, bandera desactivada');
+                    console.log('[UBICACIÓN SIMPLE] Copia de ubicación completada, bandera desactivada');
 
-                    // 4. Copiar campos de contacto y ocupación
-                    console.log('PASO 4: Copiando campos de contacto y ocupación...');
+                    // 4. Copiar campos de contacto
+                    console.log('PASO 4: Copiando campos de contacto...');
                     const camposContacto = [
                         [`direccion${prefijo}`, 'direccion-representante'],
                         [`telefono${prefijo}`, 'telefono-representante'],
@@ -5540,70 +5893,28 @@
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
 
-                    // 5. Copiar ocupación con función ultra
-                    console.log('PASO 5: Copiando ocupación con función ultra...');
+                    // 5. Copiar ocupación con método NATIVO PURO (sin Bootstrap-Select)
+                    console.log('PASO 5: Copiando ocupación con método nativo puro...');
                     
-                    // El select de ocupación ya tiene las opciones cargadas desde Blade
-                    const ocupacionDestino = document.getElementById('ocupacion-representante');
-                    
-                    if (ocupacionDestino) {
-                        console.log('[OCUPACIÓN ULTRA] Estado inicial ocupación - options.length:', ocupacionDestino.options.length);
-                        
-                        // VALIDACIÓN: Verificar que el elemento exista en el DOM
-                        if (ocupacionDestino.parentNode) {
-                            // Solo asegurarse de que el selectpicker esté inicializado
-                            const $select = $(ocupacionDestino);
-                            if ($select.length && $select[0]) {
-                                try {
-                                    if (!$select.data('selectpicker')) {
-                                        console.log('[OCUPACIÓN ULTRA] Inicializando selectpicker...');
-                                        $select.selectpicker({
-                                            liveSearch: true,
-                                            size: 8,
-                                            noneResultsText: 'No hay resultados para {0}',
-                                            selectOnTab: false,
-                                            showSubtext: false,
-                                            showIcon: true,
-                                            width: 'auto'
-                                        });
-                                    }
-                                    
-                                    // Refrescar el selectpicker para asegurar que se muestren las opciones
-                                    $select.selectpicker('refresh');
-                                    console.log('[OCUPACIÓN ULTRA] Selectpicker refrescado');
-                                } catch (error) {
-                                    console.error('[OCUPACIÓN ULTRA] Error al manejar selectpicker:', error);
-                                    // Continuar sin selectpicker si hay error
-                                }
-                            } else {
-                                console.warn('[OCUPACIÓN ULTRA] Elemento ocupacionDestino no válido para jQuery');
-                            }
-                        } else {
-                            console.warn('[OCUPACIÓN ULTRA] Elemento ocupacionDestino ya no existe en el DOM');
-                        }
-                    }
-                    
+                    copiarSelectNativoPuro(esMadre ? 'ocupacion-madre' : 'ocupacion-padre', 'ocupacion-representante');
+
+                    // 6. Manejar campo "otra ocupación"
+                    console.log('PASO 6: Manejando campo otra ocupación...');
                     const ocupacionOrigen = document.getElementById(esMadre ? 'ocupacion-madre' : 'ocupacion-padre');
-                    if (ocupacionOrigen && ocupacionDestino) {
-                        await establecerValorSelectUltraSimple(ocupacionDestino, ocupacionOrigen.value, 150);
-                        await new Promise(resolve => setTimeout(resolve, 300));
-                        
-                        // Manejar campo "otra ocupación"
-                        const otraOcupacionOrigen = document.getElementById(esMadre ? 'otra-ocupacion' : 'otra-ocupacion-padre');
-                        const otraOcupacionDestino = document.getElementById('otra-ocupacion-representante');
-                        const otraOcupacionContainer = document.getElementById('otra-ocupacion-container');
-                        
-                        if (ocupacionOrigen.value === 'otro' && otraOcupacionOrigen && otraOcupacionDestino) {
-                            if (otraOcupacionContainer) {
-                                otraOcupacionContainer.classList.remove('d-none');
-                                otraOcupacionContainer.classList.add('d-block');
-                            }
-                            otraOcupacionDestino.value = otraOcupacionOrigen.value;
-                            otraOcupacionDestino.dispatchEvent(new Event('input'));
-                        } else if (otraOcupacionContainer) {
-                            otraOcupacionContainer.classList.add('d-none');
-                            otraOcupacionContainer.classList.remove('d-block');
+                    const otraOcupacionOrigen = document.getElementById(esMadre ? 'otra-ocupacion' : 'otra-ocupacion-padre');
+                    const otraOcupacionDestino = document.getElementById('otra-ocupacion-representante');
+                    const otraOcupacionContainer = document.getElementById('otra-ocupacion-container');
+                    
+                    if (ocupacionOrigen && ocupacionOrigen.value === 'otro' && otraOcupacionOrigen && otraOcupacionDestino) {
+                        if (otraOcupacionContainer) {
+                            otraOcupacionContainer.classList.remove('d-none');
+                            otraOcupacionContainer.classList.add('d-block');
                         }
+                        otraOcupacionDestino.value = otraOcupacionOrigen.value;
+                        otraOcupacionDestino.dispatchEvent(new Event('input'));
+                    } else if (otraOcupacionContainer) {
+                        otraOcupacionContainer.classList.add('d-none');
+                        otraOcupacionContainer.classList.remove('d-block');
                     }
 
                     // 6. Copiar convivencia de forma simple
@@ -5619,13 +5930,89 @@
                         }
                     }
 
-                    // 7. Validación final ultra completa
+                    // 7. Validación final ultra completa...
                     console.log('PASO 7: Validación final ultra completa...');
+                    
+                    // PASO FINAL: Reconstrucción simple con bloqueo global
+                    console.log('PASO FINAL: Reconstruyendo todos los selectpickers después de la copia...');
+                    
+                    // MODO COPIA: No programar reconstrucción si estamos copiando
+                    if (window.copiandoDatosProgenitor) {
+                        console.log('[RECONSTRUCCIÓN FINAL] ⚠️ Modo copia activo, omitiendo programación de reconstrucción');
+                        return;
+                    }
+                    
+                    const reconstruirSelectpickersDespuesDeCopia = () => {
+                        // MODO COPIA: No reconstruir selectpickers si estamos copiando
+                        if (window.copiandoDatosProgenitor) {
+                            console.log('[RECONSTRUCCIÓN FINAL] ⚠️ Modo copia activo, omitiendo reconstrucción de selectpickers');
+                            // NO resetear la bandera aquí, mantener activa
+                            return;
+                        }
+                        
+                        // Esperar a que no haya reconstrucciones activas
+                        if (window.reconstruyendoSelectpickers) {
+                            console.log('[RECONSTRUCCIÓN FINAL] Esperando que termine reconstrucción previa...');
+                            setTimeout(reconstruirSelectpickersDespuesDeCopia, 500);
+                            return;
+                        }
+                        
+                        // Establecer bloqueo
+                        window.reconstruyendoSelectpickers = true;
+                        
+                        const selectIds = [
+                            'prefijo-representante',
+                            'prefijo_dos-representante',
+                            'ocupacion-representante',
+                            'parentesco',
+                            'idPais-representante',
+                            'idEstado-representante',
+                            'idMunicipio-representante',
+                            'idparroquia-representante'
+                        ];
+                        
+                        console.log('[RECONSTRUCCIÓN FINAL] Iniciando reconstrucción con bloqueo global...');
+                        
+                        selectIds.forEach((id, index) => {
+                            setTimeout(() => {
+                                const select = document.getElementById(id);
+                                if (select) {
+                                    try {
+                                        // Solo refresh - no inicializar para evitar conflictos
+                                        const $select = $(select);
+                                        if ($select.data('selectpicker')) {
+                                            $select.selectpicker('refresh');
+                                            console.log(`[RECONSTRUCCIÓN FINAL] ✅ ${id}: Refrescado`);
+                                        } else {
+                                            console.log(`[RECONSTRUCCIÓN FINAL] ⚠️ ${id}: Sin Bootstrap-Select, omitiendo`);
+                                        }
+                                    } catch (error) {
+                                        console.error(`[RECONSTRUCCIÓN FINAL] Error en ${id}:`, error);
+                                    }
+                                }
+                                
+                                // Liberar bloqueo al finalizar
+                                if (index === selectIds.length - 1) {
+                                    setTimeout(() => {
+                                        window.reconstruyendoSelectpickers = false;
+                                        console.log('[RECONSTRUCCIÓN FINAL] ✅ Bloqueo liberado');
+                                    }, 200);
+                                }
+                            }, index * 100); // Reducido a 100ms para mayor velocidad
+                        });
+                    };
+                    
+                    // Ejecutar reconstrucción después de un delay SOLO si no estamos copiando
+                    if (!window.copiandoDatosProgenitor) {
+                        setTimeout(reconstruirSelectpickersDespuesDeCopia, 1000);
+                    } else {
+                        console.log('[RECONSTRUCCIÓN FINAL] ⚠️ Modo copia activo, omitiendo timeout de reconstrucción');
+                    }
                     
                     // Esperar tiempo adicional para estabilización completa
                     await new Promise(resolve => setTimeout(resolve, 1500));
                     
-                    // Validar que los selects no tengan duplicación
+                    // Validación simple y rápida
                     const selectsValidar = [
                         'prefijo-representante',
                         'prefijo_dos-representante',
@@ -5639,38 +6026,17 @@
                     selectsValidar.forEach(selectId => {
                         const select = document.getElementById(selectId);
                         if (select) {
-                            const $select = $(select);
-                            const valor = $select.selectpicker('val');
-                            const texto = $select.find('option:selected').text();
-                            
-                            // Validación ultra estricta
-                            if (texto && valor) {
-                                // Para valores numéricos, verificar que no haya repetición
-                                if (!isNaN(valor)) {
-                                    const patronDuplicacion = new RegExp(`${valor}.*${valor}`);
-                                    if (patronDuplicacion.test(texto)) {
-                                        console.error(`[VALIDACIÓN ULTRA] ❌ Duplicación numérica en ${selectId}: "${texto}"`);
-                                        duplicacionDetectada = true;
-                                    } else {
-                                        console.log(`[VALIDACIÓN ULTRA] ✅ ${selectId}: "${texto}" (sin duplicación numérica)`);
-                                    }
-                                } else {
-                                    // Para valores de texto, verificar que no esté concatenado
-                                    if (texto.includes(valor) && texto !== valor) {
-                                        console.error(`[VALIDACIÓN ULTRA] ❌ Duplicación textual en ${selectId}: "${texto}"`);
-                                        duplicacionDetectada = true;
-                                    } else {
-                                        console.log(`[VALIDACIÓN ULTRA] ✅ ${selectId}: "${texto}" (sin duplicación textual)`);
-                                    }
-                                }
+                            const texto = select.options[select.selectedIndex]?.text || '';
+                            if (texto.includes('()') || /\d.*\d/.test(texto)) {
+                                duplicacionDetectada = true;
                             }
                         }
                     });
 
                     if (duplicacionDetectada) {
-                        console.warn('[VALIDACIÓN ULTRA] ⚠️ Se detectó duplicación persistente');
+                        console.warn('[VALIDACIÓN] ⚠️ Duplicación detectada');
                     } else {
-                        console.log('[VALIDACIÓN ULTRA] 🎉 Todos los selects perfectos, sin duplicación');
+                        console.log('[VALIDACIÓN] ✅ Sin duplicación');
                     }
 
                     // Aplicar estilos de solo lectura (excluyendo radios de convivencia)
@@ -5697,10 +6063,10 @@
                     window.copiandoDatosProgenitor = false;
                     throw error; // Re-lanzar para que se maneje arriba si es necesario
                 } finally {
-                    // CORRECCIÓN: Resetear bandera SIEMPRE al final, incluso en error
+                    // CORRECCIÓN: Resetear bandera SOLO al finalizar completamente la copia
                     clearTimeout(watchdogTimeout); // Limpiar el timeout para evitar resets innecesarios
                     window.copiandoDatosProgenitor = false;
-                    console.log('[COPIA WATCHDOG] Bandera reseteada al final (finally ejecutado)');
+                    console.log('[COPIA WATCHDOG] ✅ Bandera reseteada al finalizar copia completamente');
                 }
             }
 
@@ -5773,25 +6139,8 @@
 
                         // Manejo especial para selects con selectpicker
                         if ($(campo).hasClass('selectpicker')) {
-                            // Usar limpieza ultra solo para parentesco (temporalmente excluyendo ocupación y prefijos para evitar duplicaciones)
-                            if (id.includes('parentesco')) {
-                                limpiarSelectPickerEstatico(campo, 'Seleccione');
-                            } else if (id.includes('idPais')) {
-                                // Para país, usar limpieza simple para preservar opciones originales de PHP
-                                campo.value = '';
-                                campo.selectedIndex = -1;
-                                if ($(campo).data('selectpicker')) {
-                                    $(campo).selectpicker('val', '');
-                                    $(campo).selectpicker('refresh');
-                                }
-                                console.log(`[RESET ULTRA] País limpiado con método simple para preservar opciones originales`);
-                            } else if (id.includes('ocupacion') || id.includes('prefijo')) {
-                                // TEMPORAL: No limpiar ocupación y prefijos para evitar duplicaciones
-                                console.log(`[RESET ULTRA] Omitiendo limpieza de ${id} para evitar duplicaciones`);
-                            } else {
-                                // Para selects dinámicos (ubicación), usar limpieza completa
-                                limpiarSelectCompleto(campo);
-                            }
+                            // Usar limpieza NUCLEAR para todos los selectpickers
+                            limpiarSelectPickerNuclear(campo, id);
                         } else {
                             // Para otros campos, limpiar normalmente
                             campo.value = '';
@@ -6955,11 +7304,19 @@
             window.copiandoDatosProgenitor = false;
             console.log('[INICIO] Bandera copiandoDatosProgenitor reseteada al cargar página');
 
+            // BLOQUEO GLOBAL para selectpickers
+            window.reconstruyendoSelectpickers = false;
+            window.colaReconstruccionGlobal = [];
+
             // MÉTODO DE EMERGENCIA: Resetear bandera cada 5 segundos por si queda atascada
             setInterval(() => {
                 if (window.copiandoDatosProgenitor) {
                     console.warn('[EMERGENCIA] Detectada bandera atascada, reseteando automáticamente...');
                     window.copiandoDatosProgenitor = false;
+                }
+                if (window.reconstruyendoSelectpickers) {
+                    console.warn('[EMERGENCIA] Resetando bloqueo de selectpickers atascado...');
+                    window.reconstruyendoSelectpickers = false;
                 }
             }, 5000);
 
@@ -6968,6 +7325,96 @@
                 console.log('[EMERGENCIA MANUAL] Forzando reseteo de bandera copiandoDatosProgenitor');
                 window.copiandoDatosProgenitor = false;
             };
+
+            // SOLUCIÓN: Forzar actualización de texto en selects del representante
+            $(document).ready(function() {
+                const selectIdsRepresentante = [
+                    'prefijo-representante',
+                    'prefijo_dos-representante', 
+                    'ocupacion-representante',
+                    'parentesco',
+                    'idPais-representante',
+                    'idEstado-representante',
+                    'idMunicipio-representante',
+                    'idparroquia-representante'
+                ];
+
+                selectIdsRepresentante.forEach(function(selectId) {
+                    const $select = $('#' + selectId);
+                    
+                    if ($select.length && $select.hasClass('selectpicker')) {
+                        // Evento change para limpiar duplicación
+                        $select.on('change', function() {
+                            console.log(`[LIMPIA DUPLICADO] ${selectId}: Cambio detectado, verificando estado DOM`);
+                            
+                            setTimeout(function() {
+                                try {
+                                    // PASO 1: Verificar que el elemento bootstrap-select exista
+                                    const $bootstrapSelect = $select.next('.bootstrap-select');
+                                    
+                                    if (!$bootstrapSelect.length) {
+                                        console.warn(`[LIMPIA DUPLICADO] ${selectId}: No existe elemento bootstrap-select, forzando recreación`);
+                                        
+                                        // Forzar recreación completa
+                                        $select.selectpicker('destroy');
+                                        $select.selectpicker({
+                                            liveSearch: true,
+                                            size: 8,
+                                            noneResultsText: 'No hay resultados para {0}',
+                                            selectOnTab: false,
+                                            showSubtext: false,
+                                            showIcon: true,
+                                            width: 'auto'
+                                        });
+                                        
+                                        // Establecer valor nuevamente
+                                        const currentValue = $select.val();
+                                        if (currentValue) {
+                                            $select.selectpicker('val', currentValue);
+                                        }
+                                        
+                                        console.log(`[LIMPIA DUPLICADO] ${selectId}: ✅ Bootstrap-select recreado`);
+                                        return;
+                                    }
+                                    
+                                    // PASO 2: Si existe, limpiar duplicación normalmente
+                                    const $filterOption = $bootstrapSelect.find('.filter-option');
+                                    
+                                    if ($filterOption.length) {
+                                        const currentValue = $select.val();
+                                        const selectedOption = $select.find('option:selected');
+                                        const cleanText = selectedOption.text().trim();
+                                        const currentButtonText = $filterOption.text().trim();
+                                        
+                                        console.log(`[LIMPIA DUPLICADO] ${selectId}: Valor="${currentValue}", Texto limpio="${cleanText}", Texto actual="${currentButtonText}"`);
+                                        
+                                        // Detectar y limpiar duplicación
+                                        if (cleanText && currentButtonText.length > cleanText.length && currentButtonText.includes(cleanText)) {
+                                            console.warn(`[LIMPIA DUPLICADO] ${selectId}: Detectada duplicación, limpiando...`);
+                                            
+                                            // Reemplazar con texto limpio
+                                            $filterOption.text(cleanText);
+                                            $filterOption.attr('title', cleanText);
+                                            
+                                            console.log(`[LIMPIA DUPLICADO] ${selectId}: ✅ Texto corregido a "${cleanText}"`);
+                                        }
+                                    } else {
+                                        console.warn(`[LIMPIA DUPLICADO] ${selectId}: No se encontró .filter-option en bootstrap-select`);
+                                    }
+                                    
+                                    // Refresh final para asegurar consistencia
+                                    $select.selectpicker('refresh');
+                                    
+                                } catch (error) {
+                                    console.error(`[LIMPIA DUPLICADO] ${selectId}: Error:`, error);
+                                }
+                            }, 50);
+                        });
+                        
+                        console.log(`[LIMPIA DUPLICADO] Evento change configurado para ${selectId}`);
+                    }
+                });
+            });
         });
     </script>
 
