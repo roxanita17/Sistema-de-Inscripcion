@@ -396,6 +396,7 @@ class RepresentanteController extends Controller
             'from' => $request->from,
             'inscripcion_id' => $request->inscripcion_id,
             'tipo' => $request->tipo,
+            'paises' => Pais::where('status', true)->orderBy('nameES', 'ASC')->get(),
             'estados' => Estado::with('municipio.localidades')->get(),
             'bancos' => Banco::where('status', true)->get(),
             'prefijos_telefono' => PrefijoTelefono::where('status', true)->get(),
