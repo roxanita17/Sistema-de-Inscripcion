@@ -159,7 +159,7 @@
                                                 <span class="required-badge">*</span>
                                             </label>
                                             <select class="form-control-modern" id="tipo-ci" name="tipo-ci" required>
-                                                <option value="" disabled selected>Seleccione</option>
+                                                <option value="">Seleccione</option>
                                                 @foreach ($tipoDocumentos as $tipoDoc)
                                                     <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
                                                 @endforeach
@@ -285,7 +285,7 @@
                                                 <span class="required-badge">*</span>
                                             </label>
                                             <select class="form-control-modern" id="sexo" name="sexo" required>
-                                                <option value="" disabled selected>Seleccione</option>
+                                                <option value="">Seleccione</option>
                                                 @foreach ($generos as $genero)
                                                     <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
                                                 @endforeach
@@ -465,7 +465,7 @@
                                             </label>
                                             <select class="form-control-modern selectpicker" id="prefijo"
                                                 name="prefijo" data-live-search="true" required>
-                                                <option value="" disabled selected>Seleccione</option>
+                                                <option value="">Seleccione</option>
                                                 @foreach ($prefijos_telefono as $prefijo)
                                                     <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
                                                         ({{ $prefijo->tipo_linea }})
@@ -557,7 +557,7 @@
                                             <select name="ocupacion-madre" id="ocupacion-madre"
                                                 class="form-control-modern selectpicker" data-live-search="true"
                                                 required>
-                                                <option value="" disabled selected>Seleccione</option>
+                                                <option value="">Seleccione una ocupación</option>
                                                 @foreach ($ocupaciones as $ocupacion)
                                                     <option value="{{ $ocupacion->id }}">
                                                         {{ $ocupacion->nombre_ocupacion }}
@@ -678,7 +678,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern" id="tipo-ci-padre" name="tipo-ci-padre" required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Seleccione</option>
                                     @foreach ($tipoDocumentos as $tipoDoc)
                                         <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
                                     @endforeach
@@ -798,7 +798,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern" id="sexo-padre" name="sexo-padre" required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Seleccione</option>
                                     @foreach ($generos as $genero)
                                         <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
                                     @endforeach
@@ -877,7 +877,7 @@
                                 </label>
                                 <select class="form-control-modern selectpicker" id="idEstado-padre"
                                     name="idEstado-padre" data-live-search="true" required>
-                                    <option value="" disabled selected>Seleccione un estado</option>
+                                    <option value="">Seleccione un estado</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione un estado.
@@ -893,7 +893,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern selectpicker" id="idMunicipio-padre"
-                                    name="idMunicipio-padre" data-live-search="true" title="Buscar municipio..."
+                                    name="idMunicipio-padre" data-live-search="true"
                                     required>
                                 </select>
                                 <div class="invalid-feedback">
@@ -960,7 +960,7 @@
                                 </label>
                                 <select class="form-control-modern selectpicker" id="prefijo-padre" name="prefijo-padre"
                                     data-live-search="true" required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Seleccione</option>
                                     @foreach ($prefijos_telefono as $prefijo)
                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
                                             ({{ $prefijo->tipo_linea }})
@@ -1048,7 +1048,7 @@
                                 <select class="form-control-modern selectpicker" id="ocupacion-padre"
                                     name="ocupacion-padre" data-live-search="true"
                                     required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Seleccione una ocupación</option>
                                     @foreach ($ocupaciones as $ocupacion)
                                         <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
                                     @endforeach
@@ -1193,7 +1193,7 @@
                                 </label>
                                 <select class="form-control-modern" id="tipo-ci-representante"
                                     name="tipo-ci-representante" required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Seleccione</option>
                                     @foreach ($tipoDocumentos as $tipoDoc)
                                         <option value="{{ $tipoDoc->id }}">{{ $tipoDoc->nombre }}</option>
                                     @endforeach
@@ -1329,7 +1329,7 @@
                                 </label>
                                 <select class="form-control-modern" id="sexo-representante" name="sexo-representante"
                                     required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Seleccione</option>
                                     @foreach ($generos as $genero)
                                         <option value="{{ $genero->id }}">{{ $genero->genero }}</option>
                                     @endforeach
@@ -1419,7 +1419,7 @@
                                 </label>
                                 <select class="form-control-modern selectpicker" id="idEstado-representante"
                                     name="idEstado-representante" data-live-search="true" required>
-                                    <option value="" disabled selected>Seleccione un estado</option>
+                                    <option value="">Seleccione un estado</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Por favor seleccione un estado.
@@ -1507,7 +1507,7 @@
                                 </label>
                                 <select class="form-control-modern selectpicker" id="prefijo-representante"
                                     name="prefijo-representante" data-live-search="true" required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Seleccione</option>
                                     @foreach ($prefijos_telefono as $prefijo)
                                         <option value="{{ $prefijo->id }}">{{ $prefijo->prefijo }}
                                             ({{ $prefijo->tipo_linea }})
@@ -1597,8 +1597,8 @@
                                 </label>
                                 <select name="ocupacion-representante" id="ocupacion-representante"
                                     class="form-control-modern selectpicker" data-live-search="true"
-                                    title="Seleccione una ocupación" required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    required>
+                                    <option value="">Seleccione una ocupación</option>
                                     @foreach ($ocupaciones as $ocupacion)
                                         <option value="{{ $ocupacion->id }}">{{ $ocupacion->nombre_ocupacion }}</option>
                                     @endforeach
@@ -1635,8 +1635,8 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <select class="form-control-modern selectpicker" id="parentesco" name="parentesco"
-                                    data-live-search="true" title="Seleccione el parentesco" required>
-                                    <option value="" disabled selected>Seleccione</option>
+                                    data-live-search="true" required>
+                                    <option value="">Seleccione el parentesco</option>
                                     <option value="Papá">Papá</option>
                                     <option value="Mamá">Mamá</option>
                                     <option value="Hermano(a)">Hermano(a)</option>
@@ -2300,7 +2300,7 @@
                 }
 
                 // Reconstruir HTML con opciones originales
-                let html = `<option value="" disabled selected>${placeholderText}</option>`;
+                let html = `<option value="">${placeholderText}</option>`;
                 const opcionesOriginales = JSON.parse(selectElement.getAttribute('data-original-options') || '[]');
                 opcionesOriginales.forEach(option => {
                     html += `<option value="${option.value}"${option.disabled ? ' disabled' : ''}>${option.text}</option>`;
@@ -3163,8 +3163,16 @@
                 if ($select.data('selectpicker')) {
                     console.log(`[LIMPIAR_SELECT] Limpiando selectpicker sin destruir para ${selectId}`);
                     
-                    // LIMPIEZA AGRESIVA: Eliminar todas las opciones excepto placeholder
-                    $select.find('option:not([value=""])').remove();
+                    // LIMPIEZA AGRESIVA: Eliminar todas las opciones excepto placeholder EXISTENTE
+                    const placeholderExistente = selectElement.querySelector('option[value=""]');
+                    if (placeholderExistente) {
+                        // Mantener solo el placeholder existente
+                        $select.find('option:not([value=""])').remove();
+                    } else {
+                        // Solo crear placeholder si no existe
+                        const placeholderText = selectId.includes('pais') ? 'país' : selectId.includes('estado') ? 'estado' : selectId.includes('municipio') ? 'municipio' : selectId.includes('parroquia') ? 'parroquia' : selectId.includes('ocupacion') ? 'ocupación' : 'opción';
+                        $select.empty().append(`<option value="">Seleccione un ${placeholderText}</option>`);
+                    }
                     
                     // LIMPIEZA DE TEXTO VISUAL: Limpiar el texto mostrado en el selectpicker
                     $select.selectpicker('val', '');
@@ -3173,12 +3181,7 @@
                     // LIMPIEZA ADICIONAL: Forzar limpieza del DOM interno del selectpicker
                     $select.selectpicker('destroy');
                     
-                    // Reconstruir con placeholder limpio
-                    const placeholderOption = selectElement.querySelector('option[value=""]');
-                    const placeholderHTML = placeholderOption ? placeholderOption.outerHTML : `<option value="">Seleccione un ${selectId.includes('pais') ? 'país' : selectId.includes('estado') ? 'estado' : selectId.includes('municipio') ? 'municipio' : 'parroquia'}</option>`;
-                    
-                    selectElement.innerHTML = placeholderHTML;
-                    
+                    // Reconstruir con el placeholder ya existente
                     // Re-inicializar selectpicker limpio
                     $select.selectpicker({
                         liveSearch: true,
@@ -3196,13 +3199,17 @@
                 }
                 
                 // Si no hay selectpicker inicializado, limpiar normalmente
-                const placeholderOption = selectElement.querySelector('option[value=""]');
-                let placeholderHTML = '';
-                
-                if (placeholderOption) {
-                    placeholderHTML = placeholderOption.outerHTML;
+                const placeholderExistente = selectElement.querySelector('option[value=""]');
+                if (placeholderExistente) {
+                    // Mantener solo el placeholder existente, eliminar el resto
+                    const opciones = Array.from(selectElement.options);
+                    opciones.forEach(option => {
+                        if (option.value !== '') {
+                            option.remove();
+                        }
+                    });
                 } else {
-                    // Crear placeholder genérico basado en el ID del select
+                    // Solo crear placeholder si no existe
                     let placeholderText = 'Seleccione';
                     
                     if (selectId.includes('pais')) placeholderText = 'Seleccione un país';
@@ -3212,12 +3219,9 @@
                     else if (selectId.includes('prefijo')) placeholderText = 'Seleccione';
                     else if (selectId.includes('ocupacion')) placeholderText = 'Seleccione una ocupación';
                     
-                    placeholderHTML = `<option value="">${placeholderText}</option>`;
+                    selectElement.innerHTML = `<option value="">${placeholderText}</option>`;
                 }
-                
-                // Limpiar y restaurar solo el placeholder
-                selectElement.innerHTML = placeholderHTML;
-                console.log(`[LIMPIAR_SELECT] HTML establecido para ${selectId}:`, placeholderHTML);
+                console.log(`[LIMPIAR_SELECT] Select limpiado para ${selectId}`);
                 console.log(`[LIMPIAR_SELECT] Opciones después de limpiar: ${selectElement.options.length}`);
                 
                 // Inicializar selectpicker solo si no existe
@@ -3858,41 +3862,35 @@
                 if (clearSelectId) {
                     const clearSelect = document.getElementById(clearSelectId);
                     if (clearSelect) {
+                        // Destruir selectpicker si existe
+                        if ($(clearSelect).data('selectpicker')) {
+                            $(clearSelect).selectpicker('destroy');
+                        }
                         clearSelect.innerHTML = '<option value="">Seleccione...</option>';
                     }
                 }
 
+                // Destruir selectpicker del target si existe
+                if ($(targetSelect).data('selectpicker')) {
+                    $(targetSelect).selectpicker('destroy');
+                }
+
                 // Filtrar datos según el tipo
                 let datos = [];
+                let placeholderText = '';
+                
                 if (tipo === 'estado') {
                     datos = ubicacionesData.filter(e => String(e.pais_id) === String(parentId));
                     console.log('[CARGAR SIMPLE] Estados encontrados:', datos.length);
                     console.log('[CARGAR SIMPLE] Datos completos:', datos);
-                    
-                    targetSelect.innerHTML = '<option value="">Seleccione un estado</option>';
-                    datos.forEach((item, index) => {
-                        // Limpiar el nombre del estado para evitar concatenación
-                        const nombreEstado = item.nombre_estado ? item.nombre_estado.trim() : '';
-                        console.log(`[CARGAR SIMPLE] Estado ${index}:`, {
-                            id: item.id,
-                            nombre_original: item.nombre_estado,
-                            nombre_limpiado: nombreEstado
-                        });
-                        targetSelect.innerHTML += `<option value="${item.id}">${nombreEstado}</option>`;
-                    });
+                    placeholderText = 'Seleccione un estado';
                     
                 } else if (tipo === 'municipio') {
                     const estado = ubicacionesData.find(e => e.id == parentId);
                     if (estado && estado.municipio) {
                         datos = estado.municipio;
                         console.log('[CARGAR SIMPLE] Municipios encontrados:', datos.length);
-                        
-                        targetSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-                        datos.forEach(item => {
-                            // Limpiar el nombre del municipio para evitar concatenación
-                            const nombreMunicipio = item.nombre_municipio ? item.nombre_municipio.trim() : '';
-                            targetSelect.innerHTML += `<option value="${item.id}">${nombreMunicipio}</option>`;
-                        });
+                        placeholderText = 'Seleccione un municipio';
                     }
                 } else if (tipo === 'localidad') {
                     for (const estado of ubicacionesData) {
@@ -3901,45 +3899,65 @@
                             if (municipio && municipio.localidades) {
                                 datos = municipio.localidades;
                                 console.log('[CARGAR SIMPLE] Localidades encontradas:', datos.length);
-                                
-                                targetSelect.innerHTML = '<option value="">Seleccione una localidad</option>';
-                                datos.forEach(item => {
-                                    // Limpiar el nombre de la localidad para evitar concatenación
-                                    const nombreLocalidad = item.nombre_localidad ? item.nombre_localidad.trim() : '';
-                                    targetSelect.innerHTML += `<option value="${item.id}">${nombreLocalidad}</option>`;
-                                });
+                                placeholderText = 'Seleccione una localidad';
                                 break;
                             }
                         }
                     }
                 }
 
-                // Re-inicializar selectpicker si existe
-                try {
-                    // Destruir y reconstruir completamente el selectpicker para evitar opciones basura
-                    if ($(targetSelect).data('selectpicker')) {
-                        $(targetSelect).selectpicker('destroy');
+                // Limpiar completamente el select
+                targetSelect.innerHTML = '';
+
+                // Agregar placeholder
+                const placeholderOption = new Option(placeholderText, '', false, false);
+                targetSelect.add(placeholderOption);
+
+                // Agregar opciones usando DOM manipulation (no innerHTML +=)
+                datos.forEach((item, index) => {
+                    let nombre = '';
+                    let id = '';
+                    
+                    if (tipo === 'estado') {
+                        nombre = item.nombre_estado ? item.nombre_estado.trim() : '';
+                        id = item.id;
+                        console.log(`[CARGAR SIMPLE] Estado ${index}:`, {
+                            id: item.id,
+                            nombre_original: item.nombre_estado,
+                            nombre_limpiado: nombre
+                        });
+                    } else if (tipo === 'municipio') {
+                        nombre = item.nombre_municipio ? item.nombre_municipio.trim() : '';
+                        id = item.id;
+                    } else if (tipo === 'localidad') {
+                        nombre = item.nombre_localidad ? item.nombre_localidad.trim() : '';
+                        id = item.id;
                     }
                     
-                    // Esperar un poco y reconstruir
-                    setTimeout(() => {
-                        $(targetSelect).selectpicker({
-                            liveSearch: true,
-                            size: 8,
-                            noneResultsText: 'No hay resultados para {0}',
-                            selectOnTab: false,
-                            showSubtext: false,
-                            showIcon: true,
-                            width: 'auto',
-                            container: 'body'
-                        });
-                        
-                        console.log('[CARGAR SIMPLE] Selectpicker reconstruido completamente');
-                    }, 100);
+                    if (nombre && id) {
+                        const option = new Option(nombre, id, false, false);
+                        targetSelect.add(option);
+                    }
+                });
+
+                // Re-inicializar selectpicker
+                try {
+                    $(targetSelect).selectpicker({
+                        liveSearch: true,
+                        size: 8,
+                        noneResultsText: 'No hay resultados para {0}',
+                        selectOnTab: false,
+                        showSubtext: false,
+                        showIcon: true,
+                        width: 'auto',
+                        container: 'body'
+                    });
+                    
+                    console.log('[CARGAR SIMPLE] Selectpicker reconstruido completamente');
                 } catch (e) {
                     console.log('[CARGAR SIMPLE] Error al reconstruir selectpicker:', e.message);
                 }
-
+                
                 // Reconfigurar eventos después de cargar datos (importante para selects reconstruidos)
                 setTimeout(() => {
                     configurarEventosRepresentante();
@@ -4013,36 +4031,30 @@
                     if (typeof $ !== 'undefined' && $.fn.selectpicker) {
                         const $parentescoSelect = $(parentescoSelect);
                         
-                        // Guardar las opciones originales
-                        const opcionesOriginales = [];
-                        Array.from(parentescoSelect.options).forEach(option => {
-                            opcionesOriginales.push({
-                                value: option.value,
-                                text: option.text,
-                                disabled: option.disabled,
-                                selected: option.selected
-                            });
-                        });
-                        
-                        // Destruir el selectpicker
+                        // Destruir el selectpicker primero para evitar conflictos
                         $parentescoSelect.selectpicker('destroy');
                         
                         // Limpiar completamente el select
                         $parentescoSelect.empty();
                         
-                        // Restaurar las opciones sin duplicación
-                        const valoresVistos = new Set();
-                        opcionesOriginales.forEach(opcion => {
-                            if (!valoresVistos.has(opcion.value)) {
-                                const $newOption = $('<option>', {
-                                    value: opcion.value,
-                                    text: opcion.text,
-                                    disabled: opcion.disabled,
-                                    selected: opcion.selected
-                                });
-                                $parentescoSelect.append($newOption);
-                                valoresVistos.add(opcion.value);
-                            }
+                        // Opciones base sin duplicación
+                        const opcionesBase = [
+                            { value: '', text: 'Seleccione un parentesco', disabled: false, selected: true },
+                            { value: 'Mamá', text: 'Mamá', disabled: (estadoMadre !== 'Presente' || tipoRepresentante === 'solo_representante'), selected: false },
+                            { value: 'Papá', text: 'Papá', disabled: (estadoPadre !== 'Presente' || tipoRepresentante === 'solo_representante'), selected: false },
+                            { value: 'Otro', text: 'Otro', disabled: false, selected: false },
+                            { value: 'Representante Legal', text: 'Representante Legal', disabled: false, selected: false }
+                        ];
+                        
+                        // Agregar opciones limpias sin duplicación
+                        opcionesBase.forEach(opcion => {
+                            const $newOption = $('<option>', {
+                                value: opcion.value,
+                                text: opcion.text,
+                                disabled: opcion.disabled,
+                                selected: opcion.selected
+                            });
+                            $parentescoSelect.append($newOption);
                         });
                         
                         // Reconstruir el selectpicker
@@ -4262,7 +4274,7 @@
                         // Para "solo representante legal", realizar limpieza SIMPLE (sin duplicación)
                         toggleCamposRepresentante(false);
                         
-                        // Limpieza SIMPLE para SELECTPICKERS del representante (evita duplicación)
+                        // Limpieza COMPLETA para SELECTPICKERS del representante (elimina duplicados)
                         const selectpickersRepresentante = [
                             'prefijo-representante',
                             'prefijo_dos-representante',
@@ -4277,20 +4289,55 @@
                         for (const id of selectpickersRepresentante) {
                             const select = document.getElementById(id);
                             if (select) {
-                                // Limpieza SIMPLE: solo limpiar valor, NO guardar/restaurar HTML
                                 try {
-                                    select.value = '';
-                                    select.selectedIndex = -1;
-                                    
-                                    const $select = $(select);
-                                    if ($select.data('selectpicker')) {
-                                        $select.selectpicker('val', '');
-                                        $select.selectpicker('refresh');
+                                    // Intentar usar opciones originales guardadas
+                                    let opcionesOriginales = null;
+                                    if (select.dataset.opcionesOriginales) {
+                                        try {
+                                            opcionesOriginales = JSON.parse(select.dataset.opcionesOriginales);
+                                        } catch (e) {
+                                            console.warn(`[LIMPIEZA COMPLETA] Error parseando opciones originales para ${id}:`, e);
+                                        }
                                     }
                                     
-                                    console.log(`[LIMPIEZA SIMPLE] Selectpicker ${id} limpiado sin duplicación`);
+                                    // Si no hay opciones originales, crear opciones limpias basadas en el tipo de select
+                                    if (!opcionesOriginales || opcionesOriginales.length === 0) {
+                                        console.log(`[LIMPIEZA COMPLETA] Creando opciones limpias para ${id}...`);
+                                        opcionesOriginales = crearOpcionesLimpias(id);
+                                    }
+                                    
+                                    // Destruir selectpicker completamente
+                                    const $select = $(select);
+                                    if ($select.data('selectpicker')) {
+                                        $select.selectpicker('destroy');
+                                    }
+
+                                    // Limpiar HTML completamente
+                                    select.innerHTML = '';
+
+                                    // Restaurar opciones limpias
+                                    opcionesOriginales.forEach(opt => {
+                                        const option = new Option(opt.text, opt.value, false, false);
+                                        if (opt.disabled) option.disabled = true;
+                                        select.add(option);
+                                    });
+
+                                    // Resetear selección
+                                    select.value = '';
+                                    select.selectedIndex = 0;
+
+                                    // Reconstruir selectpicker
+                                    $select.selectpicker({
+                                        liveSearch: true,
+                                        noneResultsText: 'No hay resultados'
+                                    });
+
+                                    // Forzar refresh
+                                    $select.selectpicker('refresh');
+                                    
+                                    console.log(`[LIMPIEZA COMPLETA] Selectpicker ${id} restaurado con ${opcionesOriginales.length} opciones limpias`);
                                 } catch (error) {
-                                    console.warn(`[LIMPIEZA SIMPLE] Error limpiando ${id}:`, error);
+                                    console.warn(`[LIMPIEZA COMPLETA] Error limpiando ${id}:`, error);
                                 }
                             }
                         }
@@ -4530,13 +4577,150 @@
                 });
             });
 
+            // Guardar opciones originales ANTES de cualquier inicialización
+            guardarOpcionesOriginales();
+            
             // Ejecutar al cargar la página
             document.addEventListener('DOMContentLoaded', function() {
                 actualizarRadiosRepresentante();
                 actualizarOpcionesParentesco();
-                actualizarOpcionesCarnetPatria
-                    (); // Asegurarse de que las opciones del Carnet de la Patria estén actualizadas
+                actualizarOpcionesCarnetPatria(); // Asegurarse de que las opciones del Carnet de la Patria estén actualizadas
+                
+                // Guardar opciones originales limpias de todos los selects antes de cualquier manipulación
+                setTimeout(() => {
+                    guardarOpcionesOriginales();
+                }, 100);
             });
+
+            // Función para guardar las opciones originales limpias de todos los selects
+            function guardarOpcionesOriginales() {
+                console.log('[OPCIONES ORIGINALES] Iniciando guardado de opciones originales...');
+                
+                const selectIds = [
+                    'prefijo-representante',
+                    'prefijo_dos-representante',
+                    'ocupacion-representante',
+                    'parentesco',
+                    'idPais-representante',
+                    'idEstado-representante',
+                    'idMunicipio-representante',
+                    'idparroquia-representante',
+                    'prefijo-padre',
+                    'prefijo_dos-padre',
+                    'ocupacion-padre',
+                    'idPais-padre',
+                    'idEstado-padre',
+                    'idMunicipio-padre',
+                    'idparroquia-padre',
+                    'prefijo-madre',
+                    'prefijo_dos-madre',
+                    'ocupacion-madre',
+                    'idPais-madre',
+                    'idEstado-madre',
+                    'idMunicipio-madre',
+                    'idparroquia-madre'
+                ];
+
+                let guardados = 0;
+                selectIds.forEach(id => {
+                    const select = document.getElementById(id);
+                    if (select) {
+                        try {
+                            // Forzar limpieza de opciones duplicadas antes de guardar
+                            const opcionesUnicas = [];
+                            const valoresVistos = new Set();
+                            
+                            Array.from(select.options).forEach(opt => {
+                                if (!valoresVistos.has(opt.value)) {
+                                    valoresVistos.add(opt.value);
+                                    opcionesUnicas.push({
+                                        value: opt.value,
+                                        text: opt.text,
+                                        disabled: opt.disabled,
+                                        selected: opt.selected
+                                    });
+                                }
+                            });
+                            
+                            select.dataset.opcionesOriginales = JSON.stringify(opcionesUnicas);
+                            guardados++;
+                            console.log(`[OPCIONES ORIGINALES] ✅ Guardadas para ${id}: ${opcionesUnicas.length} opciones únicas`);
+                        } catch (error) {
+                            console.warn(`[OPCIONES ORIGINALES] ❌ Error guardando ${id}:`, error);
+                        }
+                    } else {
+                        console.warn(`[OPCIONES ORIGINALES] ⚠️ Select no encontrado: ${id}`);
+                    }
+                });
+                
+                console.log(`[OPCIONES ORIGINALES] 📊 Resumen: ${guardados}/${selectIds.length} selects procesados`);
+                return guardados > 0;
+            }
+
+            // Función para crear opciones limpias basadas en el tipo de select
+            function crearOpcionesLimpias(selectId) {
+                const opciones = [];
+                
+                if (selectId.includes('prefijo')) {
+                    // Prefijos telefónicos
+                    opciones.push({ value: "", text: "Seleccione", disabled: false, selected: false });
+                    opciones.push({ value: "1", text: "0412 ()", disabled: false, selected: false });
+                    opciones.push({ value: "5", text: "0414 ()", disabled: false, selected: false });
+                    opciones.push({ value: "2", text: "0416 ()", disabled: false, selected: false });
+                    opciones.push({ value: "6", text: "0422 ()", disabled: false, selected: false });
+                    opciones.push({ value: "3", text: "0424 ()", disabled: false, selected: false });
+                    opciones.push({ value: "4", text: "0426 ()", disabled: false, selected: false });
+                } else if (selectId.includes('ocupacion')) {
+                    // Ocupaciones - agregar placeholder
+                    opciones.push({ value: "", text: "Seleccione una ocupación", disabled: false, selected: false });
+                    
+                    // Usar datos globales si están disponibles
+                    if (typeof ocupaciones !== 'undefined' && ocupaciones.length > 0) {
+                        ocupaciones.forEach(ocup => {
+                            opciones.push({ 
+                                value: ocup.id.toString(), 
+                                text: ocup.nombre || ocup.descripcion || 'Ocupación', 
+                                disabled: false, 
+                                selected: false 
+                            });
+                        });
+                    }
+                } else if (selectId.includes('parentesco')) {
+                    // Parentesco
+                    opciones.push({ value: "", text: "Seleccione un parentesco", disabled: false, selected: false });
+                    opciones.push({ value: "Mamá", text: "Mamá", disabled: false, selected: false });
+                    opciones.push({ value: "Papá", text: "Papá", disabled: false, selected: false });
+                    opciones.push({ value: "Otro", text: "Otro", disabled: false, selected: false });
+                    opciones.push({ value: "Representante Legal", text: "Representante Legal", disabled: false, selected: false });
+                } else if (selectId.includes('idPais')) {
+                    // Países
+                    opciones.push({ value: "", text: "Seleccione un país", disabled: false, selected: false });
+                    if (typeof paises !== 'undefined' && paises.length > 0) {
+                        paises.forEach(pais => {
+                            opciones.push({ 
+                                value: pais.id.toString(), 
+                                text: pais.nombre, 
+                                disabled: false, 
+                                selected: false 
+                            });
+                        });
+                    }
+                } else {
+                    // Para selects de ubicación (estado, municipio, parroquia) - solo placeholder
+                    if (selectId.includes('idEstado')) {
+                        opciones.push({ value: "", text: "Seleccione un estado", disabled: false, selected: false });
+                    } else if (selectId.includes('idMunicipio')) {
+                        opciones.push({ value: "", text: "Seleccione un municipio", disabled: false, selected: false });
+                    } else if (selectId.includes('idparroquia')) {
+                        opciones.push({ value: "", text: "Seleccione una parroquia", disabled: false, selected: false });
+                    } else {
+                        opciones.push({ value: "", text: "Seleccione", disabled: false, selected: false });
+                    }
+                }
+                
+                console.log(`[OPCIONES LIMPIAS] Creadas ${opciones.length} opciones para ${selectId}`);
+                return opciones;
+            }
 
             // ================================
             // VALIDACIÓN EN TIEMPO REAL CÉDULAS
@@ -6032,10 +6216,17 @@
                         const origen = document.getElementById(origenId);
                         const destino = document.getElementById(destinoId);
                         if (origen && destino) {
-                            destino.value = origen.value;
+                            // Limpiar completamente antes de asignar para evitar concatenación
+                            const valorOrigen = origen.value;
+                            destino.value = '';
+                            
+                            // Asignar el nuevo valor
+                            destino.value = valorOrigen;
+                            
+                            // Disparar eventos
                             destino.dispatchEvent(new Event('input'));
                             destino.dispatchEvent(new Event('change'));
-                            console.log(`[SIMPLE] ${origenId} -> ${destinoId} = "${origen.value}"`);
+                            console.log(`[SIMPLE] ${origenId} -> ${destinoId} = "${valorOrigen}"`);
                             return true;
                         }
                         console.warn(`[SIMPLE] No se pudo copiar: ${origenId} -> ${destinoId}`);
@@ -6098,10 +6289,15 @@
                                 }
                                 
                                 // PASO 2: Asignación DIRECTA al select nativo (ahora es un select normal)
+                                // Limpiar completamente antes de asignar para evitar concatenación
+                                destino.value = '';
+                                destino.selectedIndex = -1;
+                                
+                                // Asignar el nuevo valor
                                 destino.value = origen.value;
                                 destino.selectedIndex = Array.from(destino.options).findIndex(opt => opt.value === origen.value);
                                 
-                                console.log(`[NATIVO PURO] Valor asignado a select normal ${destinoId}`);
+                                console.log(`[NATIVO PURO] Valor asignado a select normal ${destinoId}: "${origen.value}"`);
                                 return true;
                                 
                             } catch (error) {
