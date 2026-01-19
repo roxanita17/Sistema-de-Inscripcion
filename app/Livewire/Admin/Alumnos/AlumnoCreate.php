@@ -16,6 +16,8 @@ use App\Models\Lateralidad;
 use App\Models\AnioEscolar;
 use App\Models\EtniaIndigena;
 use App\Models\Talla;
+use Livewire\Attributes\On;
+
 
 class AlumnoCreate extends Component
 {
@@ -514,14 +516,15 @@ class AlumnoCreate extends Component
     }
 
 
+    #[On('localidadCreada')]
     public function refrescarLocalidades($data)
     {
         if ($this->municipio_id == $data['municipio_id']) {
-
-            $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
+            $this->localidades = \App\Models\Localidad::where('municipio_id', $this->municipio_id)
                 ->where('status', true)
                 ->orderBy('nombre_localidad')
                 ->get();
+
             $this->localidad_id = $data['id'];
         }
     }

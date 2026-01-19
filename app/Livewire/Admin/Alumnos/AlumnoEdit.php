@@ -15,6 +15,8 @@ use App\Models\OrdenNacimiento;
 use App\Models\EtniaIndigena;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\On;
+
 
 class AlumnoEdit extends Component
 {
@@ -658,14 +660,15 @@ class AlumnoEdit extends Component
     }
 
 
+    #[On('localidadCreada')]
     public function refrescarLocalidades($data)
     {
         if ($this->municipio_id == $data['municipio_id']) {
-
-            $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
+            $this->localidades = \App\Models\Localidad::where('municipio_id', $this->municipio_id)
                 ->where('status', true)
                 ->orderBy('nombre_localidad')
                 ->get();
+
             $this->localidad_id = $data['id'];
         }
     }

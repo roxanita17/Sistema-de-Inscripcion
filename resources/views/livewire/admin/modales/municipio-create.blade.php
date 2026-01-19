@@ -3,8 +3,6 @@
         data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content modal-modern">
-
-                {{-- Header --}}
                 <div class="modal-header-create">
                     <div class="modal-icon-create">
                         <i class="fas fa-plus-circle"></i>
@@ -15,10 +13,7 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-
-                {{-- Body --}}
                 <div class="modal-body-create">
-
                     @if (session()->has('success'))
                         <div class="alert alert-success alert-dismissible fade show">
                             <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -32,10 +27,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     @endif
-
                     <form wire:submit.prevent="store">
-
-                        {{-- País --}}
                         <div class="form-group-modern">
                             <label class="form-label-modern">
                                 <i class="fas fa-globe"></i> País
@@ -52,7 +44,6 @@
                             @enderror
                         </div>
 
-                        {{-- Estado --}}
                         <div class="form-group-modern">
                             <label class="form-label-modern">
                                 <i class="fas fa-tags"></i> Estado

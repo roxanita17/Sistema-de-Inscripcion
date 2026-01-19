@@ -12,6 +12,8 @@ use App\Repositories\RepresentanteRepository;
 use App\Services\DocumentoService;
 use App\Services\InscripcionService;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\On;
+
 
 class InscripcionEdit extends Component
 {
@@ -665,9 +667,8 @@ class InscripcionEdit extends Component
                 'title' => 'Inscripción actualizada exitosamente',
                 'message' => 'Estado de documentos: ' . $evaluacion['estado_documentos']
             ]);
-            
+
             return redirect()->route('admin.transacciones.inscripcion.index');
-            
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch('swal', [
@@ -679,8 +680,22 @@ class InscripcionEdit extends Component
     }
 
     protected $listeners = [
-        'actualizarAlumno' => 'manejarActualizacionAlumno'
-    ];
+        'actualizarAlumno' => 'manejarActualizacionAlumno',
+        'localidadCreada' => 'refrescarLocalidades'
+    ]; 
+
+    #[On('localidadCreada')]
+    public function refrescarLocalidades($data)
+    {
+        if ($this->municipio_id == $data['municipio_id']) {
+            $this->localidades = \App\Models\Localidad::where('municipio_id', $this->municipio_id)
+                ->where('status', true)
+                ->orderBy('nombre_localidad')
+                ->get();
+
+            $this->localidad_id = $data['id'];
+        }
+    }
 
     public function manejarActualizacionAlumno()
     {
