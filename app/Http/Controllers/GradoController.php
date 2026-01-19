@@ -42,7 +42,7 @@ class GradoController extends Controller
         if ($existe) {
             return redirect()
                 ->route('admin.grado.index')
-                ->with('error', 'Ya existe un grado con el mismo número.');
+                ->with('error', 'Ya existe un nivel academico con el mismo número.');
         }
 
         try {
@@ -56,11 +56,11 @@ class GradoController extends Controller
 
             return redirect()
                 ->route('admin.grado.index')
-                ->with('success', 'El grado fue creado correctamente.');
+                ->with('success', 'El nivel academico fue creado correctamente.');
         } catch (\Exception $e) {
             return redirect()
                 ->route('admin.grado.index')
-                ->with('error', 'Ocurrió un error al crear el grado: ' . $e->getMessage());
+                ->with('error', 'Ocurrió un error al crear el nivel academico: ' . $e->getMessage());
         }
     }
 
@@ -83,7 +83,7 @@ class GradoController extends Controller
         if ($existe) {
             return redirect()
                 ->route('admin.grado.index')
-                ->with('error', 'Ya existe un grado con el mismo número.');
+                ->with('error', 'Ya existe un nivel academico con el mismo número.');
         }
 
         try {
@@ -95,11 +95,11 @@ class GradoController extends Controller
 
             return redirect()
                 ->route('admin.grado.index')
-                ->with('success', 'El grado fue actualizado correctamente.');
+                ->with('success', 'El nivel academico fue actualizado correctamente.');
         } catch (\Exception $e) {
             return redirect()
                 ->route('admin.grado.index')
-                ->with('error', 'Ocurrió un error al actualizar el grado: ' . $e->getMessage());
+                ->with('error', 'Ocurrió un error al actualizar el nivel academico: ' . $e->getMessage());
         }
     }
 
@@ -137,11 +137,11 @@ class GradoController extends Controller
             $grado->update(['status' => false]);
             return redirect()
                 ->route('admin.grado.index')
-                ->with('success', 'El grado fue eliminado correctamente.');
+                ->with('success', 'El nivel academico fue eliminado correctamente.');
         }
 
         return redirect()
             ->route('admin.grado.index')
-            ->with('error', 'No se encontró el grado especificado.');
+            ->with('error', 'No se encontró el nivel academico especificado.');
     }
 }

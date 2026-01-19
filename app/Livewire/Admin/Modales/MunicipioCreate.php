@@ -86,10 +86,12 @@ class MunicipioCreate extends Component
 
             session()->flash('success', 'Municipio creado exitosamente.');
 
-            $this->dispatch('municipioCreado', [
-                'id' => $municipio->id,
-                'estado_id' => $municipio->estado_id,
-            ]);
+            $this->dispatch(
+                'municipioCreado',
+                id: $municipio->id,
+                estado_id: $municipio->estado_id
+            );
+
 
             $this->dispatch('cerrarModalDespuesDe', ['delay' => 1500]);
 

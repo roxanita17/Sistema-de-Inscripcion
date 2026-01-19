@@ -61,9 +61,9 @@
                         {{ !request('grado_id') ? 'disabled' : '' }}>
                         <option value="">
                             @if (!request('grado_id'))
-                                Primero seleccione un grado
+                                Primero seleccione un nivel academico
                             @elseif($secciones->isEmpty())
-                                No hay secciones para este grado
+                                No hay secciones para este nivel academico
                             @else
                                 Todas las secciones
                             @endif

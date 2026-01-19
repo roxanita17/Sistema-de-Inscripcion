@@ -1,8 +1,6 @@
 <div class="modal fade" id="modalFiltros" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
         <div class="modal-content modal-modern">
-
-            <!-- Header -->
             <div class="modal-header border-0 pb-0">
                 <h6 class="modal-title d-flex align-items-center gap-2" style="color: var(--primary);">
                     <i class="fas fa-filter"></i>
@@ -12,29 +10,21 @@
             </div>
             <hr>
 
-            <!-- Body -->
             <div class="modal-body pt-0">
-
-                {{-- FILTRO --}}
                 <form method="GET" class="filter-inline">
-
                     <input type="hidden" name="tipo" value="{{ request('tipo', 'inscripciones') }}">
-
-                    {{-- GRADO --}}
                     <label class="form-label-modern">
                         <i class="fas fa-calendar-alt"></i>
-                        Grados
+                        Niveles Academicos
                     </label>
                     <select name="grado_id" class="form-select form-control-modern">
                         <option value="">Todos</option>
                         @foreach ($gradosEscolares as $grado)
                             <option value="{{ $grado->id }}" {{ request('grado_id') == $grado->id ? 'selected' : '' }}>
-                                {{ $grado->numero_grado }} - {{ $grado->nombre_grado_escolar }}
+                                {{ $grado->numero_grado }}
                             </option>
                         @endforeach
                     </select>
-
-                    {{-- SECCIÓN --}}
                     <label class="form-label-modern mt-3">
                         <i class="fas fa-layer-group"></i>
                         Sección
@@ -49,8 +39,6 @@
 
                         @endforeach
                     </select>
-
-                    {{-- ÁREA --}}
                     <div id="filtroModalidad">
                         <label class="form-label-modern mt-3">
                             <i class="fas fa-user-graduate"></i>
@@ -65,12 +53,10 @@
                             @endforeach
                         </select>
                     </div>
-
                     <button class="btn-modal-create mt-4 w-100">
                         <i class="fas fa-check"></i> Aplicar
                     </button>
                 </form>
-
             </div>
         </div>
     </div>

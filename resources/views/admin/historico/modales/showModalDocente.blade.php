@@ -148,29 +148,45 @@
                     </div>
                     <div class="section-title">
                         <i class="fas fa-book"></i>
-                        <span>Areas de formación y grados asignados:</span>
+                        <span>Áreas de formación, niveles académicos y grupos estables asignados:</span>
                     </div>
+
                     <div class="card mini-card shadow-sm border-0 p-3 mt-2">
                         <div class="card shadow-sm">
                             <div class="card-body" style="background: white">
-                                @forelse ($datos->asignacionesAreasActivas as $asignacion)
+                                @php
+                                    $asigs = $datos->asignacionesAreasActivas
+                                        ->where('status', true)
+                                        ->sortBy('tipo_asignacion'); 
+                                @endphp
+
+                                @forelse($asigs as $asignacion)
                                     <div class="border-bottom pb-2 mb-3">
                                         <p class="mb-1">
-                                            <strong>Area de Formacion:</strong>
-                                            {{ $asignacion->areaEstudios->areaFormacion->nombre_area_formacion ?? 'N/A' }}
-                                            |
-                                            <strong>Grado:</strong>
-                                            {{ $asignacion->grado->numero_grado ?? 'N/A' }}
-                                            |
-                                            <strong>Seccion:</strong>
-                                            {{ $asignacion->seccion->nombre ?? 'N/A' }}
+                                            @if ($asignacion->tipo_asignacion === 'area')
+                                                <strong>Área de Formación:</strong>
+                                                {{ optional($asignacion->areaEstudios->areaFormacion)->nombre_area_formacion ?? 'N/A' }}
+                                                |
+                                                <strong>Nivel Academico:</strong>
+                                                {{ optional($asignacion->grado)->numero_grado ?? 'N/A' }}
+                                                |
+                                                <strong>Sección:</strong>
+                                                {{ optional($asignacion->seccion)->nombre ?? 'N/A' }}
+
+                                            @elseif ($asignacion->tipo_asignacion === 'grupo_estable')
+                                                <strong>Grupo Estable:</strong>
+                                                {{ optional($asignacion->grupoEstable)->nombre_grupo_estable ?? 'N/A' }}
+                                                |
+                                                <strong>Nivel Academico:</strong>
+                                                {{ optional($asignacion->gradoGrupoEstable)->numero_grado ?? 'N/A' }}
+                                            @endif
                                         </p>
                                         <p class="mb-2 text-muted" style="font-size:.85rem;">
                                             Asignado el: {{ $asignacion->created_at->format('d/m/Y h:i A') }}
                                         </p>
                                     </div>
                                 @empty
-                                    <p class="text-center text-muted">Este datos no tiene asignaciones activas.</p>
+                                    <p class="text-center text-muted">Este docente no tiene asignaciones activas.</p>
                                 @endforelse
                             </div>
                         </div>

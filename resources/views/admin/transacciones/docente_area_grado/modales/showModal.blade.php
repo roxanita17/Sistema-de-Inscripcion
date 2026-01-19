@@ -146,10 +146,9 @@
                         <div class="card shadow-sm">
                             <div class="card-body" style="background: white">
                                 @php
-                                    // Filtrar asignaciones activas
                                     $asigs = $datos->asignacionesAreasActivas
                                         ->where('status', true)
-                                        ->sortBy('tipo_asignacion'); // opcional: primero areas, luego grupos
+                                        ->sortBy('tipo_asignacion'); 
                                 @endphp
 
                                 @forelse($asigs as $asignacion)
@@ -159,7 +158,7 @@
                                                 <strong>Área de Formación:</strong>
                                                 {{ optional($asignacion->areaEstudios->areaFormacion)->nombre_area_formacion ?? 'N/A' }}
                                                 |
-                                                <strong>Nivel Académico:</strong>
+                                                <strong>Nivel Academico:</strong>
                                                 {{ optional($asignacion->grado)->numero_grado ?? 'N/A' }}
                                                 |
                                                 <strong>Sección:</strong>
@@ -169,7 +168,7 @@
                                                 <strong>Grupo Estable:</strong>
                                                 {{ optional($asignacion->grupoEstable)->nombre_grupo_estable ?? 'N/A' }}
                                                 |
-                                                <strong>Grado:</strong>
+                                                <strong>Nivel Academico:</strong>
                                                 {{ optional($asignacion->gradoGrupoEstable)->numero_grado ?? 'N/A' }}
                                             @endif
                                         </p>

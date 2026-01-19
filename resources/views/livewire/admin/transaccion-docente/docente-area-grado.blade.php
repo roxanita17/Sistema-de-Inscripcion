@@ -47,7 +47,7 @@
             </div>
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
-                    <div class="col-md-10" wire:ignore>
+                    <div class="col-md-12" wire:ignore>
                         <label for="docente_select" class="form-label-modern">
                             <i class="fas fa-chalkboard-teacher"></i>
                             Docente
@@ -249,6 +249,24 @@
                 </div>
             </div>
         </div>
+        <div class="alerts-container mb-3">
+            @if ($alertaAsignacion)
+                <div class="alert-modern alert-error alert alert-dismissible fade show">
+                    <div class="alert-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>Error</h4>
+                        <p>{{ $alertaAsignacion }}</p>
+                    </div>
+                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert"
+                        aria-label="Cerrar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
+        </div>
+
         <div class="card-modern mb-4">
             <div class="card-header-modern">
                 <div class="header-left">
@@ -367,97 +385,81 @@
                             </span>
                         </button>
                     </div>
-
                 </div>
-                <small class="form-text-modern" style="margin-top: 0.5rem; color: var(--gray-500);  ">
-                    <i class="fas fa-info-circle"></i>
-                    Si no hay asignaciones de areas de formacion y estudios para el docente puede agregar una
-                    <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion">"aquí"</a>
+                <small class="form-text-modern d-flex align-items-center gap-1">
+                    <i class="fas fa-plus-circle text-primary"></i>
+                    <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                        data-bs-target="#modalCrearAsignacion">
+                        Crear nueva asignacion
+                    </a>
                 </small>
             </div>
-        </div>
+            <hr class="my-4" style="border-top: 2px dashed #e5e7eb;">
+            <div class="card-body-modern pt-0">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; vertical-align: middle;">#</th>
+                            <th style="text-align: center; vertical-align: middle;">Area de formacion</th>
+                            <th style="text-align: center; vertical-align: middle;">Nivel academico</th>
+                            <th style="text-align: center; vertical-align: middle;">Sección</th>
+                            <th style="text-align: center; vertical-align: middle;">Acciones</th>
+                        </tr>
+                    </thead>
 
-        <div class="card-modern">
-            <div class="card-body-modern">
-                <div class="table-wrapper">
-                    <table class="table-modern">
-                        <thead>
+                    <tbody>
+                        @forelse ($asignaciones->where('tipo_asignacion', 'area') as $index => $detalle)
                             <tr>
-                                <th style="text-align: center; vertical-align: middle;">#</th>
-                                <th style="text-align: center; vertical-align: middle;">Area de formacion</th>
-                                <th style="text-align: center; vertical-align: middle;">Nivel academico</th>
-                                <th style="text-align: center; vertical-align: middle;">Sección</th>
-                                <th style="text-align: center; vertical-align: middle;">Fecha de Registro</th>
-                                <th style="text-align: center; vertical-align: middle;">Acciones</th>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <span class="number-badge">{{ $index + 1 }}</span>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <div
+                                        style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+
+                                        <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
+                                            {{ $detalle->areaEstudios->areaFormacion->nombre_area_formacion ?? 'N/A' }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
+                                        {{ $detalle->grado->numero_grado ?? 'N/A' }}
+                                    </div>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
+                                        {{ $detalle->seccion->nombre ?? 'N/A' }}
+                                    </div>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <div style="display: flex; justify-content: center;">
+                                        <button class="action-btn btn-delete"
+                                            wire:click="$set('asignacionAEliminar', {{ $detalle->id }})"
+                                            data-bs-toggle="modal" data-bs-target="#modalEliminarAsignacion"
+                                            title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-
-                        <tbody>
-                            @forelse ($asignaciones->where('tipo_asignacion', 'area') as $index => $detalle)
-                                <tr>
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <span class="number-badge">{{ $index + 1 }}</span>
-                                    </td>
-
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <div
-                                            style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
-                                            <div
-                                                style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem;">
-                                                <i class="fas fa-book"></i>
-                                            </div>
-                                            <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
-                                                {{ $detalle->areaEstudios->areaFormacion->nombre_area_formacion ?? 'N/A' }}
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
-                                            {{ $detalle->grado->numero_grado ?? 'N/A' }}
-                                        </div>
-                                    </td>
-
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <div style="font-weight: 600; color: var(--gray-900); font-size: 0.95rem;">
-                                            {{ $detalle->seccion->nombre ?? 'N/A' }}
-                                        </div>
-                                    </td>
-
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <span style="color: var(--gray-600); font-size: 0.85rem;">
-                                            <i class="fas fa-calendar-alt text-primary me-1"></i>
-                                            {{ $detalle->created_at->format('d/m/Y') }}
-                                        </span>
-                                    </td>
-
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <div style="display: flex; justify-content: center;">
-                                            <button class="action-btn btn-delete"
-                                                wire:click="$set('asignacionAEliminar', {{ $detalle->id }})"
-                                                data-bs-toggle="modal" data-bs-target="#modalEliminarAsignacion"
-                                                title="Eliminar">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" style="text-align: center; padding: 3rem;">
-                                        <i class="fas fa-inbox"
-                                            style="font-size: 3rem; color: var(--gray-400); margin-bottom: 1rem;"></i>
-                                        <p style="color: var(--gray-600); font-size: 1.1rem; margin: 0;">
-                                            No hay asignaciones registradas
-                                        </p>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 3rem;">
+                                    <i class="fas fa-inbox"
+                                        style="font-size: 3rem; color: var(--gray-400); margin-bottom: 1rem;"></i>
+                                    <p style="color: var(--gray-600); font-size: 1.1rem; margin: 0;">
+                                        No hay asignaciones registradas
+                                    </p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
+
+
         <div wire:ignore.self class="modal fade" id="modalEliminarAsignacion" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-modern">
@@ -501,7 +503,7 @@
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon">
-                        <i class="fas fa-users-class"></i>
+                         <i class="fas fa-plus-circle"></i>
                     </div>
                     <div>
                         <h3>Agregar Grupo Estable</h3>
@@ -584,50 +586,41 @@
                     </div>
                 </div>
             </div>
-        </div>
+             <hr class=" pt-0" style="border-top: 2px dashed #e5e7eb;">
 
-        <div class="card-modern">
-        
-            <div class="card-body-modern">
+
+            <div class="card-body-modern pt-0">
                 <div class="table-wrapper">
                     <table class="table-modern">
-                        <thead>
+                        <thead >
                             <tr>
-                                <th>#</th>
-                                <th>Grupo Estable</th>
-                                <th>Nivel Académico</th>
-                                <th>Fecha</th>
-                                <th>Acciones</th>
+                                <th style="text-align: center; vertical-align: middle;">Grupo Estable</th>
+                                <th style="text-align: center; vertical-align: middle;">Nivel Académico</th>
+                                <th style="text-align: center; vertical-align: middle;">Acciones</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            @forelse ($asignaciones->where('tipo_asignacion','grupo_estable') as $i => $detalle)
+                            @forelse ($asignaciones->where('tipo_asignacion','grupo_estable') as  $detalle)
                                 <tr>
-                                    <td><span class="number-badge">{{ $i + 1 }}</span></td>
-
-                                    <td>
+                                    <td style="text-align: center; vertical-align: middle;">
                                         <strong>{{ $detalle->grupoEstable->nombre_grupo_estable ?? 'N/A' }}</strong>
                                     </td>
-
-                                    <td>{{ $detalle->gradoGrupoEstable->numero_grado ?? 'N/A' }}</td>
-
-                                    <td>
-                                        <i class="fas fa-calendar-alt text-primary"></i>
-                                        {{ $detalle->created_at->format('d/m/Y') }}
-                                    </td>
-
-                                    <td>
+                                    <td style="text-align: center; vertical-align: middle;">{{ $detalle->gradoGrupoEstable->numero_grado ?? 'N/A' }}</td>
+                                   <td style="text-align: center; vertical-align: middle;">
+                                    <div style="display: flex; justify-content: center;">
                                         <button class="action-btn btn-delete"
                                             wire:click="$set('asignacionAEliminar', {{ $detalle->id }})"
-                                            data-bs-toggle="modal" data-bs-target="#modalEliminarAsignacion">
+                                            data-bs-toggle="modal" data-bs-target="#modalEliminarAsignacion"
+                                            title="Eliminar">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
-                                    </td>
+                                    </div>
+                                </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-5">
+                                    <td colspan="4" class="text-center py-5">
                                         <i class="fas fa-inbox fa-3x text-muted"></i>
                                         <p class="mt-2">No hay grupos estables asignados</p>
                                     </td>

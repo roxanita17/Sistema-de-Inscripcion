@@ -108,21 +108,27 @@ class InscripcionController extends Controller
             'grado',
             'seccionAsignada',
             'nuevoIngreso',
-            'prosecucion',
             'anioEscolar'
         ])
-            ->when($anioEscolarActivo, function ($q) use ($anioEscolarActivo) {
-                $q->where('anio_escolar_id', $anioEscolarActivo->id);
-            })
-            ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
-            ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
-            ->when($tipoInscripcion, function ($q) use ($tipoInscripcion) {
-                if ($tipoInscripcion === 'nuevo_ingreso') {
-                    $q->whereNotNull('nuevo_ingreso_id');
-                } elseif ($tipoInscripcion === 'prosecucion') {
-                    $q->whereNotNull('prosecucion_id');
+
+            // 🔑 FILTRO POR NUEVO INGRESO + STATUS
+            ->whereHas('nuevoIngreso', function ($q) use ($status) {
+                if ($status) {
+                    $q->where('status', $status); // Activo | Pendiente | Inactivo
                 }
             })
+
+            // Año escolar Activo o Extendido
+            ->whereHas('anioEscolar', function ($q) {
+                $q->whereIn('status', ['Activo', 'Extendido']);
+            })
+
+            // Status de la INSCRIPCIÓN (opcional, ajusta si lo necesitas)
+            ->when($status, fn($q) => $q->where('status', $status))
+
+            ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
+            ->when($seccionId, fn($q) => $q->where('seccion_id', $seccionId))
+
             ->when($buscar, function ($q) use ($buscar) {
                 $q->whereHas('alumno.persona', function ($qq) use ($buscar) {
                     $qq->where('primer_nombre', 'like', "%$buscar%")
@@ -130,12 +136,14 @@ class InscripcionController extends Controller
                         ->orWhere('numero_documento', 'like', "%$buscar%");
                 });
             })
-            ->when($status, function ($q) use ($status) {
-                $q->where('status', $status);
-            })
-            ->orderBy('created_at', 'desc')
+
+            ->orderByDesc('created_at')
             ->paginate(10)
             ->withQueryString();
+
+
+
+
         return view('admin.transacciones.inscripcion.index', [
             'anioEscolarActivo' => $anioEscolarActivo ? true : false,
             'anioEscolar' => $anioEscolarActivo,

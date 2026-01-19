@@ -114,8 +114,8 @@
                                             <div class="empty-icon">
                                                 <i class="fas fa-inbox"></i>
                                             </div>
-                                            <h4>No hay grados registrados</h4>
-                                            <p>Agrega un nuevo grado con el botón superior</p>
+                                            <h4>No hay prefijos registrados</h4>
+                                            <p>Agrega un nuevo prefijos con el botón superior</p>
                                         </div>
                                     </td>
                                 </tr>

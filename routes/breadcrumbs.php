@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Alumno;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as Trail;
+use App\Models\Docente;
+use App\Models\Inscripcion;
+use App\Models\Representante;
 
 // Inicio (Home)
 Breadcrumbs::for('home', function (Trail $trail) {
@@ -18,6 +22,12 @@ Breadcrumbs::for('admin.anio_escolar.index', function (Trail $trail) {
 Breadcrumbs::for('admin.banco.index', function (Trail $trail) {
     $trail->parent('home');
     $trail->push('Banco', route('admin.banco.index'));
+});
+
+// Pais
+Breadcrumbs::for('admin.pais.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Pais', route('admin.pais.index'));
 });
 
 // Estado
@@ -53,7 +63,7 @@ Breadcrumbs::for('admin.ocupacion.index', function (Trail $trail) {
 // Grado
 Breadcrumbs::for('admin.grado.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Grado', route('admin.grado.index'));
+    $trail->push('Nivel Academico', route('admin.grado.index'));
 });
 
 // Area de Formacion
@@ -77,7 +87,7 @@ Breadcrumbs::for('admin.discapacidad.index', function (Trail $trail) {
 // Grado Area Formacion
 Breadcrumbs::for('admin.transacciones.grado_area_formacion.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Grado Area Formacion', route('admin.transacciones.grado_area_formacion.index'));
+    $trail->push('Nivel Academico a Area de Formacion', route('admin.transacciones.grado_area_formacion.index'));
 });
 
 // Prefijo de telefono
@@ -101,13 +111,165 @@ Breadcrumbs::for('admin.estudios_realizados.index', function (Trail $trail) {
 // Area Estudio Realizado
 Breadcrumbs::for('admin.transacciones.area_estudio_realizado.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Area Estudio Realizado', route('admin.transacciones.area_estudio_realizado.index'));
+    $trail->push('Area de Formacion a Estudio Realizado', route('admin.transacciones.area_estudio_realizado.index'));
+});
+
+// Institucion de procedencia
+Breadcrumbs::for('admin.institucion_procedencia.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Institucion de procedencia', route('admin.institucion_procedencia.index'));
 });
 
 // Docente
 Breadcrumbs::for('admin.docente.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Docente', route('admin.docente.index'));
+    $trail->push('Docentes', route('admin.docente.index'));
+});
+
+// Docente crear 
+Breadcrumbs::for('admin.docente.create', function (Trail $trail) {
+    $trail->parent('admin.docente.index');
+    $trail->push('Crear Docente', route('admin.docente.create'));
+});
+
+// Docente editar
+Breadcrumbs::for('admin.docente.edit', function (Trail $trail, $docenteId) {
+    $docente = Docente::with('persona')->findOrFail($docenteId);
+    $trail->parent('admin.docente.index');
+    $trail->push('Editar Docente',route('admin.docente.edit', $docente->id));
+});
+
+// Docente estudios
+Breadcrumbs::for('admin.docente.estudios', function (Trail $trail, $docenteId) {
+    $docente = Docente::with('persona')->findOrFail($docenteId);
+    $trail->parent('admin.docente.edit', $docente->id);
+    $trail->push('Estudios Académicos',route('admin.docente.estudios', $docente->id));
+});
+
+// Transaccion Docente
+Breadcrumbs::for('admin.transacciones.docente_area_grado.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Asignacion de Areas', route('admin.transacciones.docente_area_grado.index'));
+});
+
+// Docente crear 
+Breadcrumbs::for('admin.transacciones.docente_area_grado.create', function (Trail $trail) {
+    $trail->parent('admin.transacciones.docente_area_grado.index');
+    $trail->push('Crear Asignacion', route('admin.transacciones.docente_area_grado.create'));
+});
+
+// Docente editar 
+Breadcrumbs::for('admin.transacciones.docente_area_grado.edit', function (Trail $trail, $docenteId) {
+    $docente = Docente::with('persona')->findOrFail($docenteId);
+    $trail->parent('admin.transacciones.docente_area_grado.index');
+    $trail->push('Editar Asignacion', route('admin.transacciones.docente_area_grado.edit', $docente->id));
+});
+
+//Representantes
+Breadcrumbs::for('admin.representante.representante', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Representantes', route('admin.representante.index'));
+});
+
+// Representantes - listado
+Breadcrumbs::for('representante.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Representantes', route('representante.index'));
+});
+
+// Representante - crear
+Breadcrumbs::for('representante.formulario', function (Trail $trail) {
+    $trail->parent('representante.index');
+    $trail->push('Nuevo Representante', route('representante.formulario'));
+});
+
+// Representante - ver / editar
+Breadcrumbs::for('representante.editar', function (Trail $trail, $representanteId) {
+
+    $representante = Representante::with('persona')->findOrFail($representanteId);
+
+    $trail->parent('representante.index');
+    $trail->push('Editar Repreentante', route('representante.editar', $representante->id));
+});
+
+// Representante - eliminados
+Breadcrumbs::for('representante.eliminados', function (Trail $trail) {
+    $trail->parent('representante.index');
+    $trail->push('Representantes Eliminados', route('representante.eliminados'));
+});
+
+// Alumnos - listado
+Breadcrumbs::for('admin.alumnos.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Alumnos', route('admin.alumnos.index'));
+});
+
+// Alumnos - editar
+Breadcrumbs::for('admin.alumnos.edit', function (Trail $trail, Alumno $alumno) {
+    $trail->parent('admin.alumnos.index');
+
+    $trail->push('Editar Alumno', route('admin.alumnos.edit', $alumno));
+}); 
+
+// Historico
+Breadcrumbs::for('admin.historico.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Historico', route('admin.historico.index'));
+});
+
+// Historial del percentil
+Breadcrumbs::for('admin.transacciones.percentil.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Historial del Percentil', route('admin.transacciones.percentil.index'));
+});
+
+
+
+// Listado
+Breadcrumbs::for('admin.transacciones.inscripcion.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Inscripciones',route('admin.transacciones.inscripcion.index'));
+});
+
+// Crear inscripción
+Breadcrumbs::for('admin.transacciones.inscripcion.create', function (Trail $trail) {
+    $trail->parent('admin.transacciones.inscripcion.index');
+    $trail->push('Nueva Inscripción', route('admin.transacciones.inscripcion.create'));
+});
+
+// Crear alumno desde inscripción
+Breadcrumbs::for('admin.transacciones.inscripcion.create-alumno', function (Trail $trail) {
+    $trail->parent('admin.transacciones.inscripcion.create');
+    $trail->push('Crear Alumno', route('admin.transacciones.inscripcion.create-alumno'));
+});
+
+// Editar inscripción
+Breadcrumbs::for('admin.transacciones.inscripcion.edit', function (Trail $trail, $id) {
+
+    $inscripcion = Inscripcion::with('alumno.persona')->findOrFail($id);
+
+    $trail->parent('admin.transacciones.inscripcion.index');
+
+    $trail->push('Editar Inscripcion', route('admin.transacciones.inscripcion.edit', $inscripcion->id));
+});
+
+
+// Listado
+Breadcrumbs::for('admin.transacciones.inscripcion_prosecucion.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push(
+        'Inscripción Prosecución',
+        route('admin.transacciones.inscripcion_prosecucion.index')
+    );
+});
+
+// Crear
+Breadcrumbs::for('admin.transacciones.inscripcion_prosecucion.create', function (Trail $trail) {
+    $trail->parent('admin.transacciones.inscripcion_prosecucion.index');
+    $trail->push(
+        'Nueva Prosecución',
+        route('admin.transacciones.inscripcion_prosecucion.create')
+    );
 });
 
 

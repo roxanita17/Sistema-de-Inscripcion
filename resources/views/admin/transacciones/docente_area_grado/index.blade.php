@@ -17,7 +17,7 @@
                 </div>
                 <div>
                     <h1 class="title-main">Asignación de Docentes</h1>
-                    <p class="title-subtitle">Gestión de materias, grados y secciones</p>
+                    <p class="title-subtitle">Gestión de materias, niveles academicos y secciones</p>
                 </div>
             </div>
 
@@ -210,7 +210,7 @@
                                         @php
                                             $areaFormacion = optional($asign->areaEstudios)->areaFormacion;
                                             $grado = optional($asign->grado);
-                                            $seccion = optional($asign->seccion);
+                                            $seccion = optional($asign->seccion); 
                                         @endphp
 
                                         <div style="margin-bottom: 0.5rem;">
@@ -248,7 +248,7 @@
 
                                     @forelse($grupos as $asign)
                                         <span style="font-weight: bold; margin-bottom: 2rem;"
-                                            title="{{ optional($asign->grupoEstable)->nombre_grupo_estable ?? 'N/A' }} - Grado: {{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }}">
+                                            title="{{ optional($asign->grupoEstable)->nombre_grupo_estable ?? 'N/A' }} - Nivel: {{ optional($asign->gradoGrupoEstable)->numero_grado ?? 'N/A' }}">
                                             <i class="fas fa-users"></i>
                                             {{ optional($asign->grupoEstable)->nombre_grupo_estable ?? 'N/A' }}
                                             -

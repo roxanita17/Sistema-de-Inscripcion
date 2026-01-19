@@ -198,6 +198,25 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="etnia_indigena_id" class="form-label-modern">
+                                Etnia Indigena
+                            </label>
+                            <select wire:model.live="etnia_indigena_id"
+                                class="form-control-modern @error('etnia_indigena_id') is-invalid @enderror">
+                                <option value="">Seleccione</option>
+                                @foreach ($etnia_indigenas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('etnia_indigena_id')
+                                <div class="invalid-feedback-modern">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -218,49 +237,56 @@
                     <!-- País -->
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="paisId" class="form-label-modern">País <span class="required-badge">*</span></label>
-                            <select wire:model.live="paisId" class="form-control-modern @error('paisId') is-invalid @enderror">
+                            <label for="paisId" class="form-label-modern">País <span
+                                    class="required-badge">*</span></label>
+                            <select wire:model.live="paisId"
+                                class="form-control-modern @error('paisId') is-invalid @enderror">
                                 <option value="">Seleccione un país</option>
-                                @foreach($paises as $pais)
+                                @foreach ($paises as $pais)
                                     <option value="{{ $pais->id }}">{{ $pais->nameES }}</option>
                                 @endforeach
                             </select>
-                            @error('paisId') <div class="invalid-feedback-modern">{{ $message }}</div> @enderror
+                            @error('paisId')
+                                <div class="invalid-feedback-modern">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
                     <!-- Estado -->
                     <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="estado_id" class="form-label-modern">Estado <span class="required-badge">*</span></label>
-                            <select wire:model.live="estado_id"
-                                    @disabled(!$paisId)
+                        <div class="d-flex gap-2 align-items-end">
+                            <div class="flex-grow-1">
+                                <label class="form-label-modern">Estado *</label>
+                                <select wire:model.live="estado_id" @disabled(!$paisId)
                                     class="form-control-modern @error('estado_id') is-invalid @enderror">
-                                <option value="">Seleccione un estado</option>
-                                @foreach ($estados as $estado)
-                                    <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                                @endforeach
-                            </select>
-                            @error('estado_id')
-                                <div class="invalid-feedback-modern">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                            <small class="form-text-modern">
-                                <i class="fas fa-info-circle"></i>
-                                Si no hay estados registrados agrega uno
-                                <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearEstado">"aquí"</a>
-                            </small>
+                                    <option value="">Seleccione un estado</option>
+                                    @foreach ($estados as $estado)
+                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                                    @endforeach
+                                </select>
+                                @error('estado_id')
+                                    <div class="invalid-feedback-modern">
+                                        <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                    </div>
+                                @enderror
+                                <small class="form-text-modern d-flex align-items-center gap-1">
+                                    <i class="fas fa-plus-circle text-primary"></i>
+                                    <a href="#" class="text-primary text-decoration-none"
+                                        data-bs-toggle="modal" data-bs-target="#modalCrearEstado">
+                                        Crear nuevo estado
+                                    </a>
+                                </small>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Municipio -->
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="municipio_id" class="form-label-modern">Municipio <span class="required-badge">*</span></label>
-                            <select wire:model.live="municipio_id"
-                                    @disabled(!$estado_id)
-                                    class="form-control-modern @error('municipio_id') is-invalid @enderror">
+                            <label for="municipio_id" class="form-label-modern">Municipio <span
+                                    class="required-badge">*</span></label>
+                            <select wire:model.live="municipio_id" @disabled(!$estado_id)
+                                class="form-control-modern @error('municipio_id') is-invalid @enderror">
                                 <option value="">Seleccione un municipio</option>
                                 @foreach ($municipios as $municipio)
                                     <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
@@ -271,10 +297,12 @@
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
-                            <small class="form-text-modern">
-                                <i class="fas fa-info-circle"></i>
-                                Si no hay municipios registrados agrega uno
-                                <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearMunicipio">"aquí"</a>
+                            <small class="form-text-modern d-flex align-items-center gap-1">
+                                <i class="fas fa-plus-circle text-primary"></i>
+                                <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                                    data-bs-target="#modalCrearMunicipio">
+                                    Crear nuevo municipio
+                                </a>
                             </small>
                         </div>
                     </div>
@@ -282,10 +310,10 @@
                     <!-- Localidad -->
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="localidad_id" class="form-label-modern">Localidad <span class="required-badge">*</span></label>
-                            <select wire:model.live="localidad_id"
-                                    @disabled(!$municipio_id)
-                                    class="form-control-modern @error('localidad_id') is-invalid @enderror">
+                            <label for="localidad_id" class="form-label-modern">Localidad <span
+                                    class="required-badge">*</span></label>
+                            <select wire:model.live="localidad_id" @disabled(!$municipio_id)
+                                class="form-control-modern @error('localidad_id') is-invalid @enderror">
                                 <option value="">Seleccione una localidad</option>
                                 @foreach ($localidades as $localidad)
                                     <option value="{{ $localidad->id }}">{{ $localidad->nombre_localidad }}</option>
@@ -296,10 +324,12 @@
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
-                            <small class="form-text-modern">
-                                <i class="fas fa-info-circle"></i>
-                                Si no hay localidades registradas agrega una
-                                <a class="text-primary" data-bs-toggle="modal" data-bs-target="#modalCrearLocalidad">"aquí"</a>
+                            <small class="form-text-modern d-flex align-items-center gap-1">
+                                <i class="fas fa-plus-circle text-primary"></i>
+                                <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                                    data-bs-target="#modalCrearLocalidad">
+                                    Crear nueva localidad
+                                </a>
                             </small>
                         </div>
                     </div>
@@ -331,8 +361,7 @@
                                 placeholder="Ej: 1.66 o 166"
                                 class="form-control-modern @error('talla_estudiante') is-invalid @enderror"
                                 inputmode="numeric" pattern="^[0-9]*$"
-                                oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
-                                maxlength="4">
+                                oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" maxlength="4">
                             @error('talla_estudiante')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -411,44 +440,6 @@
                                 @endforeach
                             </select>
                             @error('talla_pantalon_id')
-                                <div class="invalid-feedback-modern">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{-- Card: Pertenencia Étnica --}}
-        <div class="card-modern mb-4">
-            <div class="card-header-modern">
-                <div class="header-left">
-                    <div class="header-icon" style="background: linear-gradient(135deg, #14b8a6, #0f766e);">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <h3>Pertenencia Étnica</h3>
-                        <p>Información sobre origen étnico</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-body-modern" style="padding: 2rem;">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="etnia_indigena_id" class="form-label-modern">
-                                Etnia Indigena
-                            </label>
-                            <select wire:model.live="etnia_indigena_id"
-                                class="form-control-modern @error('etnia_indigena_id') is-invalid @enderror">
-                                <option value="">Seleccione</option>
-                                @foreach ($etnia_indigenas as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
-                                @endforeach
-                            </select>
-                            @error('etnia_indigena_id')
                                 <div class="invalid-feedback-modern">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>

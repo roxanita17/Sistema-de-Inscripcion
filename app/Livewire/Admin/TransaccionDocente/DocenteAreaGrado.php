@@ -19,19 +19,21 @@ class DocenteAreaGrado extends Component
     public $docenteSeleccionado = null;
     public $materiaId;
     public $materias = [];
-    public $gradoAreaId;         
-    public $gradosArea = [];     
-    public $seccionAreaId;       
-    public $seccionesArea = [];  
+    public $gradoAreaId;
+    public $gradosArea = [];
+    public $seccionAreaId;
+    public $seccionesArea = [];
     public $grupoEstableId;
     public $gruposEstables = [];
-    public $gradoGrupoId;        
-    public $gradosGrupo = [];    
-    public $seccionGrupoId;      
-    public $seccionesGrupo = []; 
+    public $gradoGrupoId;
+    public $gradosGrupo = [];
+    public $seccionGrupoId;
+    public $seccionesGrupo = [];
     public $asignaciones = [];
     public $modoEditar = false;
     public $asignacionAEliminar = null;
+    public $alertaAsignacion = null;
+
 
     protected $listeners = [
         'asignacionCreada' => 'manejarAsignacionCreada',
@@ -211,6 +213,7 @@ class DocenteAreaGrado extends Component
 
     public function updatedMateriaId()
     {
+        $this->alertaAsignacion = null;
         $this->reset(['gradoAreaId', 'seccionAreaId']);
         $this->seccionesArea = collect();
 
@@ -254,6 +257,7 @@ class DocenteAreaGrado extends Component
 
     public function updatedGrupoEstableId()
     {
+        $this->alertaAsignacion = null;
         $this->reset(['gradoGrupoId', 'seccionGrupoId']);
         $this->seccionesGrupo = collect();
 
@@ -349,10 +353,10 @@ class DocenteAreaGrado extends Component
                 $docente = $asignacionExistente->detalleDocenteEstudio->docente;
                 $nombre = $docente->persona->primer_nombre . ' ' . $docente->persona->primer_apellido;
 
-                throw ValidationException::withMessages([
-                    'materiaId' => "Esta área ya está asignada en este grado y sección al docente {$nombre}."
-                ]);
+                $this->alertaAsignacion = " Esta área ya está asignada en este nivel academico y sección al docente {$nombre}.";
+                return;
             }
+
 
             ModeloDocenteAreaGrado::create([
                 'docente_estudio_realizado_id' => $detalleEstudio->id,
@@ -419,17 +423,18 @@ class DocenteAreaGrado extends Component
                 'tipo_asignacion' => 'grupo_estable',
                 'status' => true,
             ])
-                ->with('docente.persona')
+                ->with('detalleDocenteEstudio.docente.persona')
                 ->first();
 
             if ($asignacionExistente) {
-                $docente = $asignacionExistente->docente;
+                $docente = $asignacionExistente->detalleDocenteEstudio->docente;
                 $nombre = $docente->persona->primer_nombre . ' ' . $docente->persona->primer_apellido;
 
-                throw ValidationException::withMessages([
-                    'grupoEstableId' => "Este grupo estable ya está asignado al docente {$nombre}.",
-                ]);
+                $this->alertaAsignacion = " Este grupo estable ya está asignado al docente {$nombre}.";
+                return;
             }
+
+
 
             ModeloDocenteAreaGrado::create([
                 'docente_estudio_realizado_id' => $detalleEstudio->id,

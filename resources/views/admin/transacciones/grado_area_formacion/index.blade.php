@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/modal-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 @stop
-@section('title', 'Gestión de Asignación de Niveles academicos a Áreas de Formación')
+@section('title', 'Gestión de Asignación de Niveles Academicos a Áreas de Formación')
 @section('content_header')
     <div class="content-header-modern">
         <div class="header-content">
@@ -13,7 +13,7 @@
                     <i class="fas fa-university"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Asignación de Niveles academicos a Áreas de Formación</h1>
+                    <h1 class="title-main">Asignación de Niveles Academicos a Áreas de Formación</h1>
                     <p class="title-subtitle">Gestión de vínculos entre niveles academicos y áreas formativas</p>
                 </div>
             </div>

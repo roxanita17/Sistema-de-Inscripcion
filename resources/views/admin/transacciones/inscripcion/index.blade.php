@@ -90,7 +90,7 @@
                         @endif
                         @if (request('grado_id'))
                             <span class="badge-filtros-small">
-                                Grado {{ $grados->find(request('grado_id'))->numero_grado ?? 'N/A' }}
+                                Nivel Academico {{ $grados->find(request('grado_id'))->numero_grado ?? 'N/A' }}
                             </span>
                         @endif
                         @if (request('seccion_id'))

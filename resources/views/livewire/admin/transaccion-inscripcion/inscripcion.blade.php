@@ -306,6 +306,7 @@
                     <label for="representante_legal_select" class="form-label-modern">
                         <i class="fas fa-gavel"></i>
                         Representante Legal
+                        <span class="required-badge">*</span>
                     </label>
                     <select id="representante_legal_select" class="form-control-modern selectpicker"
                         data-live-search="true" data-size="8" data-width="100%">
@@ -764,12 +765,13 @@
                                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                             </div>
                                         @enderror
-                                        <small class="form-text-modern"
-                                            style="margin-top: 0.5rem; color: var(--gray-500);  ">
-                                            <i class="fas fa-info-circle"></i>
-                                            Si no hay instituciones registradas agrega una
-                                            <a class="text-primary" data-bs-toggle="modal"
-                                                data-bs-target="#modalCrearInstitucionInscripcion">"aquí"</a>
+                                        <small class="form-text-modern d-flex align-items-center gap-1">
+                                            <i class="fas fa-plus-circle text-primary"></i>
+                                            <a href="#" class="text-primary text-decoration-none"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalCrearInstitucionInscripcion">
+                                                Crear nueva institución
+                                            </a>
                                         </small>
                                     @else
                                         <input type="text" class="form-control-modern"
