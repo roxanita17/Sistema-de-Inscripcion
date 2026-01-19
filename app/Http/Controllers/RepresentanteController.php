@@ -451,7 +451,7 @@ class RepresentanteController extends Controller
             ],
             'sexo-representante' => 'required|exists:generos,id',
             'tipo-ci-representante' => 'required|exists:tipo_documentos,id',
-            'pais_id' => 'required|exists:paises,id',
+            'pais_id' => 'required|exists:pais,id',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
             'parroquia_id' => 'required|exists:localidads,id',
