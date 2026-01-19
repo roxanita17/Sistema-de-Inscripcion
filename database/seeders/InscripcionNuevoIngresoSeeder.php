@@ -18,7 +18,7 @@ class InscripcionNuevoIngresoSeeder extends Seeder
             // ============================================
             // PRIMER GRADO - Alumnos 1 y 2
             // ============================================
-/*             [
+            [
                 'id' => 1,
                 'inscripcion_id' => 1,
                 'numero_zonificacion' => 1001,
@@ -33,12 +33,12 @@ class InscripcionNuevoIngresoSeeder extends Seeder
                 'institucion_procedencia_id' => 1,
                 'expresion_literaria_id' => 2,
                 'anio_egreso' => Carbon::create(2023, 7, 15),
-            ], */
+            ],
 
             // ============================================
             // SEGUNDO GRADO - Alumnos 3 y 4
             // ============================================
-/*             [
+            [
                 'id' => 3,
                 'inscripcion_id' => 3,
                 'numero_zonificacion' => 2001,
@@ -53,12 +53,12 @@ class InscripcionNuevoIngresoSeeder extends Seeder
                 'institucion_procedencia_id' => 2,
                 'expresion_literaria_id' => 3,
                 'anio_egreso' => Carbon::create(2022, 7, 15),
-            ], */
+            ],
 
             // ============================================
             // TERCER GRADO - Alumnos 5 y 6
             // ============================================
-/*             [
+            [
                 'id' => 5,
                 'inscripcion_id' => 5,
                 'numero_zonificacion' => 3001,
@@ -73,7 +73,7 @@ class InscripcionNuevoIngresoSeeder extends Seeder
                 'institucion_procedencia_id' => 3,
                 'expresion_literaria_id' => 1,
                 'anio_egreso' => Carbon::create(2021, 7, 15),
-            ], */
+            ],
 
             // ============================================
             // CUARTO GRADO - Alumnos 7 y 8

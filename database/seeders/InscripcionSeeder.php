@@ -22,12 +22,12 @@ class InscripcionSeeder extends Seeder
             // ============================================
             // Anio Escolar 1
             // ============================================
-/*             [
+            [
                 'id' => 1,
-                'anio_escolar_id' => 1,
+                'anio_escolar_id' => 3,
                 'alumno_id' => 1,
                 'grado_id' => 1,
-                'seccion_id' => 1,
+                'seccion_id' => null,
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
@@ -40,10 +40,10 @@ class InscripcionSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'anio_escolar_id' => 1,
+                'anio_escolar_id' => 3,
                 'alumno_id' => 2,
                 'grado_id' => 1,
-                'seccion_id' => 2,
+                'seccion_id' => null,
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
@@ -56,10 +56,10 @@ class InscripcionSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'anio_escolar_id' => 1,
+                'anio_escolar_id' => 3,
                 'alumno_id' => 2,
                 'grado_id' => 1,
-                'seccion_id' => 2,
+                'seccion_id' => null,
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
@@ -69,17 +69,17 @@ class InscripcionSeeder extends Seeder
                 'observaciones' => 'Sin observaciones',
                 'acepta_normas_contrato' => true,
                 'status' => 'Activo',
-            ], */
+            ],
 
             // ============================================
             // Anio escolar 2
             // ============================================
-/*             [
+            [
                 'id' => 4,
-                'anio_escolar_id' => 2,
+                'anio_escolar_id' => 3,
                 'alumno_id' => 3,
-                'grado_id' => 2,
-                'seccion_id' => 1, // Sección A
+                'grado_id' => 1,
+                'seccion_id' => null, // Sección A
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
@@ -92,10 +92,10 @@ class InscripcionSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'anio_escolar_id' => 2,
+                'anio_escolar_id' => 3,
                 'alumno_id' => 4,
-                'grado_id' => 2,
-                'seccion_id' => 2, // Sección B
+                'grado_id' => 1,
+                'seccion_id' => null, // Sección B
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
@@ -108,10 +108,10 @@ class InscripcionSeeder extends Seeder
             ],
             [
                 'id' => 6,
-                'anio_escolar_id' => 2,
+                'anio_escolar_id' => 3,
                 'alumno_id' => 6,
-                'grado_id' => 3,
-                'seccion_id' => 4, // Sección B
+                'grado_id' => 1,
+                'seccion_id' => null, // Sección B
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
@@ -121,7 +121,7 @@ class InscripcionSeeder extends Seeder
                 'observaciones' => 'Sin observaciones',
                 'acepta_normas_contrato' => true,
                 'status' => 'Activo',
-            ], */
+            ],
 
             // ============================================
             // Anio Escolar 3
