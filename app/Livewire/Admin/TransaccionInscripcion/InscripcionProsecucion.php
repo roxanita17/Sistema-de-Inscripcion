@@ -357,58 +357,59 @@ class InscripcionProsecucion extends Component
             })->exists();
     }
 
-private function calcularSugerenciaInscripcion(): void
-{
-    $this->mensajeSugerencia = null;
-    $this->gradoSugeridoId = null;
-    $this->seccionSugeridaId = null;
+    private function calcularSugerenciaInscripcion(): void
+    {
+        $this->mensajeSugerencia = null;
+        $this->gradoSugeridoId = null;
+        $this->seccionSugeridaId = null;
 
-    if (!$this->inscripcionAnterior || !$this->gradoAnteriorId) {
-        return;
-    }
-
-    $gradoAnterior = Grado::find($this->gradoAnteriorId);
-    if (!$gradoAnterior) {
-        return;
-    }
-
-    // Determinar grado sugerido
-    if ($this->repite_grado) {
-        $gradoSugerido = $gradoAnterior;
-    } else {
-        $gradoSugerido = Grado::where('numero_grado', $gradoAnterior->numero_grado + 1)
-            ->where('status', true)
-            ->first();
-    }
-
-    if (!$gradoSugerido) {
-        return;
-    }
-
-    $this->gradoSugeridoId = $gradoSugerido->id;
-
-    // 👉 BUSCAR SECCIÓN CON EL MISMO NOMBRE
-    if ($this->inscripcionAnterior->seccion) {
-        $nombreSeccion = $this->inscripcionAnterior->seccion->nombre;
-
-        $seccionSugerida = Seccion::where('grado_id', $gradoSugerido->id)
-            ->where('nombre', $nombreSeccion)
-            ->where('status', true)
-            ->first();
-
-        if ($seccionSugerida) {
-            $this->seccionSugeridaId = $seccionSugerida->id;
+        if (!$this->inscripcionAnterior || !$this->gradoAnteriorId) {
+            return;
         }
+
+        $gradoAnterior = Grado::find($this->gradoAnteriorId);
+        if (!$gradoAnterior) {
+            return;
+        }
+
+        // Determinar grado sugerido
+        if ($this->repite_grado) {
+            $gradoSugerido = $gradoAnterior;
+        } else {
+            $gradoSugerido = Grado::where('numero_grado', $gradoAnterior->numero_grado + 1)
+                ->where('status', true)
+                ->first();
+        }
+
+        if (!$gradoSugerido) {
+            return;
+        }
+
+        $this->gradoSugeridoId = $gradoSugerido->id;
+
+        if (!$this->repite_grado && $this->inscripcionAnterior->seccion) {
+            $nombreSeccion = $this->inscripcionAnterior->seccion->nombre;
+
+            $seccionSugerida = Seccion::where('grado_id', $gradoSugerido->id)
+                ->where('nombre', $nombreSeccion)
+                ->where('status', true)
+                ->first();
+
+            if ($seccionSugerida) {
+                $this->seccionSugeridaId = $seccionSugerida->id;
+            }
+        }
+
+        // Mensaje final
+        $this->mensajeSugerencia = sprintf(
+            'Sugerencia: inscribir en %s° Nivel Académico%s.',
+            $gradoSugerido->numero_grado,
+            $this->seccionSugeridaId
+                ? ' Sección ' . optional(Seccion::find($this->seccionSugeridaId))->nombre
+                : ''
+        );
     }
 
-    $this->mensajeSugerencia = sprintf(
-        'Sugerencia: inscribir en %s° Nivel Académico%s.',
-        $gradoSugerido->numero_grado,
-        $this->seccionSugeridaId
-            ? ' – Sección ' . optional(Seccion::find($this->seccionSugeridaId))->nombre
-            : ''
-    );
-}
 
     public function updatedSeleccionarTodasArrastradas($value)
     {

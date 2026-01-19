@@ -541,7 +541,7 @@
                         <h3>Paso 3: Nivel Academico y Sección</h3>
                         <p>Seleccione el nivel academico al que será promovido el estudiante</p>
                     </div>
-                </div>
+                </div> 
             </div>
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">
