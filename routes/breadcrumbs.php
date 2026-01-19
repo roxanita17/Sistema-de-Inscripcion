@@ -189,7 +189,7 @@ Breadcrumbs::for('representante.editar', function (Trail $trail, $representanteI
     $representante = Representante::with('persona')->findOrFail($representanteId);
 
     $trail->parent('representante.index');
-    $trail->push('Editar Repreentante', route('representante.editar', $representante->id));
+    $trail->push('Editar Representante', route('representante.editar', $representante->id));
 });
 
 // Representante - eliminados

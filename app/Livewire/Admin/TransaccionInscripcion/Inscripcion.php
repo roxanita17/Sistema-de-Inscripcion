@@ -11,6 +11,7 @@ use App\DTOs\InscripcionData;
 use App\Exceptions\InscripcionException;
 use App\Models\Localidad;
 use Illuminate\Database\QueryException;
+use Livewire\Attributes\On;
 
 class Inscripcion extends Component
 {
@@ -685,16 +686,20 @@ class Inscripcion extends Component
         $this->institucion_procedencia_id = $data['id'];
     }
 
+
+    #[On('localidadCreada')]
     public function refrescarLocalidades($data)
     {
         if ($this->municipio_id == $data['municipio_id']) {
-            $this->localidades = Localidad::where('municipio_id', $this->municipio_id)
+            $this->localidades = \App\Models\Localidad::where('municipio_id', $this->municipio_id)
                 ->where('status', true)
                 ->orderBy('nombre_localidad')
                 ->get();
+
             $this->localidad_id = $data['id'];
         }
     }
+
 
     public function actualizarEstadoBoton($value)
     {

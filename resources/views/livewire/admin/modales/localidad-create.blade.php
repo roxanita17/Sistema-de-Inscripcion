@@ -68,7 +68,7 @@
                                 </div>
                             @enderror
                         </div>
-
+ 
                         <div class="form-group-modern">
                             <label for="municipio_id_localidad" class="form-label-modern">
                                 <i class="fas fa-tags"></i>

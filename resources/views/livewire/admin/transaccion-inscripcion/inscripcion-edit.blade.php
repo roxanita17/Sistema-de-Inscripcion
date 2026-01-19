@@ -60,7 +60,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2 text-md-end mt-3 mt-md-0">
+                {{-- <div class="col-md-2 text-md-end mt-3 mt-md-0">
                     @if ($padreId)
                         <a href="{{ route('representante.editar', [
                             'id' => $padreId,
@@ -71,7 +71,7 @@
                             <i class="fas fa-edit me-1"></i> Editar
                         </a>
                     @endif
-                </div>
+                </div> --}}
             </div>
             @if ($padreSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
@@ -209,7 +209,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2 text-md-end mt-3 mt-md-0">
+                {{-- <div class="col-md-2 text-md-end mt-3 mt-md-0">
                     @if ($madreId)
                         <a href="{{ route('representante.editar', [
                             'id' => $madreId,
@@ -220,7 +220,7 @@
                             <i class="fas fa-edit me-1"></i> Editar
                         </a>
                     @endif
-                </div>
+                </div>  --}}
             </div>
             @if ($madreSeleccionado)
                 <div class="card-body-modern" style="padding: 0;">
@@ -358,7 +358,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2 text-md-end mt-3 mt-md-0">
+                {{-- <div class="col-md-2 text-md-end mt-3 mt-md-0">
                     @if ($representanteLegalId)
                         <a href="{{ route('representante.editar', [
                             'id' => $representanteLegalId,
@@ -369,7 +369,7 @@
                             <i class="fas fa-edit me-1"></i> Editar
                         </a>
                     @endif
-                </div>
+                </div> --}}
             </div>
             @error('representanteLegalId')
                 <div class="invalid-feedback-modern">

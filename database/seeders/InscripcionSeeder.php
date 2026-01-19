@@ -22,7 +22,7 @@ class InscripcionSeeder extends Seeder
             // ============================================
             // Anio Escolar 1
             // ============================================
-            [
+/*             [
                 'id' => 1,
                 'anio_escolar_id' => 1,
                 'alumno_id' => 1,
@@ -69,12 +69,12 @@ class InscripcionSeeder extends Seeder
                 'observaciones' => 'Sin observaciones',
                 'acepta_normas_contrato' => true,
                 'status' => 'Activo',
-            ],
+            ], */
 
             // ============================================
             // Anio escolar 2
             // ============================================
-            [
+/*             [
                 'id' => 4,
                 'anio_escolar_id' => 2,
                 'alumno_id' => 3,
@@ -121,7 +121,7 @@ class InscripcionSeeder extends Seeder
                 'observaciones' => 'Sin observaciones',
                 'acepta_normas_contrato' => true,
                 'status' => 'Activo',
-            ],
+            ], */
 
             // ============================================
             // Anio Escolar 3
