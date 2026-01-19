@@ -1258,7 +1258,7 @@ class RepresentanteController extends Controller
                 $esProgenitorNoRepresentante = false;
                 $tipoProgenitor = null;
                 $tipoRepresentante = $request->input('tipo_representante');
-                $esRepresentanteLegal = in_array($tipoRepresentante, ['representante_legal', 'progenitor_representante']);
+                $esRepresentanteLegal = in_array($tipoRepresentante, ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
 
                 Log::info('Validando tipo de representante', [
                     'tipo_representante' => $tipoRepresentante,
@@ -1280,6 +1280,7 @@ class RepresentanteController extends Controller
                             'numero_documento' => $request->input('numero_documento-representante'),
                             'tipo_representante' => $tipoRepresentante
                         ]);
+                        $datosRepresentante['status'] = 1;
                     } else {
                         $esProgenitorNoRepresentante = true;
                         $datosRepresentante['status'] = 3;
@@ -1300,6 +1301,7 @@ class RepresentanteController extends Controller
                             'numero_documento' => $request->input('numero_documento-representante'),
                             'tipo_representante' => $tipoRepresentante
                         ]);
+                        $datosRepresentante['status'] = 1;
                     } else {
                         $esProgenitorNoRepresentante = true;
                         $datosRepresentante['status'] = 2;
@@ -1308,6 +1310,15 @@ class RepresentanteController extends Controller
                             'tipo_representante' => $tipoRepresentante
                         ]);
                     }
+                }
+
+                // Si es representante legal pero no coincidió con las condiciones anteriores, asegurar status = 1
+                if ($esRepresentanteLegal && !isset($tipoProgenitor)) {
+                    $datosRepresentante['status'] = 1;
+                    Log::info('Representante legal (general), manteniendo estado 1', [
+                        'numero_documento' => $request->input('numero_documento-representante'),
+                        'tipo_representante' => $tipoRepresentante
+                    ]);
                 }
 
                 $representante = Representante::updateOrCreate(
@@ -1514,7 +1525,7 @@ class RepresentanteController extends Controller
                     'persona_id' => $personaMadre->id,
                 ]);
 
-                $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante']);
+                $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
 
                 Log::info('Guardando madre como representante', [
                     'persona_id' => $personaMadre->id,
@@ -1594,7 +1605,7 @@ class RepresentanteController extends Controller
                     'persona_id' => $personaPadre->id,
                 ]);
 
-                $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante']);
+                $esRepresentanteLegal = in_array($request->input('tipo_representante'), ['representante_legal', 'progenitor_representante', 'progenitor_madre_representante', 'progenitor_padre_representante']);
 
                 Log::info('Guardando padre como representante', [
                     'persona_id' => $personaPadre->id,
