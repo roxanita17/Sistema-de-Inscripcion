@@ -24,10 +24,10 @@ class InscripcionSeeder extends Seeder
             // ============================================
             [
                 'id' => 1,
-                'anio_escolar_id' => 3,
+                'anio_escolar_id' => 2,
                 'alumno_id' => 1,
                 'grado_id' => 1,
-                'seccion_id' => null,
+                'seccion_id' => 1,
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
@@ -40,10 +40,10 @@ class InscripcionSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'anio_escolar_id' => 3,
+                'anio_escolar_id' => 2,
                 'alumno_id' => 2,
                 'grado_id' => 1,
-                'seccion_id' => null,
+                'seccion_id' => 1,
                 'padre_id' => 1,
                 'madre_id' => 2,
                 'representante_legal_id' => 1,
@@ -57,7 +57,7 @@ class InscripcionSeeder extends Seeder
             [
                 'id' => 3,
                 'anio_escolar_id' => 3,
-                'alumno_id' => 2,
+                'alumno_id' => 3,
                 'grado_id' => 1,
                 'seccion_id' => null,
                 'padre_id' => 1,
@@ -77,7 +77,7 @@ class InscripcionSeeder extends Seeder
             [
                 'id' => 4,
                 'anio_escolar_id' => 3,
-                'alumno_id' => 3,
+                'alumno_id' => 4,
                 'grado_id' => 1,
                 'seccion_id' => null, // Sección A
                 'padre_id' => 1,
@@ -93,7 +93,7 @@ class InscripcionSeeder extends Seeder
             [
                 'id' => 5,
                 'anio_escolar_id' => 3,
-                'alumno_id' => 4,
+                'alumno_id' => 5,
                 'grado_id' => 1,
                 'seccion_id' => null, // Sección B
                 'padre_id' => 1,

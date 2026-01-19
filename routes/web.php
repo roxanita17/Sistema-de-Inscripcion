@@ -64,6 +64,11 @@ Route::get("/vidaEstudiantil", function () {
 // ============================================
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+
+    Route::get(
+        'historico/secciones-por-grado/{grado}',
+        [HistoricoController::class, 'seccionesPorGrado']
+    )->name('admin.historico.secciones-por-grado');
     // Rutas para Institución de Procedencia
     Route::get('institucion-procedencia', [InstitucionProcedenciaController::class, 'index'])->name('institucion-procedencia.index');
     Route::post('institucion-procedencia', [InstitucionProcedenciaController::class, 'store'])->name('institucion-procedencia.store');
@@ -292,7 +297,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     //===== RUTA REPORTES DOCENTE ======
     Route::get('docente/reporte/{id}', [DocenteController::class, 'reportePDF'])->name('docente.reportePDF');
     Route::get('docente/reporte-general', [DocenteController::class, 'reporteGeneralPDF'])->name('docente.reporteGeneralPDF');
-    
+
     // Verificar cédula duplicada (AJAX)
     Route::get('docente/verificar-cedula', [DocenteController::class, 'verificarCedula'])->name('docente.verificar_cedula');
 
@@ -306,7 +311,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
         Route::post('alumnos/{alumno}/update', [AlumnoController::class, 'update'])
             ->name('alumnos.update');
-            
+
         Route::delete('alumnos/{id}', [AlumnoController::class, 'destroy'])->name('alumnos.destroy');
     });
 
