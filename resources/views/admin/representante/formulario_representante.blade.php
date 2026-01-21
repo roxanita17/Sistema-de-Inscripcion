@@ -3688,9 +3688,9 @@
                     const paisRepresentante = document.getElementById('idPais-representante').getAttribute('data-valor-guardado');
                     if (paisRepresentante) {
                         // Limpiar valores anteriores antes de cargar
-                        limpiarSelectCompleto(document.getElementById('idEstado-representante'));
-                        limpiarSelectCompleto(document.getElementById('idMunicipio-representante'));
-                        limpiarSelectCompleto(document.getElementById('idparroquia-representante'));
+                        limpiarSelectValor(document.getElementById('idEstado-representante'));
+                        limpiarSelectValor(document.getElementById('idMunicipio-representante'));
+                        limpiarSelectValor(document.getElementById('idparroquia-representante'));
                         
                         // Usar función ultra simple para evitar duplicación de texto en selectpicker
                         const paisRepresentanteSelect = document.getElementById('idPais-representante');
@@ -3802,7 +3802,8 @@
                 console.log('[PAIS REPRESENTANTE] Cambio detectado, valor:', this.value);
                 if (!copiandoUbicacion && !reseteandoRepresentante && !window.copiandoDatosProgenitor) {
                     cargarSelectAnidadoSimple('estado', this.value, 'idEstado-representante', 'idMunicipio-representante');
-                    limpiarSelectCompleto(document.getElementById('idparroquia-representante'));
+                    // Solo limpiar valor, NO destruir opciones
+                    limpiarSelectValor(document.getElementById('idparroquia-representante'));
                 }
             }
 
@@ -5959,9 +5960,16 @@
                     
                     console.log(`[PARENTESCO] Opción encontrada y habilitada, estableciendo valor...`);
 
-                    // MODO COPIA: Desactivar selectpicker y usar select nativo
-                    if (window.copiandoDatosProgenitor) {
-                        console.log('[PARENTESCO] Modo copia: usando select nativo SIN reactivar selectpicker...');
+                    // MODO COPIA O PARENTESCO FIJO: Desactivar selectpicker y usar select nativo
+                    if (window.copiandoDatosProgenitor || valorParentesco === 'Mamá' || valorParentesco === 'Papá') {
+                        const esModoCopia = window.copiandoDatosProgenitor;
+                        const esParentescoFijo = valorParentesco === 'Mamá' || valorParentesco === 'Papá';
+                        
+                        if (esModoCopia) {
+                            console.log('[PARENTESCO] Modo copia: usando select nativo SIN reactivar selectpicker...');
+                        } else if (esParentescoFijo) {
+                            console.log(`[PARENTESCO] Parentesco fijo "${valorParentesco}": manteniendo select nativo sin selectpicker...`);
+                        }
                         
                         // Desactivar selectpicker completamente
                         const $parentesco = $(parentescoSelect);
@@ -5976,7 +5984,7 @@
                                 bootstrapSelect.remove();
                             }
                             
-                            console.log('[PARENTESCO] Selectpicker destruido completamente (no se reactivará)');
+                            console.log('[PARENTESCO] Selectpicker destruido completamente');
                         }
                         
                         // Establecer valor directamente en select nativo
@@ -5992,7 +6000,12 @@
                         // Deshabilitar el select nativo con estilo visual
                         parentescoSelect.disabled = true;
                         parentescoSelect.classList.add('bg-light', 'text-muted');
-                        console.log('[PARENTESCO] Select nativo deshabilitado (permanente durante copia)');
+                        
+                        if (esModoCopia) {
+                            console.log('[PARENTESCO] Select nativo deshabilitado (permanente durante copia)');
+                        } else if (esParentescoFijo) {
+                            console.log(`[PARENTESCO] Select nativo deshabilitado (permanente para parentesco "${valorParentesco}")`);
+                        }
                         
                         // Disparar evento change
                         const event = new Event('change');
@@ -6122,7 +6135,7 @@
 
                     console.log(`[COPIA WATCHDOG] Iniciando copia para ${esMadre ? 'madre' : 'padre'}`);
                     
-                    // Limpieza MENOS AGRESIVA - Solo limpiar valores sin destruir selectpicker
+                    // Limpieza SUAVE - Solo limpiar valores seleccionados sin afectar opciones
                     const selectsRepresentante = [
                         'prefijo-representante', 'prefijo_dos-representante', 'ocupacion-representante',
                         'idPais-representante', 'idEstado-representante', 'idMunicipio-representante', 'idparroquia-representante'
@@ -6133,25 +6146,26 @@
                             try {
                                 const $select = $(select);
                                 if ($select.length && $select[0] && $select.data('selectpicker')) {
-                                    $select.selectpicker('val', '');  // Limpiar selección
-                                    $select.selectpicker('refresh');  // Refrescar visualmente
+                                    // SOLO limpiar selección, NO destruir ni refrescar agresivamente
+                                    $select.selectpicker('val', '');
+                                    // NO hacer refresh aquí para evitar perder opciones
+                                    console.log(`[LIMPIEZA SUAVE] ${id} selección limpiada (opciones preservadas)`);
                                 } else {
                                     select.value = '';
                                     select.selectedIndex = -1;
                                 }
-                                console.log(`[LIMPIEZA WATCHDOG] ${id} limpiado (valor solo, opciones preservadas)`);
                             } catch (error) {
-                                console.error(`[LIMPIEZA WATCHDOG] Error al limpiar ${id}:`, error);
+                                console.error(`[LIMPIEZA SUAVE] Error al limpiar ${id}:`, error);
                                 // Intentar limpieza básica como fallback
                                 try {
                                     select.value = '';
                                     select.selectedIndex = -1;
                                 } catch (fallbackError) {
-                                    console.error(`[LIMPIEZA WATCHDOG] Error en fallback para ${id}:`, fallbackError);
+                                    console.error(`[LIMPIEZA SUAVE] Error en fallback para ${id}:`, fallbackError);
                                 }
                             }
                         } else {
-                            console.warn(`[LIMPIEZA WATCHDOG] Elemento ${id} no encontrado o no está en el DOM`);
+                            console.warn(`[LIMPIEZA SUAVE] Elemento ${id} no encontrado o no está en el DOM`);
                         }
                     }
 
@@ -6163,17 +6177,14 @@
                     // Habilitar temporalmente los campos para poder copiar los valores
                     toggleCamposRepresentante(false);
 
-                    // Función para preparar todos los selects (ultra limpieza)
-                    const prepararSelectsUltra = () => {
-                        console.log('PREPARACIÓN ULTRA: Limpiando estado residual de todos los selects...');
+                    // Función para preparar todos los selects (limpieza suave)
+                    const prepararSelectsSuave = () => {
+                        console.log('PREPARACIÓN SUAVE: Limpiando solo selección de selects...');
                         const selectsPreparar = [
                             'prefijo-representante',
                             'prefijo_dos-representante',
-                            // 'idPais-representante', // NO limpiar país - necesita mantener opciones originales
-                            'idEstado-representante',
-                            'idMunicipio-representante',
-                            'idparroquia-representante',
                             'ocupacion-representante'
+                            // NO incluir selects de ubicación para preservar sus opciones cargadas
                         ];
 
                         selectsPreparar.forEach(selectId => {
@@ -6183,30 +6194,27 @@
                                 try {
                                     // Verificar si el selectpicker está inicializado antes de operar
                                     if ($select.data('selectpicker')) {
-                                        // Limpieza ultra completa solo si está inicializado
+                                        // Solo limpiar selección, NO destruir ni deselectAll
                                         $select.selectpicker('val', '');
-                                        $select.selectpicker('deselectAll');
-                                        select.value = '';
-                                        select.selectedIndex = -1;
-                                        console.log(`[PREP ULTRA] ${selectId}: Estado residual eliminado completamente`);
+                                        console.log(`[PREP SUAVE] ${selectId}: Selección limpiada (opciones preservadas)`);
                                     } else {
                                         // Si no está inicializado, limpiar solo el select nativo
                                         select.value = '';
                                         select.selectedIndex = -1;
-                                        console.log(`[PREP ULTRA] ${selectId}: Limpieza básica (selectpicker no inicializado)`);
+                                        console.log(`[PREP SUAVE] ${selectId}: Limpieza básica (selectpicker no inicializado)`);
                                     }
                                 } catch (error) {
-                                    console.error(`[PREP ULTRA] ${selectId}: Error durante limpieza:`, error);
+                                    console.error(`[PREP SUAVE] ${selectId}: Error durante limpieza:`, error);
                                     // Intentar limpieza básica como fallback
                                     try {
                                         select.value = '';
                                         select.selectedIndex = -1;
                                     } catch (fallbackError) {
-                                        console.error(`[PREP ULTRA] ${selectId}: Error en fallback:`, fallbackError);
+                                        console.error(`[PREP SUAVE] ${selectId}: Error en fallback:`, fallbackError);
                                     }
                                 }
                             } else {
-                                console.warn(`[PREP ULTRA] ${selectId}: Elemento no encontrado`);
+                                console.warn(`[PREP SUAVE] ${selectId}: Elemento no encontrado`);
                             }
                         });
                     };
@@ -6233,9 +6241,9 @@
                         return false;
                     };
 
-                    // PASO 0: Preparación ultra completa
-                    prepararSelectsUltra();
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    // PASO 0: Preparación suave (preservar opciones de ubicación)
+                    prepararSelectsSuave();
+                    await new Promise(resolve => setTimeout(resolve, 200)); // Reducir tiempo de espera
 
                     // 1. Copiar campos personales primero
                     console.log('PASO 1: Copiando campos personales...');
@@ -6411,86 +6419,8 @@
                     // 7. Validación final ultra completa...
                     console.log('PASO 7: Validación final ultra completa...');
                     
-                    // PASO FINAL: Reconstrucción simple con bloqueo global
-                    console.log('PASO FINAL: Reconstruyendo todos los selectpickers después de la copia...');
-                    
-                    // MODO COPIA: No programar reconstrucción si estamos copiando
-                    if (window.copiandoDatosProgenitor) {
-                        console.log('[RECONSTRUCCIÓN FINAL] ⚠️ Modo copia activo, omitiendo programación de reconstrucción');
-                        return;
-                    }
-                    
-                    const reconstruirSelectpickersDespuesDeCopia = () => {
-                        // MODO COPIA: No reconstruir selectpickers si estamos copiando
-                        if (window.copiandoDatosProgenitor) {
-                            console.log('[RECONSTRUCCIÓN FINAL] ⚠️ Modo copia activo, omitiendo reconstrucción de selectpickers');
-                            // NO resetear la bandera aquí, mantener activa
-                            return;
-                        }
-                        
-                        // Esperar a que no haya reconstrucciones activas
-                        if (window.reconstruyendoSelectpickers) {
-                            console.log('[RECONSTRUCCIÓN FINAL] Esperando que termine reconstrucción previa...');
-                            setTimeout(reconstruirSelectpickersDespuesDeCopia, 500);
-                            return;
-                        }
-                        
-                        // Establecer bloqueo
-                        window.reconstruyendoSelectpickers = true;
-                        
-                        const selectIds = [
-                            'prefijo-representante',
-                            'prefijo_dos-representante',
-                            'ocupacion-representante',
-                            'parentesco',
-                            'idPais-representante',
-                            'idEstado-representante',
-                            'idMunicipio-representante',
-                            'idparroquia-representante'
-                        ];
-                        
-                        console.log('[RECONSTRUCCIÓN FINAL] Iniciando reconstrucción con bloqueo global...');
-                        
-                        selectIds.forEach((id, index) => {
-                            setTimeout(() => {
-                                const select = document.getElementById(id);
-                                if (select) {
-                                    try {
-                                        // Solo refresh - no inicializar para evitar conflictos
-                                        const $select = $(select);
-                                        if ($select.data('selectpicker')) {
-                                            $select.selectpicker('refresh');
-                                            console.log(`[RECONSTRUCCIÓN FINAL] ✅ ${id}: Refrescado`);
-                                        } else {
-                                            console.log(`[RECONSTRUCCIÓN FINAL] ⚠️ ${id}: Sin Bootstrap-Select, omitiendo`);
-                                        }
-                                    } catch (error) {
-                                        console.error(`[RECONSTRUCCIÓN FINAL] Error en ${id}:`, error);
-                                    }
-                                }
-                                
-                                // Liberar bloqueo al finalizar
-                                if (index === selectIds.length - 1) {
-                                    setTimeout(() => {
-                                        window.reconstruyendoSelectpickers = false;
-                                        console.log('[RECONSTRUCCIÓN FINAL] ✅ Bloqueo liberado');
-                                    }, 200);
-                                }
-                            }, index * 100); // Reducido a 100ms para mayor velocidad
-                        });
-                    };
-                    
-                    // Ejecutar reconstrucción después de un delay SOLO si no estamos copiando
-                    if (!window.copiandoDatosProgenitor) {
-                        setTimeout(reconstruirSelectpickersDespuesDeCopia, 1000);
-                    } else {
-                        console.log('[RECONSTRUCCIÓN FINAL] ⚠️ Modo copia activo, omitiendo timeout de reconstrucción');
-                    }
-                    
-                    // Esperar tiempo adicional para estabilización completa
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    // Validación simple y rápida
+                    // PASO FINAL: Validación simple y rápida
+                    console.log('PASO FINAL: Validación final de duplicaciones...');
                     const selectsValidar = [
                         'prefijo-representante',
                         'prefijo_dos-representante',
@@ -6551,18 +6481,16 @@
             // Función para copiar datos del padre al representante
             async function copiarDatosPadreARepresentante() {
                 console.log('[COPIA PADRE] Iniciando. Estado actual de copiandoDatosProgenitor:', window.copiandoDatosProgenitor);
-                // Resetear bandera por si quedó activa
-                window.copiandoDatosProgenitor = false;
-                console.log('[COPIA PADRE] Bandera reseteada al inicio');
+                // NO resetear bandera aquí para mantener el modo copia activo y el parentesco establecido
+                console.log('[COPIA PADRE] Manteniendo bandera copiandoDatosProgenitor para preservar parentesco');
                 return await copiarDatosProgenitorARepresentante(false);
             }
 
             // Función para copiar datos de la madre al representante
             async function copiarDatosMadreARepresentante() {
                 console.log('[COPIA MADRE] Iniciando. Estado actual de copiandoDatosProgenitor:', window.copiandoDatosProgenitor);
-                // Resetear bandera por si quedó activa
-                window.copiandoDatosProgenitor = false;
-                console.log('[COPIA MADRE] Bandera reseteada al inicio');
+                // NO resetear bandera aquí para mantener el modo copia activo y el parentesco establecido
+                console.log('[COPIA MADRE] Manteniendo bandera copiandoDatosProgenitor para preservar parentesco');
                 return await copiarDatosProgenitorARepresentante(true);
             }
 
@@ -6703,7 +6631,33 @@
             // }
         }
 
-        // Función para limpiar errores
+        // Función para limpiar solo el valor de un select sin destruir sus opciones
+        function limpiarSelectValor(selectElement) {
+            if (!selectElement) return;
+            
+            try {
+                const $select = $(selectElement);
+                if ($select.hasClass('selectpicker') && $select.data('selectpicker')) {
+                    // Solo limpiar selección, preservar opciones
+                    $select.selectpicker('val', '');
+                    console.log(`[LIMPIAR VALOR] ${selectElement.id}: Valor limpiado, opciones preservadas`);
+                } else {
+                    // Para selects normales
+                    selectElement.value = '';
+                    selectElement.selectedIndex = -1;
+                    console.log(`[LIMPIAR VALOR] ${selectElement.id}: Valor limpiado (select normal)`);
+                }
+            } catch (error) {
+                console.error(`[LIMPIAR VALOR] Error limpiando ${selectElement?.id}:`, error);
+                // Fallback básico
+                if (selectElement) {
+                    selectElement.value = '';
+                    selectElement.selectedIndex = -1;
+                }
+            }
+        }
+
+            // Función para limpiar errores
         function limpiarError(elemento) {
             if (!elemento) return;
 
