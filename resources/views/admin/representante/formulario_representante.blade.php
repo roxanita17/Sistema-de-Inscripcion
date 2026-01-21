@@ -4271,9 +4271,16 @@
                     // Limpiar campos según el tipo seleccionado
                     if (tipo !== 'solo_representante') {
                         await resetearCamposRepresentante();
-                    } else {
+                    }
+                    
+                    // SIEMPRE ejecutar limpieza completa cuando se selecciona "solo_representante"
+                    if (tipo === 'solo_representante') {
                         // Para "solo representante legal", realizar limpieza SIMPLE (sin duplicación)
                         toggleCamposRepresentante(false);
+                        
+                        // FORZAR: Regenerar opciones originales limpias antes de la limpieza
+                        console.log('[LIMPIEZA COMPLETA] Regenerando opciones originales limpias...');
+                        guardarOpcionesOriginales();
                         
                         // Limpieza COMPLETA para SELECTPICKERS del representante (elimina duplicados)
                         const selectpickersRepresentante = [
@@ -4291,20 +4298,26 @@
                             const select = document.getElementById(id);
                             if (select) {
                                 try {
-                                    // Intentar usar opciones originales guardadas
+                                    // SIEMPRE usar opciones originales guardadas, nunca generar nuevas
                                     let opcionesOriginales = null;
                                     if (select.dataset.opcionesOriginales) {
                                         try {
                                             opcionesOriginales = JSON.parse(select.dataset.opcionesOriginales);
+                                            console.log(`[LIMPIEZA COMPLETA] Usando opciones originales guardadas para ${id}: ${opcionesOriginales.length} opciones`);
                                         } catch (e) {
                                             console.warn(`[LIMPIEZA COMPLETA] Error parseando opciones originales para ${id}:`, e);
+                                            opcionesOriginales = null;
                                         }
                                     }
                                     
-                                    // Si no hay opciones originales, crear opciones limpias basadas en el tipo de select
+                                    // Si no hay opciones originales, NO generar nuevas - solo limpiar el select existente
                                     if (!opcionesOriginales || opcionesOriginales.length === 0) {
-                                        console.log(`[LIMPIEZA COMPLETA] Creando opciones limpias para ${id}...`);
-                                        opcionesOriginales = crearOpcionesLimpias(id);
+                                        console.warn(`[LIMPIEZA COMPLETA] ⚠️ No hay opciones originales para ${id}, limpiando select existente sin reconstruir`);
+                                        // Solo limpiar el select existente sin reconstruir
+                                        const $select = $(select);
+                                        $select.val('');
+                                        $select.selectpicker('refresh');
+                                        continue; // Saltar al siguiente select
                                     }
                                     
                                     // Destruir selectpicker completamente
@@ -4316,7 +4329,7 @@
                                     // Limpiar HTML completamente
                                     select.innerHTML = '';
 
-                                    // Restaurar opciones limpias
+                                    // Restaurar opciones limpias desde originales
                                     opcionesOriginales.forEach(opt => {
                                         const option = new Option(opt.text, opt.value, false, false);
                                         if (opt.disabled) option.disabled = true;
@@ -4347,88 +4360,7 @@
                         setTimeout(() => {
                             console.log('\n🔍 DIAGNÓSTICO DESPUÉS DE LIMPIEZA 🔍');
                             diagnosticarSelectpicker('prefijo-representante');
-                            diagnosticarSelectpicker('ocupacion-representante');
-                        }, 2000); // Aumentado a 2 segundos
-
-                        // Limpieza de SELECTS REGULARES del representante
-                        const selectsRegularesRepresentante = [
-                            'tipo-ci-representante',
-                            'sexo-representante'
-                        ];
-
-                        selectsRegularesRepresentante.forEach(id => {
-                            const select = document.getElementById(id);
-                            if (select) {
-                                select.value = '';
-                                select.selectedIndex = -1;
-                                console.log(`[LIMPIEZA EXTRA] Select regular ${id} limpiado`);
-                            }
-                        });
-
-                        // Limpieza de inputs de texto del representante
-                        const inputsRepresentante = [
-                            'numero_documento-representante',
-                            'primer-nombre-representante',
-                            'segundo-nombre-representante', 
-                            'tercer-nombre-representante',
-                            'primer-apellido-representante',
-                            'segundo-apellido-representante',
-                            'fecha-nacimiento-representante',
-                            'lugar-nacimiento-representante',
-                            'direccion-representante',
-                            'telefono-representante',
-                            'telefono_dos-representante',
-                            'correo-representante',
-                            'codigo-patria',
-                            'serial-patria',
-                            'especifique-organizacion',
-                            'direccion-habitacion'
-                        ];
-
-                        inputsRepresentante.forEach(id => {
-                            const input = document.getElementById(id);
-                            if (input) {
-                                input.value = '';
-                                // Limpiar clases de validación si existen
-                                input.classList.remove('is-invalid');
-                                const errorElement = document.getElementById(id + '-error');
-                                if (errorElement) errorElement.textContent = '';
-                                console.log(`[LIMPIEZA EXTRA] Input ${id} limpiado`);
-                            }
-                        });
-
-                        // Limpiar campos ocultos si es necesario
-                        const hiddenFields = ['persona-id-representante', 'representante-id', 'parentesco_hidden'];
-                        hiddenFields.forEach(id => {
-                            const hidden = document.getElementById(id);
-                            if (hidden) hidden.value = '';
-                        });
-
-                        // Limpiar selects sin selectpicker (como tipo-cuenta, banco_id)
-                        const simpleSelects = ['carnet-patria-afiliado', 'tipo-cuenta', 'banco_id'];
-                        simpleSelects.forEach(id => {
-                            const select = document.getElementById(id);
-                            if (select) {
-                                select.value = '';
-                                select.selectedIndex = -1;
-                                console.log(`[LIMPIEZA EXTRA] Select simple ${id} limpiado`);
-                            }
-                        });
-
-                        // Limpiar radio buttons
-                        const radioButtons = document.querySelectorAll('input[name="convive-representante"], input[name="organizacion-representante"]');
-                        radioButtons.forEach(radio => {
-                            radio.checked = false;
-                        });
-
-                        // Ocultar contenedores condicionales si están visibles
-                        const contenedoresCondicionales = ['especifique-organizacion-container'];
-                        contenedoresCondicionales.forEach(id => {
-                            const container = document.getElementById(id);
-                            if (container) container.style.display = 'none';
-                        });
-
-                        console.log('[LIMPIEZA EXTRA] Limpieza completa del representante realizada');
+                        }, 500);
                     }
 
                     // Resetear bandera NUEVAMENTE después del reseteo de campos (por si los selectpickers la afectaron)

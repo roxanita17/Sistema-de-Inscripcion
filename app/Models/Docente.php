@@ -197,8 +197,61 @@ class Docente extends Model
             )
             ->get();
 
+        // Obtener estudiantes asignados al docente
+        $estudiantes = DB::table('docentes as d')
+            ->join('detalle_docente_estudios as dde', 'd.id', '=', 'dde.docente_id')
+            ->join('docente_area_grados as dag', 'dde.id', '=', 'dag.docente_estudio_realizado_id')
+            ->join('inscripcions as i', function($join) {
+                $join->on('i.grado_id', '=', 'dag.grado_id')
+                     ->where('i.status', true);
+            })
+            ->join('alumnos as a', 'i.alumno_id', '=', 'a.id')
+            ->join('personas as p', 'a.persona_id', '=', 'p.id')
+            ->join('grados as g', 'i.grado_id', '=', 'g.id')
+            ->join('seccions as s', 'i.seccion_id', '=', 's.id')
+            ->where('d.id', $id)
+            ->where('dde.status', true)
+            ->where('dag.status', true)
+            ->where('a.status', true)
+            ->distinct()
+            ->select(
+                'p.primer_nombre',
+                'p.segundo_nombre',
+                'p.tercer_nombre',
+                'p.primer_apellido',
+                'p.segundo_apellido',
+                'p.numero_documento',
+                'g.nombre as grado',
+                's.nombre as seccion'
+            )
+            ->orderBy('p.primer_apellido')
+            ->orderBy('p.primer_nombre')
+            ->get();
+
+        // Obtener grados y secciones asignados al docente
+        $gradosSecciones = DB::table('docentes as d')
+            ->join('detalle_docente_estudios as dde', 'd.id', '=', 'dde.docente_id')
+            ->join('docente_area_grados as dag', 'dde.id', '=', 'dag.docente_estudio_realizado_id')
+            ->join('grados as g', 'dag.grado_id', '=', 'g.id')
+            ->join('seccions as s', 'g.id', '=', 's.grado_id')
+            ->where('d.id', $id)
+            ->where('dde.status', true)
+            ->where('dag.status', true)
+            ->where('s.status', true)
+            ->distinct()
+            ->select(
+                'g.nombre as grado',
+                's.nombre as seccion'
+            )
+            ->orderBy('g.nombre')
+            ->orderBy('s.nombre')
+            ->get();
+
         $pdf = PDF::loadView('admin.docente.reportes.individual_PDF', [
-            'docente' => $docente
+            'docente' => $docente,
+            'estudiantes' => $estudiantes,
+            'materias' => $materias,
+            'gradosSecciones' => $gradosSecciones
         ]);
 
         return $pdf->stream('docente_' . ($docente->numero_documento ?? $docente->id) . '.pdf');
