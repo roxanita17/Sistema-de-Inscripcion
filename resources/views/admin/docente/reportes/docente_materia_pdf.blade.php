@@ -294,7 +294,7 @@
                     <div class="grado-box">
                         <div class="grado-header">
                             <span>GRADO: {{ $gradoData['grado'] }}</span>
-                            <span>SECCIÓN: {{ $gradoData['estudiantes']->isNotEmpty() ? $gradoData['estudiantes']->first()->seccion : (isset($gradoData['secciones'][$gradoData['primera_seccion']]) ? $gradoData['secciones'][$gradoData['primera_seccion']] : 'N/A') }}</span>
+                            <span>SECCIÓN: {{ $gradoData['seccion_asignada'] ?? 'N/A' }}</span>
                         </div>
                         
                         <div class="content-section">

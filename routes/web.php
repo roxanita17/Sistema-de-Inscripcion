@@ -298,6 +298,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('docente/reporte/{id}', [DocenteController::class, 'reportePDF'])->name('docente.reportePDF');
     Route::get('docente/reporte-general', [DocenteController::class, 'reporteGeneralPDF'])->name('docente.reporteGeneralPDF');
     Route::get('docente/reporte-materia', [DocenteController::class, 'DocenteMateria'])->name('docente.DocenteMateria');
+    Route::get('docente/reporte-materia/{id}', [DocenteController::class, 'DocenteMateria'])->name('docente.DocenteMateriaIndividual');
 
     // Verificar cédula duplicada (AJAX)
     Route::get('docente/verificar-cedula', [DocenteController::class, 'verificarCedula'])->name('docente.verificar_cedula');
