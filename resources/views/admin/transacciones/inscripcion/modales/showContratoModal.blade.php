@@ -216,7 +216,7 @@
                             </h6>
                             <div class="detail-item">
                                 <span class="detail-value text-start">
-                                    Al estudiante que repita año escolar se le brindará una segunda oportunidad con el
+                                    Al estudiante que repita Calendario Escolar se le brindará una segunda oportunidad con el
                                     compromiso y seguimiento del plantel y su representante legal.
                                 </span>
                             </div>

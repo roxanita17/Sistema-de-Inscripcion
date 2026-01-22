@@ -12,10 +12,10 @@ Breadcrumbs::for('home', function (Trail $trail) {
     $trail->push('Inicio', route('home'));
 });
 
-// Año Escolar
+// Calendario Escolar
 Breadcrumbs::for('admin.anio_escolar.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Año Escolar', route('admin.anio_escolar.index'));
+    $trail->push('Calendario Escolar', route('admin.anio_escolar.index'));
 });
 
 // Banco

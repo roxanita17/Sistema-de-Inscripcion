@@ -17,7 +17,8 @@ class GradoController extends Controller
 
     public function index()
     {
-        $grados = Grado::where('status', true)
+        $grados = Grado::withCount('inscripciones')
+            ->where('status', true)
             ->orderBy('numero_grado', 'asc')
             ->paginate(10);
 
@@ -25,6 +26,7 @@ class GradoController extends Controller
 
         return view('admin.grado.index', compact('grados', 'anioEscolarActivo'));
     }
+
 
     public function store(Request $request)
     {
@@ -118,7 +120,6 @@ class GradoController extends Controller
                 'success' => true,
                 'existe' => $existe
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
@@ -133,15 +134,24 @@ class GradoController extends Controller
     {
         $grado = Grado::find($id);
 
-        if ($grado) {
-            $grado->update(['status' => false]);
+        if (!$grado) {
             return redirect()
                 ->route('admin.grado.index')
-                ->with('success', 'El nivel academico fue eliminado correctamente.');
+                ->with('error', 'No se encontró el nivel académico.');
         }
+
+        $tieneEstudiantes = $grado->inscripciones()->exists();
+
+        if ($tieneEstudiantes) {
+            return redirect()
+                ->route('admin.grado.index')
+                ->with('error', 'No se puede inactivar este nivel académico porque tiene estudiantes inscritos.');
+        }
+
+        $grado->update(['status' => false]);
 
         return redirect()
             ->route('admin.grado.index')
-            ->with('error', 'No se encontró el nivel academico especificado.');
+            ->with('success', 'El nivel académico fue inactivado correctamente.');
     }
 }

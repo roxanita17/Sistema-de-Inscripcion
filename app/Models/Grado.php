@@ -24,10 +24,14 @@ class Grado extends Model
             ->withPivot('status')
             ->withTimestamps();
     }
-    
+
     public function gradoAreaFormacion()
     {
         return $this->hasMany(GradoAreaFormacion::class, 'grado_id', 'id');
     }
 
+    public function inscripciones()
+    {
+        return $this->hasMany(\App\Models\Inscripcion::class, 'grado_id');
+    }
 }

@@ -77,7 +77,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('institucion-procedencia/{institucionProcedencia}', [InstitucionProcedenciaController::class, 'destroy'])->name('institucion-procedencia.destroy');
 
 
-    // ===== AÑO ESCOLAR (SIEMPRE ACCESIBLE - SIN VERIFICACIÓN) =====
+    // ===== Calendario Escolar (SIEMPRE ACCESIBLE - SIN VERIFICACIÓN) =====
     Route::get('anio_escolar', [AnioEscolarController::class, 'index'])->name('anio_escolar.index');
     Route::post('anio_escolar/modales/store', [AnioEscolarController::class, 'store'])->name('anio_escolar.modales.store');
     Route::post('anio_escolar/{id}/extender', [AnioEscolarController::class, 'extender'])->name('anio_escolar.modales.extender');

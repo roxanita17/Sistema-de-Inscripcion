@@ -24,7 +24,7 @@
                 <div>
                     <a href="{{ route('admin.transacciones.inscripcion.create') }}" class="btn-create"
                         @if (!$anioEscolarActivo) disabled @endif
-                        title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Crear nueva inscripción' }}">
+                        title="{{ !$anioEscolarActivo ? 'Debe registrar un Calendario Escolar activo' : 'Crear nueva inscripción' }}">
                         <i class="fas fa-plus"></i>
                         <span>Registrar</span>
                     </a>
@@ -40,11 +40,11 @@
                 <div class="d-flex align-items-center">
                     <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
                     <div>
-                        <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                        <h5 class="alert-heading mb-1">Atención: No hay Calendario Escolar activo</h5>
                         <p class="mb-0">
                             Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong>
                             inscripciones.
-                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Calendario Escolar</a>
                         </p>
                     </div>
                 </div>
@@ -118,8 +118,11 @@
                     </div>
                     <div>
                         <h3 class="mb-0">Listado de inscripciones</h3>
+                        <p>{{ $inscripciones->total() }} registros encontrados</p>
+
                     </div>
                 </div>
+
                 <div class="header-right d-flex align-items-center gap-2 flex-wrap">
                     <form action="{{ route('admin.transacciones.inscripcion.index') }}" class="mb-0 search-sm">
                         <input type="hidden" name="grado_id" value="{{ request('grado_id') }}">
@@ -150,8 +153,8 @@
                             </span>
                         @endif
                     </button>
-                    <a href="{{ route('admin.transacciones.inscripcion.reporteGeneralNuevoIngresoPDF') }}"
-                        target="_blank" class="btn-pdf" id="generarPdfBtn"> 
+                    <a href="{{ route('admin.transacciones.inscripcion.reporteGeneralNuevoIngresoPDF') }}" target="_blank"
+                        class="btn-pdf" id="generarPdfBtn">
                         <i class="fas fa-file-pdf"></i> PDF General
                     </a>
                     @php
@@ -162,7 +165,7 @@
                     @if ($mostrarAnio)
                         <div class="d-flex align-items-center bg-light rounded px-2 py-1 border">
                             <span class="badge bg-primary me-2" style="font-size: 0.7rem;">
-                                <i class="fas fa-calendar-check me-1"></i> Año Escolar
+                                <i class="fas fa-calendar-check me-1"></i> Calendario Escolar
                             </span>
                             <span class="text-muted me-2" style="font-size: 0.8rem;">
                                 <i class="fas fa-play-circle text-primary me-1"></i>
@@ -285,7 +288,7 @@
                                                                 <a href="{{ route('admin.transacciones.inscripcion.edit', $datos->id) }}"
                                                                     class="dropdown-item d-flex align-items-center text-warning"
                                                                     @if (!$anioEscolarActivo) disabled @endif
-                                                                    title="{{ !$anioEscolarActivo ? 'Requiere año escolar activo' : 'Editar' }}">
+                                                                    title="{{ !$anioEscolarActivo ? 'Requiere Calendario Escolar activo' : 'Editar' }}">
                                                                     <i class="fas fa-edit me-2"></i>
                                                                     Editar
                                                                 </a>

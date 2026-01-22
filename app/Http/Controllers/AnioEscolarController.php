@@ -37,7 +37,7 @@ class AnioEscolarController extends Controller
         if ($resultado['success']) {
             return redirect()
                 ->route('admin.anio_escolar.index')
-                ->with('success', 'Año escolar creado correctamente.');
+                ->with('success', 'Calendario Escolar creado correctamente.');
         }
 
         return redirect()
@@ -52,7 +52,7 @@ class AnioEscolarController extends Controller
         if ($resultado['success']) {
             return redirect()
                 ->route('admin.anio_escolar.index')
-                ->with('success', 'Año escolar extendido correctamente.');
+                ->with('success', 'Calendario Escolar extendido correctamente.');
         }
 
         return redirect()
@@ -67,7 +67,7 @@ class AnioEscolarController extends Controller
         if ($resultado['success']) {
             return redirect()
                 ->route('admin.anio_escolar.index')
-                ->with('success', 'Año escolar inactivado correctamente.');
+                ->with('success', 'Calendario Escolar inactivado correctamente.');
         }
 
         return redirect()

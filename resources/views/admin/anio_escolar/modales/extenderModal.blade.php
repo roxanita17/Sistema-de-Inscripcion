@@ -7,7 +7,7 @@
                     <i class="fas fa-calendar-plus"></i>
                 </div>
                 <h5 class="modal-title-edit" id="viewModalExtenderLabel{{ $datos->id }}">
-                    Extender Año Escolar
+                    Extender Calendario Escolar
                 </h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
@@ -27,7 +27,7 @@
                     <div class="form-group-modern">
                         <label class="form-label-modern">
                             <i class="fas fa-calendar-alt me-2"></i>
-                            Inicio del Año Escolar
+                            Inicio del Calendario Escolar
                         </label>
                         <input type="date" 
                             class="form-control-modern" 
@@ -75,7 +75,7 @@
                     @if($datos->extencion_anio_escolar)
                     <div class="alert alert-info d-flex align-items-center" style="font-size: 0.85rem; padding: 0.75rem;">
                         <i class="fas fa-info-circle me-2"></i>
-                        <span>Este año escolar ya fue extendido anteriormente hasta el <strong>{{ \Carbon\Carbon::parse($datos->extencion_anio_escolar)->format('d/m/Y') }}</strong></span>
+                        <span>Este Calendario Escolar ya fue extendido anteriormente hasta el <strong>{{ \Carbon\Carbon::parse($datos->extencion_anio_escolar)->format('d/m/Y') }}</strong></span>
                     </div>
                     @endif
 

@@ -231,7 +231,7 @@ return [
 
         // ================== CONFIGURACIÓN BASE ==================
         [
-            'text' => 'Año Escolar',
+            'text' => 'Calendario Escolar',
             'url'  => 'admin/anio_escolar',
             'icon' => 'fas fa-calendar-check',
             'icon_color' => 'warning',

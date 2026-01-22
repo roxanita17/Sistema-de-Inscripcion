@@ -8,7 +8,7 @@ use Spatie\Permission\Models\Role;
 class RoleController extends Controller
 {
         /**
-     * Verifica si hay un año escolar activo
+     * Verifica si hay un Calendario Escolar activo
      */
     private function verificarAnioEscolar()
     {
@@ -25,7 +25,7 @@ class RoleController extends Controller
         $roles = Role::orderBy('name', 'asc')
             ->paginate(10);
 
-        // Verificar si hay año escolar activo
+        // Verificar si hay Calendario Escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         return view('admin.roles.index', compact('roles', 'anioEscolarActivo'));

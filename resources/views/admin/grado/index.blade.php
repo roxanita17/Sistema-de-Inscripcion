@@ -167,14 +167,15 @@
                                                             </button>
                                                         </li>
                                                         <li>
-                                                            <button
-                                                                class="dropdown-item d-flex align-items-center text-danger"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#confirmarEliminar{{ $datos->id }}"
-                                                                @disabled(!$anioEscolarActivo) title="Inactivar año escolar">
+                                                            <button type="button"
+                                                                class="dropdown-item d-flex align-items-center text-danger btn-inactivar-grado"
+                                                                data-tiene-estudiantes="{{ $datos->inscripciones_count > 0 ? '1' : '0' }}"
+                                                                data-modal-id="confirmarEliminar{{ $datos->id }}"
+                                                                @disabled(!$anioEscolarActivo)>
                                                                 <i class="fas fa-ban me-2"></i>
                                                                 Inactivar
                                                             </button>
+
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -218,20 +219,51 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
-                        @endif
-                    </tbody>
-                </table>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <x-pagination :paginator="$grados" />
 
     @push('js')
         <script src="{{ asset('js/validations/grado.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                document.querySelectorAll('.btn-inactivar-grado').forEach(btn => {
+
+                    btn.addEventListener('click', function() {
+
+                        const tieneEstudiantes = this.dataset.tieneEstudiantes === '1';
+                        const modalId = this.dataset.modalId;
+
+                        if (tieneEstudiantes) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'No permitido',
+                                html: 'Este <b>nivel académico</b> tiene estudiantes inscritos.<br><br>' +
+                                    'No puede ser inactivado mientras tenga estudiantes inscritos.',
+                                confirmButtonText: 'Entendido'
+                            });
+                            return;
+                        }
+
+                        const modal = new bootstrap.Modal(
+                            document.getElementById(modalId)
+                        );
+                        modal.show();
+                    });
+
+                });
+
+            });
+        </script>
     @endpush
 
 @endsection

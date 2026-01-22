@@ -93,7 +93,7 @@ class AlumnoController extends Controller
             ->paginate(10)
             ->appends(request()->query());
 
-        // Verificar si hay año escolar activo
+        // Verificar si hay Calendario Escolar activo
         $anioEscolarActivo = $this->verificarAnioEscolar();
 
         // Se envían los datos a la vista

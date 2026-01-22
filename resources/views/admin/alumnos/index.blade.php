@@ -28,11 +28,11 @@
                 <div class="d-flex align-items-center">
                     <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
                     <div>
-                        <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                        <h5 class="alert-heading mb-1">Atención: No hay Calendario Escolar activo</h5>
                         <p class="mb-0">
                             Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> alumnos hasta
-                            que se registre un año escolar activo.
-                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                            que se registre un Calendario Escolar activo.
+                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Calendario Escolar</a>
                         </p>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                     @if ($mostrarAnio)
                         <div class="d-flex align-items-center bg-light rounded px-2 py-1 border">
                             <span class="badge bg-primary me-2" style="font-size: 0.7rem;">
-                                <i class="fas fa-calendar-check me-1"></i> Año Escolar
+                                <i class="fas fa-calendar-check me-1"></i> Calendario Escolar
                             </span>
                             <span class="text-muted me-2" style="font-size: 0.8rem;">
                                 <i class="fas fa-play-circle text-primary me-1"></i>

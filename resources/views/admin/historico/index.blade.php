@@ -19,7 +19,7 @@
                 </div>
                 <div>
                     <h1 class="title-main">Histórico Académico</h1>
-                    <p class="title-subtitle">Consulta de registros por año escolar</p>
+                    <p class="title-subtitle">Consulta de registros por Calendario Escolar</p>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
                                 <div class="d-flex align-items-center">
                                     <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
                                         <i class="fas fa-calendar-check me-1"></i>
-                                        Año Escolar
+                                        Calendario Escolar
                                     </span>
                                     <div class="d-flex align-items-center" style="font-size: 0.8rem;">
                                         <span class="text-muted me-2">
@@ -93,14 +93,14 @@
                     <table class="table-modern">
                         <thead>
                             @if ($tipo === 'inscripciones')
-                                <th>Año Escolar</th>
+                                <th>Calendario Escolar</th>
                                 <th class="text-center">Alumno</th>
                                 <th class="text-center">Nivel Academico</th>
                                 <th class="text-center">Sección</th>
                                 <th class="text-center">Tipo de Inscripción</th>
                                 <th class="text-center">Acciones</th>
                             @elseif($tipo === 'docentes')
-                                <th class="text-center">Año Escolar</th>
+                                <th class="text-center">Calendario Escolar</th>
                                 <th class="text-center">Docente</th>
                                 <th class="text-center">Areas de Formacion</th>
                                 <th class="text-center">Grupo Estable</th>
@@ -166,7 +166,7 @@
                                                 <div class="empty-state">
                                                     <i class="fas fa-inbox fa-2x"></i>
                                                     <h4>No hay inscripciones de prosecución</h4>
-                                                    <p>No se encontraron registros para el año escolar seleccionado</p>
+                                                    <p>No se encontraron registros para el Calendario Escolar seleccionado</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -215,7 +215,7 @@
                                                 <div class="empty-state">
                                                     <i class="fas fa-inbox fa-2x"></i>
                                                     <h4>No hay inscripciones de nuevo ingreso</h4>
-                                                    <p>No se encontraron registros para el año escolar seleccionado</p>
+                                                    <p>No se encontraron registros para el Calendario Escolar seleccionado</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -303,7 +303,7 @@
                                                 <div class="empty-state">
                                                     <i class="fas fa-inbox fa-2x"></i>
                                                     <h4>No hay inscripciones</h4>
-                                                    <p>No se encontraron registros para el año escolar seleccionado</p>
+                                                    <p>No se encontraron registros para el Calendario Escolar seleccionado</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -406,7 +406,7 @@
                                             <div class="empty-state">
                                                 <i class="fas fa-inbox fa-2x"></i>
                                                 <h4>No hay docentes</h4>
-                                                <p>Seleccione otro año escolar</p>
+                                                <p>Seleccione otro Calendario Escolar</p>
                                             </div>
                                         </td>
                                     </tr>

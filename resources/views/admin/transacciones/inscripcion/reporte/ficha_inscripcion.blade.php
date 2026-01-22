@@ -319,7 +319,7 @@
         </div>
 
         <div class="header">
-            <h1>FICHA DE INSCRIPCION AÑO ESCOLAR
+            <h1>FICHA DE INSCRIPCION Calendario Escolar
                 @if ($anioEscolarActivo)
                     {{ $anioEscolarActivo->inicio_anio_escolar->format('Y') }} -
                     {{ $anioEscolarActivo->cierre_anio_escolar->format('Y') }}
@@ -726,7 +726,7 @@
                     </li>
 
                     <li style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
-                        <strong>Estudiantes repitentes:</strong> Al estudiante que repita año escolar se le brindará una
+                        <strong>Estudiantes repitentes:</strong> Al estudiante que repita Calendario Escolar se le brindará una
                         segunda oportunidad con el compromiso y seguimiento del plantel y su representante legal.
                     </li>
 
@@ -838,7 +838,7 @@
 
                 <p style="text-align: justify; margin-top: 15px; font-style: italic; color: #555;">
                     <strong>Nota:</strong> Me comprometo a notificar cualquier cambio de domicilio durante el transcurso
-                    del año escolar. La Dirección del plantel no se hace responsable por los perjuicios ocasionados a mi
+                    del Calendario Escolar. La Dirección del plantel no se hace responsable por los perjuicios ocasionados a mi
                     representado(a) por el incumplimiento de esta disposición.
                 </p>
             </div>

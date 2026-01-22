@@ -363,7 +363,7 @@
                         <div class="stat-number" style="font-size: 1.5rem;">
                             {{ $anioEscolarActivo ?? 'N/A' }}
                         </div>
-                        <div class="stat-label">Año Escolar</div>
+                        <div class="stat-label">Calendario Escolar</div>
                     </div>
                     <div class="stat-icon info">
                         <i class="fas fa-calendar-alt"></i>
@@ -416,7 +416,7 @@
                         <div class="action-icon">
                             <i class="fas fa-calendar-check"></i>
                         </div>
-                        <p class="action-title">Año Escolar</p>
+                        <p class="action-title">Calendario Escolar</p>
                     </a>
 
                     <a href="{{ route('admin.historico.index') }}" class="action-card">

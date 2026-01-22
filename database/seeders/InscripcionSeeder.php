@@ -14,7 +14,7 @@ class InscripcionSeeder extends Seeder
         $anioAnterior = AnioEscolar::find(1);
 
         if (!$anioAnterior) {
-            $this->command->error('No existe el año escolar con ID 1');
+            $this->command->error('No existe el Calendario Escolar con ID 1');
             return;
         }
 

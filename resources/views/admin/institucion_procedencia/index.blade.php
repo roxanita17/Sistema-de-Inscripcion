@@ -22,7 +22,7 @@
                 data-bs-toggle="modal"
                 data-bs-target="#modalCrear"
                 @if (!$anioEscolarActivo) disabled @endif
-                title="{{ $anioEscolarActivo ? 'Crear Institución' : 'Debe registrar un año escolar activo para realizar esta acción.' }}">
+                title="{{ $anioEscolarActivo ? 'Crear Institución' : 'Debe registrar un Calendario Escolar activo para realizar esta acción.' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nueva Institución</span>
             </button>

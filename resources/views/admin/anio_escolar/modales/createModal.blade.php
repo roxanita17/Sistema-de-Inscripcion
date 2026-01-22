@@ -5,7 +5,7 @@
                 <div class="modal-icon-create">
                     <i class="fas fa-plus-circle"></i>
                 </div>
-                <h5 class="modal-title-create" id="modalCrearAnioEscolarLabel">Nuevo Año Escolar</h5>
+                <h5 class="modal-title-create" id="modalCrearAnioEscolarLabel">Nuevo Calendario Escolar</h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 (cierre.getMonth() - inicio.getMonth());
         
         if (mesesDiferencia < 6) {
-            mostrarError('El año escolar debe tener una duración mínima de 6 meses.');
+            mostrarError('El Calendario Escolar debe tener una duración mínima de 6 meses.');
             inputCierre.classList.add('is-invalid');
             btnGuardar.disabled = true;
             return;

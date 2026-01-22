@@ -14,7 +14,7 @@ class VerificarAnioEscolarActivo
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Excluir rutas relacionadas con año escolar
+        // Excluir rutas relacionadas con Calendario Escolar
         $rutasExcluidas = [
             'admin.anio_escolar.*',
             'logout',
@@ -28,7 +28,7 @@ class VerificarAnioEscolarActivo
             }
         }
 
-        // Verificar si existe un año escolar activo
+        // Verificar si existe un Calendario Escolar activo
         $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
             ->orWhere('status', 'Extendido')
             ->exists();
@@ -37,14 +37,14 @@ class VerificarAnioEscolarActivo
             // Si es una petición AJAX (Livewire), retornar error JSON
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
-                    'error' => 'Debe registrar un año escolar activo para continuar.'
+                    'error' => 'Debe registrar un Calendario Escolar activo para continuar.'
                 ], 403);
             }
 
             // Para solicitudes normales, redirigir con mensaje
             return redirect()
                 ->route('admin.anio_escolar.index')
-                ->with('warning', 'Debe registrar un año escolar activo antes de acceder a este módulo.');
+                ->with('warning', 'Debe registrar un Calendario Escolar activo antes de acceder a este módulo.');
         }
 
         return $next($request);
@@ -60,7 +60,7 @@ class VerificarAnioEscolarActivo
         if (!$anioEscolarActivo) {
             return redirect()
                 ->route('admin.anio_escolar.index')
-                ->with('warning', 'Debe registrar un año escolar activo.');
+                ->with('warning', 'Debe registrar un Calendario Escolar activo.');
         }
 
         // ... resto del código existente

@@ -14,7 +14,7 @@
 @stop
 
 
-@section('title', 'Gestión de Años Escolares')
+@section('title', 'Gestión de Calendarios Escolares')
 
 @section('content_header')
     <div class="content-header-modern">
@@ -24,13 +24,13 @@
                     <i class="fas fa-university"></i>
                 </div>
                 <div>
-                    <h1 class="title-main">Gestión de Años Escolares</h1>
+                    <h1 class="title-main">Gestión de Calendarios Escolares</h1>
                     <p class="title-subtitle">Administración de periodos académicos</p>
                 </div>
             </div>
             <button type="button" id="btnNuevoAnioEscolar" class="btn-create">
                 <i class="fas fa-plus"></i>
-                <span>Nuevo Año Escolar</span>
+                <span>Nuevo Calendario Escolar</span>
             </button>
         </div>
     </div>
@@ -47,8 +47,8 @@
             <div class="d-flex align-items-center">
                 <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
                 <div>
-                    <h5 class="alert-heading mb-1">No hay año escolar activo</h5>
-                    <p class="mb-0">Debe registrar un año escolar activo para poder utilizar los demás módulos del
+                    <h5 class="alert-heading mb-1">No hay Calendario Escolar activo</h5>
+                    <p class="mb-0">Debe registrar un Calendario Escolar activo para poder utilizar los demás módulos del
                         sistema.</p>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                     <i class="fas fa-list-ul"></i>
                 </div>
                 <div>
-                    <h3>Listado de Años Escolares</h3>
+                    <h3>Listado de Calendarios Escolares</h3>
                     <p>{{ $escolar->total() }} registros encontrados</p>
                 </div>
             </div>
@@ -181,7 +181,7 @@
                                                     <button class="dropdown-item d-flex align-items-center text-primary"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#viewModal{{ $datos->id }}"
-                                                        title="Ver detalles del año escolar">
+                                                        title="Ver detalles del Calendario Escolar">
                                                         <i class="fas fa-eye me-2"></i>
                                                         Ver más
                                                     </button>
@@ -192,7 +192,7 @@
                                                         <button class="dropdown-item d-flex align-items-center text-warning"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#viewModalExtender{{ $datos->id }}"
-                                                            title="Extender Año Escolar">
+                                                            title="Extender Calendario Escolar">
                                                             <i class="fas fa-calendar-plus me-2"></i>
                                                             Extender
                                                         </button>
@@ -204,7 +204,7 @@
                                                         <button class="dropdown-item d-flex align-items-center text-danger"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#deleteModal{{ $datos->id }}"
-                                                            @disabled(!$anioEscolarActivo) title="Inactivar año escolar">
+                                                            @disabled(!$anioEscolarActivo) title="Inactivar Calendario Escolar">
                                                             <i class="fas fa-ban me-2"></i>
                                                             Inactivar
                                                         </button>
@@ -270,8 +270,8 @@
                                         <div class="empty-icon">
                                             <i class="fas fa-inbox"></i>
                                         </div>
-                                        <h4>No hay años escolares registrados</h4>
-                                        <p>Comienza creando un nuevo año escolar usando el botón superior</p>
+                                        <h4>No hay Calendarios Escolares registrados</h4>
+                                        <p>Comienza creando un nuevo Calendario Escolar usando el botón superior</p>
                                     </div>
                                 </td>
                             </tr>
@@ -299,8 +299,8 @@
             if (anioEscolarActivo) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Año escolar activo',
-                    html: 'Ya existe un <b>año escolar activo o extendido</b>.<br><br>' +
+                    title: 'Calendario Escolar activo',
+                    html: 'Ya existe un <b>Calendario Escolar activo o extendido</b>.<br><br>' +
                         'Debe cerrar o finalizar el año actual antes de crear uno nuevo.',
                     confirmButtonText: 'Entendido'
                 });

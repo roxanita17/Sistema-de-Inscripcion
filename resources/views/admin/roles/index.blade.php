@@ -27,7 +27,7 @@
             {{-- Botón que abre la ventana modal para crear un nuevo rol --}}
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrear"
                 @if (!$anioEscolarActivo) disabled @endif
-                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nuevo Rol' }}">
+                title="{{ !$anioEscolarActivo ? 'Debe registrar un Calendario Escolar activo' : 'Nuevo Rol' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Rol</span>
             </button>
@@ -41,17 +41,17 @@
         {{-- Modal para crear un nuevo rol --}}
         @include('admin.roles.modales.createModal')
 
-        {{-- Alerta si NO hay año escolar activo --}}
+        {{-- Alerta si NO hay Calendario Escolar activo --}}
         @if (!$anioEscolarActivo)
             <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
                     <div>
-                        <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                        <h5 class="alert-heading mb-1">Atención: No hay Calendario Escolar activo</h5>
                         <p class="mb-0">
                             Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> hasta que se
-                            registre un año escolar activo.
-                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                            registre un Calendario Escolar activo.
+                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Calendario Escolar</a>
                         </p>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                                 <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
                                     <i class="fas fa-calendar-check me-1"></i>
 
-                                    Año Escolar
+                                    Calendario Escolar
                                 </span>
 
                                 <div class="d-flex align-items-center" style="font-size: 0.8rem;">
@@ -194,7 +194,7 @@
                                                 <button class="action-btn btn-edit" data-bs-toggle="modal"
                                                     data-bs-target="#viewModalEditar{{ $datos->id }}" title="Editar"
                                                     @if (!$anioEscolarActivo) disabled @endif
-                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar Rol' }}">
+                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un Calendario Escolar activo' : 'Editar Rol' }}">
                                                     <i class="fas fa-pen"></i>
                                                 </button>
 
@@ -202,7 +202,7 @@
                                                 <button class="action-btn btn-delete" data-bs-toggle="modal"
                                                     data-bs-target="#confirmarEliminar{{ $datos->id }}"
                                                     title="Eliminar" @if (!$anioEscolarActivo) disabled @endif
-                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Eliminar Rol' }}">
+                                                    title="{{ !$anioEscolarActivo ? 'Debe registrar un Calendario Escolar activo' : 'Eliminar Rol' }}">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
 
