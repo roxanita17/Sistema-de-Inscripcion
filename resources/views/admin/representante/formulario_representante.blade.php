@@ -6587,7 +6587,21 @@
 
             document.querySelectorAll('input[name*="numero_documento"]').forEach(input => {
                 input.addEventListener('input', function() {
+                    // Limpiar caracteres no numéricos y limitar longitud
                     this.value = this.value.replace(/[^0-9]/g, '').substring(0, 8);
+                    
+                    // Validar en tiempo real la longitud mínima
+                    const valor = this.value.trim();
+                    if (valor.length > 0 && valor.length < 7) {
+                        mostrarError(this, 'La cédula debe tener al menos 7 dígitos');
+                    } else if (valor.length >= 7) {
+                        limpiarError(this);
+                    }
+                });
+                
+                // Validar al salir del campo (blur)
+                input.addEventListener('blur', function() {
+                    validarnumero_documento(this);
                 });
             });
         });
@@ -6686,13 +6700,25 @@
                 null;
         }
 
-        // Validar cédula (solo verifica que no esté vacío si es requerido)
+        // Validar cédula (verifica que no esté vacío y tenga al menos 7 dígitos)
         function validarnumero_documento(input) {
             if (!input) return true; // No hay input, no validar
 
             const numero_documento = input.value.trim();
             if (input.required && !numero_documento) {
                 mostrarError(input, 'La cédula es obligatoria');
+                return false;
+            }
+
+            // Validar que tenga al menos 7 dígitos
+            if (numero_documento && numero_documento.length < 7) {
+                mostrarError(input, 'La cédula debe tener al menos 7 dígitos');
+                return false;
+            }
+
+            // Validar que solo contenga números (opcional, pero recomendado)
+            if (numero_documento && !/^\d+$/.test(numero_documento)) {
+                mostrarError(input, 'La cédula solo debe contener números');
                 return false;
             }
 
