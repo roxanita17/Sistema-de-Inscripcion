@@ -242,7 +242,7 @@ class Inscripcion extends Model
             'padre' => $this->padre?->toArray(),
             'representante_legal' => $this->representanteLegal?->load([
                 'representante.persona',
-                'banco'
+                'banco' 
             ])?->toArray(),
             'institucion_procedencia' => $this->nuevoIngreso?->institucionProcedencia?->toArray(),
             'expresion_literaria' => $this->nuevoIngreso?->expresionLiteraria?->toArray(),
