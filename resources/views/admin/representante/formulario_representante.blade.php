@@ -5686,6 +5686,12 @@
                                 return;
                             }
                             
+                            // BLOQUEO DE SEGURIDAD: Esperar un tiempo después de copia reciente
+                            if (window.ultimaCopiaDatos && Date.now() - window.ultimaCopiaDatos < 1000) {
+                                console.log('[TOGGLE] ⚠️ Copia reciente detectada, esperando antes de procesar cola');
+                                return;
+                            }
+                            
                             // Usar bloqueo global para evitar conflictos con otros procesos
                             if (window.reconstruyendoSelectpickers || window.reconstruccionCola.length === 0) {
                                 return;
@@ -6395,6 +6401,9 @@
                     // Deshabilitar los campos después de copiar los datos
                     toggleCamposRepresentante(true);
                     
+                    // Registrar timestamp de la copia para bloqueo de seguridad
+                    window.ultimaCopiaDatos = Date.now();
+                    
                     console.log(`=== COPIA WATCHDOG ${mensajeExito.toUpperCase()} COMPLETADA ===`);
                         
                 } catch (error) {
@@ -6403,10 +6412,52 @@
                     window.copiandoDatosProgenitor = false;
                     throw error; // Re-lanzar para que se maneje arriba si es necesario
                 } finally {
-                    // CORRECCIÓN: Resetear bandera SOLO al finalizar completamente la copia
+                    // CORRECCIÓN: Esperar un momento antes de resetear la bandera para evitar conflictos con la cola de reconstrucción
                     clearTimeout(watchdogTimeout); // Limpiar el timeout para evitar resets innecesarios
-                    window.copiandoDatosProgenitor = false;
-                    console.log('[COPIA WATCHDOG] ✅ Bandera reseteada al finalizar copia completamente');
+                    
+                    // Esperar a que termine cualquier procesamiento de la cola de reconstrucción
+                    setTimeout(() => {
+                        window.copiandoDatosProgenitor = false;
+                        console.log('[COPIA WATCHDOG] ✅ Bandera reseteada después de esperar procesamiento de cola');
+                        
+                        // VERIFICACIÓN FINAL: Asegurar que los selects copiados estén correctamente inicializados
+                        setTimeout(() => {
+                            const selectsParaVerificar = [
+                                'prefijo-representante',
+                                'prefijo_dos-representante', 
+                                'ocupacion-representante',
+                                'idPais-representante',
+                                'idEstado-representante',
+                                'idMunicipio-representante',
+                                'idparroquia-representante'
+                            ];
+                            
+                            selectsParaVerificar.forEach(selectId => {
+                                const select = document.getElementById(selectId);
+                                if (select && select.value) {
+                                    const $select = $(select);
+                                    if ($select.hasClass('selectpicker') && !$select.data('selectpicker')) {
+                                        console.log(`[VERIFICACIÓN FINAL] Re-inicializando ${selectId}...`);
+                                        try {
+                                            $select.selectpicker({
+                                                liveSearch: true,
+                                                size: 8,
+                                                noneResultsText: 'No hay resultados para {0}',
+                                                selectOnTab: false,
+                                                showSubtext: false,
+                                                showIcon: true,
+                                                width: 'auto'
+                                            });
+                                            $select.selectpicker('refresh');
+                                            console.log(`[VERIFICACIÓN FINAL] ✅ ${selectId} re-inicializado`);
+                                        } catch (error) {
+                                            console.error(`[VERIFICACIÓN FINAL] ❌ Error re-inicializando ${selectId}:`, error);
+                                        }
+                                    }
+                                }
+                            });
+                        }, 200); // Esperar 200ms adicionales para verificación
+                    }, 500); // Esperar 500ms para asegurar que la cola termine
                 }
             }
 
