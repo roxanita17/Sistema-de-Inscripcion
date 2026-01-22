@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre_municipio');
             $table->boolean('status')->default(true);
-            $table->foreignId('estado_id')->constrained('estados')->cascadeOnDelete();
+            $table->foreignId('estado_id')->nullable()->constrained('estados')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -942,9 +942,6 @@
         </div>
         <div class="card-body-modern" style="padding: 2rem;">
             <div class="row">
-                @php
-                    $colCounter = 0;
-                @endphp
                 <div class="col-12 mb-4">
                     <div class="checkbox-item-modern">
                         <input type="checkbox" id="seleccionar_todos" wire:model.live="seleccionarTodos"
@@ -954,47 +951,114 @@
                         </label>
                     </div>
                 </div>
-                @foreach ([
-        'partida_nacimiento' => 'Partida de Nacimiento',
-        'boletin_6to_grado' => 'Boletín de 6to Grado',
-        'notas_certificadas' => 'Notas Certificadas',
-        'liberacion_cupo' => 'Liberación de Cupo',
-        'certificado_calificaciones' => 'Certificado de Calificaciones',
-        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
-        'copia_cedula_representante' => 'Copia de Cédula del Representante',
-        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
-        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
-        'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
-        'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
-        'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
-    ] as $documento => $etiqueta)
-                    @php
-                        if ($esPrimerGrado && in_array($documento, ['notas_certificadas', 'liberacion_cupo'])) {
-                            continue;
-                        }
-                    @endphp
-                    @if ($colCounter % 12 === 0 && $colCounter !== 0)
-            </div>
-            <div class="row mt-3">
-                @endif
-                @php
-                    $esFaltante = in_array($documento, $documentosFaltantes);
-                @endphp
-                <div class="col-md-6 mb-3">
-                    <div class="checkbox-item-modern {{ $esFaltante ? 'checkbox-warning' : '' }}">
-                        <input type="checkbox" id="doc_{{ $documento }}" wire:model.live="documentos"
-                            value="{{ $documento }}" class="checkbox-modern">
 
-                        <label for="doc_{{ $documento }}"
-                            class="checkbox-label-modern {{ $esFaltante ? 'text-warning fw-bold' : '' }}">
-                            {{ $etiqueta }}
-                        </label>
+                @php
+                    // Definir documentos obligatorios
+                    $documentosObligatorios = [
+                        'partida_nacimiento',
+                        'boletin_6to_grado',
+                        'certificado_calificaciones',
+                        'constancia_aprobacion_primaria',
+                    ];
+                    
+                    // Para 2do grado en adelante
+                    if (!$esPrimerGrado) {
+                        $documentosObligatorios[] = 'notas_certificadas';
+                        $documentosObligatorios[] = 'liberacion_cupo';
+                    }
+
+                    // Agregar autorización si no hay padre ni madre
+                    $requiereAutorizacion = !$padreId && !$madreId;
+                    if ($requiereAutorizacion) {
+                        $documentosObligatorios[] = 'autorizacion_tercero';
+                    }
+
+                    $documentosOpcionales = [
+                        'copia_cedula_representante',
+                        'copia_cedula_estudiante',
+                        'foto_estudiante',
+                        'foto_representante',
+                        'carnet_vacunacion',
+                    ];
+
+                    $todosDocumentos = [
+                        'partida_nacimiento' => 'Partida de Nacimiento',
+                        'boletin_6to_grado' => 'Boletín de 6to Grado',
+                        'notas_certificadas' => 'Notas Certificadas',
+                        'liberacion_cupo' => 'Liberación de Cupo',
+                        'certificado_calificaciones' => 'Certificado de Calificaciones',
+                        'constancia_aprobacion_primaria' => 'Constancia de Aprobación Primaria',
+                        'copia_cedula_representante' => 'Copia de Cédula del Representante',
+                        'copia_cedula_estudiante' => 'Copia de Cédula del Estudiante',
+                        'foto_estudiante' => 'Fotografía Tipo Carnet Del Estudiante',
+                        'foto_representante' => 'Fotografía Tipo Carnet Del Representante',
+                        'carnet_vacunacion' => 'Carnet de Vacunación Vigente',
+                        'autorizacion_tercero' => 'Autorización Firmada (si inscribe un tercero)',
+                    ];
+                @endphp
+
+                <!-- SECCIÓN: DOCUMENTOS OBLIGATORIOS -->
+                <div class="col-12 mb-4">
+                    <h6 class="text-danger mb-3">
+                         Documentos Obligatorios
+                    </h6>
+                    <div class="row">
+                        @foreach ($todosDocumentos as $documento => $etiqueta)
+                            @if (in_array($documento, $documentosObligatorios))
+                                @php
+                                    // Omitir notas_certificadas y liberacion_cupo para primer grado
+                                    if ($esPrimerGrado && in_array($documento, ['notas_certificadas', 'liberacion_cupo'])) {
+                                        continue;
+                                    }
+                                    
+                                    $esFaltante = in_array($documento, $documentosFaltantes);
+                                    $estaSeleccionado = in_array($documento, $documentos);
+                                @endphp
+                                <div class="col-md-6 mb-3">
+                                    <div class="checkbox-item-modern {{ $esFaltante ? 'border border-danger' : ($estaSeleccionado ? 'border border-success' : '') }}" style="padding: 0.75rem; border-radius: 8px;">
+                                        <input type="checkbox" id="doc_{{ $documento }}" wire:model.live="documentos"
+                                            value="{{ $documento }}" class="checkbox-modern">
+                                        <label for="doc_{{ $documento }}" class="checkbox-label-modern d-flex align-items-center justify-content-between w-100">
+                                            <span class="{{ $esFaltante ? 'text-danger fw-bold' : '' }}">
+                                                {{ $etiqueta }}
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
-                @php $colCounter++; @endphp
-                @endforeach
+
+                <!-- SECCIÓN: DOCUMENTOS OPCIONALES -->
+                <div class="col-12">
+                    <h6 class="text-primary mb-3">
+                         Documentos Opcionales
+                    </h6>
+                    <div class="row">
+                        @foreach ($todosDocumentos as $documento => $etiqueta)
+                            @if (in_array($documento, $documentosOpcionales))
+                                @php
+                                    $esFaltante = in_array($documento, $documentosFaltantes);
+                                    $estaSeleccionado = in_array($documento, $documentos);
+                                @endphp
+                                <div class="col-md-6 mb-3">
+                                    <div class="checkbox-item-modern {{ $estaSeleccionado ? 'border border-success' : '' }}" style="padding: 0.75rem; border-radius: 8px;">
+                                        <input type="checkbox" id="doc_{{ $documento }}" wire:model.live="documentos"
+                                            value="{{ $documento }}" class="checkbox-modern">
+                                        <label for="doc_{{ $documento }}" class="checkbox-label-modern d-flex align-items-center justify-content-between w-100">
+                                            <span>{{ $etiqueta }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
             </div>
-            <div class="row mt-3">
+
+            <!-- Observaciones -->
+            <div class="row mt-4">
                 <div class="col-12">
                     <div class="form-group">
                         <label for="observaciones" class="form-label-modern">
@@ -1015,7 +1079,9 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+
+            <!-- Contrato -->
+            <div class="row mt-3">
                 <div class="col-md-6 ms-auto d-flex flex-column align-items-end gap-2">
                     <div class="checkbox-item-modern">
                         <input type="checkbox" id="acepta_normas_contrato" wire:model.live="acepta_normas_contrato"
@@ -1038,7 +1104,9 @@
                 </div>
             </div>
         </div>
+
         @include('admin.transacciones.inscripcion.modales.showContratoModal')
+
         <div class="card-modern">
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="d-flex justify-content-end gap-3">
@@ -1048,9 +1116,9 @@
                         Cancelar
                     </a>
                     <button type="button" wire:click="finalizar" class="btn-create" wire:loading.attr="disabled"
-                        @if (!$acepta_normas_contrato) disabled @endif>
-                        <span wire:loading.remove wire:target="finalizar" @disabled(!empty($documentosFaltantes))
-                            @disabled($gradoSinCupos)>
+                        @if (!$acepta_normas_contrato) disabled @endif
+                        @if ($gradoSinCupos) disabled @endif>
+                        <span wire:loading.remove wire:target="finalizar">
                             <i class="fas fa-save"></i>
                             Guardar
                         </span>

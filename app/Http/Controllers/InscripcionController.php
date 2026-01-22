@@ -111,19 +111,16 @@ class InscripcionController extends Controller
             'anioEscolar'
         ])
 
-            // 🔑 FILTRO POR NUEVO INGRESO + STATUS
             ->whereHas('nuevoIngreso', function ($q) use ($status) {
                 if ($status) {
-                    $q->where('status', $status); // Activo | Pendiente | Inactivo
+                    $q->where('status', $status); 
                 }
             })
 
-            // Calendario Escolar Activo o Extendido
             ->whereHas('anioEscolar', function ($q) {
                 $q->whereIn('status', ['Activo', 'Extendido']);
             })
 
-            // Status de la INSCRIPCIÓN (opcional, ajusta si lo necesitas)
             ->when($status, fn($q) => $q->where('status', $status))
 
             ->when($gradoId, fn($q) => $q->where('grado_id', $gradoId))
@@ -140,8 +137,6 @@ class InscripcionController extends Controller
             ->orderByDesc('created_at')
             ->paginate(10)
             ->withQueryString();
-
-
 
 
         return view('admin.transacciones.inscripcion.index', [
