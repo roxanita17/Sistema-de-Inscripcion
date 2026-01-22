@@ -421,9 +421,15 @@ class DocenteController extends Controller
         }
     }
 
-    public function DocenteMateria($id = null)
+    public function DocenteMateria($id = null, Request $request)
     {
         try {
+            // Obtener parámetros de filtro
+            $buscar = $request->buscar;
+            $gradoId = $request->grado_id;
+            $seccionNombre = $request->seccion_id;
+            $areaFormacionId = $request->area_formacion_id;
+            
             // Inicializar variable
             $docentesAgrupados = [];
 
@@ -457,8 +463,8 @@ class DocenteController extends Controller
                     \Log::info('El docente no tiene relación con persona');
                 }
 
-                // Obtener asignaciones del docente
-                $asignaciones = DB::table('docente_area_grados as dag')
+                // Obtener asignaciones del docente con filtros
+                $asignacionesQuery = DB::table('docente_area_grados as dag')
                     ->join('detalle_docente_estudios as dde', 'dag.docente_estudio_realizado_id', '=', 'dde.id')
                     ->join('area_estudio_realizados as aer', 'dag.area_estudio_realizado_id', '=', 'aer.id')
                     ->join('area_formacions as af', 'aer.area_formacion_id', '=', 'af.id')
@@ -466,8 +472,22 @@ class DocenteController extends Controller
                     ->join('seccions as s', 'dag.seccion_id', '=', 's.id')
                     ->where('dde.docente_id', $docenteModel->id)
                     ->where('dag.status', true)
-                    ->where('dde.status', true)
-                    ->select(
+                    ->where('dde.status', true);
+
+                // Aplicar filtros
+                if ($gradoId) {
+                    $asignacionesQuery->where('dag.grado_id', $gradoId);
+                }
+
+                if ($seccionNombre) {
+                    $asignacionesQuery->where('s.nombre', $seccionNombre);
+                }
+
+                if ($areaFormacionId) {
+                    $asignacionesQuery->where('aer.area_formacion_id', $areaFormacionId);
+                }
+
+                $asignaciones = $asignacionesQuery->select(
                         'af.nombre_area_formacion as materia',
                         'g.numero_grado as grado',
                         'g.id as grado_id',
@@ -528,19 +548,42 @@ class DocenteController extends Controller
 
                 $docentesAgrupados = [$docenteModel->id => $docenteData];
             } else {
-                // Si no hay ID, mostrar todos los docentes (comportamiento original)
-                $docentes = DB::table('docentes as d')
+                // Si no hay ID, mostrar todos los docentes con filtros
+                $docentesQuery = DB::table('docentes as d')
                     ->join('personas as p', 'd.persona_id', '=', 'p.id')
                     ->join('detalle_docente_estudios as dde', 'd.id', '=', 'dde.docente_id')
-                    ->join('area_estudio_realizados as aer', 'dde.id', '=', 'aer.docente_estudio_realizado_id')
+                    ->join('docente_area_grados as dag', 'dde.id', '=', 'dag.docente_estudio_realizado_id')
                     ->join('area_estudio_realizados as aer', 'dag.area_estudio_realizado_id', '=', 'aer.id')
                     ->join('area_formacions as af', 'aer.area_formacion_id', '=', 'af.id')
                     ->join('grados as g', 'dag.grado_id', '=', 'g.id')
+                    ->join('seccions as s', 'dag.seccion_id', '=', 's.id')
                     ->where('d.status', true)
                     ->where('dde.status', true)
                     ->where('dag.status', true)
-                    ->where('p.status', true)
-                    ->select(
+                    ->where('p.status', true);
+
+                // Aplicar filtros
+                if ($gradoId) {
+                    $docentesQuery->where('dag.grado_id', $gradoId);
+                }
+
+                if ($seccionNombre) {
+                    $docentesQuery->where('s.nombre', $seccionNombre);
+                }
+
+                if ($areaFormacionId) {
+                    $docentesQuery->where('aer.area_formacion_id', $areaFormacionId);
+                }
+
+                if ($buscar) {
+                    $docentesQuery->where(function($q) use ($buscar) {
+                        $q->where('p.primer_nombre', 'like', '%' . $buscar . '%')
+                          ->orWhere('p.primer_apellido', 'like', '%' . $buscar . '%')
+                          ->orWhere('p.numero_documento', 'like', '%' . $buscar . '%');
+                    });
+                }
+
+                $docentes = $docentesQuery->select(
                         'd.id as docente_id',
                         'd.codigo',
                         'p.primer_nombre',
@@ -551,19 +594,22 @@ class DocenteController extends Controller
                         'p.numero_documento',
                         'af.nombre_area_formacion as materia',
                         'g.numero_grado as grado',
-                        'g.id as grado_id'
+                        'g.id as grado_id',
+                        's.nombre as seccion',
+                        's.id as seccion_id'
                     )
                     ->orderBy('p.primer_apellido')
                     ->orderBy('p.primer_nombre')
                     ->orderBy('g.numero_grado')
+                    ->orderBy('s.nombre')
                     ->orderBy('af.nombre_area_formacion')
                     ->get();
 
-                // Agrupar datos por docente y grado
+                // Agrupar datos por docente y grado-sección
                 $docentesAgrupados = [];
                 foreach ($docentes as $asignacion) {
                     $docenteId = $asignacion->docente_id;
-                    $gradoKey = $asignacion->grado . '-' . $asignacion->grado_id;
+                    $gradoKey = $asignacion->grado . '-' . $asignacion->seccion . '-' . $asignacion->grado_id;
                     
                     if (!isset($docentesAgrupados[$docenteId])) {
                         $docentesAgrupados[$docenteId] = [
@@ -582,6 +628,8 @@ class DocenteController extends Controller
                         $docentesAgrupados[$docenteId]['grados'][$gradoKey] = [
                             'grado' => $asignacion->grado,
                             'grado_id' => $asignacion->grado_id,
+                            'seccion' => $asignacion->seccion,
+                            'seccion_id' => $asignacion->seccion_id,
                             'materias' => [],
                             'estudiantes' => []
                         ];
@@ -593,24 +641,15 @@ class DocenteController extends Controller
                     }
                 }
 
-                // Obtener estudiantes para cada docente y grado
+                // Obtener estudiantes para cada docente y grado-sección
                 foreach ($docentesAgrupados as $docenteId => &$docente) {
                     foreach ($docente['grados'] as $gradoKey => &$gradoData) {
-                        // Obtener la sección asignada al docente para este grado
-                        $seccionAsignada = DB::table('docente_area_grados as dag')
-                            ->join('detalle_docente_estudios as dde', 'dag.docente_estudio_realizado_id', '=', 'dde.id')
-                            ->where('dde.docente_id', $docenteId)
-                            ->where('dag.grado_id', $gradoData['grado_id'])
-                            ->where('dag.status', true)
-                            ->where('dde.status', true)
-                            ->value('dag.seccion_id');
-
                         $estudiantes = DB::table('inscripcions as i')
                             ->join('alumnos as a', 'i.alumno_id', '=', 'a.id')
                             ->join('personas as p', 'a.persona_id', '=', 'p.id')
                             ->join('seccions as s', 'i.seccion_id', '=', 's.id')
                             ->where('i.grado_id', $gradoData['grado_id'])
-                            ->where('i.seccion_id', $seccionAsignada)
+                            ->where('i.seccion_id', $gradoData['seccion_id'])
                             ->where('i.status', 'Activo')
                             ->select(
                                 'p.numero_documento',
@@ -626,12 +665,6 @@ class DocenteController extends Controller
                             ->orderBy('p.primer_nombre')
                             ->get();
 
-                        // Obtener nombre de la sección asignada
-                        $nombreSeccion = DB::table('seccions')
-                            ->where('id', $seccionAsignada)
-                            ->value('nombre');
-
-                        $gradoData['seccion_asignada'] = $nombreSeccion;
                         $gradoData['estudiantes'] = $estudiantes;
                     }
                 }
@@ -641,7 +674,13 @@ class DocenteController extends Controller
             \Log::info('Variable docentesAgrupados: ' . json_encode($docentesAgrupados));
 
             $pdf = PDF::loadView('admin.transacciones.docente_area_grado.reportes.docente_materia_pdf', [
-                'docentesAgrupados' => $docentesAgrupados
+                'docentesAgrupados' => $docentesAgrupados,
+                'filtros' => [
+                    'buscar' => $buscar,
+                    'grado_id' => $gradoId,
+                    'seccion_id' => $seccionNombre,
+                    'area_formacion_id' => $areaFormacionId
+                ]
             ]);
 
             $pdf->setPaper('A4', 'portrait');

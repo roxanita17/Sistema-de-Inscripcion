@@ -322,7 +322,7 @@
                                                 </li>
                                                                                                     {{-- PDF Materias --}}
                                                     <li>
-                                                        <a href="{{ route('admin.docente.DocenteMateriaIndividual', $datos->id) }}"
+                                                        <a href="{{ route('admin.docente.DocenteMateriaIndividual', ['id' => $datos->id] + request()->query()) }}"
                                                             class="dropdown-item d-flex align-items-center text-danger"
                                                             target="_blank"
                                                             title="Generar PDF de materias">
