@@ -321,8 +321,8 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                <th width="20%">Cédula</th>
-                                                <th width="80%">Nombre Completo</th>
+                                                <th width="20%" style="color: #2d3748;">Cédula</th>
+                                                <th width="80%" style="color: #2d3748;">Nombre Completo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
