@@ -2,8 +2,8 @@
 import axios from "axios"
 import dayjs from "dayjs";
 
-// TODO: eliminar (supender el año escolar en espera)
-// TODO: tarea programada para poder abrir y cerrar años escolares
+// TODO: eliminar (supender el Calendario Escolar en espera)
+// TODO: tarea programada para poder abrir y cerrar Calendarios Escolares
 
 
 
@@ -12,7 +12,7 @@ import dayjs from "dayjs";
     let dataGlobal=null;
 
     window.modalModoRegistro = () => {
-    modificarTituloModal("formularioLabel", "Año Escolar Activación");
+    modificarTituloModal("formularioLabel", "Calendario Escolar Activación");
 
     let botonContinuiar = document.getElementById("botonContinuiar");
     let botonExtender = document.getElementById("botonExtender");
@@ -33,12 +33,12 @@ import dayjs from "dayjs";
     const añoActual = hoy.year();
     let fechaInicioDefault, fechaCierreDefault;
 
-    // Si estamos antes de septiembre, el año escolar comenzará en septiembre de este año
+    // Si estamos antes de septiembre, el Calendario Escolar comenzará en septiembre de este año
     if (hoy.month() < 8) { // Antes de septiembre
         fechaInicioDefault = hoy.month(8).date(1); // 1 de septiembre del año actual
         fechaCierreDefault = hoy.add(1, 'year').month(6).date(30); // 30 de julio del año siguiente
     }
-    // Si estamos en o después de septiembre, el año escolar comenzará en septiembre del año actual
+    // Si estamos en o después de septiembre, el Calendario Escolar comenzará en septiembre del año actual
     // (no se permiten años futuros)
     else {
         fechaInicioDefault = hoy.month(8).date(1); // 1 de septiembre del año actual
@@ -73,7 +73,7 @@ import dayjs from "dayjs";
 };
 
     // window.modalModoRegistro= () => {
-    //     modificarTituloModal("formularioLabel","Año Escolar Activación")
+    //     modificarTituloModal("formularioLabel","Calendario Escolar Activación")
 
     //     let botonContinuiar= document.getElementById("botonContinuiar")
     //     let botonExtender=document.getElementById("botonExtender")
@@ -92,7 +92,7 @@ import dayjs from "dayjs";
     //     let buscarActivoOExtendido=dataGlobal.find(reg => reg.status==="Activo" || reg.status==="Extendido")
     //     console.log("find  => ",buscarActivoOExtendido)
 
-    //     // esto se encarga de que si hay un año escolar activo o extendido
+    //     // esto se encarga de que si hay un Calendario Escolar activo o extendido
     //     let fecha=null
     //     if(buscarActivoOExtendido){
     //         if(buscarActivoOExtendido.extencion_ano_escolar){
@@ -111,7 +111,7 @@ import dayjs from "dayjs";
     // }
 
     window.modalModoExtender= (id) => {
-        modificarTituloModal("formularioLabel","Extender Año Escolar")
+        modificarTituloModal("formularioLabel","Extender Calendario Escolar")
 
         let botonContinuiar= document.getElementById("botonContinuiar")
         let botonExtender=document.getElementById("botonExtender")
@@ -414,7 +414,7 @@ import dayjs from "dayjs";
 //         }
 
 //         if (fechaInicio.year() > añoActual) {
-//             errorInicio.textContent = `No se puede crear un año escolar futuro. El año máximo permitido es ${añoActual}`;
+//             errorInicio.textContent = `No se puede crear un Calendario Escolar futuro. El año máximo permitido es ${añoActual}`;
 //             hayErrores = true;
 //         }
 //     }
@@ -446,7 +446,7 @@ import dayjs from "dayjs";
 
 //             const diferenciaMeses = fechaCierre.diff(fechaInicio, 'month');
 //             if (diferenciaMeses < 10 || diferenciaMeses > 11) {
-//                 errorCierre.textContent = "El año escolar debe durar aproximadamente 10 meses (septiembre-julio)";
+//                 errorCierre.textContent = "El Calendario Escolar debe durar aproximadamente 10 meses (septiembre-julio)";
 //                 hayErrores = true;
 //             }
 //         }
@@ -522,7 +522,7 @@ function validacionesAlCrear() {
         }
 
         if (fechaInicio.year() > añoActual) {
-            mostrarError(inputInicio, `No se puede crear un año escolar futuro. El año máximo permitido es ${añoActual}`);
+            mostrarError(inputInicio, `No se puede crear un Calendario Escolar futuro. El año máximo permitido es ${añoActual}`);
             hayErrores = true;
         }
     }
@@ -554,7 +554,7 @@ function validacionesAlCrear() {
 
             const diferenciaMeses = fechaCierre.diff(fechaInicio, 'month');
             if (diferenciaMeses < 10 || diferenciaMeses > 11) {
-                mostrarError(inputCierre, "El año escolar debe durar aproximadamente 10 meses (septiembre-julio)");
+                mostrarError(inputCierre, "El Calendario Escolar debe durar aproximadamente 10 meses (septiembre-julio)");
                 hayErrores = true;
             }
         }
@@ -616,7 +616,7 @@ window.validarFormularioExtender = () => {
         const anoExtender = dataGlobal?.find(reg => reg.id == idAnoExtender);
 
         if (!anoExtender || (anoExtender.status !== "Activo" && anoExtender.status !== "Extendido")) {
-            console.log("Solo se pueden extender años escolares activos");
+            console.log("Solo se pueden extender Calendarios Escolares activos");
             return;
         }
         ejecutarModal("#modalConfirmacionExtencion");

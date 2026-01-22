@@ -173,7 +173,7 @@
             <p>
                 Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}
                 @if(!empty($filtros['anio_escolar']))
-                    | Año escolar: {{ $filtros['anio_escolar'] }}
+                    | Calendario Escolar: {{ $filtros['anio_escolar'] }}
                 @endif
             </p>
             @if(!empty($filtros) && count(array_filter($filtros)) > 1)

@@ -96,7 +96,7 @@ class EntradasPercentilController extends Controller
         ]);
 
         if (!$this->verificarAnioEscolar()) {
-            return back()->with('error', 'No existe un año escolar activo.');
+            return back()->with('error', 'No existe un Calendario Escolar activo.');
         }
 
         $grado = Grado::findOrFail($request->grado_id);

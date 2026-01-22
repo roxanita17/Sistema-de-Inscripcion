@@ -102,7 +102,7 @@ class InscripcionProsecucion extends Component
 
         if (!$anioActual) {
             $this->alumnos = collect();
-            session()->flash('warning', 'No hay un año escolar activo.');
+            session()->flash('warning', 'No hay un Calendario Escolar activo.');
             return;
         }
 
@@ -112,7 +112,7 @@ class InscripcionProsecucion extends Component
 
         if (!$anioAnterior) {
             $this->alumnos = collect();
-            session()->flash('warning', 'No se encontró el año escolar anterior.');
+            session()->flash('warning', 'No se encontró el Calendario Escolar anterior.');
             return;
         }
 
@@ -463,7 +463,7 @@ class InscripcionProsecucion extends Component
         $this->validate();
         $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
         if (!$anioActual) {
-            $this->addError('general', 'No hay un año escolar activo.');
+            $this->addError('general', 'No hay un Calendario Escolar activo.');
             return;
         }
         if (!$this->validarAntesDeGuardar()) {
@@ -472,7 +472,7 @@ class InscripcionProsecucion extends Component
         if ($this->alumnoYaPromovido($this->alumnoId, $anioActual->id)) {
             $this->addError(
                 'alumnoId',
-                'Este estudiante ya fue inscrito o promovido en el año escolar actual.'
+                'Este estudiante ya fue inscrito o promovido en el Calendario Escolar actual.'
             );
             return;
         }

@@ -100,7 +100,7 @@ class InstitucionProcedenciaCreate extends Component
             ->exists();
 
         if (!$anioEscolarActivo) {
-            session()->flash('error', 'Debe registrar un año escolar activo para realizar esta acción.');
+            session()->flash('error', 'Debe registrar un Calendario Escolar activo para realizar esta acción.');
             return;
         }
 

@@ -47,7 +47,7 @@ class LocalidadIndex extends Component
     private function verificarAccion()
     {
         if (!$this->anioEscolarActivo) {
-            session()->flash('warning', 'Debe registrar un año escolar activo para realizar esta acción.');
+            session()->flash('warning', 'Debe registrar un Calendario Escolar activo para realizar esta acción.');
             return false;
         }
         return true;

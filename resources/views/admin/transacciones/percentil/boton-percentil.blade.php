@@ -6,7 +6,7 @@
 
     <button type="button" onclick="confirmarEnvio()" class="btn-percentil" {{ !$anioEscolarActivo ? 'disabled' : '' }}
         title="{{ !$anioEscolarActivo
-            ? 'Debe registrar un año escolar activo'
+            ? 'Debe registrar un Calendario Escolar activo'
             : 'Ejecutar percentil y distribución de secciones' }}">
         <i class="fas fa-calculator me-1"></i>
         Ejecutar Percentil

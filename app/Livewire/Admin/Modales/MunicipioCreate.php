@@ -57,7 +57,7 @@ class MunicipioCreate extends Component
             ->exists();
 
         if (!$anioEscolarActivo) {
-            $this->addError('general', 'Debe registrar un año escolar activo para realizar esta acción.');
+            $this->addError('general', 'Debe registrar un Calendario Escolar activo para realizar esta acción.');
             return;
         }
 

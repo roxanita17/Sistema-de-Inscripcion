@@ -9,7 +9,7 @@
                         Docente
                     </h5>
                     <p class="mb-2" style="font-size: 0.95rem; opacity: 0.95;">
-                        Año Escolar:
+                        Calendario Escolar:
                         {{ \Carbon\Carbon::parse($datos->anioEscolar->inicio_anio_escolar)->format('Y') }}
                         -
                         {{ \Carbon\Carbon::parse($datos->anioEscolar->cierre_anio_escolar)->format('Y') }}

@@ -118,7 +118,7 @@ class InscripcionController extends Controller
                 }
             })
 
-            // Año escolar Activo o Extendido
+            // Calendario Escolar Activo o Extendido
             ->whereHas('anioEscolar', function ($q) {
                 $q->whereIn('status', ['Activo', 'Extendido']);
             })

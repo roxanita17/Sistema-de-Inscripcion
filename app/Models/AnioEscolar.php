@@ -59,7 +59,7 @@ class AnioEscolar extends Model
             $anio->marcarComoInactivo();
             $contador++;
 
-            Log::info('Año escolar auto-inactivado', [
+            Log::info('Calendario Escolar auto-inactivado', [
                 'id' => $anio->id,
                 'inicio' => $anio->inicio_anio_escolar->format('Y-m-d'),
                 'cierre' => $anio->cierre_anio_escolar->format('Y-m-d'),
@@ -122,7 +122,7 @@ class AnioEscolar extends Model
         if ($existe) {
             return [
                 'valido' => false,
-                'error' => 'Ya existe un año escolar que se superpone con estas fechas.'
+                'error' => 'Ya existe un Calendario Escolar que se superpone con estas fechas.'
             ];
         }
 

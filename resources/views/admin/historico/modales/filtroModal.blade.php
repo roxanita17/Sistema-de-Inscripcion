@@ -20,7 +20,7 @@
                     {{-- MODALIDAD (solo Inscripciones) --}}
                     <label class="form-label-modern">
                         <i class="fas fa-calendar-alt" style="color: var(--primary);"></i>
-                        Año Escolar
+                        Calendario Escolar
                     </label>
                     <select name="anio_escolar_id" class="form-select form-control-modern">
                         <option value="">Todos los años</option>

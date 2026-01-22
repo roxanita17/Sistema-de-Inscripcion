@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class AnioEscolarService
 {
     /**
-     * Crear un nuevo año escolar
+     * Crear un nuevo Calendario Escolar
      * 
      * @param array $datos
      * @return array ['success' => bool, 'anio' => AnioEscolar|null, 'error' => string|null]
@@ -30,7 +30,7 @@ class AnioEscolarService
             ];
         }
 
-        // Crear el año escolar en una transacción
+        // Crear el Calendario Escolar en una transacción
         try {
             $anioEscolar = DB::transaction(function () use ($datos) {
                 return AnioEscolar::create([
@@ -40,7 +40,7 @@ class AnioEscolarService
                 ]);
             });
 
-            Log::info('Año escolar creado', ['id' => $anioEscolar->id]);
+            Log::info('Calendario Escolar creado', ['id' => $anioEscolar->id]);
 
             return [
                 'success' => true,
@@ -48,7 +48,7 @@ class AnioEscolarService
                 'error' => null
             ];
         } catch (\Exception $e) {
-            Log::error('Error al crear año escolar', [
+            Log::error('Error al crear Calendario Escolar', [
                 'error' => $e->getMessage(),
                 'datos' => $datos
             ]);
@@ -56,13 +56,13 @@ class AnioEscolarService
             return [
                 'success' => false,
                 'anio' => null,
-                'error' => 'Error al crear el año escolar. Por favor, intente nuevamente.'
+                'error' => 'Error al crear el Calendario Escolar. Por favor, intente nuevamente.'
             ];
         }
     }
 
     /**
-     * Extender un año escolar existente
+     * Extender un Calendario Escolar existente
      * 
      * @param int $id
      * @param string $nuevoCierre
@@ -76,7 +76,7 @@ class AnioEscolarService
             return [
                 'success' => false,
                 'anio' => null,
-                'error' => 'Año escolar no encontrado.'
+                'error' => 'Calendario Escolar no encontrado.'
             ];
         }
 
@@ -100,7 +100,7 @@ class AnioEscolarService
                 $anioEscolar->marcarComoExtendido();
             });
 
-            Log::info('Año escolar extendido', [
+            Log::info('Calendario Escolar extendido', [
                 'id' => $anioEscolar->id,
                 'nueva_fecha' => $nuevoCierre
             ]);
@@ -111,7 +111,7 @@ class AnioEscolarService
                 'error' => null
             ];
         } catch (\Exception $e) {
-            Log::error('Error al extender año escolar', [
+            Log::error('Error al extender Calendario Escolar', [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
@@ -119,13 +119,13 @@ class AnioEscolarService
             return [
                 'success' => false,
                 'anio' => null,
-                'error' => 'Error al extender el año escolar. Por favor, intente nuevamente.'
+                'error' => 'Error al extender el Calendario Escolar. Por favor, intente nuevamente.'
             ];
         }
     }
 
     /**
-     * Inactivar un año escolar
+     * Inactivar un Calendario Escolar
      */
     public function inactivar(int $id): array
     {
@@ -134,28 +134,28 @@ class AnioEscolarService
         if (!$anioEscolar) {
             return [
                 'success' => false,
-                'error' => 'Año escolar no encontrado.'
+                'error' => 'Calendario Escolar no encontrado.'
             ];
         }
 
         try {
             $anioEscolar->marcarComoInactivo();
 
-            Log::info('Año escolar inactivado', ['id' => $id]);
+            Log::info('Calendario Escolar inactivado', ['id' => $id]);
 
             return [
                 'success' => true,
                 'error' => null
             ];
         } catch (\Exception $e) {
-            Log::error('Error al inactivar año escolar', [
+            Log::error('Error al inactivar Calendario Escolar', [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
 
             return [
                 'success' => false,
-                'error' => 'Error al inactivar el año escolar.'
+                'error' => 'Error al inactivar el Calendario Escolar.'
             ];
         }
     }

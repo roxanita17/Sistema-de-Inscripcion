@@ -64,7 +64,7 @@
                                 (cierre.getMonth() - inicio.getMonth());
         
         if (mesesDiferencia < 6) {
-            mostrarError('El año escolar debe tener una duración mínima de 6 meses.');
+            mostrarError('El Calendario Escolar debe tener una duración mínima de 6 meses.');
             inputCierre.classList.add('is-invalid');
             btnGuardar.disabled = true;
             return;

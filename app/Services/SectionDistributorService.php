@@ -24,13 +24,13 @@ class SectionDistributorService
     {
         return DB::transaction(function () use ($grado) {
 
-            // Verificar año escolar activo
+            // Verificar Calendario Escolar activo
             $anioEscolarActivo = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])
                 ->orWhere('status', 'Extendido')
                 ->first();
 
             if (!$anioEscolarActivo) {
-                throw new \Exception('No hay un año escolar activo');
+                throw new \Exception('No hay un Calendario Escolar activo');
             }
 
             $inscripciones = Inscripcion::where('grado_id', $grado->id)
@@ -183,7 +183,7 @@ class SectionDistributorService
                     // Guardar sección TAMBIÉN en inscripción
                     $inscripcion = $entrada->inscripcion;
 
-                    // ¿Tiene prosecución activa para este año escolar?
+                    // ¿Tiene prosecución activa para este Calendario Escolar?
                     $prosecucion = $inscripcion->prosecucion()
                         ->where('anio_escolar_id', $anioEscolarActivo->id)
                         ->where('status', 'Activo')

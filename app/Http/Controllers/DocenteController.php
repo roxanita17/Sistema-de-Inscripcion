@@ -61,7 +61,7 @@ class DocenteController extends Controller
             ->first();
 
         if (!$anioEscolar) {
-            throw new \Exception('No hay un año escolar activo. Por favor, contacte al administrador.');
+            throw new \Exception('No hay un Calendario Escolar activo. Por favor, contacte al administrador.');
         }
 
         return $anioEscolar;

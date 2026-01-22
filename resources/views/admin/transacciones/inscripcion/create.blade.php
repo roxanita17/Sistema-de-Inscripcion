@@ -37,8 +37,8 @@
         @endphp
         @if (!$anoActivo)
             <div class="alert alert-warning">
-                <strong>No hay año escolar activo.</strong>
-                <a href="{{ route('admin.anio_escolar.index') }}">Ir a Año Escolar</a>
+                <strong>No hay Calendario Escolar activo.</strong>
+                <a href="{{ route('admin.anio_escolar.index') }}">Ir a Calendario Escolar</a>
             </div>
         @endif
         <livewire:admin.transaccion-inscripcion.inscripcion />

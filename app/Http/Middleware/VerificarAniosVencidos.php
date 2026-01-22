@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class VerificarAniosVencidos
 {
     /**
-     * Verifica y desactiva años escolares vencidos en cada request
+     * Verifica y desactiva Calendarios Escolares vencidos en cada request
      */
     public function handle(Request $request, Closure $next): Response
     {

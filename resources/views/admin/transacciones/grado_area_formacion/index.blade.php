@@ -19,7 +19,7 @@
             </div>
             <button type="button" class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCrearAsignacion"
                 @if (!$anioEscolarActivo) disabled @endif
-                title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Nueva Asignación' }}">
+                title="{{ !$anioEscolarActivo ? 'Debe registrar un Calendario Escolar activo' : 'Nueva Asignación' }}">
                 <i class="fas fa-plus"></i>
                 <span>Nueva Asignación</span>
             </button>
@@ -34,11 +34,11 @@
                 <div class="d-flex align-items-center">
                     <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
                     <div>
-                        <h5 class="alert-heading mb-1">Atención: No hay año escolar activo</h5>
+                        <h5 class="alert-heading mb-1">Atención: No hay Calendario Escolar activo</h5>
                         <p class="mb-0">
                             Puedes ver los registros, pero <strong>no podrás crear, editar o eliminar</strong> bancos hasta
-                            que se registre un año escolar activo.
-                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Año Escolar</a>
+                            que se registre un Calendario Escolar activo.
+                            <a href="{{ route('admin.anio_escolar.index') }}" class="alert-link">Ir a Calendario Escolar</a>
                         </p>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                             <div class="d-flex align-items-center">
                                 <span class="badge bg-primary rounded me-2 py-1 px-2" style="font-size: 0.7rem;">
                                     <i class="fas fa-calendar-check me-1"></i>
-                                    Año Escolar
+                                    Calendario Escolar
                                 </span>
                                 <div class="d-flex align-items-center" style="font-size: 0.8rem;">
                                     <span class="text-muted me-2">
@@ -185,7 +185,7 @@
                                                             data-bs-target="#viewModalEditar{{ $datos->id }}"
                                                             title="Editar"
                                                             @if (!$anioEscolarActivo) disabled @endif
-                                                            title="{{ !$anioEscolarActivo ? 'Debe registrar un año escolar activo' : 'Editar' }}">
+                                                            title="{{ !$anioEscolarActivo ? 'Debe registrar un Calendario Escolar activo' : 'Editar' }}">
                                                             <i class="fas fa-pen me-2"></i>
                                                             Editar
                                                         </button>
@@ -194,7 +194,7 @@
                                                         <button class="dropdown-item d-flex align-items-center text-danger"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#confirmarEliminar{{ $datos->id }}"
-                                                            @disabled(!$anioEscolarActivo) title="Inactivar año escolar">
+                                                            @disabled(!$anioEscolarActivo) title="Inactivar Calendario Escolar">
                                                             <i class="fas fa-ban me-2"></i>
                                                             Inactivar
                                                         </button>

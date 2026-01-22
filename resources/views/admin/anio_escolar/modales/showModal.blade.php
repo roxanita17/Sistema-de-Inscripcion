@@ -8,7 +8,7 @@
                     <i class="fas fa-eye"></i>
                 </div>
                 <h5 class="modal-title-view" id="viewModalLabel{{ $datos->id }}">
-                    Detalles del Año Escolar
+                    Detalles del Calendario Escolar
                 </h5>
                 <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
@@ -66,7 +66,7 @@
                     <div class="detail-item">
                         <span class="detail-label">
                             <i class="fas fa-toggle-on"></i>
-                            Estado del Año Escolar
+                            Estado del Calendario Escolar
                         </span>
                         <span class="detail-value">
                             @if ($datos->status == 'Activo')
