@@ -139,8 +139,6 @@ class InscripcionController extends Controller
             ->withQueryString();
 
 
-
-
         return view('admin.transacciones.inscripcion.index', [
             'anioEscolarActivo' => $anioEscolarActivo ? true : false,
             'anioEscolar' => $anioEscolarActivo,

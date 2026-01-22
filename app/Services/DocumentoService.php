@@ -24,10 +24,13 @@ class DocumentoService
         'boletin_6to_grado',
         'certificado_calificaciones',
         'constancia_aprobacion_primaria',
+    ];
+
+    private array $documentosSegundoGrado = [
         'notas_certificadas',
         'liberacion_cupo',
     ];
-
+    
     private array $documentosOpcionales = [
         'copia_cedula_representante',
         'copia_cedula_estudiante',
@@ -68,61 +71,54 @@ class DocumentoService
         bool $requiereAutorizacion,
         bool $esPrimerGrado
     ): array {
-        // 1. Definir obligatorios según grado
-        $documentosObligatorios = [
-            'partida_nacimiento',
-            'boletin_6to_grado',
-            'certificado_calificaciones',
-            'constancia_aprobacion_primaria',
-        ];
+        // 1. Definir documentos OBLIGATORIOS según grado
+        $obligatorios = $this->documentosObligatorios;
 
-        // Solo para 2do grado en adelante
+        // Para 2do grado en adelante, agregar documentos adicionales como obligatorios
         if (!$esPrimerGrado) {
-            $documentosObligatorios[] = 'notas_certificadas';
-            $documentosObligatorios[] = 'liberacion_cupo';
+            $obligatorios = array_merge($obligatorios, $this->documentosSegundoGrado);
         }
 
-        // Validar obligatorios
-        $faltanObligatorios = array_diff($documentosObligatorios, $seleccionados);
+        // 2. Verificar documentos OBLIGATORIOS faltantes (BLOQUEANTES)
+        $faltantesObligatorios = array_diff($obligatorios, $seleccionados);
 
-        if (!empty($faltanObligatorios)) {
-            return [
-                'puede_guardar' => false,
-                'estado_documentos' => 'Incompletos',
-                'status_inscripcion' => 'Pendiente',
-                'faltantes' => $faltanObligatorios,
-            ];
-        }
-
-
-        // 2. Validar autorización si aplica
+        // 3. Verificar autorización si aplica (TAMBIÉN ES BLOQUEANTE)
         if ($requiereAutorizacion && !in_array($this->documentoAutorizacion, $seleccionados)) {
+            $faltantesObligatorios[] = $this->documentoAutorizacion;
+        }
+
+        // Si faltan documentos OBLIGATORIOS, NO puede guardar
+        if (!empty($faltantesObligatorios)) {
             return [
                 'puede_guardar' => false,
                 'estado_documentos' => 'Incompletos',
                 'status_inscripcion' => 'Pendiente',
-                'faltantes' => [$this->documentoAutorizacion],
+                'faltantes' => $faltantesObligatorios,
+                'faltantes_obligatorios' => $faltantesObligatorios,
             ];
         }
 
-        // 3. Validar opcionales
-        $faltanOpcionales = array_diff($this->documentosOpcionales, $seleccionados);
+        // 4. Verificar documentos OPCIONALES faltantes (NO BLOQUEANTES)
+        $faltantesOpcionales = array_diff($this->documentosOpcionales, $seleccionados);
 
-        if (!empty($faltanOpcionales)) {
+        // Si faltan opcionales, puede guardar pero queda en Pendiente
+        if (!empty($faltantesOpcionales)) {
             return [
                 'puede_guardar' => true,
                 'estado_documentos' => 'Incompletos',
                 'status_inscripcion' => 'Pendiente',
-                'faltantes' => $faltanOpcionales,
+                'faltantes' => $faltantesOpcionales,
+                'faltantes_obligatorios' => [],
             ];
         }
 
-        // 4. Todo completo
+        // 5. Todo completo - puede guardar y queda Activo
         return [
             'puede_guardar' => true,
             'estado_documentos' => 'Completos',
             'status_inscripcion' => 'Activo',
             'faltantes' => [],
+            'faltantes_obligatorios' => [],
         ];
     }
 
@@ -132,43 +128,48 @@ class DocumentoService
         bool $esPrimerGrado,
         ?int $alumnoId = null
     ): ?string {
-
         $evaluacion = $this->evaluarEstadoDocumentos(
             $documentos,
             $requiereAutorizacion,
-            $esPrimerGrado,
-            $alumnoId
+            $esPrimerGrado
         );
 
         $observaciones = [];
 
+        // Solo listar los documentos que faltan (obligatorios u opcionales)
         if (!empty($evaluacion['faltantes'])) {
+            $observaciones[] = 'Documentos faltantes:';
+            
             foreach ($evaluacion['faltantes'] as $doc) {
-                $observaciones[] =
-                    $this->documentosEtiquetas[$doc]
-                    ?? ucfirst(str_replace('_', ' ', $doc));
+                $etiqueta = $this->documentosEtiquetas[$doc] ?? ucfirst(str_replace('_', ' ', $doc));
+                
+                // Marcar si es obligatorio
+                $esObligatorio = in_array($doc, $evaluacion['faltantes_obligatorios']);
+                $marcador = $esObligatorio ? ' (OBLIGATORIO)' : ' (Opcional)';
+                
+                $observaciones[] = '- ' . $etiqueta . $marcador;
             }
         }
 
-        $discapacidades = \App\Models\DiscapacidadEstudiante::with('discapacidad')
-            ->where('alumno_id', $alumnoId)
-            ->where('status', true)
-            ->get()
-            ->pluck('discapacidad.nombre_discapacidad')
-            ->filter()
-            ->values();
+        // Agregar discapacidades si existen
+        if ($alumnoId) {
+            $discapacidades = \App\Models\DiscapacidadEstudiante::with('discapacidad')
+                ->where('alumno_id', $alumnoId)
+                ->where('status', true)
+                ->get()
+                ->pluck('discapacidad.nombre_discapacidad')
+                ->filter()
+                ->values();
 
-        if ($discapacidades->isNotEmpty()) {
-            $observaciones[] = 'Discapacidades del estudiante:';
-
-            foreach ($discapacidades as $nombre) {
-                $observaciones[] = $nombre;
+            if ($discapacidades->isNotEmpty()) {
+                $observaciones[] = '';
+                $observaciones[] = 'Discapacidades del estudiante:';
+                foreach ($discapacidades as $nombre) {
+                    $observaciones[] = '- ' . $nombre;
+                }
             }
         }
 
-
-        return empty($observaciones)
-            ? null
-            : 'Observaciones:' . PHP_EOL . PHP_EOL . 'Documentos faltantes:' . PHP_EOL . implode(PHP_EOL, $observaciones);
+        return empty($observaciones) ? null : implode(PHP_EOL, $observaciones);
     }
 }

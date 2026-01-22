@@ -9,7 +9,6 @@ use App\Models\Persona;
 use App\DTOs\InscripcionData;
 use App\Models\InscripcionNuevoIngreso;
 use App\Models\InscripcionProsecucion;
-use App\Exceptions\InscripcionException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -33,7 +32,6 @@ class InscripcionService
         return $anioEscolar;
     }
 
-
     public function verificarCuposDisponibles($gradoId): bool
     {
         $grado = Grado::find($gradoId);
@@ -47,7 +45,6 @@ class InscripcionService
         $inscripcionesActivas = Inscripcion::where('grado_id', $gradoId)
             ->whereIn('status', ['Activo', 'Pendiente'])
             ->where(function ($q) use ($grado, $anioEscolarActivo) {
-
                 if ((int) $grado->numero_grado === 1) {
                     $q->where(function ($qq) use ($anioEscolarActivo) {
                         $qq->whereHas('nuevoIngreso', function ($n) use ($anioEscolarActivo) {
@@ -70,7 +67,6 @@ class InscripcionService
 
         return $inscripcionesActivas < $grado->capacidad_max;
     }
-
 
     public function obtenerInfoCupos($gradoId): ?array
     {
@@ -97,7 +93,6 @@ class InscripcionService
         ];
     }
 
-
     public function validarAnioEgreso(string $fecha): bool
     {
         $anioEgreso = Carbon::parse($fecha)->year;
@@ -106,40 +101,38 @@ class InscripcionService
             && $anioEgreso <= $anioActual;
     }
 
-
     public function registrar(InscripcionData $data): Inscripcion
     {
         DB::beginTransaction();
 
         try {
+            // Validar cupos disponibles
             if (!$this->verificarCuposDisponibles($data->grado_id)) {
-                throw new InscripcionException(
-                    'El grado ha alcanzado el límite de cupos disponibles.'
-                );
+                throw new \Exception('El grado ha alcanzado el límite de cupos disponibles.');
             }
+
             $grado = Grado::findOrFail($data->grado_id);
             $esPrimerGrado = ((int) $grado->numero_grado === 1);
 
-
+            // Evaluar estado de documentos
             $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
                 $data->documentos,
                 !$data->padre_id && !$data->madre_id,
                 $esPrimerGrado
             );
 
-            if (!empty($evaluacion['faltantes'])) {
-
+            // Solo bloquear si faltan documentos OBLIGATORIOS
+            if (!$evaluacion['puede_guardar']) {
                 $etiquetas = $this->documentoService->obtenerEtiquetas();
 
-                $lista = collect($evaluacion['faltantes'])
+                $lista = collect($evaluacion['faltantes_obligatorios'])
                     ->map(fn($doc) => $etiquetas[$doc] ?? ucfirst(str_replace('_', ' ', $doc)))
-                    ->implode('<br>');
+                    ->implode(', ');
 
-                throw new InscripcionException(
-                    "Faltan los siguientes documentos obligatorios:<br><br>{$lista}"
-                );
+                throw new \Exception("Faltan documentos obligatorios: {$lista}");
             }
 
+            // Si puede guardar, proceder con la inscripción
             $anioEscolar = $this->obtenerAnioEscolarActivo();
 
             $inscripcion = Inscripcion::create([
@@ -156,7 +149,7 @@ class InscripcionService
                 'fecha_inscripcion' => $data->fecha_inscripcion,
                 'observaciones' => $data->observaciones,
                 'acepta_normas_contrato' => $data->acepta_normas_contrato,
-                'status' => $evaluacion['status_inscripcion'],
+                'status' => $evaluacion['status_inscripcion'], // 'Activo' o 'Pendiente'
             ]);
 
             $tipo = $data->tipo_inscripcion;
@@ -178,10 +171,17 @@ class InscripcionService
                     'repite_grado' => $data->repite_grado,
                 ]);
             }
+
             DB::commit();
             return $inscripcion;
+
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Error al registrar inscripción', [
+                'mensaje' => $e->getMessage(),
+                'linea' => $e->getLine(),
+                'archivo' => $e->getFile(),
+            ]);
             throw $e;
         }
     }
@@ -235,14 +235,24 @@ class InscripcionService
             $inscripcion = $this->registrar($datosInscripcion);
 
             DB::commit();
-
             return $inscripcion;
-        } catch (InscripcionException $e) {
-            throw $e; 
+
         } catch (QueryException $e) {
-            throw new InscripcionException(
-                'Error al guardar los datos del alumno.'
-            );
+            DB::rollBack();
+            \Log::error('Error de base de datos al registrar alumno', [
+                'mensaje' => $e->getMessage(),
+                'codigo' => $e->getCode(),
+            ]);
+            throw new \Exception($e);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error general al registrar con alumno', [
+                'mensaje' => $e->getMessage(),
+                'linea' => $e->getLine(),
+                'archivo' => $e->getFile(),
+            ]);
+            throw $e;
         }
     }
 }

@@ -56,6 +56,7 @@
                                 data-subtext="{{ $padre['tipo_documento'] }}-{{ $padre['numero_documento'] }}"
                                 {{ $padreId == $padre['id'] ? 'selected' : '' }}>
                                 {{ $padre['nombre_completo'] }}
+
                             </option>
                         @endforeach
                     </select>
@@ -769,91 +770,177 @@
         </div>
     </div>
     <div class="card-modern mb-4">
-        <div class="card-header-modern">
-            <div class="header-left">
-                <div class="header-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <div>
-                    <h3>Documentos Entregados</h3>
-                    <p>Marque los documentos que el estudiante ha entregado</p>
-                </div>
-            </div>
-            <div class="header-right">
-                @if ($estadoDocumentos === 'Completos')
-                    <span class="badge bg-success">
-                        <i class="fas fa-check-circle"></i> Completos
-                    </span>
-                @elseif($estadoDocumentos === 'Incompletos')
-                    <span class="badge bg-warning">
-                        <i class="fas fa-exclamation-circle"></i> Incompletos
-                    </span>
-                @endif
-            </div>
-        </div>
-        <div class="card-body-modern" style="padding: 2rem;">
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <div class="checkbox-item-modern">
-                        <input type="checkbox" id="seleccionar_todos" wire:model.live="seleccionarTodos"
-                            class="checkbox-modern">
-                        <label for="seleccionar_todos" class="checkbox-label-modern">
-                            Seleccionar todos los documentos
-                        </label>
+        <div class="card-modern mb-4" id="bloque-documentos">
+            <div class="card-header-modern">
+                <div class="header-left">
+                    <div class="header-icon" style="background: linear-gradient(135deg, var(--warning), #d97706);">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <div>
+                        <h3>Documentos Entregados</h3>
+                        <p>Marque los documentos que el estudiante ha entregado</p>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                @php
-                    $colCounter = 0;
-                @endphp
-                @foreach ($documentosEtiquetas as $documento => $etiqueta)
-                    @php
-                        if ($esPrimerGrado && in_array($documento, ['notas_certificadas', 'liberacion_cupo'])) {
-                            continue;
-                        }
-                        $esFaltante = in_array($documento, $documentosFaltantes);
-                    @endphp
-                    @if ($colCounter % 12 === 0 && $colCounter !== 0)
-            </div>
-            <div class="row mt-3">
-                @endif
-                <div class="col-md-6 mb-3">
-                    <div class="checkbox-item-modern {{ $esFaltante ? 'checkbox-warning' : '' }}">
-                        <input type="checkbox" id="doc_{{ $documento }}" wire:model.live="documentos"
-                            value="{{ $documento }}" class="checkbox-modern">
 
-                        <label for="doc_{{ $documento }}"
-                            class="checkbox-label-modern {{ $esFaltante ? 'text-warning fw-bold' : '' }}">
-                            {{ $etiqueta }}
-                            @if ($esFaltante)
-                                <span class="badge bg-warning ms-2">Pendiente</span>
-                            @endif
-                        </label>
+                <div class="header-right">
+                    @if ($estadoDocumentos === 'Completos')
+                        <span class="badge bg-success">
+                            <i class="fas fa-check-circle"></i> Completos
+                        </span>
+                    @elseif($estadoDocumentos === 'Incompletos')
+                        <span class="badge bg-warning">
+                            <i class="fas fa-exclamation-circle"></i> Incompletos
+                        </span>
+                    @else
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-clock"></i> Pendientes
+                        </span>
+                    @endif
+                </div>
+            </div>
+
+            <div class="card-body-modern" style="padding: 2rem;">
+                <div class="row">
+
+                    <!-- Seleccionar todos -->
+                    <div class="col-12 mb-4">
+                        <div class="checkbox-item-modern">
+                            <input type="checkbox" id="seleccionar_todos" wire:model.live="seleccionarTodos"
+                                class="checkbox-modern">
+                            <label for="seleccionar_todos" class="checkbox-label-modern">
+                                Seleccionar todos los documentos
+                            </label>
+                        </div>
+                    </div>
+
+                    @php
+                        $documentosObligatorios = [
+                            'partida_nacimiento',
+                            'boletin_6to_grado',
+                            'certificado_calificaciones',
+                            'constancia_aprobacion_primaria',
+                        ];
+
+                        if (!$esPrimerGrado) {
+                            $documentosObligatorios[] = 'notas_certificadas';
+                            $documentosObligatorios[] = 'liberacion_cupo';
+                        }
+
+                        if (!$padreId && !$madreId) {
+                            $documentosObligatorios[] = 'autorizacion_tercero';
+                        }
+
+                        $documentosOpcionales = [
+                            'copia_cedula_representante',
+                            'copia_cedula_estudiante',
+                            'foto_estudiante',
+                            'foto_representante',
+                            'carnet_vacunacion',
+                        ];
+                    @endphp
+
+                    <!-- DOCUMENTOS OBLIGATORIOS -->
+                    <div class="col-12 mb-4">
+                        <h6 class="text-danger mb-3">
+                             Documentos Obligatorios
+                        </h6>
+
+                        <div class="row">
+                            @foreach ($documentosEtiquetas as $documento => $etiqueta)
+                                @if (in_array($documento, $documentosObligatorios))
+                                    @php
+                                        if (
+                                            $esPrimerGrado &&
+                                            in_array($documento, ['notas_certificadas', 'liberacion_cupo'])
+                                        ) {
+                                            continue;
+                                        }
+
+                                        $esFaltante = in_array($documento, $documentosFaltantes);
+                                        $estaSeleccionado = in_array($documento, $documentos);
+                                    @endphp
+
+                                    <div class="col-md-6 mb-3">
+                                        <div class="checkbox-item-modern
+                                    {{ $esFaltante ? 'border border-danger' : ($estaSeleccionado ? 'border border-success' : '') }}"
+                                            style="padding: 0.75rem; border-radius: 8px;">
+
+                                            <input type="checkbox" id="doc_{{ $documento }}"
+                                                wire:model.live="documentos" value="{{ $documento }}"
+                                                class="checkbox-modern">
+
+                                            <label for="doc_{{ $documento }}"
+                                                class="checkbox-label-modern d-flex justify-content-between align-items-center w-100">
+                                                <span class="{{ $esFaltante ? 'text-danger fw-bold' : '' }}">
+                                                    {{ $etiqueta }}
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- DOCUMENTOS OPCIONALES -->
+                    <div class="col-12">
+                        <h6 class="text-primary mb-3">
+                             Documentos Opcionales
+                        </h6>
+
+                        <div class="row">
+                            @foreach ($documentosEtiquetas as $documento => $etiqueta)
+                                @if (in_array($documento, $documentosOpcionales))
+                                    @php
+                                        $estaSeleccionado = in_array($documento, $documentos);
+                                    @endphp
+
+                                    <div class="col-md-6 mb-3">
+                                        <div class="checkbox-item-modern
+                                    {{ $estaSeleccionado ? 'border border-success' : '' }}"
+                                            style="padding: 0.75rem; border-radius: 8px;">
+
+                                            <input type="checkbox" id="doc_{{ $documento }}"
+                                                wire:model.live="documentos" value="{{ $documento }}"
+                                                class="checkbox-modern">
+
+                                            <label for="doc_{{ $documento }}"
+                                                class="checkbox-label-modern w-100">
+                                                {{ $etiqueta }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
                     </div>
                 </div>
-                @php $colCounter++; @endphp
-                @endforeach
-            </div>
-            <div class="row mt-4">
-                <div class="col-12">
-                    <label class="form-label-modern">
-                        <i class="fas fa-comment"></i> Observaciones
-                    </label>
-                    <textarea wire:model.live="observaciones" id="observaciones"
-                        class="form-control-modern @error('observaciones') is-invalid @enderror" rows="3"
-                        placeholder="Agregue observaciones adicionales sobre la inscripción (opcional)" maxlength="500"></textarea>
-                    @error('observaciones')
-                        <div class="invalid-feedback-modern" style="display: block;">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                        </div>
-                    @enderror
-                    <small class="form-text text-muted">
-                        {{ strlen($observaciones ?? '') }}/500 caracteres
-                    </small>
+
+                <!-- Observaciones -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <label for="observaciones" class="form-label-modern">
+                            <i class="fas fa-comment"></i> Observaciones
+                        </label>
+
+                        <textarea wire:model.live="observaciones" id="observaciones"
+                            class="form-control-modern @error('observaciones') is-invalid @enderror" rows="3" maxlength="500"
+                            placeholder="Agregue observaciones adicionales (opcional)"></textarea>
+
+                        @error('observaciones')
+                            <div class="invalid-feedback-modern" style="display:block;">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+
+                        <small class="form-text text-muted">
+                            {{ strlen($observaciones ?? '') }}/500 caracteres
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
     @include('admin.transacciones.inscripcion.modales.showContratoModal')
     <div class="card-modern">
