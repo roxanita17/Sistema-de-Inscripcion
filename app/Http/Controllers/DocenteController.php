@@ -640,7 +640,7 @@ class DocenteController extends Controller
             // Log para depuración
             \Log::info('Variable docentesAgrupados: ' . json_encode($docentesAgrupados));
 
-            $pdf = PDF::loadView('admin.docente.reportes.docente_materia_pdf', [
+            $pdf = PDF::loadView('admin.transacciones.docente_area_grado.reportes.docente_materia_pdf', [
                 'docentesAgrupados' => $docentesAgrupados
             ]);
 

@@ -320,6 +320,16 @@
                                                         Inactivar
                                                     </button>
                                                 </li>
+                                                                                                    {{-- PDF Materias --}}
+                                                    <li>
+                                                        <a href="{{ route('admin.docente.DocenteMateriaIndividual', $datos->id) }}"
+                                                            class="dropdown-item d-flex align-items-center text-danger"
+                                                            target="_blank"
+                                                            title="Generar PDF de materias">
+                                                            <i class="fas fa-file-pdf me-2"></i>
+                                                            Materias PDF
+                                                        </a>
+                                                    </li>
                                             </ul>
                                         </div>
                                     </div>

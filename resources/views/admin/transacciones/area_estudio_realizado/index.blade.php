@@ -205,6 +205,8 @@
                                                         </button>
                                                     </li>
 
+
+
                                                     {{-- Inactivar --}}
                                                     <li>
                                                         <button class="dropdown-item d-flex align-items-center text-danger"
