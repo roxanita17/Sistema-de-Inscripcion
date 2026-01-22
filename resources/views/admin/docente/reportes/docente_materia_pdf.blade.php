@@ -276,7 +276,13 @@
         <!-- Encabezado del documento -->
         <div class="header">
             <h2>REPORTE DE DOCENTES CON MATERIAS Y ESTUDIANTES</h2>
-            <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
+            @forelse($docentesAgrupados as $docente)
+                <h2>{{ $docente['primer_nombre'] ?? 'N/A' }} {{ $docente['primer_apellido'] ?? 'N/A' }}</h2>
+                <p>Cédula: {{ $docente['tipo_documento'] ?? 'N/A' }}-{{ $docente['numero_documento'] ?? 'N/A' }} • Generado el {{ now()->format('d/m/Y H:i:s') }}</p>
+            @empty
+                <h2>No hay datos disponibles</h2>
+                <p>No se encontraron docentes con asignaciones registradas</p>
+            @endforelse
         </div>
 
         <!-- Contenido principal -->
@@ -285,16 +291,12 @@
                 <div class="docente-header">
                     DOCENTE: {{ $docente['primer_nombre'] }} {{ $docente['segundo_nombre'] }} {{ $docente['tercer_nombre'] }} {{ $docente['primer_apellido'] }} {{ $docente['segundo_apellido'] }}
                 </div>
-                <div class="docente-info">
-                    <strong>Código:</strong> <span>{{ $docente['codigo'] ?? 'N/A' }}</span> | 
-                    <strong>Cédula:</strong> <span>{{ $docente['numero_documento'] ?? 'N/A' }}</span>
-                </div>
                 
                 @foreach($docente['grados'] as $gradoKey => $gradoData)
                     <div class="grado-box">
                         <div class="grado-header">
                             <span>GRADO: {{ $gradoData['grado'] }}</span>
-                            <span>SECCIÓN: {{ $gradoData['seccion_asignada'] ?? 'N/A' }}</span>
+                            <span>SECCIÓN: {{ $gradoData['seccion'] ?? 'N/A' }}</span>
                         </div>
                         
                         <div class="content-section">

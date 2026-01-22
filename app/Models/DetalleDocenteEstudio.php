@@ -31,5 +31,10 @@ class DetalleDocenteEstudio extends Model
         return $this->belongsTo(EstudiosRealizado::class, 'estudios_id', 'id');
     }
 
+    public function docenteAreaGrados()
+    {
+        return $this->hasMany(DocenteAreaGrado::class, 'docente_estudio_realizado_id', 'id');
+    }
+
     
 }
