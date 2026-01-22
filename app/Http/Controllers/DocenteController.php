@@ -421,7 +421,7 @@ class DocenteController extends Controller
         }
     }
 
-    public function DocenteMateria($id = null, Request $request)
+    public function DocenteMateria(Request $request, $id = null)
     {
         try {
             // Obtener parámetros de filtro

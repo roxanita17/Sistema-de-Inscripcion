@@ -337,7 +337,25 @@ return new Promise(async (resolve) => {
             return;
         }
         
-        const response = await fetch(`${window.verificarCedulaUrl}?numero_documento=${cedula}`);
+        // Obtener el campo de cédula y sus datos
+        const cedulaField = document.getElementById('numero_documento');
+        const originalValue = cedulaField ? cedulaField.dataset.originalValue : null;
+        const personaId = cedulaField ? cedulaField.dataset.personaId : null;
+        
+        // Si la cédula no ha cambiado, no validar duplicados
+        if (originalValue && cedula === originalValue) {
+            clearError({ target: cedulaField });
+            resolve(true);
+            return;
+        }
+        
+        // Construir URL con parámetros
+        let url = `${window.verificarCedulaUrl}?numero_documento=${cedula}`;
+        if (personaId) {
+            url += `&persona_id=${personaId}`;
+        }
+        
+        const response = await fetch(url);
         
         if (!response.ok) {
             const errorData = await response.json();
