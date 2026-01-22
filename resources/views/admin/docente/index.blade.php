@@ -210,15 +210,6 @@
                                                                 PDF individual
                                                             </a>
                                                         </li>
-                                                        <li>
-                                                            <a class="dropdown-item d-flex align-items-center text-danger"
-                                                                type="button"
-                                                                href="{{ route('admin.docente.DocenteMateriaIndividual', $datos->id) }}"
-                                                                target="_blank" title="Generar reporte de materias">
-                                                                <i class="fas fa-file-pdf me-2"></i>
-                                                                Materias PDF
-                                                            </a>
-                                                        </li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -271,8 +262,5 @@
     </div>
 
     <x-pagination :paginator="$docentes" />
-
-    <!-- Modal de Filtros -->
-    @include('admin.docente.modales.filtroModal')
 
 @endsection
