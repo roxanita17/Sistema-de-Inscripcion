@@ -198,7 +198,7 @@ class Inscripcion extends Model
                 'updated_at' => now()
             ]);
     }
-
+ 
     public function obtenerDatosCompletos()
     {
         $alumno = $this->alumno?->load([
