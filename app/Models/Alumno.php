@@ -230,9 +230,7 @@ class Alumno extends Model
                 'generos.genero as nombre_genero',
                 'tipo_documentos.nombre as tipo_documento',
                 'pais.nameES as pais',
-
-
-
+                
                 'etnia_indigenas.nombre as etnia',
                 'lateralidads.lateralidad',
                 'orden_nacimientos.orden_nacimiento'

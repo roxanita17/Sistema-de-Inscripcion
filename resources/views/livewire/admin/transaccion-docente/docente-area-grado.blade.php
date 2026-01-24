@@ -503,7 +503,7 @@
             <div class="card-header-modern">
                 <div class="header-left">
                     <div class="header-icon">
-                         <i class="fas fa-plus-circle"></i>
+                        <i class="fas fa-plus-circle"></i>
                     </div>
                     <div>
                         <h3>Agregar Grupo Estable</h3>
@@ -586,13 +586,13 @@
                     </div>
                 </div>
             </div>
-             <hr class=" pt-0" style="border-top: 2px dashed #e5e7eb;">
+            <hr class=" pt-0" style="border-top: 2px dashed #e5e7eb;">
 
 
             <div class="card-body-modern pt-0">
                 <div class="table-wrapper">
                     <table class="table-modern">
-                        <thead >
+                        <thead>
                             <tr>
                                 <th style="text-align: center; vertical-align: middle;">Grupo Estable</th>
                                 <th style="text-align: center; vertical-align: middle;">Nivel Académico</th>
@@ -606,17 +606,18 @@
                                     <td style="text-align: center; vertical-align: middle;">
                                         <strong>{{ $detalle->grupoEstable->nombre_grupo_estable ?? 'N/A' }}</strong>
                                     </td>
-                                    <td style="text-align: center; vertical-align: middle;">{{ $detalle->gradoGrupoEstable->numero_grado ?? 'N/A' }}</td>
-                                   <td style="text-align: center; vertical-align: middle;">
-                                    <div style="display: flex; justify-content: center;">
-                                        <button class="action-btn btn-delete"
-                                            wire:click="$set('asignacionAEliminar', {{ $detalle->id }})"
-                                            data-bs-toggle="modal" data-bs-target="#modalEliminarAsignacion"
-                                            title="Eliminar">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
-                                </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        {{ $detalle->gradoGrupoEstable->numero_grado ?? 'N/A' }}</td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <div style="display: flex; justify-content: center;">
+                                            <button class="action-btn btn-delete"
+                                                wire:click="$set('asignacionAEliminar', {{ $detalle->id }})"
+                                                data-bs-toggle="modal" data-bs-target="#modalEliminarAsignacion"
+                                                title="Eliminar">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>

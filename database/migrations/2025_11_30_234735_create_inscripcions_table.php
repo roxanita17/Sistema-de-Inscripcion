@@ -51,10 +51,9 @@ return new class extends Migration
             $table->string('estado_documentos')->default('Pendiente');
 
             // Fecha de inscripción
-            $table->string('observaciones')->nullable();
+            $table->text('observaciones')->nullable();
             $table->boolean('acepta_normas_contrato')->default(false);
-            $table->string('status')->default('Activo'); 
-
+            $table->string('status')->default('Activo');
             $table->timestamps();
             $table->softDeletes();
         });

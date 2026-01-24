@@ -10,7 +10,6 @@
    
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
-
     @livewireStyles
 @stop
 
@@ -5686,6 +5685,12 @@
                                 return;
                             }
                             
+                            // BLOQUEO DE SEGURIDAD: Esperar un tiempo después de copia reciente
+                            if (window.ultimaCopiaDatos && Date.now() - window.ultimaCopiaDatos < 1000) {
+                                console.log('[TOGGLE] ⚠️ Copia reciente detectada, esperando antes de procesar cola');
+                                return;
+                            }
+                            
                             // Usar bloqueo global para evitar conflictos con otros procesos
                             if (window.reconstruyendoSelectpickers || window.reconstruccionCola.length === 0) {
                                 return;
@@ -6395,6 +6400,9 @@
                     // Deshabilitar los campos después de copiar los datos
                     toggleCamposRepresentante(true);
                     
+                    // Registrar timestamp de la copia para bloqueo de seguridad
+                    window.ultimaCopiaDatos = Date.now();
+                    
                     console.log(`=== COPIA WATCHDOG ${mensajeExito.toUpperCase()} COMPLETADA ===`);
                         
                 } catch (error) {
@@ -6403,10 +6411,52 @@
                     window.copiandoDatosProgenitor = false;
                     throw error; // Re-lanzar para que se maneje arriba si es necesario
                 } finally {
-                    // CORRECCIÓN: Resetear bandera SOLO al finalizar completamente la copia
+                    // CORRECCIÓN: Esperar un momento antes de resetear la bandera para evitar conflictos con la cola de reconstrucción
                     clearTimeout(watchdogTimeout); // Limpiar el timeout para evitar resets innecesarios
-                    window.copiandoDatosProgenitor = false;
-                    console.log('[COPIA WATCHDOG] ✅ Bandera reseteada al finalizar copia completamente');
+                    
+                    // Esperar a que termine cualquier procesamiento de la cola de reconstrucción
+                    setTimeout(() => {
+                        window.copiandoDatosProgenitor = false;
+                        console.log('[COPIA WATCHDOG] ✅ Bandera reseteada después de esperar procesamiento de cola');
+                        
+                        // VERIFICACIÓN FINAL: Asegurar que los selects copiados estén correctamente inicializados
+                        setTimeout(() => {
+                            const selectsParaVerificar = [
+                                'prefijo-representante',
+                                'prefijo_dos-representante', 
+                                'ocupacion-representante',
+                                'idPais-representante',
+                                'idEstado-representante',
+                                'idMunicipio-representante',
+                                'idparroquia-representante'
+                            ];
+                            
+                            selectsParaVerificar.forEach(selectId => {
+                                const select = document.getElementById(selectId);
+                                if (select && select.value) {
+                                    const $select = $(select);
+                                    if ($select.hasClass('selectpicker') && !$select.data('selectpicker')) {
+                                        console.log(`[VERIFICACIÓN FINAL] Re-inicializando ${selectId}...`);
+                                        try {
+                                            $select.selectpicker({
+                                                liveSearch: true,
+                                                size: 8,
+                                                noneResultsText: 'No hay resultados para {0}',
+                                                selectOnTab: false,
+                                                showSubtext: false,
+                                                showIcon: true,
+                                                width: 'auto'
+                                            });
+                                            $select.selectpicker('refresh');
+                                            console.log(`[VERIFICACIÓN FINAL] ✅ ${selectId} re-inicializado`);
+                                        } catch (error) {
+                                            console.error(`[VERIFICACIÓN FINAL] ❌ Error re-inicializando ${selectId}:`, error);
+                                        }
+                                    }
+                                }
+                            });
+                        }, 200); // Esperar 200ms adicionales para verificación
+                    }, 500); // Esperar 500ms para asegurar que la cola termine
                 }
             }
 
@@ -6536,7 +6586,21 @@
 
             document.querySelectorAll('input[name*="numero_documento"]').forEach(input => {
                 input.addEventListener('input', function() {
+                    // Limpiar caracteres no numéricos y limitar longitud
                     this.value = this.value.replace(/[^0-9]/g, '').substring(0, 8);
+                    
+                    // Validar en tiempo real la longitud mínima
+                    const valor = this.value.trim();
+                    if (valor.length > 0 && valor.length < 7) {
+                        mostrarError(this, 'La cédula debe tener al menos 7 dígitos');
+                    } else if (valor.length >= 7) {
+                        limpiarError(this);
+                    }
+                });
+                
+                // Validar al salir del campo (blur)
+                input.addEventListener('blur', function() {
+                    validarnumero_documento(this);
                 });
             });
         });
@@ -6635,13 +6699,25 @@
                 null;
         }
 
-        // Validar cédula (solo verifica que no esté vacío si es requerido)
+        // Validar cédula (verifica que no esté vacío y tenga al menos 7 dígitos)
         function validarnumero_documento(input) {
             if (!input) return true; // No hay input, no validar
 
             const numero_documento = input.value.trim();
             if (input.required && !numero_documento) {
                 mostrarError(input, 'La cédula es obligatoria');
+                return false;
+            }
+
+            // Validar que tenga al menos 7 dígitos
+            if (numero_documento && numero_documento.length < 7) {
+                mostrarError(input, 'La cédula debe tener al menos 7 dígitos');
+                return false;
+            }
+
+            // Validar que solo contenga números (opcional, pero recomendado)
+            if (numero_documento && !/^\d+$/.test(numero_documento)) {
+                mostrarError(input, 'La cédula solo debe contener números');
                 return false;
             }
 

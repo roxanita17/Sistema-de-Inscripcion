@@ -8,9 +8,7 @@ use App\Services\DocumentoService;
 use App\Repositories\InscripcionRepository;
 use App\Repositories\RepresentanteRepository;
 use App\DTOs\InscripcionData;
-use App\Exceptions\InscripcionException;
-use App\Models\Localidad;
-use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 
 class Inscripcion extends Component
@@ -19,6 +17,7 @@ class Inscripcion extends Component
     protected DocumentoService $documentoService;
     protected InscripcionRepository $inscripcionRepository;
     protected RepresentanteRepository $representanteRepository;
+    
     public $alumnoId;
     public $padreId;
     public $madreId;
@@ -68,6 +67,7 @@ class Inscripcion extends Component
     public string $tipo_inscripcion = 'nuevo_ingreso';
     public bool $gradoSinCupos = false;
     public string $mensajeCupos = '';
+
     public function boot(
         InscripcionService $inscripcionService,
         DocumentoService $documentoService,
@@ -139,9 +139,9 @@ class Inscripcion extends Component
     public function rules()
     {
         return [
-            'estado_id' => 'required|exists:estados,id',
-            'municipio_id' => 'required|exists:municipios,id',
-            'localidad_id' => 'required|exists:localidads,id',
+            'estado_id' => $this->esVenezolano ? 'required|exists:estados,id' : 'nullable',
+            'municipio_id' => $this->esVenezolano ? 'required|exists:municipios,id' : 'nullable',
+            'localidad_id' => $this->esVenezolano ? 'required|exists:localidads,id' : 'nullable',
             'numero_zonificacion' => [
                 'nullable',
                 'regex:/^\d+$/'
@@ -152,6 +152,7 @@ class Inscripcion extends Component
             'otroPaisNombre' => !$this->esVenezolano && !$this->institucion_procedencia_id
                 ? 'required|string|max:255'
                 : 'nullable',
+            'paisId' => 'required|exists:pais,id',
             'expresion_literaria_id' => 'required|exists:expresion_literarias,id',
             'gradoId' => [
                 'required',
@@ -176,11 +177,15 @@ class Inscripcion extends Component
     }
 
     protected $messages = [
+        'paisId.required' => 'Debe seleccionar un país.',
+        'paisId.exists' => 'El país seleccionado no es válido.',
         'tipo_inscripcion.required' => 'Debe seleccionar el tipo de inscripción.',
         'tipo_inscripcion.in' => 'El tipo de inscripción no es válido.',
         'numero_zonificacion.regex' => 'El número de zonificación solo puede contener números.',
         'institucion_procedencia_id.required' => 'Este campo es requerido.',
         'institucion_procedencia_id.exists' => 'La institución de procedencia seleccionada no es válida.',
+        'otroPaisNombre.required' => 'Debe ingresar el nombre de la institución extranjera.',
+        'otroPaisNombre.max' => 'El nombre de la institución no puede exceder 255 caracteres.',
         'expresion_literaria_id.required' => 'Este campo es requerido.',
         'expresion_literaria_id.exists' => 'La expresión literaria seleccionada no es válida.',
         'gradoId.required' => 'Este campo es requerido.',
@@ -189,8 +194,7 @@ class Inscripcion extends Component
         'seccion_id.exists' => 'La sección seleccionada no es válida.',
         'documentos.array' => 'El formato de los documentos seleccionados no es válido.',
         'documentos.*.string' => 'Uno o más documentos seleccionados no son válidos.',
-        'acepta_normas_contrato.accepted' =>
-        'Debe aceptar las normas del contrato para continuar.',
+        'acepta_normas_contrato.accepted' => 'Debe aceptar las normas del contrato para continuar.',
         'anio_egreso.required' => 'Este campo es requerido.',
         'anio_egreso.date' => 'El año de egreso debe ser 7 años antes del actual.',
     ];
@@ -507,70 +511,141 @@ class Inscripcion extends Component
             ]);
         }
     }
+
     private function crearInstitucionSiNoEsVenezolano(): ?int
     {
-        if ($this->esVenezolano) {
-            return $this->institucion_procedencia_id;
-        }
-        if (trim($this->otroPaisNombre) === '') {
-            return null;
-        }
-        $institucion = \App\Models\InstitucionProcedencia::firstOrCreate(
-            [
+        try {
+            if ($this->esVenezolano) {
+                Log::info('Inscripción Venezuela - Institución ID: ' . $this->institucion_procedencia_id);
+                return $this->institucion_procedencia_id;
+            }
+
+            if (!$this->paisId) {
+                Log::error('Inscripción Extranjera - No se seleccionó país');
+                throw new \Exception('Debe seleccionar un país para la institución extranjera.');
+            }
+
+            $nombreInstitucion = trim($this->otroPaisNombre);
+            
+            if ($nombreInstitucion === '') {
+                Log::error('Inscripción Extranjera - Nombre de institución vacío');
+                throw new \Exception('Debe ingresar el nombre de la institución extranjera.');
+            }
+
+            Log::info('Creando institución extranjera', [
                 'pais_id' => $this->paisId,
-                'nombre_institucion' => $this->otroPaisNombre,
-                'status' => true,
-            ],
-            [
-                'localidad_id' => null,
-            ]
-        );
-        return $institucion->id;
+                'nombre' => $nombreInstitucion
+            ]);
+
+            $institucion = \App\Models\InstitucionProcedencia::firstOrCreate(
+                [
+                    'pais_id' => $this->paisId,
+                    'nombre_institucion' => $nombreInstitucion,
+                ],
+                [
+                    'localidad_id' => null,
+                    'status' => true,
+                ]
+            );
+
+            Log::info('Institución extranjera creada/encontrada', [
+                'id' => $institucion->id,
+                'nombre' => $institucion->nombre_institucion
+            ]);
+
+            return $institucion->id;
+            
+        } catch (\Exception $e) {
+            Log::error('Error al crear institución de procedencia', [
+                'mensaje' => $e->getMessage(),
+                'pais_id' => $this->paisId,
+                'esVenezolano' => $this->esVenezolano,
+                'otroPaisNombre' => $this->otroPaisNombre,
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
 
     public function registrar()
     {
-        if (!$this->validarRepresentantes()) {
-            return;
-        }
-        if (!empty($this->documentosFaltantes)) {
-            $mensaje = collect($this->documentosFaltantes)
-                ->map(fn($doc) => $this->documentosEtiquetas[$doc] ?? $doc)
-                ->implode('<br>');
-
-            $this->dispatch('swal', [
-                'icon' => 'error',
-                'title' => 'Documentos incompletos',
-                'html' => $mensaje
-            ]);
-
-            return;
-        }
-
-        if (!$this->inscripcionService->verificarCuposDisponibles($this->gradoId)) {
-            $this->dispatch('swal', [
-                'icon' => 'error',
-                'title' => 'Cupos agotados',
-                'html' => 'Este nivel academico ha alcanzado el máximo de cupos disponibles.'
-            ]);
-            return;
-        }
-        $this->validate();
         try {
+            if (!$this->validarRepresentantes()) {
+                return;
+            }
+
+            // Verificar solo documentos OBLIGATORIOS
+            $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
+                $this->documentos,
+                $this->requiereAutorizacion(),
+                $this->esPrimerGrado
+            );
+
+            // Solo bloquear si faltan documentos OBLIGATORIOS
+            if (!$evaluacion['puede_guardar']) {
+                $mensaje = collect($evaluacion['faltantes_obligatorios'])
+                    ->map(fn($doc) => $this->documentosEtiquetas[$doc] ?? $doc)
+                    ->implode('<br>');
+
+                $this->dispatch('swal', [
+                    'icon' => 'error',
+                    'title' => 'Documentos obligatorios incompletos',
+                    'html' => 'Debe adjuntar los siguientes documentos obligatorios:<br><br>' . $mensaje
+                ]);
+
+                return;
+            }
+
+            if (!$this->inscripcionService->verificarCuposDisponibles($this->gradoId)) {
+                $this->dispatch('swal', [
+                    'icon' => 'error',
+                    'title' => 'Cupos agotados',
+                    'html' => 'Este nivel academico ha alcanzado el máximo de cupos disponibles.'
+                ]);
+                return;
+            }
+
+            $this->validate();
+
+            Log::info('Datos antes de crear DTO', [
+                'esVenezolano' => $this->esVenezolano,
+                'paisId' => $this->paisId,
+                'institucion_procedencia_id' => $this->institucion_procedencia_id,
+                'otroPaisNombre' => $this->otroPaisNombre,
+            ]);
+
             $dto = $this->crearInscripcionDTO();
+            
+            Log::info('DTO creado exitosamente', [
+                'institucion_procedencia_id' => $dto->institucion_procedencia_id
+            ]);
+
             $inscripcion = $this->inscripcionService->registrar($dto);
+            
             if ($this->alumnoId && !empty($this->discapacidadesAgregadas)) {
                 $this->guardarDiscapacidadesAlumno($this->alumnoId);
             }
 
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
-        } catch (InscripcionException $e) {
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Error de validación en inscripción', [
+                'errors' => $e->errors(),
+            ]);
+            throw $e;
+            
+        } catch (\Exception $e) {
+            Log::error('Error en inscripción', [
+                'mensaje' => $e->getMessage(),
+                'linea' => $e->getLine(),
+            ]);
+            
             $this->dispatch('swal', [
                 'icon' => 'error',
-                'title' => 'No se puede completar la inscripción',
-                'message' => $e->getMessage()
+                'title' => 'Error al registrar',
+                'text' => $e->getMessage()
             ]);
         }
     }
@@ -581,52 +656,96 @@ class Inscripcion extends Component
             $this->addError('acepta_normas_contrato', 'Debe aceptar las normas para continuar.');
             return;
         }
+
         if (!$this->validarRepresentantes()) {
             return;
         }
-        if (!empty($this->documentosFaltantes)) {
-            $mensaje = collect($this->documentosFaltantes)
+
+        // Verificar solo documentos OBLIGATORIOS
+        $evaluacion = $this->documentoService->evaluarEstadoDocumentos(
+            $this->documentos,
+            $this->requiereAutorizacion(),
+            $this->esPrimerGrado
+        );
+
+        // Solo bloquear si faltan documentos OBLIGATORIOS
+        if (!$evaluacion['puede_guardar']) {
+            $mensaje = collect($evaluacion['faltantes_obligatorios'])
                 ->map(fn($doc) => $this->documentosEtiquetas[$doc] ?? $doc)
                 ->implode('<br>');
 
             $this->dispatch('swal', [
                 'icon' => 'error',
-                'title' => 'Documentos incompletos',
-                'html' => $mensaje
+                'title' => 'Documentos obligatorios incompletos',
+                'html' => 'Debe adjuntar los siguientes documentos obligatorios:<br><br>' . $mensaje
             ]);
-
+            
             return;
         }
+        
         $this->dispatch('solicitarDatosAlumno');
     }
 
     public function guardarTodo($datos = [])
     {
-        if (empty($datos)) {
-            $this->dispatch('swal', [
-                'icon' => 'error',
-                'title' => 'No se puede completar la inscripción',
-                'message' => 'No se recibieron datos del alumno.'
-            ]);
-            return;
-        }
-
-        $this->validate();
-
         try {
+            if (empty($datos)) {
+                $this->dispatch('swal', [
+                    'icon' => 'error',
+                    'title' => 'No se puede completar la inscripción',
+                    'message' => 'No se recibieron datos del alumno.'
+                ]);
+                return;
+            }
+
+            $this->validate();
+
+            Log::info('Guardando inscripción con alumno nuevo', [
+                'esVenezolano' => $this->esVenezolano,
+                'paisId' => $this->paisId,
+                'otroPaisNombre' => $this->otroPaisNombre,
+            ]);
+
             $dto = $this->crearInscripcionDTO();
+            
             $inscripcion = $this->inscripcionService->registrarConAlumno(
                 $datos,
                 $dto,
                 $this->discapacidadesAgregadas
             );
+            
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Error de validación en guardarTodo', [
+                'errors' => $e->errors()
+            ]);
+            throw $e;
+            
         } catch (InscripcionException $e) {
+            Log::error('Error InscripcionException en guardarTodo', [
+                'mensaje' => $e->getMessage()
+            ]);
+            
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'No se puede completar la inscripción',
                 'message' => $e->getMessage()
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error general en guardarTodo', [
+                'mensaje' => $e->getMessage(),
+                'archivo' => $e->getFile(),
+                'linea' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Error inesperado',
+                'message' => 'Ocurrió un error al procesar la inscripción.'
             ]);
         }
     }

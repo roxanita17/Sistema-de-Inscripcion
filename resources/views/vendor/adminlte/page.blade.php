@@ -55,4 +55,5 @@
 @section('adminlte_js')
     @stack('js')
     @yield('js')
+    <script src="{{ asset('js/global.js') }}"></script>
 @stop

@@ -106,6 +106,8 @@
                                 pattern="[0-9]+" maxlength="8" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                                 class="form-control-modern @error('numero_documento') is-invalid @enderror"
                                 value="{{ old('numero_documento', $docente->persona->numero_documento) }}"
+                                data-original-value="{{ $docente->persona->numero_documento }}"
+                                data-persona-id="{{ $docente->persona->id }}"
                                 placeholder="12345678" required>
                             @error('numero_documento')
                                 <div class="invalid-feedback-modern">
