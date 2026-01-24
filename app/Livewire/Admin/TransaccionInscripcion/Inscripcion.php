@@ -181,6 +181,8 @@ class Inscripcion extends Component
         'representanteLegalId.required' => 'Debe selecionar un representante legal',
         'paisId.required' => 'Debe seleccionar un país.',
         'paisId.exists' => 'El país seleccionado no es válido.',
+        'localidad_id.required' => 'Este campo es requerido.',
+        'localidad_id.exists' => 'La localidad seleccionada no es válida.',
         'tipo_inscripcion.required' => 'Debe seleccionar el tipo de inscripción.',
         'tipo_inscripcion.in' => 'El tipo de inscripción no es válido.',
         'numero_zonificacion.regex' => 'El número de zonificación solo puede contener números.',
@@ -361,6 +363,10 @@ class Inscripcion extends Component
 
     public function updatedPaisId($value)
     {
+        if ($value) {
+            $this->resetErrorBag('paisId');
+        }
+
         if (!$value) {
             $this->esVenezolano = true;
             return;
@@ -392,6 +398,11 @@ class Inscripcion extends Component
         $this->institucion_procedencia_id = null;
         $this->localidades = [];
         $this->instituciones = [];
+
+        if ($value) {
+            $this->resetErrorBag('estado_id');
+        }
+
         if (!$value) {
             $this->municipios = [];
             return;
@@ -407,6 +418,11 @@ class Inscripcion extends Component
         $this->localidad_id = null;
         $this->institucion_procedencia_id = null;
         $this->instituciones = [];
+
+        if ($value) {
+            $this->resetErrorBag('municipio_id');
+        }
+
         if (!$value) {
             $this->localidades = [];
             return;
@@ -421,6 +437,11 @@ class Inscripcion extends Component
     {
         $this->institucion_procedencia_id = null;
         $this->resetErrorBag('institucion_procedencia_id');
+
+        if ($value) {
+            $this->resetErrorBag('localidad_id');
+        }
+
         if (!$value) {
             $this->instituciones = [];
             return;
