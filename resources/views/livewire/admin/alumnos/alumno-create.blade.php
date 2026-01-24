@@ -20,18 +20,13 @@
                                 Doc.
                                 <span class="required-badge">*</span>
                             </label>
-                            <select wire:model.livee="tipo_documento_id"
+                            <select wire:model.live="tipo_documento_id"
                                 class="form-control-modern @error('tipo_documento_id') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($tipos_documentos as $item)
                                     <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                 @endforeach
                             </select>
-                            @error('tipo_documento_id')
-                                <div class="invalid-feedback-modern">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
                         </div>
                     </div>
 
