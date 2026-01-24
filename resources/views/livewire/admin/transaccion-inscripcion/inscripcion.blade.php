@@ -318,6 +318,11 @@
                             </option>
                         @endforeach
                     </select>
+                    @error('representanteLegalId')
+                        <div class="invalid-feedback-modern">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
                 </div>
             </div>
             @if ($representanteLegalSeleccionado)

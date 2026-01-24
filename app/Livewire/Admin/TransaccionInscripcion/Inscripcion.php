@@ -17,7 +17,7 @@ class Inscripcion extends Component
     protected DocumentoService $documentoService;
     protected InscripcionRepository $inscripcionRepository;
     protected RepresentanteRepository $representanteRepository;
-    
+
     public $alumnoId;
     public $padreId;
     public $madreId;
@@ -146,6 +146,7 @@ class Inscripcion extends Component
                 'nullable',
                 'regex:/^\d+$/'
             ],
+            'representanteLegalId' => 'required',
             'institucion_procedencia_id' => $this->esVenezolano
                 ? 'required|exists:institucion_procedencias,id'
                 : 'nullable',
@@ -177,6 +178,7 @@ class Inscripcion extends Component
     }
 
     protected $messages = [
+        'representanteLegalId.required' => 'Debe selecionar un representante legal',
         'paisId.required' => 'Debe seleccionar un país.',
         'paisId.exists' => 'El país seleccionado no es válido.',
         'tipo_inscripcion.required' => 'Debe seleccionar el tipo de inscripción.',
@@ -526,7 +528,7 @@ class Inscripcion extends Component
             }
 
             $nombreInstitucion = trim($this->otroPaisNombre);
-            
+
             if ($nombreInstitucion === '') {
                 Log::error('Inscripción Extranjera - Nombre de institución vacío');
                 throw new \Exception('Debe ingresar el nombre de la institución extranjera.');
@@ -554,7 +556,6 @@ class Inscripcion extends Component
             ]);
 
             return $institucion->id;
-            
         } catch (\Exception $e) {
             Log::error('Error al crear institución de procedencia', [
                 'mensaje' => $e->getMessage(),
@@ -616,32 +617,30 @@ class Inscripcion extends Component
             ]);
 
             $dto = $this->crearInscripcionDTO();
-            
+
             Log::info('DTO creado exitosamente', [
                 'institucion_procedencia_id' => $dto->institucion_procedencia_id
             ]);
 
             $inscripcion = $this->inscripcionService->registrar($dto);
-            
+
             if ($this->alumnoId && !empty($this->discapacidadesAgregadas)) {
                 $this->guardarDiscapacidadesAlumno($this->alumnoId);
             }
 
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
-            
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Error de validación en inscripción', [
                 'errors' => $e->errors(),
             ]);
             throw $e;
-            
         } catch (\Exception $e) {
             Log::error('Error en inscripción', [
                 'mensaje' => $e->getMessage(),
                 'linea' => $e->getLine(),
             ]);
-            
+
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'Error al registrar',
@@ -679,10 +678,10 @@ class Inscripcion extends Component
                 'title' => 'Documentos obligatorios incompletos',
                 'html' => 'Debe adjuntar los siguientes documentos obligatorios:<br><br>' . $mensaje
             ]);
-            
+
             return;
         }
-        
+
         $this->dispatch('solicitarDatosAlumno');
     }
 
@@ -707,33 +706,30 @@ class Inscripcion extends Component
             ]);
 
             $dto = $this->crearInscripcionDTO();
-            
+
             $inscripcion = $this->inscripcionService->registrarConAlumno(
                 $datos,
                 $dto,
                 $this->discapacidadesAgregadas
             );
-            
+
             session()->flash('success', 'Inscripción registrada exitosamente.');
             return redirect()->route('admin.transacciones.inscripcion.index');
-            
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Error de validación en guardarTodo', [
                 'errors' => $e->errors()
             ]);
             throw $e;
-            
-        } catch (InscripcionException $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Error InscripcionException en guardarTodo', [
                 'mensaje' => $e->getMessage()
             ]);
-            
+
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'No se puede completar la inscripción',
                 'message' => $e->getMessage()
             ]);
-            
         } catch (\Exception $e) {
             Log::error('Error general en guardarTodo', [
                 'mensaje' => $e->getMessage(),
@@ -741,7 +737,7 @@ class Inscripcion extends Component
                 'linea' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'Error inesperado',
@@ -752,7 +748,7 @@ class Inscripcion extends Component
 
     private function validarRepresentantes(): bool
     {
-        if (!$this->padreId && !$this->madreId && !$this->representanteLegalId) {
+        if (!$this->representanteLegalId) {
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'No se puede completar la inscripción',
