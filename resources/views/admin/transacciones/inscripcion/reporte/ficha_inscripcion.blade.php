@@ -2,8 +2,7 @@
 <html lang="es">
 
 <head>
-
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Ficha de Inscripción</title>
 
     <style>
@@ -215,31 +214,30 @@
 
     <div class="pagina">
 
-        <table width="100%" class="cintillo cintillo-color">
-            <tr>
+        <table width="100%" class="cintillo cintillo-color encabezado ">
+            <tr  style="color: #eee;">
                 <td width="20%" class="">
                     <img src="{{ public_path('img/logo-ven.webp') }}" alt="Logo" width="90" height="30">
                 </td>
                 <td width="60%">
-
+                    <strong class=" titulo-principal" style="font-size: 14px">LICEO GRAL. JUAN GUILLERMO
+                        IRIBARREN</strong><br>
+                    PORTUGUESA - ARAURE<br>
                 </td>
-                <td width="20%" class="" style="color: #eee; font-size: 9px">
+                <td width="20%" class="" style=" font-size: 9px">
                     Ministerio del Poder Popular <br>
                     para la <b>Educacion</b>
                 </td>
             </tr>
         </table>
         <!-- ENCABEZADO -->
-        <table width="100%" class="encabezado">
+        <table width="100%" class="encabezado" style="margin-bottom: 25px">
             <tr>
                 <td width="20%" class="logo">
                     FOTO <br>REPRESENTANTE
                 </td>
                 <td width="60%">
-                    <strong class="text-azul titulo-principal" style="font-size: 14px">LICEO GRAL. JUAN GUILLERMO
-                        IRIBARREN</strong><br>
-                    PORTUGUESA - ARAURE<br>
-                    <strong class="text-azul">FECHA DE INSCRIPCION AÑO ESCOLAR:
+                    <strong class="text-azul" style="font-size: 10px">FECHA DE INSCRIPCION AÑO ESCOLAR:
                         {{ \Carbon\Carbon::parse($datosCompletos['anio_escolar']['inicio_anio_escolar'])->format('Y') }}
                         -
                         {{ \Carbon\Carbon::parse($datosCompletos['anio_escolar']['cierre_anio_escolar'])->format('Y') }}
@@ -278,7 +276,8 @@
                 </td>
                 <td class="campo" colspan="2">
                     <div class="valor label"><b>INSTITUCIÓN DE PROCEDENCIA:
-                        </b>{{ $datosCompletos['nuevo_ingreso']['institucion_procedencia']['nombre_institucion'] ?? 'N/A' }}</div>
+                        </b>{{ $datosCompletos['nuevo_ingreso']['institucion_procedencia']['nombre_institucion'] ?? 'N/A' }}
+                    </div>
                 </td>
             </tr>
 
@@ -388,12 +387,13 @@
             </tr>
             <tr>
                 <td class="campo" colspan="2">
-                    <div class="valor label"><b>LATERALIDAD: 
+                    <div class="valor label"><b>LATERALIDAD:
                         </b>{{ $datosCompletos['datos_adicionales']['lateralidad']['lateralidad'] ?? 'N/A' }}</div>
                 </td>
                 <td class="campo" colspan="2">
                     <div class="valor label"><b>ORDEN DE
-                            NACIMIENTO:  </b>{{ $datosCompletos['datos_adicionales']['orden_nacimiento']['orden_nacimiento'] ?? 'N/A' }}
+                            NACIMIENTO:
+                        </b>{{ $datosCompletos['datos_adicionales']['orden_nacimiento']['orden_nacimiento'] ?? 'N/A' }}
                     </div>
                 </td>
                 <td class="campo" colspan="1">
@@ -818,7 +818,7 @@
                         </span>
                     </div>
                 </td>
-                
+
             </tr>
             <tr>
                 <td class="campo" colspan="4">

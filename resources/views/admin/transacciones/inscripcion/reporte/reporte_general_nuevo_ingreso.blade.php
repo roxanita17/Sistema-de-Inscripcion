@@ -1,10 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-{{-- representante legal y su telefono
-nombre apellido y cedula del alumno
-discapacidad o condicion
-nivel y seccion
- --}}
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -263,43 +258,50 @@ nivel y seccion
             color: #666;
             margin-top: 5px;
         }
+
+        .cintillo-color {
+            background-color: #1589e1;
+        }
+
+        .encabezado td {
+            padding: 3px;
+            vertical-align: middle;
+        }
+
+        .titulo-principal {
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <!-- CINTILLO SUPERIOR -->
-        <div class="cintillo">
-            <table width="100%">
-                <tr>
-                    <td width="15%">
-                        <img src="{{ public_path('img/logo-ven.webp') }}" alt="Logo Venezuela">
-                    </td>
-                    <td width="70%"></td>
-                    <td width="15%" class="cintillo-text">
-                        Ministerio del Poder Popular<br>
-                        para la <strong>Educación</strong>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        <table width="100%" class="cintillo cintillo-color encabezado">
+            <tr style="color:#eee;">
+                <!-- IZQUIERDA -->
+                <td width="33%" class="text-left">
+                    <img src="{{ public_path('img/logo-ven.webp') }}" alt="Logo" width="90" height="30">
+                </td>
 
-        <!-- ENCABEZADO INSTITUCIÓN -->
-        <div class="institution-header">
-            <h1>LICEO GRAL. JUAN GUILLERMO IRIBARREN</h1>
-            <div class="institution-subtitle">Portuguesa - Araure</div>
-        </div>
+                <!-- CENTRO -->
+                <td width="34%" class="text-center" style="text-align: center">
+                    <strong class="titulo-principal" style="font-size:14px;">
+                        LICEO GRAL. JUAN GUILLERMO IRIBARREN
+                    </strong><br>
+                    PORTUGUESA – ARAURE
+                </td>
 
-        <!-- ENCABEZADO REPORTE -->
-        <div class="header">
-            <h2>REPORTE GENERAL - NUEVO INGRESO</h2>
-            <p>
-                Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}
-                @if (!empty($filtros['anio_escolar']))
-                    | Año Escolar: {{ $filtros['anio_escolar'] }}
-                @endif
-            </p>
-        </div>
+                <!-- DERECHA -->
+                <td width="33%" class="text-right" style="font-size:9px;">
+                    Ministerio del Poder Popular<br>
+                    para la <b>Educación</b>
+                </td>
+            </tr>
+
+        </table>
 
         <!-- TABLA DE DATOS -->
         <table>
@@ -398,6 +400,12 @@ nivel y seccion
                 </tr>
             </tfoot>
         </table>
+        <p>
+            Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}
+            @if (!empty($filtros['anio_escolar']))
+                | Año Escolar: {{ $filtros['anio_escolar'] }}
+            @endif
+        </p>
 
         <script type="text/php">
             if (isset($pdf)) {
