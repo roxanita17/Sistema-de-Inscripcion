@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -217,7 +218,8 @@ class Inscripcion extends Model
                             'municipio' => $alumno?->persona?->localidad?->municipio?->toArray() ?? null,
                             'estadoThroughMunicipio' => $alumno?->persona?->localidad?->municipio?->estado?->toArray() ?? null
                         ]
-                    )
+                    ),
+                    'genero' => $alumno?->persona?->genero?->genero
                 ]
             ),
             'alumno' => array_merge($alumno?->toArray() ?? [], [
@@ -236,18 +238,78 @@ class Inscripcion extends Model
                     ->toArray() ?? [],
                 'etnia_indigena' => $alumno?->etniaIndigena?->toArray(),
             ],
-            'persona_madre' => $this->madre?->persona?->toArray(),
+            'persona_madre' => $this->madre?->persona
+                ? array_merge(
+                    $this->madre->persona->toArray(),
+                    [
+                        'ocupacion' => $this->madre->ocupacion?->toArray(),
+                        'prefijo' => $this->madre->persona->prefijo?->toArray(),
+                        'direccion' => [
+                            'localidad' => $this->madre->localidads?->toArray(),
+                            'municipio' => $this->madre->municipios?->toArray(),
+                            'estado' => $this->madre->estado?->toArray(),
+                        ],
+                    ]
+                )
+                : null,
             'madre' => $this->madre?->toArray(),
-            'persona_padre' => $this->padre?->persona?->toArray(),
+            'persona_padre' => $this->padre?->persona
+                ? array_merge(
+                    $this->padre->persona->toArray(),
+                    [
+                        'ocupacion' => $this->padre->ocupacion?->toArray(),
+                        'prefijo' => $this->padre->persona->prefijo?->toArray(),
+                        'direccion' => [
+                            'localidad' => $this->padre->localidads?->toArray(),
+                            'municipio' => $this->padre->municipios?->toArray(),
+                            'estado' => $this->padre->estado?->toArray(),
+                        ],
+                    ]
+                )
+                : null,
+
             'padre' => $this->padre?->toArray(),
-            'representante_legal' => $this->representanteLegal?->load([
-                'representante.persona',
-                'banco' 
-            ])?->toArray(),
+            'persona_representante' => $this->representanteLegal?->representante?->persona
+                ? array_merge(
+                    $this->representanteLegal->representante->persona->toArray(),
+                    [
+                        'ocupacion' => $this->representanteLegal->representante->ocupacion?->toArray(),
+                        'prefijo' => $this->representanteLegal->representante->persona->prefijo?->toArray(),
+                        'direccion' => [
+                            'localidad' => $this->representanteLegal->representante->localidads?->toArray(),
+                            'municipio' => $this->representanteLegal->representante->municipios?->toArray(),
+                            'estado' => $this->representanteLegal->representante->estado?->toArray(),
+                        ],
+                    ]
+                )
+                : null,
+
+
+            'representante_legal' => $this->representanteLegal
+                ? array_merge(
+                    $this->representanteLegal->toArray(),
+                    [
+                        'banco' => $this->representanteLegal->banco?->toArray(),
+                        'representante' => [
+                            'persona' => $this->representanteLegal->representante?->persona?->toArray(),
+                            'prefijo' => $this->representanteLegal->representante?->persona?->prefijo?->toArray(),
+                            'ocupacion' => $this->representanteLegal->representante?->ocupacion?->toArray(),
+                            'direccion' => [
+                                'localidad' => $this->representanteLegal->representante?->localidads?->toArray(),
+                                'municipio' => $this->representanteLegal->representante?->municipios?->toArray(),
+                                'estado' => $this->representanteLegal->representante?->estado?->toArray(),
+                            ],
+                        ],
+                    ]
+                )
+                : null,
+
             'institucion_procedencia' => $this->nuevoIngreso?->institucionProcedencia?->toArray(),
             'expresion_literaria' => $this->nuevoIngreso?->expresionLiteraria?->toArray(),
             'grado' => $this->grado?->toArray(),
             'seccion' => $this->seccionAsignada?->toArray(),
+            'anio_escolar' => $this->anioEscolar?->toArray(),
+
         ];
     }
 

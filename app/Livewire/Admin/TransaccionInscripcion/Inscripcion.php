@@ -516,23 +516,23 @@ class Inscripcion extends Component
     {
         try {
             if ($this->esVenezolano) {
-                \Log::info('Inscripción Venezuela - Institución ID: ' . $this->institucion_procedencia_id);
+                Log::info('Inscripción Venezuela - Institución ID: ' . $this->institucion_procedencia_id);
                 return $this->institucion_procedencia_id;
             }
 
             if (!$this->paisId) {
-                \Log::error('Inscripción Extranjera - No se seleccionó país');
+                Log::error('Inscripción Extranjera - No se seleccionó país');
                 throw new \Exception('Debe seleccionar un país para la institución extranjera.');
             }
 
             $nombreInstitucion = trim($this->otroPaisNombre);
             
             if ($nombreInstitucion === '') {
-                \Log::error('Inscripción Extranjera - Nombre de institución vacío');
+                Log::error('Inscripción Extranjera - Nombre de institución vacío');
                 throw new \Exception('Debe ingresar el nombre de la institución extranjera.');
             }
 
-            \Log::info('Creando institución extranjera', [
+            Log::info('Creando institución extranjera', [
                 'pais_id' => $this->paisId,
                 'nombre' => $nombreInstitucion
             ]);
@@ -548,7 +548,7 @@ class Inscripcion extends Component
                 ]
             );
 
-            \Log::info('Institución extranjera creada/encontrada', [
+            Log::info('Institución extranjera creada/encontrada', [
                 'id' => $institucion->id,
                 'nombre' => $institucion->nombre_institucion
             ]);
@@ -556,7 +556,7 @@ class Inscripcion extends Component
             return $institucion->id;
             
         } catch (\Exception $e) {
-            \Log::error('Error al crear institución de procedencia', [
+            Log::error('Error al crear institución de procedencia', [
                 'mensaje' => $e->getMessage(),
                 'pais_id' => $this->paisId,
                 'esVenezolano' => $this->esVenezolano,
@@ -608,7 +608,7 @@ class Inscripcion extends Component
 
             $this->validate();
 
-            \Log::info('Datos antes de crear DTO', [
+            Log::info('Datos antes de crear DTO', [
                 'esVenezolano' => $this->esVenezolano,
                 'paisId' => $this->paisId,
                 'institucion_procedencia_id' => $this->institucion_procedencia_id,
@@ -617,7 +617,7 @@ class Inscripcion extends Component
 
             $dto = $this->crearInscripcionDTO();
             
-            \Log::info('DTO creado exitosamente', [
+            Log::info('DTO creado exitosamente', [
                 'institucion_procedencia_id' => $dto->institucion_procedencia_id
             ]);
 
@@ -631,13 +631,13 @@ class Inscripcion extends Component
             return redirect()->route('admin.transacciones.inscripcion.index');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Error de validación en inscripción', [
+            Log::error('Error de validación en inscripción', [
                 'errors' => $e->errors(),
             ]);
             throw $e;
             
         } catch (\Exception $e) {
-            \Log::error('Error en inscripción', [
+            Log::error('Error en inscripción', [
                 'mensaje' => $e->getMessage(),
                 'linea' => $e->getLine(),
             ]);

@@ -53,8 +53,7 @@ return new class extends Migration
             // Fecha de inscripción
             $table->text('observaciones')->nullable();
             $table->boolean('acepta_normas_contrato')->default(false);
-            $table->string('status')->default('Activo'); 
-
+            $table->string('status')->default('Activo');
             $table->timestamps();
             $table->softDeletes();
         });

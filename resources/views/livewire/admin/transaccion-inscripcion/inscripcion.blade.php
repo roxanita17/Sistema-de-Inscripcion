@@ -1115,7 +1115,7 @@
                         <i class="fas fa-arrow-left"></i>
                         Cancelar
                     </a>
-                    <button type="button" wire:click="finalizar" class="btn-create" wire:loading.attr="disabled"
+                    <button type="button" wire:click="finalizar" class="btn-create rd-submit-btn" wire:loading.attr="disabled"
                         @if (!$acepta_normas_contrato) disabled @endif
                         @if ($gradoSinCupos) disabled @endif>
                         <span wire:loading.remove wire:target="finalizar">

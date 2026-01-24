@@ -65,6 +65,8 @@ class Representante extends Model
         return $this->hasOne(RepresentanteLegal::class, 'representante_id', 'id');
     }
 
+    
+
     public function inscripciones()
     {
         return Inscripcion::where(function($query) {

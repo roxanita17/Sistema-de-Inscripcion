@@ -13,7 +13,7 @@ class RepresentanteLegal extends Model
 
     protected $fillable = [
         "representante_id",
-        "banco_id", 
+        "banco_id",  
         "parentesco",
         "correo_representante",
         "pertenece_a_organizacion_representante",

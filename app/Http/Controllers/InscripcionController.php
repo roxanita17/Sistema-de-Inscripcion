@@ -113,7 +113,7 @@ class InscripcionController extends Controller
 
             ->whereHas('nuevoIngreso', function ($q) use ($status) {
                 if ($status) {
-                    $q->where('status', $status); 
+                    $q->where('status', $status);
                 }
             })
 
@@ -222,6 +222,7 @@ class InscripcionController extends Controller
     public function reporte($id)
     {
         $inscripcion = Inscripcion::with([
+            'anioEscolar',
             'alumno.persona',
             'alumno.persona.localidad.estado.pais',
             'alumno.ordenNacimiento',
@@ -230,10 +231,25 @@ class InscripcionController extends Controller
             'alumno.etniaIndigena',
             'grado',
             'seccionAsignada',
-            'padre.persona',
-            'madre.persona',
-            'representanteLegal.representante.persona',
+            'madre.persona.prefijo',
+            'madre.ocupacion',
+            'madre.estado',
+            'madre.municipios',
+            'madre.localidads',
+
+            'padre.persona.prefijo',
+            'padre.ocupacion',
+            'padre.estado',
+            'padre.municipios',
+            'padre.localidads',
+
+            'representanteLegal.representante.persona.prefijo',
+            'representanteLegal.representante.ocupacion',
+            'representanteLegal.representante.estado',
+            'representanteLegal.representante.municipios',
+            'representanteLegal.representante.localidads',
             'representanteLegal.banco',
+
             'nuevoIngreso.institucionProcedencia',
             'nuevoIngreso.expresionLiteraria',
         ])->findOrFail($id);

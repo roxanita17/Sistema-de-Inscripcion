@@ -13,7 +13,6 @@ class Persona extends Model
     use ConvierteAMayusculas;
     use Capitalizar;
     protected $table = 'personas';
-
     protected $fillable = [
         'primer_nombre',
         'segundo_nombre',
