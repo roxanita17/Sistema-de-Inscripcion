@@ -11,8 +11,8 @@
 
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 9pt;
-            line-height: 1.3;
+            font-size: 8pt;
+            line-height: 1.2;
             color: #333;
             margin: 0;
             padding: 0;
@@ -111,7 +111,7 @@
         th,
         td {
             border: 1px solid #000000;
-            padding: 6px 8px;
+            padding: 4px 5px;
             vertical-align: middle;
             word-break: break-word;
         }
@@ -119,10 +119,9 @@
         th {
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 8pt;
+            font-size: 7pt;
             letter-spacing: 0.3px;
             text-align: center;
-            white-space: nowrap;
         }
 
         tbody tr:nth-child(even) {
@@ -172,17 +171,17 @@
 
         th:nth-child(2),
         td:nth-child(2) {
-            width: 35%;
+            width: 30%;
         }
 
         th:nth-child(3),
         td:nth-child(3) {
-            width: 12%;
+            width: 15%;
         }
 
         th:nth-child(4),
         td:nth-child(4) {
-            width: 38%;
+            width: 40%;
         }
 
         /* ESTILOS PARA IMPRESIÓN */

@@ -98,7 +98,7 @@
             color: #333;
             margin: 10px 0 5px 0;
             font-size: 10pt;
-            font-weight: bold;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
         }
@@ -191,12 +191,12 @@
 
         th:nth-child(4),
         td:nth-child(4) {
-            width: 15%;
+            width: 18%;
         }
 
         th:nth-child(5),
         td:nth-child(5) {
-            width: 8%;
+            width: 6%;
         }
 
         th:nth-child(6),
@@ -221,25 +221,23 @@
 
         th:nth-child(10),
         td:nth-child(10) {
-            width: 6%;
+            width: 8%;
         }
 
-        @if (isset($filtros['es_legal']) && $filtros['es_legal'])
-            th:nth-child(11),
-            td:nth-child(11) {
-                width: 8%;
-            }
+        th:nth-child(11),
+        td:nth-child(11) {
+            width: 8%;
+        }
 
-            th:nth-child(12),
-            td:nth-child(12) {
-                width: 8%;
-            }
+        th:nth-child(12),
+        td:nth-child(12) {
+            width: 8%;
+        }
 
-            th:nth-child(13),
-            td:nth-child(13) {
-                width: 6%;
-            }
-        @endif
+        th:nth-child(13),
+        td:nth-child(13) {
+            width: 6%;
+        }
 
         /* ESTILOS PARA IMPRESIÓN */
         @media print {
@@ -299,6 +297,11 @@
             font-weight: bold;
             line-height: 1.2;
         }
+
+        .long-text {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
     </style>
 </head>
 
@@ -327,12 +330,6 @@
                 </td>
             </tr>
         </table>
-
-        <!-- ENCABEZADO INSTITUCIÓN -->
-        <div class="institution-header">
-            <h1>Liceo Nacional "Gral. Juan Guillermo Iribarren"</h1>
-            <div class="institution-subtitle">Formando líderes para el futuro</div>
-        </div>
 
         <!-- ENCABEZADO REPORTE -->
         <div class="header">
@@ -381,14 +378,14 @@
             <tbody>
                 @forelse($representantes as $index => $representante)
                     <tr>
-                        <td class="text-center nowrap">{{ $representante->numero_documento ?? 'N/A' }}</td>
-                        <td class="text-left">
+                        <td class="text-center">{{ $representante->numero_documento ?? 'N/A' }}</td>
+                        <td class="long-text">
                             {{ $representante->primer_nombre ?? 'N/A' }}
                             {{ $representante->segundo_nombre ?? '' }}
                         </td>
-                        <td class="text-left">{{ $representante->primer_apellido ?? 'N/A' }} {{ $representante->segundo_apellido ?? '' }}
+                        <td>{{ $representante->primer_apellido ?? 'N/A' }} {{ $representante->segundo_apellido ?? '' }}
                         </td>
-                        <td class="text-left">
+                        <td class="long-text">
                             @if ($representante->alumno_cedula && $representante->alumno_primer_nombre)
                                 <strong>{{ $representante->alumno_cedula }}</strong><br>
                                 {{ $representante->alumno_primer_nombre ?? '' }}
@@ -400,8 +397,8 @@
                             @endif
                         </td>
                         <td class="text-center">{{ $representante->telefono ?? 'N/A' }}</td>
-                        <td class="text-left">{{ $representante->email ?? 'N/A' }}</td>
-                        <td class="text-left">{{ $representante->ocupacion_nombre ?? 'N/A' }}</td>
+                        <td class="long-text">{{ $representante->email ?? 'N/A' }}</td>
+                        <td class="long-text">{{ $representante->ocupacion_nombre ?? 'N/A' }}</td>
                         <td class="text-center">{{ $representante->parentesco ? 'Representante Legal' : 'Progenitor' }}
                         </td>
                         <td class="text-center">{{ $representante->seccion_nombre ?? 'N/A' }}</td>
