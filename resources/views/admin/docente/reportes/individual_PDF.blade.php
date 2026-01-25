@@ -4,417 +4,347 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Ficha del Docente - {{ $docente->numero_documento ?? 'N/A' }}</title>
     <style>
-        :root {
-            --color-primario: #4361ee;
-            --color-primario-suave: #6b8aff;
-            --color-primario-pastel: #eef2ff;
-            --color-secundario: #3743a8ff;
-            --color-secundario-pastel: #f3e8ff;
-            --color-acento: #4cc9f0;
-            --color-acento-pastel: #e6f7ff;
-            --color-fondo: #ffffff;
-            --color-borde: #d1daff;
-            --color-texto: #2d3748;
-            --color-texto-suave: #718096;
-        }
-        
         @page {
-            margin: 1cm;
-            size: landscape;
+            margin: 0.5cm 0.8cm;
+            size: A4;
         }
-        
+
         body {
-            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-            font-size: 10pt;
-            line-height: 1.5;
-            color: var(--color-texto);
-            margin: 0;
-            padding: 0;
-            background: var(--color-fondo);
-        }
-        
-        .container {
-            max-width: 100%;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 9px;
+            line-height: 1.1;
             margin: 0;
             padding: 0;
         }
-        
-        .institution-header {
-            background-color: var(--color-primario);
-            color: white;
-            padding: 8px 15px;
-            margin: 0 auto 0 auto;
-            border-radius: 6px;
-            box-shadow: 0 2px 6px rgba(67, 97, 238, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border-bottom: 2px solid var(--color-acento);
-            page-break-after: avoid;
-            page-break-inside: avoid;
-        }
-        
-        .institution-header img {
-            max-height: 70px;
-            max-width: 70px;
-            margin-right: 20px;
-            border-radius: 4px;
-            border: none;
-            padding: 0;
-            background: transparent;
-            object-fit: contain;
-        }
-        
-        .institution-text {
-            text-align: center;
-        }
-        
-        .institution-header h1 {
-            margin: 0 0 5px 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.2;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        }
-        
-        .institution-subtitle {
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin: 0;
-            opacity: 0.95;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.95);
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 0;
-            padding: 8px 15px;
-            border-bottom: 2px solid var(--color-primario);
-            background: var(--color-primario-pastel);
-            border-radius: 6px;
-            box-shadow: 0 1px 4px rgba(67, 97, 238, 0.08);
-            page-break-after: avoid;
-            page-break-inside: avoid;
-        }
-        
-        .header h1 {
-            color: var(--color-primario);
-            margin: 0 0 8px 0;
-            font-size: 16pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-        }
-        
-        .header h2 {
-            color: var(--color-secundario);
-            margin: 4px 0;
-            font-size: 13pt;
-            font-weight: 600;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-            text-transform: none;
-            letter-spacing: 0.3px;
-        }
-        
-        .header p {
-            color: var(--color-texto-suave);
-            margin: 8px 0 0 0;
-            font-size: 9pt;
-            font-style: italic;
-            letter-spacing: 0.2px;
-        }
-        
-        .section {
-            margin-bottom: 20px;
-            page-break-inside: avoid;
-            background: white;
-            padding: 15px 18px 18px;
-            border-radius: 8px;
-            border: 1px solid var(--color-borde);
-            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.05);
-        }
-        
-        .section-content {
-            padding: 5px 0;
-        }
-        
-        .section-title {
-            color: var(--color-primario);
-            font-size: 11pt;
-            margin: 5px 0 12px 0;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--color-borde);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: relative;
-            padding-left: 12px;
-        }
-        
-        .section-title::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 6px;
-            height: 16px;
-            width: 4px;
-            background: var(--color-primario);
-            border-radius: 2px;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            left: 12px;
-            bottom: -1px;
-            width: 60px;
-            height: 2px;
-            background: var(--color-acento);
-            border-radius: 2px;
-        }
-        
-        .info-grid {
+
+        .pagina {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 8px 0 0 0;
-            background: white;
-            border-radius: 6px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(67, 97, 238, 0.08);
         }
-        
-        .info-item {
-            transition: background-color 0.2s ease;
+
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
         }
-        
-        .info-item:not(:last-child) {
-            border-bottom: 1px solid var(--color-borde);
+
+        .cintillo {
+            padding: 2px;
         }
-        
-        .info-item:hover {
-            background-color: var(--color-acento-pastel);
+
+        .cintillo-color {
+            background-color: #1589e1;
         }
-        
-        .info-label {
-            width: 35%;
-            padding: 10px 15px;
-            font-weight: 600;
-            background-color: var(--color-primario-pastel);
-            border-right: 1px solid var(--color-borde);
-            color: var(--color-secundario);
-            font-size: 9.5pt;
+
+        /* ENCABEZADO */
+        .encabezado td {
+            padding: 3px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .titulo-principal {
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .text-azul {
+            color: #1589e1;
+            font-weight: bold;
+        }
+
+        .logo {
+            font-size: 9px;
+        }
+
+        .foto {
+            font-size: 8px;
+        }
+
+        /* BLOQUES */
+        .bloque {
+            margin-top: 10px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .bloque td {
+            padding: 1px 3px;
             vertical-align: top;
         }
-        
-        .info-value {
-            padding: 10px 15px;
-            color: var(--color-texto);
-            word-break: break-word;
-            font-size: 10pt;
-            line-height: 1.5;
+
+        .titulo {
+            font-size: 9px;
+            background-color: #1589e1;
+            color: #fff;
+            padding: 2px 4px;
+            font-weight: bold;
+            margin: 0;
         }
-        
-        .table-grid {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 12px 0 0 0;
-            page-break-inside: avoid;
-            background: white;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(67, 97, 238, 0.08);
+
+        .subtitulo {
+            font-size: 8px;
+            background-color: #6ab2ea;
+            color: #fff;
+            padding: 2px 4px;
+            font-weight: bold;
         }
-        
-        .table-grid th {
-            background: linear-gradient(to bottom, var(--color-primario) 0%, var(--color-primario-suave) 100%);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 9pt;
-            letter-spacing: 0.5px;
-            padding: 8px 12px;
-            text-align: left;
-            border: 1px solid var(--color-borde);
+
+        .campo {
+            height: auto;
+            min-height: 12px;
+            vertical-align: top;
+            padding: 1px 2px;
         }
-        
-        .table-grid td {
-            padding: 8px 12px;
-            border: 1px solid var(--color-borde);
-            font-size: 9.5pt;
-            line-height: 1.4;
+
+        .label {
+            font-size: 9px;
+            letter-spacing: 0.1px;
+            color: #333;
         }
-        
-        .table-grid tr:nth-child(even) {
-            background-color: var(--color-primario-pastel);
+
+        .valor {
+            padding: 1px 2px;
+            border-bottom: 1px solid #000;
+            min-height: 10px;
         }
-        
-        .table-grid tr:hover {
-            background-color: var(--color-acento-pastel) !important;
+
+        /* FIRMAS */
+        .firmas {
+            margin-top: 20px;
         }
-        
-        .footer {
-            margin-top: 30px;
-            padding: 15px 0 5px;
-            border-top: 1px dashed var(--color-borde);
-            text-align: right;
-            color: var(--color-texto-suave);
-            font-size: 9pt;
-            font-style: italic;
-        }
-        
-        .text-center {
-            text-align: center !important;
-        }
-        
-        .text-right {
-            text-align: right !important;
-        }
-        
-        .long-text {
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-        
-        .signature {
-            margin-top: 50px;
-            text-align: right;
-        }
-        
-        .signature-line {
-            border-top: 1px solid var(--color-borde);
-            width: 200px;
-            margin-left: auto;
-            padding-top: 5px;
+
+        .firmas td {
+            padding-top: 25px;
             text-align: center;
-            color: var(--color-texto-suave);
-            font-size: 9pt;
+            font-size: 8px;
+            vertical-align: bottom;
+        }
+
+        /* PAGINACIÓN */
+        .page-break {
+            page-break-after: always;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Evitar superposiciones */
+        .text-center {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Encabezado de la institución -->
-        <div class="institution-header">
-            <img src="{{ public_path('img/Liceo_logo.png') }}" alt="Logo" class="institution-logo">
-            <div class="institution-text">
-                <h1>Liceo Nacional "Gral. Juan Guillermo Iribarren"</h1>
-                <div class="institution-subtitle">Formando líderes para el futuro</div>
-            </div>
-        </div>
+    <div class="pagina">
+        <!-- CINTILLO INSTITUCIONAL -->
+        <table width="100%" class="cintillo cintillo-color encabezado">
+            <tr style="color: #eee;">
+                <td width="20%" class="">
+                    <img src="{{ public_path('img/logo-ven.webp') }}" alt="Logo" width="90" height="30">
+                </td>
+                <td width="60%">
+                    <strong class="titulo-principal" style="font-size: 14px">LICEO GRAL. JUAN GUILLERMO
+                        IRIBARREN</strong><br>
+                    PORTUGUESA - ARAURE<br>
+                </td>
+                <td width="20%" class="" style="font-size: 9px">
+                    Ministerio del Poder Popular <br>
+                    para la <b>Educacion</b>
+                </td>
+            </tr>
+        </table>
 
-        <!-- Encabezado del documento -->
-        <div class="header">
-            <h1>FICHA INDIVIDUAL DEL DOCENTE</h1>
-            <h2>{{ $docente->primer_nombre ?? 'N/A' }} {{ $docente->primer_apellido ?? 'N/A' }}</h2>
-            <p>Cédula: {{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }} • Generado el {{ now()->format('d/m/Y H:i:s') }}</p>
-        </div>
+        <!-- ENCABEZADO DEL DOCUMENTO -->
+        <table width="100%" class="encabezado" style="margin-bottom: 25px">
+            <tr>
+                <td width="20%" class="logo">
+                    FOTO <br>DOCENTE
+                </td>
+                <td width="60%">
+                    <strong class="text-azul" style="font-size: 10px">FICHA INDIVIDUAL DEL DOCENTE</strong>
+                </td>
+                <td width="20%" class="foto">
+                    CÓDIGO:<br>
+                    {{ $docente->numero_documento ?? 'N/A' }}
+                </td>
+            </tr>
+        </table>
 
-        <!-- Sección de Datos Personales -->
-        <div class="section">
-            <div class="section-title">INFORMACIÓN PERSONAL</div>
-            <div class="section-content">
-            <table class="info-grid">
-                <tr class="info-item">
-                    <td class="info-label">Cédula de Identidad:</td>
-                    <td class="info-value">{{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Nombres:</td>
-                    <td class="info-value">
-                        {{ $docente->primer_nombre ?? 'N/A' }}
+        <!-- DATOS PERSONALES -->
+        <table width="100%" class="bloque">
+            <colgroup>
+                <col width="50%">
+                <col width="50%">
+            </colgroup>
+            <tr>
+                <td colspan="2" class="titulo">DATOS PERSONALES</td>
+            </tr>
+            <tr>
+                <td class="campo" colspan="2">
+                    <div class="valor label">
+                        <b>NOMBRES:</b> {{ $docente->primer_nombre ?? 'N/A' }}
                         {{ $docente->segundo_nombre ?? '' }}
                         {{ $docente->tercer_nombre ?? '' }}
-                    </td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Apellidos:</td>
-                    <td class="info-value">
-                        {{ $docente->primer_apellido ?? 'N/A' }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="campo" colspan="2">
+                    <div class="valor label">
+                        <b>APELLIDOS:</b> {{ $docente->primer_apellido ?? 'N/A' }}
                         {{ $docente->segundo_apellido ?? '' }}
-                    </td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Fecha de Nacimiento:</td>
-                    <td class="info-value">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="campo">
+                    <div class="valor label">
+                        <b>CÉDULA DE IDENTIDAD:</b> {{ $docente->tipo_documento ?? 'N/A' }}-{{ $docente->numero_documento ?? 'N/A' }}
+                    </div>
+                </td>
+                <td class="campo">
+                    <div class="valor label">
+                        <b>FECHA DE NACIMIENTO:</b>
                         @if(isset($docente->fecha_nacimiento) && $docente->fecha_nacimiento !== 'N/A')
                             {{ \Carbon\Carbon::parse($docente->fecha_nacimiento)->format('d/m/Y') }}
-                            ({{ \Carbon\Carbon::parse($docente->fecha_nacimiento)->age }} años)
                         @else
                             N/A
                         @endif
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="campo">
+                    <div class="valor label">
+                        <b>EDAD:</b>
+                        @if(isset($docente->fecha_nacimiento) && $docente->fecha_nacimiento !== 'N/A')
+                            {{ \Carbon\Carbon::parse($docente->fecha_nacimiento)->age }} años
+                        @else
+                            N/A
+                        @endif
+                    </div>
+                </td>
+                <td class="campo">
+                    <div class="valor label">
+                        <b>GÉNERO:</b> {{ $docente->genero ?? 'N/A' }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="campo">
+                    <div class="valor label">
+                        <b>CORREO ELECTRÓNICO:</b> {{ $docente->email ?? 'N/A' }}
+                    </div>
+                </td>
+                <td class="campo">
+                    <div class="valor label">
+                        <b>TELÉFONO:</b> {{ $docente->telefono ?? 'N/A' }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="campo" colspan="2">
+                    <div class="valor label">
+                        <b>DIRECCIÓN:</b> {{ $docente->direccion ?? 'N/A' }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="campo" colspan="2">
+                    <div class="valor label">
+                        <b>DEPENDENCIA:</b> {{ $docente->dependencia ?? 'N/A' }}
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- ESTUDIOS REALIZADOS -->
+        <table width="100%" class="bloque">
+            <tr>
+                <td class="titulo">ESTUDIOS REALIZADOS</td>
+            </tr>
+        </table>
+        
+        <table width="100%" class="bloque">
+            <colgroup>
+                <col width="5%">
+                <col width="95%">
+            </colgroup>
+            <tr>
+                <td class="campo text-center">
+                    <div class="valor">#</div>
+                </td>
+                <td class="campo">
+                    <div class="valor">ESTUDIO</div>
+                </td>
+            </tr>
+            @if(isset($docente->detalleDocenteEstudio) && $docente->detalleDocenteEstudio->count() > 0)
+                @foreach($docente->detalleDocenteEstudio as $key => $detalle)
+                <tr>
+                    <td class="campo text-center">
+                        <div class="valor">{{ $key + 1 }}</div>
+                    </td>
+                    <td class="campo">
+                        <div class="valor">{{ $detalle->estudiosRealizado->estudios ?? 'N/A' }}</div>
                     </td>
                 </tr>
-                <tr class="info-item">
-                    <td class="info-label">Género:</td>
-                    <td class="info-value">{{ $docente->genero ?? 'N/A' }}</td>
+                @endforeach
+            @else
+                <tr>
+                    <td colspan="2" class="campo text-center">
+                        <div class="valor">No se encontraron registros de estudios</div>
+                    </td>
                 </tr>
-                <tr class="info-item">
-                    <td class="info-label">Correo Electrónico:</td>
-                    <td class="info-value">{{ $docente->email ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Teléfono:</td>
-                    <td class="info-value">{{ $docente->telefono ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Dirección:</td>
-                    <td class="info-value">{{ $docente->direccion ?? 'N/A' }}</td>
-                </tr>
-                <tr class="info-item">
-                    <td class="info-label">Dependencia:</td>
-                    <td class="info-value">{{ $docente->dependencia ?? 'N/A' }}</td>
-                </tr>
-            </table>
-            </div>
-        </div>
+            @endif
+        </table>
 
-        <!-- Sección de Estudios Realizados -->
-        <div class="section">
-            <div class="section-title">ESTUDIOS REALIZADOS</div>
-            <div class="section-content">
-                <table class="table-grid">
-                    <thead>
-                        <tr>
-                            <th width="5%">#</th>
-                            <th>Estudio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if(isset($docente->detalleDocenteEstudio) && $docente->detalleDocenteEstudio->count() > 0)
-                            @foreach($docente->detalleDocenteEstudio as $key => $detalle)
-                            <tr>
-                                <td class="text-center">{{ $key + 1 }}</td>
-                                <td>{{ $detalle->estudiosRealizado->estudios ?? 'N/A' }}</td>
-                            </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="2" class="text-center">No se encontraron registros de estudios</td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Pie de página -->
-        <div class="footer">
-            Generado el {{ now()->format('d/m/Y H:i:s') }}
-        </div>
+        <!-- FIRMAS -->
+        <table width="100%" class="firmas">
+            <tr class="text-azul">
+                <td>Fecha: _________________________</td>
+                <td>Docente: _________________________</td>
+                <td>Firma: _________________________</td>
+            </tr>
+        </table>
+    </div>
         
         <script type="text/php">
-            if (isset($pdf)) {
-                $pdf->page_text(40, 570, "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}", null, 8, array(90, 90, 90));
-                $pdf->page_text(400, 570, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10, array(0, 0, 0));
-            }
+        if (isset($pdf)) {
+            $pdf->page_text(
+                40,
+                810,
+                "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}",
+                null,
+                8,
+                array(90, 90, 90)
+            );
+
+            $pdf->page_text(
+                450,
+                810,
+                "Página {PAGE_NUM} de {PAGE_COUNT}",
+                null,
+                9,
+                array(0, 0, 0)
+            );
+        }
         </script>
     </div>
 
