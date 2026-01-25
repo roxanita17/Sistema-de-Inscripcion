@@ -16,7 +16,7 @@
         /*FONDO */
         .login-page {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
-                        url('{{ asset("HomePage/vidaEstudiantil/Bievenida_img.jpg") }}') no-repeat center center fixed;
+                        url('{{ asset("HomePage/comunidad/login.jpeg") }}') no-repeat center center fixed;
             background-size: cover;
         }
         

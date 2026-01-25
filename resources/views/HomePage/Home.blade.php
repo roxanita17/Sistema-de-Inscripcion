@@ -28,7 +28,7 @@
 
     @include("HomePage.Encabezado")
     
-<div class="caja-imagen-nav" style="background-image: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),url({{asset("HomePage/comunidad/imgNav.jpg")}});">   
+<div class="caja-imagen-nav" style="background-image: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),url({{asset("HomePage/comunidad/home.jpeg")}});">   
         <div class="texto">
             <h2 class="titulo-imagen-nav">Bienvenidos al Liceo Gral "Juan Guillermo Iribarren"</h2>
             <p class="texto-imagen-nav">Formando el futuro con valores y excelencia</p>
