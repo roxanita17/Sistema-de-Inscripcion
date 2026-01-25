@@ -96,9 +96,7 @@
                 </div>
 
                 <div class="header-right d-flex align-items-center gap-2 flex-wrap">
-                    <button class="btn-modal-create" data-bs-toggle="modal" data-bs-target="#modalFiltros">
-                        <i class="fas fa-filter"></i>
-                    </button>
+                   
                     <form action="{{ route('admin.docente.index') }}" class="mb-0 search-sm">
                         <div class="search-modern">
                             <i class="fas fa-search"></i>
