@@ -159,6 +159,16 @@ class Alumno extends Model
         return $inscripcionBase ?? $inscripcionProsecucion;
     }
 
+    public function ultimaInscripcion()
+    {
+        return $this->inscripciones()
+            ->where('status', 'Activo')
+            ->orderByDesc('anio_escolar_id')
+            ->orderByDesc('created_at')
+            ->first();
+    }
+
+
 
     public function ultimaInscripcionAntesDe(int $anioActualId)
     {
@@ -185,6 +195,20 @@ class Alumno extends Model
         return $base ?? $prosecucion;
     }
 
+    public function ultimaInscripcionConRepresentantes()
+    {
+        return $this->inscripciones()
+            ->where('status', 'Activo')
+            ->where(function ($q) {
+                $q->whereNotNull('representante_legal_id')
+                    ->orWhereNotNull('padre_id')
+                    ->orWhereNotNull('madre_id');
+            })
+            ->orderBy('anio_escolar_id')
+            ->first();
+    }
+
+
     public function materiasPendientesHistoricas()
     {
         return ProsecucionArea::whereHas('inscripcionProsecucion.inscripcion', function ($q) {
@@ -197,6 +221,29 @@ class Alumno extends Model
             ])
             ->get();
     }
+
+    public function materiasPendientesUltimaProsecucion()
+    {
+        $ultimaProsecucion = $this->inscripcionProsecucions()
+            ->where('inscripcion_prosecucions.status', 'Activo')
+            ->orderByDesc('anio_escolar_id')
+            ->orderByDesc('created_at')
+            ->first();
+
+        if (!$ultimaProsecucion) {
+            return collect();
+        }
+
+        return $ultimaProsecucion->prosecucionAreas()
+            ->where('status', 'pendiente')
+            ->with([
+                'gradoAreaFormacion.area_formacion',
+                'gradoAreaFormacion.grado',
+            ])
+            ->get();
+    }
+
+
 
     public function scopeBuscar($query, $buscar)
     {
@@ -230,7 +277,7 @@ class Alumno extends Model
                 'generos.genero as nombre_genero',
                 'tipo_documentos.nombre as tipo_documento',
                 'pais.nameES as pais',
-                
+
                 'etnia_indigenas.nombre as etnia',
                 'lateralidads.lateralidad',
                 'orden_nacimientos.orden_nacimiento'

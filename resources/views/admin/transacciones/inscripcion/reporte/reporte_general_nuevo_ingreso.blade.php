@@ -117,8 +117,6 @@
         }
 
         th {
-            background-color: #1589e1;
-            color: white;
             font-weight: bold;
             text-transform: uppercase;
             font-size: 7pt;

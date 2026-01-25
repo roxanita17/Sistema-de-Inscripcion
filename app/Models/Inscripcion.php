@@ -195,7 +195,7 @@ class Inscripcion extends Model
             ->where('id', $id)
             ->update([
                 'status' => 'Inactivo',
-                'updated_at' => now()
+                'updated_at' => now() 
             ]);
     }
  

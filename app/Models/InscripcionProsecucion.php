@@ -113,7 +113,7 @@ class InscripcionProsecucion extends Model
         $anioEscolarId = $filtros['anio_escolar_id'] ?? null;
         $gradoId = $filtros['grado_id'] ?? null;
         $seccionId = $filtros['seccion_id'] ?? null;
-        $estatusInscripcion = $filtros['status'] ?? null;
+        $estatusInscripcion = $filtros['status'] ?? null; 
         $buscar = $filtros['buscar'] ?? null;
         $materiasPendientes = $filtros['materias_pendientes'] ?? null;
         return self::query()

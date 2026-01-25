@@ -150,7 +150,7 @@ class InscripcionProsecucionController extends Controller
             'inscripcion.alumno.tallaCamisa',
             'inscripcion.alumno.tallaPantalon',
             'inscripcion.grado',
-            'inscripcion.seccionAsignada',
+            'inscripcion.seccionAsignada', 
             'inscripcion.padre.persona',
             'inscripcion.madre.persona',
             'inscripcion.representanteLegal.representante.persona',

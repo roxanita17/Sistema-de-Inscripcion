@@ -141,20 +141,20 @@
                                                         <div class="info-col">
                                                             <span class="info-key">Documento:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->padre->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->padre->persona->numero_documento }}
+                                                                {{ $ins->padre->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->padre->persona->numero_documento ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         <div class="info-col">
                                                             <span class="info-key">Telefono:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->padre->persona->telefono_completo }}
+                                                                {{ $ins->padre->persona->telefono_completo ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         @if ($ins->padre->persona->telefono_dos_completo)
                                                             <div class="info-col">
                                                                 <span class="info-key">Segundo Telefono:</span>
                                                                 <span class="info-val">
-                                                                    {{ $ins->padre->persona->telefono_dos_completo }}
+                                                                    {{ $ins->padre->persona->telefono_dos_completo ?? 'N/A' }}
                                                                 </span>
                                                             </div>
                                                         @endif
@@ -171,16 +171,16 @@
                                                         <div class="info-col">
                                                             <span class="info-key">Nombre:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->padre->persona->primer_nombre }}
-                                                                {{ $ins->padre->persona->segundo_nombre }}
-                                                                {{ $ins->padre->persona->primer_apellido }}
-                                                                {{ $ins->padre->persona->segundo_apellido }}
+                                                                {{ $ins->padre->persona->primer_nombre ?? 'N/A' }}
+                                                                {{ $ins->padre->persona->segundo_nombre ?? 'N/A' }}
+                                                                {{ $ins->padre->persona->primer_apellido ?? 'N/A' }}
+                                                                {{ $ins->padre->persona->segundo_apellido ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         <div class="info-col">
                                                             <span class="info-key">Ocupacion:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->padre->ocupacion->nombre_ocupacion }}
+                                                                {{ $ins->padre->ocupacion->nombre_ocupacion ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -209,20 +209,20 @@
                                                         <div class="info-col">
                                                             <span class="info-key">Documento:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->madre->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->madre->persona->numero_documento }}
+                                                                {{ $ins->madre->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->madre->persona->numero_documento ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         <div class="info-col">
                                                             <span class="info-key">Telefono:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->madre->persona->telefono_completo }}
+                                                                {{ $ins->madre->persona->telefono_completo ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         @if ($ins->madre->persona->telefono_dos_completo)
                                                             <div class="info-col">
                                                                 <span class="info-key">Segundo Telefono:</span>
                                                                 <span class="info-val">
-                                                                    {{ $ins->madre->persona->telefono_dos_completo }}
+                                                                    {{ $ins->madre->persona->telefono_dos_completo ?? 'N/A' }}
                                                                 </span>
                                                             </div>
                                                         @endif
@@ -239,16 +239,16 @@
                                                         <div class="info-col">
                                                             <span class="info-key">Nombre:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->madre->persona->primer_nombre }}
-                                                                {{ $ins->madre->persona->segundo_nombre }}
-                                                                {{ $ins->madre->persona->primer_apellido }}
-                                                                {{ $ins->madre->persona->segundo_apellido }}
+                                                                {{ $ins->madre->persona->primer_nombre ?? 'N/A' }}
+                                                                {{ $ins->madre->persona->segundo_nombre ?? 'N/A' }}
+                                                                {{ $ins->madre->persona->primer_apellido ?? 'N/A' }}
+                                                                {{ $ins->madre->persona->segundo_apellido ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         <div class="info-col">
                                                             <span class="info-key">Ocupacion:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->madre->ocupacion->nombre_ocupacion }}
+                                                                {{ $ins->madre->ocupacion->nombre_ocupacion ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -276,20 +276,20 @@
                                                         <div class="info-col">
                                                             <span class="info-key">Documento:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->representanteLegal->representante->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->representanteLegal->representante->persona->numero_documento }}
+                                                                {{ $ins->representanteLegal->representante->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $ins->representanteLegal->representante->persona->numero_documento ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         <div class="info-col">
                                                             <span class="info-key">Telefono:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->representanteLegal->representante->persona->telefono_completo }}
+                                                                {{ $ins->representanteLegal->representante->persona->telefono_completo ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         @if ($ins->representanteLegal->representante->persona->telefono_dos_completo)
                                                             <div class="info-col">
                                                                 <span class="info-key">Segundo Telefono:</span>
                                                                 <span class="info-val">
-                                                                    {{ $ins->representanteLegal->representante->persona->telefono_dos_completo }}
+                                                                    {{ $ins->representanteLegal->representante->persona->telefono_dos_completo ?? 'N/A' }}
                                                                 </span>
                                                             </div>
                                                         @endif
@@ -306,16 +306,16 @@
                                                         <div class="info-col">
                                                             <span class="info-key">Nombre:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->representanteLegal->representante->persona->primer_nombre }}
-                                                                {{ $ins->representanteLegal->representante->persona->segundo_nombre }}
-                                                                {{ $ins->representanteLegal->representante->persona->primer_apellido }}
-                                                                {{ $ins->representanteLegal->representante->persona->segundo_apellido }}
+                                                                {{ $ins->representanteLegal->representante->persona->primer_nombre ?? 'N/A' }}
+                                                                {{ $ins->representanteLegal->representante->persona->segundo_nombre ?? 'N/A' }}
+                                                                {{ $ins->representanteLegal->representante->persona->primer_apellido ?? 'N/A' }}
+                                                                {{ $ins->representanteLegal->representante->persona->segundo_apellido ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                         <div class="info-col">
                                                             <span class="info-key">Ocupacion:</span>
                                                             <span class="info-val">
-                                                                {{ $ins->representanteLegal->representante->ocupacion->nombre_ocupacion }}
+                                                                {{ $ins->representanteLegal->representante->ocupacion->nombre_ocupacion ?? 'N/A' }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -381,11 +381,35 @@
                             </div>
                         </div>
                     @endif
+
+                    {{-- @if ($inscripcionAnterior)
+                        <div class="alert alert-info">
+                            <strong>Debug - Datos cargados:</strong><br>
+                            Padre ID: {{ $inscripcionAnterior->padre_id }}<br>
+                            Madre ID: {{ $inscripcionAnterior->madre_id }}<br>
+                            Rep. Legal ID: {{ $inscripcionAnterior->representante_legal_id }}<br>
+
+                            @if ($inscripcionAnterior->padre)
+                                Nombre Padre: {{ $inscripcionAnterior->padre->persona->primer_nombre ?? 'N/A' }}<br>
+                            @endif
+
+                            @if ($inscripcionAnterior->madre)
+                                Nombre Madre: {{ $inscripcionAnterior->madre->persona->primer_nombre ?? 'N/A' }}<br>
+                            @endif
+
+                            @if ($inscripcionAnterior->representanteLegal)
+                                Nombre Rep:
+                                {{ $inscripcionAnterior->representanteLegal->representante->persona->primer_nombre ?? 'N/A' }}<br>
+                            @endif
+                        </div>
+                    @else 
+                        <div class="alert alert-warning">No hay inscripción anterior cargada</div>
+                    @endif--}}
                     <div class="alert alert-info mt-3">
                         <div class="d-flex align-items-center gap-2">
                             <i class="fas fa-info-circle fa-2x"></i>
                             <div>
-                                <strong>NIvel academico cursado:</strong>
+                                <strong>Nivel académico cursado:</strong>
                                 {{ $grados->firstWhere('id', $gradoAnteriorId)?->numero_grado ?? 'N/A' }} °
                             </div>
                             <div>
@@ -541,7 +565,7 @@
                         <h3>Paso 3: Nivel Academico y Sección</h3>
                         <p>Seleccione el nivel academico al que será promovido el estudiante</p>
                     </div>
-                </div> 
+                </div>
             </div>
             <div class="card-body-modern" style="padding: 2rem;">
                 <div class="row">

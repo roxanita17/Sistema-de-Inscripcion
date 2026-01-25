@@ -185,53 +185,74 @@ class InscripcionProsecucion extends Component
         ]);
         $this->resetErrorBag();
         $this->alumnoId = $alumnoId;
+
         $this->alumnoSeleccionado = Alumno::with([
             'persona.tipoDocumento',
             'inscripciones.grado',
-            'inscripciones.representanteLegal.representante.persona.tipoDocumento',
         ])->find($alumnoId);
+
         if (!$this->alumnoSeleccionado) {
             session()->flash('error', 'No se pudo cargar el alumno seleccionado.');
             return;
         }
-        $this->cargarGradoDesdeInscripcionAnterior();
+
+        // Obtener el año escolar actual
         $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
-        $this->inscripcionAnterior = $this->alumnoSeleccionado
-            ->inscripcionAnterior($anioActual->id);
+
+        if (!$anioActual) {
+            session()->flash('error', 'No hay un Calendario Escolar activo.');
+            return;
+        }
+
+        // Obtener el año escolar anterior
+        $anioAnterior = AnioEscolar::where('inicio_anio_escolar', '<', $anioActual->inicio_anio_escolar)
+            ->orderByDesc('inicio_anio_escolar')
+            ->first();
+
+        if (!$anioAnterior) {
+            session()->flash('error', 'No se encontró el Calendario Escolar anterior.');
+            return;
+        }
+
+        // Obtener la inscripción del año anterior con todos los datos de representantes
+        $this->inscripcionAnterior = Inscripcion::with([
+            'grado',
+            'seccion',
+            'anioEscolar',
+            'padre.persona.tipoDocumento',
+            'madre.persona.tipoDocumento',
+            'representanteLegal.representante.persona.tipoDocumento',
+        ])
+            ->where('alumno_id', $alumnoId)
+            ->where('anio_escolar_id', $anioAnterior->id)
+            ->first();
+
+        if (!$this->inscripcionAnterior) {
+            session()->flash('error', 'No se encontró la inscripción anterior del estudiante.');
+            return;
+        }
+
+        $this->cargarGradoDesdeInscripcionAnterior();
         $this->calcularSugerenciaInscripcion();
     }
 
-
     public function getRepresentantesProperty()
     {
-        if (!$this->alumnoSeleccionado) {
-            return collect();
-        }
-        $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
-        if (!$anioActual) {
-            return collect();
-        }
-        $inscripcionAnterior = $this->alumnoSeleccionado
-            ->inscripcionAnterior($anioActual->id);
-        if (!$inscripcionAnterior) {
-            return collect();
-        }
-        return collect($inscripcionAnterior->representanteLegal ?? []);
+        // Usar directamente la inscripción anterior ya cargada
+        return $this->inscripcionAnterior?->representanteLegal;
     }
+
 
     private function cargarGradoDesdeInscripcionAnterior()
     {
-        if (!$this->alumnoSeleccionado) return;
-        $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
-        if (!$anioActual) return;
-        $inscripcionAnterior = $this->alumnoSeleccionado->inscripcionAnterior($anioActual->id);
-        if ($inscripcionAnterior && $inscripcionAnterior->grado) {
-            $this->gradoAnteriorId = $inscripcionAnterior->grado->id;
-            $this->cargarGradosPermitidos();
-            $this->cargarMateriasParaProsecucion($this->gradoAnteriorId);
+        if (!$this->inscripcionAnterior || !$this->inscripcionAnterior->grado) {
+            return;
         }
-    }
 
+        $this->gradoAnteriorId = $this->inscripcionAnterior->grado->id;
+        $this->cargarGradosPermitidos();
+        $this->cargarMateriasParaProsecucion($this->gradoAnteriorId);
+    }
     private function cargarMateriasParaProsecucion($gradoId)
     {
         $this->materias = [];
@@ -248,7 +269,8 @@ class InscripcionProsecucion extends Component
                 ];
             }
         }
-        $pendientes = $this->alumnoSeleccionado->materiasPendientesHistoricas();
+        $pendientes = $this->alumnoSeleccionado->materiasPendientesUltimaProsecucion();
+
         foreach ($pendientes as $pendiente) {
             $this->materias[] = [
                 'id' => $pendiente->grado_area_formacion_id,
@@ -461,14 +483,17 @@ class InscripcionProsecucion extends Component
     public function finalizar()
     {
         $this->validate();
+
         $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->first();
         if (!$anioActual) {
             $this->addError('general', 'No hay un Calendario Escolar activo.');
             return;
         }
+
         if (!$this->validarAntesDeGuardar()) {
             return;
         }
+
         if ($this->alumnoYaPromovido($this->alumnoId, $anioActual->id)) {
             $this->addError(
                 'alumnoId',
@@ -476,17 +501,19 @@ class InscripcionProsecucion extends Component
             );
             return;
         }
+
+        // USAR $this->inscripcionAnterior en lugar de llamar al método
+        if (!$this->inscripcionAnterior) {
+            throw new \Exception('No se encontró la inscripción anterior del alumno.');
+        }
+
         DB::beginTransaction();
         try {
-            $anioActual = AnioEscolar::whereIn('status', ['Activo', 'Extendido'])->firstOrFail();
-            $inscripcionAnterior = $this->alumnoSeleccionado
-                ->inscripcionAnterior($anioActual->id);
-            if (!$inscripcionAnterior) {
-                throw new \Exception('No se encontró la inscripción anterior del alumno.');
-            }
-            $padreId = $inscripcionAnterior->padre_id;
-            $madreId = $inscripcionAnterior->madre_id;
-            $representanteLegalId = $inscripcionAnterior->representante_legal_id;
+            // Obtener IDs de representantes de la inscripción anterior ya cargada
+            $padreId = $this->inscripcionAnterior->padre_id;
+            $madreId = $this->inscripcionAnterior->madre_id;
+            $representanteLegalId = $this->inscripcionAnterior->representante_legal_id;
+
             $nuevaInscripcion = Inscripcion::create([
                 'tipo_inscripcion' => 'prosecucion',
                 'anio_escolar_id' => $anioActual->id,
@@ -494,7 +521,7 @@ class InscripcionProsecucion extends Component
                 'grado_id' => $this->gradoPromocionId,
                 'seccion_id' => $this->seccion_id,
                 'status' => 'Activo',
-                'documentos' => $inscripcionAnterior->documentos ?? null,
+                'documentos' => $this->inscripcionAnterior->documentos ?? null,
                 'observaciones' => filled($this->observaciones)
                     ? $this->observaciones
                     : 'Promoción por prosecución',
@@ -503,9 +530,10 @@ class InscripcionProsecucion extends Component
                 'madre_id' => $madreId,
                 'representante_legal_id' => $representanteLegalId,
             ]);
+
             $prosecucion = ModeloInscripcionProsecucion::create([
                 'inscripcion_id' => $nuevaInscripcion->id,
-                'inscripcion_anterior_id' => $inscripcionAnterior->id,
+                'inscripcion_anterior_id' => $this->inscripcionAnterior->id,
                 'anio_escolar_id' => $anioActual->id,
                 'grado_id' => $this->gradoPromocionId,
                 'seccion_id' => $this->seccion_id,
@@ -517,6 +545,7 @@ class InscripcionProsecucion extends Component
                 'acepta_normas_contrato' => $this->acepta_normas_contrato,
                 'status' => 'Activo',
             ]);
+
             if ($this->seccion_id) {
                 $seccion = Seccion::lockForUpdate()->find($this->seccion_id);
                 if (!$seccion) {
@@ -531,7 +560,9 @@ class InscripcionProsecucion extends Component
                 }
                 $seccion->increment('cantidad_actual');
             }
+
             $this->guardarMateriasEstado($prosecucion->id);
+
             DB::commit();
             session()->flash('success', 'Inscripción por prosecución registrada correctamente.');
             return redirect()->route('admin.transacciones.inscripcion_prosecucion.index');
