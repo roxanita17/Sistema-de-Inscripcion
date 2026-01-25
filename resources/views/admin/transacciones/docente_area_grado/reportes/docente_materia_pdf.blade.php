@@ -4,375 +4,372 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Reporte de Docentes y Materias</title>
     <style>
-        :root {
-            --color-primario: #4361ee;
-            --color-primario-suave: #6b8aff;
-            --color-primario-pastel: #eef2ff;
-            --color-secundario: #3743a8ff;
-            --color-secundario-pastel: #f3e8ff;
-            --color-acento: #4cc9f0;
-            --color-acento-pastel: #e6f7ff;
-            --color-fondo: #ffffff;
-            --color-borde: #d1daff;
-            --color-texto: #2d3748;
-            --color-texto-suave: #718096;
-        }
-        
         @page {
-            margin: 1.5cm;
-            size: portrait;
+            margin: 0.5cm 0.8cm;
+            size: A4;
         }
-        
+
         body {
-            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-            font-size: 10pt;
-            line-height: 1.4;
-            color: var(--color-texto);
-            margin: 0;
-            padding: 0;
-            background: var(--color-fondo);
-        }
-        
-        .container {
-            max-width: 100%;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 9px;
+            line-height: 1.1;
             margin: 0;
             padding: 0;
         }
-        
-        .institution-header {
-            background-color: var(--color-primario);
-            color: white;
-            padding: 10px 20px;
-            margin: 0 auto 20px auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(67, 97, 238, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border-bottom: 2px solid var(--color-acento);
-            page-break-after: avoid;
-            page-break-inside: avoid;
-        }
-        
-        .institution-header img {
-            max-height: 60px;
-            max-width: 60px;
-            margin-right: 20px;
-            border-radius: 4px;
-            border: none;
-            padding: 0;
-            background: transparent;
-            object-fit: contain;
-        }
-        
-        .institution-text {
-            text-align: center;
-        }
-        
-        .institution-text h1 {
-            color: white;
-            margin: 0 0 5px 0;
-            font-size: 1.3rem;
-            font-weight: 700;
-            line-height: 1.2;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        }
-        
-        .institution-subtitle {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin: 0;
-            font-style: italic;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            border-bottom: 2px solid var(--color-primario);
-            background: var(--color-primario-pastel);
-            border-radius: 6px;
-            box-shadow: 0 1px 4px rgba(67, 97, 238, 0.08);
-            page-break-after: avoid;
-            page-break-inside: avoid;
-        }
-        
-        .header h2 {
-            color: var(--color-primario);
-            margin: 0 0 5px 0;
-            font-size: 16pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-        }
-        
-        .header p {
-            color: var(--color-texto-suave);
-            margin: 5px 0 0 0;
-            font-size: 9pt;
-            font-style: italic;
-        }
-        
-        .docente-section {
-            margin-bottom: 30px;
-            page-break-inside: avoid;
-            border: 2px solid var(--color-borde);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.1);
-        }
-        
-        .docente-header {
-            background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%);
-            color: white;
-            padding: 12px 20px;
-            font-weight: 600;
-            font-size: 12pt;
-        }
-        
-        .docente-info {
-            background: var(--color-primario-pastel);
-            padding: 10px 20px;
-            border-bottom: 1px solid var(--color-borde);
-        }
-        
-        .docente-info span {
-            font-weight: 600;
-            color: var(--color-secundario);
-        }
-        
-        .grado-box {
-            margin: 15px;
-            border: 1px solid var(--color-borde);
-            border-radius: 6px;
-            overflow: hidden;
-            background: white;
-        }
-        
-        .grado-header {
-            background: var(--color-acento-pastel);
-            padding: 8px 15px;
-            font-weight: 600;
-            color: var(--color-primario);
-            border-bottom: 1px solid var(--color-borde);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .content-section {
-            padding: 15px;
-        }
-        
-        .materias-section, .estudiantes-section {
-            margin-bottom: 15px;
-        }
-        
-        .section-title {
-            font-weight: 600;
-            color: var(--color-secundario);
-            margin-bottom: 8px;
-            font-size: 11pt;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--color-borde);
-            padding-bottom: 5px;
-        }
-        
-        .materia-list, .estudiante-list {
-            background: var(--color-fondo);
-            border: 1px solid var(--color-borde);
-            border-radius: 4px;
-            padding: 10px;
-        }
-        
-        .materia-item {
-            padding: 4px 0;
-            border-bottom: 1px dashed var(--color-borde);
-            font-size: 10pt;
-        }
-        
-        .materia-item:last-child {
-            border-bottom: none;
-        }
-        
-        .materia-item::before {
-            content: "•";
-            color: var(--color-primario);
-            font-weight: bold;
-            margin-right: 8px;
-        }
-        
-        table {
+
+        .pagina {
             width: 100%;
-            border-collapse: collapse;
-            margin: 0;
-            font-size: 9pt;
         }
-        
-        th, td {
-            padding: 6px 8px;
-            text-align: left;
-            border: 1px solid var(--color-borde);
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-            line-height: 1.3;
+
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .cintillo {
+            padding: 2px;
+        }
+
+        .cintillo-color {
+            background-color: #1589e1;
+        }
+
+        /* ENCABEZADO */
+        .encabezado td {
+            padding: 3px;
+            text-align: center;
             vertical-align: middle;
         }
-        
-        th {
-            background: linear-gradient(to bottom, #2c3e50 0%, #34495e 100%);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 8pt;
-            letter-spacing: 0.5px;
+
+        .titulo-principal {
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .text-azul {
+            color: #1589e1;
+            font-weight: bold;
+        }
+
+        .logo {
+            font-size: 9px;
+        }
+
+        .foto {
+            font-size: 8px;
+        }
+
+        /* BLOQUES */
+        .bloque {
+            margin-top: 10px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .bloque td {
+            padding: 1px 3px;
+            vertical-align: top;
+        }
+
+        .titulo {
+            font-size: 9px;
+            background-color: #1589e1;
+            color: #fff;
+            padding: 2px 4px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .subtitulo {
+            font-size: 8px;
+            background-color: #6ab2ea;
+            color: #fff;
+            padding: 2px 4px;
+            font-weight: bold;
+        }
+
+        .campo {
+            height: auto;
+            min-height: 12px;
+            vertical-align: top;
+            padding: 1px 2px;
+        }
+
+        .label {
+            font-size: 9px;
+            letter-spacing: 0.1px;
+            color: #333;
+        }
+
+        .valor {
+            padding: 1px 2px;
+            border-bottom: 1px solid #000;
+            min-height: 10px;
+        }
+
+        /* FIRMAS */
+        .firmas {
+            margin-top: 20px;
+        }
+
+        .firmas td {
+            padding-top: 25px;
             text-align: center;
+            font-size: 8px;
+            vertical-align: bottom;
         }
-        
-        td {
-            font-size: 9pt;
-        }
-        
-        .text-center { 
-            text-align: center; 
-        }
-        
-        .no-data {
-            text-align: center;
-            color: var(--color-texto-suave);
-            font-style: italic;
-            padding: 15px;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 9pt;
-            color: var(--color-texto-suave);
-            padding: 10px 0;
-            border-top: 1px solid var(--color-borde);
-        }
-        
+
+        /* PAGINACIÓN */
         .page-break {
-            page-break-before: always;
+            page-break-after: always;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Evitar superposiciones */
+        .text-center {
+            text-align: center;
+        }
+
+        /* Tabla con bordes para estudiantes */
+        .tabla-bordes {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .tabla-bordes th,
+        .tabla-bordes td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            font-size: 9px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .tabla-bordes th {
+            background-color: #1589e1;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .tabla-bordes td.text-center {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Encabezado de la institución -->
-        <div class="institution-header">
-            <img src="{{ public_path('img/Liceo_logo.png') }}" alt="Logo" class="institution-logo">
-            <div class="institution-text">
-                <h1>Liceo Nacional "Gral. Juan Guillermo Iribarren"</h1>
-                <div class="institution-subtitle">Formando líderes para el futuro</div>
-            </div>
-        </div>
+    <div class="pagina">
+        <!-- CINTILLO INSTITUCIONAL -->
+        <table width="100%" class="cintillo cintillo-color encabezado">
+            <tr style="color: #eee;">
+                <td width="20%" class="">
+                    <img src="{{ public_path('img/logo-ven.webp') }}" alt="Logo" width="90" height="30">
+                </td>
+                <td width="60%">
+                    <strong class="titulo-principal" style="font-size: 14px">LICEO GRAL. JUAN GUILLERMO
+                        IRIBARREN</strong><br>
+                    PORTUGUESA - ARAURE<br>
+                </td>
+                <td width="20%" class="" style="font-size: 9px">
+                    Ministerio del Poder Popular <br>
+                    para la <b>Educacion</b>
+                </td>
+            </tr>
+        </table>
 
-        <!-- Encabezado del documento -->
-        <div class="header">
-            <h2>REPORTE DE DOCENTES CON MATERIAS Y ESTUDIANTES</h2>
-            @forelse($docentesAgrupados as $docente)
-                <h2>{{ $docente['primer_nombre'] ?? 'N/A' }} {{ $docente['primer_apellido'] ?? 'N/A' }}</h2>
-                <p>Cédula: {{ $docente['tipo_documento'] ?? 'N/A' }}-{{ $docente['numero_documento'] ?? 'N/A' }} • Generado el {{ now()->format('d/m/Y H:i:s') }}</p>
-            @empty
-                <h2>No hay datos disponibles</h2>
-                <p>No se encontraron docentes con asignaciones registradas</p>
-            @endforelse
-        </div>
+        <!-- ENCABEZADO DEL DOCUMENTO -->
+        <table width="100%" class="encabezado" style="margin-bottom: 25px">
+            <tr>
+                <td width="20%" class="logo">
+                    REPORTE <br>DOCENTES
+                </td>
+                <td width="60%">
+                    <strong class="text-azul" style="font-size: 10px">REPORTE DE DOCENTES CON MATERIAS Y ESTUDIANTES</strong>
+                </td>
+                <td width="20%" class="foto">
+                    FECHA:<br>
+                    {{ now()->format('d/m/Y') }}
+                </td>
+            </tr>
+        </table>
 
-        <!-- Contenido principal -->
+        <!-- CONTENIDO PRINCIPAL -->
         @forelse($docentesAgrupados as $docente)
-            <div class="docente-section">
-                <div class="docente-header">
-                    DOCENTE: {{ $docente['primer_nombre'] }} {{ $docente['segundo_nombre'] }} {{ $docente['tercer_nombre'] }} {{ $docente['primer_apellido'] }} {{ $docente['segundo_apellido'] }}
-                </div>
+            <!-- DATOS DEL DOCENTE -->
+            <table width="100%" class="bloque">
+                <colgroup>
+                    <col width="50%">
+                    <col width="50%">
+                </colgroup>
+                <tr>
+                    <td colspan="2" class="titulo">DATOS DEL DOCENTE</td>
+                </tr>
+                <tr>
+                    <td class="campo" colspan="2">
+                        <div class="valor label">
+                            <b>NOMBRE COMPLETO:</b> {{ $docente['primer_nombre'] }} {{ $docente['segundo_nombre'] }} {{ $docente['tercer_nombre'] }} {{ $docente['primer_apellido'] }} {{ $docente['segundo_apellido'] }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="campo">
+                        <div class="valor label">
+                            <b>CÉDULA DE IDENTIDAD:</b> {{ $docente['tipo_documento'] ?? 'N/A' }}-{{ $docente['numero_documento'] ?? 'N/A' }}
+                        </div>
+                    </td>
+                    <td class="campo">
+                        <div class="valor label">
+                            <b>FECHA DE REPORTE:</b> {{ now()->format('d/m/Y H:i:s') }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            @foreach($docente['grados'] as $gradoKey => $gradoData)
+                <div style="height: 10px;"></div>
                 
-                @foreach($docente['grados'] as $gradoKey => $gradoData)
-                    <div class="grado-box">
-                        <div class="grado-header">
-                            <span>GRADO: {{ $gradoData['grado'] }}</span>
-                            <span>SECCIÓN: {{ $gradoData['seccion'] ?? 'N/A' }}</span>
-                        </div>
-                        
-                        <div class="content-section">
-                            <!-- Materias que dicta el docente en este grado -->
-                            <div class="materias-section">
-                                <div class="section-title">Materias Asignadas</div>
-                                @if(count($gradoData['materias']) > 0)
-                                    <div class="materia-list">
-                                        @foreach($gradoData['materias'] as $materia)
-                                            <div class="materia-item">{{ $materia }}</div>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <div class="no-data">No hay materias asignadas</div>
-                                @endif
-                            </div>
-                            
-                            <!-- Estudiantes del grado -->
-                            <div class="estudiantes-section">
-                                <div class="section-title">Estudiantes Asignados</div>
-                                @if(count($gradoData['estudiantes']) > 0)
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th width="20%" style="color: #2d3748;">Cédula</th>
-                                                <th width="80%" style="color: #2d3748;">Nombre Completo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($gradoData['estudiantes'] as $estudiante)
-                                                <tr>
-                                                    <td class="text-center">{{ $estudiante->numero_documento }}</td>
-                                                    <td>
-                                                        {{ $estudiante->primer_nombre }} 
-                                                        {{ $estudiante->segundo_nombre ? $estudiante->segundo_nombre . ' ' : '' }}
-                                                        {{ $estudiante->tercer_nombre ? $estudiante->tercer_nombre . ' ' : '' }}
-                                                        {{ $estudiante->primer_apellido }} 
-                                                        {{ $estudiante->segundo_apellido }}
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                @else
-                                    <div class="no-data">No hay estudiantes asignados a este grado</div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    
-                    @if(!$loop->last)
-                        <div style="height: 20px;"></div>
-                    @endif
-                @endforeach
-            </div>
-            
+                <!-- DATOS DEL GRADO CON MATERIAS Y ESTUDIANTES -->
+                <table class="tabla-bordes">
+                    <thead>
+                        <tr>
+                            <th colspan="4" style="background-color: #6ab2ea;">GRADO: {{ $gradoData['grado'] }} - SECCIÓN: {{ $gradoData['seccion'] ?? 'N/A' }}</th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="background-color: #1589e1;">MATERIAS ASIGNADAS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(count($gradoData['materias']) > 0)
+                            @foreach($gradoData['materias'] as $key => $materia)
+                            <tr>
+                                <td class="text-center" width="10%">{{ $key + 1 }}</td>
+                                <td colspan="3">{{ $materia }}</td>
+                            </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="4" class="text-center">No hay materias asignadas</td>
+                            </tr>
+                        @endif
+                        <tr>
+                            <th colspan="4" style="background-color: #1589e1;">ESTUDIANTES ASIGNADOS</th>
+                        </tr>
+                        <tr>
+                            <th width="15%">CÉDULA</th>
+                            <th width="45%">NOMBRE COMPLETO</th>
+                            <th width="20%">GRADO</th>
+                            <th width="20%">SECCIÓN</th>
+                        </tr>
+                        @if(count($gradoData['estudiantes']) > 0)
+                            @foreach($gradoData['estudiantes'] as $estudiante)
+                            <tr>
+                                <td class="text-center">{{ $estudiante->numero_documento }}</td>
+                                <td>
+                                    {{ $estudiante->primer_nombre }} 
+                                    {{ $estudiante->segundo_nombre ? $estudiante->segundo_nombre . ' ' : '' }}
+                                    {{ $estudiante->tercer_nombre ? $estudiante->tercer_nombre . ' ' : '' }}
+                                    {{ $estudiante->primer_apellido }} 
+                                    {{ $estudiante->segundo_apellido }}
+                                </td>
+                                <td class="text-center">{{ $gradoData['grado'] }}</td>
+                                <td class="text-center">{{ $gradoData['seccion'] ?? 'N/A' }}</td>
+                            </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="4" class="text-center">No hay estudiantes asignados a este grado</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+
+                @if(!$loop->last)
+                    <div style="height: 15px;"></div>
+                @endif
+            @endforeach
+
             @if(!$loop->last)
                 <div class="page-break"></div>
             @endif
         @empty
-            <div class="no-data" style="text-align: center; font-size: 12pt; margin: 50px 0;">
-                No hay docentes con asignaciones registradas
-            </div>
+            <table width="100%" class="bloque">
+                <tr>
+                    <td class="campo text-center" style="font-size: 11px;">
+                        <div class="valor">No hay docentes con asignaciones registradas</div>
+                    </td>
+                </tr>
+            </table>
         @endforelse
 
-        <!-- Pie de página -->
-        <div class="footer">
-            <p><strong>Total de docentes:</strong> {{ count($docentesAgrupados) }}</p>
-            <p>Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}</p>
-        </div>
+        <!-- RESUMEN -->
+        <table width="100%" class="bloque">
+            <colgroup>
+                <col width="50%">
+                <col width="50%">
+            </colgroup>
+            <tr>
+                <td class="campo">
+                    <div class="valor label">
+                        <b>TOTAL DE DOCENTES:</b> {{ count($docentesAgrupados) }}
+                    </div>
+                </td>
+                <td class="campo">
+                    <div class="valor label">
+                        <b>GENERADO POR:</b> {{ Auth::user()->name ?? 'Sistema' }}
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- FIRMAS -->
+        <table width="100%" class="firmas">
+            <tr class="text-azul">
+                
+                <td>Firma: _________________________</td>
+            </tr>
+        </table>
+    </div>
         
         <script type="text/php">
-            if (isset($pdf)) {
-                $pdf->page_text(40, 800, "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}", null, 8, array(90, 90, 90));
-                $pdf->page_text(400, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10, array(0, 0, 0));
-            }
+        if (isset($pdf)) {
+            $pdf->page_text(
+                40,
+                810,
+                "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}",
+                null,
+                8,
+                array(90, 90, 90)
+            );
+
+            $pdf->page_text(
+                450,
+                810,
+                "Página {PAGE_NUM} de {PAGE_COUNT}",
+                null,
+                9,
+                array(0, 0, 0)
+            );
+        }
         </script>
     </div>
 </body>
