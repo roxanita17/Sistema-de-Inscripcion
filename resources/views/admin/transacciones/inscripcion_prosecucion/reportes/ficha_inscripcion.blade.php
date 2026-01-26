@@ -5,10 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Ficha de Inscripción - Prosecución</title>
 
-    <style>
-        @page {
+    <style>  
+        @page {  
             margin: 0.5cm 0.8cm;
-            size: A4;
+            size: A4;                         
+            
         }
 
         body {
