@@ -225,7 +225,7 @@ return [
             'text' => 'Panel Principal',
             'url' => 'home',
             'icon' => 'fas fa-fw fa-tachometer-alt',
-            'icon_color' => 'primary',
+            
             'active' => ['home', 'home/*'],
         ],
 
@@ -234,23 +234,20 @@ return [
             'text' => 'Calendario Escolar',
             'url'  => 'admin/anio_escolar',
             'icon' => 'fas fa-calendar-check',
-            'icon_color' => 'warning',
         ],
 
         [
             'text' => 'Histórico',
             'url'  => 'admin/historico',
             'icon' => 'fas fa-history',
-            'icon_color' => 'secondary',
         ],
 
         ['header' => 'INSCRIPCIONES'],
 
         // ================== INSCRIPCIONES ==================
         [
-            'text' => 'Inscripciones',
+            'text' => 'INSCRIPCIONES',
             'icon' => 'fas fa-fw fa-clipboard-list',
-            'icon_color' => 'primary',
             'submenu' => [
                 [
                     'text' => 'Nuevo Ingreso',
@@ -272,7 +269,6 @@ return [
             'text' => 'Historial del Percentil',
             'url' => 'admin/transacciones/percentil',
             'icon' => 'fas fa-fw fa-chart-line',
-            'icon_color' => 'success',
             'active' => ['admin/transacciones/percentil', 'admin/transacciones/percentil/*'],
         ],
 
@@ -299,7 +295,7 @@ return [
         ['header' => 'GESTIÓN DE DOCENTES'],
 
         [
-            'text' => 'Docentes',
+            'text' => 'DOCENTES',
             'icon' => 'fas fa-chalkboard-teacher',
             'submenu' => [
                 [
@@ -334,7 +330,7 @@ return [
         ['header' => 'CONFIGURACIÓN GENERAL'],
 
         [
-            'text' => 'Configuraciones',
+            'text' => 'CONFIGURACIONES',
             'icon' => 'fas fa-fw fa-cogs',
             'submenu' => [
                 ['header' => 'GESTIÓN ACADÉMICA'],
@@ -349,7 +345,7 @@ return [
                 // Asignaciones
                 [
                     
-                    'text' => 'Asignaciones',
+                    'text' => 'ASIGNACIONES',
                     'icon' => 'fas fa-fw fa-link',
                     'active' => ['admin/transacciones/grado_area_formacion*', 'admin/transacciones/area_estudio_realizado*', 'admin/transacciones/docente*'],
                     'submenu' => [
@@ -400,7 +396,7 @@ return [
                 ['header' => 'UBICACIÓN GEOGRÁFICA'],
 
                 [
-                    'text' => 'Ubicaciones',
+                    'text' => 'UBICACIONES',
                     'icon' => 'fas fa-fw fa-map-marker-alt',
                     'active' => ['admin/estado*', 'admin/municipio*', 'admin/localidad*'],
                     'submenu' => [
@@ -430,7 +426,7 @@ return [
                 ['header' => 'PARAMETROS GENERALES'],
 
                 [
-                    'text' => 'Parametros Generales',
+                    'text' => 'PARAMETROS GENERALES',
                     'icon' => 'fas fa-fw fa-cogs',
                     'active' => ['admin/banco*', 'admin/prefijo_telefono*', 'admin/institucion_procedencia*'],
                     'submenu' => [
@@ -453,39 +449,13 @@ return [
                 ],
             ],
         ],
-
-
-        // ============================================================
-        //  DATOS PERSONALES
-        // ============================================================
-        
-
-
-        // ============================================================
-        //  UBICACIÓN GEOGRÁFICA
-        // ============================================================
-        
-
-        // ============================================================
-        //  CONFIGURACIÓN GENERAL
-        // ============================================================
-
-        // Separador
-
-        // Representantes
-
-
-
-        // ============================================================
-        //  ADMINISTRACIÓN
-        // ============================================================
-        ['header' => 'ADMINISTRACIÓN'],
+/*         ['header' => 'ADMINISTRACIÓN'],
 
         [
             'text' => 'Roles y Permisos',
             'url'  => 'admin/roles',
             'icon' => 'fas fa-user-shield',
-        ],
+        ], */
     ],
 
 

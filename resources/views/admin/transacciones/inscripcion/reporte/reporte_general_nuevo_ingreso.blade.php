@@ -308,7 +308,7 @@
                     <th>Cédula</th>
                     <th>Apellidos</th>
                     <th>Nombres</th>
-                    <th>Año</th>
+                    <th>Nivel Acad.</th>
                     <th>Secc.</th>
                     <th>Discapacidad</th>
                     <th>Representante Legal</th>
