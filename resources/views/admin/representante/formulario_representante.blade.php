@@ -1800,8 +1800,8 @@
                                     Código
                                 </label>
                                 <input type="text" class="form-control-modern" id="codigo-patria"
-                                    name="codigo-patria" placeholder="Solo números" pattern="[0-9]+"
-                                    inputmode="numeric"
+                                    name="codigo-patria" placeholder="Solo números (10-15 dígitos)" pattern="[0-9]{10,15}"
+                                    inputmode="numeric" maxlength="15" min="10"
                                     onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                 <small id="codigo-patria-error" class="text-danger"></small>
                             </div>
@@ -1813,8 +1813,8 @@
                                     Serial
                                 </label>
                                 <input type="text" class="form-control-modern" id="serial-patria"
-                                    name="serial-patria" placeholder="Solo números" pattern="[0-9]+"
-                                    inputmode="numeric"
+                                    name="serial-patria" placeholder="Solo números (10-15 dígitos)" pattern="[0-9]{10,15}"
+                                    inputmode="numeric" maxlength="15" min="10"
                                     onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                 <small id="serial-patria-error" class="text-danger"></small>
                             </div>
@@ -2816,14 +2816,28 @@
             input.addEventListener('input', function() {
                 // Eliminar cualquier caracter que no sea número
                 this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Limitar a 15 dígitos máximo
+                if (this.value.length > 15) {
+                    this.value = this.value.slice(0, 15);
+                }
             });
 
             // Prevenir pegar texto no numérico
             input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const texto = e.clipboardData.getData('text');
-                const numeros = texto.replace(/[^0-9]/g, '');
+                const numeros = texto.replace(/[^0-9]/g, '').slice(0, 15);
                 document.execCommand('insertText', false, numeros);
+            });
+            
+            // Validar longitud mínima al perder el foco
+            input.addEventListener('blur', function() {
+                if (this.value.length > 0 && this.value.length < 10) {
+                    this.setCustomValidity('El campo debe tener entre 10 y 15 dígitos');
+                } else {
+                    this.setCustomValidity('');
+                }
             });
         }
 
@@ -4037,13 +4051,16 @@
                         // Limpiar completamente el select
                         $parentescoSelect.empty();
                         
-                        // Opciones base sin duplicación
+                        // Opciones base sin duplicación (todas las opciones del HTML original)
                         const opcionesBase = [
                             { value: '', text: 'Seleccione un parentesco', disabled: false, selected: true },
-                            { value: 'Mamá', text: 'Mamá', disabled: (estadoMadre !== 'Presente' || tipoRepresentante === 'solo_representante'), selected: false },
                             { value: 'Papá', text: 'Papá', disabled: (estadoPadre !== 'Presente' || tipoRepresentante === 'solo_representante'), selected: false },
-                            { value: 'Otro', text: 'Otro', disabled: false, selected: false },
-                            { value: 'Representante Legal', text: 'Representante Legal', disabled: false, selected: false }
+                            { value: 'Mamá', text: 'Mamá', disabled: (estadoMadre !== 'Presente' || tipoRepresentante === 'solo_representante'), selected: false },
+                            { value: 'Hermano(a)', text: 'Hermano(a)', disabled: false, selected: false },
+                            { value: 'Abuelo(a)', text: 'Abuelo(a)', disabled: false, selected: false },
+                            { value: 'Tío(a)', text: 'Tío(a)', disabled: false, selected: false },
+                            { value: 'Primo(a)', text: 'Primo(a)', disabled: false, selected: false },
+                            { value: 'Otro', text: 'Otro', disabled: false, selected: false }
                         ];
                         
                         // Agregar opciones limpias sin duplicación

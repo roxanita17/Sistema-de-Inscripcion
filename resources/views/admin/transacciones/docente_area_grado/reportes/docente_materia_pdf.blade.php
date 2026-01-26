@@ -200,16 +200,10 @@
         <!-- ENCABEZADO DEL DOCUMENTO -->
         <table width="100%" class="encabezado" style="margin-bottom: 25px">
             <tr>
-                <td width="20%" class="logo">
-                    REPORTE <br>DOCENTES
-                </td>
                 <td width="60%">
                     <strong class="text-azul" style="font-size: 10px">REPORTE DE DOCENTES CON MATERIAS Y ESTUDIANTES</strong>
                 </td>
-                <td width="20%" class="foto">
-                    FECHA:<br>
-                    {{ now()->format('d/m/Y') }}
-                </td>
+
             </tr>
         </table>
 
@@ -235,11 +229,6 @@
                     <td class="campo">
                         <div class="valor label">
                             <b>CÉDULA DE IDENTIDAD:</b> {{ $docente['tipo_documento'] ?? 'N/A' }}-{{ $docente['numero_documento'] ?? 'N/A' }}
-                        </div>
-                    </td>
-                    <td class="campo">
-                        <div class="valor label">
-                            <b>FECHA DE REPORTE:</b> {{ now()->format('d/m/Y H:i:s') }}
                         </div>
                     </td>
                 </tr>
@@ -328,24 +317,15 @@
                 <col width="50%">
             </colgroup>
             <tr>
-                <td class="campo">
-                    <div class="valor label">
-                        <b>TOTAL DE DOCENTES:</b> {{ count($docentesAgrupados) }}
-                    </div>
-                </td>
+                       <!-- FECHA DE GENERACIÓN -->
+        <div style="margin-top: 30px; text-align: left; font-size: 9px; color: #666;">
+            Generado el: {{ date('d/m/Y') }}
+        </div>
                 <td class="campo">
                     <div class="valor label">
                         <b>GENERADO POR:</b> {{ Auth::user()->name ?? 'Sistema' }}
                     </div>
                 </td>
-            </tr>
-        </table>
-
-        <!-- FIRMAS -->
-        <table width="100%" class="firmas">
-            <tr class="text-azul">
-                
-                <td>Firma: _________________________</td>
             </tr>
         </table>
     </div>

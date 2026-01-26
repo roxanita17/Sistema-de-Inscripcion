@@ -352,7 +352,6 @@
                     @endif
                 </h3>
             @endif
-            <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
         <table>
@@ -428,7 +427,10 @@
                 </tr>
             </tfoot>
         </table>
-
+   <!-- FECHA DE GENERACIÓN -->
+        <div style="margin-top: 30px; text-align: left; font-size: 9px; color: #666;">
+            Generado: {{ date('d/m/Y H:i:s') }}
+        </div>
         <script type="text/php">
             if (isset($pdf)) {
                 $pdf->page_text(40, 570, "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}", null, 7, array(90, 90, 90));

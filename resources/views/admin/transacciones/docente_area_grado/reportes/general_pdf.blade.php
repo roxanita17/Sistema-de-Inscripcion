@@ -290,7 +290,6 @@
         <!-- ENCABEZADO REPORTE -->
         <div class="header">
             <h2>REPORTE GENERAL DE DOCENTES CON AREAS DE FORMACION ASIGNADAS</h2>
-            <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
 
         <!-- Tabla de docentes -->
@@ -376,7 +375,7 @@
                 </tr>
             </tfoot>
         </table>
-
+            <p>Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}</p>
         <script type="text/php">
             if (isset($pdf)) {
                 $pdf->page_text(40, 570, "Generado por: {{ Auth::user()->name ?? 'Sistema' }} - {{ date('d/m/Y H:i:s') }}", null, 7, array(90, 90, 90));
