@@ -8,7 +8,7 @@
         <div class="modal-content modal-modern shadow">
             <div class="modal-header modal-header-view">
                 <div class="w-100 text-center">
-                    <h5 class="modal-title-view mb-2">Información de Inscripción por Prosecución</h5>
+                    <h5 class="modal-title-view mb-2">Información de Inscripción por Nuevo ingreso</h5>
                     {{ \Carbon\Carbon::parse($datos->anioEscolar->inicio_anio_escolar)->year }}
                     -
                     {{ \Carbon\Carbon::parse($datos->anioEscolar->cierre_anio_escolar)->year }}
