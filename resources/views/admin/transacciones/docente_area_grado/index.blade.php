@@ -327,7 +327,7 @@
                                                             target="_blank"
                                                             title="Generar PDF de materias">
                                                             <i class="fas fa-file-pdf me-2"></i>
-                                                            Materias PDF
+                                                            Area de formacion PDF
                                                         </a>
                                                     </li>
                                             </ul>
