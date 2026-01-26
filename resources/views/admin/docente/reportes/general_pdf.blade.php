@@ -323,9 +323,10 @@
             </tfoot>
         </table>
         
-        <p>
-            Fecha de generación: {{ now()->format('d/m/Y H:i:s') }}
-        </p>
+       <!-- FECHA DE GENERACIÓN -->
+        <div style="margin-top: 30px; text-align: left; font-size: 9px; color: #666;">
+            Generado el: {{ date('d/m/Y') }}
+        </div>
         
         <script type="text/php">
             if (isset($pdf)) {

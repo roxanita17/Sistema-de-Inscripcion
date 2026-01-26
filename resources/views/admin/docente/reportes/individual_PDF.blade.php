@@ -174,15 +174,8 @@
         <!-- ENCABEZADO DEL DOCUMENTO -->
         <table width="100%" class="encabezado" style="margin-bottom: 25px">
             <tr>
-                <td width="20%" class="logo">
-                    FOTO <br>DOCENTE
-                </td>
                 <td width="60%">
                     <strong class="text-azul" style="font-size: 10px">FICHA INDIVIDUAL DEL DOCENTE</strong>
-                </td>
-                <td width="20%" class="foto">
-                    CÓDIGO:<br>
-                    {{ $docente->numero_documento ?? 'N/A' }}
                 </td>
             </tr>
         </table>
@@ -313,15 +306,6 @@
                     </td>
                 </tr>
             @endif
-        </table>
-
-        <!-- FIRMAS -->
-        <table width="100%" class="firmas">
-            <tr class="text-azul">
-                <td>Fecha: _________________________</td>
-                <td>Docente: _________________________</td>
-                <td>Firma: _________________________</td>
-            </tr>
         </table>
     </div>
         
