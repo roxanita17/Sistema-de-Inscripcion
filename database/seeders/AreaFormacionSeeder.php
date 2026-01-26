@@ -33,7 +33,8 @@ class AreaFormacionSeeder extends Seeder
             ['nombre_grupo_estable' => 'Taekwondo', 'status' => true], /* 4 */
             ['nombre_grupo_estable' => 'Futbol', 'status' => true], /* 5 */
             ['nombre_grupo_estable' => 'Baloncesto', 'status' => true], /* 6 */
-           
+            ['nombre_grupo_estable' => 'Manos a la Siembra', 'status' => true], /* 7 */
+
         ]);
         $this->command->info('Grupos estables insertados correctamente.');
     }

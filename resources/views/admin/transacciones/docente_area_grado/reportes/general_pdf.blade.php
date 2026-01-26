@@ -172,21 +172,16 @@
 
         th:nth-child(2),
         td:nth-child(2) {
-            width: 25%;
+            width: 10%;
         }
 
         th:nth-child(3),
         td:nth-child(3) {
-            width: 10%;
+            width: 20%;
         }
 
         th:nth-child(4),
         td:nth-child(4) {
-            width: 20%;
-        }
-
-        th:nth-child(5),
-        td:nth-child(5) {
             width: 15%;
         }
 
@@ -298,8 +293,7 @@
                 <tr>
                     <th>Cédula</th>
                     <th>Nombres y Apellidos</th>
-                    <th>Género</th>
-                    <th>Áreas de formación, grado y sección</th>
+                    <th>Áreas de formación, nivel y sección</th>
                     <th>Grupos Estables</th>
                 </tr>
             </thead>
@@ -315,7 +309,6 @@
                             {{ $docente->persona->primer_apellido ?? '' }}
                             {{ $docente->persona->segundo_apellido ?? '' }}
                         </td>
-                        <td class="text-center">{{ $docente->persona->genero->genero ?? 'N/A' }}</td>
 
                         {{-- Áreas de formación con grado y sección --}}
                         <td class="long-text">

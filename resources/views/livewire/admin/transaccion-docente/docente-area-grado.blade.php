@@ -63,9 +63,6 @@
                                     <option value="{{ $docente->id }}"
                                         data-subtext="{{ $docente->persona->tipoDocumento->nombre ?? 'N/A' }}-{{ $docente->persona->numero_documento }}">
                                         {{ $docente->nombre_completo }}
-                                        @if ($docente->codigo)
-                                            ({{ $docente->codigo }})
-                                        @endif
                                     </option>
                                 @endif
                             @endforeach

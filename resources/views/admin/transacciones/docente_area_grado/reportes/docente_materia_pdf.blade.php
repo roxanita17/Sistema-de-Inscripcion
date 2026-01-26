@@ -241,7 +241,7 @@
                 <table class="tabla-bordes">
                     <thead>
                         <tr>
-                            <th colspan="4" style="background-color: #6ab2ea;">GRADO: {{ $gradoData['grado'] }} - SECCIÓN: {{ $gradoData['seccion'] ?? 'N/A' }}</th>
+                            <th colspan="4" style="background-color: #6ab2ea;">NIVEL: {{ $gradoData['grado'] }} - SECCIÓN: {{ $gradoData['seccion'] ?? 'N/A' }}</th>
                         </tr>
                         <tr>
                             <th colspan="4" style="background-color: #1589e1;">MATERIAS ASIGNADAS</th>
@@ -266,7 +266,7 @@
                         <tr>
                             <th width="15%">CÉDULA</th>
                             <th width="45%">NOMBRE COMPLETO</th>
-                            <th width="20%">GRADO</th>
+                            <th width="20%">NIVEL</th>
                             <th width="20%">SECCIÓN</th>
                         </tr>
                         @if(count($gradoData['estudiantes']) > 0)
