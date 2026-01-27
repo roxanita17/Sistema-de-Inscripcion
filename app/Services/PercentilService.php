@@ -21,7 +21,7 @@ class PercentilService
 
         $edadMeses = Carbon::parse($persona->fecha_nacimiento)->diffInMonths(now());
         $pesoKg = $alumno->peso;
-        $estaturaCm = $alumno->estatura;
+        $estaturaCm = (int) round($alumno->estatura * 100);
 
         $indiceEdad = $this->buscarIndiceEdad($edadMeses);
         $indicePeso = $this->buscarIndicePeso($pesoKg);
