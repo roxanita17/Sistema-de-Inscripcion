@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Reporte de Docentes y Materias</title>
+    <title>Reporte de Docentes y areas de formacion</title>
     <style>
         @page {
             margin: 0.5cm 0.8cm;
@@ -201,7 +201,7 @@
         <table width="100%" class="encabezado" style="margin-bottom: 25px">
             <tr>
                 <td width="60%">
-                    <strong class="text-azul" style="font-size: 10px">REPORTE DE DOCENTES CON MATERIAS Y ESTUDIANTES</strong>
+                    <strong class="text-azul" style="font-size: 10px">REPORTE DE DOCENTES CON AREAS DE FORMACION Y ESTUDIANTES</strong>
                 </td>
 
             </tr>
@@ -244,7 +244,7 @@
                             <th colspan="4" style="background-color: #6ab2ea;">NIVEL: {{ $gradoData['grado'] }} - SECCIÓN: {{ $gradoData['seccion'] ?? 'N/A' }}</th>
                         </tr>
                         <tr>
-                            <th colspan="4" style="background-color: #1589e1;">MATERIAS ASIGNADAS</th>
+                            <th colspan="4" style="background-color: #1589e1;">AREAS DE FORMACION ASIGNADAS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -257,7 +257,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="4" class="text-center">No hay materias asignadas</td>
+                                <td colspan="4" class="text-center">No hay areas de formacion asignadas</td>
                             </tr>
                         @endif
                         <tr>
@@ -286,7 +286,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="4" class="text-center">No hay estudiantes asignados a este grado</td>
+                                <td colspan="4" class="text-center">No hay estudiantes asignados a este nivel academico</td>
                             </tr>
                         @endif
                     </tbody>
