@@ -349,7 +349,7 @@
                 <div class="stat-card-header">
                     <div>
                         <div class="stat-number">{{ $totalGrados ?? 0 }}</div>
-                        <div class="stat-label">Años Activos</div>
+                        <div class="stat-label">Niveles Escolares Activos</div>
                     </div>
                     <div class="stat-icon warning">
                         <i class="fas fa-school"></i>
@@ -485,8 +485,50 @@
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="col-md-6">
+                <div class="card-modern">
+                    <div class="card-header-modern">
+                        <div class="header-left">
+                            <div class="header-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <div>
+                                <h3>Contáctanos</h3>
+                                <p>Soporte y documentación del sistema</p>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="card-body-modern" style="padding: 1.25rem;">
+                        <p>
+                            <i class="fas fa-phone"></i>
+                            <strong>Teléfono:</strong> +58 412-9242220
+                        </p>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="">
+                                    <a href="{{ asset('manuales/Manual_usuario.pdf') }}" target="_blank"
+                                        class="btn btn-create">
+                                        <i class="fas fa-file-pdf"></i>
+                                        Descargar Manual de Usuario
+                                    </a>
+                                </p>
+
+                            </div>
+                            {{-- <div class="col-6">
+                                <p class="">
+                                    <a href="{{ asset('manuales/manual_sistema.pdf') }}" target="_blank"
+                                        class="btn btn-create">
+                                        <i class="fas fa-file-pdf"></i>
+                                        Descargar Manual del Sistema
+                                    </a>
+                                </p>
+                            </div> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @stop
 
