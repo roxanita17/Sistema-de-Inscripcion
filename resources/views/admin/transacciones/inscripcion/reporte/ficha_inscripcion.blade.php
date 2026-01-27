@@ -528,12 +528,12 @@
                 <td class="campo" colspan="3">
                     <div class="valor">
                         <span class="label">CEDULA:
-                            {{ match ($datosCompletos['persona_madre']['tipo_documento_id'] ?? null) {
+                            {{ match ($datosCompletos['persona_madre']['tipo_documento_id'] ?? 'N/A') {
                                 1 => 'V',
                                 2 => 'E',
-                                default => '',
+                                default => 'N/A',
                             } }}
-                            -{{ $datosCompletos['persona_madre']['numero_documento'] }}</span>
+                            -{{ $datosCompletos['persona_madre']['numero_documento'] ?? 'N/A' }}</span>
                     </div>
                 </td>
             </tr>
@@ -635,7 +635,7 @@
                                 2 => 'E',
                                 default => '',
                             } }}
-                            -{{ $datosCompletos['persona_padre']['numero_documento'] }}</span>
+                            -{{ $datosCompletos['persona_padre']['numero_documento'] ?? 'N/A'}}</span>
                     </div>
                 </td>
             </tr>
@@ -734,7 +734,7 @@
                                 2 => 'E',
                                 default => '',
                             } }}
-                            -{{ $datosCompletos['persona_representante']['numero_documento'] }}
+                            -{{ $datosCompletos['persona_representante']['numero_documento'] ?? 'N/A'}}
                         </span>
                     </div>
                 </td>
@@ -777,13 +777,13 @@
                         </span>
                     </div>
                 </td>
-                <td class="campo" colspan="2">
+                {{-- <td class="campo" colspan="2">
                     <div class="valor">
                         <span class="label">CORREO ELECTRONICO:
 
                         </span>
                     </div>
-                </td>
+                </td> --}}
             </tr>
             <tr>
                 <td class="campo" colspan="2">

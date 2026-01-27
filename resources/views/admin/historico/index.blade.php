@@ -192,7 +192,7 @@
                                                     {{ $inscripcion->grado->numero_grado }}°
                                                 </span>
                                             </td>
-                                            <td>{{ $inscripcion->seccionAsignada->nombre ?? '—' }}</td>
+                                            <td>{{ $inscripcion->seccion->nombre ?? '—' }}</td>
                                             <td>
                                                 <span class="badge bg-success">
                                                     <i class="fas fa-star"></i> Nuevo Ingreso
@@ -251,7 +251,7 @@
                                                 @if ($inscripcion->prosecucion)
                                                     {{ $inscripcion->prosecucion->seccion->nombre ?? '—' }}
                                                 @else
-                                                    {{ $inscripcion->seccionAsignada->nombre ?? '—' }}
+                                                    {{ $inscripcion->seccion->nombre ?? '—' }}
                                                 @endif
                                             </td>
                                             <td>

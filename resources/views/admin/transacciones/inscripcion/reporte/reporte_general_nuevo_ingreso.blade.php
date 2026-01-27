@@ -333,7 +333,7 @@
                                 ($per?->tercer_nombre ?? ''),
                         );
                         $grado = $ins?->grado?->numero_grado ?? 'N/A';
-                        $seccion = $ins?->seccionAsignada?->nombre ?? 'N/A';
+                        $seccion = $ins?->seccion?->nombre ?? 'N/A';
 
                         // Discapacidades
                         $discapacidades = '';
