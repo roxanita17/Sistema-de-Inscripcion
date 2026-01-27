@@ -292,11 +292,6 @@
 
                 <tr>
                     <td class="campo">
-                        <div class="valor label"><b>NIVEL (AÑO) ANTERIOR: </b>
-                            {{ $datosCompletos['prosecucion']['grado_anterior'] ?? 'N/A' }}
-                        </div>
-                    </td>
-                    <td class="campo">
                         <div class="valor label"><b>NIVEL (AÑO) ACTUAL: </b>
                             {{ $prosecucion->grado->numero_grado ?? 'N/A' }}
                         </div>
